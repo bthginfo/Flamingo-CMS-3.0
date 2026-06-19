@@ -1733,7 +1733,6 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   verticalTimeline: {
     headline: 'So läuft Ihr Projekt ab',
     subline: 'Klare Schritte von der Anfrage bis zur Fertigstellung.',
-    accentColor: '#6366f1',
     steps: [
       { number: '01', timeLabel: 'Tag 1', title: 'Erstgespräch', text: 'Wir besprechen Ihre Wünsche und beraten Sie kostenfrei.', checkmarks: ['Bedarfsanalyse', 'Budgetrahmen', 'Zeitplanung'] },
       { number: '02', timeLabel: 'Tag 2–4', title: 'Planung & Angebot', text: 'Detaillierter Plan mit verbindlichem Festpreisangebot.', checkmarks: ['3D-Vorschau', 'Materialauswahl', 'Festpreis'] },
@@ -1744,7 +1743,6 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   beforeAfterSlider: {
     headline: 'Der Moment, in dem Qualität sichtbar wird.',
     subline: 'Ein direkter Vorher-Nachher-Beweis für Umbauten, Rebrandings, Behandlungen, Renovierungen oder Optimierungen.',
-    handleColor: '#18181b',
     slides: [
       { imageBefore: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=85', imageAfter: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=85', labelBefore: 'Vorher', labelAfter: 'Nachher', caption: 'Aus einem austauschbaren Raum wird ein hochwertiges, klar strukturiertes Wohnkonzept.' },
     ],
@@ -1829,9 +1827,6 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   horizontalScrollShowcase: {
     headline: 'Referenzen, die wie eine Kampagne wirken.',
     subline: 'Große Panels, starke Bilder und kurze Projektstories machen mehrere Cases schnell vergleichbar.',
-    bgColor: '#09090b',
-    textColor: '#ffffff',
-    dotColor: '#6366f1',
     panels: [
       { image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=88', title: 'Office Relaunch', text: 'Ein Arbeitsplatzkonzept mit besserer Orientierung, mehr Ruhe und klaren Zonen für Fokus und Austausch.', ctaLabel: 'Case ansehen', ctaHref: '#' },
       { image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=88', title: 'Showroom Upgrade', text: 'Die Produkte bekommen mehr Bühne, der Beratungsprozess wird nachvollziehbarer und die Verweildauer steigt.', ctaLabel: 'Case ansehen', ctaHref: '#' },

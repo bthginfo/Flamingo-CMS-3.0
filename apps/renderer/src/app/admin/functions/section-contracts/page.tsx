@@ -10,7 +10,7 @@ export default function SectionContractsPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Intern</p>
         <h1 className="mt-2 text-2xl font-bold">Section Contract Studio</h1>
         <p className="mt-2 max-w-3xl text-sm text-zinc-500">
-          Read-only Übersicht aller bekannten Section Contracts. Jeder Contract beschreibt offiziell, welche Inhalte, Medien und Farbslots eine Section unterstützt. Kuratierte Contracts sind handgeschärft; Registry-Contracts werden aus Section-Auswahl, Defaults und Preview-Daten erzeugt.
+          Read-only Übersicht aller bekannten Section Contracts. Jeder Contract beschreibt offiziell, welche Inhalte, Medien und Farbfelder eine Section unterstützt. Kuratierte Contracts sind handgeschärft; Registry-Contracts werden aus Section-Auswahl, Defaults und Preview-Daten erzeugt.
         </p>
         <div className="mt-4 flex flex-wrap gap-2 text-xs">
           <span className="rounded-full bg-zinc-100 px-3 py-1.5 text-zinc-600">{contracts.length} Sections</span>
@@ -40,7 +40,7 @@ export default function SectionContractsPage() {
               </div>
               <div className="flex gap-2 text-xs">
                 <span className="rounded-lg bg-zinc-50 px-2.5 py-1.5 text-zinc-600">{contract.fields.length} Felder</span>
-                <span className="rounded-lg bg-zinc-50 px-2.5 py-1.5 text-zinc-600">{contract.colorSlots.length} Farbslots</span>
+                <span className="rounded-lg bg-zinc-50 px-2.5 py-1.5 text-zinc-600">{contract.colorFields.length} Farbfelder</span>
               </div>
             </div>
 
@@ -65,16 +65,16 @@ export default function SectionContractsPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-zinc-700">Farbslots</h3>
-                {contract.colorSlots.length ? (
+                <h3 className="text-sm font-semibold text-zinc-700">Farbfelder</h3>
+                {contract.colorFields.length ? (
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {contract.colorSlots.map(slot => (
+                    {contract.colorFields.map(slot => (
                       <code key={slot} className="rounded-full bg-zinc-100 px-3 py-1.5 text-xs text-zinc-600">{slot}</code>
                     ))}
                   </div>
                 ) : (
                   <p className="mt-2 rounded-xl bg-zinc-50 p-3 text-xs leading-5 text-zinc-600">
-                    Kein eigener Farbslot im Contract. Die tatsächlichen Section-Farben werden über das Section-Farbmapping geprüft.
+                    Kein eigenes Farbfeld im Contract. Die tatsächlichen Section-Farben werden über das zentrale Section-Farbmapping geprüft.
                   </p>
                 )}
                 <h3 className="mt-5 text-sm font-semibold text-zinc-700">Preview-Daten</h3>

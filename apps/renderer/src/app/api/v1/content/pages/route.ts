@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverrides } from '@/lib/api-utils';
+import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection } from '@/lib/api-utils';
 
 export const POST = withApiHandler(async (req, auth) => {
   const body = await req.json();
@@ -23,7 +23,7 @@ export const POST = withApiHandler(async (req, auth) => {
   });
 
   if (Array.isArray(sections) && sections.length > 0) {
-    const sectionErr = validateSections(sections);
+    const sectionErr = validateSections(sections, auth.tenant.industry);
     if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
     await db.insert(pageSections).values(
       sections.map((s: any, i: number) => ({
@@ -38,7 +38,7 @@ export const POST = withApiHandler(async (req, auth) => {
         spacingTop: s.spacingTop || 'm',
         spacingBottom: s.spacingBottom || 'm',
         anchorId: s.anchorId || null,
-        styleOverrides: normalizeStyleOverrides(s.styleOverrides),
+        styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
         sortOrder: i,
       }))
     );

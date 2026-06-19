@@ -1,5 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { getFieldsForSection } from '../apps/renderer/src/lib/section-color-resolver';
+import { getSectionSchemas } from '../apps/renderer/src/lib/section-data-schemas';
 
 type RegistryEntry = {
   type: string;
@@ -98,33 +100,47 @@ function extractObjectBlock(source: string, marker: string): string {
   return source.slice(open);
 }
 
-function extractApiSchemas(source: string): string[] {
-  const start = source.indexOf('const schemas: Record<string, object> = {');
-  const end = source.indexOf('if (industry ===', start);
-  if (start === -1) return [];
-  const baseSchemas = source.slice(start, end > start ? end : undefined);
-  const baseKeys = Array.from(baseSchemas.matchAll(/^\s{4}([a-zA-Z][a-zA-Z0-9_]*)\s*:/gm), (match) => match[1]);
+const INDUSTRIES = [
+  'tradesman',
+  'restaurant',
+  'salon',
+  'hotel',
+  'tourism',
+  'medical',
+  'wedding',
+  'photography',
+  'consulting',
+  'realestate',
+  'cafe',
+  'tattoo',
+  'ecommerce',
+  'retail',
+  'florist',
+  'fitness',
+  'location',
+];
 
-  const assignSchemas = Array.from(source.matchAll(/Object\.assign\(schemas,\s*\{([\s\S]*?)\n\s{4}\}\);/g))
-    .flatMap((match) => Array.from(match[1].matchAll(/^\s{6}([a-zA-Z][a-zA-Z0-9_]*)\s*:/gm), (keyMatch) => keyMatch[1]));
-
-  return unique([...baseKeys, ...assignSchemas]);
+function getApiSchemaTypes(): string[] {
+  return unique(INDUSTRIES.flatMap((industry) => Object.keys(getSectionSchemas(industry))));
 }
 
 function buildAudit(): RegistryEntry[] {
   const sectionTypesSource = read('apps/renderer/src/app/admin/pages/[id]/section-types.ts');
   const templatesSource = read('apps/renderer/src/templates/index.ts');
   const dataEditorSource = read('apps/renderer/src/app/admin/pages/[id]/section-data-editor.tsx');
-  const colorEditorSource = read('apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx');
-  const instructionsSource = read('apps/renderer/src/app/api/v1/instructions/route.ts');
+  const colorContractsSource = read('apps/renderer/src/lib/section-color-contracts-generated.ts');
 
   const adminTypes = extractQuotedTypes(sectionTypesSource);
   const rendererTypes = extractTemplates(templatesSource);
   const dataEditorTypes = extractObjectKeysAfter(dataEditorSource, 'const EDITORS');
-  const colorTypes = extractObjectKeysAfter(colorEditorSource, 'const SECTION_FIELDS');
-  const apiSchemaTypes = extractApiSchemas(instructionsSource);
+  const generatedColorTypes = unique([
+    ...extractObjectKeysAfter(colorContractsSource, 'export const SECTION_COLOR_CONTRACTS_GENERIC'),
+    ...extractObjectKeysAfter(colorContractsSource, 'export const SECTION_COLOR_CONTRACTS_GENERATED')
+      .map((key) => key.replace(/(?:Tradesman|Restaurant|Salon|Hotel|Tourism|Medical|Wedding|Photography|Consulting|Realestate|Cafe|Tattoo|Ecommerce|Retail|Florist|Fitness|Location)$/, '')),
+  ]);
+  const apiSchemaTypes = getApiSchemaTypes();
 
-  const allTypes = unique([...adminTypes, ...rendererTypes, ...dataEditorTypes, ...colorTypes, ...apiSchemaTypes]);
+  const allTypes = unique([...adminTypes, ...rendererTypes, ...dataEditorTypes, ...generatedColorTypes, ...apiSchemaTypes]);
 
   return allTypes.map((type) => {
     const entry: RegistryEntry = {
@@ -133,7 +149,7 @@ function buildAudit(): RegistryEntry[] {
       rendererRegistered: rendererTypes.includes(type),
       apiSchema: apiSchemaTypes.includes(type),
       dataEditor: dataEditorTypes.includes(type),
-      colorMapping: colorTypes.includes(type),
+      colorMapping: getFieldsForSection(type).length > 0,
       notes: [],
     };
 

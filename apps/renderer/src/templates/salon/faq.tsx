@@ -31,7 +31,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
       </div>
       <div className="divide-y divide-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md">
         {items.map((item, i) => (
-          <motion.details key={`$<span data-edit-path="question">{item.question}</span>-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="group p-5" data-edit-collection="items" data-edit-index={i}>
+          <motion.details key={`${item.question || 'item'}-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="group p-5" data-edit-collection="items" data-edit-index={i}>
             <summary className="cursor-pointer font-semibold text-[color:var(--token-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </motion.details>
@@ -52,7 +52,7 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
       </div>
       <div className="divide-y divide-black/10 border-y border-black/10">
         {items.map((item, i) => (
-          <details key={`$<span data-edit-path="question">{item.question}</span>-${i}`} className="py-6" data-edit-collection="items" data-edit-index={i}>
+          <details key={`${item.question || 'item'}-${i}`} className="py-6" data-edit-collection="items" data-edit-index={i}>
             <summary className="cursor-pointer font-light text-[color:var(--token-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
@@ -73,7 +73,7 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
       </div>
       <div className="divide-y-2 divide-[#111827] border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]">
         {items.map((item, i) => (
-          <details key={`$<span data-edit-path="question">{item.question}</span>-${i}`} className="p-5" data-edit-collection="items" data-edit-index={i}>
+          <details key={`${item.question || 'item'}-${i}`} className="p-5" data-edit-collection="items" data-edit-index={i}>
             <summary className="cursor-pointer font-black uppercase text-[color:var(--token-on-dark-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>

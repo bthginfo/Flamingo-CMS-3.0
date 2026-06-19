@@ -38,7 +38,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
-          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
+          <motion.article key={`${item.title || 'item'}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative min-h-56"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[color:var(--token-badge-text)]" />
@@ -86,7 +86,7 @@ function Bold({ header, items, ctaPrimary }: Props) {
       </div>
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
+          <article key={`${item.title || 'item'}-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative min-h-56"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[color:var(--token-badge-text)] font-black" />

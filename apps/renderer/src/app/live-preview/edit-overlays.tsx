@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { icons as lucideIcons, type LucideIcon } from 'lucide-react';
-import { FIELD_DEFS, getFieldsForSection, type ColorFieldKey } from '@/app/admin/pages/[id]/section-color-editor';
+import { FIELD_DEFS, type ColorFieldKey } from '@/lib/section-color-fields';
+import { getFieldsForSection } from '@/lib/section-color-resolver';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LIVE-PREVIEW EDIT OVERLAYS

@@ -56,7 +56,7 @@ function Classic(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <motion.div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
+            <motion.div key={`${v.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
               <div className="shrink-0 text-[color:var(--token-eyebrow))]"><DynamicIcon editPath="icon" name={v.icon || 'map-pin'} size={20} /></div>
               <div><h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
@@ -103,7 +103,7 @@ function Mod(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-l border-black/20 pl-5" data-edit-collection="values" data-edit-index={i}>
+            <div key={`${v.title || 'item'}-${i}`} className="border-l border-black/20 pl-5" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon editPath="icon" name={v.icon || 'map-pin'} size={18} className="text-[color:var(--token-muted)]" />
               <h3 className="mt-2 font-medium text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
@@ -150,7 +150,7 @@ function Bold(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[var(--token-card-border)] p-5 shadow-[4px_4px_0_var(--token-eyebrow))]" data-edit-collection="values" data-edit-index={i}>
+            <div key={`${v.title || 'item'}-${i}`} className="border-2 border-[var(--token-card-border)] p-5 shadow-[4px_4px_0_var(--token-eyebrow))]" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon editPath="icon" name={v.icon || 'map-pin'} size={20} className="text-[color:var(--token-eyebrow))]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}

@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq, and, asc } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandlerParams, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverrides } from '@/lib/api-utils';
+import { withApiHandlerParams, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection } from '@/lib/api-utils';
 
 export const GET = withApiHandlerParams(async (_req, auth, params) => {
   const { id } = params;
@@ -35,7 +35,7 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
   }
 
   if (Array.isArray(body.sections)) {
-    const sectionErr = validateSections(body.sections);
+    const sectionErr = validateSections(body.sections, auth.tenant.industry);
     if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
     await db.delete(pageSections).where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId)));
     if (body.sections.length > 0) {
@@ -52,7 +52,7 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
           spacingTop: s.spacingTop || 'm',
           spacingBottom: s.spacingBottom || 'm',
           anchorId: s.anchorId || null,
-          styleOverrides: normalizeStyleOverrides(s.styleOverrides),
+          styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
           sortOrder: i,
         }))
       );
@@ -91,10 +91,10 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
       if (patch.visible != null) sectionUpdates.visible = patch.visible;
       if (patch.variant != null) sectionUpdates.variant = patch.variant;
       if (patch.styleOverrides !== undefined) {
-        sectionUpdates.styleOverrides = normalizeStyleOverrides({
+        sectionUpdates.styleOverrides = normalizeStyleOverridesForSection(existing.type, {
           ...((existing.styleOverrides as Record<string, string> | null) || {}),
           ...(patch.styleOverrides || {}),
-        });
+        }, auth.tenant.industry);
       }
       await db.update(pageSections).set(sectionUpdates).where(and(eq(pageSections.id, patch.id), eq(pageSections.tenantId, auth.tenantId)));
     }

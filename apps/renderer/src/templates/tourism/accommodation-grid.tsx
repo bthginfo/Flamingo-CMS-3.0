@@ -47,7 +47,7 @@ function Modern({ header, items }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="group overflow-hidden border border-[var(--token-card-border)] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={index}>
+          <article key={`${item.title || 'item'}-${index}`} className="group overflow-hidden border border-[var(--token-card-border)] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-light uppercase tracking-widest text-[color:var(--token-badge-text)]">{[item.category, item.typeLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>
@@ -73,7 +73,7 @@ function Bold({ header, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={index}>
+          <article key={`${item.title || 'item'}-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-badge-text)]">{[item.category, item.typeLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>

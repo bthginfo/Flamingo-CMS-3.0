@@ -24,6 +24,26 @@ export function GlowHeroSection({ data }: Props) {
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+    if (isTouchDevice) {
+      if (prefersReducedMotion) return;
+      let frame = 0;
+      const start = performance.now();
+      const animate = (time: number) => {
+        const elapsed = (time - start) / 1000;
+        setPos({
+          x: 50 + Math.sin(elapsed * 0.18) * 22,
+          y: 48 + Math.cos(elapsed * 0.14) * 18,
+        });
+        frame = requestAnimationFrame(animate);
+      };
+      frame = requestAnimationFrame(animate);
+      return () => cancelAnimationFrame(frame);
+    }
+
     function onMove(event: MouseEvent) {
       const rect = node!.getBoundingClientRect();
       setPos({ x: ((event.clientX - rect.left) / rect.width) * 100, y: ((event.clientY - rect.top) / rect.height) * 100 });

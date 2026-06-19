@@ -48,6 +48,7 @@ export const DESIGN_TOKENS = {
   cardBg:          { cssVar: '--token-card-bg',         kind: 'color', default: '#ffffff',          description: 'Card / tile background color' },
   cardBorder:      { cssVar: '--token-card-border',     kind: 'color', default: 'rgba(15,23,42,0.08)', description: 'Card / tile border color' },
   divider:         { cssVar: '--token-divider',         kind: 'color', default: 'rgba(15,23,42,0.12)', description: 'Horizontal rule / section divider color' },
+  imageOverlay:    { cssVar: '--token-image-overlay',   kind: 'color', default: 'rgba(0,0,0,0.42)', description: 'Overlay color for image-backed heroes, cards and media sections' },
 
   // ─── Card typography ──────────────────────────────────────────────────────────
   cardHeading:     { cssVar: '--token-card-heading',    kind: 'color', default: '#0f172a',          description: 'Card heading / title text color' },
@@ -60,12 +61,20 @@ export const DESIGN_TOKENS = {
   // ─── Accents / actions ────────────────────────────────────────────────────────
   accent:          { cssVar: '--token-accent',          kind: 'color', default: '#dc2626',          description: 'Primary accent color (links, focused states, hero highlights)' },
   accentRgb:       { cssVar: '--token-accent-rgb',      kind: 'color', default: '220 38 38',        description: 'Accent color as space-separated RGB triplet for rgb(... / alpha) usage' },
+  glowColor:       { cssVar: '--token-glow-color',      kind: 'color', default: 'rgba(220,38,38,0.35)', description: 'Ambient glow / spotlight color for premium sections' },
   icon:            { cssVar: '--token-icon',            kind: 'color', default: '#dc2626',          description: 'Default icon stroke / fill color' },
   check:           { cssVar: '--token-check',           kind: 'color', default: '#16a34a',          description: 'Success checkmark / "included" indicator color' },
   ratingStar:      { cssVar: '--token-rating-star',     kind: 'color', default: '#eab308',          description: 'Filled rating star color' },
 
   // ─── Links ────────────────────────────────────────────────────────────────────
+  link:            { cssVar: '--token-link',            kind: 'color', default: '#dc2626',          description: 'Inline link color' },
+  linkHover:       { cssVar: '--token-link-hover',      kind: 'color', default: '#991b1b',          description: 'Inline link hover color' },
   label:           { cssVar: '--token-label',           kind: 'color', default: '#374151',          description: 'Form label text color' },
+
+  // ─── Form inputs ──────────────────────────────────────────────────────────────
+  inputBg:         { cssVar: '--token-input-bg',        kind: 'color', default: '#ffffff',          description: 'Form input background color' },
+  inputBorder:     { cssVar: '--token-input-border',    kind: 'color', default: 'rgba(15,23,42,0.16)', description: 'Form input border color' },
+  inputText:       { cssVar: '--token-input-text',      kind: 'color', default: '#0f172a',          description: 'Form input text color' },
 
   // ─── Badges (eyebrow pills, status chips) ─────────────────────────────────────
   badgeBg:         { cssVar: '--token-badge-bg',        kind: 'color', default: 'rgba(220,38,38,0.10)', description: 'Pill / badge background color' },

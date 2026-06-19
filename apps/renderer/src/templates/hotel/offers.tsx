@@ -38,7 +38,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
       {offers.length === 0 && fallbackText ? <p className="text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-6 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <motion.article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
+          <motion.article key={`${offer.title || 'item'}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted)]">
@@ -73,7 +73,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
       {offers.length === 0 && fallbackText ? <p className="font-light text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-px border border-black/10 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} className={`grid overflow-hidden border border-black/10 bg-[var(--token-card-bg)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_2%,transparent)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
+          <article key={`${offer.title || 'item'}-${index}`} className={`grid overflow-hidden border border-black/10 bg-[var(--token-card-bg)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_2%,transparent)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-6">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]">
@@ -108,7 +108,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
       {offers.length === 0 && fallbackText ? <p className="text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-4 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} className={`grid overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
+          <article key={`${offer.title || 'item'}-${index}`} className={`grid overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]">

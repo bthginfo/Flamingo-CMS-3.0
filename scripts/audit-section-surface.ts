@@ -3,10 +3,13 @@ import path from 'node:path';
 import { SECTION_PREVIEW_DATA } from '../apps/renderer/src/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '../apps/renderer/src/lib/section-editor-field-defaults';
 import { getSectionColorSlotForCssVar } from '../apps/renderer/src/lib/section-contracts';
+import { FIELD_DEFS } from '../apps/renderer/src/lib/section-color-fields';
+import { resolveColorContractForSection } from '../apps/renderer/src/lib/section-color-resolver';
+import { getSectionSchemas } from '../apps/renderer/src/lib/section-data-schemas';
 
 const root = process.cwd();
 const templatesIndexPath = path.join(root, 'apps/renderer/src/templates/index.ts');
-const colorEditorPath = path.join(root, 'apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx');
+const templatesDir = path.join(root, 'apps/renderer/src/templates');
 const dataEditorPath = path.join(root, 'apps/renderer/src/app/admin/pages/[id]/section-data-editor.tsx');
 const reportsDir = path.join(root, 'reports');
 const reportPath = path.join(reportsDir, 'section-surface-audit.json');
@@ -15,6 +18,7 @@ const mdPath = path.join(reportsDir, 'section-surface-audit.md');
 
 type SectionReport = {
   type: string;
+  industry: string | null;
   component: string | null;
   file: string | null;
   feDataFields: string[];
@@ -80,6 +84,56 @@ function parseSectionComponents(indexSource: string) {
   return mappings;
 }
 
+function extractConstObjectBody(source: string, constName: string) {
+  const header = new RegExp(`(?:export\\s+)?const\\s+${constName}\\b[\\s\\S]*?=\\s*\\{`, 'm');
+  const match = header.exec(source);
+  if (!match) return '';
+  const openBraceIndex = match.index + match[0].length - 1;
+  return extractBalanced(source, openBraceIndex).slice(1, -1);
+}
+
+function parseFlatTemplateEntries(indexSource: string, constName: string) {
+  const body = extractConstObjectBody(indexSource, constName);
+  const entries: Array<{ type: string; component: string }> = [];
+  for (const match of body.matchAll(/^\s*([a-zA-Z][\w]*)\s*:\s*([A-Z][A-Za-z0-9]+),?\s*$/gm)) {
+    entries.push({ type: match[1], component: match[2] });
+  }
+  return entries;
+}
+
+function parseTemplateEntries(indexSource: string) {
+  const entries: Array<{ type: string; component: string | null; industry: string | null }> = [];
+  const seen = new Set<string>();
+  const push = (industry: string | null, type: string, component: string | null) => {
+    const key = `${industry || 'shared'}:${type}:${component || 'none'}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    entries.push({ industry, type, component });
+  };
+
+  for (const entry of parseFlatTemplateEntries(indexSource, 'SHARED_TEMPLATES')) {
+    push(null, entry.type, entry.component);
+  }
+
+  const industryBody = extractConstObjectBody(indexSource, 'INDUSTRY_TEMPLATES');
+  for (const match of industryBody.matchAll(/^\s*([a-zA-Z][a-zA-Z0-9]*)\s*:\s*([A-Z][A-Z0-9_]+),?\s*$/gm)) {
+    for (const entry of parseFlatTemplateEntries(indexSource, match[2])) {
+      push(match[1], entry.type, entry.component);
+    }
+  }
+
+  for (const match of industryBody.matchAll(/^\s*([a-zA-Z][a-zA-Z0-9]*)\s*:\s*\{/gm)) {
+    const industry = match[1];
+    const start = match.index + match[0].length - 1;
+    const body = extractBalanced(industryBody, start).slice(1, -1);
+    for (const entryMatch of body.matchAll(/^\s*([a-zA-Z][\w]*)\s*:\s*([A-Z][A-Za-z0-9]+),?\s*$/gm)) {
+      push(industry, entryMatch[1], entryMatch[2]);
+    }
+  }
+
+  return entries;
+}
+
 function resolveTemplateFile(importPath: string | undefined, componentName?: string | null) {
   if (!importPath) return null;
   const base = path.join(root, 'apps/renderer/src/templates', importPath);
@@ -103,6 +157,23 @@ function resolveTemplateFile(importPath: string | undefined, componentName?: str
   return resolved;
 }
 
+function resolveTemplateImport(importPath: string, fromFile: string) {
+  const base = path.resolve(path.dirname(fromFile), importPath);
+  const candidates = [`${base}.tsx`, `${base}.ts`, path.join(base, 'index.tsx'), path.join(base, 'index.ts')];
+  const resolved = candidates.find((candidate) => fs.existsSync(candidate)) || null;
+  return resolved && resolved.startsWith(templatesDir) ? resolved : null;
+}
+
+function collectTemplateSource(file: string | null, depth = 0, seen = new Set<string>()): string {
+  if (!file || seen.has(file) || depth > 3) return '';
+  seen.add(file);
+  const source = read(file);
+  const imports = [...source.matchAll(/import[\s\S]*?from\s+['"](\.[^'"]+)['"]/g)]
+    .map((match) => resolveTemplateImport(match[1], file))
+    .filter(Boolean) as string[];
+  return [source, ...imports.map((child) => collectTemplateSource(child, depth + 1, seen))].join('\n');
+}
+
 function flattenFields(value: unknown, prefix = ''): string[] {
   if (value == null) return [];
   if (Array.isArray(value)) {
@@ -121,6 +192,14 @@ function flattenFields(value: unknown, prefix = ''): string[] {
 
 function topLevel(field: string) {
   return field.split(/[.[\]]/)[0];
+}
+
+function inferIndustryFromFile(file: string | null) {
+  if (!file) return undefined;
+  const normalized = file.replaceAll('\\', '/');
+  const match = normalized.match(/apps\/renderer\/src\/templates\/([^/]+)\//);
+  const industry = match?.[1];
+  return CONTRACT_INDUSTRIES.includes(industry as never) ? industry : undefined;
 }
 
 function parseFeDataFields(source: string) {
@@ -170,42 +249,13 @@ function fieldsForHardcodedColorClasses(source: string) {
   return [...fields];
 }
 
-function parseFieldDefs(colorSource: string) {
-  const defs = new Map<string, string>();
-  const regex = /([a-zA-Z]\w*)\s*:\s*\{\s*cssVar:\s*'([^']+)'/g;
-  for (const match of colorSource.matchAll(regex)) defs.set(match[1], match[2]);
-  return defs;
-}
-
-function parseSectionFields(colorSource: string) {
-  const fields = new Map<string, string[]>();
-  const start = colorSource.indexOf('const SECTION_FIELDS');
-  const block = extractBalanced(colorSource, start);
-  const regex = /^\s*([a-zA-Z]\w*)\s*:\s*\[([^\]]*)\]/gm;
-  for (const match of block.matchAll(regex)) {
-    const values = [...match[2].matchAll(/'([^']+)'/g)].map((item) => item[1]);
-    fields.set(match[1], values);
-  }
-  return fields;
-}
-
-function parseDefaultSectionFields(colorSource: string) {
-  const start = colorSource.indexOf('const DEFAULT_SECTION_FIELDS');
-  if (start < 0) return [];
-  const assignmentStart = colorSource.indexOf('=', start);
-  const block = extractBalanced(colorSource, assignmentStart > -1 ? assignmentStart : start, '[', ']');
-  return [...block.matchAll(/'([^']+)'/g)].map((item) => item[1]);
-}
-
 const indexSource = read(templatesIndexPath);
-const colorSource = read(colorEditorPath);
 const dataEditorSource = read(dataEditorPath);
 const imports = parseImports(indexSource);
 const mappings = parseSectionComponents(indexSource);
-const fieldDefs = parseFieldDefs(colorSource);
-const sectionFields = parseSectionFields(colorSource);
-const defaultSectionFields = parseDefaultSectionFields(colorSource);
-const cssVarByField = new Map([...fieldDefs.entries()].map(([field, cssVar]) => [field, cssVar]));
+const templateEntries = parseTemplateEntries(indexSource);
+const fieldDefs = new Map(Object.entries(FIELD_DEFS).map(([field, def]) => [field, def.cssVar]));
+const cssVarByField = fieldDefs;
 
 const SECTION_RENDERER_EFFECTIVE_VARS = [
   '--style-section-bg',
@@ -235,25 +285,117 @@ const editorBlockStart = dataEditorSource.indexOf('const EDITORS');
 const editorBlock = extractBalanced(dataEditorSource, editorBlockStart);
 const dataEditorTypes = new Set([...editorBlock.matchAll(/^\s*([a-zA-Z]\w*)\s*:/gm)].map((match) => match[1]));
 
-const allTypes = unique([...mappings.keys(), ...Object.keys(SECTION_PREVIEW_DATA), ...sectionFields.keys(), ...dataEditorTypes]);
-const SYSTEM_INJECTED_FIELDS = new Set(['tenantId']);
+const CONTRACT_INDUSTRIES = [
+  'tradesman',
+  'restaurant',
+  'salon',
+  'hotel',
+  'tourism',
+  'medical',
+  'wedding',
+  'photography',
+  'consulting',
+  'realestate',
+  'cafe',
+  'tattoo',
+  'ecommerce',
+  'retail',
+  'florist',
+  'fitness',
+  'location',
+] as const;
 
-const reports: SectionReport[] = allTypes.map((type) => {
-  const component = mappings.get(type) || null;
+function getAuditedColorContract(type: string, file: string | null, explicitIndustry?: string | null) {
+  const industry = explicitIndustry || inferIndustryFromFile(file);
+  if (industry) {
+    const specific = resolveColorContractForSection(type, industry);
+    if (specific.source !== 'none') {
+      return {
+        fields: specific.fields,
+        hasContract: true,
+      };
+    }
+  }
+
+  const direct = resolveColorContractForSection(type);
+  const effective = direct.source !== 'none'
+    ? [direct]
+    : CONTRACT_INDUSTRIES
+        .map((industry) => resolveColorContractForSection(type, industry))
+        .filter((contract) => contract.source !== 'none');
+  return {
+    fields: unique(effective.flatMap((contract) => contract.fields)),
+    hasContract: effective.length > 0,
+  };
+}
+
+function getSchemaFieldsByType() {
+  const fieldsByType = new Map<string, Record<string, unknown>>();
+  for (const industry of CONTRACT_INDUSTRIES) {
+    const schemas = getSectionSchemas(industry);
+    for (const [type, schema] of Object.entries(schemas)) {
+      const fields = (schema as { fields?: Record<string, unknown> }).fields || {};
+      fieldsByType.set(type, { ...(fieldsByType.get(type) || {}), ...fields });
+    }
+  }
+  return fieldsByType;
+}
+
+const schemaFieldsByType = getSchemaFieldsByType();
+const entryTypes = new Set(templateEntries.map((entry) => entry.type));
+const standaloneTypes = unique([...Object.keys(SECTION_PREVIEW_DATA), ...dataEditorTypes, ...schemaFieldsByType.keys()])
+  .filter((type) => !entryTypes.has(type));
+const auditEntries = [
+  ...templateEntries,
+  ...standaloneTypes.map((type) => ({ type, component: mappings.get(type) || null, industry: null })),
+];
+const SYSTEM_INJECTED_FIELDS = new Set([
+  'error',
+  'tenantId',
+  'tenant',
+  'tenantSlug',
+  'sectionId',
+  'industry',
+  'locale',
+  'preview',
+]);
+
+const FIELD_COVERAGE_GROUPS = [
+  ['headline', 'heading', 'title'],
+  ['subline', 'subtitle', 'subheadline', 'description', 'text', 'body', 'copy'],
+  ['eyebrow', 'kicker', 'badge', 'badgeText', 'label'],
+  ['image', 'bgImage', 'backgroundImage', 'imageSrc', 'imageUrl', 'media', 'photo', 'avatar', 'logo', 'logoUrl', 'storyImage'],
+  ['primaryCta', 'cta', 'ctaPrimary', 'primaryButton', 'button'],
+  ['secondaryCta', 'ctaSecondary', 'secondaryButton'],
+  ['items', 'cards', 'manualCards', 'services', 'entries', 'features', 'benefits', 'highlights', 'steps', 'list'],
+  ['facts', 'stats', 'metrics', 'numbers'],
+  ['testimonials', 'reviews', 'quotes'],
+] as const;
+
+function isFieldCoveredByCms(field: string, cmsFields: string[]) {
+  if (cmsFields.includes(field)) return true;
+  const group = FIELD_COVERAGE_GROUPS.find((aliases) => aliases.includes(field as never));
+  return Boolean(group && group.some((alias) => cmsFields.includes(alias)));
+}
+
+const reports: SectionReport[] = auditEntries.map(({ type, component, industry }) => {
   const file = resolveTemplateFile(component ? imports.get(component) : undefined, component);
   const source = file ? read(file) : '';
+  const templateSource = collectTemplateSource(file);
   const feDataFields = parseFeDataFields(source).filter((field) => field !== 'id' && field !== 'type');
   const cmsRelevantFeDataFields = feDataFields.filter((field) => !SYSTEM_INJECTED_FIELDS.has(field));
   const cmsPreviewFields = unique([
+    ...Object.keys(schemaFieldsByType.get(type) || {}),
     ...flattenFields(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}).map(topLevel),
     ...flattenFields(SECTION_PREVIEW_DATA[type] || {}).map(topLevel),
   ]);
-  const missingCmsFields = cmsRelevantFeDataFields.filter((field) => !cmsPreviewFields.includes(field));
+  const missingCmsFields = cmsRelevantFeDataFields.filter((field) => !isFieldCoveredByCms(field, cmsPreviewFields));
   const feCssVars = unique([
-    ...parseCssVars(source),
-    ...fieldsForHardcodedColorClasses(source).map((field) => cssVarByField.get(field) || ''),
+    ...parseCssVars(templateSource),
+    ...fieldsForHardcodedColorClasses(templateSource).map((field) => cssVarByField.get(field) || ''),
   ]);
-  const adminColorFields = (sectionFields.get(type) || defaultSectionFields).filter((field) => field !== 'sectionBgAlt');
+  const colorContract = getAuditedColorContract(type, file ? path.relative(root, file).replaceAll('\\', '/') : null, industry);
+  const adminColorFields = colorContract.fields.filter((field) => field !== 'sectionBgAlt');
   const adminColorCssVars = unique(adminColorFields.map((field) => fieldDefs.get(field) || ''));
   const missingColorCssVars = feCssVars
     .filter((cssVar) => cssVar.startsWith('--style-') || cssVar.startsWith('--brand-btn-'))
@@ -269,6 +411,7 @@ const reports: SectionReport[] = allTypes.map((type) => {
   if (phantomColorCssVars.length) notes.push('Admin zeigt Color-Variablen, die dieses Template nicht verwendet');
   return {
     type,
+    industry,
     component,
     file: file ? path.relative(root, file).replaceAll('\\', '/') : null,
     feDataFields,
@@ -279,9 +422,9 @@ const reports: SectionReport[] = allTypes.map((type) => {
     feCssVars,
     missingColorCssVars,
     phantomColorCssVars,
-    genericColorFallback: false,
+    genericColorFallback: !colorContract.hasContract,
     dataColorFields,
-    hardcodedColorClassCount: parseHardcodedColorClasses(source),
+    hardcodedColorClassCount: parseHardcodedColorClasses(templateSource),
     notes,
   };
 });
@@ -305,6 +448,7 @@ const summary = {
     .slice(0, 40)
     .map((report) => ({
       type: report.type,
+      industry: report.industry,
       component: report.component,
       missingCmsFields: report.missingCmsFields,
       missingColorCssVars: report.missingColorCssVars,
@@ -320,9 +464,10 @@ fs.writeFileSync(reportPath, JSON.stringify({ summary, sections: reports }, null
 
 const csvEscape = (value: unknown) => `"${String(value ?? '').replaceAll('"', '""')}"`;
 const csvRows = [
-  ['type', 'component', 'file', 'missingCmsFields', 'missingColorCssVars', 'phantomColorCssVars', 'genericColorFallback', 'hardcodedColorClassCount', 'notes'],
+  ['type', 'industry', 'component', 'file', 'missingCmsFields', 'missingColorCssVars', 'phantomColorCssVars', 'genericColorFallback', 'hardcodedColorClassCount', 'notes'],
   ...reports.map((report) => [
     report.type,
+    report.industry || '',
     report.component || '',
     report.file || '',
     report.missingCmsFields.join('; '),
@@ -338,7 +483,7 @@ fs.writeFileSync(csvPath, csvRows.map((row) => row.map(csvEscape).join(',')).joi
 const issueLines = reports
   .filter((report) => report.notes.length > 0)
   .slice(0, 120)
-  .map((report) => `| \`${report.type}\` | ${report.component || '-'} | ${report.missingCmsFields.length} | ${report.missingColorCssVars.length} | ${report.phantomColorCssVars.length} | ${report.genericColorFallback ? 'ja' : 'nein'} | ${report.hardcodedColorClassCount} | ${report.notes.join('<br>')} |`);
+  .map((report) => `| \`${report.type}\` | ${report.industry || '-'} | ${report.component || '-'} | ${report.missingCmsFields.length} | ${report.missingColorCssVars.length} | ${report.phantomColorCssVars.length} | ${report.genericColorFallback ? 'ja' : 'nein'} | ${report.hardcodedColorClassCount} | ${report.notes.join('<br>')} |`);
 
 const md = `# Section Surface Audit
 
@@ -364,8 +509,8 @@ ${reports.filter((report) => report.notes.length === 0).map((report) => `- \`${r
 
 Vollständige Details stehen in \`reports/section-surface-audit.json\` und \`reports/section-surface-audit.csv\`.
 
-| Section | Component | FE-Felder fehlen | Color-Mappings fehlen | Phantom-Controls | Generisch | Hardcoded Colors | Hinweise |
-| --- | --- | ---: | ---: | ---: | --- | ---: | --- |
+| Section | Branche | Component | FE-Felder fehlen | Color-Mappings fehlen | Phantom-Controls | Generisch | Hardcoded Colors | Hinweise |
+| --- | --- | --- | ---: | ---: | ---: | --- | ---: | --- |
 ${issueLines.join('\n')}
 `;
 fs.writeFileSync(mdPath, md);

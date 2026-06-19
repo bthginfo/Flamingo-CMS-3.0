@@ -23,8 +23,20 @@ const ROOT = path.resolve(__dirname, '..');
 const GENERATED = path.join(ROOT, 'apps/renderer/src/lib/section-color-contracts-generated.ts');
 const GENERATOR = path.join(ROOT, 'scripts/generate-section-color-contracts.cjs');
 const VOCAB_AUDIT = path.join(ROOT, 'scripts/audit-token-vocabulary.cjs');
+const REGISTRY_CHECK = path.join(ROOT, 'scripts/check-section-color-field-registry.cjs');
 
-// First gate: vocabulary. Any var(--token-X) used in a template must have
+// First gate: the canonical field registry must be internally consistent.
+try {
+  execSync('node ' + JSON.stringify(REGISTRY_CHECK), {
+    stdio: ['ignore', 'inherit', 'inherit'],
+  });
+} catch {
+  console.error('');
+  console.error('Registry check failed — see output above.');
+  process.exit(1);
+}
+
+// Second gate: vocabulary. Any var(--token-X) used in a template must have
 // a matching FIELD_DEFS entry, otherwise the codegen drops it silently.
 try {
   execSync('node ' + JSON.stringify(VOCAB_AUDIT) + ' ' + JSON.stringify(ROOT) + ' --strict', {

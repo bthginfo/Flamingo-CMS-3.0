@@ -18,10 +18,10 @@ export function VerticalTimelineSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const steps = (data.steps as Step[]) || [];
-  const accentColor = (data.accentColor as string) || 'var(--token-icon, #18181b)';
-  const lineColor = (data.lineColor as string) || 'var(--token-divider, #e4e7eb)';
-  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, transparent)';
-  const textColor = (data.textColor as string) || 'var(--token-body, inherit)';
+  const accentColor = 'var(--token-accent, var(--token-icon, #18181b))';
+  const lineColor = 'var(--token-divider, #e4e7eb)';
+  const bgColor = 'var(--token-section-bg, transparent)';
+  const textColor = 'var(--token-body, inherit)';
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start 80%', 'end 60%'] });
@@ -79,7 +79,7 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
       {/* Dot */}
       <div
         className="absolute left-4 md:left-6 w-4 h-4 rounded-full border-[3px] bg-[var(--token-card-bg,#fff)] transition-colors duration-500"
-        style={{ borderColor: isInView ? accentColor : '#d4d4d8' }}
+        style={{ borderColor: isInView ? accentColor : 'var(--token-divider, #d4d4d8)' }}
       />
 
       {/* Content */}

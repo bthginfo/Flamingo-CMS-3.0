@@ -30,7 +30,7 @@ function previewImage(p: IgPost): string {
 function trimCaption(s: string | null, n: number) {
   if (!s) return '';
   const clean = s.replace(/\s+/g, ' ').trim();
-  return clean.length > n ? `${clean.slice(0, n)}â€¦` : clean;
+  return clean.length > n ? `${clean.slice(0, n)}...` : clean;
 }
 
 export function InstagramFeedSection({ data }: Props) {
@@ -61,16 +61,16 @@ export function InstagramFeedSection({ data }: Props) {
     setMounted(true);
     let cancelled = false;
     // Build the feed URL with the right tenant signal:
-    //   â€¢ Live preview (admin) injects window.__FLAMINGO_TENANT_ID__ so we can
+    //   - Live preview (admin) injects window.__FLAMINGO_TENANT_ID__ so we can
     //     ask for the session-gated tenantId variant.
-    //   â€¢ Public shared-renderer pages use the first path segment as slug.
-    //   â€¢ Custom-domain tenants need no hint (host header is enough).
+    //   - Public shared-renderer pages use the first path segment as slug.
+    //   - Custom-domain tenants need no hint (host header is enough).
     const injectedTenantId = typeof window !== 'undefined' ? (window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__ : '';
     let qs = `limit=${maxPosts}`;
     if (injectedTenantId) {
       qs += `&tenantId=${encodeURIComponent(injectedTenantId)}`;
     } else if (typeof window !== 'undefined') {
-      // Demo URLs look like /demo/<industry>/... â€” the tenant slug is
+      // Demo URLs look like /demo/<industry>/... - the tenant slug is
       // `demo-<industry>`, not the literal "demo" prefix. For everything else
       // the first path segment IS the tenant slug (shared-renderer style).
       const segs = window.location.pathname.split('/').filter(Boolean);
@@ -129,7 +129,7 @@ export function InstagramFeedSection({ data }: Props) {
               style={{ color: 'var(--token-heading, inherit)' }}
               data-edit-path="headline"
             >
-              {headline || (isPreview ? 'Ãœberschrift' : '')}
+              {headline || (isPreview ? 'Überschrift' : '')}
             </h2>
           )}
           {(subline || isPreview) && (

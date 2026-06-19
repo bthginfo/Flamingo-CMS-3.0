@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { isValidColorString } from '@/lib/color-validation';
+import { COLOR_FIELD_BY_CSS_VAR, COLOR_FIELD_CSS_VARS, FIELD_DEFS } from '@/lib/section-color-fields';
+import { getFieldsForSection } from '@/lib/section-color-resolver';
 
 type AuthResult = Awaited<ReturnType<typeof validatePat>>;
 
@@ -76,7 +78,7 @@ const DISALLOWED_API_SECTION_TYPES = new Set([
   'script',
 ]);
 
-export function validateSections(sections: unknown): string | null {
+export function validateSections(sections: unknown, industry?: string): string | null {
   if (!Array.isArray(sections)) return 'sections must be an array';
   for (let i = 0; i < sections.length; i++) {
     const s = sections[i];
@@ -94,7 +96,7 @@ export function validateSections(sections: unknown): string | null {
     ) {
       return `sections[${i}].styleOverrides must be an object`;
     }
-    const styleErr = validateStyleOverridesForApi(s.styleOverrides, `sections[${i}].styleOverrides`);
+    const styleErr = validateStyleOverridesForApi(s.styleOverrides, `sections[${i}].styleOverrides`, s.type, industry);
     if (styleErr) return styleErr;
     // Section-specific validation
     const data = s.data || {};
@@ -161,63 +163,11 @@ export function normalizeSectionData(type: string, data: Record<string, unknown>
   return d;
 }
 
-const STYLE_OVERRIDE_KEY_TO_VARS: Record<string, string[]> = {
-  sectionBg: ['--style-section-bg', '--token-section-bg'],
-  sectionBgAlt: ['--style-section-bg-alt', '--token-section-bg-alt'],
-  cardBg: ['--style-card-bg', '--token-card-bg'],
-  cardBorder: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
-  borderColor: ['--style-border-color', '--token-card-border'],
-  cardBorderColor: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
-  dividerColor: ['--style-divider-color', '--token-divider'],
-  divider: ['--style-divider-color', '--token-divider'],
-  heading: ['--style-heading-color', '--style-text-primary', '--token-heading'],
-  headingColor: ['--style-heading-color', '--style-text-primary', '--token-heading'],
-  heroHeading: ['--style-image-text-color', '--token-on-dark-heading'],
-  subheading: ['--style-subheading-color', '--style-text-secondary', '--token-subheading'],
-  subheadingColor: ['--style-subheading-color', '--style-text-secondary', '--token-subheading'],
-  body: ['--style-body-color', '--style-text-secondary', '--token-body'],
-  bodyColor: ['--style-body-color', '--style-text-secondary', '--token-body'],
-  heroBody: ['--style-image-body-color', '--token-on-dark-body'],
-  muted: ['--style-text-muted', '--token-muted'],
-  mutedColor: ['--style-text-muted', '--token-muted'],
-  textPrimary: ['--style-text-primary', '--token-heading'],
-  textSecondary: ['--style-text-secondary', '--token-body'],
-  eyebrow: ['--style-accent-color', '--token-eyebrow'],
-  icon: ['--style-icon-color', '--token-icon'],
-  iconColor: ['--style-icon-color', '--token-icon'],
-  accentColor: ['--style-accent-color', '--style-accent', '--token-accent'],
-  statValue: ['--token-stat-value'],
-  quote: ['--token-quote'],
-  quoteMark: ['--token-quote'],
-  ratingStar: ['--token-rating-star'],
-  check: ['--token-check'],
-  badgeBg: ['--style-badge-bg', '--token-badge-bg'],
-  badgeText: ['--style-badge-text', '--token-badge-text'],
-  badgeBorder: ['--style-badge-border', '--token-badge-border'],
-  btnBg: ['--style-button-bg', '--brand-btn-bg', '--token-btn-bg'],
-  btnText: ['--style-button-text', '--brand-btn-text', '--token-btn-text'],
-  btnSecondaryBg: ['--style-button-secondary-bg', '--brand-btn-secondary-bg', '--token-btn-secondary-bg'],
-  btnSecondaryText: ['--style-button-secondary-text', '--brand-btn-secondary-text', '--token-btn-secondary-text'],
-  btnSecondaryBorder: ['--style-button-secondary-border', '--brand-btn-secondary-border', '--token-btn-secondary-border'],
-  secondaryBtnBg: ['--style-button-secondary-bg', '--brand-btn-secondary-bg', '--token-btn-secondary-bg'],
-  secondaryBtnText: ['--style-button-secondary-text', '--brand-btn-secondary-text', '--token-btn-secondary-text'],
-  secondaryBtnBorder: ['--style-button-secondary-border', '--brand-btn-secondary-border', '--token-btn-secondary-border'],
-  secondaryButtonBg: ['--style-button-secondary-bg', '--brand-btn-secondary-bg', '--token-btn-secondary-bg'],
-  secondaryButtonText: ['--style-button-secondary-text', '--brand-btn-secondary-text', '--token-btn-secondary-text'],
-  secondaryButtonBorder: ['--style-button-secondary-border', '--brand-btn-secondary-border', '--token-btn-secondary-border'],
-  secondaryCtaBg: ['--style-button-secondary-bg', '--brand-btn-secondary-bg', '--token-btn-secondary-bg'],
-  secondaryCtaText: ['--style-button-secondary-text', '--brand-btn-secondary-text', '--token-btn-secondary-text'],
-  secondaryCtaBorder: ['--style-button-secondary-border', '--brand-btn-secondary-border', '--token-btn-secondary-border'],
-  onDarkHeading: ['--style-image-text-color', '--token-on-dark-heading'],
-  onDarkBody: ['--style-image-body-color', '--token-on-dark-body'],
-  onDarkMuted: ['--style-image-muted-color', '--token-on-dark-muted'],
-  imageTextColor: ['--style-image-text-color', '--token-on-dark-heading'],
-  brandPrimary: ['--brand-primary'],
-  brandAccent: ['--brand-accent'],
-  colorPrimary: ['--brand-primary'],
-};
+const STYLE_OVERRIDE_KEY_TO_VARS: Record<string, string[]> = Object.fromEntries(
+  Object.entries(FIELD_DEFS).map(([key, def]) => [key, [def.cssVar]]),
+);
 
-const ALLOWED_RAW_STYLE_OVERRIDE_VARS = new Set(Object.values(STYLE_OVERRIDE_KEY_TO_VARS).flat());
+const ALLOWED_RAW_STYLE_OVERRIDE_VARS = COLOR_FIELD_CSS_VARS;
 
 const SAFE_DIMENSION_RE = /^-?\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw)?$/i;
 const SAFE_BORDER_RE = /^\d+(?:\.\d+)?px\s+(?:solid|dashed|dotted)\s+(.+)$/i;
@@ -236,6 +186,23 @@ function isSafeStyleOverrideValue(value: string): boolean {
   const border = SAFE_BORDER_RE.exec(v);
   if (border) return isValidColorString(border[1].trim()) || SAFE_VAR_RE.test(border[1].trim());
   return false;
+}
+
+function styleOverrideKeyToField(key: string): string | undefined {
+  return key.startsWith('--')
+    ? COLOR_FIELD_BY_CSS_VAR[key]
+    : FIELD_DEFS[key as keyof typeof FIELD_DEFS]
+      ? key
+      : undefined;
+}
+
+function allowedStyleOverrideKeysForSection(sectionType: string, industry?: string): Set<string> {
+  const allowed = new Set<string>();
+  for (const field of getFieldsForSection(sectionType, industry)) {
+    allowed.add(field);
+    allowed.add(FIELD_DEFS[field].cssVar);
+  }
+  return allowed;
 }
 
 export interface StyleOverrideNormalizationIssue {
@@ -315,15 +282,42 @@ export function normalizeStyleOverrides(styleOverrides: unknown): Record<string,
   return normalizeStyleOverridesWithIssues(styleOverrides).styleOverrides;
 }
 
+export function normalizeStyleOverridesForSection(
+  sectionType: string,
+  styleOverrides: unknown,
+  industry?: string,
+): Record<string, string> | null {
+  const normalized = normalizeStyleOverridesWithIssues(styleOverrides).styleOverrides;
+  if (!normalized) return null;
+  const allowedCssVars = new Set(getFieldsForSection(sectionType, industry).map((field) => FIELD_DEFS[field].cssVar));
+  const filtered = Object.fromEntries(Object.entries(normalized).filter(([key]) => allowedCssVars.has(key)));
+  return Object.keys(filtered).length ? filtered : null;
+}
+
 export function validateStyleOverridesForApi(
   styleOverrides: unknown,
   location = 'styleOverrides',
+  sectionType?: string,
+  industry?: string,
 ): string | null {
   if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
   const { issues } = normalizeStyleOverridesWithIssues(styleOverrides, location);
-  if (!issues.length) return null;
-  const first = issues[0];
-  return `${first.message}. Allowed keys are documented in /api/v1/instructions sectionStyleContracts. Use hex, rgb(), rgba(), var(--token) or safe border/dimension values only.`;
+  if (issues.length) {
+    const first = issues[0];
+    return `${first.message}. Allowed keys are documented in /api/v1/instructions sectionStyleContracts. Use hex, rgb(), rgba(), var(--token) or safe border/dimension values only.`;
+  }
+  if (sectionType) {
+    const allowedKeys = allowedStyleOverrideKeysForSection(sectionType, industry);
+    for (const [key, value] of Object.entries(styleOverrides)) {
+      if (value == null || value === '') continue;
+      const field = styleOverrideKeyToField(key);
+      if (!field || !allowedKeys.has(key)) {
+        const allowedFields = getFieldsForSection(sectionType, industry).join(', ');
+        return `${location}.${key} is not used by section type "${sectionType}". Allowed color fields for this section: ${allowedFields}.`;
+      }
+    }
+  }
+  return null;
 }
 
 function sanitizeValue(value: unknown): unknown {

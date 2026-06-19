@@ -38,7 +38,7 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
         {introText && <div className="text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex items-center gap-4 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_78%,var(--token-section-bg-alt,#f8fafc))] px-4 py-3 shadow-sm" data-edit-collection="infoCards" data-edit-index={index}>
+            <div key={`${card.label || 'item'}-${index}`} className="flex items-center gap-4 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_78%,var(--token-section-bg-alt,#f8fafc))] px-4 py-3 shadow-sm" data-edit-collection="infoCards" data-edit-index={index}>
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={18} /></div>
               <div className="min-w-0 flex-1"><p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="break-words font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
@@ -63,7 +63,7 @@ function Modern({ header, introText, image, mapEmbedUrl, formEnabled, submitLabe
         {introText && <div className="font-light text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex items-center gap-4 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_78%,var(--token-section-bg-alt,#f8fafc))] px-4 py-3" data-edit-collection="infoCards" data-edit-index={index}>
+            <div key={`${card.label || 'item'}-${index}`} className="flex items-center gap-4 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_78%,var(--token-section-bg-alt,#f8fafc))] px-4 py-3" data-edit-collection="infoCards" data-edit-index={index}>
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={18} /></div>
               <div className="min-w-0 flex-1"><p className="text-xs font-light text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="break-words font-light text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
@@ -95,7 +95,7 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel,
         {introText && <div className="text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex items-center gap-4 border-2 border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_78%,var(--token-section-bg-alt,#f8fafc))] px-4 py-3" data-edit-collection="infoCards" data-edit-index={index}>
+            <div key={`${card.label || 'item'}-${index}`} className="flex items-center gap-4 border-2 border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_78%,var(--token-section-bg-alt,#f8fafc))] px-4 py-3" data-edit-collection="infoCards" data-edit-index={index}>
               <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-[var(--token-badge-bg)] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={18} /></div>
               <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="break-words font-black text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>

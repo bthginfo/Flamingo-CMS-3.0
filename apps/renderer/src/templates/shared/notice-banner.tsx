@@ -10,10 +10,12 @@ export function NoticeBannerSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const text = (data.text as string) || '';
-  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, #2563eb)';
-  const textColor = (data.textColor as string) || 'var(--token-body, #ffffff)';
-  const btnBg = (data.btnBg as string) || (data.accentColor as string) || 'var(--token-btn-bg, #111827)';
-  const btnText = (data.btnText as string) || 'var(--token-btn-text, #ffffff)';
+  const bgColor = 'var(--token-section-bg, transparent)';
+  const textColor = 'var(--token-body, inherit)';
+  const btnBg = 'var(--token-btn-bg, #111827)';
+  const btnText = 'var(--token-btn-text, #ffffff)';
+  const secondaryText = 'var(--token-btn-secondary-text, var(--token-btn-bg, currentColor))';
+  const secondaryBorder = 'var(--token-btn-secondary-border, var(--token-card-border, currentColor))';
   const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
 
@@ -37,7 +39,7 @@ export function NoticeBannerSection({ data }: Props) {
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold border-2 transition-all duration-300 hover:-translate-y-0.5" style={{ borderColor: btnText, color: btnText }}>
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold border-2 transition-all duration-300 hover:-translate-y-0.5" style={{ borderColor: secondaryBorder, color: secondaryText }}>
                 <span data-edit-path="label">{secondaryCta.label}</span>
                 {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
               </a>

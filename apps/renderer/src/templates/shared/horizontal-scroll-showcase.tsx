@@ -10,7 +10,6 @@ type Panel = {
   text?: string;
   ctaLabel?: string;
   ctaHref?: string;
-  overlayColor?: string;
 };
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -19,9 +18,10 @@ export function HorizontalScrollShowcaseSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const panels = (data.panels as Panel[]) || [];
-  const bgColor = (data.bgColor as string) || 'var(--token-section-bg)';
-  const textColor = (data.textColor as string) || 'var(--token-body)';
-  const dotColor = (data.dotColor as string) || 'var(--token-icon)';
+  const bgColor = 'var(--token-section-bg, transparent)';
+  const textColor = 'var(--token-body, inherit)';
+  const dotColor = 'var(--token-accent, var(--token-icon))';
+  const overlayColor = 'var(--token-image-overlay, rgba(0,0,0,0.45))';
   const panelHeight = (data.panelHeight as string) || 'full'; // full | compact
 
   const [isMobile, setIsMobile] = useState(false);
@@ -36,14 +36,14 @@ export function HorizontalScrollShowcaseSection({ data }: Props) {
   if (panels.length === 0) return null;
 
   if (isMobile) {
-    return <MobileCarousel headline={headline} subline={plain(subline)} panels={panels} bgColor={bgColor} textColor={textColor} dotColor={dotColor} />;
+    return <MobileCarousel headline={headline} subline={plain(subline)} panels={panels} bgColor={bgColor} textColor={textColor} dotColor={dotColor} overlayColor={overlayColor} />;
   }
 
-  return <DesktopStickyScroll headline={headline} subline={plain(subline)} panels={panels} bgColor={bgColor} textColor={textColor} dotColor={dotColor} panelHeight={panelHeight} />;
+  return <DesktopStickyScroll headline={headline} subline={plain(subline)} panels={panels} bgColor={bgColor} textColor={textColor} dotColor={dotColor} panelHeight={panelHeight} overlayColor={overlayColor} />;
 }
 
-function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, dotColor, panelHeight }: {
-  headline: string; subline: string; panels: Panel[]; bgColor: string; textColor: string; dotColor: string; panelHeight: string;
+function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, dotColor, panelHeight, overlayColor }: {
+  headline: string; subline: string; panels: Panel[]; bgColor: string; textColor: string; dotColor: string; panelHeight: string; overlayColor: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -74,7 +74,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
           {panels.map((panel, i) => (
             <div key={i} className="relative flex-shrink-0 h-full" style={{ width: `${100 / panels.length}%` }} data-edit-collection="panels" data-edit-index={i}>
               <img data-edit-image="image" src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0" style={{ backgroundColor: panel.overlayColor || 'rgba(0,0,0,0.4)' }} />
+              <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
               <div className="relative z-10 flex flex-col justify-end h-full p-8 md:p-14 max-w-lg">
                 <motion.h3
                   className="text-2xl md:text-4xl font-bold"
@@ -87,7 +87,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
                 {panel.text && <p className="mt-3 opacity-80 leading-relaxed" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
                   <a href={panel.ctaHref} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold opacity-90 hover:opacity-100 transition-opacity">
-                    <span data-edit-path="ctaLabel">{panel.ctaLabel}</span> <span>→</span>
+                    <span data-edit-path="ctaLabel">{panel.ctaLabel}</span> <span>-&gt;</span>
                   </a>
                 )}
               </div>
@@ -110,8 +110,8 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
   );
 }
 
-function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColor }: {
-  headline: string; subline: string; panels: Panel[]; bgColor: string; textColor: string; dotColor: string;
+function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColor, overlayColor }: {
+  headline: string; subline: string; panels: Panel[]; bgColor: string; textColor: string; dotColor: string; overlayColor: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -136,12 +136,12 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
           <div key={i} className="flex-shrink-0 w-full snap-center px-4" data-edit-collection="panels" data-edit-index={i}>
             <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
               <img data-edit-image="image" src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0" style={{ backgroundColor: panel.overlayColor || 'rgba(0,0,0,0.4)' }} />
+              <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
               <div className="relative z-10 flex flex-col justify-end h-full p-6">
                 <h3 className="text-xl font-bold" data-edit-path="title">{panel.title}</h3>
                 {panel.text && <p className="mt-2 text-sm opacity-80" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
-                  <a href={panel.ctaHref} className="mt-3 text-sm font-semibold opacity-90"><span data-edit-path="ctaLabel">{panel.ctaLabel}</span> →</a>
+                  <a href={panel.ctaHref} className="mt-3 text-sm font-semibold opacity-90"><span data-edit-path="ctaLabel">{panel.ctaLabel}</span> -&gt;</a>
                 )}
               </div>
             </div>

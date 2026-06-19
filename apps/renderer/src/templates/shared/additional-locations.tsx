@@ -55,7 +55,7 @@ export function AdditionalLocationsSection({ data }: Props) {
             const routeHref = location.ctaHref || mapsHref(location.address);
             return (
               <article
-                key={`$<span data-edit-path="name">{location.name || 'standort'}</span>-${index}`}
+                key={`${location.name || 'standort' || 'item'}-${index}`}
                 className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_80px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_32px_100px_rgba(15,23,42,0.14)]"
               >
                 {location.mapEmbedUrl && (
@@ -90,13 +90,13 @@ export function AdditionalLocationsSection({ data }: Props) {
                       </div>
                     )}
                     {location.phone && (
-                      <a href={`tel:$<span data-edit-path="phone">{location.phone}</span>`} className="flex gap-3 text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
+                      <a href={`tel:${location.phone}`} className="flex gap-3 text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
                         <Phone size={17} className="mt-0.5 shrink-0 text-[color:var(--token-icon)]" />
                         <span data-edit-path="phone">{location.phone}</span>
                       </a>
                     )}
                     {email && (
-                      <a href={`mailto:$<span data-edit-path="email">{email}</span>`} className="flex gap-3 break-all text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
+                      <a href={`mailto:${email}`} className="flex gap-3 break-all text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
                         <Mail size={17} className="mt-0.5 shrink-0 text-[color:var(--token-icon)]" />
                         <span data-edit-path="email">{email}</span>
                       </a>

@@ -32,7 +32,7 @@ function PackagesClassic({ headline, subline, badgeText, packages, ctaPrimary }:
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {packages.map((item, i) => (
-          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="packages" data-edit-index={i}>
+          <motion.article key={`${item.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="packages" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.priceLabel || item.validUntilLabel) && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]">{[item.priceLabel, item.validUntilLabel].filter(Boolean).join(' / ')}</p>}
@@ -59,7 +59,7 @@ function PackagesModern({ headline, subline, badgeText, packages, ctaPrimary }: 
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {packages.map((item, i) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="group" data-edit-collection="packages" data-edit-index={i}>
+          <article key={`${item.title || 'item'}-${i}`} className="group" data-edit-collection="packages" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="mt-4">
               {(item.priceLabel || item.validUntilLabel) && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]">{[item.priceLabel, item.validUntilLabel].filter(Boolean).join(' / ')}</p>}
@@ -86,7 +86,7 @@ function PackagesBold({ headline, subline, badgeText, packages, ctaPrimary }: Pr
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {packages.map((item, i) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="packages" data-edit-index={i}>
+          <article key={`${item.title || 'item'}-${i}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="packages" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.priceLabel || item.validUntilLabel) && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]">{[item.priceLabel, item.validUntilLabel].filter(Boolean).join(' / ')}</span>}

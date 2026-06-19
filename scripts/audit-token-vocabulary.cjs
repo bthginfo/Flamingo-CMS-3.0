@@ -10,11 +10,11 @@ const WHITELIST = new Set([
   '--token-accent-rgb', // computed RGB triplet of --token-accent for rgba() usage
 ]);
 
-const editor = fs.readFileSync(path.join(ROOT, 'apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx'), 'utf8');
+const registry = fs.readFileSync(path.join(ROOT, 'apps/renderer/src/lib/section-color-fields.ts'), 'utf8');
 const fieldDefVars = new Set();
 const re = /cssVar:\s*'(--token-[a-z0-9-]+)'/g;
 let m;
-while ((m = re.exec(editor)) !== null) fieldDefVars.add(m[1]);
+while ((m = re.exec(registry)) !== null) fieldDefVars.add(m[1]);
 
 function walk(d, out) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
@@ -60,7 +60,7 @@ for (const t of phantoms) console.log('  ' + t);
 
 if (STRICT && orphans.length > 0) {
   console.error('');
-  console.error('FAIL: ' + orphans.length + ' orphan token(s). Add to FIELD_DEFS in section-color-editor.tsx');
+  console.error('FAIL: ' + orphans.length + ' orphan token(s). Add to FIELD_DEFS in section-color-fields.ts');
   console.error('      or to the WHITELIST in this script if intentionally not user-editable.');
   process.exit(1);
 }

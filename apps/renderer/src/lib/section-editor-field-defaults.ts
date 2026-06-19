@@ -276,7 +276,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "provider": ""
   },
   "noticeBanner": {
-    "bgColor": "",
     "primaryCta": {
       "label": "",
       "href": ""
@@ -285,8 +284,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
       "label": "",
       "href": ""
     },
-    "subline": "",
-    "textColor": ""
+    "subline": ""
   },
   "socialProofBar": {
     "bgStyle": ""
@@ -310,14 +308,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "sortBy": "date-desc"
   },
   "verticalTimeline": {
-    "bgColor": "",
-    "lineColor": "",
-    "textColor": ""
   },
   "beforeAfterSlider": {
-    "aspectRatio": "",
-    "bgColor": "",
-    "textColor": ""
+    "aspectRatio": ""
   },
   "horizontalScrollShowcase": {
     "panelHeight": 0

@@ -82,14 +82,11 @@ function main() {
   const sectionTypesSource = read('apps/renderer/src/app/admin/pages/[id]/section-types.ts');
   const templatesSource = read('apps/renderer/src/templates/index.ts');
   const dataEditorSource = read('apps/renderer/src/app/admin/pages/[id]/section-data-editor.tsx');
-  const colorEditorSource = read('apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx');
   const instructionsSource = read('apps/renderer/src/app/api/v1/instructions/route.ts');
 
   const adminTypes = extractQuotedTypes(sectionTypesSource);
   const rendererTypes = extractTemplates(templatesSource);
   const dataEditorTypes = extractObjectKeysAfter(dataEditorSource, 'const EDITORS');
-  const colorTypes = extractObjectKeysAfter(colorEditorSource, 'const SECTION_FIELDS');
-  const hasDefaultColorEditorFields = colorEditorSource.includes('const DEFAULT_SECTION_FIELDS');
   const apiSchemaTypes = extractApiSchemas(instructionsSource);
 
   const contracts = getAllSectionContracts().map(contract => {
@@ -99,7 +96,7 @@ function main() {
     if (!rendererTypes.includes(contract.type)) issues.push('Contract section is not registered in renderer');
     if (!isInternalAlias && !apiSchemaTypes.includes(contract.type)) issues.push('Contract section is missing from AI/API schema');
     if (!isInternalAlias && !dataEditorTypes.includes(contract.type)) issues.push('Contract section has no curated data editor');
-    if (contract.colorSlots.length > 0 && !colorTypes.includes(contract.type) && !hasDefaultColorEditorFields) issues.push('Contract defines color slots but no section color mapping exists');
+    if (contract.colorFields.length === 0) issues.push('Contract has no color fields from the central color registry');
 
     return {
       type: contract.type,
@@ -108,7 +105,7 @@ function main() {
       internalAlias: isInternalAlias,
       fields: contract.fields.length,
       requiredFields: contract.fields.filter(field => field.required).map(field => field.key),
-      colorSlots: contract.colorSlots,
+      colorFields: contract.colorFields,
       issues,
     };
   });

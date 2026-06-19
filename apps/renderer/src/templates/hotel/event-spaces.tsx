@@ -42,7 +42,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <motion.article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
+          <motion.article key={`${space.name || 'item'}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>
@@ -81,7 +81,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
       </div>
       <div className="grid gap-px border border-black/10 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} className="overflow-hidden border border-black/10 bg-[var(--token-card-bg)]" data-edit-collection="spaces" data-edit-index={index}>
+          <article key={`${space.name || 'item'}-${index}`} className="overflow-hidden border border-black/10 bg-[var(--token-card-bg)]" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-6">
               <h3 className="text-lg font-light text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>
@@ -120,7 +120,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} className="overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="spaces" data-edit-index={index}>
+          <article key={`${space.name || 'item'}-${index}`} className="overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>

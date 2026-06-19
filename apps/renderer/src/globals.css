@@ -708,6 +708,18 @@ html {
   display: none;
 }
 
+/* Touch browsers often keep :hover active after tapping cards. These layers are
+   purely decorative, so disable them on coarse pointers instead of relying on hover. */
+@media (max-width: 767px), (hover: none), (pointer: coarse) {
+  .spotlight-card-hover-layer,
+  .spotlight-card-image-layer {
+    opacity: 0 !important;
+  }
+  .spotlight-card {
+    transform: none !important;
+  }
+}
+
 /* View Transitions API (cross-document, Chrome 126+ / Safari 18+).
    Falls back silently. Subtle 180ms fade on navigation between public pages. */
 @view-transition { navigation: auto; }

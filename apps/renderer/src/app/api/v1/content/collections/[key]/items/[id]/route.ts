@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { collectionItems } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { normalizeSectionData, normalizeStyleOverrides, validateSections, withApiHandlerParams } from '@/lib/api-utils';
+import { normalizeSectionData, normalizeStyleOverridesForSection, validateSections, withApiHandlerParams } from '@/lib/api-utils';
 import crypto from 'crypto';
 
 export const GET = withApiHandlerParams(async (_req, auth, params) => {
@@ -30,13 +30,13 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
 
   // Ensure all sections have IDs for DnD support
   if (body.data && Array.isArray(body.data.sections)) {
-    const sectionErr = validateSections(body.data.sections);
+    const sectionErr = validateSections(body.data.sections, auth.tenant.industry);
     if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
     body.data.sections = body.data.sections.map((s: Record<string, unknown>) => ({
       ...s,
       id: s.id || crypto.randomUUID(),
       data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
-      styleOverrides: normalizeStyleOverrides(s.styleOverrides),
+      styleOverrides: normalizeStyleOverridesForSection(String(s.type || ''), s.styleOverrides, auth.tenant.industry),
     }));
   }
 
@@ -73,13 +73,13 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
   if (body.data != null) {
     const mergedData = { ...(existing.data as Record<string, unknown>), ...body.data };
     if (Array.isArray(mergedData.sections)) {
-      const sectionErr = validateSections(mergedData.sections);
+      const sectionErr = validateSections(mergedData.sections, auth.tenant.industry);
       if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
       mergedData.sections = (mergedData.sections as Record<string, unknown>[]).map(s => ({
         ...s,
         id: s.id || crypto.randomUUID(),
         data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
-        styleOverrides: normalizeStyleOverrides(s.styleOverrides),
+        styleOverrides: normalizeStyleOverridesForSection(String(s.type || ''), s.styleOverrides, auth.tenant.industry),
       }));
     }
     updates.data = mergedData;

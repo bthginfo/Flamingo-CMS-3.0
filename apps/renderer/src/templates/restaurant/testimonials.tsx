@@ -40,7 +40,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`$<span data-edit-path="name">{item.name}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
+          <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow)]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-4">
@@ -67,7 +67,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`$<span data-edit-path="name">{item.name}</span>-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
+          <article key={`${item.name || 'item'}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow)]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <p className="mt-4 font-medium text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
@@ -92,7 +92,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`$<span data-edit-path="name">{item.name}</span>-${i}`} className="border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] p-6 shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="items" data-edit-index={i}>
+          <article key={`${item.name || 'item'}-${i}`} className="border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] p-6 shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow)]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <div className="mt-4 border-t border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] pt-4">

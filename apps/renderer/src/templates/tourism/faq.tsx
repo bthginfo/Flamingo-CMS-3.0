@@ -63,7 +63,7 @@ function Bold({ header, items, ctaPrimary }: Props) {
       </div>
       <div className="divide-y divide-[var(--token-card-border)] border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]">
         {items.map((item, index) => (
-          <details key={`$<span data-edit-path="question">{item.question}</span>-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
+          <details key={`${item.question || 'item'}-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-black uppercase text-[color:var(--token-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>

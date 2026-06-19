@@ -18,9 +18,10 @@ export function BeforeAfterSliderSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const slides = (data.slides as Slide[]) || [];
-  const handleColor = (data.handleColor as string) || 'var(--token-icon)';
-  const bgColor = (data.bgColor as string) || 'var(--token-section-bg)';
-  const textColor = (data.textColor as string) || 'var(--token-body)';
+  const handleColor = 'var(--token-accent, var(--token-icon))';
+  const inactiveColor = 'var(--token-divider, #d4d4d8)';
+  const bgColor = 'var(--token-section-bg, transparent)';
+  const textColor = 'var(--token-body, inherit)';
   const aspectRatio = (data.aspectRatio as string) || '16/9';
 
   const [activeSlide, setActiveSlide] = useState(0);
@@ -57,7 +58,7 @@ export function BeforeAfterSliderSection({ data }: Props) {
                 key={i}
                 onClick={() => setActiveSlide(i)}
                 className="w-2.5 h-2.5 rounded-full transition-all"
-                style={{ backgroundColor: i === activeSlide ? handleColor : '#d4d4d8' }}
+                style={{ backgroundColor: i === activeSlide ? handleColor : inactiveColor }}
                data-edit-collection="slides" data-edit-index={i}/>
             ))}
           </div>
@@ -141,13 +142,13 @@ function SliderWidget({ slide, handleColor, aspectRatio }: { slide: Slide; handl
       </div>
 
       {/* Handle */}
-      <div className="absolute top-0 bottom-0 w-0.5" style={{ left: `$<span data-edit-path="position">{position}</span>%`, backgroundColor: handleColor }}>
+      <div className="absolute top-0 bottom-0 w-0.5" style={{ left: `${position}%`, backgroundColor: handleColor }}>
         <div
           className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
           style={{ backgroundColor: handleColor }}
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M7 4l-4 6 4 6M13 4l4 6-4 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M7 4l-4 6 4 6M13 4l4 6-4 6" stroke="var(--token-btn-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
         {/* Pulse glow hint */}

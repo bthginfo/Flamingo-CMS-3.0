@@ -9,7 +9,6 @@ import {
 
 const root = process.cwd();
 const templatesIndexPath = path.join(root, 'apps/renderer/src/templates/index.ts');
-const colorEditorPath = path.join(root, 'apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx');
 const reportsDir = path.join(root, 'reports');
 const reportPath = path.join(reportsDir, 'section-color-contract-audit.json');
 
@@ -119,11 +118,8 @@ function isStyleRelevantVar(cssVar: string) {
 }
 
 const indexSource = read(templatesIndexPath);
-const colorSource = read(colorEditorPath);
 const imports = parseImports(indexSource);
 const mappings = parseSectionComponents(indexSource);
-const explicitSectionFields = parseSectionFields(colorSource);
-const defaultSectionFields = parseDefaultSectionFields(colorSource);
 const contractsByType = new Map(getAllSectionContracts().map((contract) => [contract.type, contract]));
 
 const reports: SectionColorReport[] = unique([...mappings.keys(), ...contractsByType.keys()]).map((type) => {
@@ -133,9 +129,11 @@ const reports: SectionColorReport[] = unique([...mappings.keys(), ...contractsBy
   const cssVars = parseCssVars(source).filter(isStyleRelevantVar);
   const feSlots = unique(cssVars.map((cssVar) => getSectionColorSlotForCssVar(cssVar)).filter(Boolean) as SectionColorSlot[]);
   const unknownCssVars = cssVars.filter((cssVar) => !getSectionColorSlotForCssVar(cssVar));
-  const contractSlots = unique(contractsByType.get(type)?.colorSlots || []);
-  const adminFields = explicitSectionFields.get(type) || (contractSlots.length ? contractSlots : defaultSectionFields);
-  const adminSlots = slotsForFields(adminFields);
+  const contractSlots = unique(contractsByType.get(type)?.colorFields || contractsByType.get(type)?.colorSlots || []);
+  // Admin, live preview and AI API all resolve section fields through the same
+  // generated contract resolver now. There is no separate SECTION_FIELDS table
+  // in the editor anymore; adminSlots intentionally mirror the contract.
+  const adminSlots = contractSlots;
   const missingContractSlots = feSlots.filter((slot) => !contractSlots.includes(slot));
   const missingAdminSlots = feSlots.filter((slot) => !adminSlots.includes(slot));
 

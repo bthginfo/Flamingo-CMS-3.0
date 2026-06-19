@@ -1,5 +1,5 @@
 /**
- * SIMPLE CODEGEN � single source of truth for editor field lists.
+ * SIMPLE CODEGEN - single source of truth for editor field lists.
  *
  * For every (industry, sectionType) pair registered in templates/index.ts:
  *   1. Resolve the EXACT template component file
@@ -7,10 +7,10 @@
  *   3. Extract every var(--token-NAME) reference
  *   4. Reverse-map each --token-NAME to the ColorFieldKey whose cssVar
  *      matches it (using the FIELD_DEFS table parsed from
- *      section-color-editor.tsx).
+ *      section-color-fields.ts).
  *   5. Sort by canonical editor order, dedupe, emit two maps:
  *        SECTION_COLOR_CONTRACTS_GENERATED         // per-industry key
- *        SECTION_COLOR_CONTRACTS_GENERIC           // by type alone (union)
+ *        SECTION_COLOR_CONTRACTS_GENERIC           // by type alone (shared templates only)
  *
  * No slot aliases, no curated overrides, no legacy fallbacks. What the
  * template literally renders is what the editor shows. Period.
@@ -25,17 +25,17 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const TEMPLATES_DIR = path.join(ROOT, 'apps/renderer/src/templates');
 const TEMPLATES_INDEX = path.join(TEMPLATES_DIR, 'index.ts');
-const EDITOR_FILE = path.join(ROOT, 'apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx');
+const FIELD_REGISTRY_FILE = path.join(ROOT, 'apps/renderer/src/lib/section-color-fields.ts');
 const OUTPUT_FILE = path.join(ROOT, 'apps/renderer/src/lib/section-color-contracts-generated.ts');
 
 // ----------------------------------------------------------------------
 // 1. Parse FIELD_DEFS from the editor so we get a precise
-//    cssVar ? ColorFieldKey mapping. No drift possible � the editor
+//    cssVar -> ColorFieldKey mapping. No drift possible - the editor
 //    file is the registry.
 // ----------------------------------------------------------------------
-function loadFieldDefs() {
-  const src = fs.readFileSync(EDITOR_FILE, 'utf8');
-  const m = src.match(/const FIELD_DEFS:[^=]*=\s*{([\s\S]*?)\n};/);
+function loadFieldRegistry() {
+  const src = fs.readFileSync(FIELD_REGISTRY_FILE, 'utf8');
+  const m = src.match(/export const FIELD_DEFS:[^=]*=\s*{([\s\S]*?)\n};/);
   if (!m) throw new Error('Could not parse FIELD_DEFS');
   const body = m[1];
   const cssVarToField = new Map();
@@ -44,11 +44,18 @@ function loadFieldDefs() {
   while ((em = entryRe.exec(body)) !== null) {
     cssVarToField.set(em[2], em[1]);
   }
-  return cssVarToField;
+  const orderMatch = src.match(/export const FIELD_RENDER_ORDER:[^=]*=\s*\[([\s\S]*?)\];/);
+  if (!orderMatch) throw new Error('Could not parse FIELD_RENDER_ORDER');
+  const fieldOrder = [];
+  const orderRe = /'([a-zA-Z][\w]*)'/g;
+  let om;
+  while ((om = orderRe.exec(orderMatch[1])) !== null) fieldOrder.push(om[1]);
+
+  return { cssVarToField, fieldOrder };
 }
 
 // ----------------------------------------------------------------------
-// 2. Resolve every Component ? file from templates/index.ts.
+// 2. Resolve every Component -> file from templates/index.ts.
 // ----------------------------------------------------------------------
 function resolveImport(rel, fromDir) {
   const abs = path.resolve(fromDir, rel);
@@ -60,7 +67,7 @@ function resolveImport(rel, fromDir) {
 }
 
 function parseImportNames(raw) {
-  // Each entry may be `Foo` or `Foo as Bar` � we want the alias if present
+  // Each entry may be `Foo` or `Foo as Bar` - we want the alias if present
   // because that's the name used in the INDUSTRY_TEMPLATES object.
   return raw.split(',').map((s) => {
     const t = s.trim();
@@ -136,9 +143,31 @@ function loadTemplateRegistry() {
     }
   }
 
-  // sectionType ? Set<{ industry, componentName }>, parsed from the
+  // sectionType -> Set<{ industry, componentName }>, parsed from the
   // INDUSTRY_TEMPLATES literal (an industry-keyed object of {type:Component}).
   const industryTypeComponent = []; // { industry, type, componentName }
+  const seenIndustryEntries = new Set();
+
+  const pushIndustryEntries = (industry, entries) => {
+    for (const entry of entries) {
+      const key = `${industry}.${entry.type}.${entry.componentName}`;
+      if (seenIndustryEntries.has(key)) continue;
+      seenIndustryEntries.add(key);
+      industryTypeComponent.push({ industry, type: entry.type, componentName: entry.componentName });
+    }
+  };
+
+  const industryTemplatesBody = extractConstObjectBody(src, 'INDUSTRY_TEMPLATES') || '';
+
+  // Some industries are registered through named maps, e.g.
+  // `restaurant: RESTAURANT_TEMPLATES`. Resolve those maps before walking
+  // inline industry blocks, otherwise these industries silently fall back to
+  // generic color contracts.
+  const referencedMapRe = /^\s*([a-zA-Z][a-zA-Z0-9]*)\s*:\s*([A-Z][A-Z0-9_]+),?\s*$/gm;
+  let rm;
+  while ((rm = referencedMapRe.exec(industryTemplatesBody)) !== null) {
+    pushIndustryEntries(rm[1], parseFlatTemplateMap(src, rm[2]));
+  }
 
   // Top-level industry blocks live as `industryKey: { type: Component, ... },`
   // We match every `<word>: { ... },` block whose body has the shape `type: Component,`.
@@ -161,7 +190,7 @@ function loadTemplateRegistry() {
     const entryRe = /^\s*([a-zA-Z][\w]*)\s*:\s*([A-Z][A-Za-z0-9]+),?\s*$/gm;
     let em;
     while ((em = entryRe.exec(body)) !== null) {
-      industryTypeComponent.push({ industry, type: em[1], componentName: em[2] });
+      pushIndustryEntries(industry, [{ type: em[1], componentName: em[2] }]);
     }
   }
 
@@ -174,7 +203,7 @@ function loadTemplateRegistry() {
 // 3. Extract --token-* references from a template + local imports
 //    (3 levels deep). Stops at any import outside src/templates.
 // ----------------------------------------------------------------------
-const TOKEN_REF_RE = /var\(\s*(--(?:token|style|brand)-[a-z0-9-]+)/gi;
+const TOKEN_REF_RE = /var\(\s*(--token-[a-z0-9-]+)/gi;
 
 function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   if (seen.has(filePath) || depth > 3) return new Set();
@@ -184,7 +213,7 @@ function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   const vars = new Set();
   let m;
   const re = new RegExp(TOKEN_REF_RE.source, 'gi');
-  while ((m = re.exec(src)) !== null) { const canonical = LEGACY_ALIASES.get(m[1]) || m[1]; vars.add(canonical); }
+  while ((m = re.exec(src)) !== null) vars.add(m[1]);
   // Follow relative imports inside src/templates only
   const importRe = /import[\s\S]*?from\s+['"](\.[^'"]+)['"]/g;
   while ((m = importRe.exec(src)) !== null) {
@@ -199,70 +228,16 @@ function extractTokenVars(filePath, depth = 0, seen = new Set()) {
 // ----------------------------------------------------------------------
 // 4. Build the contracts.
 // ----------------------------------------------------------------------
-const FIELD_ORDER = [
-  'sectionBg', 'sectionBgAlt', 'cardBg',
-  'headingColor', 'cardHeadingColor', 'subheadingColor', 'bodyColor', 'cardBodyColor', 'mutedColor', 'cardMutedColor',
-  'iconColor', 'cardIconColor', 'accentColor',
-  'linkColor', 'linkHoverColor',
-  'onDarkHeading', 'onDarkBody', 'onDarkMuted',
-  'imageOverlay',
-  'eyebrow', 'statValue', 'quoteMark', 'ratingStar', 'check',
-  'priceColor', 'priceStrikeColor',
-  'btnBg', 'btnText',
-  'btnSecondaryBg', 'btnSecondaryText', 'btnSecondaryBorder',
-  'badgeBg', 'badgeText', 'badgeBorder',
-  'cardBadgeBg', 'cardBadgeText',
-  'inputBg', 'inputBorder', 'inputText', 'labelColor',
-  'borderColor', 'dividerColor',
-  'cardRadius', 'buttonRadius',
-  'cardShadow', 'headingWeight', 'headingTracking',
-  'successColor', 'successBg', 'dangerColor', 'dangerBg',
-];
-const orderIdx = (f) => { const i = FIELD_ORDER.indexOf(f); return i < 0 ? 999 : i; };
-
-
-// Legacy CSS var aliases ? canonical --token-* name
-const LEGACY_ALIASES = new Map([
-  ['--style-section-bg', '--token-section-bg'],
-  ['--style-section-bg-alt', '--token-section-bg-alt'],
-  ['--style-card-bg', '--token-card-bg'],
-  ['--style-heading-color', '--token-heading'],
-  ['--style-heading', '--token-heading'],
-  ['--style-subheading-color', '--token-subheading'],
-  ['--style-subheading', '--token-subheading'],
-  ['--style-body-color', '--token-body'],
-  ['--style-body', '--token-body'],
-  ['--style-text-primary', '--token-heading'],
-  ['--style-text-secondary', '--token-body'],
-  ['--style-text-muted', '--token-muted'],
-  ['--style-muted', '--token-muted'],
-  ['--style-icon-color', '--token-icon'],
-  ['--style-accent-color', '--token-accent'],
-  ['--style-divider-color', '--token-divider'],
-  ['--style-eyebrow', '--token-eyebrow'],
-  ['--style-stat-value', '--token-stat-value'],
-  ['--style-quote', '--token-quote'],
-  ['--style-rating-star', '--token-rating-star'],
-  ['--style-check', '--token-check'],
-  ['--token-accent-rgb', '--token-accent'],
-  ['--brand-btn-bg', '--token-btn-bg'],
-  ['--style-button-bg', '--token-btn-bg'],
-  ['--brand-btn-text', '--token-btn-text'],
-  ['--style-button-text', '--token-btn-text'],
-  ['--style-badge-bg', '--token-badge-bg'],
-  ['--style-badge-text', '--token-badge-text'],
-  ['--style-card-border', '--token-card-border'],
-  ['--style-border', '--token-card-border'],
-  ['--style-divider', '--token-divider'],
-  ['--brand-primary', '--token-accent'],
-]);
-
 function build() {
-  const cssVarToField = loadFieldDefs();
+  const { cssVarToField, fieldOrder } = loadFieldRegistry();
+  const orderIdx = (f) => {
+    const i = fieldOrder.indexOf(f);
+    return i < 0 ? 999 : i;
+  };
   const { componentToFile, industryTypeComponent, sharedTypeComponent } = loadTemplateRegistry();
 
-  const perIndustry = {};   // 'heroSalon' ? ColorFieldKey[]
-  const perType = {};       // 'hero' ? ColorFieldKey[] (union)
+  const perIndustry = {};   // 'heroSalon' -> ColorFieldKey[]
+  const perType = {};       // 'hero' -> ColorFieldKey[] (shared templates only)
   const stats = {
     industryEntries: 0,
     industryResolved: 0,
@@ -270,6 +245,7 @@ function build() {
     sharedEntries: sharedTypeComponent.length,
     sharedResolved: 0,
     sharedMissing: [],
+    unmappedTokens: [],
   };
 
   for (const { industry, type, componentName } of industryTypeComponent) {
@@ -280,19 +256,17 @@ function build() {
 
     const tokens = extractTokenVars(file);
     const fieldSet = new Set();
-    // sectionBg is ALWAYS available — every section can have its background changed
+    // sectionBg is ALWAYS available - every section can have its background changed
     fieldSet.add('sectionBg');
     for (const t of tokens) {
       const field = cssVarToField.get(t);
       if (field) fieldSet.add(field);
+      else stats.unmappedTokens.push(`${industry}.${type} (${componentName}): ${t}`);
     }
     const fields = [...fieldSet].sort((a, b) => orderIdx(a) - orderIdx(b));
 
     const industryKey = type + industry.charAt(0).toUpperCase() + industry.slice(1);
     perIndustry[industryKey] = fields;
-
-    if (!perType[type]) perType[type] = new Set();
-    for (const f of fields) perType[type].add(f);
   }
 
   for (const { type, componentName } of sharedTypeComponent) {
@@ -306,10 +280,11 @@ function build() {
     for (const t of tokens) {
       const field = cssVarToField.get(t);
       if (field) perType[type].add(field);
+      else stats.unmappedTokens.push(`${type} (${componentName}): ${t}`);
     }
   }
 
-  // Materialize unions in canonical order
+  // Materialize shared template contracts in canonical order.
   const perTypeArr = {};
   for (const [t, set] of Object.entries(perType)) {
     perTypeArr[t] = [...set].sort((a, b) => orderIdx(a) - orderIdx(b));
@@ -323,15 +298,15 @@ function build() {
 // ----------------------------------------------------------------------
 function render(perIndustry, perType) {
   const lines = [];
-  lines.push(`// AUTO-GENERATED by scripts/generate-section-color-contracts.cjs � DO NOT EDIT BY HAND.`);
+  lines.push(`// AUTO-GENERATED by scripts/generate-section-color-contracts.cjs - DO NOT EDIT BY HAND.`);
   lines.push(`// Regenerate after ANY template change with:`);
   lines.push(`//   node scripts/generate-section-color-contracts.cjs`);
   lines.push(`//`);
   lines.push(`// Each entry is the EXACT list of color fields the corresponding template`);
   lines.push(`// reads via var(--token-*). Reverse-mapped from FIELD_DEFS in`);
-  lines.push(`// section-color-editor.tsx. No heuristics, no fallbacks.`);
+  lines.push(`// section-color-fields.ts. No heuristics, no fallbacks.`);
   lines.push(``);
-  lines.push(`import type { ColorFieldKey } from '@/app/admin/pages/[id]/section-color-editor';`);
+  lines.push(`import type { ColorFieldKey } from '@/lib/section-color-fields';`);
   lines.push(``);
 
   const emit = (name, doc, map) => {
@@ -348,12 +323,12 @@ function render(perIndustry, perType) {
   };
   emit(
     'SECTION_COLOR_CONTRACTS_GENERATED',
-    'Per-industry contracts (keyed as `${type}${IndustryPascal}` � e.g. heroSalon).',
+    'Per-industry contracts (keyed as `${type}${IndustryPascal}` - e.g. heroSalon).',
     perIndustry,
   );
   emit(
     'SECTION_COLOR_CONTRACTS_GENERIC',
-    'Generic per-type contracts (union across all industries, fallback only).',
+    'Generic per-type contracts (shared templates only, never a cross-industry union).',
     perType,
   );
   return lines.join('\n');
@@ -361,6 +336,17 @@ function render(perIndustry, perType) {
 
 function main() {
   const { perIndustry, perType, stats } = build();
+  if (stats.unmappedTokens.length) {
+    console.error(`Unmapped --token-* references: ${stats.unmappedTokens.length}`);
+    for (const entry of stats.unmappedTokens.slice(0, 30)) {
+      console.error('  - ' + entry);
+    }
+    if (stats.unmappedTokens.length > 30) {
+      console.error(`  ... ${stats.unmappedTokens.length - 30} more`);
+    }
+    throw new Error('Color contract generation failed because template tokens are missing from FIELD_DEFS.');
+  }
+
   const out = render(perIndustry, perType);
   fs.writeFileSync(OUTPUT_FILE, out);
 

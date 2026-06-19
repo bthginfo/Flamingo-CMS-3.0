@@ -50,7 +50,7 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
         {subline && <div className="mt-4 text-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 grid gap-5">
           {highlights.map((highlight, index) => (
-            <motion.div key={`$<span data-edit-path="title">{highlight.title}</span>-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg)] p-4 shadow-sm" data-edit-collection="highlights" data-edit-index={index}>
+            <motion.div key={`${highlight.title || 'item'}-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg)] p-4 shadow-sm" data-edit-collection="highlights" data-edit-index={index}>
               <div className="mt-0.5 shrink-0 rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] p-2 text-[color:var(--token-eyebrow)]"><DynamicIcon editPath="icon" name={highlight.icon || 'star'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{highlight.title || ''}</h3>
@@ -80,7 +80,7 @@ function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecon
         {subline && <div className="mt-6 font-light leading-relaxed text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-10 grid gap-6">
           {highlights.map((highlight, index) => (
-            <div key={`$<span data-edit-path="title">{highlight.title}</span>-${index}`} className="flex gap-4 border-l-2 border-[var(--token-card-border)] pl-5" data-edit-collection="highlights" data-edit-index={index}>
+            <div key={`${highlight.title || 'item'}-${index}`} className="flex gap-4 border-l-2 border-[var(--token-card-border)] pl-5" data-edit-collection="highlights" data-edit-index={index}>
               <div className="mt-0.5 shrink-0 text-[color:var(--token-muted)]"><DynamicIcon editPath="icon" name={highlight.icon || 'star'} size={18} /></div>
               <div>
                 <h3 className="font-medium text-[color:var(--token-heading)]" data-edit-path="title">{highlight.title || ''}</h3>
@@ -111,7 +111,7 @@ function AmbienceBold({ headline, subline, badgeText, imagePrimary, imageSeconda
           {subline && <div className="mt-4 text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 grid gap-4">
             {highlights.map((highlight, index) => (
-              <div key={`$<span data-edit-path="title">{highlight.title}</span>-${index}`} className="flex gap-4 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] p-4 shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="highlights" data-edit-index={index}>
+              <div key={`${highlight.title || 'item'}-${index}`} className="flex gap-4 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] p-4 shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="highlights" data-edit-index={index}>
                 <div className="mt-0.5 shrink-0 text-[color:var(--token-eyebrow)]"><DynamicIcon editPath="icon" name={highlight.icon || 'star'} size={20} /></div>
                 <div>
                   <h3 className="font-bold uppercase" data-edit-path="title">{highlight.title || ''}</h3>

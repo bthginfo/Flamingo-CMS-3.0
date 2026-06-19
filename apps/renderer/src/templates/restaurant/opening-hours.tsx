@@ -48,7 +48,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-lg">
         {days.map((day, index) => (
-          <motion.div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} initial={{ opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="flex items-center justify-between gap-4 border-b border-black/10 px-6 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
+          <motion.div key={`${day.label || 'item'}-${index}`} initial={{ opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="flex items-center justify-between gap-4 border-b border-black/10 px-6 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] p-1.5 text-[color:var(--token-eyebrow)]"><Clock size={15} /></div>
               <div>
@@ -79,7 +79,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
       </div>
       <div className="border border-black/5">
         {days.map((day, index) => (
-          <div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} className="flex items-center justify-between gap-4 border-b border-black/5 px-6 py-5 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
+          <div key={`${day.label || 'item'}-${index}`} className="flex items-center justify-between gap-4 border-b border-black/5 px-6 py-5 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
               <Clock size={15} className="text-[color:var(--token-muted)]" />
               <div>
@@ -111,7 +111,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
         </div>
         <div className="border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)]">
           {days.map((day, index) => (
-            <div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
+            <div key={`${day.label || 'item'}-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
               <div className="flex items-center gap-3">
                 <Clock size={17} className="text-[color:var(--token-eyebrow)]" />
                 <div>
