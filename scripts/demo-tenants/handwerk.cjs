@@ -36,15 +36,42 @@ const C = {
 // against the dark section so they pop without the copper accent (which is
 // reserved for icons/eyebrows/stars).
 const darkSectionTokens = {
+  // Text
   '--token-heading':         '#FFFFFF',
+  '--token-subheading':      'rgba(255,255,255,0.92)',
   '--token-body':            'rgba(255,255,255,0.92)',
   '--token-muted':           'rgba(255,255,255,0.7)',
   '--token-eyebrow':         '#E2B58D',
   '--token-on-dark-heading': '#FFFFFF',
   '--token-on-dark-body':    'rgba(255,255,255,0.92)',
   '--token-on-dark-muted':   'rgba(255,255,255,0.7)',
+  // Icons & accents — MUST be overridden or they stay on the dark brand default
+  // (the dark-on-dark icon/heading bug).
+  '--token-icon':            '#E2B58D',
+  '--token-accent':          '#E2B58D',
+  '--token-stat-value':      '#FFFFFF',
+  '--token-rating-star':     '#E2B58D',
+  '--token-quote':           '#E2B58D',
+  '--token-check':           '#E2B58D',
+  '--token-link':            '#E2B58D',
+  '--token-link-hover':      '#FFFFFF',
+  '--token-divider':         'rgba(255,255,255,0.16)',
+  '--token-card-border':     'rgba(255,255,255,0.16)',
+  // Cards that sit ON the dark section (glassy surface + light card text/icons)
+  '--token-card-bg':         'rgba(255,255,255,0.06)',
+  '--token-card-heading':    '#FFFFFF',
+  '--token-card-body':       'rgba(255,255,255,0.92)',
+  '--token-card-muted':      'rgba(255,255,255,0.7)',
+  '--token-card-icon':       '#E2B58D',
+  '--token-card-badge-bg':   'rgba(255,255,255,0.14)',
+  '--token-card-badge-text': '#FFFFFF',
+  // Buttons
   '--token-btn-bg':          C.cream,
   '--token-btn-text':        C.brand,
+  '--token-btn-secondary-bg':     'transparent',
+  '--token-btn-secondary-text':   '#FFFFFF',
+  '--token-btn-secondary-border': 'rgba(255,255,255,0.3)',
+  // Badges
   '--token-badge-bg':        'rgba(255,255,255,0.14)',
   '--token-badge-text':      '#FFFFFF',
   '--token-badge-border':    'rgba(255,255,255,0.28)',
