@@ -68,7 +68,7 @@ export function PropertyShowcaseSection({ data }: Props) {
                     <span className="mt-1 block text-xs font-medium text-[color:var(--token-muted)]">Wohnfläche</span>
                   </span>
                 </div>
-                <p className="text-xl font-bold text-[color:var(--token-stat-value,var(--token-icon))] mt-3" data-edit-path="price">{property.price}</p>
+                <p className="text-xl font-bold text-[color:var(--token-price,var(--token-stat-value,var(--token-icon)))] mt-3" data-edit-path="price">{property.price}</p>
               </div>
             </motion.a>
           ))}

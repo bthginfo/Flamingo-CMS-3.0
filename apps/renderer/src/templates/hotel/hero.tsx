@@ -215,7 +215,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
         <div className="max-w-5xl">
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              className="inline-block bg-[var(--token-card-bg)] text-[color:var(--token-heading)] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
+              className="inline-block bg-[var(--token-card-bg)] text-[color:var(--token-badge-text,var(--token-heading))] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
               {badgeText}
             </motion.div>
           )}

@@ -71,7 +71,7 @@ function Bold({ header, introText, cards }: Props) {
     <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <div className="mb-10 max-w-3xl">
-          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-success,theme(colors.teal.400))]" data-edit-path="badgeText">{header.badgeText}</p>}
+          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text,var(--token-success,theme(colors.teal.400)))]" data-edit-path="badgeText">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
           {header.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>

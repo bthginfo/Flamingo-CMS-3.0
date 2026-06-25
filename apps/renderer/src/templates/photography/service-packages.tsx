@@ -105,7 +105,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{pkg.name}</h3>
               {pkg.price && (
                 <div className="mt-3">
-                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-icon)]'}`} data-edit-path="price">{pkg.price}</span>
+                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-price,var(--token-on-dark-heading))]' : 'text-[color:var(--token-price,var(--token-icon))]'}`} data-edit-path="price">{pkg.price}</span>
                   {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>{pkg.priceNote}</span>}
                 </div>
               )}

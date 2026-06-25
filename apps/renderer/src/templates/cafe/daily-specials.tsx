@@ -42,7 +42,7 @@ export function DailySpecialsSection({ data }: Props) {
                 <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
                 <p className="text-sm text-[color:var(--token-muted)] mt-0.5" data-edit-path="description">{plain(item.description)}</p>
               </div>
-              {item.price && <span className="font-bold text-[color:var(--token-icon)] whitespace-nowrap" data-edit-path="price">{item.price}</span>}
+              {item.price && <span className="font-bold text-[color:var(--token-price,var(--token-icon))] whitespace-nowrap" data-edit-path="price">{item.price}</span>}
             </motion.div>
           ))}
         </div>

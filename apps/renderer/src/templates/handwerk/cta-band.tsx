@@ -30,9 +30,12 @@ type CProps = { headline: string; subline: string; badgeText: string; cta?: { la
 const CTA_CARD_BG = 'linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg, #0f172a) 92%, #000) 0%, color-mix(in srgb, var(--token-accent, #f59e0b) 30%, var(--token-card-bg, #0f172a)) 100%)';
 const CTA_CARD_HEADING = 'var(--token-heading, #fff)';
 const CTA_CARD_BODY = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 82%, transparent)';
-const CTA_CARD_BADGE_BG = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 14%, transparent)';
-const CTA_CARD_BADGE_TEXT = 'var(--token-on-dark-body, rgba(255,255,255,0.78))';
-const CTA_CARD_BADGE_BORDER = 'color-mix(in srgb, var(--token-card-border, rgba(255,255,255,0.22)) 24%, transparent)';
+// Badge is bound to its DEDICATED slots so the CMS "Badge"-Felder actually
+// control it. The previous derived values (onDarkBody / card-border) are kept
+// only as fallbacks for when the badge slots are unset.
+const CTA_CARD_BADGE_BG = 'var(--token-badge-bg, color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 14%, transparent))';
+const CTA_CARD_BADGE_TEXT = 'var(--token-badge-text, var(--token-on-dark-body, rgba(255,255,255,0.78)))';
+const CTA_CARD_BADGE_BORDER = 'var(--token-badge-border, color-mix(in srgb, var(--token-card-border, rgba(255,255,255,0.22)) 24%, transparent))';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
 function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {

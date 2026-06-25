@@ -27,7 +27,7 @@ function ExperienceMeta({ item, className }: { item: Experience; className?: str
       {item.audienceLabel && <span className="inline-flex items-center gap-1"><Users size={13} />{item.audienceLabel}</span>}
       {item.category && <span data-edit-path="category">{item.category}</span>}
       {item.difficultyLabel && <span>{item.difficultyLabel}</span>}
-      {item.priceLabel && <span data-edit-path="priceLabel">{item.priceLabel}</span>}
+      {item.priceLabel && <span className="text-[color:var(--token-price)]" data-edit-path="priceLabel">{item.priceLabel}</span>}
     </div>
   );
 }

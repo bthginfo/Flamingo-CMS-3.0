@@ -30,7 +30,7 @@ export function ScrollStorySection({ data }: Props) {
           <motion.article key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-120px' }} className="overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm" data-edit-collection="steps" data-edit-index={i}>
             {step.image && <img data-edit-image="image" src={step.image} alt="" className="h-64 w-full object-cover" />}
             <div className="p-6 md:p-8">
-              <div className="mb-3 text-xs font-bold uppercase text-[color:var(--token-card-icon,var(--token-icon))]" data-edit-path="kicker">{step.kicker || String(i + 1).padStart(2, '0')}</div>
+              <div className="mb-3 text-xs font-bold uppercase text-[color:var(--token-eyebrow,var(--token-card-icon,var(--token-icon)))]" data-edit-path="kicker">{step.kicker || String(i + 1).padStart(2, '0')}</div>
               <h3 className="text-2xl font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{step.title}</h3>
               {step.text && <p className="mt-3 leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(step.text)}</p>}
             </div>

@@ -155,6 +155,16 @@ above contributing slots a particular industry variant doesn't paint.
    the output to the committed `section-color-contracts-generated.ts`.
    If they differ it exits 1 with a diff summary.
 
+4. **Role-coverage gate** (`scripts/audit-color-role-coverage.cjs --strict`):
+   for each semantic role that has a dedicated slot (badge, eyebrow, price, …)
+   it checks every section that RENDERS the role actually binds it to its own
+   token — not to a borrowed one. This catches the subtle bug where a badge is
+   painted via `color-mix(var(--token-on-dark-body))`: the codegen sees only
+   `on-dark-body`, so no "Badge" field appears and editing body text silently
+   recolours the badge. The fix is to bind the element to `--token-badge-*`
+   (text-only roles via `scripts/rebind-text-roles.cjs`, pill badges via the
+   `.section-badge` class which the renderer wires to the badge slots).
+
 3. **Render-mirror gate** (`scripts/check-section-color-render-mirror.cjs`):
    for every `(industry, type)` the renderer can paint, re-derives the
    actually-rendered component (`specific ?? shared ?? all`, mirroring

@@ -31,7 +31,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text,var(--token-muted))]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -43,7 +43,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
-                {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
+                {offer.priceLabel && <span className="text-[color:var(--token-price)]" data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{offer.title || ''}</h3>
@@ -78,7 +78,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
             <div className="p-6">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
-                {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
+                {offer.priceLabel && <span className="text-[color:var(--token-price)]" data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-light text-[color:var(--token-heading)]" data-edit-path="title">{offer.title || ''}</h3>
@@ -113,7 +113,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
-                {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
+                {offer.priceLabel && <span className="text-[color:var(--token-price)]" data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{offer.title || ''}</h3>

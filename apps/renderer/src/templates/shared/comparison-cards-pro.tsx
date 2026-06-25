@@ -26,7 +26,7 @@ export function ComparisonCardsProSection({ data }: Props) {
           <motion.article key={index} initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className={`relative flex min-h-[460px] flex-col rounded-3xl border bg-[var(--token-card-bg)] p-6 text-[color:var(--token-card-body,var(--token-body))] shadow-sm ${plan.highlighted ? 'border-[var(--token-btn-bg)] shadow-2xl ring-2 ring-[color-mix(in_srgb,var(--token-btn-bg)_18%,transparent)]' : 'border-[var(--token-card-border)]'}`} data-edit-collection="plans" data-edit-index={index}>
             {plan.highlighted && <div className="absolute right-5 top-5 rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-badge-text)]">Empfohlen</div>}
             <div className="text-sm font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]" data-edit-path="name">{plan.name}</div>
-            {plan.price && <div className="mt-5 text-4xl font-black" data-edit-path="price">{plan.price}</div>}
+            {plan.price && <div className="mt-5 text-4xl font-black text-[color:var(--token-price)]" data-edit-path="price">{plan.price}</div>}
             {plan.note && <p className="mt-3 text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="note">{plan.note}</p>}
             <div className="mt-7 space-y-3">
               {(plan.features || []).map((feature, i) => <div key={i} className="flex gap-2 text-sm" data-edit-collection="features" data-edit-index={i}><Check size={17} className="text-[color:var(--token-check)]" />{feature}</div>)}

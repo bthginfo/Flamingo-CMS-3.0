@@ -135,7 +135,7 @@ export function MenuCardSection({ data }: Props) {
                   </h3>
                   {dish.price && (
                     <span
-                      className="flex-shrink-0 text-sm font-bold text-[color:var(--token-accent,#dc2626)]"
+                      className="flex-shrink-0 text-sm font-bold text-[color:var(--token-price,var(--token-accent,#dc2626))]"
                       data-edit-path="price"
                     >
                       {dish.price}

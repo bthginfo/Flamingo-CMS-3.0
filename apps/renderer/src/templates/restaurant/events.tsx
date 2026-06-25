@@ -46,7 +46,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted)]">
                 {event.dateLabel && <span className="inline-flex items-center gap-1 rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] px-3 py-1 text-[color:var(--token-eyebrow)]"><CalendarDays size={13} />{event.dateLabel}</span>}
                 {event.timeLabel && <span className="rounded-full bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] px-3 py-1">{event.timeLabel}</span>}
-                {event.priceLabel && <span className="rounded-full bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] px-3 py-1" data-edit-path="priceLabel">{event.priceLabel}</span>}
+                {event.priceLabel && <span className="rounded-full bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] px-3 py-1 text-[color:var(--token-price)]" data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{event.title || ''}</h3>
               {event.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}

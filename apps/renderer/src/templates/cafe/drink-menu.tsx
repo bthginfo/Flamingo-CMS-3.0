@@ -41,7 +41,7 @@ export function DrinkMenuSection({ data }: Props) {
                       <span className="font-medium text-[color:var(--token-heading)] text-sm" data-edit-path="name">{item.name}</span>
                       {item.description && <p className="text-xs text-[color:var(--token-muted)] mt-0.5" data-edit-path="description">{plain(item.description)}</p>}
                     </div>
-                    <span className="text-sm font-semibold text-[color:var(--token-muted)] whitespace-nowrap" data-edit-path="price">{item.price}</span>
+                    <span className="text-sm font-semibold text-[color:var(--token-price,var(--token-muted))] whitespace-nowrap" data-edit-path="price">{item.price}</span>
                   </li>
                 ))}
               </ul>
