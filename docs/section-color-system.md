@@ -82,26 +82,61 @@ a checked-in file containing two maps:
 
 ### 2. Editor reads only the generated file
 
-`section-color-editor.tsx > getFieldsForSection(type, industry)` does:
+`section-color-resolver.ts > resolveColorContractForSection(type, industry)` does:
 
 ```ts
+// 1. Exact industry template:        heroSalon
 const industrySpecific = SECTION_COLOR_CONTRACTS_GENERATED[`${type}${Industry}`];
-if (industrySpecific?.length) return industrySpecific;
-return SECTION_COLOR_CONTRACTS_GENERIC[type] ?? defaults;
+if (industrySpecific?.length) return { source: 'industry', fields: industrySpecific };
+// 2. Shared template:                hero (shared only)
+const generic = SECTION_COLOR_CONTRACTS_GENERIC[type];
+if (generic?.length) return { source: 'generic', fields: generic };
+// 3. Cross-industry borrow (UNION):  any industry that defines this type
+const any = SECTION_COLOR_CONTRACTS_ANY[type];
+if (any?.length) return { source: 'any', fields: any };
+// 4. Unknown type → background only
+return { source: 'none', fields: ['sectionBg'] };
 ```
 
 No hand-curated map, no heuristics, no per-industry escape hatches.
 
-### 3. Runtime DOM-scan (extra safety, `useUsedTokens` hook)
+**Why stage 3 exists (the cross-industry UNION).** The renderer's
+`getIndustryTemplates(industry)` falls back to `ALL_TEMPLATES` when a section
+type is *borrowed* into an industry that doesn't define it (the editor catalog
+offers foreign sections under "Andere: …"). Before stage 3, those sections
+rendered a full template in the FE but the editor collapsed to a single
+"Hintergrund" picker — ~1300 (industry, type) pairs were affected. Stage 3
+mirrors that borrow: `SECTION_COLOR_CONTRACTS_ANY[type]` is the **union** of the
+fields every industry's variant reads, so the editor can never expose *fewer*
+controls than the FE paints. It is a deliberate superset; stage 3 of the
+runtime DOM-scan (below) trims it back down to what the rendered variant
+actually uses.
 
-The live-preview iframe scans the rendered section's `outerHTML` for
-`var(--token-X)` substrings. Pickers whose token does NOT appear in the
-rendered DOM are hidden behind an "Erweitert: N ungenutzte Slots anzeigen"
-toggle.
+**Industry aliases must match the renderer.** `INDUSTRY_CONTRACT_ALIASES`
+(`handwerk → tradesman`) exists only because the renderer serves the same
+template for that string. Never add an alias the renderer's
+`getIndustryTemplates` does not honor — it would point the editor at a
+different template than the one painted (the render-mirror guard fails if you
+do).
 
-This handles cases where the codegen would over-include a slot because
-the template only uses it conditionally (e.g. a card border that only
-renders if `data.bordered === true`).
+### 3. Runtime DOM-scan (trims the contract to reality — in BOTH editors)
+
+Both colour editors scan the rendered section's `outerHTML` for
+`var(--token-X)` substrings and split the contract fields into *active* (token
+present in the DOM, or already overridden by the user) and *inactive*. Inactive
+pickers are hidden behind an "Erweitert: N ungenutzte Slots anzeigen" toggle, so
+the user is never shown a no-op control.
+
+- **Live-preview overlay** (`live-preview/edit-overlays.tsx`) — `useUsedTokens`.
+- **Page-editor card** (`admin/pages/[id]/section-color-editor.tsx`) — scans the
+  same `[data-section-id]` element through the preview iframe ref.
+
+When no preview iframe is reachable the scan returns nothing and **every**
+contract field is shown (we never hide a control we cannot prove is unused).
+
+This handles two cases at once: the codegen over-including a slot the template
+only uses conditionally (`data.bordered === true`), and the stage-3 union
+above contributing slots a particular industry variant doesn't paint.
 
 ## CI guard — drift is forbidden
 
@@ -120,8 +155,18 @@ renders if `data.bordered === true`).
    the output to the committed `section-color-contracts-generated.ts`.
    If they differ it exits 1 with a diff summary.
 
-Wired into `.github/workflows/ci.yml` as `pnpm check:section-colors`
-before any app build runs.
+3. **Render-mirror gate** (`scripts/check-section-color-render-mirror.cjs`):
+   for every `(industry, type)` the renderer can paint, re-derives the
+   actually-rendered component (`specific ?? shared ?? all`, mirroring
+   `getIndustryTemplates`) and asserts the contract resolver exposes **at
+   least** every field that component reads. This is the invariant that makes
+   "missing fields" impossible: the editor can never be a strict subset of the
+   FE. It also catches industry-alias drift and templates that read tokens
+   through an import the codegen doesn't follow.
+
+`pnpm check:section-colors` runs gates 2 + 3 (gate 1 via
+`audit-token-vocabulary`). Wired into `.github/workflows/ci.yml` before any app
+build runs.
 
 Locally before pushing:
 
@@ -182,8 +227,10 @@ Common mappings:
 | `apps/renderer/src/lib/section-color-contracts-generated.ts`                  | AUTO-GENERATED contracts (do not edit)     |
 | `apps/renderer/src/app/live-preview/edit-overlays.tsx`                        | Live overlay + runtime DOM-scan filter     |
 | `apps/renderer/src/templates/index.ts`                                        | sectionType → component registry           |
-| `scripts/generate-section-color-contracts.cjs`                                | Codegen                                    |
+| `apps/renderer/src/lib/section-color-resolver.ts`                             | 4-stage resolver (industry → generic → any → none) |
+| `scripts/generate-section-color-contracts.cjs`                                | Codegen (emits GENERATED + GENERIC + ANY)  |
 | `scripts/check-section-color-contracts.cjs`                                   | CI drift guard                             |
+| `scripts/check-section-color-render-mirror.cjs`                               | CI render-mirror guard (resolver ⊇ renderer) |
 | `scripts/audit-template-colors.cjs`                                           | Reports hardcoded colours per template     |
 
 ## Anti-patterns — do not do these

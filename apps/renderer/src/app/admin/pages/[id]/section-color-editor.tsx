@@ -160,13 +160,35 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   // Keep color editor collapsed by default; open only on user interaction.
   const [open, setOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showUnused, setShowUnused] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
+  // Tokens literally present in the rendered section DOM (inline styles AND
+  // Tailwind arbitrary-value classes both keep the literal "var(--token-X)"
+  // string in outerHTML). Empty when no preview iframe is reachable, in which
+  // case we cannot filter and fall back to showing every contract field.
+  const [usedTokens, setUsedTokens] = useState<Set<string>>(new Set());
   const allFields = rawFields;
   
   // Split into color fields and design token fields
   const colorFields = sortColorFields(allFields.filter(f => FIELD_DEFS[f]?.type !== 'size'));
   const designFields = allFields.filter(f => FIELD_DEFS[f]?.type === 'size');
   // No grouping — show all color fields flat in one grid.
+
+  // Partition color fields by what the rendered DOM actually paints. When the
+  // preview iframe isn't reachable (usedTokens empty) we cannot tell, so we
+  // treat every field as active — never hide a control we can't prove is unused.
+  const canFilterByDom = usedTokens.size > 0;
+  const isFieldLive = (f: ColorFieldKey): boolean => {
+    if (!canFilterByDom) return true;
+    if (f === 'sectionBg') return true; // background is always meaningful
+    const v = FIELD_DEFS[f]?.cssVar;
+    if (!v) return false;
+    if (overrides[v]) return true; // the user already set it → keep visible
+    return usedTokens.has(v);
+  };
+  const liveColorFields = colorFields.filter(isFieldLive);
+  const inactiveColorFields = colorFields.filter(f => !isFieldLive(f));
+  const visibleColorFields = showUnused ? colorFields : liveColorFields;
 
   // All CSS vars we need to read (token-only after Phase 3 cleanup)
   const allVarKeys = allFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean);
@@ -181,6 +203,15 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         if (doc) {
           const el = doc.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
           if (el) {
+            // Which tokens does this section ACTUALLY paint? Scan the rendered
+            // markup so the editor can hide fields the template never reads.
+            const found = new Set<string>();
+            const re = /var\(\s*(--token-[\w-]+)\s*(?:,[^)]*)?\)/g;
+            let m: RegExpExecArray | null;
+            const html = (el as HTMLElement).outerHTML;
+            while ((m = re.exec(html)) !== null) found.add(m[1]);
+            setUsedTokens(found);
+
             const styles = getComputedStyle(el);
             for (const v of allVarKeys) {
               const val = styles.getPropertyValue(v).trim();
@@ -354,8 +385,19 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-3 border-t border-blue-100">
-        {colorFields.map(renderColorField)}
+        {visibleColorFields.map(renderColorField)}
       </div>
+      {inactiveColorFields.length > 0 && (
+        <button
+          type="button"
+          className="mt-3 text-xs font-medium text-zinc-500 hover:text-zinc-800 underline"
+          onClick={() => setShowUnused(v => !v)}
+        >
+          {showUnused
+            ? 'Nur genutzte Felder zeigen'
+            : `Erweitert: ${inactiveColorFields.length} ungenutzte Slots anzeigen`}
+        </button>
+      )}
       {designFields.length > 0 && (
         <div className="mt-3 pt-3 border-t border-zinc-100">
           <button type="button" className="text-xs font-medium text-zinc-600 flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors" onClick={() => setShowAdvanced(!showAdvanced)}>
