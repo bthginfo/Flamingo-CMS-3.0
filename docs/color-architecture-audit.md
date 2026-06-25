@@ -39,8 +39,12 @@
   `--token-icon`, `--token-stat-value`, `--token-quote`, …). No more
   N-roles-on-1-var.
 
-See [apps/renderer/src/lib/section-color-tokens.ts](apps/renderer/src/lib/section-color-tokens.ts)
-for the slot taxonomy and the resolver implementation (Phase 1, additive).
+See [apps/renderer/src/lib/section-color-fields.ts](apps/renderer/src/lib/section-color-fields.ts)
+for the slot taxonomy (FIELD_DEFS) and
+[apps/renderer/src/lib/brand-colors.ts](apps/renderer/src/lib/brand-colors.ts)
+(`getBrandCssVars`) for the single source of per-slot page-level defaults.
+(The former additive `section-color-tokens.ts` resolver was never wired in and
+has been removed.)
 
 ## Audit — confirmed cross-contamination cases
 

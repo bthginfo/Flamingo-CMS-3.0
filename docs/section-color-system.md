@@ -232,7 +232,7 @@ Common mappings:
 
 | File                                                                          | Role                                       |
 |-------------------------------------------------------------------------------|--------------------------------------------|
-| `apps/renderer/src/lib/section-color-tokens.ts`                               | Resolves brand → slot defaults at render time |
+| `apps/renderer/src/lib/brand-colors.ts` (`getBrandCssVars`)                   | Resolves brand → independent page-level `--token-*` defaults (single source) |
 | `apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx`             | FIELD_DEFS + editor UI                     |
 | `apps/renderer/src/lib/section-color-contracts-generated.ts`                  | AUTO-GENERATED contracts (do not edit)     |
 | `apps/renderer/src/app/live-preview/edit-overlays.tsx`                        | Live overlay + runtime DOM-scan filter     |
