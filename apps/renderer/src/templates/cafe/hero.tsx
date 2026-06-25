@@ -50,7 +50,7 @@ export function CafeHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap gap-4 mt-8">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-accent)] hover:bg-amber-800 text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all" data-edit-path="label">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-accent)] hover:bg-[var(--token-accent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all" data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}

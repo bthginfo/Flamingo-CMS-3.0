@@ -115,8 +115,11 @@ function themeFallback(prop, cls) {
   return null;
 }
 
+// Optional Tailwind variant chain (hover:, focus:, dark:, group-hover:,
+// data-[open]:, sm:, …) — preserved verbatim so the state still applies.
+const VARIANT = `(?:[a-z][a-z0-9-]*(?:\\[[^\\]]*\\])?:)*`;
 const CLASS_RE = new RegExp(
-  `(^|[\\s"'\`])(${PROPS.join('|')})-(${COLOR_FAMILIES.join('|')})(-\\d{2,3})?(/\\d{1,3})?(?=[\\s"'\`]|$)`,
+  `(^|[\\s"'\`])(${VARIANT})(${PROPS.join('|')})-(${COLOR_FAMILIES.join('|')})(-\\d{2,3})?(/\\d{1,3})?(?=[\\s"'\`]|$)`,
   'g',
 );
 
@@ -137,13 +140,13 @@ function processFile(file) {
   let src = fs.readFileSync(file, 'utf8');
   let fileRewrites = 0;
   const localPlan = [];
-  src = src.replace(CLASS_RE, (full, pre, prop, fam, shadePart, alphaPart) => {
+  src = src.replace(CLASS_RE, (full, pre, variants, prop, fam, shadePart, alphaPart) => {
     const cls = `${prop}-${fam}${shadePart || ''}`;
     if (alphaPart) { skipped.alpha++; return full; }            // glass / overlay
     const token = mapToken(prop, cls);
     if (!token) { skipped.unmapped++; return full; }
     const fb = themeFallback(prop, cls);
-    const replacement = `${prop}-[var(${token}${fb ? `,${fb}` : ''})]`;
+    const replacement = `${variants || ''}${prop}-[var(${token}${fb ? `,${fb}` : ''})]`;
     fileRewrites++; rewrites++;
     localPlan.push(`${cls} -> ${replacement}`);
     return `${pre}${replacement}`;

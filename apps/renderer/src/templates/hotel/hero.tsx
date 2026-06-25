@@ -155,7 +155,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
           {subline && <div className="text-lg text-[color:var(--token-body)] leading-relaxed mt-8 max-w-lg rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-[color:var(--token-heading)] font-medium text-base border-b-2 border-[color:var(--token-card-border)] pb-1 hover:border-amber-500 hover:text-amber-600 transition-colors w-full sm:w-auto">
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-[color:var(--token-heading)] font-medium text-base border-b-2 border-[color:var(--token-card-border)] pb-1 hover:border-[var(--token-accent)] hover:text-[var(--token-accent)] transition-colors w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}

@@ -357,7 +357,7 @@ export function ShopCheckoutSection({ data }: Props) {
             ) : (
               <div className="flex gap-2">
                 <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-[color:var(--token-card-border)] rounded-lg px-3 py-2" />
-                <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] rounded-lg hover:bg-zinc-300 font-medium">Einlösen</button>
+                <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] rounded-lg hover:bg-[var(--token-section-bg,theme(colors.zinc.300))] font-medium">Einlösen</button>
               </div>
             )}
             {couponError && <p className="text-xs text-[var(--token-danger)] mt-1">{couponError}</p>}

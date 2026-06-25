@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T13:40:11.535Z",
+  "generatedAt": "2026-06-25T18:12:48.543Z",
   "perFile": {
     "apps/renderer/src/templates/cafe/atmosphere-gallery.tsx": {
       "hexUtils": 0,
@@ -18,14 +18,6 @@
       "total": 1
     },
     "apps/renderer/src/templates/cafe/drink-menu.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/cafe/hero.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
       "paletteUtils": 1,
@@ -124,10 +116,10 @@
     "apps/renderer/src/templates/hotel/hero.tsx": {
       "hexUtils": 6,
       "alphaUtils": 2,
-      "paletteUtils": 4,
+      "paletteUtils": 2,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 12
+      "total": 10
     },
     "apps/renderer/src/templates/hotel/hotel-dining.tsx": {
       "hexUtils": 0,
@@ -264,14 +256,6 @@
       "inlineHex": 0,
       "inlineRgb": 0,
       "total": 1
-    },
-    "apps/renderer/src/templates/photography/portfolio-gallery.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 2,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 2
     },
     "apps/renderer/src/templates/realestate/hero.tsx": {
       "hexUtils": 0,
@@ -569,35 +553,11 @@
       "inlineRgb": 0,
       "total": 2
     },
-    "apps/renderer/src/templates/shared/shop-checkout.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
     "apps/renderer/src/templates/shared/shop-product-detail.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
       "paletteUtils": 0,
       "inlineHex": 1,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/shared/shop-product-grid.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 2,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 2
-    },
-    "apps/renderer/src/templates/shared/shop-thank-you.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
       "inlineRgb": 0,
       "total": 1
     },
@@ -667,11 +627,11 @@
     }
   },
   "totals": {
-    "files": 83,
-    "total": 218,
+    "files": 78,
+    "total": 209,
     "hexUtils": 27,
     "alphaUtils": 142,
-    "paletteUtils": 48,
+    "paletteUtils": 39,
     "inlineHex": 1,
     "inlineRgb": 0
   }

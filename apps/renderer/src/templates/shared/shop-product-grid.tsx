@@ -146,11 +146,11 @@ export function ShopProductGridSection({ data }: Props) {
       {/* Category filter */}
       {showCategories && categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
-          <button onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${!activeCategory ? 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-zinc-200'}`}>
+          <button onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${!activeCategory ? 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-[var(--token-section-bg-alt,theme(colors.zinc.200))]'}`}>
             Alle
           </button>
           {categories.map(c => (
-            <button key={c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-zinc-200'}`} data-edit-path="name">
+            <button key={c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-[var(--token-section-bg-alt,theme(colors.zinc.200))]'}`} data-edit-path="name">
               {c.name}
             </button>
           ))}
