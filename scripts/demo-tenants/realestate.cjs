@@ -14,6 +14,7 @@
 
 const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
+const { darkTokens } = require('./_lib/theme.cjs');
 
 const PAT = '6ef04ab718a41192d1eac3b1c3b4d523a2561463927a77861f85a745e251c485';
 
@@ -77,6 +78,7 @@ const mistTokens = {
 };
 
 const imageTokens = {
+  ...darkTokens({ accent: '#F4C875' }),
   '--token-heading': '#FFFFFF',
   '--token-body': 'rgba(255,255,255,0.92)',
   '--token-muted': 'rgba(255,255,255,0.74)',
@@ -98,6 +100,7 @@ const imageTokens = {
 };
 
 const darkSolidTokens = {
+  ...darkTokens({ accent: '#F4C875' }),
   ...imageTokens,
   '--token-section-bg': C.night,
   '--token-section-bg-alt': C.night,

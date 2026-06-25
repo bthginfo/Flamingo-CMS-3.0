@@ -11,6 +11,7 @@
 
 const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
+const { darkTokens } = require('./_lib/theme.cjs');
 
 const PAT = 'a8a4079b1415c23ee6e7ec484438a8a780452b6a6a86fc0acf3025c8d24c3904';
 
@@ -31,6 +32,7 @@ const C = {
 };
 
 const darkSectionTokens = {
+  ...darkTokens({ accent: '#F4D6C8' }),
   '--token-heading': '#FFFFFF',
   '--token-body': 'rgba(255,255,255,0.92)',
   '--token-muted': 'rgba(255,255,255,0.76)',
@@ -1298,7 +1300,10 @@ const tenant = {
   pages,
 };
 
-run(tenant).catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+module.exports = tenant;
+if (require.main === module) {
+  run(tenant).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

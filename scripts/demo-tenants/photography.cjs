@@ -814,7 +814,10 @@ const tenant = {
   ],
 };
 
-run(tenant).catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+module.exports = tenant;
+if (require.main === module) {
+  run(tenant).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

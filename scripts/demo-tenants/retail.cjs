@@ -20,6 +20,7 @@
 
 const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
+const { darkTokens: sharedDark } = require('./_lib/theme.cjs');
 
 const PAT = 'c29a426d1a1c833d67b0a3086479cc42db14f8e3ac0b30b323422e99cca58016';
 
@@ -77,6 +78,7 @@ const warmTokens = {
 };
 
 const darkTokens = {
+  ...sharedDark({ accent: '#F0C29D' }),
   '--token-section-bg': C.ink,
   '--token-section-bg-alt': '#24313A',
   '--token-card-bg': '#24313A',

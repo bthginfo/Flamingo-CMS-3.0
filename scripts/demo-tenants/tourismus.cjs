@@ -1,5 +1,6 @@
 const { randomUUID } = require('node:crypto');
 const { run } = require('./_lib/runner.cjs');
+const { darkTokens } = require('./_lib/theme.cjs');
 
 /**
  * Tenant: tourismus
@@ -36,6 +37,7 @@ const p = (text) => `<p>${text}</p>`;
 
 function darkSectionTokens(bg = C.deep) {
   return {
+    ...darkTokens({ accent: C.sun }),
     '--token-section-bg': bg,
     '--token-section-bg-alt': bg,
     '--token-card-bg': 'rgba(18,45,54,0.78)',
@@ -730,7 +732,10 @@ function buildNewsItem({ slug, title, excerpt, imageId }) {
   };
 }
 
-run(tenant).catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+module.exports = tenant;
+if (require.main === module) {
+  run(tenant).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
