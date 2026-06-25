@@ -31,7 +31,7 @@ export function SocialProofBarSection({ data }: Props) {
             {item.logo ? (
               <Image data-edit-image="logo" src={item.logo} alt={item.label} width={80} height={40} className="object-contain mb-1 max-h-10" />
             ) : item.icon === 'star' ? (
-              <div className="flex gap-0.5 mb-1">{Array.from({ length: 5 }).map((_, si) => <Star key={si} size={14} className="fill-[var(--token-rating-star,#facc15)] text-yellow-400"  data-edit-collection="length" data-edit-index={si}/>)}</div>
+              <div className="flex gap-0.5 mb-1">{Array.from({ length: 5 }).map((_, si) => <Star key={si} size={14} className="fill-[var(--token-rating-star,#facc15)] text-[var(--token-accent,theme(colors.yellow.400))]"  data-edit-collection="length" data-edit-index={si}/>)}</div>
             ) : null}
             <span className="text-2xl md:text-3xl font-bold leading-tight" data-edit-path="value">{item.value}</span>
             <span className="text-xs text-[color:var(--token-card-body,var(--token-body))] md:text-sm" data-edit-path="label">{item.label}</span>

@@ -1,39 +1,23 @@
 {
-  "generatedAt": "2026-06-16T14:46:04.859Z",
+  "generatedAt": "2026-06-25T13:40:11.535Z",
   "perFile": {
     "apps/renderer/src/templates/cafe/atmosphere-gallery.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 1,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 2
+      "total": 1
     },
     "apps/renderer/src/templates/cafe/daily-specials.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 5,
+      "paletteUtils": 1,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
+      "total": 1
     },
     "apps/renderer/src/templates/cafe/drink-menu.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/cafe/event-calendar.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/cafe/food-menu.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
       "paletteUtils": 1,
@@ -44,14 +28,6 @@
     "apps/renderer/src/templates/cafe/hero.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 3,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 3
-    },
-    "apps/renderer/src/templates/cafe/location-vibe.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
       "paletteUtils": 1,
       "inlineHex": 0,
       "inlineRgb": 0,
@@ -60,28 +36,12 @@
     "apps/renderer/src/templates/cafe/team.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 5,
+      "paletteUtils": 2,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
-    },
-    "apps/renderer/src/templates/cafe/testimonials.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
+      "total": 2
     },
     "apps/renderer/src/templates/consulting/case-results.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 4,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 4
-    },
-    "apps/renderer/src/templates/consulting/faq.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
       "paletteUtils": 1,
@@ -97,29 +57,13 @@
       "inlineRgb": 0,
       "total": 5
     },
-    "apps/renderer/src/templates/consulting/testimonials.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/handwerk/header-banner.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 3,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 3
-    },
     "apps/renderer/src/templates/handwerk/hero.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 3,
+      "paletteUtils": 2,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 3
+      "total": 2
     },
     "apps/renderer/src/templates/handwerk/portfolio.tsx": {
       "hexUtils": 0,
@@ -180,10 +124,10 @@
     "apps/renderer/src/templates/hotel/hero.tsx": {
       "hexUtils": 6,
       "alphaUtils": 2,
-      "paletteUtils": 5,
+      "paletteUtils": 4,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 13
+      "total": 12
     },
     "apps/renderer/src/templates/hotel/hotel-dining.tsx": {
       "hexUtils": 0,
@@ -244,58 +188,58 @@
     "apps/renderer/src/templates/medical/certifications.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 4,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
+      "total": 1
     },
     "apps/renderer/src/templates/medical/download-forms.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 10,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 11
+      "total": 1
     },
     "apps/renderer/src/templates/medical/hero.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 12,
+      "paletteUtils": 4,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 12
+      "total": 4
     },
     "apps/renderer/src/templates/medical/insurance-info.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 9,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 10
+      "total": 1
     },
     "apps/renderer/src/templates/medical/patient-info.tsx": {
       "hexUtils": 0,
       "alphaUtils": 2,
-      "paletteUtils": 3,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
+      "total": 2
     },
     "apps/renderer/src/templates/medical/practice-gallery.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 4,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
+      "total": 1
     },
     "apps/renderer/src/templates/medical/practice-team.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 4,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
+      "total": 1
     },
     "apps/renderer/src/templates/medical/story.tsx": {
       "hexUtils": 0,
@@ -316,10 +260,10 @@
     "apps/renderer/src/templates/medical/values-grid.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 1,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 2
+      "total": 1
     },
     "apps/renderer/src/templates/photography/portfolio-gallery.tsx": {
       "hexUtils": 0,
@@ -344,14 +288,6 @@
       "inlineHex": 0,
       "inlineRgb": 0,
       "total": 1
-    },
-    "apps/renderer/src/templates/realestate/testimonials.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 2,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 2
     },
     "apps/renderer/src/templates/realestate/valuation-cta.tsx": {
       "hexUtils": 0,
@@ -404,10 +340,10 @@
     "apps/renderer/src/templates/restaurant/hero.tsx": {
       "hexUtils": 0,
       "alphaUtils": 2,
-      "paletteUtils": 3,
+      "paletteUtils": 2,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
+      "total": 4
     },
     "apps/renderer/src/templates/restaurant/menu.tsx": {
       "hexUtils": 0,
@@ -428,10 +364,10 @@
     "apps/renderer/src/templates/restaurant/reservation.tsx": {
       "hexUtils": 0,
       "alphaUtils": 4,
-      "paletteUtils": 2,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 6
+      "total": 4
     },
     "apps/renderer/src/templates/restaurant/signature-dishes.tsx": {
       "hexUtils": 0,
@@ -577,14 +513,6 @@
       "inlineRgb": 0,
       "total": 1
     },
-    "apps/renderer/src/templates/shared/additional-locations.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
     "apps/renderer/src/templates/shared/before-after-slider.tsx": {
       "hexUtils": 0,
       "alphaUtils": 2,
@@ -593,21 +521,13 @@
       "inlineRgb": 0,
       "total": 2
     },
-    "apps/renderer/src/templates/shared/before-after-story-pro.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 2,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 2
-    },
     "apps/renderer/src/templates/shared/before-after.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 6,
+      "paletteUtils": 4,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 6
+      "total": 4
     },
     "apps/renderer/src/templates/shared/category-mosaic.tsx": {
       "hexUtils": 0,
@@ -624,14 +544,6 @@
       "inlineHex": 0,
       "inlineRgb": 0,
       "total": 2
-    },
-    "apps/renderer/src/templates/shared/immersive-cta-banner.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
     },
     "apps/renderer/src/templates/shared/inspiration-grid.tsx": {
       "hexUtils": 0,
@@ -657,55 +569,23 @@
       "inlineRgb": 0,
       "total": 2
     },
-    "apps/renderer/src/templates/shared/product-showcase.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/shared/shop-cart.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
     "apps/renderer/src/templates/shared/shop-checkout.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 4,
+      "paletteUtils": 1,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 4
-    },
-    "apps/renderer/src/templates/shared/shop-featured-products.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 2,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 2
+      "total": 1
     },
     "apps/renderer/src/templates/shared/shop-product-detail.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 1,
+      "paletteUtils": 0,
       "inlineHex": 1,
       "inlineRgb": 0,
-      "total": 2
+      "total": 1
     },
     "apps/renderer/src/templates/shared/shop-product-grid.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 3,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 3
-    },
-    "apps/renderer/src/templates/shared/shop-thank-you.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
       "paletteUtils": 2,
@@ -713,23 +593,7 @@
       "inlineRgb": 0,
       "total": 2
     },
-    "apps/renderer/src/templates/shared/social-proof-bar.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/shared/timeline.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
-    },
-    "apps/renderer/src/templates/shared/video-embed.tsx": {
+    "apps/renderer/src/templates/shared/shop-thank-you.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
       "paletteUtils": 1,
@@ -740,26 +604,26 @@
     "apps/renderer/src/templates/tattoo/hero.tsx": {
       "hexUtils": 0,
       "alphaUtils": 0,
-      "paletteUtils": 4,
+      "paletteUtils": 3,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 4
+      "total": 3
     },
     "apps/renderer/src/templates/tourism/download-guides.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 7,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 8
+      "total": 1
     },
     "apps/renderer/src/templates/tourism/gallery.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 4,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 5
+      "total": 1
     },
     "apps/renderer/src/templates/tourism/hero.tsx": {
       "hexUtils": 0,
@@ -772,18 +636,18 @@
     "apps/renderer/src/templates/tourism/season-teaser.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 7,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 8
+      "total": 1
     },
     "apps/renderer/src/templates/tourism/sightseeing-list.tsx": {
       "hexUtils": 0,
       "alphaUtils": 1,
-      "paletteUtils": 7,
+      "paletteUtils": 0,
       "inlineHex": 0,
       "inlineRgb": 0,
-      "total": 8
+      "total": 1
     },
     "apps/renderer/src/templates/tourism/story.tsx": {
       "hexUtils": 0,
@@ -800,30 +664,14 @@
       "inlineHex": 0,
       "inlineRgb": 0,
       "total": 3
-    },
-    "apps/renderer/src/templates/wedding/rsvp.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 5,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 5
-    },
-    "apps/renderer/src/templates/wedding/wedding-menu.tsx": {
-      "hexUtils": 0,
-      "alphaUtils": 0,
-      "paletteUtils": 1,
-      "inlineHex": 0,
-      "inlineRgb": 0,
-      "total": 1
     }
   },
   "totals": {
-    "files": 102,
-    "total": 341,
+    "files": 83,
+    "total": 218,
     "hexUtils": 27,
     "alphaUtils": 142,
-    "paletteUtils": 171,
+    "paletteUtils": 48,
     "inlineHex": 1,
     "inlineRgb": 0
   }

@@ -28,7 +28,7 @@ export function CafeTestimonialsSection({ data }: Props) {
           {testimonials.map((t, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.1 }} className="bg-[var(--token-section-bg-alt)] p-6 rounded-xl" data-edit-collection="testimonials" data-edit-index={i}>
               {t.stars && (
-                <div className="flex gap-0.5 mb-3">{Array.from({ length: t.stars }).map((_, j) => <Star key={j} size={14} className="fill-amber-400 text-amber-400"  data-edit-collection="stars" data-edit-index={j}/>)}</div>
+                <div className="flex gap-0.5 mb-3">{Array.from({ length: t.stars }).map((_, j) => <Star key={j} size={14} className="fill-amber-400 text-[var(--token-accent,theme(colors.amber.400))]"  data-edit-collection="stars" data-edit-index={j}/>)}</div>
               )}
               <p className="text-[color:var(--token-muted)] text-sm leading-relaxed italic">&ldquo;<span data-edit-path="text">{plain(t.text)}</span>&rdquo;</p>
               <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[color:var(--token-card-border)]">

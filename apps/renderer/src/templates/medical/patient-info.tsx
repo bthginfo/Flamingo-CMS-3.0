@@ -71,7 +71,7 @@ function Bold({ header, introText, cards }: Props) {
     <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <div className="mb-10 max-w-3xl">
-          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400" data-edit-path="badgeText">{header.badgeText}</p>}
+          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-success,theme(colors.teal.400))]" data-edit-path="badgeText">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
           {header.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
@@ -81,7 +81,7 @@ function Bold({ header, introText, cards }: Props) {
         {cards.map((card, index) => (
           <article key={`${card.title || 'item'}-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="cards" data-edit-index={index}>
             <IconRows items={[card]} />
-            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="border border-teal-400 px-3 py-1 text-xs font-bold uppercase text-teal-600">{item}</span>)}</div>
+            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="border border-[var(--token-success,theme(colors.teal.400))] px-3 py-1 text-xs font-bold uppercase text-[var(--token-success,theme(colors.teal.600))]">{item}</span>)}</div>
           </article>
         ))}
       </div>

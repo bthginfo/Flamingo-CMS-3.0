@@ -36,7 +36,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
   return (
     <section ref={ref} className="relative overflow-hidden bg-[var(--token-section-bg)]">
       <motion.div style={{ y }} className="absolute inset-x-0 -top-10 h-[calc(100%+80px)]">
-        {image ? <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" style={{ objectPosition: imagePosition }} /> : <div className="h-full bg-zinc-950" />}
+        {image ? <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" style={{ objectPosition: imagePosition }} /> : <div className="h-full bg-[var(--token-section-bg,theme(colors.zinc.950))]" />}
         <div className="absolute inset-0" style={{ background: overlay }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(255,255,255,0.18),transparent_28%)]" />
       </motion.div>

@@ -82,7 +82,7 @@ export function ShopCartSection({ data }: Props) {
           </div>
           {shopBase.startsWith('/demo/') ? (
             <div className="mt-4 text-center">
-              <span className="block w-full py-3 bg-zinc-200 text-[color:var(--token-card-muted,var(--token-muted))] font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
+              <span className="block w-full py-3 bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] text-[color:var(--token-card-muted,var(--token-muted))] font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
               <p className="text-xs text-[color:var(--token-card-body,var(--token-body))] mt-2">Checkout ist in der Demo nicht verfügbar</p>
             </div>
           ) : (

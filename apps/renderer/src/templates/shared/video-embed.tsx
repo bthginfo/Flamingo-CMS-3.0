@@ -59,7 +59,7 @@ export function VideoEmbedSection({ data }: Props) {
       )}
 
       {!embedUrl && videoUrl && (
-        <p className="text-center text-sm text-zinc-400">Ungültiger Video-Link. Bitte einen YouTube- oder Vimeo-Link einfügen.</p>
+        <p className="text-center text-sm text-[var(--token-muted,theme(colors.zinc.400))]">Ungültiger Video-Link. Bitte einen YouTube- oder Vimeo-Link einfügen.</p>
       )}
     </div>
   );

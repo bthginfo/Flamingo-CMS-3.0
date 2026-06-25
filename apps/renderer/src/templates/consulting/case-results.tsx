@@ -37,8 +37,8 @@ export function CaseResultsSection({ data }: Props) {
   return (
     <div ref={ref} className="relative overflow-hidden rounded-2xl bg-[var(--token-section-bg-alt)] p-10 md:p-16">
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500 rounded-full blur-[100px]" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-blue-500 rounded-full blur-[80px]" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--token-accent,theme(colors.amber.500))] rounded-full blur-[100px]" />
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-[var(--token-accent,theme(colors.blue.500))] rounded-full blur-[80px]" />
       </div>
       <div className="relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
@@ -49,7 +49,7 @@ export function CaseResultsSection({ data }: Props) {
           {stats.map((stat, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.15 }} className="text-center" data-edit-collection="stats" data-edit-index={i}>
               {stat.icon && (
-                <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-amber-600/20 flex items-center justify-center text-amber-400">
+                <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-amber-600/20 flex items-center justify-center text-[var(--token-accent,theme(colors.amber.400))]">
                   <DynamicIcon editPath="icon" name={stat.icon} size={20} />
                 </div>
               )}

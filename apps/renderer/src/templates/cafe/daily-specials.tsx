@@ -21,7 +21,7 @@ export function DailySpecialsSection({ data }: Props) {
     <section ref={ref} className="py-16 md:py-24 bg-amber-50/50">
       <div className="max-w-4xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-10">
-          <Sparkles className="mx-auto text-amber-600 mb-3" size={24} />
+          <Sparkles className="mx-auto text-[var(--token-accent,theme(colors.amber.600))] mb-3" size={24} />
           <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
           {subline && <p className="text-[color:var(--token-muted)] mt-2" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
@@ -33,10 +33,10 @@ export function DailySpecialsSection({ data }: Props) {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.1 }}
-              className="flex items-start gap-4 bg-[var(--token-card-bg)] rounded-lg p-5 border border-amber-100 shadow-sm"
+              className="flex items-start gap-4 bg-[var(--token-card-bg)] rounded-lg p-5 border border-[var(--token-accent,theme(colors.amber.100))] shadow-sm"
              data-edit-collection="specials" data-edit-index={i}>
               {item.day && (
-                <span className="text-xs font-bold uppercase text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">{item.day}</span>
+                <span className="text-xs font-bold uppercase text-[var(--token-accent,theme(colors.amber.700))] bg-[var(--token-accent,theme(colors.amber.100))] px-2.5 py-1 rounded-full whitespace-nowrap">{item.day}</span>
               )}
               <div className="flex-1">
                 <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>

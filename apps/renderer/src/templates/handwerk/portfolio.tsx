@@ -66,7 +66,7 @@ export function PortfolioSection({ data }: Props) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/25" />
                 {project.category && (
-                  <span className="absolute top-4 left-4 rounded-full border border-white/25 bg-black/35 px-3 py-1.5 text-xs font-semibold text-white shadow-sm backdrop-blur-md" data-edit-path="category">
+                  <span className="absolute top-4 left-4 rounded-full border border-white/25 bg-black/35 px-3 py-1.5 text-xs font-semibold text-[var(--token-on-dark-heading,white)] shadow-sm backdrop-blur-md" data-edit-path="category">
                     {project.category}
                   </span>
                 )}

@@ -38,7 +38,7 @@ export function CafeHeroSection({ data }: Props) {
           className="max-w-xl"
         >
           {openingHint && (
-            <span className="inline-block text-amber-400 text-sm font-medium mb-4 tracking-wide">{openingHint}</span>
+            <span className="inline-block text-[var(--token-accent,theme(colors.amber.400))] text-sm font-medium mb-4 tracking-wide">{openingHint}</span>
           )}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight" data-edit-path="headline">
             {headline}
@@ -50,7 +50,7 @@ export function CafeHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap gap-4 mt-8">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-amber-700 hover:bg-amber-800 text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all" data-edit-path="label">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-accent,theme(colors.amber.700))] hover:bg-amber-800 text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all" data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}

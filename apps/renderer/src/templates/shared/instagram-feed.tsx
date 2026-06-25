@@ -173,14 +173,14 @@ export function InstagramFeedSection({ data }: Props) {
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {p.mediaType === 'VIDEO' && (
-                <span className="absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold text-white">VIDEO</span>
+                <span className="absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold text-[var(--token-on-dark-heading,white)]">VIDEO</span>
               )}
               {p.mediaType === 'CAROUSEL_ALBUM' && (
-                <span className="absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold text-white">ALBUM</span>
+                <span className="absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold text-[var(--token-on-dark-heading,white)]">ALBUM</span>
               )}
               {showCaptions && p.caption && (
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/35 to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <p className="line-clamp-3 text-xs leading-snug text-white">{trimCaption(p.caption, 180)}</p>
+                  <p className="line-clamp-3 text-xs leading-snug text-[var(--token-on-dark-heading,white)]">{trimCaption(p.caption, 180)}</p>
                 </div>
               )}
             </a>

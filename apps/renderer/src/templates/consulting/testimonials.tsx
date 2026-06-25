@@ -36,7 +36,7 @@ export function ConsultingTestimonialsSection({ data }: Props) {
             {item.rating && (
               <div className="flex gap-0.5 mb-4">
                 {Array.from({ length: item.rating }).map((_, j) => (
-                  <DynamicIcon key={j} name="star" size={14} className="text-amber-400 fill-amber-400"  data-edit-collection="rating" data-edit-index={j}/>
+                  <DynamicIcon key={j} name="star" size={14} className="text-[var(--token-accent,theme(colors.amber.400))] fill-amber-400"  data-edit-collection="rating" data-edit-index={j}/>
                 ))}
               </div>
             )}

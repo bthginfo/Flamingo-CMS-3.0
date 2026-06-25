@@ -59,9 +59,9 @@ export function BeforeAfterStoryProSection({ data }: Props) {
 function ImagePanel({ label, image, prominent }: { label: string; image: string; prominent?: boolean }) {
   return (
     <div className={`relative min-h-[360px] overflow-hidden rounded-3xl ${prominent ? 'shadow-2xl' : 'opacity-85'}`}>
-      {image ? <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-zinc-200" />}
+      {image ? <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-[var(--token-section-bg-alt,theme(colors.zinc.200))]" />}
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
-      <div className="absolute bottom-4 left-4 rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-zinc-950" data-edit-path="label">{label}</div>
+      <div className="absolute bottom-4 left-4 rounded-full bg-[var(--token-card-bg,white)] px-3 py-1 text-xs font-black uppercase text-[var(--token-heading,theme(colors.zinc.950))]" data-edit-path="label">{label}</div>
     </div>
   );
 }

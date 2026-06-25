@@ -179,7 +179,7 @@ export function ShopProductGridSection({ data }: Props) {
                     </div>
                   )}
                   {product.stock === 0 && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
+                    <div className="absolute top-3 left-3 bg-[var(--token-danger-bg,theme(colors.red.500))] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
                   )}
                   {product.comparePriceCents && (
                     <div className="absolute top-3 right-3 bg-[color:var(--token-success-bg,#22c55e)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>

@@ -59,7 +59,7 @@ export function AdditionalLocationsSection({ data }: Props) {
                 className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_80px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_32px_100px_rgba(15,23,42,0.14)]"
               >
                 {location.mapEmbedUrl && (
-                  <div className="relative h-56 overflow-hidden bg-slate-200">
+                  <div className="relative h-56 overflow-hidden bg-[var(--token-section-bg-alt,theme(colors.slate.200))]">
                     <iframe
                       title={location.name || `Standort ${index + 1}`}
                       src={location.mapEmbedUrl}

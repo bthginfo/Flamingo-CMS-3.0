@@ -110,7 +110,7 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
       )}
       <div className="absolute inset-0 bg-[var(--token-section-bg-alt)]" style={{ opacity: overlayOpacity }} />
       <div className="relative z-10 text-center px-6">
-        {badgeText && <p className="text-sm font-black uppercase tracking-[0.5em] text-red-500 mb-6" data-edit-path="badgeText">{badgeText}</p>}
+        {badgeText && <p className="text-sm font-black uppercase tracking-[0.5em] text-[var(--token-danger,theme(colors.red.500))] mb-6" data-edit-path="badgeText">{badgeText}</p>}
         <h1 className="text-6xl sm:text-8xl lg:text-[10rem] font-black text-[color:var(--token-on-dark-heading)] uppercase leading-[0.85] drop-shadow-[0_0_40px_rgba(255,0,0,0.15)]" data-edit-path="headline">
           {headline}
         </h1>

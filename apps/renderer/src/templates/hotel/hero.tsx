@@ -146,7 +146,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
             <div className="flex items-center gap-3 text-sm text-[color:var(--token-body)] mb-8 tracking-wide uppercase">
-              <span className="w-8 h-px bg-gray-300" /><span data-edit-path="badgeText">{badgeText}</span>
+              <span className="w-8 h-px bg-[var(--token-section-bg,theme(colors.gray.300))]" /><span data-edit-path="badgeText">{badgeText}</span>
             </div>
           )}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading)] !leading-[1.1] tracking-tight" data-edit-path="headline">

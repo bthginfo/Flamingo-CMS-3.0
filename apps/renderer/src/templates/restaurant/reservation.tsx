@@ -79,7 +79,7 @@ function ReservationForm({ submitLabel, dark }: { submitLabel: string; dark?: bo
   if (status === 'success') {
     return (
       <div className={`flex flex-col items-center gap-3 rounded-xl p-8 text-center ${dark ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`}>
-        <CheckCircle size={40} className="text-green-500" />
+        <CheckCircle size={40} className="text-[var(--token-success,theme(colors.green.500))]" />
         <p className="text-lg font-semibold">Anfrage gesendet!</p>
         <p className={`text-sm ${dark ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>Wir melden uns zeitnah bei Ihnen.</p>
       </div>
@@ -107,7 +107,7 @@ function ReservationForm({ submitLabel, dark }: { submitLabel: string; dark?: bo
       </div>
       <textarea name="message" rows={2} placeholder="Anmerkungen (optional)" className={inputClass} />
       {status === 'error' && (
-        <p className="flex items-center gap-2 text-sm text-red-500"><AlertCircle size={14} />{errorMsg}</p>
+        <p className="flex items-center gap-2 text-sm text-[var(--token-danger,theme(colors.red.500))]"><AlertCircle size={14} />{errorMsg}</p>
       )}
       <button type="submit" disabled={status === 'loading'} className={`mt-1 rounded-lg px-5 py-3 font-semibold shadow-md transition-all disabled:opacity-60 ${dark ? 'bg-[var(--token-card-bg)] text-[color:var(--token-heading)] hover:bg-[var(--token-section-bg-alt)]' : 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] hover:opacity-90'}`}>
         {status === 'loading' ? 'Wird gesendet...' : submitLabel}

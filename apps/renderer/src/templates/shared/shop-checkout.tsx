@@ -182,7 +182,7 @@ export function ShopCheckoutSection({ data }: Props) {
               {i < step ? <Check size={14} /> : i + 1}
             </div>
             <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-[color:var(--token-card-body,var(--token-body))]'}`}>{s}</span>
-            {i < STEPS.length - 1 && <div className="w-8 h-px bg-zinc-200" />}
+            {i < STEPS.length - 1 && <div className="w-8 h-px bg-[var(--token-section-bg-alt,theme(colors.zinc.200))]" />}
           </div>
         ))}
       </div>
@@ -357,10 +357,10 @@ export function ShopCheckoutSection({ data }: Props) {
             ) : (
               <div className="flex gap-2">
                 <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-[color:var(--token-card-border)] rounded-lg px-3 py-2" />
-                <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-zinc-200 rounded-lg hover:bg-zinc-300 font-medium">Einlösen</button>
+                <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] rounded-lg hover:bg-zinc-300 font-medium">Einlösen</button>
               </div>
             )}
-            {couponError && <p className="text-xs text-red-500 mt-1">{couponError}</p>}
+            {couponError && <p className="text-xs text-[var(--token-danger,theme(colors.red.500))] mt-1">{couponError}</p>}
           </div>
         </div>
       </div>

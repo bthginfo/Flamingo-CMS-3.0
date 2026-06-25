@@ -162,12 +162,12 @@ function SliderWidget({ slide, handleColor, aspectRatio }: { slide: Slide; handl
 
       {/* Labels */}
       {slide.labelBefore && position > 15 && (
-        <span className="absolute top-4 left-4 text-xs font-bold uppercase tracking-wider bg-black/50 text-white px-2 py-1 rounded">
+        <span className="absolute top-4 left-4 text-xs font-bold uppercase tracking-wider bg-black/50 text-[var(--token-on-dark-heading,white)] px-2 py-1 rounded">
           {slide.labelBefore}
         </span>
       )}
       {slide.labelAfter && position < 85 && (
-        <span className="absolute top-4 right-4 text-xs font-bold uppercase tracking-wider bg-black/50 text-white px-2 py-1 rounded">
+        <span className="absolute top-4 right-4 text-xs font-bold uppercase tracking-wider bg-black/50 text-[var(--token-on-dark-heading,white)] px-2 py-1 rounded">
           {slide.labelAfter}
         </span>
       )}

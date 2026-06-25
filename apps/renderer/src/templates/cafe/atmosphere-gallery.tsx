@@ -16,10 +16,10 @@ export function AtmosphereGallerySection({ data }: Props) {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-stone-900">
+    <section ref={ref} className="py-20 md:py-28 bg-[var(--token-section-bg,theme(colors.stone.900))]">
       <div className="max-w-7xl mx-auto px-6">
         {headline && (
-          <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-white text-center mb-12" data-edit-path="headline">
+          <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[var(--token-on-dark-heading,white)] text-center mb-12" data-edit-path="headline">
             {headline}
           </motion.h2>
         )}
@@ -43,7 +43,7 @@ export function AtmosphereGallerySection({ data }: Props) {
               />
               {img.caption && (
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <span className="text-white text-sm font-medium" data-edit-path="caption">{img.caption}</span>
+                  <span className="text-[var(--token-on-dark-heading,white)] text-sm font-medium" data-edit-path="caption">{img.caption}</span>
                 </div>
               )}
             </motion.div>

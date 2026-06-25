@@ -31,7 +31,7 @@ export function ConsultingFaqSection({ data }: Props) {
             initial={{ opacity: 0, y: 10 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.05 }}
-            className="border border-slate-200 rounded-xl overflow-hidden"
+            className="border border-[var(--token-card-border,theme(colors.slate.200))] rounded-xl overflow-hidden"
            data-edit-collection="items" data-edit-index={i}>
             <button
               onClick={() => setOpen(open === i ? null : i)}
