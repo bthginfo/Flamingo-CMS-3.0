@@ -88,7 +88,7 @@ function ReservationForm({ submitLabel, dark }: { submitLabel: string; dark?: bo
 
   const inputClass = dark
     ? 'w-full rounded-lg border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-3 text-sm text-[color:var(--token-on-dark-heading)] placeholder:text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] outline-none focus:border-[color:color-mix(in_srgb,var(--token-card-border)_40%,transparent)]'
-    : 'w-full rounded-lg border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-4 py-3 text-sm text-[color:var(--token-heading)] placeholder:text-[color:var(--token-body)] outline-none focus:border-[var(--token-card-border)] focus:ring-2 focus:ring-brand-primary/10';
+    : 'w-full rounded-lg border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] px-4 py-3 text-sm text-[color:var(--token-input-text)] placeholder:text-[color:var(--token-label)] outline-none focus:border-[var(--token-input-border)] focus:ring-2 focus:ring-brand-primary/10';
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-3">
