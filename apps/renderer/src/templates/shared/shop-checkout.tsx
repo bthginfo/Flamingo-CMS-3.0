@@ -195,19 +195,19 @@ export function ShopCheckoutSection({ data }: Props) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Name *</label>
-                  <input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" placeholder="Max Mustermann" />
+                  <input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="Max Mustermann" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">E-Mail *</label>
-                  <input type="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" placeholder="max@example.de" />
+                  <input type="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="max@example.de" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Telefon</label>
-                  <input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" placeholder="+49 ..." />
+                  <input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="+49 ..." />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Firma</label>
-                  <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
+                  <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
                 </div>
               </div>
               <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
@@ -222,19 +222,19 @@ export function ShopCheckoutSection({ data }: Props) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Straße & Hausnr. *</label>
-                  <input value={form.street} onChange={e => set('street', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
+                  <input value={form.street} onChange={e => set('street', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">PLZ *</label>
-                  <input value={form.zip} onChange={e => set('zip', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
+                  <input value={form.zip} onChange={e => set('zip', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Stadt *</label>
-                  <input value={form.city} onChange={e => set('city', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
+                  <input value={form.city} onChange={e => set('city', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Land</label>
-                  <select value={form.country} onChange={e => set('country', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm bg-[var(--token-card-bg)]">
+                  <select value={form.country} onChange={e => set('country', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm bg-[var(--token-input-bg)]">
                     <option value="DE">Deutschland</option>
                     <option value="AT">Österreich</option>
                     <option value="CH">Schweiz</option>
@@ -292,7 +292,7 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
               <div>
                 <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Bemerkungen (optional)</label>
-                <textarea value={form.customerNotes} onChange={e => set('customerNotes', e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm resize-y" />
+                <textarea value={form.customerNotes} onChange={e => set('customerNotes', e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm resize-y" />
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setStep(1)} className="px-6 py-3 border border-[color:var(--token-card-border)] rounded-xl text-sm">Zurück</button>
@@ -356,7 +356,7 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
             ) : (
               <div className="flex gap-2">
-                <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-[color:var(--token-card-border)] rounded-lg px-3 py-2" />
+                <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-[color:var(--token-input-border)] rounded-lg px-3 py-2" />
                 <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] rounded-lg hover:bg-[var(--token-section-bg,theme(colors.zinc.300))] font-medium">Einlösen</button>
               </div>
             )}

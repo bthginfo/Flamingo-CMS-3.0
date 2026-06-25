@@ -160,7 +160,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {/* Variant options */}
           {product.variantOptions?.map(opt => (
             <div key={opt.name} className="mb-5">
-              <label className="text-sm font-medium text-[color:var(--token-card-muted,var(--token-muted))] mb-2 block" data-edit-path="name">{opt.name}</label>
+              <label className="text-sm font-medium text-[color:var(--token-label)] mb-2 block" data-edit-path="name">{opt.name}</label>
               <div className="flex flex-wrap gap-2">
                 {opt.values.map(val => {
                   const matchVariant = variants.find(v => v.name.includes(val));

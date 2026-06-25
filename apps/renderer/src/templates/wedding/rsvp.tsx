@@ -65,31 +65,31 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
           <form onSubmit={handleSubmit} className="space-y-6">
             {status === 'error' && <p className="text-sm text-[var(--token-danger)] flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-body)] mb-2">Name(n)</label>
-              <input name="name" type="text" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border)] focus:border-[color:var(--token-card-border)] outline-none bg-transparent text-[color:var(--token-heading)]" placeholder="Vor- und Nachname" />
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Name(n)</label>
+              <input name="name" type="text" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" placeholder="Vor- und Nachname" />
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-body)] mb-2">E-Mail</label>
-              <input name="email" type="email" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border)] focus:border-[color:var(--token-card-border)] outline-none bg-transparent text-[color:var(--token-heading)]" placeholder="eure@email.de" />
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">E-Mail</label>
+              <input name="email" type="email" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" placeholder="eure@email.de" />
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-body)] mb-2">Zusage</label>
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Zusage</label>
               <div className="flex gap-6 py-2">
                 <label className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]"><input type="radio" name="attending" value="yes" defaultChecked className="accent-[var(--token-icon)]" /> Wir kommen</label>
                 <label className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]"><input type="radio" name="attending" value="no" className="accent-[var(--token-icon)]" /> Leider nicht</label>
               </div>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-body)] mb-2">Anzahl Personen</label>
-              <input name="guestCount" type="number" min={1} max={10} defaultValue={1} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border)] focus:border-[color:var(--token-card-border)] outline-none bg-transparent text-[color:var(--token-heading)]" />
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Anzahl Personen</label>
+              <input name="guestCount" type="number" min={1} max={10} defaultValue={1} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" />
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-body)] mb-2">Essenswünsche / Allergien</label>
-              <textarea name="dietary" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border)] focus:border-[color:var(--token-card-border)] outline-none bg-transparent text-[color:var(--token-heading)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Essenswünsche / Allergien</label>
+              <textarea name="dietary" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-body)] mb-2">Nachricht (optional)</label>
-              <textarea name="comment" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border)] focus:border-[color:var(--token-card-border)] outline-none bg-transparent text-[color:var(--token-heading)] resize-none" placeholder="Eure Nachricht an uns..." />
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Nachricht (optional)</label>
+              <textarea name="comment" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="Eure Nachricht an uns..." />
             </div>
             <button type="submit" disabled={status === 'loading'} className="w-full py-3 border border-[color:var(--token-card-border)] text-[color:var(--token-heading)] text-sm uppercase tracking-[0.2em] hover:bg-[var(--token-section-bg-alt)] hover:text-[color:var(--token-on-dark-heading)] transition-colors mt-8 disabled:opacity-50">
               {status === 'loading' ? 'Wird gesendet…' : 'Zusagen'}

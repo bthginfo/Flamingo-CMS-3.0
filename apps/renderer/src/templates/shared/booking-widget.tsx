@@ -34,7 +34,7 @@ const PREVIEW_CONFIG: BookingConfig = {
   ],
 };
 
-const FORM_CONTROL_CLASS = 'rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg,#fff)] px-4 py-3 text-sm text-[color:var(--token-body,#09090b)] outline-none placeholder:text-[color:var(--token-muted,rgba(9,9,11,.45))] focus:border-[var(--token-btn-bg)]';
+const FORM_CONTROL_CLASS = 'rounded-xl border border-[var(--token-input-border)] bg-[var(--token-input-bg)] px-4 py-3 text-sm text-[color:var(--token-input-text)] outline-none placeholder:text-[color:var(--token-label)] focus:border-[var(--token-btn-bg)]';
 const FORM_LABEL_CLASS = 'grid gap-1 text-sm font-semibold text-[color:var(--token-body,#09090b)]';
 const FORM_MUTED_CLASS = 'text-[color:var(--token-muted,rgba(9,9,11,.55))]';
 const BOOKING_NOTICE_CLASS = 'rounded-2xl p-5 text-sm';

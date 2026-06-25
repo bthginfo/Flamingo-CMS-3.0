@@ -101,7 +101,7 @@ export function ShopProductGridSection({ data }: Props) {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Produkt suchen…"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-section-bg-alt)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--token-card-border)] focus:bg-[var(--token-card-bg)] transition"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--token-card-border)] focus:bg-[var(--token-card-bg)] transition"
             />
           </div>
         )}

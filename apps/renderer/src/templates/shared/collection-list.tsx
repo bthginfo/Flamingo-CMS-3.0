@@ -78,7 +78,7 @@ export function CollectionListSection({ data }: Props) {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as SortOption)}
-              className="border border-[color:var(--token-card-border)] rounded-lg px-3 py-1.5 text-sm bg-[var(--token-card-bg)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="border border-[color:var(--token-input-border)] rounded-lg px-3 py-1.5 text-sm bg-[var(--token-input-bg)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               {Object.entries(SORT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
