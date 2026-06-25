@@ -21,6 +21,7 @@
 
 const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
+const { darkTokens } = require('./_lib/theme.cjs');
 
 const PAT = '910915ec2186b9d044b5ea5f67becabead7291f28c9ef61c384a3d376043a1d1';
 
@@ -39,6 +40,7 @@ const C = {
 };
 
 const darkSectionTokens = {
+  ...darkTokens({ accent: '#F2C17B', btnBg: C.cream, btnText: C.espresso }),
   '--token-heading': '#FFFFFF',
   '--token-subheading': 'rgba(255,255,255,0.9)',
   '--token-body': 'rgba(255,255,255,0.9)',

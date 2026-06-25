@@ -1,5 +1,6 @@
 const { randomUUID } = require('node:crypto');
 const { run } = require('./_lib/runner.cjs');
+const { darkTokens } = require('./_lib/theme.cjs');
 
 /**
  * Tenant: hotel
@@ -35,6 +36,7 @@ function p(text) { return `<p>${text}</p>`; }
 
 function darkSectionTokens(bg = C.deep) {
   return {
+    ...darkTokens({ accent: C.gold, btnBg: C.gold, btnText: C.deep }),
     '--token-section-bg': bg,
     '--token-section-bg-alt': bg,
     '--token-card-bg': 'rgba(19,36,31,0.72)',
