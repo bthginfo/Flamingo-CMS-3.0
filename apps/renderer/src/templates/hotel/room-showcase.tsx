@@ -31,7 +31,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -42,7 +42,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-semibold text-[color:var(--token-price,var(--token-heading))]" data-edit-path="priceLabel">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-semibold text-[color:var(--token-price)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs text-[color:var(--token-muted)]">
@@ -81,7 +81,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
             <div className="p-6">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-lg font-light text-[color:var(--token-heading)]" data-edit-path="name">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-light text-[color:var(--token-price,var(--token-muted))]" data-edit-path="priceLabel">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-light text-[color:var(--token-price)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs font-light text-[color:var(--token-muted)]">
@@ -120,7 +120,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="name">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-black text-[color:var(--token-price,var(--token-heading))]" data-edit-path="priceLabel">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-black text-[color:var(--token-price)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs font-bold text-[color:var(--token-muted)]">

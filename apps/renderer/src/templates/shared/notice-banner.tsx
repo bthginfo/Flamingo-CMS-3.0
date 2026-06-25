@@ -12,10 +12,10 @@ export function NoticeBannerSection({ data }: Props) {
   const text = (data.text as string) || '';
   const bgColor = 'var(--token-section-bg, transparent)';
   const textColor = 'var(--token-body, inherit)';
-  const btnBg = 'var(--token-btn-bg, #111827)';
-  const btnText = 'var(--token-btn-text, #ffffff)';
-  const secondaryText = 'var(--token-btn-secondary-text, var(--token-btn-bg, currentColor))';
-  const secondaryBorder = 'var(--token-btn-secondary-border, var(--token-card-border, currentColor))';
+  const btnBg = 'var(--token-btn-bg)';
+  const btnText = 'var(--token-btn-text)';
+  const secondaryText = 'var(--token-btn-secondary-text)';
+  const secondaryBorder = 'var(--token-btn-secondary-border)';
   const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
 

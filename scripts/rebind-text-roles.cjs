@@ -21,6 +21,11 @@ const DRY = process.argv.includes('--dry');
 const ROLES = [
   { token: '--token-price', paths: ['price', 'priceLabel', 'priceValue', 'priceFrom'] },
   { token: '--token-eyebrow', paths: ['eyebrow', 'kicker', 'overline'] },
+  // Icon roles: a Check icon is always a checkmark, a Star always a rating
+  // star — so binding their colour to the dedicated slot is always correct.
+  { token: '--token-check', tags: ['Check', 'CheckCircle', 'CheckCircle2', 'BadgeCheck', 'CircleCheck', 'CheckCheck'] },
+  { token: '--token-rating-star', tags: ['Star', 'StarHalf'] },
+  { token: '--token-quote', tags: ['Quote'] },
   // Text-only badges (coloured uppercase labels) bind to the dedicated badge
   // TEXT slot. Pill badges that carry a background use `.section-badge`, which
   // is already wired to --token-badge-* by the renderer — so those tags are
@@ -84,12 +89,26 @@ for (const file of walk(TEMPLATES)) {
   let fileN = 0;
   for (const role of ROLES) {
     if (role.onlyFiles && !role.onlyFiles.has(file)) continue;
-    const pathAlt = role.paths.join('|');
-    // Match an opening tag that carries data-edit-(path|rich)="<role path>".
-    const tagRe = new RegExp(`<[a-zA-Z][^>]*data-edit-(?:path|rich)=["'](?:${pathAlt})["'][^>]*>`, 'g');
+    // Match the element that carries the role: either a JSX tag with the role's
+    // data-edit-path, or a specific element/icon tag name.
+    const tagRe = role.tags
+      ? new RegExp(`<(?:${role.tags.join('|')})\\b[^>]*?/?>`, 'g')
+      : new RegExp(`<[a-zA-Z][^>]*data-edit-(?:path|rich)=["'](?:${role.paths.join('|')})["'][^>]*>`, 'g');
     src = src.replace(tagRe, (tag) => {
       if (role.excludeIfTagHas && tag.includes(role.excludeIfTagHas)) return tag;
-      const { out, n } = rebindTag(tag, role.token);
+      let { out, n } = rebindTag(tag, role.token);
+      // Icons that carry no own colour class (they inherit the parent text
+      // colour, with or without fill="currentColor") get one injected so the
+      // role becomes editable — falls back to inherit when the slot is unset.
+      // Check/Star icons are semantically unambiguous, so this is always right.
+      const hasOwnColour = /text-\[(?:color:)?var\(/.test(tag) || /style=\{\{[^}]*color/.test(tag);
+      if (n === 0 && role.tags && !hasOwnColour) {
+        const cls = `text-[color:var(${role.token})]`;
+        if (/className=["']/.test(out)) out = out.replace(/className=["']/, (m) => `${m}${cls} `);
+        else out = out.replace(/<(\w+)\b/, (m, t) => `<${t} className="${cls}"`);
+        n = 1; fileN += 1; rewrites += 1;
+        return out;
+      }
       if (n > 0) { fileN += n; rewrites += n; }
       else if (!/text-\[(?:color:)?var\(/.test(tag)) noColorTags++;
       return out;

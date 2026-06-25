@@ -135,7 +135,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
               className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--token-on-dark-muted)]">
               {trustItems.map((item) => (
                 <span key={item} className="flex items-center gap-2">
-                  <CheckCircle size={14} className="text-[color:var(--token-eyebrow)]" />{item}
+                  <CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}
                 </span>
               ))}
             </motion.div>
@@ -256,13 +256,13 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
               <a data-edit-link="primaryCta" href={primaryCta.href || '#'}
-                className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_20%,transparent)] w-full sm:w-auto">
+                className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow)_20%,transparent)] w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta.label && (
               <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
-                className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_34%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border)] transition-colors shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_10%,transparent)]" data-edit-path="label">
+                className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_34%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border)] transition-colors shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow)_10%,transparent)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

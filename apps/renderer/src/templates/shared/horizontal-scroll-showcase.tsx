@@ -20,7 +20,7 @@ export function HorizontalScrollShowcaseSection({ data }: Props) {
   const panels = (data.panels as Panel[]) || [];
   const bgColor = 'var(--token-section-bg, transparent)';
   const textColor = 'var(--token-body, inherit)';
-  const dotColor = 'var(--token-accent, var(--token-icon))';
+  const dotColor = 'var(--token-accent)';
   const overlayColor = 'var(--token-image-overlay, rgba(0,0,0,0.45))';
   const panelHeight = (data.panelHeight as string) || 'full'; // full | compact
 

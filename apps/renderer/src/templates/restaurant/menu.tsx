@@ -127,7 +127,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
             <div>
               <div className="flex items-start justify-between gap-4">
                 <h4 className={`font-semibold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{item.name || ''}</h4>
-                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[color:var(--token-price,var(--token-eyebrow))]' : 'text-[color:var(--token-price,var(--token-heading))]'}`} data-edit-path="price">{item.price}</p>}
+                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[color:var(--token-price)]' : 'text-[color:var(--token-price)]'}`} data-edit-path="price">{item.price}</p>}
               </div>
               {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">

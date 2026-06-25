@@ -18,8 +18,8 @@ export function VerticalTimelineSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const steps = (data.steps as Step[]) || [];
-  const accentColor = 'var(--token-accent, var(--token-icon, #18181b))';
-  const lineColor = 'var(--token-divider, #e4e7eb)';
+  const accentColor = 'var(--token-accent)';
+  const lineColor = 'var(--token-divider)';
   const bgColor = 'var(--token-section-bg, transparent)';
   const textColor = 'var(--token-body, inherit)';
 
@@ -79,7 +79,7 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
       {/* Dot */}
       <div
         className="absolute left-4 md:left-6 w-4 h-4 rounded-full border-[3px] bg-[var(--token-card-bg,#fff)] transition-colors duration-500"
-        style={{ borderColor: isInView ? accentColor : 'var(--token-divider, #d4d4d8)' }}
+        style={{ borderColor: isInView ? accentColor : 'var(--token-divider)' }}
       />
 
       {/* Content */}

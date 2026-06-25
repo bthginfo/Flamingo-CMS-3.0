@@ -14,7 +14,7 @@ export function baseHeader(data: Record<string, unknown>, headline: string, badg
 export function SectionHeader({ headline, subline, badgeText }: { headline: string; subline: string; badgeText: string }) {
   return (
     <div className="mb-10 max-w-3xl">
-      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text,var(--token-muted))]" data-edit-path="badgeText">{badgeText}</p>}
+      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-3xl font-[700] text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
     </div>

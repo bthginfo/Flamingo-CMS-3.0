@@ -26,7 +26,7 @@ export function MarketReportSection({ data }: Props) {
       <div className="mx-auto max-w-7xl px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-14">
           {region && (
-            <span className="text-sm font-semibold uppercase tracking-wider text-[color:var(--token-eyebrow,var(--token-accent))]">
+            <span className="text-sm font-semibold uppercase tracking-wider text-[color:var(--token-eyebrow)]">
               {region}
             </span>
           )}
@@ -52,14 +52,14 @@ export function MarketReportSection({ data }: Props) {
                 className="rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm shadow-black/5"
               >
                 <Icon size={20} className="mb-3 text-[color:var(--token-icon)]" />
-                <p className="text-3xl font-bold text-[color:var(--token-stat-value,var(--token-heading))]" data-edit-path="value">
+                <p className="text-3xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">
                   {stat.value}
                 </p>
                 <p className="mt-1 text-sm text-[color:var(--token-muted)]" data-edit-path="label">
                   {stat.label}
                 </p>
                 {stat.trend && (
-                  <span className="mt-3 inline-block rounded-full bg-[color:color-mix(in_srgb,var(--token-accent,var(--token-icon))_12%,transparent)] px-2.5 py-1 text-xs font-semibold text-[color:var(--token-accent,var(--token-icon))]">
+                  <span className="mt-3 inline-block rounded-full bg-[color:color-mix(in_srgb,var(--token-accent)_12%,transparent)] px-2.5 py-1 text-xs font-semibold text-[color:var(--token-accent)]">
                     {stat.trend}
                   </span>
                 )}

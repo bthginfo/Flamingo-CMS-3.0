@@ -44,17 +44,17 @@ export function DeliveryTimelineSection({ data }: Props) {
               className="text-center relative"
              data-edit-collection="steps" data-edit-index={i}>
               {/* Step circle */}
-              <div className="relative mx-auto w-24 h-24 rounded-full bg-[color-mix(in_srgb,var(--token-card-icon,var(--token-icon))_5%,transparent)] border-2 border-[color-mix(in_srgb,var(--token-card-icon,var(--token-icon))_20%,transparent)] flex flex-col items-center justify-center mb-5">
+              <div className="relative mx-auto w-24 h-24 rounded-full bg-[color-mix(in_srgb,var(--token-card-icon)_5%,transparent)] border-2 border-[color-mix(in_srgb,var(--token-card-icon)_20%,transparent)] flex flex-col items-center justify-center mb-5">
                 {step.icon ? (
-                  <DynamicIcon editPath="icon" name={step.icon} size={28} className="text-[color:var(--token-card-icon,var(--token-icon))]" />
+                  <DynamicIcon editPath="icon" name={step.icon} size={28} className="text-[color:var(--token-card-icon)]" />
                 ) : (
-                  <span className="text-2xl font-bold text-[color:var(--token-card-icon,var(--token-icon))]">{step.number || i + 1}</span>
+                  <span className="text-2xl font-bold text-[color:var(--token-card-icon)]">{step.number || i + 1}</span>
                 )}
               </div>
 
               {/* Arrow between steps (desktop) */}
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 -right-2 text-[color-mix(in_srgb,var(--token-card-icon,var(--token-icon))_30%,transparent)] text-xl">→</div>
+                <div className="hidden lg:block absolute top-12 -right-2 text-[color-mix(in_srgb,var(--token-card-icon)_30%,transparent)] text-xl">→</div>
               )}
 
               <h3 className="font-display font-semibold text-lg text-[color:var(--token-card-body,var(--token-body))] mb-2" data-edit-path="title">{step.title}</h3>

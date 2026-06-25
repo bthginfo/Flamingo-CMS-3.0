@@ -39,7 +39,7 @@ export function ComparisonTableSection({ data }: Props) {
                 Vergleich
               </th>
               {columns.map((col, i) => (
-                <th key={i} className={`border-b border-r last:border-r-0 border-[color:var(--token-card-border)] px-7 py-6 text-center text-sm font-extrabold md:px-8 ${i === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent,#f59e0b)_15%,var(--token-card-bg,#fff))] text-[color:var(--token-accent)]' : 'bg-[color:var(--token-card-bg)] text-[color:var(--token-card-heading,var(--token-heading))]'}`} data-edit-collection="columns" data-edit-index={i}>
+                <th key={i} className={`border-b border-r last:border-r-0 border-[color:var(--token-card-border)] px-7 py-6 text-center text-sm font-extrabold md:px-8 ${i === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_15%,var(--token-card-bg,#fff))] text-[color:var(--token-accent)]' : 'bg-[color:var(--token-card-bg)] text-[color:var(--token-card-heading,var(--token-heading))]'}`} data-edit-collection="columns" data-edit-index={i}>
                   {col.label || `Option ${i + 1}`}
                 </th>
               ))}
@@ -50,8 +50,8 @@ export function ComparisonTableSection({ data }: Props) {
               <tr key={ri} className="group transition-colors" data-edit-collection="rows" data-edit-index={ri}>
                 <td className="border-b border-r border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg)] px-7 py-6 font-bold leading-relaxed text-[color:var(--token-card-heading,var(--token-heading))] transition group-last:border-b-0 group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))] md:px-8">{row.feature || `Kriterium ${ri + 1}`}</td>
                 {row.values.map((val, ci) => (
-                  <td key={ci} className={`border-b border-r last:border-r-0 border-[color:var(--token-card-border)] px-7 py-6 text-center transition group-last:border-b-0 md:px-8 ${ci === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent,#f59e0b)_9%,var(--token-card-bg,#fff))]' : 'bg-[color:var(--token-card-bg)] group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))]'}`} data-edit-collection="values" data-edit-index={ci}>
-                    {val === 'true' ? <Check size={18} className="mx-auto text-[color:var(--token-check,var(--token-accent))]" /> : val === 'false' ? <X size={18} className="mx-auto text-[color:var(--token-card-muted,var(--token-muted))]" /> : <span className="font-semibold leading-relaxed text-[color:var(--token-card-body,var(--token-body))]">{val || '-'}</span>}
+                  <td key={ci} className={`border-b border-r last:border-r-0 border-[color:var(--token-card-border)] px-7 py-6 text-center transition group-last:border-b-0 md:px-8 ${ci === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_9%,var(--token-card-bg,#fff))]' : 'bg-[color:var(--token-card-bg)] group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))]'}`} data-edit-collection="values" data-edit-index={ci}>
+                    {val === 'true' ? <Check size={18} className="mx-auto text-[color:var(--token-check)]" /> : val === 'false' ? <X size={18} className="mx-auto text-[color:var(--token-card-muted,var(--token-muted))]" /> : <span className="font-semibold leading-relaxed text-[color:var(--token-card-body,var(--token-body))]">{val || '-'}</span>}
                   </td>
                 ))}
               </tr>

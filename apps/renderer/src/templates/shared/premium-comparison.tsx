@@ -34,9 +34,9 @@ export function PremiumComparisonSection({ data }: Props) {
         <div className="grid min-w-[720px]" style={{ gridTemplateColumns: `minmax(180px,1.2fr) repeat(${columns.length}, minmax(140px,1fr))` }}>
           <div className="border-b border-[var(--token-card-border)] p-5" />
           {columns.map((col, i) => (
-            <div key={i} className={`border-b border-l border-[var(--token-card-border)] p-5 text-center ${i === highlightCol ? 'bg-[var(--token-icon)] text-[color:var(--token-btn-text,#fff)]' : ''}`} data-edit-collection="columns" data-edit-index={i}>
+            <div key={i} className={`border-b border-l border-[var(--token-card-border)] p-5 text-center ${i === highlightCol ? 'bg-[var(--token-icon)] text-[color:var(--token-btn-text)]' : ''}`} data-edit-collection="columns" data-edit-index={i}>
               <div className="font-bold" data-edit-path="label">{col.label}</div>
-              {col.note && <div className={`mt-1 text-xs ${i === highlightCol ? 'text-[color:color-mix(in_srgb,var(--token-btn-text,#fff)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-path="note">{col.note}</div>}
+              {col.note && <div className={`mt-1 text-xs ${i === highlightCol ? 'text-[color:color-mix(in_srgb,var(--token-btn-text)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-path="note">{col.note}</div>}
             </div>
           ))}
           {rows.map((row, ri) => (
@@ -46,7 +46,7 @@ export function PremiumComparisonSection({ data }: Props) {
                 const value = normalizeValue(row.values[ci]);
                 return (
                   <div key={`${ri}-${ci}`} className={`flex items-center justify-center border-b border-l border-[var(--token-card-border)] p-5 text-center text-sm ${ci === highlightCol ? 'bg-[color-mix(in_srgb,var(--token-icon)_5%,transparent)]' : ''}`}>
-                    {value === true ? <Check className="text-[color:var(--token-icon)]" size={19} /> : value === false ? <Minus className="text-[color:var(--token-muted)]" size={19} /> : <span data-edit-path="value">{value}</span>}
+                    {value === true ? <Check className="text-[color:var(--token-check)]" size={19} /> : value === false ? <Minus className="text-[color:var(--token-muted)]" size={19} /> : <span data-edit-path="value">{value}</span>}
                   </div>
                 );
               })}

@@ -51,7 +51,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
             </div>
             <div className="p-5 text-center">
               <h4 className="font-semibold text-lg text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-              <p className="text-sm text-[var(--token-accent,theme(colors.amber.700))] font-medium mt-0.5" data-edit-path="role">{m.role}</p>
+              <p className="text-sm text-[var(--token-accent)] font-medium mt-0.5" data-edit-path="role">{m.role}</p>
             </div>
           </motion.div>
         ))}
@@ -110,7 +110,7 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <h4 className="font-bold text-[color:var(--token-on-dark-heading)] text-lg" data-edit-path="name">{m.name}</h4>
-              <p className="text-[var(--token-accent,theme(colors.amber.400))] text-sm font-medium" data-edit-path="role">{m.role}</p>
+              <p className="text-[var(--token-accent)] text-sm font-medium" data-edit-path="role">{m.role}</p>
               {m.bio && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-xs mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
             </div>
           </motion.div>

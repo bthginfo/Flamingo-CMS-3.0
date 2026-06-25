@@ -44,7 +44,7 @@ export function MenuCardSection({ data }: Props) {
       <div className="text-center max-w-3xl mx-auto mb-10">
         {(badgeText || isPreview) && (
           <span
-            className="inline-block text-xs font-semibold tracking-wider uppercase mb-3 px-3 py-1 rounded-full bg-[color:var(--token-badge-bg,rgba(220,38,38,0.1))] text-[color:var(--token-badge-text,#dc2626)]"
+            className="inline-block text-xs font-semibold tracking-wider uppercase mb-3 px-3 py-1 rounded-full bg-[color:var(--token-badge-bg)] text-[color:var(--token-badge-text)]"
             data-edit-path="badgeText"
           >
             {badgeText || (isPreview ? 'Badge' : '')}
@@ -77,8 +77,8 @@ export function MenuCardSection({ data }: Props) {
               onClick={() => setActiveTab(idx)}
               className={`px-5 py-2 text-sm font-medium rounded-full border transition-all duration-200 ${
                 activeTab === idx
-                  ? 'bg-[color:var(--token-btn-bg,#0f172a)] text-[color:var(--token-btn-text,#fff)] border-transparent shadow-md'
-                  : 'bg-[color:var(--token-card-bg,#fff)] text-[color:var(--token-card-body,#475569)] border-[color:var(--token-card-border,rgba(15,23,42,0.08))] hover:border-[color:var(--token-accent,#dc2626)]/30'
+                  ? 'bg-[color:var(--token-btn-bg)] text-[color:var(--token-btn-text)] border-transparent shadow-md'
+                  : 'bg-[color:var(--token-card-bg,#fff)] text-[color:var(--token-card-body,#475569)] border-[color:var(--token-card-border)] hover:border-[color:var(--token-accent)]/30'
               }`}
               data-edit-collection="categories"
               data-edit-index={idx}
@@ -107,7 +107,7 @@ export function MenuCardSection({ data }: Props) {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="relative flex gap-4 rounded-xl border border-[color:var(--token-card-border,rgba(15,23,42,0.08))] bg-[color:var(--token-card-bg,#fff)] p-4 shadow-sm transition-shadow hover:shadow-md"
+              className="relative flex gap-4 rounded-xl border border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg,#fff)] p-4 shadow-sm transition-shadow hover:shadow-md"
               data-edit-collection="items"
               data-edit-index={i}
             >
@@ -135,7 +135,7 @@ export function MenuCardSection({ data }: Props) {
                   </h3>
                   {dish.price && (
                     <span
-                      className="flex-shrink-0 text-sm font-bold text-[color:var(--token-price,var(--token-accent,#dc2626))]"
+                      className="flex-shrink-0 text-sm font-bold text-[color:var(--token-price)]"
                       data-edit-path="price"
                     >
                       {dish.price}
@@ -160,7 +160,7 @@ export function MenuCardSection({ data }: Props) {
               {/* Badge */}
               {dish.badge && (
                 <span
-                  className="absolute -top-2 -right-2 rounded-full bg-[color:var(--token-card-badge-bg,rgba(220,38,38,0.1))] px-2 py-0.5 text-[10px] font-bold text-[color:var(--token-card-badge-text,#dc2626)]"
+                  className="absolute -top-2 -right-2 rounded-full bg-[color:var(--token-card-badge-bg)] px-2 py-0.5 text-[10px] font-bold text-[color:var(--token-card-badge-text)]"
                   data-edit-path="badge"
                 >
                   {dish.badge}

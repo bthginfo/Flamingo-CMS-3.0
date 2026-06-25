@@ -99,7 +99,7 @@ function ProcessBold({ headline, badgeText, steps }: PProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {steps.map((step, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="relative border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))]" data-edit-collection="steps" data-edit-index={i}>
+            className="relative border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow)]" data-edit-collection="steps" data-edit-index={i}>
             <div className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center bg-[var(--token-accent)] text-sm font-black text-[color:var(--token-badge-text)]">
               {i + 1}
             </div>

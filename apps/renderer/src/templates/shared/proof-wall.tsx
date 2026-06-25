@@ -48,7 +48,7 @@ export function ProofWallSection({ data }: Props) {
                     <div className="font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="name">{review.name || review.author || ''}</div>
                     {(review.context || review.meta) && <div className="text-xs text-[color:var(--token-muted)]">{review.context || review.meta}</div>}
                   </div>
-                  <div className="flex text-[color:var(--token-rating-star)]">{Array.from({ length: review.rating || 5 }).slice(0, 5).map((_, i) => <Star key={i} size={14} fill="currentColor"  data-edit-collection="rating" data-edit-index={i}/>)}</div>
+                  <div className="flex text-[color:var(--token-rating-star)]">{Array.from({ length: review.rating || 5 }).slice(0, 5).map((_, i) => <Star className="text-[color:var(--token-rating-star)]" key={i} size={14} fill="currentColor"  data-edit-collection="rating" data-edit-index={i}/>)}</div>
                 </div>
               </article>
             ))}
@@ -57,7 +57,7 @@ export function ProofWallSection({ data }: Props) {
             <div className="mt-5 grid gap-2 sm:grid-cols-3">
               {logos.map((logo, index) => (
                 <div key={index} className="flex min-h-16 items-center justify-center rounded-xl border border-[var(--token-card-border)] px-3 text-center text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-collection="logos" data-edit-index={index}>
-                  {logo.image ? <img data-edit-image="image" src={logo.image} alt={logo.name} className="max-h-8 max-w-full object-contain" /> : <span className="inline-flex items-center gap-2"><CheckCircle2 size={14} /><span data-edit-path="name">{logo.name}</span></span>}
+                  {logo.image ? <img data-edit-image="image" src={logo.image} alt={logo.name} className="max-h-8 max-w-full object-contain" /> : <span className="inline-flex items-center gap-2"><CheckCircle2 className="text-[color:var(--token-check)]" size={14} /><span data-edit-path="name">{logo.name}</span></span>}
                 </div>
               ))}
             </div>

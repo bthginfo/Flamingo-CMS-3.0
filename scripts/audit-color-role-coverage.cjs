@@ -24,25 +24,57 @@ const TEMPLATES = path.join(ROOT, 'apps/renderer/src/templates');
 const STRICT = process.argv.includes('--strict');
 const roleFilter = (() => { const i = process.argv.indexOf('--role'); return i >= 0 ? process.argv[i + 1] : null; })();
 
-// role -> { dedicated tokens, signals that prove the role is rendered }
+// Roles enforced by --strict. `input` / `label` are reported but NOT yet gated:
+// form fields are theme-dependent (dark forms need light inputs), so binding
+// them to the flat input slots requires per-form visual verification first.
+const SOFT_ROLES = new Set(['input', 'label']);
+
+// role -> dedicated tokens + signals that prove the role is rendered.
+//   paths:  data-edit-path / data-edit-rich field names (content roles)
+//   tags:   JSX element / lucide-icon names rendered for the role (visual roles)
+//   glyphs: literal characters/entities that denote the role
+//   cssClass: a class the renderer already wires to the role's tokens
 const ROLES = {
   badge: {
     tokens: ['--token-badge-bg', '--token-badge-text', '--token-badge-border'],
-    // 'tag'/'pill' deliberately excluded: those are filter/category UI controls,
-    // not content badges, and are correctly bound to card/heading tokens.
+    // 'tag'/'pill' excluded: filter/category UI, not content badges.
     paths: ['badgeText', 'badge', 'badgeLabel'],
+    cssClass: 'section-badge',
   },
   eyebrow: {
     tokens: ['--token-eyebrow'],
     paths: ['eyebrow', 'kicker', 'overline'],
   },
   price: {
-    tokens: ['--token-price'],
-    paths: ['price', 'priceLabel', 'priceValue', 'priceFrom'],
+    tokens: ['--token-price', '--token-price-strikethrough'],
+    paths: ['price', 'priceLabel', 'priceValue', 'priceFrom', 'priceStrike', 'comparePrice'],
   },
   statValue: {
     tokens: ['--token-stat-value'],
     paths: ['statValue', 'statNumber', 'metricValue'],
+  },
+  check: {
+    tokens: ['--token-check'],
+    tags: ['Check', 'CheckCircle', 'CheckCircle2', 'BadgeCheck', 'CircleCheck', 'CheckCheck'],
+  },
+  ratingStar: {
+    tokens: ['--token-rating-star'],
+    // Star icons in review/rating contexts. Binding a star to the star slot is
+    // correct even when a star is decorative, so this is safe to flag.
+    tags: ['Star', 'StarHalf'],
+  },
+  quoteMark: {
+    tokens: ['--token-quote'],
+    tags: ['Quote', 'QuoteIcon'],
+    glyphs: ['&ldquo;', '&rdquo;', '&#8220;', '“', '”'],
+  },
+  input: {
+    tokens: ['--token-input-bg', '--token-input-border', '--token-input-text'],
+    tags: ['input', 'textarea', 'select'],
+  },
+  label: {
+    tokens: ['--token-label'],
+    tags: ['label'],
   },
 };
 
@@ -56,21 +88,24 @@ function walk(dir) {
   return out;
 }
 
-// Does the template RENDER this role? Strong signal: data-edit-path="<path>".
-// Weaker signal: a JSX element clearly tied to the role variable.
+// Does the template RENDER this role?
 function rendersRole(src, role) {
-  for (const p of role.paths) {
+  for (const p of role.paths || []) {
     if (new RegExp(`data-edit-path=["']${p}["']`).test(src)) return p;
     if (new RegExp(`data-edit-rich=["']${p}["']`).test(src)) return p;
+  }
+  for (const t of role.tags || []) {
+    if (new RegExp(`<${t}\\b`).test(src)) return `<${t}>`;
+  }
+  for (const g of role.glyphs || []) {
+    if (src.includes(g)) return g;
   }
   return null;
 }
 
-function boundToRole(src, roleName, role) {
-  // The canonical `.section-badge` element is bound to --token-badge-* via the
-  // per-section CSS rule injected by section-renderer.tsx (with !important), so
-  // it counts as bound even though the .tsx never names the token directly.
-  if (roleName === 'badge' && /className=["'][^"']*\bsection-badge\b/.test(src)) return true;
+function boundToRole(src, role) {
+  // A class the renderer already wires to the role's tokens counts as bound.
+  if (role.cssClass && new RegExp(`className=["'][^"']*\\b${role.cssClass}\\b`).test(src)) return true;
   return role.tokens.some((t) => src.includes(`var(${t}`) || src.includes(t));
 }
 
@@ -85,7 +120,7 @@ for (const file of files) {
     if (!signal) continue;
     counts[roleName] = counts[roleName] || { rendered: 0, bound: 0, gap: 0 };
     counts[roleName].rendered++;
-    if (boundToRole(src, roleName, role)) { counts[roleName].bound++; continue; }
+    if (boundToRole(src, role)) { counts[roleName].bound++; continue; }
     counts[roleName].gap++;
     gaps.push({ role: roleName, signal, file: path.relative(ROOT, file) });
   }
@@ -104,4 +139,4 @@ for (const g of gaps) {
   console.log(`  ${g.file}`);
 }
 
-if (STRICT && gaps.length) process.exit(1);
+if (STRICT && gaps.some((g) => !SOFT_ROLES.has(g.role))) process.exit(1);

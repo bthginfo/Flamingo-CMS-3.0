@@ -44,7 +44,7 @@ export function BeforeAfterStoryProSection({ data }: Props) {
           <div className="grid gap-3 rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 sm:grid-cols-3">
             {points.map((point, index) => (
               <div key={index} data-edit-collection="points" data-edit-index={index}>
-                <CheckCircle2 className="mb-2 text-[color:var(--token-accent)]" size={18} />
+                <CheckCircle2 className="mb-2 text-[color:var(--token-check)]" size={18} />
                 {point.value && <div className="text-2xl font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="value">{point.value}</div>}
                 <div className="text-sm text-[color:var(--token-muted)]" data-edit-path="label">{point.label}</div>
               </div>

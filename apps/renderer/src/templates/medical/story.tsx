@@ -41,7 +41,7 @@ function Classic(p: Props) {
           {p.storyText && <p className="whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-5 shadow-sm">
-              <p className="text-sm italic leading-6 text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
+              <p className="text-sm italic leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{p.founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {p.founderName && <p className="mt-3 font-semibold text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </blockquote>
@@ -88,7 +88,7 @@ function Mod(p: Props) {
           {p.storyText && <p className="whitespace-pre-line font-light leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 border-l border-black/20 pl-5">
-              <p className="text-sm italic font-light leading-6 text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
+              <p className="text-sm italic font-light leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{p.founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {p.founderName && <p className="mt-3 font-medium text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs font-light text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </blockquote>
@@ -135,7 +135,7 @@ function Bold(p: Props) {
           {p.storyText && <p className="whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <div className="mt-8 border-l-4 border-[var(--token-eyebrow))] bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] p-5">
-              <p className="text-sm italic font-bold text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
+              <p className="text-sm italic font-bold text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{p.founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {p.founderName && <p className="mt-3 font-black uppercase text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </div>

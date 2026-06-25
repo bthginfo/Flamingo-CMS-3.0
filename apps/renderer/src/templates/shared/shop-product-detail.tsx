@@ -102,7 +102,7 @@ export function ShopProductDetailSection({ data }: Props) {
               </>
             )}
             {discount > 0 && (
-              <span className="absolute top-4 left-4 bg-[color:var(--token-danger-bg,#ef4444)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
+              <span className="absolute top-4 left-4 bg-[color:var(--token-danger-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
             )}
           </div>
           {/* Thumbnails */}
@@ -137,9 +137,9 @@ export function ShopProductDetailSection({ data }: Props) {
 
           {/* Price */}
           <div className="flex items-baseline gap-3 mb-6">
-            <span className="text-3xl font-bold text-[color:var(--token-price,inherit)]">{formatPrice(currentPrice)}</span>
+            <span className="text-3xl font-bold text-[color:var(--token-price)]">{formatPrice(currentPrice)}</span>
             {product.comparePriceCents && (
-              <span className="text-lg text-[color:var(--token-price-strikethrough,var(--token-card-body,var(--token-body)))] line-through">{formatPrice(product.comparePriceCents)}</span>
+              <span className="text-lg text-[color:var(--token-price-strikethrough)] line-through">{formatPrice(product.comparePriceCents)}</span>
             )}
           </div>
 
@@ -149,7 +149,7 @@ export function ShopProductDetailSection({ data }: Props) {
               <ul className="space-y-2">
                 {highlights.map((h, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm" data-edit-collection="highlights" data-edit-index={i}>
-                    <Sparkles size={14} className="text-[color:var(--token-rating-star,#f59e0b)] shrink-0" />
+                    <Sparkles size={14} className="text-[color:var(--token-rating-star)] shrink-0" />
                     <span className="text-[color:var(--token-card-muted,var(--token-muted))]">{h}</span>
                   </li>
                 ))}
@@ -192,12 +192,12 @@ export function ShopProductDetailSection({ data }: Props) {
               style={{ backgroundColor: outOfStock ? '#d4d4d8' : added ? '#22c55e' : '#18181b', color: '#ffffff' }}
               className={`flex-1 py-3.5 px-6 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${outOfStock ? 'cursor-not-allowed' : added ? 'scale-[1.02]' : 'hover:opacity-90 hover:scale-[1.01] active:scale-[0.99]'}`}
             >
-              {outOfStock ? 'Ausverkauft' : added ? <><Check size={18} /> Hinzugefügt!</> : <><ShoppingBag size={18} /> In den Warenkorb</>}
+              {outOfStock ? 'Ausverkauft' : added ? <><Check className="text-[color:var(--token-check)]" size={18} /> Hinzugefügt!</> : <><ShoppingBag size={18} /> In den Warenkorb</>}
             </button>
           </div>
 
           {!product.isDigital && currentStock > 0 && currentStock <= 5 && (
-            <p className="text-xs text-[var(--token-accent,theme(colors.orange.600))] mt-2 font-medium">⚡ Nur noch {currentStock} auf Lager!</p>
+            <p className="text-xs text-[var(--token-accent)] mt-2 font-medium">⚡ Nur noch {currentStock} auf Lager!</p>
           )}
 
           {/* Trust badges */}

@@ -107,15 +107,15 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
               className="inline-flex items-center gap-2.5 rounded-full border px-5 py-2.5 text-sm shadow-sm backdrop-blur-md mt-6"
               style={{
-                background: 'var(--token-badge-bg, color-mix(in srgb, var(--token-on-dark-heading) 14%, transparent))',
-                borderColor: 'var(--token-badge-border, color-mix(in srgb, var(--token-card-border) 24%, transparent))',
-                color: 'var(--token-badge-text,var(--token-on-dark-heading))',
+                background: 'var(--token-badge-bg)',
+                borderColor: 'var(--token-badge-border)',
+                color: 'var(--token-badge-text)',
               }}>
-              <DynamicIcon name={badgeIcon} size={15} className="text-[color:var(--token-icon,var(--token-badge-text))]" />
+              <DynamicIcon name={badgeIcon} size={15} className="text-[color:var(--token-icon)]" />
               <span className="font-medium" data-edit-path="badgeText">{badgeText}</span>
               {badgeStarsIcon && (
                 <div className="flex -space-x-0.5 ml-2">
-                  {[1,2,3,4,5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={12} className="fill-[var(--token-icon,var(--token-badge-text))] text-[color:var(--token-icon,var(--token-badge-text))]" />)}
+                  {[1,2,3,4,5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={12} className="fill-[var(--token-icon)] text-[color:var(--token-icon)]" />)}
                 </div>
               )}
             </motion.div>
@@ -150,7 +150,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}
           >
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-2 whitespace-nowrap" data-edit-collection="trustItems" data-edit-index={i}><CheckCircle size={14} className="text-[color:var(--token-eyebrow)]" />{item}</span>
+              <span key={i} className="flex items-center gap-2 whitespace-nowrap" data-edit-collection="trustItems" data-edit-index={i}><CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}</span>
             ))}
           </div>
         </motion.div>
@@ -182,7 +182,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border,var(--token-card-border))] px-7 py-3 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] hover:border-[color:var(--token-btn-secondary-border,var(--token-card-border))] transition-colors text-sm w-full sm:w-auto">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border)] px-7 py-3 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] hover:border-[color:var(--token-btn-secondary-border)] transition-colors text-sm w-full sm:w-auto">
                 <Phone size={14} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}
@@ -231,7 +231,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
         <div className="max-w-5xl">
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text,var(--token-on-dark-heading))] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
+              className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
               {badgeText}
             </motion.div>
           )}
@@ -246,12 +246,12 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta?.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-btn-bg,var(--token-badge-bg))] text-[color:var(--token-btn-text,var(--token-badge-text,var(--token-on-dark-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_20%,transparent)]">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow)_20%,transparent)]">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-btn-secondary-border,var(--token-card-border))] text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-btn-secondary-border,var(--token-card-border))] transition-colors">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-btn-secondary-border)] text-[color:var(--token-btn-secondary-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-btn-secondary-border)] transition-colors">
                 <Phone size={16} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}

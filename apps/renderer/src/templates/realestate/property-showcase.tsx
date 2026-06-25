@@ -45,12 +45,12 @@ export function PropertyShowcaseSection({ data }: Props) {
               className="group overflow-hidden rounded-3xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_18px_50px_color-mix(in_srgb,var(--token-shadow)_8%,transparent)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_color-mix(in_srgb,var(--token-shadow)_13%,transparent)]"
              data-edit-collection="properties" data-edit-index={i}>
               <div className="relative aspect-[4/3] overflow-hidden">
-                <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--token-card-bg,#fff)_84%,var(--token-section-bg-alt,#f8fafc)),color-mix(in_srgb,var(--token-accent,#f59e0b)_12%,var(--token-card-bg,#fff)))]" />
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--token-card-bg,#fff)_84%,var(--token-section-bg-alt,#f8fafc)),color-mix(in_srgb,var(--token-accent)_12%,var(--token-card-bg,#fff)))]" />
                 {property.image && (
                   <Image data-edit-image="image" src={property.image} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
                 )}
                 {property.badge && (
-                  <span className="absolute left-4 top-4 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[color:var(--token-badge-text)] shadow-sm backdrop-blur" data-edit-path="badge">
+                  <span className="absolute left-4 top-4 rounded-full border border-[color:var(--token-badge-border)] bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[color:var(--token-badge-text)] shadow-sm backdrop-blur" data-edit-path="badge">
                     {property.badge}
                   </span>
                 )}
@@ -68,7 +68,7 @@ export function PropertyShowcaseSection({ data }: Props) {
                     <span className="mt-1 block text-xs font-medium text-[color:var(--token-muted)]">Wohnfläche</span>
                   </span>
                 </div>
-                <p className="text-xl font-bold text-[color:var(--token-price,var(--token-stat-value,var(--token-icon)))] mt-3" data-edit-path="price">{property.price}</p>
+                <p className="text-xl font-bold text-[color:var(--token-price)] mt-3" data-edit-path="price">{property.price}</p>
               </div>
             </motion.a>
           ))}

@@ -50,7 +50,7 @@ export function OfferCampaignStripSection({ data }: Props) {
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((benefit, index) => (
                 <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[color:var(--token-card-body,var(--token-body))]" data-edit-collection="benefits" data-edit-index={index}>
-                  <Check size={16} className="text-[color:var(--token-accent)]" />
+                  <Check size={16} className="text-[color:var(--token-check)]" />
                   <span data-edit-path="text">{benefit}</span>
                 </motion.div>
               ))}

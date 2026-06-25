@@ -71,7 +71,7 @@ function Modern({ header, introText, image, mapEmbedUrl, formEnabled, submitLabe
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-secondary-border,var(--token-card-border))] px-5 py-3 font-light text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-secondary-border)] px-5 py-3 font-light text-[color:var(--token-btn-secondary-text)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
       <div className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5">
@@ -103,7 +103,7 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel,
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-secondary-border,var(--token-card-border))] px-5 py-3 font-black uppercase text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-secondary-border)] px-5 py-3 font-black uppercase text-[color:var(--token-btn-secondary-text)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
       <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]">

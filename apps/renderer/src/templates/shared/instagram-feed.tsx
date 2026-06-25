@@ -117,7 +117,7 @@ export function InstagramFeedSection({ data }: Props) {
           {(badgeText || isPreview) && (
             <span
               className="inline-block text-xs font-semibold tracking-wider uppercase mb-3 section-badge px-3 py-1 rounded-full"
-              style={{ color: 'var(--token-badge-text, currentColor)', backgroundColor: 'var(--token-badge-bg, rgba(0,0,0,0.04))' }}
+              style={{ color: 'var(--token-badge-text)', backgroundColor: 'var(--token-badge-bg)' }}
               data-edit-path="badgeText"
             >
               {badgeText || (isPreview ? 'Badge' : '')}
@@ -196,8 +196,8 @@ export function InstagramFeedSection({ data }: Props) {
             rel="noreferrer noopener"
             className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5"
             style={{
-              backgroundColor: 'var(--token-btn-bg, #111)',
-              color: 'var(--token-btn-text, #fff)',
+              backgroundColor: 'var(--token-btn-bg)',
+              color: 'var(--token-btn-text)',
             }}
           >
             <Instagram className="h-4 w-4" />

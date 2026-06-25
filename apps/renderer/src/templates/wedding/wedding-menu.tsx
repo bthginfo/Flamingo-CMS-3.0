@@ -41,7 +41,7 @@ function Classic({ badge, headline, courses, note }: P) {
                   <div key={j} data-edit-collection="items" data-edit-index={j}>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</span>
-                      {item.tags?.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3.5 h-3.5 text-[var(--token-success,theme(colors.green.600))]" title={tag} />; })}
+                      {item.tags?.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3.5 h-3.5 text-[var(--token-success)]" title={tag} />; })}
                     </div>
                     {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-0.5 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>

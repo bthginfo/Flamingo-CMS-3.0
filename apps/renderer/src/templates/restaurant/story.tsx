@@ -47,7 +47,7 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
           {imageSecondary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></motion.div>}
           {founderQuote && (
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex flex-col justify-center rounded-xl bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] p-5">
-              <p className="text-sm italic leading-6 text-[color:var(--token-heading)]">&ldquo;{founderQuote}&rdquo;</p>
+              <p className="text-sm italic leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {founderName && <p className="mt-3 font-semibold text-[color:var(--token-heading)]">{founderName}</p>}
               {founderRole && <p className="text-xs text-[color:var(--token-muted)]">{founderRole}</p>}
             </motion.div>
@@ -97,7 +97,7 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
           {storyText && <div className="mt-6 whitespace-pre-line font-light leading-7 text-[color:var(--token-muted)] rt-content" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           {founderQuote && (
             <blockquote className="mt-8 border-l-2 border-[var(--token-card-border)] pl-5">
-              <p className="text-sm italic font-light leading-6 text-[color:var(--token-heading)]">&ldquo;{founderQuote}&rdquo;</p>
+              <p className="text-sm italic font-light leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {founderName && <p className="mt-3 font-medium text-[color:var(--token-heading)]">{founderName}</p>}
               {founderRole && <p className="text-xs font-light text-[color:var(--token-muted)]">{founderRole}</p>}
             </blockquote>
@@ -147,7 +147,7 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
           {storyText && <div className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted)] rt-content" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           {founderQuote && (
             <div className="mt-8 border-l-4 border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] p-5">
-              <p className="text-sm italic font-bold text-[color:var(--token-heading)]">&ldquo;{founderQuote}&rdquo;</p>
+              <p className="text-sm italic font-bold text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {founderName && <p className="mt-3 font-black uppercase text-[color:var(--token-heading)]">{founderName}</p>}
               {founderRole && <p className="text-xs font-bold text-[color:var(--token-muted)]">{founderRole}</p>}
             </div>

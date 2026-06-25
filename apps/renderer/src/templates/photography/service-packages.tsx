@@ -75,7 +75,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>
-                      <Check className="w-4 h-4 mt-0.5 shrink-0 text-[color:var(--token-eyebrow)]" />
+                      <Check className="w-4 h-4 mt-0.5 shrink-0 text-[color:var(--token-check)]" />
                       <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)]">{f}</span>
                     </li>
                   ))}
@@ -105,7 +105,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{pkg.name}</h3>
               {pkg.price && (
                 <div className="mt-3">
-                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-price,var(--token-on-dark-heading))]' : 'text-[color:var(--token-price,var(--token-icon))]'}`} data-edit-path="price">{pkg.price}</span>
+                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-price)]' : 'text-[color:var(--token-price)]'}`} data-edit-path="price">{pkg.price}</span>
                   {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>{pkg.priceNote}</span>}
                 </div>
               )}
@@ -113,7 +113,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               <ul className="mt-6 space-y-3">
                 {pkg.features.map((f, j) => (
                   <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>
-                    <Check className={`w-4 h-4 mt-0.5 shrink-0 ${pkg.highlighted ? 'text-[color:var(--token-eyebrow)]' : 'text-[color:var(--token-icon)]'}`} />
+                    <Check className={`w-4 h-4 mt-0.5 shrink-0 ${pkg.highlighted ? 'text-[color:var(--token-check)]' : 'text-[color:var(--token-check)]'}`} />
                     <span className={pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_90%,transparent)]' : 'text-[color:var(--token-muted)]'}>{f}</span>
                   </li>
                 ))}

@@ -55,7 +55,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
               <p className="text-[color:var(--token-body)] leading-relaxed mb-6 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
               {item.features && item.features.length > 0 && (
                 <ul className="space-y-2 mb-6">
-                  {item.features.map((f, fi) => <li key={fi} className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]" data-edit-collection="features" data-edit-index={fi}><CheckCircle size={16} className="text-[color:var(--token-icon)] shrink-0" />{f}</li>)}
+                  {item.features.map((f, fi) => <li key={fi} className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]" data-edit-collection="features" data-edit-index={fi}><CheckCircle size={16} className="text-[color:var(--token-check)] shrink-0" />{f}</li>)}
                 </ul>
               )}
               {item.ctaLabel && item.ctaHref && (
@@ -127,7 +127,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
       <div className="space-y-6">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={i}>
+            className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-shadow)] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={i}>
             {item.mediaType === 'image' && item.image && (
               <div className="relative w-full lg:w-64 aspect-[4/3] lg:aspect-square shrink-0 overflow-hidden">
                 <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover" sizes="256px" />

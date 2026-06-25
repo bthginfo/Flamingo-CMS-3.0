@@ -18,8 +18,8 @@ export function BeforeAfterSliderSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const slides = (data.slides as Slide[]) || [];
-  const handleColor = 'var(--token-accent, var(--token-icon))';
-  const inactiveColor = 'var(--token-divider, #d4d4d8)';
+  const handleColor = 'var(--token-accent)';
+  const inactiveColor = 'var(--token-divider)';
   const bgColor = 'var(--token-section-bg, transparent)';
   const textColor = 'var(--token-body, inherit)';
   const aspectRatio = (data.aspectRatio as string) || '16/9';
@@ -148,7 +148,7 @@ function SliderWidget({ slide, handleColor, aspectRatio }: { slide: Slide; handl
           style={{ backgroundColor: handleColor }}
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M7 4l-4 6 4 6M13 4l4 6-4 6" stroke="var(--token-btn-text, white)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M7 4l-4 6 4 6M13 4l4 6-4 6" stroke="var(--token-btn-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
         {/* Pulse glow hint */}

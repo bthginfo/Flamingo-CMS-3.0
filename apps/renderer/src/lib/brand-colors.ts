@@ -118,6 +118,41 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--token-btn-bg']        = brand.btnPrimaryBg   ?? normalizedPrimary;
   vars['--token-btn-text']      = brand.btnPrimaryText ?? '#ffffff';
   vars['--token-divider']       = brand.dividerColor ?? 'rgba(15,23,42,0.12)';
+
+  // ── Independent page-level defaults for every remaining semantic slot. ──
+  // Each is a VALUE (not a var() reference to another slot), so a slot can NEVER
+  // be steered by editing a different field. Templates read these via a plain
+  // `var(--token-<role>)` with no borrowed fallback (see gate: check:section-color-crosstalk).
+  // NOTE: theme-aware text slots (heading/body/muted, card-heading/body/muted,
+  // on-dark-*) are intentionally NOT defaulted here — their light/dark value is
+  // resolved per section by section-renderer.tsx, so adding a flat default would
+  // break dark sections.
+  const HEADING_VALUE = brand.headingColor  ?? '#0f172a';
+  const BODY_VALUE    = brand.bodyTextColor ?? '#475569';
+  const MUTED_VALUE   = brand.mutedTextColor ?? '#64748b';
+  vars['--token-price']               = HEADING_VALUE;
+  vars['--token-price-strikethrough'] = MUTED_VALUE;
+  vars['--token-link']                = accent;
+  vars['--token-link-hover']          = brand.linkHoverColor ?? normalizedPrimary;
+  vars['--token-label']               = MUTED_VALUE;
+  vars['--token-input-bg']            = brand.cardBg ?? '#ffffff';
+  vars['--token-input-border']        = borderColor ?? 'rgba(15,23,42,0.12)';
+  vars['--token-input-text']          = BODY_VALUE;
+  vars['--token-success']             = '#16a34a';
+  vars['--token-success-bg']          = 'rgba(22,163,74,0.10)';
+  vars['--token-danger']              = '#dc2626';
+  vars['--token-danger-bg']           = 'rgba(220,38,38,0.10)';
+  vars['--token-glow-color']          = accent;
+  vars['--token-shadow']              = 'rgba(15,23,42,0.08)';
+  // Card sub-slots: independent values that visually match their section
+  // counterparts by default, but can be overridden separately.
+  vars['--token-card-badge-bg']       = brand.badgeBg   ?? `${normalizedPrimary}12`;
+  vars['--token-card-badge-text']     = brand.badgeText ?? normalizedPrimary;
+  vars['--token-card-icon']           = brand.iconColor ?? normalizedPrimary;
+  // Secondary button.
+  vars['--token-btn-secondary-bg']     = brand.btnSecondaryBg     ?? 'transparent';
+  vars['--token-btn-secondary-text']   = brand.btnSecondaryText   ?? BODY_VALUE;
+  vars['--token-btn-secondary-border'] = brand.btnSecondaryBorder ?? 'color-mix(in srgb, currentColor 22%, transparent)';
   if (brand.cardRadius) vars['--token-card-radius'] = brand.cardRadius;
   if (brand.btnRadius) vars['--token-button-radius'] = brand.btnRadius;
   // Phase 4: typography utilities + shadow + image overlay.

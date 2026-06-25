@@ -87,12 +87,12 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
               <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} />}
             </a>
           )}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border,var(--token-card-border))] bg-[var(--token-btn-secondary-bg,transparent)] px-6 py-3 font-semibold text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-6 py-3 font-semibold text-[color:var(--token-btn-secondary-text)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[color:var(--token-on-dark-muted)]">
           {locationLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_12%,transparent)] px-4 py-2 backdrop-blur"><MapPin size={15} />{locationLabel}</span>}
           {seasonLabel && <span className="rounded-full bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_12%,transparent)] px-4 py-2 backdrop-blur">{seasonLabel}</span>}
-          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_12%,transparent)] px-4 py-2 backdrop-blur"><CheckCircle size={14} className="text-[color:var(--token-on-dark-heading)]" />{item}</span>)}
+          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_12%,transparent)] px-4 py-2 backdrop-blur"><CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}</span>)}
         </motion.div>
       </div>
     </section>
@@ -110,7 +110,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgCo
           {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[color:var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 flex flex-wrap gap-3">
             {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} />}</a>}
-            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-secondary-border,var(--token-card-border))] px-5 py-3 font-semibold text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))]" data-edit-path="label">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-secondary-border)] px-5 py-3 font-semibold text-[color:var(--token-btn-secondary-text)]" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
           <div className="mt-10 flex flex-wrap gap-3 text-sm text-[color:var(--token-body)]">
             {locationLabel && <span className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-4 py-2"><MapPin size={15} />{locationLabel}</span>}
@@ -156,7 +156,7 @@ function HeroBold({ headline, subline, badgeText, bgImage, bgImageMobile, bgColo
         {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-secondary-border,var(--token-card-border))] px-6 py-3 font-black uppercase text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-secondary-border)] px-6 py-3 font-black uppercase text-[color:var(--token-btn-secondary-text)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm text-[color:var(--token-body)]">
           {locationLabel && <span className="inline-flex items-center gap-2 border border-[var(--token-card-border)] px-4 py-2 font-bold uppercase"><MapPin size={15} />{locationLabel}</span>}

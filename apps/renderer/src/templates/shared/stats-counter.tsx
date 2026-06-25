@@ -62,11 +62,11 @@ export function StatsCounterSection({ data }: Props) {
 
         <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
           {stats.map((stat, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.45, delay: i * 0.08 }} className="min-h-[140px] rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-4 py-7 text-center shadow-[0_18px_50px_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_6%,transparent)] md:px-5" data-edit-collection="stats" data-edit-index={i}>
-              <div className="text-3xl font-bold leading-none text-[color:var(--token-stat-value,var(--token-accent))] md:text-4xl lg:text-5xl">
+            <motion.div key={i} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.45, delay: i * 0.08 }} className="min-h-[140px] rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-4 py-7 text-center shadow-[0_18px_50px_color-mix(in_srgb,var(--token-shadow)_6%,transparent)] md:px-5" data-edit-collection="stats" data-edit-index={i}>
+              <div className="text-3xl font-bold leading-none text-[color:var(--token-stat-value)] md:text-4xl lg:text-5xl">
                 <AnimatedNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} inView={inView} />
               </div>
-              <div className="mx-auto mt-4 h-px w-10 bg-[var(--token-divider,var(--token-card-border))]" />
+              <div className="mx-auto mt-4 h-px w-10 bg-[var(--token-divider)]" />
               <div className="mt-4 text-sm font-medium leading-snug text-[color:var(--token-card-body,var(--token-body))] md:text-base" data-edit-path="label">{stat.label}</div>
             </motion.div>
           ))}

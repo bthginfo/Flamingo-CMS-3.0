@@ -35,7 +35,7 @@ function TestimonialsClassic({ headline, badgeText, ratingValue, ratingCount, it
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {(ratingValue || ratingCount) && (
           <div className="flex items-center justify-center gap-2 mt-5">
-            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={18} className="fill-[var(--token-accent)] text-[color:var(--token-accent)]" />)}</div>
+            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={18} className="fill-[var(--token-accent)] text-[color:var(--token-rating-star)]" />)}</div>
             <span className="ml-2 text-sm font-medium text-[color:var(--token-body)]">{ratingValue && `${ratingValue} / 5`}{ratingCount && ` aus ${ratingCount}+ Bewertungen`}</span>
           </div>
         )}
@@ -72,7 +72,7 @@ function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, ite
             transition={{ duration: 0.5, delay: i * 0.1 }}
             className="break-inside-avoid rounded-lg border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8"
            data-edit-collection="items" data-edit-index={i}>
-            <p className="leading-relaxed text-[color:var(--token-body)] italic">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
+            <p className="leading-relaxed text-[color:var(--token-body)] italic"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
             <div className="mt-6 border-t border-[var(--token-card-border)] pt-4">
               <p className="text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</p>
               {item.context && <p className="mt-0.5 text-xs text-[color:var(--token-muted)]">{item.context}</p>}
@@ -96,7 +96,7 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
         {(ratingValue || ratingCount) && (
           <div className="flex items-center gap-2 mt-4">
-            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-[var(--token-accent)] text-[color:var(--token-accent)]" />)}</div>
+            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-[var(--token-accent)] text-[color:var(--token-rating-star)]" />)}</div>
             <span className="text-sm font-bold text-[color:var(--token-body)]">{ratingValue}/5</span>
           </div>
         )}
@@ -108,9 +108,9 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
             initial={{ opacity: 0, x: 30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))]"
+            className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow)]"
            data-edit-collection="items" data-edit-index={i}>
-            <Quote size={24} className="mb-3 text-[color:var(--token-accent)]" />
+            <Quote size={24} className="mb-3 text-[color:var(--token-quote)]" />
             <div className="rt-content font-medium leading-relaxed text-[color:var(--token-body)]" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />
             <div className="mt-4 border-t-2 border-[var(--token-card-border)] pt-3">
               <p className="text-sm font-bold uppercase tracking-wide text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</p>

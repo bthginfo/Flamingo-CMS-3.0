@@ -38,14 +38,14 @@ export function FoodMenuSection({ data }: Props) {
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <Image data-edit-image="image" src={item.image} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 33vw" />
                   {item.badge && (
-                    <span className="absolute top-3 left-3 bg-[var(--token-accent,theme(colors.amber.600))] text-[color:var(--token-badge-text,var(--token-on-dark-heading))] text-[10px] font-bold px-2.5 py-1 rounded-full" data-edit-path="badge">{item.badge}</span>
+                    <span className="absolute top-3 left-3 bg-[var(--token-accent)] text-[color:var(--token-badge-text)] text-[10px] font-bold px-2.5 py-1 rounded-full" data-edit-path="badge">{item.badge}</span>
                   )}
                 </div>
               )}
               <div className="p-5">
                 <div className="flex justify-between items-start gap-2">
                   <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</h3>
-                  <span className="font-bold text-[color:var(--token-price,var(--token-icon))] whitespace-nowrap" data-edit-path="price">{item.price}</span>
+                  <span className="font-bold text-[color:var(--token-price)] whitespace-nowrap" data-edit-path="price">{item.price}</span>
                 </div>
                 {item.description && <p className="text-sm text-[color:var(--token-muted)] mt-1.5" data-edit-path="description">{plain(item.description)}</p>}
               </div>

@@ -40,13 +40,13 @@ function StoryClassic(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-          {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{p.badgeText}</span></p>}
+          {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{p.badgeText}</span></p>}
           <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 text-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: p.subline }} />}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-sm">
-              <p className="text-sm italic leading-6 text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
+              <p className="text-sm italic leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{p.founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {p.founderName && <p className="mt-3 font-semibold text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </blockquote>
@@ -105,7 +105,7 @@ function StoryModern(p: Props) {
           {p.storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 border-l border-black/20 pl-5">
-              <p className="text-sm italic font-light leading-6 text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
+              <p className="text-sm italic font-light leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{p.founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {p.founderName && <p className="mt-3 font-medium text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs font-light text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </blockquote>
@@ -164,7 +164,7 @@ function StoryBold(p: Props) {
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <div className="mt-8 border-l-4 border-[var(--token-icon)] bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] p-5">
-              <p className="text-sm italic font-bold text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
+              <p className="text-sm italic font-bold text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span>{p.founderQuote}<span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
               {p.founderName && <p className="mt-3 font-black uppercase text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </div>

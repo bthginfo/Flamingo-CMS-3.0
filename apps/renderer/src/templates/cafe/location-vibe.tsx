@@ -28,7 +28,7 @@ export function LocationVibeSection({ data }: Props) {
           <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
             <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
             {description && <p className="text-[color:var(--token-muted)] mt-4 leading-relaxed" data-edit-path="description">{plain(description)}</p>}
-            {vibeText && <p className="text-[var(--token-accent,theme(colors.amber.700))] font-medium mt-3 italic">{plain(vibeText)}</p>}
+            {vibeText && <p className="text-[var(--token-accent)] font-medium mt-3 italic">{plain(vibeText)}</p>}
 
             {address && (
               <div className="flex items-start gap-3 mt-8">

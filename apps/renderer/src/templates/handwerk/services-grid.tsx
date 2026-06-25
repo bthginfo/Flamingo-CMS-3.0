@@ -162,7 +162,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="group border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))] transition-all hover:border-[var(--token-accent)] hover:shadow-[-4px_4px_0_var(--token-accent)]"
+              className="group border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow)] transition-all hover:border-[var(--token-accent)] hover:shadow-[-4px_4px_0_var(--token-accent)]"
             >
               {card.href ? <Link href={card.href} className="block">{inner}</Link> : inner}
             </motion.div>

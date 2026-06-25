@@ -55,7 +55,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
       <div className={`grid grid-cols-2 ${colsClass} gap-4 md:gap-6`}>
         {products.map(product => (
           <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
-            <div className="rounded-2xl border border-[var(--token-card-border,theme(colors.zinc.100))] overflow-hidden hover:shadow-md transition-shadow">
+            <div className="rounded-2xl border border-[var(--token-card-border)] overflow-hidden hover:shadow-md transition-shadow">
               <div className="aspect-square bg-[color:var(--token-section-bg-alt,var(--token-card-bg))] overflow-hidden">
                 {product.images?.[0] ? (
                   <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />

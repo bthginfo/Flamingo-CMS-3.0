@@ -179,10 +179,10 @@ export function ShopProductGridSection({ data }: Props) {
                     </div>
                   )}
                   {product.stock === 0 && (
-                    <div className="absolute top-3 left-3 bg-[var(--token-danger-bg,theme(colors.red.500))] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
+                    <div className="absolute top-3 left-3 bg-[var(--token-danger-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
                   )}
                   {product.comparePriceCents && (
-                    <div className="absolute top-3 right-3 bg-[color:var(--token-success-bg,#22c55e)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>
+                    <div className="absolute top-3 right-3 bg-[color:var(--token-success-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>
                   )}
                 </div>
                 <div className="p-5">
@@ -190,9 +190,9 @@ export function ShopProductGridSection({ data }: Props) {
                   <h3 className="font-semibold group-hover:text-[color:var(--token-muted)] transition" data-edit-path="title">{product.title}</h3>
                   {product.shortDescription && <p className="text-sm text-[color:var(--token-muted)] mt-1.5 line-clamp-2">{product.shortDescription}</p>}
                   <div className="flex items-center gap-2 mt-3">
-                    <span className="font-bold text-lg text-[color:var(--token-price,inherit)]">{formatPrice(product.priceCents)}</span>
+                    <span className="font-bold text-lg text-[color:var(--token-price)]">{formatPrice(product.priceCents)}</span>
                     {product.comparePriceCents && (
-                      <span className="text-sm text-[color:var(--token-price-strikethrough,var(--token-card-body,var(--token-body)))] line-through">{formatPrice(product.comparePriceCents)}</span>
+                      <span className="text-sm text-[color:var(--token-price-strikethrough)] line-through">{formatPrice(product.comparePriceCents)}</span>
                     )}
                   </div>
                 </div>

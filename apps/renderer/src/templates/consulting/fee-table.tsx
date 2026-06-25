@@ -42,7 +42,7 @@ export function FeeTableSection({ data }: Props) {
               </div>
             )}
             <h3 className="text-lg font-semibold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{fee.title}</h3>
-            {fee.price && <div className="text-2xl font-bold text-[color:var(--token-price,var(--token-icon))] mb-3" data-edit-path="price">{fee.price}</div>}
+            {fee.price && <div className="text-2xl font-bold text-[color:var(--token-price)] mb-3" data-edit-path="price">{fee.price}</div>}
             {fee.description && <p className="text-[color:var(--token-muted)] text-sm leading-relaxed" data-edit-path="description">{plain(fee.description)}</p>}
           </motion.div>
         ))}

@@ -36,7 +36,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
           <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md" data-edit-collection="items" data-edit-index={i}>
-            <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
+            <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star className="text-[color:var(--token-rating-star)]" key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading)] rt-content" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs text-[color:var(--token-muted)]">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
@@ -60,7 +60,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
           <article key={`${item.name || 'item'}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
-            <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={12}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
+            <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star className="text-[color:var(--token-rating-star)]" key={si} size={12}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm font-light leading-6 text-[color:var(--token-heading)] rt-content" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-light text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs font-light text-[color:var(--token-muted)]">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
@@ -84,7 +84,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
           <article key={`${item.name || 'item'}-${i}`} className="border-2 border-[var(--token-card-border)] bg-[#111] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
-            <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
+            <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star className="text-[color:var(--token-rating-star)]" key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-on-dark-heading)] rt-content" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>

@@ -38,12 +38,12 @@ export function RealestateTestimonialsSection({ data }: Props) {
               {t.stars && (
                 <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: t.stars }).map((_, j) => (
-                    <Star key={j} size={14} className="fill-amber-400 text-[var(--token-accent,theme(colors.amber.400))]"  data-edit-collection="stars" data-edit-index={j}/>
+                    <Star key={j} size={14} className="fill-amber-400 text-[var(--token-rating-star)]"  data-edit-collection="stars" data-edit-index={j}/>
                   ))}
                 </div>
               )}
-              <p className="text-[color:var(--token-muted)] text-sm leading-relaxed italic">&ldquo;<span data-edit-path="text">{plain(t.text)}</span>&rdquo;</p>
-              <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[var(--token-card-border,theme(colors.gray.50))]">
+              <p className="text-[color:var(--token-muted)] text-sm leading-relaxed italic"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="text">{plain(t.text)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
+              <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[var(--token-card-border)]">
                 {t.image && (
                   <Image data-edit-image="image" src={t.image} alt={t.name} width={36} height={36} className="rounded-full object-cover" />
                 )}

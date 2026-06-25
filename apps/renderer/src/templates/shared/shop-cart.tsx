@@ -50,7 +50,7 @@ export function ShopCartSection({ data }: Props) {
                 <p className="font-semibold mt-1">{formatPrice(item.priceCents)}</p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <button onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-body,var(--token-body))] hover:text-[color:var(--token-danger,#ef4444)]">
+                <button onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-body,var(--token-body))] hover:text-[color:var(--token-danger)]">
                   <Trash2 size={16} />
                 </button>
                 <div className="flex items-center border rounded-lg">

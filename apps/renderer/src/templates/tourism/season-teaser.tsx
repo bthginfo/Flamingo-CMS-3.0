@@ -28,10 +28,10 @@ function Classic({ header, seasons }: Props) {
           <motion.article key={`${season.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="seasons" data-edit-index={index}>
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="25vw" /></div>}
             <div className="p-5">
-              <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-success,theme(colors.green.700))]">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-success)]">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{season.title || ''}</h3>
               {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: season.text }} />}
-              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--token-success,theme(colors.green.700))]"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
+              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--token-success)]"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </motion.article>
         ))}
@@ -49,10 +49,10 @@ function Modern({ header, seasons }: Props) {
           <article key={`${season.title}-${index}`} className="group overflow-hidden border border-black/10 bg-[var(--token-card-bg)]" data-edit-collection="seasons" data-edit-index={index}>
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             <div className="p-5">
-              <p className="text-xs font-light uppercase tracking-widest text-[var(--token-success,theme(colors.teal.600))]">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
+              <p className="text-xs font-light uppercase tracking-widest text-[var(--token-success)]">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading)]" data-edit-path="title">{season.title || ''}</h3>
               {season.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: season.text }} />}
-              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--token-success,theme(colors.teal.600))]"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
+              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--token-success)]"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </article>
         ))}
@@ -65,7 +65,7 @@ function Bold({ header, seasons }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text,var(--token-accent,theme(colors.orange.500)))]" data-edit-path="badgeText">{header.badgeText}</p>}
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
@@ -74,10 +74,10 @@ function Bold({ header, seasons }: Props) {
           <article key={`${season.title || 'item'}-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="seasons" data-edit-index={index}>
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             <div className="p-5">
-              <p className="text-xs font-black uppercase tracking-widest text-[var(--token-accent,theme(colors.orange.500))]">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
+              <p className="text-xs font-black uppercase tracking-widest text-[var(--token-accent)]">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{season.title || ''}</h3>
               {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: season.text }} />}
-              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase text-[var(--token-accent,theme(colors.orange.500))]"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
+              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase text-[var(--token-accent)]"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </article>
         ))}

@@ -36,11 +36,11 @@ export function ConsultingTestimonialsSection({ data }: Props) {
             {item.rating && (
               <div className="flex gap-0.5 mb-4">
                 {Array.from({ length: item.rating }).map((_, j) => (
-                  <DynamicIcon key={j} name="star" size={14} className="text-[var(--token-accent,theme(colors.amber.400))] fill-amber-400"  data-edit-collection="rating" data-edit-index={j}/>
+                  <DynamicIcon key={j} name="star" size={14} className="text-[var(--token-accent)] fill-amber-400"  data-edit-collection="rating" data-edit-index={j}/>
                 ))}
               </div>
             )}
-            <p className="text-[color:var(--token-muted)] leading-relaxed italic mb-6">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
+            <p className="text-[color:var(--token-muted)] leading-relaxed italic mb-6"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
             <div className="border-t border-[color:var(--token-card-border)] pt-4">
               <div className="font-semibold text-[color:var(--token-heading)] text-sm" data-edit-path="name">{item.name}</div>
               {item.context && <div className="text-[color:var(--token-body)] text-xs mt-0.5">{item.context}</div>}

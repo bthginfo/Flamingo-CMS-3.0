@@ -13,7 +13,7 @@ export function ShopThankYouSection({ data }: Props) {
 
   return (
     <section className="py-16 md:py-24 text-center">
-      <CheckCircle2 size={64} className="mx-auto mb-6 text-[color:var(--token-success,#22c55e)]" />
+      <CheckCircle2 size={64} className="mx-auto mb-6 text-[color:var(--token-check)]" />
       <h1 className="text-3xl font-bold mb-3" data-edit-path="headline">{headline}</h1>
       <p className="text-[color:var(--token-muted)] text-lg mb-8 max-w-md mx-auto" data-edit-path="subline">{plain(subline)}</p>
       <Link href="/shop" className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-section-bg,theme(colors.zinc.900))] text-[color:var(--token-on-dark-heading,#fff)] font-medium rounded-xl hover:bg-zinc-800 transition">

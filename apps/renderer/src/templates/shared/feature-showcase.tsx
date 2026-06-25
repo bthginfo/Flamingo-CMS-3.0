@@ -51,7 +51,7 @@ export function FeatureShowcaseSection({ data }: Props) {
         style={{ y: imageY }}
         className={`relative overflow-hidden rounded-2xl aspect-[4/3] lg:aspect-auto lg:h-[500px] ${reversed ? 'lg:order-2 lg:direction-ltr' : ''}`}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--token-card-bg,#fff)_86%,var(--token-section-bg-alt,#f8fafc)),color-mix(in_srgb,var(--token-accent,#f59e0b)_12%,var(--token-card-bg,#fff)))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--token-card-bg,#fff)_86%,var(--token-section-bg-alt,#f8fafc)),color-mix(in_srgb,var(--token-accent)_12%,var(--token-card-bg,#fff)))]" />
         {image && (
           <img
             data-edit-image="image"
@@ -102,7 +102,7 @@ export function FeatureShowcaseSection({ data }: Props) {
 
         {ctaLabel && (
           <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: 0.5 }} className="mt-8">
-                <a href={ctaHref || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-accent)] text-[color:var(--token-btn-text,#fff)] font-medium rounded-lg hover:opacity-90 transition-opacity">
+                <a href={ctaHref || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-accent)] text-[color:var(--token-btn-text)] font-medium rounded-lg hover:opacity-90 transition-opacity">
               <span data-edit-path="ctaLabel">{ctaLabel}</span>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
             </a>

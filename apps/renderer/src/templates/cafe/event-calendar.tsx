@@ -49,7 +49,7 @@ export function CafeEventCalendarSection({ data }: Props) {
                   </div>
                 )}
                 <div className="p-5">
-                  <div className="flex items-center gap-2 text-xs text-[var(--token-accent,theme(colors.amber.700))] font-medium mb-2">
+                  <div className="flex items-center gap-2 text-xs text-[var(--token-accent)] font-medium mb-2">
                     <Icon size={14} />
                     <span data-edit-path="date">{event.date}</span>
                     <span className="text-[color:var(--token-body)]">·</span>

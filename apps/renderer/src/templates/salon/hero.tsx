@@ -72,7 +72,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           {badgeText && (
-            <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-5 py-2 text-xs font-bold uppercase tracking-widest backdrop-blur-sm" style={{ background: 'var(--token-badge-bg)', color: 'var(--token-badge-text,var(--token-on-dark-heading))' }}>
+            <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-5 py-2 text-xs font-bold uppercase tracking-widest backdrop-blur-sm" style={{ background: 'var(--token-badge-bg)', color: 'var(--token-badge-text)' }}>
               <DynamicIcon name={badgeIcon} size={14} /><span data-edit-path="badgeText">{badgeText}</span>
             </motion.p>
           )}
@@ -81,7 +81,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="mx-auto mt-7 max-w-2xl text-lg leading-8 rt-content" style={{ color: heroBody }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-lg"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-7 py-3 font-semibold backdrop-blur-sm" style={{ background: 'var(--token-btn-secondary-bg,var(--token-badge-bg))', color: 'var(--token-btn-secondary-text,var(--token-badge-text))' }} data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-7 py-3 font-semibold backdrop-blur-sm" style={{ background: 'var(--token-btn-secondary-bg)', color: 'var(--token-btn-secondary-text)' }} data-edit-path="label">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm">
           {bookingHint && <span className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{bookingHint}</span>}
@@ -147,7 +147,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
         {subline && <div className="mt-7 max-w-2xl text-lg font-bold uppercase leading-8 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-btn-secondary-border,var(--token-card-border))] px-6 py-3 font-black uppercase text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-btn-secondary-border)] px-6 py-3 font-black uppercase text-[color:var(--token-btn-secondary-text)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm font-bold uppercase text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">
           {bookingHint && <span className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-2">{bookingHint}</span>}

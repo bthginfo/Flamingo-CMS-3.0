@@ -26,7 +26,7 @@ export function MedicalTestimonialsSection({ data, styleVariant }: SectionProps)
 type Props = { headline: string; subline: string; badgeText: string; ratingValue: string; ratingCount: string; items: Testimonial[]; ctaPrimary: ButtonValue };
 
 function Stars({ count }: { count: number }) {
-  return <div className="flex gap-0.5">{Array.from({ length: count || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor"  data-edit-collection="count" data-edit-index={i}/>)}</div>;
+  return <div className="flex gap-0.5">{Array.from({ length: count || 5 }).map((_, i) => <Star className="text-[color:var(--token-rating-star)]" key={i} size={14} fill="currentColor"  data-edit-collection="count" data-edit-index={i}/>)}</div>;
 }
 
 function Classic({ headline, subline, badgeText, ratingValue, ratingCount, items, ctaPrimary }: Props) {
@@ -38,7 +38,7 @@ function Classic({ headline, subline, badgeText, ratingValue, ratingCount, items
         {items.map((item, i) => (
           <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>}
             <div className="mt-4 border-t border-black/10 pt-3">
               <p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
               <p className="text-xs text-[color:var(--token-muted)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
@@ -60,7 +60,7 @@ function Mod({ headline, subline, badgeText, ratingValue, ratingCount, items, ct
         {items.map((item, i) => (
           <article key={`${item.name || 'item'}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>}
             <p className="mt-4 font-medium text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs font-light text-[color:var(--token-muted)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
           </article>
@@ -80,7 +80,7 @@ function Bold({ headline, subline, badgeText, ratingValue, ratingCount, items, c
         {items.map((item, i) => (
           <article key={`${item.name || 'item'}-${i}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>}
             <div className="mt-4 border-t-2 border-[var(--token-card-border)] pt-3">
               <p className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
               <p className="text-xs font-bold text-[color:var(--token-muted)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>

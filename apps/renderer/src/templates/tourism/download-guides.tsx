@@ -44,11 +44,11 @@ function Modern({ header, items }: Props) {
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-5" data-edit-collection="items" data-edit-index={index}>
-            <Download size={22} className="text-[var(--token-success,theme(colors.teal.600))]" />
-            {item.metaLabel && <p className="mt-4 text-xs font-light uppercase tracking-widest text-[var(--token-success,theme(colors.teal.600))]">{item.metaLabel}</p>}
+            <Download size={22} className="text-[var(--token-success)]" />
+            {item.metaLabel && <p className="mt-4 text-xs font-light uppercase tracking-widest text-[var(--token-success)]">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
-            {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[var(--token-success,theme(colors.teal.600))]">{item.fileLabel}<ArrowRight size={14} /></a>}
+            {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[var(--token-success)]">{item.fileLabel}<ArrowRight size={14} /></a>}
           </article>
         ))}
       </div>
@@ -60,18 +60,18 @@ function Bold({ header, items }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-accent,theme(colors.orange.500))]" data-edit-path="badgeText">{header.badgeText}</p>}
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-accent)]" data-edit-path="badgeText">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
           <article key={`${item.title || 'item'}-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={index}>
-            <Download size={22} className="text-[var(--token-accent,theme(colors.orange.500))]" />
-            {item.metaLabel && <p className="mt-4 text-xs font-black uppercase tracking-widest text-[var(--token-accent,theme(colors.orange.500))]">{item.metaLabel}</p>}
+            <Download size={22} className="text-[var(--token-accent)]" />
+            {item.metaLabel && <p className="mt-4 text-xs font-black uppercase tracking-widest text-[var(--token-accent)]">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
-            {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-black uppercase text-[var(--token-accent,theme(colors.orange.500))]">{item.fileLabel}<ArrowRight size={14} /></a>}
+            {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-black uppercase text-[var(--token-accent)]">{item.fileLabel}<ArrowRight size={14} /></a>}
           </article>
         ))}
       </div>

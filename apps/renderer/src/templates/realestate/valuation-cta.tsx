@@ -39,7 +39,7 @@ export function ValuationCtaSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center"
         >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-4 py-2 text-sm font-medium text-[color:var(--token-badge-text)]">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--token-badge-border)] bg-[var(--token-badge-bg)] px-4 py-2 text-sm font-medium text-[color:var(--token-badge-text)]">
             <Home size={16} />
             Immobilienbewertung
           </div>
@@ -50,7 +50,7 @@ export function ValuationCtaSection({ data }: Props) {
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
-                  <p className="text-2xl font-bold text-[color:var(--token-stat-value,var(--token-accent))]" data-edit-path="value">{stat.value}</p>
+                  <p className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{stat.value}</p>
                   <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>
               ))}

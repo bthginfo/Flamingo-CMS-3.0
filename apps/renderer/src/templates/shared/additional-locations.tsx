@@ -73,7 +73,7 @@ export function AdditionalLocationsSection({ data }: Props) {
 
                 <div className="p-6">
                   <div className="mb-5 flex items-start gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--token-card-badge-bg,var(--token-badge-bg))] text-[color:var(--token-icon)]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--token-card-badge-bg)] text-[color:var(--token-icon)]">
                       <MapPin size={22} />
                     </div>
                     <div>

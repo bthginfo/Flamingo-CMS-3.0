@@ -48,7 +48,7 @@ export function BeforeAfterSection({ data }: Props) {
           {imageAfter ? (
             <img data-edit-image="imageAfter" src={imageAfter} alt={labelAfter} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-green-50 to-green-100 flex items-center justify-center text-[var(--token-success,theme(colors.green.300))] text-2xl">{labelAfter}</div>
+            <div className="w-full h-full bg-gradient-to-r from-green-50 to-green-100 flex items-center justify-center text-[var(--token-success)] text-2xl">{labelAfter}</div>
           )}
         </div>
 
@@ -57,7 +57,7 @@ export function BeforeAfterSection({ data }: Props) {
           {imageBefore ? (
             <img data-edit-image="imageBefore" src={imageBefore} alt={labelBefore} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-amber-50 to-amber-100 flex items-center justify-center text-[var(--token-accent,theme(colors.amber.300))] text-2xl">{labelBefore}</div>
+            <div className="w-full h-full bg-gradient-to-r from-amber-50 to-amber-100 flex items-center justify-center text-[var(--token-accent)] text-2xl">{labelBefore}</div>
           )}
         </div>
 

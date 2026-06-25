@@ -55,7 +55,7 @@ export function BrandShowroomSection({ data }: Props) {
           )}
 
           {cta?.label && (
-            <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-card-icon,var(--token-icon))] text-[color:var(--token-on-dark-heading)] font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
+            <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-card-icon)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
               {cta.label}
             </a>
           )}

@@ -62,7 +62,7 @@ export function TextImageSection({ data, variant }: Props) {
                 </Link>
               )}
               {secondaryCta.label && (
-                <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-btn-secondary-border,var(--token-card-border))] px-6 py-3 font-semibold text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
+                <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-btn-secondary-border)] px-6 py-3 font-semibold text-[color:var(--token-btn-secondary-text)] hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
                   {secondaryCta.label} {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
                 </Link>
               )}

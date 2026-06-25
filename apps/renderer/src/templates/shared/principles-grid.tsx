@@ -36,7 +36,7 @@ export function PrinciplesGridSection({ data }: Props) {
               transition={{ delay: index * 0.05 }}
               className="min-h-[280px] rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-8 py-10"
              data-edit-collection="principles" data-edit-index={index}>
-              <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-card-badge-bg,var(--token-badge-bg))] text-sm font-black text-[color:var(--token-icon)]">
+              <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-card-badge-bg)] text-sm font-black text-[color:var(--token-icon)]">
                 {String(index + 1).padStart(2, '0')}
               </div>
               {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{item.eyebrow}</div>}
