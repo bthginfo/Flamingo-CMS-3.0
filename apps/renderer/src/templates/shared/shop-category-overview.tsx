@@ -5,7 +5,11 @@ import { FolderOpen } from 'lucide-react';
 import Link from 'next/link';
 import { plain } from '@/lib/strip-html';
 
-type Category = { id: string; name: string; slug: string; description?: string | null; image?: string | null };
+// Catalog categories carry `name`; manually-authored section categories use
+// `title`. Accept both so the heading always renders.
+type Category = { id: string; name?: string | null; title?: string | null; slug: string; description?: string | null; image?: string | null };
+
+const categoryTitle = (cat: Category) => cat.name || cat.title || '';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -45,7 +49,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
             <div className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-[4/3] bg-[var(--token-section-bg-alt)] relative overflow-hidden">
                 {cat.image ? (
-                  <img data-edit-image="image" src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img data-edit-image="image" src={cat.image} alt={categoryTitle(cat)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <FolderOpen size={40} className="text-[color:var(--token-card-body,var(--token-body))]" />
@@ -53,7 +57,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
                 )}
               </div>
               <div className="p-5 text-center">
-                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-card-muted,var(--token-muted))] transition" data-edit-path="name">{cat.name}</h3>
+                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-card-muted,var(--token-muted))] transition" data-edit-path="name">{categoryTitle(cat)}</h3>
                 {cat.description && <p className="text-sm text-[color:var(--token-card-muted,var(--token-muted))] mt-1 line-clamp-2" data-edit-path="description">{plain(cat.description)}</p>}
               </div>
             </div>

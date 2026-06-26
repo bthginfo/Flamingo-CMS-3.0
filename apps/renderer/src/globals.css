@@ -238,9 +238,12 @@ html {
   }
 
   /* ─── CTA / button color overrides — use TOKEN-AWARE system ─── */
-  /* When section has token-btn-bg override, apply to ALL buttons within it */
-  [data-style][style*="--token-btn-bg"] a,
-  [data-style][style*="--token-btn-bg"] button,
+  /* Apply the button token colours only to elements actually styled as buttons
+     (they carry a `bg-` utility class). The root [data-style] wrapper always
+     defines --token-btn-bg in its inline style, so an unqualified `… a` / `… button`
+     selector here would paint a button background behind EVERY link and button on
+     the page (logo, nav, footer) — that was the "coloured box behind text" bug.
+     Keep the [class*="bg-"] qualifier so only real buttons are affected. */
   [data-style][style*="--token-btn-bg"] a[class*="bg-"],
   [data-style][style*="--token-btn-bg"] button[class*="bg-"] {
     background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-primary))) !important;
