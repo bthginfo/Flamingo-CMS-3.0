@@ -92,4 +92,9 @@ function makeResolver() {
   };
 }
 
-module.exports = { makeResolver };
+/** @returns {Record<string,string>} ColorFieldKey -> cssVar (e.g. headingColor -> --token-heading) */
+function fieldCssVars() {
+  return loadFieldCssVars(fs.readFileSync(FIELDS_TS, 'utf8'));
+}
+
+module.exports = { makeResolver, fieldCssVars };
