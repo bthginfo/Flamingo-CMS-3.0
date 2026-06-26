@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { resolveTenant } from '@/lib/snapshot';
 import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability, parseBookingDateRange, type BookingTimeModel } from '@/lib/booking-core';
@@ -104,46 +104,49 @@ export async function POST(req: NextRequest) {
 
     const cancellationToken = crypto.randomBytes(24).toString('hex');
     const cancellationTokenHash = crypto.createHash('sha256').update(cancellationToken).digest('hex');
-    const lockKey = `${tenantId}:${resourceId || 'global'}:${startsAt.toISOString()}:${endsAt.toISOString()}`;
-    const booking = await db.transaction(async (tx) => {
-      await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${lockKey}))`);
-      if (settings.mode === 'instant') {
-        const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt, timezone, bufferBeforeMinutes, bufferAfterMinutes });
-        if (conflict) throw new Error('BOOKING_CONFLICT');
-      }
-      const [customer] = await tx.insert(bookingCustomers).values({
-        tenantId,
-        name: customerName,
-        email: customerEmail || null,
-        phone: customerPhone || null,
-      }).returning();
-      const bookingStatus = settings.mode === 'instant' ? 'confirmed' as const : 'requested' as const;
-      const bookingValues = {
-        tenantId,
-        customerId: customer.id,
-        serviceId,
-        resourceId,
-        mode: settings.mode,
-        timeModel,
-        status: bookingStatus,
-        customerName,
-        customerEmail: customerEmail || null,
-        customerPhone: customerPhone || null,
-        partySize,
-        startsAt,
-        endsAt,
-        bufferBeforeMinutes,
-        bufferAfterMinutes,
-        intakeAnswers,
-        message,
-        cancellationTokenHash,
-      };
-      let [created] = await tx.insert(bookingRequests).values(bookingValues).returning().catch(async (error) => {
-        if (!isMissingBookingRulesColumn(error)) throw error;
-        const { bufferBeforeMinutes: _before, bufferAfterMinutes: _after, intakeAnswers: _answers, ...legacyValues } = bookingValues;
-        return tx.insert(bookingRequests).values(legacyValues).returning();
-      });
-      return created;
+
+    // The neon-http driver has NO interactive transactions, so the former
+    // pg_advisory_xact_lock + tx wrapper (which made this endpoint throw on
+    // every request) is removed. For instant bookings we re-check conflicts
+    // immediately before inserting — this covers the common sequential case.
+    // A fully race-proof guard needs a DB exclusion constraint
+    // (btree_gist over a tstzrange of [startsAt, endsAt) per resource); tracked
+    // as a follow-up since it requires a reviewed migration.
+    if (settings.mode === 'instant') {
+      const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt, timezone, bufferBeforeMinutes, bufferAfterMinutes });
+      if (conflict) return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.' }, { status: 409 });
+    }
+    const [customer] = await db.insert(bookingCustomers).values({
+      tenantId,
+      name: customerName,
+      email: customerEmail || null,
+      phone: customerPhone || null,
+    }).returning();
+    const bookingStatus = settings.mode === 'instant' ? 'confirmed' as const : 'requested' as const;
+    const bookingValues = {
+      tenantId,
+      customerId: customer.id,
+      serviceId,
+      resourceId,
+      mode: settings.mode,
+      timeModel,
+      status: bookingStatus,
+      customerName,
+      customerEmail: customerEmail || null,
+      customerPhone: customerPhone || null,
+      partySize,
+      startsAt,
+      endsAt,
+      bufferBeforeMinutes,
+      bufferAfterMinutes,
+      intakeAnswers,
+      message,
+      cancellationTokenHash,
+    };
+    const [booking] = await db.insert(bookingRequests).values(bookingValues).returning().catch(async (error) => {
+      if (!isMissingBookingRulesColumn(error)) throw error;
+      const { bufferBeforeMinutes: _before, bufferAfterMinutes: _after, intakeAnswers: _answers, ...legacyValues } = bookingValues;
+      return db.insert(bookingRequests).values(legacyValues).returning();
     });
 
     const bookingSummary = [

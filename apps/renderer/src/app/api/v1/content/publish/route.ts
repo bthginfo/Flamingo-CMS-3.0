@@ -3,7 +3,7 @@ import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collections, collectionItems, globalSettings } from '@flamingo/db';
 import { publishedSnapshots, publishHistory } from '@flamingo/db';
-import { eq, asc, and, inArray, desc } from 'drizzle-orm';
+import { eq, asc, and, inArray, desc, ne } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { createHash } from 'crypto';
 import { getDraftSnapshot } from '@/lib/snapshot';
@@ -25,31 +25,32 @@ export async function POST(req: NextRequest) {
     if (!snapshot) return NextResponse.json({ error: 'No content to publish' }, { status: 400 });
     const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
 
-    await db.transaction(async (tx) => {
-      await tx.update(pages).set({ status: 'published' }).where(eq(pages.tenantId, auth.tenantId));
+    // The neon-http driver has no interactive transactions, so this runs as a
+    // sequence of idempotent steps instead of db.transaction() (which threw and
+    // made publish always 500). Order matters: we insert the new active snapshot
+    // BEFORE deactivating the previous one, so there is never a window with zero
+    // active snapshots (a brief two-active window is harmless — readers take the
+    // highest version). Pages are flipped to published first; the snapshot is a
+    // version record, and the renderer serves the current state regardless.
+    await db.update(pages).set({ status: 'published' }).where(eq(pages.tenantId, auth.tenantId));
 
-      const [currentActive] = await tx
-        .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
-        .from(publishedSnapshots)
-        .where(and(eq(publishedSnapshots.tenantId, auth.tenantId), eq(publishedSnapshots.isActive, true)))
-        .orderBy(desc(publishedSnapshots.version))
-        .limit(1);
+    const [currentActive] = await db
+      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
+      .from(publishedSnapshots)
+      .where(and(eq(publishedSnapshots.tenantId, auth.tenantId), eq(publishedSnapshots.isActive, true)))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1);
 
-      if (currentActive?.checksum === checksum) return;
-
-      const [latest] = await tx
+    if (currentActive?.checksum !== checksum) {
+      const [latest] = await db
         .select({ version: publishedSnapshots.version })
         .from(publishedSnapshots)
         .where(eq(publishedSnapshots.tenantId, auth.tenantId))
         .orderBy(desc(publishedSnapshots.version))
         .limit(1);
 
-      await tx.update(publishedSnapshots)
-        .set({ isActive: false })
-        .where(and(eq(publishedSnapshots.tenantId, auth.tenantId), eq(publishedSnapshots.isActive, true)));
-
       const nextVersion = (latest?.version ?? 0) + 1;
-      const [created] = await tx.insert(publishedSnapshots).values({
+      const [created] = await db.insert(publishedSnapshots).values({
         tenantId: auth.tenantId,
         version: nextVersion,
         snapshot: snapshot as unknown as Record<string, unknown>,
@@ -60,14 +61,23 @@ export async function POST(req: NextRequest) {
 
       if (!created?.id) throw new Error('Published snapshot could not be created');
 
-      await tx.insert(publishHistory).values({
+      // Deactivate every other previously-active snapshot for this tenant.
+      await db.update(publishedSnapshots)
+        .set({ isActive: false })
+        .where(and(
+          eq(publishedSnapshots.tenantId, auth.tenantId),
+          eq(publishedSnapshots.isActive, true),
+          ne(publishedSnapshots.id, created.id),
+        ));
+
+      await db.insert(publishHistory).values({
         tenantId: auth.tenantId,
         snapshotId: created.id,
         previousSnapshotId: currentActive?.id ?? null,
         action: 'publish',
         note: 'Published via API',
       });
-    });
+    }
 
     // Get all pages to revalidate their paths
     const allPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
