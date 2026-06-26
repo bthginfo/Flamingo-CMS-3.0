@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { coupons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
+import { couponEffect } from '@/lib/shop-totals';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -44,21 +45,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Mindestbestellwert: ${(coupon.minOrderCents / 100).toFixed(2).replace('.', ',')} €` }, { status: 400 });
   }
 
-  // Calculate discount
-  let discountCents = 0;
-  let freeShipping = false;
-
-  switch (coupon.type) {
-    case 'percent':
-      discountCents = Math.round((subtotalCents * coupon.value) / 100);
-      break;
-    case 'fixed_amount':
-      discountCents = Math.min(coupon.value, subtotalCents);
-      break;
-    case 'free_shipping':
-      freeShipping = true;
-      break;
-  }
+  // Calculate discount (shared with the checkout charge — see lib/shop-totals)
+  const { discountCents, freeShipping } = couponEffect(coupon, subtotalCents);
 
   return NextResponse.json({
     valid: true,

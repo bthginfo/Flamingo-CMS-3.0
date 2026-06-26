@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/components/shop/cart-context';
 import { useRouter } from 'next/navigation';
 import { Check, Loader2, Tag, X } from 'lucide-react';
+import { computeShippingCents } from '@/lib/shop-totals';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -80,11 +81,10 @@ export function ShopCheckoutSection({ data }: Props) {
       .catch(() => setShippingMethods([]));
   }, [form.country, tenantId]);
 
-  // Calculate shipping cost
+  // Calculate shipping cost — same helper the checkout charge uses, so the
+  // displayed total can never diverge from what the customer is charged.
   const selectedShipping = shippingMethods.find(m => m.id === form.shippingMethod);
-  const shippingCents = selectedShipping
-    ? (coupon?.freeShipping || (selectedShipping.freeAboveCents && totalCents >= selectedShipping.freeAboveCents)) ? 0 : selectedShipping.priceCents
-    : 0;
+  const shippingCents = computeShippingCents(selectedShipping, totalCents, coupon?.freeShipping);
   const discountCents = coupon?.discountCents || 0;
   const grandTotal = totalCents + shippingCents - discountCents;
 

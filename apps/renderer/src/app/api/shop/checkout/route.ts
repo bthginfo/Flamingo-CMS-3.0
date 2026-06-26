@@ -6,6 +6,7 @@ import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { getTaxRate } from '@/lib/tax';
+import { couponEffect, computeShippingCents, computeTaxCents } from '@/lib/shop-totals';
 import Stripe from 'stripe';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -206,28 +207,11 @@ export async function POST(req: NextRequest) {
     }, { status: 409 });
   }
 
-  // Server-side shipping cost validation
-  let shippingCents = 0;
-  if (shippingMethodId && paymentMethod !== 'pickup') {
-    const [method] = await db.select().from(shippingMethods)
-      .where(and(eq(shippingMethods.id, shippingMethodId), eq(shippingMethods.tenantId, tenantId), eq(shippingMethods.active, true)))
-      .limit(1);
-    if (method) {
-      shippingCents = method.priceCents;
-      if (method.freeAboveCents && subtotalCents >= method.freeAboveCents) {
-        shippingCents = 0;
-      }
-    }
-  }
-
-  // Calculate tax per item (supports mixed rates: 19%, 7%, 0%)
-  const taxCents = orderItems.reduce((sum, item) => {
-    const itemTotal = item.priceCents * item.quantity;
-    return sum + Math.round(itemTotal * item.taxRate / (100 + item.taxRate));
-  }, 0);
-
-  // Server-side discount calculation (never trust client discount)
+  // Server-side discount calculation (never trust client). Resolved BEFORE
+  // shipping so a free_shipping coupon can zero the shipping cost — matching what
+  // the cart/coupon API shows the customer (see lib/shop-totals.couponEffect).
   let discountCents = 0;
+  let freeShipping = false;
   let appliedCouponId: string | null = null;
   if (couponCode) {
     const [coupon] = await db.select().from(coupons)
@@ -239,24 +223,38 @@ export async function POST(req: NextRequest) {
       const expired = (coupon.validUntil && now > coupon.validUntil) || (coupon.validFrom && now < coupon.validFrom);
       const maxedOut = coupon.maxUses && coupon.usedCount >= coupon.maxUses;
       if (!expired && !maxedOut) {
-        if (coupon.type === 'percent') {
-          discountCents = Math.round(subtotalCents * coupon.value / 100);
-        } else {
-          discountCents = coupon.value;
-        }
+        const effect = couponEffect(coupon, subtotalCents);
         // Atomic increment with max-uses guard (prevents race condition)
         const result = await db.execute(
           sql`UPDATE coupons SET used_count = used_count + 1 WHERE id = ${coupon.id} AND (max_uses IS NULL OR used_count < max_uses) RETURNING id`
         );
-        if (!result.rows?.length) {
-          // Race: coupon was maxed out between check and increment
-          discountCents = 0;
-        } else {
+        if (result.rows?.length) {
+          discountCents = effect.discountCents;
+          freeShipping = effect.freeShipping;
           appliedCouponId = coupon.id;
         }
+        // else race: coupon maxed out between check and increment → no effect
       }
     }
   }
+
+  // Server-side shipping cost validation (honours a free_shipping coupon)
+  let shippingCents = 0;
+  if (shippingMethodId && paymentMethod !== 'pickup') {
+    const [method] = await db.select().from(shippingMethods)
+      .where(and(eq(shippingMethods.id, shippingMethodId), eq(shippingMethods.tenantId, tenantId), eq(shippingMethods.active, true)))
+      .limit(1);
+    if (method) {
+      shippingCents = computeShippingCents(
+        { priceCents: method.priceCents, freeAboveCents: method.freeAboveCents },
+        subtotalCents,
+        freeShipping,
+      );
+    }
+  }
+
+  // Tax contained in the gross prices (informational; not added to the total).
+  const taxCents = computeTaxCents(orderItems);
 
   // Ensure total never goes negative
   const totalCents = Math.max(0, subtotalCents + shippingCents - discountCents);
