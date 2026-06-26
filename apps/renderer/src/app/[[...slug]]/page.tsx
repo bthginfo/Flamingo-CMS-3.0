@@ -42,6 +42,7 @@ function preloadOptimizedImage(rawUrl: string, sizes: string): void {
 export const revalidate = 60;
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
+import { isShopActive } from '@/lib/shop-pages';
 import { getDesignCssVars } from '@/lib/design-vars';
 import { getDb } from '@/lib/db';
 import { tenants } from '@flamingo/db';
@@ -386,6 +387,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   }
 
   const brandCssVars = getBrandCssVars(brand);
+  const shopEnabled = await isShopActive(tenantId);
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
   // Build dynamic style overrides that need !important to beat Tailwind utilities
@@ -408,7 +410,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
           <SectionRenderer key={section.id} section={(section.type.startsWith('shop') || sectionsNeedingTenantId.has(section.type)) ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} defaultLocale={i18n?.defaultLocale} linkPrefix={linkPrefix} />
         ))}
       </main>
-      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />
+      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} shopEnabled={shopEnabled} />
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
     </div>
   );

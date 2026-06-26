@@ -22,10 +22,10 @@ export function ShopCartSection({ data }: Props) {
   if (items.length === 0) {
     return (
       <section className="py-16 text-center">
-        <ShoppingBag size={48} className="mx-auto mb-4 text-[color:var(--token-body)]" />
-        <h2 className="text-2xl font-bold mb-2" data-edit-path="headline">{headline}</h2>
+        <ShoppingBag size={48} className="mx-auto mb-4 text-[color:var(--token-icon)]" />
+        <h2 className="text-2xl font-bold mb-2 text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         <p className="text-[color:var(--token-muted)] mb-6">{emptyText}</p>
-        <Link href={shopBase} className="inline-block px-6 py-3 bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:bg-[var(--token-section-bg-alt)] transition">
+        <Link href={shopBase} className="inline-block px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-xl font-medium hover:opacity-90 transition">
           {continueLabel}
         </Link>
       </section>
@@ -34,7 +34,7 @@ export function ShopCartSection({ data }: Props) {
 
   return (
     <section className="py-12 md:py-16">
-      <h2 className="text-2xl font-bold mb-8" data-edit-path="headline">{headline}</h2>
+      <h2 className="text-2xl font-bold mb-8 text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Items */}
@@ -45,15 +45,15 @@ export function ShopCartSection({ data }: Props) {
                 {item.image && <img data-edit-image="image" src={item.image} alt="" className="w-full h-full object-cover" />}
               </div>
               <div className="flex-1 min-w-0">
-                <Link href={`${shopBase}/${item.slug}`} className="font-medium text-sm hover:underline">{item.title}</Link>
-                {item.variantName && <p className="text-xs text-[color:var(--token-card-body,var(--token-body))]">{item.variantName}</p>}
-                <p className="font-semibold mt-1">{formatPrice(item.priceCents)}</p>
+                <Link href={`${shopBase}/${item.slug}`} className="font-medium text-sm text-[color:var(--token-card-heading)] hover:underline">{item.title}</Link>
+                {item.variantName && <p className="text-xs text-[color:var(--token-card-muted)]">{item.variantName}</p>}
+                <p className="font-semibold mt-1 text-[color:var(--token-price)]">{formatPrice(item.priceCents)}</p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <button onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-body,var(--token-body))] hover:text-[color:var(--token-danger)]">
+                <button onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-muted)] hover:text-[color:var(--token-danger)]">
                   <Trash2 size={16} />
                 </button>
-                <div className="flex items-center border rounded-lg">
+                <div className="flex items-center rounded-lg border border-[color:var(--token-card-border)] text-[color:var(--token-card-body)]">
                   <button onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)} className="p-1.5 hover:bg-[var(--token-section-bg-alt)]"><Minus size={14} /></button>
                   <span className="w-8 text-center text-sm">{item.quantity}</span>
                   <button onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)} className="p-1.5 hover:bg-[var(--token-section-bg-alt)]"><Plus size={14} /></button>
@@ -64,33 +64,33 @@ export function ShopCartSection({ data }: Props) {
         </div>
 
         {/* Summary */}
-        <div className="bg-[var(--token-section-bg-alt)] rounded-2xl p-6 h-fit sticky top-4">
-          <h3 className="font-semibold mb-4">Zusammenfassung</h3>
-          <div className="space-y-2 text-sm">
+        <div className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] p-6 h-fit sticky top-4">
+          <h3 className="font-semibold mb-4 text-[color:var(--token-card-heading)]">Zusammenfassung</h3>
+          <div className="space-y-2 text-sm text-[color:var(--token-card-body)]">
             <div className="flex justify-between">
               <span>Zwischensumme</span>
-              <span>{formatPrice(totalCents)}</span>
+              <span className="text-[color:var(--token-price)]">{formatPrice(totalCents)}</span>
             </div>
-            <div className="flex justify-between text-[color:var(--token-card-body,var(--token-body))]">
+            <div className="flex justify-between text-[color:var(--token-card-muted)]">
               <span>Versand</span>
               <span>wird im Checkout berechnet</span>
             </div>
           </div>
-          <div className="border-t mt-4 pt-4 flex justify-between font-bold text-lg">
+          <div className="border-t border-[color:var(--token-card-border)] mt-4 pt-4 flex justify-between font-bold text-lg text-[color:var(--token-card-heading)]">
             <span>Gesamt</span>
-            <span>{formatPrice(totalCents)}</span>
+            <span className="text-[color:var(--token-price)]">{formatPrice(totalCents)}</span>
           </div>
           {shopBase.startsWith('/demo/') ? (
             <div className="mt-4 text-center">
-              <span className="block w-full py-3 bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] text-[color:var(--token-card-muted,var(--token-muted))] font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
-              <p className="text-xs text-[color:var(--token-card-body,var(--token-body))] mt-2">Checkout ist in der Demo nicht verfügbar</p>
+              <span className="block w-full py-3 bg-[var(--token-section-bg-alt)] text-[color:var(--token-card-muted)] font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
+              <p className="text-xs text-[color:var(--token-card-muted)] mt-2">Checkout ist in der Demo nicht verfügbar</p>
             </div>
           ) : (
-            <Link href={`${shopBase.replace(/\/shop$/, '')}/checkout`} className="block w-full text-center py-3 mt-4 bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)] font-medium rounded-xl hover:bg-[var(--token-section-bg-alt)] transition">
+            <Link href={`${shopBase.replace(/\/shop$/, '')}/checkout`} className="block w-full text-center py-3 mt-4 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-medium rounded-xl hover:opacity-90 transition">
               {checkoutLabel}
             </Link>
           )}
-          <Link href={shopBase} className="block w-full text-center py-2 mt-2 text-sm text-[color:var(--token-card-muted,var(--token-muted))] hover:text-[color:var(--token-card-muted,var(--token-muted))]">
+          <Link href={shopBase} className="block w-full text-center py-2 mt-2 text-sm text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]">
             {continueLabel}
           </Link>
         </div>

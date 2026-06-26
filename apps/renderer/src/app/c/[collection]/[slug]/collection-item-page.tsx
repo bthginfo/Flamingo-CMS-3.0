@@ -1,4 +1,5 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
+import { isShopActive } from '@/lib/shop-pages';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle, getTenantSeoGlobal, getTenantSeoItem, getTenantI18n } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
@@ -130,6 +131,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
   const item = col.items.find(i => i.slug === slug);
   if (!item) notFound();
 
+  const shopEnabled = await isShopActive(tenantId);
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
   const brandCssVars = getBrandCssVars(brand);
   const designOverrides: Record<string, string> = {};
@@ -167,7 +169,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
       <main>
         <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} />
       </main>
-      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />
+      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} shopEnabled={shopEnabled} />
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
     </div>
   );

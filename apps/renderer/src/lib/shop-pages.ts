@@ -7,8 +7,22 @@
  *  - apps/renderer/src/app/api/v1/instructions/route.ts (PAT-gated)
  */
 import { getDb } from '@/lib/db';
-import { pages, pageSections } from '@flamingo/db';
+import { pages, pageSections, tenantAddons } from '@flamingo/db';
 import { and, eq } from 'drizzle-orm';
+
+export const SHOP_ADDON_KEY = 'shop';
+
+/** True when the tenant has the shop addon active. Used e.g. to surface the
+ *  legally-required withdrawal (Widerruf) link in the footer on shop sites. */
+export async function isShopActive(tenantId: string): Promise<boolean> {
+  if (!tenantId) return false;
+  const [row] = await getDb()
+    .select({ active: tenantAddons.active })
+    .from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, SHOP_ADDON_KEY)))
+    .limit(1);
+  return Boolean(row?.active);
+}
 
 export const SHOP_PAGES = [
   {

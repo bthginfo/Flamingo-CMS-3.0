@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Music } from 'lucide-react';
+import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Music, Undo2 } from 'lucide-react';
 import type { FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 import { prefixInternalHref } from '@/lib/link-prefix';
 
@@ -19,7 +19,7 @@ function isLightColor(hex: string | undefined): boolean {
   return lum > 0.4;
 }
 
-export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '' }: { footer: FooterData | null; brand: BrandData; contact?: ContactData; socialLinks?: SocialLinks; linkPrefix?: string }) {
+export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '', shopEnabled = false }: { footer: FooterData | null; brand: BrandData; contact?: ContactData; socialLinks?: SocialLinks; linkPrefix?: string; shopEnabled?: boolean }) {
   if (!footer) return null;
 
   const socials = Object.entries(socialLinks || {}).filter(([, url]) => url);
@@ -111,6 +111,20 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
             ))}
           </div>
         </div>
+
+        {/* Shop legal: a prominent right-of-withdrawal button is legally required
+            on every page of a shop, so it sits above the small legal links. */}
+        {shopEnabled && (
+          <div className="pt-8 flex justify-center sm:justify-start">
+            <Link
+              href={prefixInternalHref('/widerrufsbelehrung', linkPrefix) as string}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-brand-accent text-sm font-semibold hover:bg-brand-accent/10 transition-colors"
+            >
+              <Undo2 size={16} className="text-brand-accent" />
+              Widerrufsrecht
+            </Link>
+          </div>
+        )}
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">

@@ -143,7 +143,7 @@ export default async function ShopProductPage({ params, searchParams }: { params
       <main className="max-w-6xl mx-auto px-6">
         <ShopProductDetailSection data={{ _slug: slug, tenantId, basePath: `${linkPrefix}/shop` || '/shop' }} />
       </main>
-      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />
+      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} shopEnabled />
     </div>
   );
 }
