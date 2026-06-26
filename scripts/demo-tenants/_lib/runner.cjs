@@ -98,35 +98,81 @@ async function run(tenant) {
 
   log('starting');
 
-  // The API enforces a strict per-section-type allow-list of colour fields
-  // (sectionStyleContracts). Any --token-* a section does not render is a hard
-  // 400. Our darkTokens() helper deliberately spreads a full light-on-dark set
-  // into every dark section for convenience; here we trim each section's
-  // styleOverrides down to exactly the vars its type accepts, so the populate
-  // never sends a misrouted/extra field. Same guarantee the CMS contract gives.
-  let allowedByType = null;
+  // The API enforces a strict per-section-type allow-list of colour fields. Any
+  // --token-* a section does not render is a hard 400 — and because the backend
+  // driver has NO transactions, that 400 lands AFTER the page row is inserted,
+  // so a retry collides on the unique slug with a 500. The only safe path is a
+  // correct first POST. We therefore resolve the full (sectionType, industry)
+  // contract ourselves — mirroring the renderer's getFieldsForSection — instead
+  // of trusting /api/v1/instructions, whose list omits borrowed section types
+  // the API still validates. darkTokens() deliberately spreads a full light-on-
+  // dark set into every dark section; this trims each one down to exactly the
+  // vars its type accepts (same no-extra/no-misrouted guarantee the CMS gives).
+  let resolveAllowed = null;
+  let industry;
   try {
     const ins = await api.instructions();
-    allowedByType = new Map();
-    for (const c of ins.sectionStyleContracts || []) {
-      allowedByType.set(c.type, new Set((c.colorFields || []).map((f) => f.cssVar)));
-    }
-    log(`loaded style contracts for ${allowedByType.size} section types`);
+    industry = ins.tenant && ins.tenant.industry;
+    const { makeResolver } = require('./contracts.cjs');
+    resolveAllowed = makeResolver();
+    log(`resolved colour contracts (industry=${industry || 'unknown'})`);
   } catch (e) {
-    log('  warn: could not load sectionStyleContracts — sending styleOverrides unfiltered:', e.message);
+    log('  warn: could not resolve colour contracts — styleOverrides unfiltered:', e.message);
   }
 
   const filterOverrides = (section) => {
     const so = section.styleOverrides;
-    if (!so || !allowedByType) return section;
-    const allow = allowedByType.get(section.type);
-    if (!allow) return section; // unknown type: leave as-is, let the API decide
+    if (!so || !resolveAllowed) return section;
+    const allow = resolveAllowed(section.type, industry);
     const kept = {};
     let dropped = 0;
     for (const [k, v] of Object.entries(so)) {
       if (allow.has(k)) kept[k] = v; else dropped++;
     }
     return dropped ? { ...section, styleOverrides: kept, __dropped: dropped } : section;
+  };
+
+  // The instructions contract list is INCOMPLETE: it only lists section types
+  // that have a real colour contract for this tenant's industry, omitting types
+  // the API still validates (utility sections collapse to sectionBg-only; some
+  // borrowed types resolve to a 12-field set the list never surfaces). For any
+  // key that slips past filterOverrides, the API returns a precise 400 naming
+  // exactly which sections[i].styleOverrides.<key> is not allowed — so we strip
+  // that one key and retry. The API itself is the source of truth; no contract
+  // logic has to be mirrored here. Returns { result, stripped }.
+  const STRIP_RE = /sections\[(\d+)\]\.styleOverrides\.(--[a-z0-9-]+) is not used by section type/i;
+  const postSectionsAdaptive = async (doPost, sections, label, beforeRetry) => {
+    const work = sections.map((s) =>
+      s && s.styleOverrides ? { ...s, styleOverrides: { ...s.styleOverrides } } : s);
+    let stripped = 0;
+    for (let attempt = 0; attempt < 200; attempt++) {
+      try {
+        return { result: await doPost(work), stripped };
+      } catch (e) {
+        const msg = e && e.body && e.body.error ? String(e.body.error) : '';
+        const m = e && e.status === 400 ? msg.match(STRIP_RE) : null;
+        if (m && work[+m[1]] && work[+m[1]].styleOverrides && m[2] in work[+m[1]].styleOverrides) {
+          delete work[+m[1]].styleOverrides[m[2]];
+          stripped++;
+          // The driver has no transactions: the failed insert may have left a
+          // partial row that would make the retry collide on the unique slug.
+          // Let the caller clean it up first.
+          if (beforeRetry) { try { await beforeRetry(); } catch { /* best-effort */ } }
+          continue;
+        }
+        throw e;
+      }
+    }
+    throw new Error(`${label}: exceeded adaptive styleOverride strip limit`);
+  };
+
+  // Delete every page that currently carries `slug` (clears partial-insert rows
+  // left behind by a failed createPage, since there are no transactions).
+  const deletePagesBySlug = async (slug) => {
+    const dbg = await api.debug();
+    for (const p of dbg.pages || []) {
+      if (p.slug === slug) { try { await api.deletePage(p.id); } catch { /* ignore */ } }
+    }
   };
 
   if (tenant.wipe !== false) {
@@ -171,10 +217,13 @@ async function run(tenant) {
     const sections = (page.sections || []).map(filterOverrides);
     const droppedTotal = sections.reduce((n, s) => n + (s.__dropped || 0), 0);
     for (const s of sections) delete s.__dropped;
+    const { result: res, stripped } = await postSectionsAdaptive(
+      (secs) => api.createPage({ slug: page.slug, title: page.title, sections: secs }),
+      sections, `page ${page.slug || '(home)'}`,
+      () => deletePagesBySlug(page.slug),
+    );
     log('POST page', page.slug || '(home)', '—', page.title,
-        droppedTotal ? `(trimmed ${droppedTotal} non-contract token(s))` : '');
-    const body = { slug: page.slug, title: page.title, sections };
-    const res = await api.createPage(body);
+        (droppedTotal || stripped) ? `(trimmed ${droppedTotal + stripped} non-contract token(s))` : '');
     pagesByIndex.push({ slug: page.slug, id: res.id || res.pageId || (res.page && res.page.id), seo: page.seo });
   }
 
@@ -196,18 +245,23 @@ async function run(tenant) {
       for (const item of col.items || []) {
         // Collection items can carry their own detail-page sections under
         // data.sections — those need the same per-section contract trim.
-        let outItem = item;
-        if (item.data && Array.isArray(item.data.sections)) {
-          const sections = item.data.sections.map(filterOverrides);
-          for (const s of sections) delete s.__dropped;
-          outItem = { ...item, data: { ...item.data, sections } };
-        }
+        const hasSections = item.data && Array.isArray(item.data.sections);
+        const baseItem = hasSections
+          ? { ...item, data: { ...item.data, sections: item.data.sections.map((s) => { const c = filterOverrides(s); delete c.__dropped; return c; }) } }
+          : item;
         log('POST item', col.key, '/', item.slug);
         try {
           // Items default to published=false on create. Force-publish unless
           // the caller explicitly set it.
-          const body = outItem.published === undefined ? { ...outItem, published: true } : outItem;
-          await api.createItem(col.key, body);
+          const publishFlag = item.published === undefined ? { published: true } : {};
+          if (hasSections) {
+            await postSectionsAdaptive(
+              (secs) => api.createItem(col.key, { ...baseItem, ...publishFlag, data: { ...baseItem.data, sections: secs } }),
+              baseItem.data.sections, `item ${col.key}/${item.slug}`,
+            );
+          } else {
+            await api.createItem(col.key, { ...baseItem, ...publishFlag });
+          }
         } catch (e) { log('  warn: createItem failed', col.key, item.slug, e.message); }
       }
     }
