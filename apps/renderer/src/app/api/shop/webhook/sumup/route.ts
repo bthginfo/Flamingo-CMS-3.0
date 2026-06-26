@@ -24,6 +24,13 @@ export async function GET(req: NextRequest) {
     .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
   if (!order) return NextResponse.redirect(new URL('/checkout', req.url));
 
+  // Idempotency: the buyer can reload this redirect URL. Without this guard we
+  // would re-verify, re-write status/history and re-send the confirmation email
+  // on every reload. If the order is already paid, just go to the success page.
+  if (order.paymentStatus === 'paid' || order.status === 'paid') {
+    return NextResponse.redirect(new URL('/bestellung-abgeschlossen', req.nextUrl.origin));
+  }
+
   const [settings] = await db.select().from(shopSettings)
     .where(eq(shopSettings.tenantId, tenantId)).limit(1);
 
