@@ -98,6 +98,37 @@ async function run(tenant) {
 
   log('starting');
 
+  // The API enforces a strict per-section-type allow-list of colour fields
+  // (sectionStyleContracts). Any --token-* a section does not render is a hard
+  // 400. Our darkTokens() helper deliberately spreads a full light-on-dark set
+  // into every dark section for convenience; here we trim each section's
+  // styleOverrides down to exactly the vars its type accepts, so the populate
+  // never sends a misrouted/extra field. Same guarantee the CMS contract gives.
+  let allowedByType = null;
+  try {
+    const ins = await api.instructions();
+    allowedByType = new Map();
+    for (const c of ins.sectionStyleContracts || []) {
+      allowedByType.set(c.type, new Set((c.colorFields || []).map((f) => f.cssVar)));
+    }
+    log(`loaded style contracts for ${allowedByType.size} section types`);
+  } catch (e) {
+    log('  warn: could not load sectionStyleContracts — sending styleOverrides unfiltered:', e.message);
+  }
+
+  const filterOverrides = (section) => {
+    const so = section.styleOverrides;
+    if (!so || !allowedByType) return section;
+    const allow = allowedByType.get(section.type);
+    if (!allow) return section; // unknown type: leave as-is, let the API decide
+    const kept = {};
+    let dropped = 0;
+    for (const [k, v] of Object.entries(so)) {
+      if (allow.has(k)) kept[k] = v; else dropped++;
+    }
+    return dropped ? { ...section, styleOverrides: kept, __dropped: dropped } : section;
+  };
+
   if (tenant.wipe !== false) {
     log('wiping existing content');
     const dbg = await api.debug();
@@ -137,8 +168,12 @@ async function run(tenant) {
   // Pages: order matters (nav links by slug, footer links by slug).
   const pagesByIndex = [];
   for (const page of tenant.pages || []) {
-    log('POST page', page.slug || '(home)', '—', page.title);
-    const body = { slug: page.slug, title: page.title, sections: page.sections || [] };
+    const sections = (page.sections || []).map(filterOverrides);
+    const droppedTotal = sections.reduce((n, s) => n + (s.__dropped || 0), 0);
+    for (const s of sections) delete s.__dropped;
+    log('POST page', page.slug || '(home)', '—', page.title,
+        droppedTotal ? `(trimmed ${droppedTotal} non-contract token(s))` : '');
+    const body = { slug: page.slug, title: page.title, sections };
     const res = await api.createPage(body);
     pagesByIndex.push({ slug: page.slug, id: res.id || res.pageId || (res.page && res.page.id), seo: page.seo });
   }
@@ -159,11 +194,19 @@ async function run(tenant) {
   if (Array.isArray(tenant.collections)) {
     for (const col of tenant.collections) {
       for (const item of col.items || []) {
+        // Collection items can carry their own detail-page sections under
+        // data.sections — those need the same per-section contract trim.
+        let outItem = item;
+        if (item.data && Array.isArray(item.data.sections)) {
+          const sections = item.data.sections.map(filterOverrides);
+          for (const s of sections) delete s.__dropped;
+          outItem = { ...item, data: { ...item.data, sections } };
+        }
         log('POST item', col.key, '/', item.slug);
         try {
           // Items default to published=false on create. Force-publish unless
           // the caller explicitly set it.
-          const body = item.published === undefined ? { ...item, published: true } : item;
+          const body = outItem.published === undefined ? { ...outItem, published: true } : outItem;
           await api.createItem(col.key, body);
         } catch (e) { log('  warn: createItem failed', col.key, item.slug, e.message); }
       }
@@ -177,8 +220,17 @@ async function run(tenant) {
 
   if (tenant.publish !== false) {
     log('POST publish');
-    const result = await api.publish();
-    log('  publish result:', JSON.stringify(result).slice(0, 220));
+    // The publish snapshot step currently fails with a backend driver
+    // limitation ("No transactions support in neon-http driver") that the demo
+    // script cannot influence. Pages are created already-published and items
+    // with published:true, so content is live regardless — treat a publish
+    // failure as a warning, not a fatal abort.
+    try {
+      const result = await api.publish();
+      log('  publish result:', JSON.stringify(result).slice(0, 220));
+    } catch (e) {
+      log('  warn: publish failed (content already written):', e.body && e.body.error ? e.body.error : e.message);
+    }
   }
 
   log('validate');

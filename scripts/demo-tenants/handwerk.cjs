@@ -68,7 +68,7 @@ const darkSectionTokens = {
   // Buttons
   '--token-btn-bg':          C.cream,
   '--token-btn-text':        C.brand,
-  '--token-btn-secondary-bg':     'transparent',
+  '--token-btn-secondary-bg':     'rgba(0,0,0,0)', // API rejects the keyword "transparent"; rgba(0,0,0,0) is identical
   '--token-btn-secondary-text':   '#FFFFFF',
   '--token-btn-secondary-border': 'rgba(255,255,255,0.3)',
   // Badges
