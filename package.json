@@ -8,6 +8,7 @@
     "dev:renderer": "pnpm --filter @flamingo/renderer dev",
     "build": "turbo build",
     "lint": "turbo lint",
+    "test": "pnpm --filter @flamingo/renderer test",
     "audit:crosstalk": "node scripts/audit-token-crosstalk.cjs",
     "check:hardcoded-colors": "node scripts/check-hardcoded-colors-regression.cjs",
     "typecheck": "turbo typecheck",

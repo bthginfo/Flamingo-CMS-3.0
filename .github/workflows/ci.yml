@@ -32,6 +32,9 @@ jobs:
       - run: pnpm audit:crosstalk
       - run: pnpm check:hardcoded-colors
 
+      # Unit tests (node:test via tsx — runs on the CI Node version, no build).
+      - run: pnpm test
+
       - run: pnpm --filter @flamingo/admin build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
