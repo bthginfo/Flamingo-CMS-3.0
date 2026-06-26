@@ -26,7 +26,7 @@ export function AiApiClient({ existingToken, apiBase }: { existingToken: Token |
   const handleCreate = async () => {
     setCreating(true);
     try {
-      const days = lifetime === 'unlimited' ? null : parseInt(lifetime);
+      const days = lifetime === 'unlimited' ? null : parseInt(lifetime, 10);
       const result = await createApiToken(days);
       setNewTokenValue(result.token);
       setToken({ id: 'new', label: 'AI Content Token', createdAt: new Date().toISOString(), expiresAt: days ? new Date(Date.now() + days * 86400000).toISOString() : null, lastUsedAt: null, revoked: false });

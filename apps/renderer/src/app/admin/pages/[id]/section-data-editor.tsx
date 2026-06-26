@@ -2420,7 +2420,7 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
         </label>
         <label className="block">
           <span className="text-xs text-gray-600">Spalten</span>
-          <select className="admin-input mt-1" value={d.columns} onChange={(e) => setD({ ...d, columns: parseInt(e.target.value) })}>
+          <select className="admin-input mt-1" value={d.columns} onChange={(e) => setD({ ...d, columns: parseInt(e.target.value, 10) })}>
             <option value={2}>2 Spalten</option>
             <option value={3}>3 Spalten</option>
             <option value={4}>4 Spalten</option>

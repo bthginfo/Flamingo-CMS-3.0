@@ -92,7 +92,7 @@ function parsePrice(value: string): number {
     return num < 10000 ? Math.round(num * 100) : Math.round(num);
   }
   // Plain number - assume cents if > 1000, otherwise euros
-  const num = parseInt(cleaned);
+  const num = parseInt(cleaned, 10);
   return num > 1000 ? num : num * 100;
 }
 
@@ -144,8 +144,8 @@ export async function importProductsCsv(csvContent: string): Promise<ImportResul
       const slug = slugify(title);
       const priceCents = row.priceCents ? parsePrice(row.priceCents) : 0;
       const comparePriceCents = row.comparePriceCents ? parsePrice(row.comparePriceCents) : undefined;
-      const stock = row.stock ? parseInt(row.stock) || 0 : 0;
-      const weightGrams = row.weightGrams ? parseInt(row.weightGrams) || undefined : undefined;
+      const stock = row.stock ? parseInt(row.stock, 10) || 0 : 0;
+      const weightGrams = row.weightGrams ? parseInt(row.weightGrams, 10) || undefined : undefined;
       const images = row.images ? row.images.split('|').map(u => u.trim()).filter(Boolean) : [];
       const highlights = row.highlights ? row.highlights.split('|').map(h => h.trim()).filter(Boolean) : [];
       const status = (row.status === 'active' || row.status === 'aktiv') ? 'active' as const : 'draft' as const;

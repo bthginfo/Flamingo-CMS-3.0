@@ -126,7 +126,7 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
           </div>
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1">Low-Stock Schwellwert</label>
-            <input type="number" min="0" value={data.lowStockThreshold} onChange={e => set('lowStockThreshold', parseInt(e.target.value || '5'))} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
+            <input type="number" min="0" value={data.lowStockThreshold} onChange={e => set('lowStockThreshold', parseInt(e.target.value || '5', 10))} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
           </div>
         </div>
       </div>

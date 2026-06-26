@@ -37,9 +37,9 @@ export function CouponsClient({ coupons: initial }: { coupons: Coupon[] }) {
     await createCoupon({
       code: form.code,
       type: form.type as 'percent' | 'fixed_amount' | 'free_shipping',
-      value: form.type === 'fixed_amount' ? Math.round(parseFloat(form.value) * 100) : parseInt(form.value),
+      value: form.type === 'fixed_amount' ? Math.round(parseFloat(form.value) * 100) : parseInt(form.value, 10),
       minOrderCents: form.minOrderCents ? Math.round(parseFloat(form.minOrderCents) * 100) : undefined,
-      maxUses: form.maxUses ? parseInt(form.maxUses) : undefined,
+      maxUses: form.maxUses ? parseInt(form.maxUses, 10) : undefined,
       validFrom: form.validFrom || undefined,
       validUntil: form.validUntil || undefined,
       appliesTo: form.appliesTo as 'all' | 'specific_products',

@@ -273,7 +273,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
               type="number"
               min="0"
               value={data.stock}
-              onChange={e => set('stock', parseInt(e.target.value || '0'))}
+              onChange={e => set('stock', parseInt(e.target.value || '0', 10))}
               className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
             />
           </div>
@@ -341,7 +341,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
               type="number"
               min="0"
               value={data.weightGrams || ''}
-              onChange={e => set('weightGrams', e.target.value ? parseInt(e.target.value) : null)}
+              onChange={e => set('weightGrams', e.target.value ? parseInt(e.target.value, 10) : null)}
               className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
               placeholder="z.B. 500"
             />

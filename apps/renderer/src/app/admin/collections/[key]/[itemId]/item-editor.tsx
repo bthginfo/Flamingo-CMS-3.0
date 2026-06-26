@@ -262,7 +262,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
             </label>
             <label className="flex items-center gap-2.5 text-sm">
               <span className="text-zinc-500">Priorität</span>
-              <input type="number" className="admin-input w-20 !py-1.5 text-center" value={item.priority} onChange={(e) => { setItem({ ...item, priority: parseInt(e.target.value) || 0 }); markDirty(); }} />
+              <input type="number" className="admin-input w-20 !py-1.5 text-center" value={item.priority} onChange={(e) => { setItem({ ...item, priority: parseInt(e.target.value, 10) || 0 }); markDirty(); }} />
             </label>
           </div>
         </div>
