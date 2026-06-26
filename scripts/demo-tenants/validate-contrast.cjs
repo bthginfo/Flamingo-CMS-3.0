@@ -43,8 +43,12 @@ function sectionsOf(tenant) {
   return out;
 }
 
+// Non-tenant scripts in this dir. `run-all.cjs` is critical to exclude: its
+// top-level IIFE fires on require() and would kick off a REAL populate run
+// (wiping live content) merely by validating. `_`-prefixed files are helpers.
+const SKIP = new Set(['validate-contrast.cjs', 'fetch-instructions.cjs', 'run-all.cjs']);
 const files = (only ? [only + '.cjs'] : fs.readdirSync(DIR).filter((f) => f.endsWith('.cjs')))
-  .filter((f) => !['validate-contrast.cjs', 'fetch-instructions.cjs'].includes(f));
+  .filter((f) => !f.startsWith('_') && !SKIP.has(f));
 
 let totalIssues = 0;
 for (const file of files) {
