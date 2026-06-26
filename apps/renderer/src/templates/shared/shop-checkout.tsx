@@ -64,7 +64,7 @@ export function ShopCheckoutSection({ data }: Props) {
     const params = new URLSearchParams({ country: form.country });
     if (tenantId) params.set('tenantId', tenantId);
     fetch(`/api/shop/shipping?${params.toString()}`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
       .then(d => {
         setShippingMethods(d.methods || []);
         if (d.methods?.length && !form.shippingMethod) {
@@ -76,7 +76,8 @@ export function ShopCheckoutSection({ data }: Props) {
             setForm(f => ({ ...f, paymentMethod: d.paymentMethods[0] }));
           }
         }
-      });
+      })
+      .catch(() => setShippingMethods([]));
   }, [form.country, tenantId]);
 
   // Calculate shipping cost
@@ -90,17 +91,21 @@ export function ShopCheckoutSection({ data }: Props) {
   async function applyCoupon() {
     setCouponError('');
     if (!couponInput.trim()) return;
-    const res = await fetch('/api/shop/coupon', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: couponInput, subtotalCents: totalCents, tenantId }),
-    });
-    const data = await res.json();
-    if (res.ok && data.valid) {
-      setCoupon(data);
-      setForm(f => ({ ...f, couponCode: data.code }));
-    } else {
-      setCouponError(data.error || 'Ungültiger Code');
+    try {
+      const res = await fetch('/api/shop/coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponInput, subtotalCents: totalCents, tenantId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.valid) {
+        setCoupon(data);
+        setForm(f => ({ ...f, couponCode: data.code }));
+      } else {
+        setCouponError(data.error || 'Ungültiger Code');
+      }
+    } catch {
+      setCouponError('Code konnte nicht geprüft werden. Bitte erneut versuchen.');
     }
   }
 

@@ -42,8 +42,9 @@ export function ShopProductGridSection({ data }: Props) {
     if (previewProducts.length > 0) return;
     const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
     fetch(`/api/shop/products${params}`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
       .then(d => { setProducts(d.products || []); setCategories(d.categories || []); })
+      .catch(() => { setProducts([]); setCategories([]); })
       .finally(() => setLoading(false));
   }, [data.tenantId, previewProducts.length]);
 

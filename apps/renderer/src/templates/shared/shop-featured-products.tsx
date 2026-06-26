@@ -41,8 +41,9 @@ export function ShopFeaturedProductsSection({ data }: Props) {
       url += '&ids=' + productIds.join(',');
     }
     fetch(url)
-      .then(r => r.json())
-      .then(d => setProducts((d.products || []).slice(0, count)));
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
+      .then(d => setProducts((d.products || []).slice(0, count)))
+      .catch(() => setProducts([]));
   }, [mode, categorySlug, count, productIds.join(','), data.tenantId, previewProducts.length]);
 
   if (products.length === 0) return null;

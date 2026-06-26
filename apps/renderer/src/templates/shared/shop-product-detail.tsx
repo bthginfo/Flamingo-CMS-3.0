@@ -25,10 +25,11 @@ export function ShopProductDetailSection({ data }: Props) {
     setLoading(true);
     const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
     fetch(`/api/shop/products/${encodeURIComponent(slug)}${params}`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
       .then(d => {
         if (d.product) setFetchedProduct({ ...d.product, variants: d.variants, variantOptions: d.options });
       })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [slug, data._product, data.tenantId]);
 
