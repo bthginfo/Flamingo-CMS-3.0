@@ -1,13 +1,18 @@
 const ALLOWED_TAGS = new Set([
   'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
-  'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'blockquote',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote',
   'a', 'img', 'figure', 'figcaption', 'code', 'pre',
+  // Structural tags used by rich-text / legal content (tables, generic blocks).
+  // Safe: no script execution, and they keep no attributes except the few below.
+  'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
 ]);
 
 const GLOBAL_ATTRS = new Set<string>();
 const TAG_ATTRS: Record<string, Set<string>> = {
   a: new Set(['href', 'title', 'target', 'rel']),
   img: new Set(['src', 'alt', 'title', 'width', 'height', 'loading']),
+  th: new Set(['colspan', 'rowspan', 'scope']),
+  td: new Set(['colspan', 'rowspan']),
 };
 
 function isSafeUrl(value: string) {
