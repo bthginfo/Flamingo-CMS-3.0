@@ -4,6 +4,7 @@ import { coupons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { couponEffect } from '@/lib/shop-totals';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -19,6 +20,15 @@ export async function POST(req: NextRequest) {
   const tenantId = resolveExplicitTenant(bodyTenantId) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   if (!code) return NextResponse.json({ error: 'Code required' }, { status: 400 });
+
+  // Throttle to stop brute-forcing valid coupon codes / hammering the DB.
+  const rl = rateLimit(`coupon:${tenantId}:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Zu viele Versuche. Bitte später erneut versuchen.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+    );
+  }
 
   const db = getDb();
   const [coupon] = await db.select().from(coupons)

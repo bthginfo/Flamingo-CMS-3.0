@@ -5,11 +5,21 @@ import { getDb } from '@/lib/db';
 import { bookingRequests, bookingSettings, bookingStatusHistory } from '@flamingo/db';
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { formatBookingDate } from '@/lib/booking-time';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function GET(req: NextRequest) {
   const bookingId = req.nextUrl.searchParams.get('booking') || '';
   const token = req.nextUrl.searchParams.get('token') || '';
   if (!bookingId || !token) return NextResponse.json({ error: 'Ungültiger Storno-Link.' }, { status: 400 });
+
+  // Throttle per IP so random tokens can't be hammered against the DB.
+  const rl = rateLimit(`booking-cancel:${getClientIp(req)}`, 30, 10 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Zu viele Versuche. Bitte später erneut versuchen.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+    );
+  }
 
   const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
   const db = getDb();
