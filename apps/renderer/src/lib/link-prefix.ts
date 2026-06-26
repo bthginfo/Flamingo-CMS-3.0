@@ -5,7 +5,11 @@ export function prefixInternalHref(href: unknown, linkPrefix = ''): unknown {
   if (!href || href === '#') return href;
   if (!href.startsWith('/') || href.startsWith('//')) return href;
   if (href === linkPrefix || href.startsWith(`${linkPrefix}/`)) return href;
-  if (href.startsWith('/api/') || href.startsWith('/admin') || href.startsWith('/demo')) return href;
+  // Match whole path segments, not prefixes: a tenant page slug like
+  // `/demo-projekt` or `/administration` must still be prefixed.
+  if (href.startsWith('/api/')
+    || href === '/admin' || href.startsWith('/admin/')
+    || href === '/demo' || href.startsWith('/demo/')) return href;
   return href === '/' ? linkPrefix : `${linkPrefix}${href}`;
 }
 
