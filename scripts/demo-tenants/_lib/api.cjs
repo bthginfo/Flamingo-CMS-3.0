@@ -9,8 +9,42 @@
  *   const page = await api.createPage({ slug: 'leistungen', title: 'Leistungen', sections: [...] });
  */
 const https = require('https');
+const http = require('http');
+const tls = require('tls');
+const fs = require('fs');
 
 const DEFAULT_HOST = 'flamingo-renderer.vercel.app';
+
+// When running inside a sandbox whose egress is forced through an HTTP CONNECT
+// proxy (HTTPS_PROXY), Node's https.request would otherwise connect directly and
+// be blocked. This agent tunnels through the proxy. No-op (undefined) when no
+// proxy is set, so local runs are unaffected.
+function makeProxyAgent() {
+  const px = process.env.HTTPS_PROXY || process.env.https_proxy;
+  if (!px) return undefined;
+  const u = new URL(px);
+  let ca;
+  try { ca = fs.readFileSync('/root/.ccr/ca-bundle.crt'); } catch { /* optional */ }
+  return new (class extends https.Agent {
+    createConnection(opts, cb) {
+      const req = http.request({
+        host: u.hostname,
+        port: u.port || 80,
+        method: 'CONNECT',
+        path: `${opts.host}:${opts.port || 443}`,
+        headers: u.username ? { 'Proxy-Authorization': 'Basic ' + Buffer.from(`${decodeURIComponent(u.username)}:${decodeURIComponent(u.password)}`).toString('base64') } : {},
+      });
+      req.on('connect', (res, socket) => {
+        if (res.statusCode !== 200) { cb(new Error(`proxy CONNECT failed: ${res.statusCode}`)); return; }
+        const tlsSock = tls.connect({ socket, servername: opts.host, ...(ca ? { ca } : {}) }, () => cb(null, tlsSock));
+        tlsSock.on('error', cb);
+      });
+      req.on('error', cb);
+      req.end();
+    }
+  })();
+}
+const PROXY_AGENT = makeProxyAgent();
 
 class ApiError extends Error {
   constructor(msg, { status, body, endpoint } = {}) {
@@ -41,6 +75,7 @@ class Api {
           hostname: this.host,
           method,
           path,
+          ...(PROXY_AGENT ? { agent: PROXY_AGENT } : {}),
           headers: {
             Authorization: 'Bearer ' + this.pat,
             'Content-Type': 'application/json',
