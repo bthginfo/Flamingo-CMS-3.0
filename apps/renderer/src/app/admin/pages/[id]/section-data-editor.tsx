@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { Info } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
+import { getProductLinksAction } from '@/app/admin/shop/actions';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
 import { RichTextEditorField } from '@/components/rich-text-editor';
@@ -2587,11 +2588,22 @@ function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || 'Empfohlene Produkte');
   const [mode, setMode] = useState<string>((data.mode as string) || 'latest');
   const [categorySlug, setCategorySlug] = useState((data.categorySlug as string) || '');
-  const [productIds, setProductIds] = useState<string>((data.productIds as string[] || []).join(', '));
+  const [productIds, setProductIds] = useState<string[]>((data.productIds as string[]) || []);
   const [count, setCount] = useState<number>((data.count as number) || 4);
   const [columns, setColumns] = useState<number>((data.columns as number) || 4);
 
-  useReport({ headline, mode, categorySlug, productIds: productIds.split(',').map(s => s.trim()).filter(Boolean), count, columns }, onChange);
+  // Pick products from a list instead of typing raw IDs.
+  const [productList, setProductList] = useState<{ id: string; title: string; slug: string }[]>([]);
+  useEffect(() => {
+    if (mode === 'manual' && productList.length === 0) {
+      getProductLinksAction().then(setProductList).catch(() => {});
+    }
+  }, [mode, productList.length]);
+
+  const toggleProduct = (id: string) =>
+    setProductIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+
+  useReport({ headline, mode, categorySlug, productIds, count, columns }, onChange);
 
   return (
     <div className="space-y-4">
@@ -2604,7 +2616,7 @@ function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
         <select className="w-full border rounded px-3 py-2" value={mode} onChange={e => setMode(e.target.value)}>
           <option value="latest">Neueste Produkte</option>
           <option value="category">Nach Kategorie</option>
-          <option value="manual">Manuelle Auswahl (IDs)</option>
+          <option value="manual">Manuelle Auswahl</option>
         </select>
       </div>
       {mode === 'category' && (
@@ -2615,8 +2627,20 @@ function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
       )}
       {mode === 'manual' && (
         <div>
-          <label className="block text-sm font-medium mb-1">Produkt-IDs (komma-getrennt)</label>
-          <input className="w-full border rounded px-3 py-2" value={productIds} onChange={e => setProductIds(e.target.value)} placeholder="id1, id2, id3" />
+          <label className="block text-sm font-medium mb-1">Produkte auswählen{productIds.length ? ` (${productIds.length})` : ''}</label>
+          {productList.length === 0 ? (
+            <p className="text-sm text-zinc-400">Keine Produkte gefunden — lege zuerst Produkte im Shop an.</p>
+          ) : (
+            <div className="max-h-56 overflow-y-auto border rounded divide-y">
+              {productList.map(p => (
+                <label key={p.id} className="flex items-center gap-2 px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50">
+                  <input type="checkbox" checked={productIds.includes(p.id)} onChange={() => toggleProduct(p.id)} />
+                  <span className="truncate">{p.title}</span>
+                </label>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-zinc-400 mt-1">Reihenfolge entspricht der Auswahl-Reihenfolge.</p>
         </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
