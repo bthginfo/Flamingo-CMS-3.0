@@ -28,23 +28,59 @@ export async function getLocalSeoAction() {
   return (brand.localSeo as Record<string, unknown> | undefined) || {};
 }
 
+function parseCoordinate(raw: string, min: number, max: number): number | undefined {
+  const n = Number(raw.trim().replace(',', '.'));
+  return Number.isFinite(n) && n >= min && n <= max ? n : undefined;
+}
+
+function parseServices(raw: string): { name: string; description?: string; url?: string }[] {
+  return raw
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      const [name, description, url] = line.split('|').map(p => p.trim());
+      return {
+        name,
+        ...(description ? { description } : {}),
+        ...(url ? { url } : {}),
+      };
+    })
+    .filter(s => s.name)
+    .slice(0, 24);
+}
+
 export async function saveLocalSeoAction(data: {
   businessType: string;
   priceRange: string;
   serviceArea: string;
   googleBusinessUrl: string;
   sameAsText: string;
+  latitude: string;
+  longitude: string;
+  ratingValue: string;
+  ratingCount: string;
+  servicesText: string;
 }) {
   const session = await requireSession();
   const db = getDb();
   const [row] = await db.select({ id: globalSettings.id, brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
   const brand = (row?.brand as Record<string, unknown>) || {};
+  const latitude = parseCoordinate(data.latitude, -90, 90);
+  const longitude = parseCoordinate(data.longitude, -180, 180);
+  const ratingValue = parseCoordinate(data.ratingValue, 0, 5);
+  const ratingCountNum = Number(data.ratingCount.trim());
+  const ratingCount = Number.isFinite(ratingCountNum) && ratingCountNum > 0 ? Math.round(ratingCountNum) : undefined;
+  const services = parseServices(data.servicesText);
   const localSeo = {
     businessType: data.businessType.trim(),
     priceRange: data.priceRange.trim(),
     serviceArea: data.serviceArea.trim(),
     googleBusinessUrl: data.googleBusinessUrl.trim(),
     sameAs: data.sameAsText.split('\n').map(line => line.trim()).filter(Boolean),
+    ...(latitude !== undefined && longitude !== undefined ? { latitude, longitude } : {}),
+    ...(ratingValue !== undefined && ratingCount !== undefined ? { ratingValue, ratingCount } : {}),
+    ...(services.length ? { services } : {}),
   };
 
   if (row) {

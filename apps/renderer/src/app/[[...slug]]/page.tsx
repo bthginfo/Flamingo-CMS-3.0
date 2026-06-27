@@ -368,6 +368,37 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
     ...(Array.isArray(localSeo.sameAs) ? localSeo.sameAs.filter((url): url is string => typeof url === 'string' && url.length > 0) : []),
   ];
 
+  // Geo coordinates: let maps / agents pin the business precisely.
+  const lat = finiteNumber(localSeo.latitude);
+  const lng = finiteNumber(localSeo.longitude);
+  const geo = lat !== undefined && lng !== undefined
+    ? { '@type': 'GeoCoordinates' as const, latitude: lat, longitude: lng }
+    : undefined;
+
+  // Aggregate rating: a strong trust + AI-summary signal (only when real data).
+  const ratingValue = finiteNumber(localSeo.ratingValue);
+  const ratingCount = finiteNumber(localSeo.ratingCount);
+  const aggregateRating = ratingValue !== undefined && ratingValue > 0 && ratingCount !== undefined && ratingCount > 0
+    ? { '@type': 'AggregateRating' as const, ratingValue, reviewCount: Math.round(ratingCount), bestRating: 5, worstRating: 1 }
+    : undefined;
+
+  // Service catalogue: tells an agent WHAT the business offers, not just that it exists.
+  const serviceItems = (Array.isArray(localSeo.services) ? localSeo.services : [])
+    .filter((s) => isRecord(s) && typeof s.name === 'string' && s.name.trim().length > 0)
+    .slice(0, 24)
+    .map((s) => ({
+      '@type': 'Offer' as const,
+      itemOffered: {
+        '@type': 'Service' as const,
+        name: String(s.name),
+        ...(typeof s.description === 'string' && s.description && { description: s.description }),
+        ...(typeof s.url === 'string' && s.url && { url: s.url }),
+      },
+    }));
+  const hasOfferCatalog = serviceItems.length > 0
+    ? { '@type': 'OfferCatalog' as const, name: 'Leistungen', itemListElement: serviceItems }
+    : undefined;
+
   // Main entity
   if (isHome) {
     jsonLdList.push({
@@ -384,6 +415,9 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       ...(specialOpeningHoursSpecification.length > 0 && { specialOpeningHoursSpecification }),
       ...(typeof localSeo.priceRange === 'string' && localSeo.priceRange && { priceRange: localSeo.priceRange }),
       ...(typeof localSeo.serviceArea === 'string' && localSeo.serviceArea && { areaServed: localSeo.serviceArea }),
+      ...(geo && { geo }),
+      ...(aggregateRating && { aggregateRating }),
+      ...(hasOfferCatalog && { hasOfferCatalog }),
       ...(sameAs.length > 0 && { sameAs }),
       ...(potentialActions.length > 0 && { potentialAction: potentialActions }),
     });
@@ -448,6 +482,12 @@ type OpeningHoursInput = { day?: string; hours?: string; note?: string; closed?:
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/** Coerce a JSON-LD numeric field, tolerating string-typed values from the CMS. */
+function finiteNumber(value: unknown): number | undefined {
+  const n = typeof value === 'string' ? Number(value.replace(',', '.')) : value;
+  return typeof n === 'number' && Number.isFinite(n) ? n : undefined;
 }
 
 const LOCAL_BUSINESS_TYPES = new Set([

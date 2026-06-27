@@ -11,7 +11,8 @@ export type BrandData = { companyName?: string; tagline?: string; primaryColor?:
 export type SocialLinks = Record<string, string>;
 export type ContactData = { phone?: string; email?: string; address?: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string };
 export type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
-export type LocalSeoData = { businessType?: string; priceRange?: string; serviceArea?: string; googleBusinessUrl?: string; sameAs?: string[] };
+export type LocalSeoService = { name: string; description?: string; url?: string };
+export type LocalSeoData = { businessType?: string; priceRange?: string; serviceArea?: string; googleBusinessUrl?: string; sameAs?: string[]; latitude?: number; longitude?: number; ratingValue?: number; ratingCount?: number; services?: LocalSeoService[] };
 
 function isPlaceholderCompanyName(value?: string): boolean {
   const normalized = (value || '').trim().toLowerCase();

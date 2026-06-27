@@ -24,6 +24,11 @@ export function SeoForm() {
     serviceArea: '',
     googleBusinessUrl: '',
     sameAsText: '',
+    latitude: '',
+    longitude: '',
+    ratingValue: '',
+    ratingCount: '',
+    servicesText: '',
   });
 
   useEffect(() => {
@@ -45,6 +50,16 @@ export function SeoForm() {
         serviceArea: typeof row.serviceArea === 'string' ? row.serviceArea : '',
         googleBusinessUrl: typeof row.googleBusinessUrl === 'string' ? row.googleBusinessUrl : '',
         sameAsText: Array.isArray(row.sameAs) ? row.sameAs.filter(Boolean).join('\n') : '',
+        latitude: typeof row.latitude === 'number' ? String(row.latitude) : '',
+        longitude: typeof row.longitude === 'number' ? String(row.longitude) : '',
+        ratingValue: typeof row.ratingValue === 'number' ? String(row.ratingValue) : '',
+        ratingCount: typeof row.ratingCount === 'number' ? String(row.ratingCount) : '',
+        servicesText: Array.isArray(row.services)
+          ? (row.services as Record<string, unknown>[])
+              .filter(s => s && typeof s.name === 'string')
+              .map(s => [s.name, s.description, s.url].filter(Boolean).join(' | '))
+              .join('\n')
+          : '',
       });
     });
   }, []);
@@ -168,6 +183,13 @@ export function SeoForm() {
           {localField('Google-Business-Link', 'googleBusinessUrl', { placeholder: 'https://g.page/...' })}
           <div className="sm:col-span-2">
             {localField('Weitere Profile', 'sameAsText', { placeholder: 'https://www.instagram.com/...\nhttps://www.linkedin.com/company/...', hint: 'Eine URL pro Zeile. Wird als sameAs im strukturierten Datenmodell ausgegeben.', multiline: true })}
+          </div>
+          {localField('Breitengrad (Latitude)', 'latitude', { placeholder: 'z.B. 48.7758', hint: 'Optional. Genaue Position für Karten & KI-Assistenten. In Google Maps per Rechtsklick auf den Standort.' })}
+          {localField('Längengrad (Longitude)', 'longitude', { placeholder: 'z.B. 9.1829', hint: 'Wird zusammen mit dem Breitengrad als geo-Koordinate ausgegeben.' })}
+          {localField('Bewertung (Ø)', 'ratingValue', { placeholder: 'z.B. 4.8', hint: 'Optional. Durchschnittliche Bewertung von 0–5. Nur echte Werte verwenden.' })}
+          {localField('Anzahl Bewertungen', 'ratingCount', { placeholder: 'z.B. 127', hint: 'Anzahl der Bewertungen. Wird zusammen mit dem Durchschnitt als aggregateRating ausgegeben.' })}
+          <div className="sm:col-span-2">
+            {localField('Leistungen / Angebote', 'servicesText', { placeholder: 'Beratung | Persönliche Erstberatung | https://...\nMontage\nWartung | Jährliche Wartung', hint: 'Eine Leistung pro Zeile. Format: Name | Beschreibung (optional) | Link (optional). Wird als Leistungskatalog ausgegeben, damit Suchmaschinen und KI-Agenten verstehen, was angeboten wird.', multiline: true })}
           </div>
         </div>
       </div>
