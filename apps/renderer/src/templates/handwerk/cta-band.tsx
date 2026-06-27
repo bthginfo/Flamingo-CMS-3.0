@@ -28,7 +28,11 @@ export function CtaBandSection({ data, styleVariant }: Props) {
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
 type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
 const CTA_CARD_BG = 'linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg, #0f172a) 92%, #000) 0%, color-mix(in srgb, var(--token-accent) 30%, var(--token-card-bg, #0f172a)) 100%)';
-const CTA_CARD_HEADING = 'var(--token-heading, #fff)';
+// This band always renders on a dark gradient (card-bg mixed toward black +
+// accent), so the heading must use the on-dark slot. Using --token-heading here
+// made the title invisible on dark sections where that slot is the dark brand
+// colour (it overrode the correct on-dark-heading className via inline style).
+const CTA_CARD_HEADING = 'var(--token-on-dark-heading, #fff)';
 const CTA_CARD_BODY = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 82%, transparent)';
 // Badge is bound to its DEDICATED slots with NO borrowed fallback, so only the
 // CMS "Badge"-Felder control it. Defaults come from the independent page-level
