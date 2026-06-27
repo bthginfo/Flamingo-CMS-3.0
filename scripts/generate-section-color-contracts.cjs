@@ -236,6 +236,16 @@ function build() {
   };
   const { componentToFile, industryTypeComponent, sharedTypeComponent } = loadTemplateRegistry();
 
+  // Text roles the section-renderer paints on EVERY section via its !important
+  // heading/body/muted rules and the per-section --_card-* definitions, no matter
+  // which tokens a given template literally reads. They must always be settable
+  // (and therefore never trimmed) so an author's chosen text colour survives —
+  // otherwise a section that reads only the on-dark slots loses its --token-heading
+  // override and inherits the page's default. Mirrors how sectionBg is universal.
+  const UNIVERSAL_FIELDS = ['headingColor', 'bodyColor', 'mutedColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor']
+    .filter((f) => fieldOrder.includes(f));
+  const addUniversal = (set) => { for (const f of UNIVERSAL_FIELDS) set.add(f); };
+
   const perIndustry = {};   // 'heroSalon' -> ColorFieldKey[]
   const perType = {};       // 'hero' -> ColorFieldKey[] (shared templates only)
   const perAnySet = {};     // 'hero' -> Set<ColorFieldKey> (UNION across every industry)
@@ -259,6 +269,7 @@ function build() {
     const fieldSet = new Set();
     // sectionBg is ALWAYS available - every section can have its background changed
     fieldSet.add('sectionBg');
+    addUniversal(fieldSet);
     for (const t of tokens) {
       const field = cssVarToField.get(t);
       if (field) fieldSet.add(field);
@@ -288,6 +299,7 @@ function build() {
     const tokens = extractTokenVars(file);
     if (!perType[type]) perType[type] = new Set();
     perType[type].add('sectionBg');
+    addUniversal(perType[type]);
     for (const t of tokens) {
       const field = cssVarToField.get(t);
       if (field) perType[type].add(field);
