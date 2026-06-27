@@ -50,13 +50,13 @@ export function ShopCartSection({ data }: Props) {
                 <p className="font-semibold mt-1 text-[color:var(--token-price)]">{formatPrice(item.priceCents)}</p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <button onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-muted)] hover:text-[color:var(--token-danger)]">
+                <button aria-label={`${item.title} aus dem Warenkorb entfernen`} onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-muted)] hover:text-[color:var(--token-danger)]">
                   <Trash2 size={16} />
                 </button>
                 <div className="flex items-center rounded-lg border border-[color:var(--token-card-border)] text-[color:var(--token-card-body)]">
-                  <button onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)} className="p-1.5 hover:bg-[var(--token-section-bg-alt)]"><Minus size={14} /></button>
-                  <span className="w-8 text-center text-sm">{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)} className="p-1.5 hover:bg-[var(--token-section-bg-alt)]"><Plus size={14} /></button>
+                  <button aria-label="Menge verringern" onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)} className="p-1.5 hover:bg-[var(--token-section-bg-alt)]"><Minus size={14} /></button>
+                  <span className="w-8 text-center text-sm" aria-live="polite">{item.quantity}</span>
+                  <button aria-label="Menge erhöhen" onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)} className="p-1.5 hover:bg-[var(--token-section-bg-alt)]"><Plus size={14} /></button>
                 </div>
               </div>
             </div>

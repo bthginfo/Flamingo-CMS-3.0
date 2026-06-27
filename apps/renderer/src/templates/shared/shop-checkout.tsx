@@ -357,7 +357,7 @@ export function ShopCheckoutSection({ data }: Props) {
                   <Tag size={14} className="text-[color:var(--token-success)]" />
                   <span className="text-sm font-medium text-[color:var(--token-success)]">{coupon.code} (<span data-edit-path="label">{coupon.label}</span>)</span>
                 </div>
-                <button onClick={removeCoupon} className="text-[color:var(--token-success)] hover:text-[color:var(--token-success)]"><X size={14} /></button>
+                <button aria-label="Gutschein entfernen" onClick={removeCoupon} className="text-[color:var(--token-success)] hover:text-[color:var(--token-success)]"><X size={14} /></button>
               </div>
             ) : (
               <div className="flex gap-2">

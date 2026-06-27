@@ -26,7 +26,7 @@ export function CartDrawer() {
             <ShoppingBag size={20} />
             <span className="font-semibold">Warenkorb ({totalItems})</span>
           </div>
-          <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-zinc-100 rounded-lg">
+          <button aria-label="Warenkorb schließen" onClick={() => setIsOpen(false)} className="p-2 hover:bg-zinc-100 rounded-lg">
             <X size={20} />
           </button>
         </div>
@@ -87,13 +87,13 @@ function CartItemRow({ item, onUpdate, onRemove }: { item: CartItem; onUpdate: (
         <p className="text-sm font-semibold mt-1">{formatPrice(item.priceCents)}</p>
       </div>
       <div className="flex flex-col items-end gap-1">
-        <button onClick={() => onRemove(item.productId, item.variantId)} className="p-1 text-zinc-400 hover:text-red-500">
+        <button aria-label="Artikel entfernen" onClick={() => onRemove(item.productId, item.variantId)} className="p-1 text-zinc-400 hover:text-red-500">
           <Trash2 size={14} />
         </button>
         <div className="flex items-center gap-1 border rounded-lg">
-          <button onClick={() => onUpdate(item.productId, item.variantId, item.quantity - 1)} className="p-1 hover:bg-zinc-100"><Minus size={12} /></button>
-          <span className="text-xs w-5 text-center">{item.quantity}</span>
-          <button onClick={() => onUpdate(item.productId, item.variantId, item.quantity + 1)} className="p-1 hover:bg-zinc-100"><Plus size={12} /></button>
+          <button aria-label="Menge verringern" onClick={() => onUpdate(item.productId, item.variantId, item.quantity - 1)} className="p-1 hover:bg-zinc-100"><Minus size={12} /></button>
+          <span className="text-xs w-5 text-center" aria-live="polite">{item.quantity}</span>
+          <button aria-label="Menge erhöhen" onClick={() => onUpdate(item.productId, item.variantId, item.quantity + 1)} className="p-1 hover:bg-zinc-100"><Plus size={12} /></button>
         </div>
       </div>
     </div>

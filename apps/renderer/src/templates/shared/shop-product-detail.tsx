@@ -98,8 +98,8 @@ export function ShopProductDetailSection({ data }: Props) {
             )}
             {images.length > 1 && (
               <>
-                <button onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[color-mix(in_srgb,var(--token-card-bg)_90%,transparent)] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronLeft size={18} /></button>
-                <button onClick={() => setSelectedImage((selectedImage + 1) % images.length)} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[color-mix(in_srgb,var(--token-card-bg)_90%,transparent)] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronRight size={18} /></button>
+                <button aria-label="Vorheriges Bild" onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[color-mix(in_srgb,var(--token-card-bg)_90%,transparent)] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronLeft size={18} /></button>
+                <button aria-label="Nächstes Bild" onClick={() => setSelectedImage((selectedImage + 1) % images.length)} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[color-mix(in_srgb,var(--token-card-bg)_90%,transparent)] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronRight size={18} /></button>
               </>
             )}
             {discount > 0 && (
@@ -110,7 +110,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {images.length > 1 && (
             <div className="flex gap-3">
               {images.slice(0, 4).map((img, i) => (
-                <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`} data-edit-collection="images" data-edit-index={i}>
+                <button key={i} aria-label={`Bild ${i + 1} anzeigen`} aria-pressed={i === selectedImage} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`} data-edit-collection="images" data-edit-index={i}>
                   <img data-edit-image="img" src={img} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
@@ -183,9 +183,9 @@ export function ShopProductDetailSection({ data }: Props) {
           {/* Add to cart */}
           <div className="flex items-center gap-4 mt-auto pt-4">
             <div className="flex items-center border border-[color:var(--token-card-border)] rounded-xl">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 hover:bg-[var(--token-section-bg-alt)] rounded-l-xl transition"><Minus size={16} /></button>
-              <span className="w-10 text-center font-medium text-sm">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="p-3 hover:bg-[var(--token-section-bg-alt)] rounded-r-xl transition"><Plus size={16} /></button>
+              <button aria-label="Menge verringern" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 hover:bg-[var(--token-section-bg-alt)] rounded-l-xl transition"><Minus size={16} /></button>
+              <span className="w-10 text-center font-medium text-sm" aria-live="polite">{quantity}</span>
+              <button aria-label="Menge erhöhen" onClick={() => setQuantity(quantity + 1)} className="p-3 hover:bg-[var(--token-section-bg-alt)] rounded-r-xl transition"><Plus size={16} /></button>
             </div>
             <button
               onClick={handleAdd}

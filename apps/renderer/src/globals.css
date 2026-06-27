@@ -423,7 +423,7 @@ html {
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-base;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] text-base;
     border-radius: var(--style-button-radius, 0.75rem);
     background: var(--brand-btn-bg, var(--brand-accent));
     color: var(--brand-btn-text, #1a1a1a);
@@ -454,7 +454,7 @@ html {
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 text-base;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] text-base;
     border-radius: var(--style-button-radius, 0.75rem);
     background: var(--brand-btn-secondary-bg, transparent);
     color: var(--brand-btn-secondary-text, white);
@@ -462,7 +462,7 @@ html {
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 text-base;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] text-base;
     border-radius: var(--style-button-radius, 0.75rem);
     background: var(--brand-btn-outline-bg, transparent);
     color: var(--brand-btn-outline-text, #374151);
