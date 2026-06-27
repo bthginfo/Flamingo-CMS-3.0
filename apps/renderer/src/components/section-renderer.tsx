@@ -96,6 +96,11 @@ const MEDIA_OVERLAY_SECTION_TYPES = new Set([
   'fitnessHero',
   'locationHero',
   'immersiveCtaBanner',
+  // ctaBand renders its text on a fixed dark gradient card (card-bg mixed toward
+  // black + accent), so it must use the on-dark colour chain. Without this the
+  // section-renderer's !important heading/body rules resolve --token-heading /
+  // --token-body to the (light-section) brand defaults → dark-on-dark.
+  'ctaBand',
 ]);
 const SKIP_REVEAL_SECTION_TYPES = new Set([
   'hero',
