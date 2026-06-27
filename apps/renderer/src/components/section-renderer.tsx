@@ -4,6 +4,7 @@ import { SectionErrorBoundary } from './section-error-boundary';
 import { prefixInternalLinks } from '@/lib/link-prefix';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { SectionReveal } from './section-reveal';
+import { isDarkColor } from '@/lib/color-validation';
 
 /** Extract the best image from a collection item. Supports strings, media objects, arrays, and embedded hero sections. */
 function getImageUrl(value: unknown): string | undefined {
@@ -409,7 +410,15 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   ]);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
-  const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay);
+  // A section whose own section-bg resolves to a dark colour must use the
+  // on-dark colour chain for its heading/body, regardless of section type.
+  // Otherwise the !important heading/body rules below resolve --token-heading /
+  // --token-body to the light-section brand defaults → dark-on-dark (this hit
+  // ctaBand and every other type whose contract omits --token-heading because
+  // its template reads the on-dark slots directly).
+  const sectionBgOverride = (section.styleOverrides as Record<string, string> | undefined)?.['--token-section-bg'];
+  const hasDarkSectionBg = typeof sectionBgOverride === 'string' && isDarkColor(sectionBgOverride);
+  const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay) || hasDarkSectionBg;
   const headingColorVar = hasMediaOverlay
     ? 'var(--token-on-dark-heading, var(--style-image-text-color, #ffffff))'
     : 'var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit)))';
