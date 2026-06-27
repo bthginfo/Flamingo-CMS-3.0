@@ -1,17 +1,24 @@
 import { NextResponse } from 'next/server';
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantBrand, getTenantSeoGlobal } from '@/lib/tenant-data';
+import { hasBookingAddon } from '@/lib/booking-core';
+import { isShopActive } from '@/lib/shop-pages';
 
 export const dynamic = 'force-dynamic';
+
+const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+const isHomeSlug = (s: string) => s === '' || s === 'home' || s === 'startseite';
 
 export async function GET() {
   const tenantId = await resolveTenant();
   if (!tenantId) return new NextResponse('Not found', { status: 404 });
 
-  const [snapshot, seo, { brand, contact }] = await Promise.all([
+  const [snapshot, seo, { brand, contact }, bookingActive, shopActive] = await Promise.all([
     getActiveSnapshot(tenantId),
     getTenantSeoGlobal(tenantId),
     getTenantBrand(tenantId),
+    hasBookingAddon(tenantId),
+    isShopActive(tenantId),
   ]);
 
   if (!snapshot) return new NextResponse('Not found', { status: 404 });
@@ -30,9 +37,19 @@ export async function GET() {
     ...(contact.email ? [`E-Mail: ${contact.email}`] : []),
     ...(contact.address ? [`Adresse: ${contact.address}`] : []),
     '',
-    '## Seiten',
-    '',
   ];
+
+  // Actionable info first, so an agent immediately knows what it can DO here.
+  if (bookingActive) {
+    const bookingPage = snapshot.pages.find(p => p.visible && (p.sections || []).some(s => BOOKING_SECTION_TYPES.has(s.type)));
+    const bookingUrl = bookingPage ? (isHomeSlug(bookingPage.slug) ? base : `${base}/${bookingPage.slug}`) : base;
+    lines.push('## Termine & Buchung', '', `Termine können online angefragt bzw. gebucht werden: ${bookingUrl}`, '');
+  }
+  if (shopActive) {
+    lines.push('## Online-Shop', '', `Produkte können online bestellt werden: ${base}/shop`, '');
+  }
+
+  lines.push('## Seiten', '');
 
   for (const page of snapshot.pages.filter(p => p.visible)) {
     const isHome = page.slug === '' || page.slug === 'home' || page.slug === 'startseite';

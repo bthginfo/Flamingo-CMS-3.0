@@ -43,6 +43,7 @@ export const revalidate = 60;
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { isShopActive } from '@/lib/shop-pages';
+import { hasBookingAddon } from '@/lib/booking-core';
 import { getDesignCssVars } from '@/lib/design-vars';
 import { getDb } from '@/lib/db';
 import { tenants } from '@flamingo/db';
@@ -331,6 +332,32 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
     }));
   });
 
+  // Actionable entry points for search engines AND AI agents: declare that the
+  // business can be booked / ordered from, and exactly where. This is what lets
+  // an agent go from "understanding" the page to "acting" on it.
+  const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+  const isHomeSlug = (s: string) => s === '' || s === 'home' || s === 'startseite';
+  const pageUrlFor = (s: string) => (isHomeSlug(s) ? canonicalBase : `${canonicalBase.replace(/\/$/, '')}/${s}`);
+  const [bookingActive, shopActive] = await Promise.all([hasBookingAddon(tenantId), isShopActive(tenantId)]);
+  const bookingPage = snapshot.pages.find(p => p.visible && p.sections.some(s => s.visible !== false && BOOKING_SECTION_TYPES.has(s.type)));
+  const actionPlatform = ['http://schema.org/DesktopWebPlatform', 'http://schema.org/MobileWebPlatform', 'http://schema.org/IOSPlatform', 'http://schema.org/AndroidPlatform'];
+  const potentialActions: Record<string, unknown>[] = [];
+  if (bookingActive) {
+    potentialActions.push({
+      '@type': 'ReserveAction',
+      name: 'Termin vereinbaren',
+      target: { '@type': 'EntryPoint', urlTemplate: bookingPage ? pageUrlFor(bookingPage.slug) : canonicalBase, inLanguage: 'de', actionPlatform },
+      result: { '@type': 'Reservation', name: 'Terminanfrage' },
+    });
+  }
+  if (shopActive) {
+    potentialActions.push({
+      '@type': 'OrderAction',
+      name: 'Online bestellen',
+      target: { '@type': 'EntryPoint', urlTemplate: `${canonicalBase.replace(/\/$/, '')}/shop`, inLanguage: 'de', actionPlatform },
+    });
+  }
+
   const jsonLdList: Record<string, unknown>[] = [];
   const openingHoursSpecification = buildOpeningHoursSpecification(openingHours);
   const specialOpeningHoursSpecification = buildSpecialOpeningHoursSpecification(openingHours);
@@ -358,6 +385,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       ...(typeof localSeo.priceRange === 'string' && localSeo.priceRange && { priceRange: localSeo.priceRange }),
       ...(typeof localSeo.serviceArea === 'string' && localSeo.serviceArea && { areaServed: localSeo.serviceArea }),
       ...(sameAs.length > 0 && { sameAs }),
+      ...(potentialActions.length > 0 && { potentialAction: potentialActions }),
     });
   } else {
     jsonLdList.push({
@@ -387,7 +415,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   }
 
   const brandCssVars = getBrandCssVars(brand);
-  const shopEnabled = await isShopActive(tenantId);
+  const shopEnabled = shopActive;
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
   // Build dynamic style overrides that need !important to beat Tailwind utilities
