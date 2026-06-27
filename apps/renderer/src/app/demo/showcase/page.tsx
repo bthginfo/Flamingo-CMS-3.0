@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from '@/app/admin/pages/[id]/section-types';
 import { SectionShowcaseClient, type ShowcaseSection } from './section-showcase-client';
+
+export const metadata: Metadata = {
+  title: 'Section Showcase — Flamingo CMS',
+  description: 'Alle Bausteine, aus denen Flamingo-Websites entstehen: Hero, Galerien, CTAs, Vertrauen-Elemente und branchenspezifische Premium-Sektionen.',
+};
 
 const INDUSTRIES = [
   { key: 'tradesman', label: 'Handwerk' },
