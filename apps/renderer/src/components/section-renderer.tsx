@@ -4,7 +4,6 @@ import { SectionErrorBoundary } from './section-error-boundary';
 import { prefixInternalLinks } from '@/lib/link-prefix';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { SectionReveal } from './section-reveal';
-import { isDarkColor } from '@/lib/color-validation';
 
 /** Extract the best image from a collection item. Supports strings, media objects, arrays, and embedded hero sections. */
 function getImageUrl(value: unknown): string | undefined {
@@ -97,11 +96,6 @@ const MEDIA_OVERLAY_SECTION_TYPES = new Set([
   'fitnessHero',
   'locationHero',
   'immersiveCtaBanner',
-  // ctaBand renders its text on a fixed dark gradient card (card-bg mixed toward
-  // black + accent), so it must use the on-dark colour chain. Without this the
-  // section-renderer's !important heading/body rules resolve --token-heading /
-  // --token-body to the (light-section) brand defaults → dark-on-dark.
-  'ctaBand',
 ]);
 const SKIP_REVEAL_SECTION_TYPES = new Set([
   'hero',
@@ -410,33 +404,24 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   ]);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
-  // A section whose own section-bg resolves to a dark colour must use the
-  // on-dark colour chain for its heading/body, regardless of section type.
-  // Otherwise the !important heading/body rules below resolve --token-heading /
-  // --token-body to the light-section brand defaults → dark-on-dark (this hit
-  // ctaBand and every other type whose contract omits --token-heading because
-  // its template reads the on-dark slots directly).
-  const sectionBgOverride = (section.styleOverrides as Record<string, string> | undefined)?.['--token-section-bg'];
-  const hasDarkSectionBg = typeof sectionBgOverride === 'string' && isDarkColor(sectionBgOverride);
-  const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay) || hasDarkSectionBg;
-  const headingColorVar = hasMediaOverlay
-    ? 'var(--token-on-dark-heading, var(--style-image-text-color, #ffffff))'
-    : 'var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit)))';
-  const bodyColorVar = hasMediaOverlay
-    ? 'var(--token-on-dark-body, var(--style-image-body-color, rgba(255,255,255,0.86)))'
-    : 'var(--token-body, var(--style-body-color, var(--style-text-secondary, inherit)))';
-  const mutedColorVar = hasMediaOverlay
-    ? 'var(--token-on-dark-muted, var(--style-image-muted-color, rgba(255,255,255,0.72)))'
-    : 'var(--token-muted, var(--style-text-muted, var(--style-text-secondary, inherit)))';
-  const cardHeadingColorVar = hasMediaOverlay
-    ? 'var(--token-card-heading, var(--token-on-dark-heading, var(--style-image-text-color, #ffffff)))'
-    : 'var(--token-card-heading, var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit))))';
-  const cardBodyColorVar = hasMediaOverlay
-    ? 'var(--token-card-body, var(--token-on-dark-body, var(--style-image-body-color, rgba(255,255,255,0.86))))'
-    : 'var(--token-card-body, var(--token-body, var(--style-body-color, var(--style-text-secondary, inherit))))';
-  const cardMutedColorVar = hasMediaOverlay
-    ? 'var(--token-card-muted, var(--token-on-dark-muted, var(--style-image-muted-color, rgba(255,255,255,0.72))))'
-    : 'var(--token-card-muted, var(--token-muted, var(--style-text-muted, var(--style-text-secondary, inherit))))';
+  // UNIFIED colour resolution — no dark/light decision. Each text role resolves
+  // to whatever the section actually set for it: the plain slot first, then its
+  // on-dark alias (so it doesn't matter which the data used), then the global
+  // style default. There is no "this section is dark" branch — you pick the
+  // section background AND the text colour, and the renderer paints exactly that.
+  // hasMediaOverlay only changes the TERMINAL fallback: a section whose
+  // background is a photo (hero) has no colour to derive from, so unset text
+  // defaults to light instead of inheriting the page's dark default.
+  const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay);
+  const headFb = hasMediaOverlay ? '#ffffff' : 'inherit';
+  const bodyFb = hasMediaOverlay ? 'rgba(255,255,255,0.86)' : 'inherit';
+  const mutedFb = hasMediaOverlay ? 'rgba(255,255,255,0.72)' : 'inherit';
+  const headingColorVar = `var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, var(--style-text-primary, ${headFb}))))`;
+  const bodyColorVar = `var(--token-body, var(--token-on-dark-body, var(--style-body-color, var(--style-text-secondary, ${bodyFb}))))`;
+  const mutedColorVar = `var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, var(--style-text-secondary, ${mutedFb}))))`;
+  const cardHeadingColorVar = `var(--token-card-heading, var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, ${headFb}))))`;
+  const cardBodyColorVar = `var(--token-card-body, var(--token-body, var(--token-on-dark-body, var(--style-body-color, ${bodyFb}))))`;
+  const cardMutedColorVar = `var(--token-card-muted, var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, ${mutedFb}))))`;
 
   // Per-section color overrides (from CMS) applied as inline CSS vars
   const overrideStyle = section.styleOverrides
