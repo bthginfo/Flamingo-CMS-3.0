@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -12,8 +12,10 @@ function AnimatedNumber({ value, prefix, suffix, inView }: { value: number | str
   const numericValue = typeof value === 'number' ? value : Number(value);
   const isNumeric = !isNaN(numericValue) && numericValue !== 0 || value === 0 || value === '0';
   const [display, setDisplay] = useState(0);
+  const reduceMotion = useReducedMotion();
   useEffect(() => {
     if (!inView || !isNumeric) return;
+    if (reduceMotion) { setDisplay(numericValue); return; }
     let start = 0;
     const duration = 2000;
     const startTime = performance.now();
@@ -25,7 +27,7 @@ function AnimatedNumber({ value, prefix, suffix, inView }: { value: number | str
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
-  }, [inView, numericValue, isNumeric]);
+  }, [inView, numericValue, isNumeric, reduceMotion]);
 
   if (!isNumeric) {
     return <span>{prefix}<span data-edit-path="value">{String(value)}</span>{suffix}</span>;

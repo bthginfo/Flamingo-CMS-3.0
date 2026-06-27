@@ -1,7 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useConsent, type ConsentCategory } from '@/lib/consent';
+
+// Internal preview/iframe routes that render public sections in isolation — the
+// cookie banner is clutter there (the showcase shows it inside every preview
+// iframe). It still shows on the real public site and on the demos.
+const PREVIEW_ROUTES = ['/section-preview', '/preview', '/live-preview'];
 
 const CATEGORIES: { key: Exclude<ConsentCategory, 'necessary'>; label: string; desc: string }[] = [
   { key: 'functional', label: 'Funktional', desc: 'Eingebettete Karten, Videos und erweiterte Funktionen.' },
@@ -10,10 +16,12 @@ const CATEGORIES: { key: Exclude<ConsentCategory, 'necessary'>; label: string; d
 ];
 
 export function CookieBanner() {
+  const pathname = usePathname();
   const { needsDecision, consent, acceptAll, rejectAll, setConsent } = useConsent();
   const [showDetails, setShowDetails] = useState(false);
   const [draft, setDraft] = useState({ functional: consent.functional, analytics: consent.analytics, marketing: consent.marketing });
 
+  if (pathname && PREVIEW_ROUTES.some((r) => pathname.startsWith(r))) return null;
   if (!needsDecision) return null;
 
   return (

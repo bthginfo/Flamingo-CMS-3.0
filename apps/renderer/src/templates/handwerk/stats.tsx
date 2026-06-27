@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
+import { motion, useInView, useMotionValue, useTransform, animate, useReducedMotion } from 'framer-motion';
 import { useEffect } from 'react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 
@@ -15,12 +15,15 @@ function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number | s
   const rounded = useTransform(count, (v) => `${prefix}${Math.round(v)}${suffix}`);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (inView && isNumeric) {
-      animate(count, numericValue, { duration: 2, ease: 'easeOut' });
-    }
-  }, [inView, count, numericValue, isNumeric]);
+    if (!isNumeric) return;
+    // Respect reduced-motion: jump straight to the final value (the imperative
+    // animate() does not honour MotionConfig on its own).
+    if (reduceMotion) { count.set(numericValue); return; }
+    if (inView) animate(count, numericValue, { duration: 2, ease: 'easeOut' });
+  }, [inView, count, numericValue, isNumeric, reduceMotion]);
 
   if (!isNumeric) {
     return <span ref={ref}>{prefix}<span data-edit-path="value">{String(value)}</span>{suffix}</span>;
