@@ -3,6 +3,7 @@ import { Inter, Outfit } from 'next/font/google';
 import { ConsentWrapper } from '@/components/consent-wrapper';
 import { CartProvider } from '@/components/shop/cart-context';
 import { CartDrawer } from '@/components/shop/cart-drawer';
+import { MotionProvider } from '@/components/motion-provider';
 import '../globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -22,10 +23,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rule, which is sufficient and avoids a hydration mismatch caused
           by a static <head> child colliding with Next's runtime injection. */}
       <body className="font-sans bg-white text-gray-900 antialiased">
-        <CartProvider>
-          <ConsentWrapper>{children}</ConsentWrapper>
-          <CartDrawer />
-        </CartProvider>
+        <MotionProvider>
+          <CartProvider>
+            <ConsentWrapper>{children}</ConsentWrapper>
+            <CartDrawer />
+          </CartProvider>
+        </MotionProvider>
       </body>
     </html>
   );

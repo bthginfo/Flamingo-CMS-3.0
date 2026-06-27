@@ -730,3 +730,27 @@ html {
   animation-duration: 180ms;
   animation-timing-function: cubic-bezier(.4, 0, .2, 1);
 }
+
+/* ─── Accessibility: keyboard focus ──────────────────────────────────────────
+   A consistent, visible focus ring for keyboard users only (mouse clicks don't
+   trigger :focus-visible), so the premium look is unaffected while the site
+   becomes keyboard-navigable. Uses the brand accent with a halo for contrast. */
+:where(a, button, input, select, textarea, [tabindex], summary):focus-visible {
+  outline: 2px solid var(--token-accent, var(--brand-primary, #2563eb));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Accessibility: reduced motion ──────────────────────────────────────────
+   Counterpart to <MotionConfig reducedMotion="user">. framer-motion handles its
+   JS transform animations; this neutralises CSS transitions/animations and the
+   view-transition fade for visitors who asked for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+}
