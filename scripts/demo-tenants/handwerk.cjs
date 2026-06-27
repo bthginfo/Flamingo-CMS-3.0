@@ -1,92 +1,70 @@
 /**
  * Demo tenant: HANDWERK
  *
- * Identität: "Müller & Söhne Meisterbetrieb" — SHK-Familienbetrieb (Sanitär, Heizung, Klima)
- *            in Köln, dritte Generation, seit 1958.
+ * Identität: "Brüggemann Bäder & Wärme" — SHK-Meisterbetrieb in Düsseldorf-Bilk,
+ *            spezialisiert auf Premium-Bäder und Wärmepumpen. Gegründet 1974,
+ *            heute in zweiter Generation von Lena Brüggemann geführt.
  *
- * Run:
- *   node scripts/demo-tenants/handwerk.cjs
- *
- * Reads the live API instructions via /api/v1/instructions; if you want to verify
- * the schema before pushing content, dump it first with:
- *   node scripts/demo-tenants/fetch-instructions.cjs handwerk
+ * Run:  PAT_HANDWERK=flm_pat_… node scripts/demo-tenants/run-all.cjs handwerk
  */
 
 const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 
-const PAT = '978b230504b8d123234c44375606f28172ee9e2d96146dcbf0892f77c3d2f7d8';
+const PAT = 'set-via-PAT_HANDWERK-env';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 
-// Brand palette — tief-blau + kupfer. Used in styleOverrides as well.
+// Brand palette — Graphit + warmes Messing (Premium-Bad-Anmutung).
 const C = {
-  brand:   '#0E3A53', // tief-blau (Stahl + Wasser) — primary action color
-  accent:  '#C76B2A', // gebrannter Kupfer (Rohrleitung) — eyebrows, icons, badges
-  ink:     '#101820', // body text on light
-  cream:   '#F5EFE6', // soft warm bg + light btn-bg on dark sections
-  steel:   '#1B4D6B', // hover-blue
+  brand:   '#22303A', // tiefes Graphit-Petrol — primary
+  accent:  '#C0922E', // warmes Messing — eyebrows, icons, badges
+  ink:     '#141A1F', // body on light
+  cream:   '#F4F1EA', // warm-heller Section-/Card-Grund
+  steel:   '#34505C', // hover/secondary
 };
 
-// On DARK section backgrounds we override BOTH the base slots (--token-heading,
-// --token-body, --token-muted) AND the on-dark equivalents, because different
-// renderer sections read different slots. Buttons use the warm cream as bg
-// against the dark section so they pop without the copper accent (which is
-// reserved for icons/eyebrows/stars).
+// Dark-Section-Tokens: kompletter hell-auf-dunkel-Satz. Mit dem vereinheitlichten
+// Renderer überlebt --token-heading nun im Contract jeder Section.
 const darkSectionTokens = {
-  // Text
   '--token-heading':         '#FFFFFF',
   '--token-subheading':      'rgba(255,255,255,0.92)',
   '--token-body':            'rgba(255,255,255,0.92)',
   '--token-muted':           'rgba(255,255,255,0.7)',
-  '--token-eyebrow':         '#E2B58D',
+  '--token-eyebrow':         '#E2C181',
   '--token-on-dark-heading': '#FFFFFF',
   '--token-on-dark-body':    'rgba(255,255,255,0.92)',
   '--token-on-dark-muted':   'rgba(255,255,255,0.7)',
-  // Icons & accents — MUST be overridden or they stay on the dark brand default
-  // (the dark-on-dark icon/heading bug).
-  '--token-icon':            '#E2B58D',
-  '--token-accent':          '#E2B58D',
+  '--token-icon':            '#E2C181',
+  '--token-accent':          '#E2C181',
   '--token-stat-value':      '#FFFFFF',
-  '--token-rating-star':     '#E2B58D',
-  '--token-quote':           '#E2B58D',
-  '--token-check':           '#E2B58D',
-  '--token-link':            '#E2B58D',
+  '--token-rating-star':     '#E2C181',
+  '--token-quote':           '#E2C181',
+  '--token-check':           '#E2C181',
+  '--token-link':            '#E2C181',
   '--token-link-hover':      '#FFFFFF',
   '--token-divider':         'rgba(255,255,255,0.16)',
   '--token-card-border':     'rgba(255,255,255,0.16)',
-  // Cards that sit ON the dark section (glassy surface + light card text/icons)
   '--token-card-bg':         'rgba(255,255,255,0.06)',
   '--token-card-heading':    '#FFFFFF',
   '--token-card-body':       'rgba(255,255,255,0.92)',
   '--token-card-muted':      'rgba(255,255,255,0.7)',
-  '--token-card-icon':       '#E2B58D',
+  '--token-card-icon':       '#E2C181',
   '--token-card-badge-bg':   'rgba(255,255,255,0.14)',
   '--token-card-badge-text': '#FFFFFF',
-  // Buttons
   '--token-btn-bg':          C.cream,
   '--token-btn-text':        C.brand,
-  '--token-btn-secondary-bg':     'rgba(0,0,0,0)', // API rejects the keyword "transparent"; rgba(0,0,0,0) is identical
+  '--token-btn-secondary-bg':     'rgba(0,0,0,0)',
   '--token-btn-secondary-text':   '#FFFFFF',
   '--token-btn-secondary-border': 'rgba(255,255,255,0.3)',
-  // Badges
   '--token-badge-bg':        'rgba(255,255,255,0.14)',
   '--token-badge-text':      '#FFFFFF',
   '--token-badge-border':    'rgba(255,255,255,0.28)',
 };
 
-// Light cream-section: heading stays brand-blue, body stays ink, button stays
-// brand-blue + white. Used for cream-coloured CTA bands on light pages.
-const lightAccentSection = {
-  '--token-section-bg':  C.cream,
-  '--token-heading':     C.brand,
-  '--token-body':        '#2A3340',
-  '--token-muted':       '#637381',
-  '--token-btn-bg':      C.brand,
-  '--token-btn-text':    '#FFFFFF',
-};
+const OVERLAY = C.brand;
 
 // ── tenant spec ───────────────────────────────────────────────────────────────
 const tenant = {
@@ -98,23 +76,23 @@ const tenant = {
   style: { style: 'classic' },
 
   brand: {
-    companyName: 'Müller & Söhne Meisterbetrieb',
-    tagline: 'Sanitär · Heizung · Klima — seit 1958 in Köln',
+    companyName: 'Brüggemann Bäder & Wärme',
+    tagline: 'Bäder · Wärmepumpen · Heizung — meisterlich aus Düsseldorf',
     primaryColor: C.brand,
     secondaryColor: C.steel,
     accentColor: C.accent,
     logoDisplay: 'name',
-    headingFont: 'Manrope',
+    headingFont: 'Fraunces',
     bodyFont: 'Inter',
     topBarColor: C.brand,
-    footerColor: '#0A2A3D',
+    footerColor: '#161F26',
   },
 
   contact: {
-    phone: '+49 221 5894120',
-    email: 'service@mueller-soehne-koeln.de',
-    address: 'Vorgebirgstraße 218, 50969 Köln',
-    whatsapp: '+49 173 5894120',
+    phone: '+49 211 4790360',
+    email: 'service@brueggemann-duesseldorf.de',
+    address: 'Aachener Straße 64, 40223 Düsseldorf',
+    whatsapp: '+49 170 4790360',
     whatsappEnabled: true,
     whatsappColor: '#25D366',
   },
@@ -123,11 +101,11 @@ const tenant = {
     sectionBg: '#FFFFFF',
     sectionBgAlt: C.cream,
     cardBg: '#FFFFFF',
-    cardBorder: '#E6DED1',
+    cardBorder: '#E7E1D4',
     heading: C.brand,
     subheading: C.steel,
-    body: '#2A3340',
-    muted: '#637381',
+    body: '#2B333A',
+    muted: '#697681',
     brand: C.brand,
     accent: C.accent,
     icon: C.accent,
@@ -135,12 +113,12 @@ const tenant = {
     btnText: '#FFFFFF',
     badgeBg: C.cream,
     badgeText: C.brand,
-    badgeBorder: '#E2C9A8',
-    dividerColor: '#E6DED1',
+    badgeBorder: '#E6D6B4',
+    dividerColor: '#E7E1D4',
     eyebrow: C.accent,
     statValue: C.brand,
     quote: C.steel,
-    ratingStar: '#E8A52B',
+    ratingStar: '#D9A441',
     check: C.accent,
     onDarkHeading: '#FFFFFF',
     onDarkBody:    'rgba(255,255,255,0.92)',
@@ -148,20 +126,20 @@ const tenant = {
   },
 
   socialLinks: {
-    google: 'https://g.page/mueller-soehne-koeln',
-    facebook: 'https://www.facebook.com/muellersoehne.koeln',
-    instagram: 'https://www.instagram.com/muellersoehne.koeln/',
+    google: 'https://g.page/brueggemann-duesseldorf',
+    instagram: 'https://www.instagram.com/brueggemann.baeder/',
+    houzz: 'https://www.houzz.de/pro/brueggemann-baeder',
   },
 
   openingHours: {
     hours: [
-      { type: 'regular', day: 'Montag',    hours: '07:30 – 17:00' },
-      { type: 'regular', day: 'Dienstag',  hours: '07:30 – 17:00' },
-      { type: 'regular', day: 'Mittwoch',  hours: '07:30 – 17:00' },
-      { type: 'regular', day: 'Donnerstag',hours: '07:30 – 17:00' },
-      { type: 'regular', day: 'Freitag',   hours: '07:30 – 15:30' },
-      { type: 'regular', day: 'Samstag',   hours: 'Nur Notdienst', note: '24/7 Notdienst unter 0173 5894120' },
-      { type: 'regular', day: 'Sonntag',   closed: true, note: '24/7 Notdienst unter 0173 5894120' },
+      { type: 'regular', day: 'Montag',     hours: '07:00 – 17:00' },
+      { type: 'regular', day: 'Dienstag',   hours: '07:00 – 17:00' },
+      { type: 'regular', day: 'Mittwoch',   hours: '07:00 – 17:00' },
+      { type: 'regular', day: 'Donnerstag', hours: '07:00 – 17:00' },
+      { type: 'regular', day: 'Freitag',    hours: '07:00 – 15:00' },
+      { type: 'regular', day: 'Samstag',    hours: 'Nur Notdienst', note: '24/7 Notdienst unter 0170 4790360' },
+      { type: 'regular', day: 'Sonntag',    closed: true, note: '24/7 Notdienst unter 0170 4790360' },
     ],
   },
 
@@ -172,29 +150,29 @@ const tenant = {
       { name: 'email',     label: 'E-Mail',   type: 'email',required: true, halfWidth: true },
       { name: 'phone',     label: 'Telefon',  type: 'tel',  required: false,halfWidth: true },
       { name: 'topic',     label: 'Anliegen', type: 'select', required: true,
-        options: ['Heizung erneuern', 'Badsanierung', 'Wartung', 'Notdienst', 'Sonstiges'] },
+        options: ['Neues Bad', 'Wärmepumpe', 'Heizung erneuern', 'Wartung', 'Notdienst', 'Sonstiges'] },
       { name: 'message',   label: 'Ihre Nachricht', type: 'textarea', required: true,
-        placeholder: 'Beschreiben Sie kurz Ihr Anliegen — wir melden uns innerhalb von 24 h.' },
+        placeholder: 'Beschreiben Sie kurz Ihr Vorhaben — wir melden uns innerhalb von 24 h.' },
     ],
   },
 
   seoGlobal: {
-    titleTemplate: '%s | Müller & Söhne Meisterbetrieb Köln',
-    defaultTitle: 'Müller & Söhne — SHK-Meisterbetrieb in Köln',
+    titleTemplate: '%s | Brüggemann Bäder & Wärme Düsseldorf',
+    defaultTitle: 'Brüggemann — Bäder & Wärmepumpen Meisterbetrieb Düsseldorf',
     defaultDescription:
-      'Familiengeführter SHK-Meisterbetrieb in Köln seit 1958. Heizung, Sanitär, Klima, Bäder und 24/7-Notdienst — meisterlich umgesetzt von Generation zu Generation.',
-    defaultOgImage: img('1581094271901-8022df4466f9', 1200),
+      'SHK-Meisterbetrieb in Düsseldorf seit 1974. Premium-Bäder, Wärmepumpen, Heizung und 24/7-Notdienst — geplant, gebaut und gewartet aus einer Hand.',
+    defaultOgImage: img('1552321554-5fefe8c9ef14', 1200),
     locale: 'de_DE',
   },
 
   navigation: {
     items: [
-      { label: 'Startseite',       href: '/' },
-      { label: 'Leistungen',       href: '/leistungen' },
-      { label: 'Referenzen',       href: '/referenzen' },
-      { label: 'Über uns',         href: '/ueber-uns' },
-      { label: 'Werkstattnotizen', href: '/news' },
-      { label: 'Kontakt',          href: '/kontakt' },
+      { label: 'Startseite', href: '/' },
+      { label: 'Leistungen', href: '/leistungen' },
+      { label: 'Referenzen', href: '/referenzen' },
+      { label: 'Über uns',   href: '/ueber-uns' },
+      { label: 'Magazin',    href: '/news' },
+      { label: 'Kontakt',    href: '/kontakt' },
     ],
     cta: { label: '24/7 Notdienst', href: '/kontakt' },
   },
@@ -202,21 +180,21 @@ const tenant = {
   footer: {
     columns: [
       { title: 'Leistungen', items: [
-        { text: 'Heizungssanierung', href: '/c/leistungen/heizungssanierung' },
-        { text: 'Badmodernisierung', href: '/c/leistungen/badmodernisierung' },
+        { text: 'Premium-Bäder',     href: '/c/leistungen/premium-baeder' },
         { text: 'Wärmepumpen',       href: '/c/leistungen/waermepumpe' },
+        { text: 'Heizung & Brennwert', href: '/c/leistungen/heizung' },
         { text: 'Wartung & Service', href: '/c/leistungen/wartung-service' },
       ]},
       { title: 'Unternehmen', items: [
-        { text: 'Über uns',          href: '/ueber-uns' },
-        { text: 'Referenzen',        href: '/referenzen' },
-        { text: 'Werkstattnotizen',  href: '/news' },
-        { text: 'Karriere',          href: '/ueber-uns' },
+        { text: 'Über uns',   href: '/ueber-uns' },
+        { text: 'Referenzen', href: '/referenzen' },
+        { text: 'Magazin',    href: '/news' },
+        { text: 'Karriere',   href: '/ueber-uns' },
       ]},
       { title: 'Service', items: [
-        { text: '24/7 Notdienst',    href: '/kontakt' },
+        { text: '24/7 Notdienst',     href: '/kontakt' },
         { text: 'Termin vereinbaren', href: '/kontakt' },
-        { text: 'WhatsApp',          href: 'https://wa.me/491735894120' },
+        { text: 'WhatsApp',           href: 'https://wa.me/491704790360' },
       ]},
     ],
     legalLinks: [
@@ -231,51 +209,51 @@ const tenant = {
       key: 'leistungen', label: 'Leistungen',
       items: [
         buildServiceItem({
-          slug: 'heizungssanierung',
-          title: 'Heizungssanierung',
-          excerpt: 'Vom Brennwertkessel bis zur Hybridanlage — fördergeprüft, planungssicher, in 2–4 Werktagen umgesetzt.',
-          heroImage: '1631545806609-c11c8a4f9f1d',
-          intro: 'Eine alte Heizung schluckt heute bis zu 30 % mehr Energie als nötig. Wir prüfen Ihren Bestand, rechnen die BAFA-Förderung schwarz auf weiß und tauschen Kessel, Pumpen und Regelung in der Regel innerhalb von zwei bis vier Werktagen.',
-          highlights: [
-            { icon: 'Flame',     title: 'Brennwerttechnik',    text: 'Gas-, Öl- und Hybridkessel der Marken Viessmann, Vaillant und Buderus — installiert vom eigenen Meisterbetrieb.' },
-            { icon: 'Leaf',      title: 'Wärmepumpen-Ready',   text: 'Wir prüfen Heizkörperauslegung und Hydraulik so, dass Ihre Anlage auf einen späteren Wärmepumpenbetrieb vorbereitet ist.' },
-            { icon: 'FileCheck', title: 'Förderung inklusive', text: 'Wir übernehmen den BAFA-Antrag und die Kommunikation mit Ihrem Energieberater.' },
-          ],
-        }),
-        buildServiceItem({
-          slug: 'badmodernisierung',
-          title: 'Badmodernisierung',
-          excerpt: 'Komplettbäder aus einer Hand — vom Aufmaß über Fliesen bis zur barrierefreien Dusche. Festpreis, Festtermin, ein Ansprechpartner.',
+          slug: 'premium-baeder',
+          title: 'Premium-Bäder',
+          excerpt: 'Komplettbäder aus einer Hand — vom 3D-Entwurf über die Naturstein-Auswahl bis zur bodengleichen Dusche. Ein Vertrag, ein Termin, ein Ansprechpartner.',
           heroImage: '1552321554-5fefe8c9ef14',
-          intro: 'Wir planen Ihr Bad in 3D, koordinieren Fliesenleger, Elektriker und Trockenbauer und übergeben den Schlüssel im vereinbarten Zeitraum — meist drei bis sechs Wochen. Ein Ansprechpartner für alles, eine Rechnung am Ende.',
+          intro: 'Wir planen Ihr Bad in 3D, beraten Sie in unserer Ausstellung in Bilk und koordinieren Fliesenleger, Elektriker und Trockenbauer selbst. Sie schließen einen Vertrag, bekommen einen verbindlichen Übergabetermin und am Ende eine Rechnung — meist vier bis sieben Wochen nach Baubeginn.',
           highlights: [
-            { icon: 'PenTool',       title: '3D-Planung', text: 'Sie sehen Ihr Bad vor dem ersten Hammerschlag — inkl. Lichtkonzept und Materialprobe.' },
-            { icon: 'Accessibility', title: 'Barrierearm', text: 'Bodengleiche Duschen, KfW-förderfähige Umbauten, rutschhemmende Beläge nach DIN 51097.' },
-            { icon: 'Handshake',     title: 'Ein Vertrag', text: 'Sie schließen einen Vertrag — wir koordinieren alle Gewerke. Keine Terminabstimmung Ihrerseits.' },
+            { icon: 'PenTool',       title: '3D-Planung & Ausstellung', text: 'Sie erleben Ihr Bad vor dem ersten Hammerschlag — mit Lichtkonzept, Materialprobe und Wunsch-Armatur in unserer Ausstellung.' },
+            { icon: 'Accessibility', title: 'Barrierearm geplant',      text: 'Bodengleiche Duschen, KfW-förderfähige Umbauten und rutschhemmende Beläge nach DIN 51097 — von Anfang an mitgedacht.' },
+            { icon: 'Handshake',     title: 'Alles aus einer Hand',     text: 'Sie schließen einen Vertrag, wir koordinieren jedes Gewerk. Keine Termin­abstimmung, kein Schwarzer-Peter-Spiel.' },
           ],
         }),
         buildServiceItem({
           slug: 'waermepumpe',
           title: 'Wärmepumpen-Installation',
-          excerpt: 'Luft-Wasser- und Sole-Wärmepumpen — geplant nach hydraulischem Abgleich, eingebaut von zertifizierten Monteuren.',
+          excerpt: 'Luft-Wasser- und Sole-Wärmepumpen, geplant nach hydraulischem Abgleich und installiert von Monteur:innen mit Kältekreis-Schein. JAZ über 4,0 im Schnitt.',
           heroImage: '1604328698692-f76ea9498e76',
-          intro: 'Eine Wärmepumpe arbeitet nur dann effizient, wenn die Hydraulik stimmt. Wir messen, rechnen und dimensionieren — und installieren danach. So liegt die Jahresarbeitszahl Ihrer Anlage bei unseren Projekten im Schnitt über 4,0.',
+          intro: 'Eine Wärmepumpe ist nur so gut wie ihre Planung. Wir messen jeden Raum, rechnen die Heizlast einzeln durch und dimensionieren danach — nicht nach Daumenregel. Den BEG-Förderantrag übernehmen wir komplett. Bei unseren Projekten liegt die Jahresarbeitszahl im Schnitt über 4,0.',
           highlights: [
-            { icon: 'Gauge',     title: 'Hydraulischer Abgleich', text: 'Inklusive Pflicht, nicht Pflichtprogramm. Wir rechnen jeden Raum einzeln durch.' },
-            { icon: 'Snowflake', title: 'Kältekreis-Schein',      text: 'Eigene Monteure mit Kältekreis-Zertifikat — kein Subunternehmer für den sensibelsten Teil der Anlage.' },
-            { icon: 'BadgeEuro', title: 'BEG-Förderung',          text: 'Bis zu 70 % Zuschuss — wir prüfen Ihre Konstellation kostenfrei vorab.' },
+            { icon: 'Gauge',     title: 'Hydraulischer Abgleich', text: 'Raumweise gerechnet, nicht überschlagen — die Grundlage für niedrige Vorlauftemperaturen und echte Effizienz.' },
+            { icon: 'Snowflake', title: 'Kältekreis-Schein',      text: 'Den sensibelsten Teil der Anlage macht kein Subunternehmer — sondern unsere eigenen zertifizierten Monteur:innen.' },
+            { icon: 'BadgeEuro', title: 'BEG-Förderung inklusive', text: 'Bis zu 70 % Zuschuss. Wir prüfen Ihre Konstellation kostenfrei vorab und stellen den Antrag.' },
+          ],
+        }),
+        buildServiceItem({
+          slug: 'heizung',
+          title: 'Heizung & Brennwert',
+          excerpt: 'Vom Brennwertkessel bis zur Hybridanlage — fördergeprüft, sauber installiert und auf einen späteren Wärmepumpen­betrieb vorbereitet.',
+          heroImage: '1631545806609-c11c8a4f9f1d',
+          intro: 'Nicht jedes Haus ist heute schon wärmepumpen­bereit. Wir prüfen ehrlich, ob eine Hybridlösung oder ein Brennwertkessel der sinnvollere Schritt ist — und legen die Anlage so aus, dass der Umstieg auf die Wärmepumpe später ohne Komplettumbau gelingt.',
+          highlights: [
+            { icon: 'Flame',     title: 'Brennwert & Hybrid',   text: 'Marken wie Viessmann, Vaillant und Buderus — installiert vom eigenen Meisterbetrieb, nicht durchgereicht.' },
+            { icon: 'Leaf',      title: 'Wärmepumpen-ready',     text: 'Wir prüfen Heizkörperauslegung und Hydraulik so, dass Ihre Anlage für den späteren WP-Betrieb vorbereitet ist.' },
+            { icon: 'FileCheck', title: 'Förderung erledigt',    text: 'BAFA-Antrag und Kommunikation mit dem Energieberater übernehmen wir aus dem Büro.' },
           ],
         }),
         buildServiceItem({
           slug: 'wartung-service',
           title: 'Wartung & Service',
-          excerpt: 'Jahreswartung mit fixem Termin im Frühjahr — damit Ihre Anlage im Winter läuft und Sie nicht in der Notdienst-Warteschlange landen.',
+          excerpt: 'Jahreswartung mit festem Termin im Frühjahr — damit Ihre Anlage im Winter läuft und Sie im Notfall nicht in der Warteschlange stehen.',
           heroImage: '1567789884554-0b844b597180',
-          intro: 'Drei Viertel aller Heizungs-Ausfälle im Januar wären bei einer Frühjahrs-Wartung aufgefallen. Mit unserem Wartungsvertrag bekommen Sie einen festen Termin, eine schriftliche Anlagendokumentation und Vorrang im Notdienst.',
+          intro: 'Die meisten Heizungs-Ausfälle im Januar wären bei einer Frühjahrs-Wartung aufgefallen. Mit unserem Wartungsvertrag bekommen Sie einen festen Wunschtermin, eine schriftliche Anlagendokumentation und garantierten Vorrang im Notdienst.',
           highlights: [
-            { icon: 'CalendarClock', title: 'Fester Wartungstermin', text: 'Sie wählen einen Wunschmonat — wir terminieren ein Jahr im Voraus.' },
-            { icon: 'ShieldCheck',   title: 'Notdienst-Vorrang',     text: 'Wartungskund:innen kommen im Notdienst zuerst dran. Garantiert.' },
-            { icon: 'ClipboardList', title: 'Anlagen-Protokoll',     text: 'Sie erhalten ein schriftliches Wartungsprotokoll — wichtig für Versicherung und späteren Eigentümerwechsel.' },
+            { icon: 'CalendarClock', title: 'Fester Wunschtermin', text: 'Sie wählen den Monat — wir terminieren ein Jahr im Voraus, ganz ohne Erinnern.' },
+            { icon: 'ShieldCheck',   title: 'Notdienst-Vorrang',   text: 'Wartungskund:innen kommen im Notfall zuerst dran. Ohne Ausnahme.' },
+            { icon: 'ClipboardList', title: 'Anlagen-Protokoll',   text: 'Schriftliche Dokumentation jeder Wartung — wichtig für Versicherung und späteren Eigentümerwechsel.' },
           ],
         }),
       ],
@@ -284,69 +262,69 @@ const tenant = {
       key: 'referenzen', label: 'Referenzen',
       items: [
         buildProjectItem({
-          slug: 'gruenderzeit-villa-marienburg',
-          title: 'Gründerzeit-Villa, Köln-Marienburg',
-          excerpt: 'Vollsanierung Heizung + drei Bäder in einer denkmalgeschützten Villa von 1906 — bei laufendem Bewohnerbetrieb.',
-          heroImage: '1600585154340-be6161a56a0c',
-          summary: 'Wir haben einen 40 Jahre alten Niedertemperaturkessel gegen eine Hybridanlage (Brennwert + Luft-Wärmepumpe) getauscht und drei Bäder im Sinne der Denkmalbehörde modernisiert — inklusive originalgetreuer Restaurierung der Schmiedeeisen-Heizkörper. Die Familie konnte während aller drei Wochen Bauzeit im Haus wohnen bleiben.',
+          slug: 'altbau-spa-bad-oberkassel',
+          title: 'Spa-Bad im Altbau, Düsseldorf-Oberkassel',
+          excerpt: 'Aus zwei kleinen Bädern wurde ein 18 m² Spa mit freistehender Wanne, Regendusche und Naturstein — bei laufendem Wohnbetrieb.',
+          heroImage: '1620626011761-996317b8d101',
+          summary: 'In einer Gründerzeitwohnung am Rheinufer haben wir zwei verwinkelte Bäder zu einem großzügigen Spa-Bad zusammengelegt. Freistehende Wanne, bodengleiche Regendusche, Travertin an Wand und Boden, eine Fußbodenheizung im Estrich und eine wandhängende Vorwand mit indirekter Beleuchtung. Die Familie konnte während der gesamten fünf Wochen Bauzeit in der Wohnung bleiben — das zweite Gäste-WC haben wir bewusst zuerst fertiggestellt.',
           facts: [
-            { label: 'Bauzeit',           value: '3 Wochen' },
-            { label: 'Heizlast',          value: '24 kW Hybrid' },
-            { label: 'Energieeinsparung', value: 'ca. 42 %' },
-            { label: 'Förderung',         value: '12.500 €' },
+            { label: 'Bauzeit',   value: '5 Wochen' },
+            { label: 'Fläche',    value: '18 m²' },
+            { label: 'Gewerke',   value: '6 koordiniert' },
+            { label: 'Material',  value: 'Travertin' },
           ],
         }),
         buildProjectItem({
-          slug: 'kita-suelz-waermepumpe',
-          title: 'Kita Sülz — Wärmepumpen-Umrüstung',
-          excerpt: 'Umstieg auf Sole-Wärmepumpe mit Erdsondenfeld und neue Lüftungsanlage — im Sommerferienzeitraum von 6 Wochen.',
-          heroImage: '1593604340846-4fbe9763a8f3',
-          summary: 'Eine kommunale Kita in Köln-Sülz musste die alte Gastherme im Rahmen eines kommunalen Klimaplans austauschen. Wir haben in 6 Sommerferienwochen ein Erdsondenfeld mit 6 Bohrungen à 100 m gesetzt, eine Sole-Wärmepumpe mit 18 kW installiert und die Lüftungsanlage mit Wärmerückgewinnung erneuert. Pünktlich zur Wiedereröffnung am 1. September fertig.',
+          slug: 'mehrfamilienhaus-waermepumpe-flingern',
+          title: 'Wärmepumpen-Kaskade, Mehrfamilienhaus Flingern',
+          excerpt: 'Umstieg von zwei Gasthermen auf eine Luft-Wärmepumpen-Kaskade mit Pufferspeicher — für acht Wohneinheiten, ohne Heizkörpertausch.',
+          heroImage: '1591955506264-3f5a6834570a',
+          summary: 'Ein Mehrfamilienhaus in Flingern sollte raus aus dem Gas. Wir haben die bestehenden Heizkörper raumweise nachgerechnet, an drei Stellen größere Flächen ergänzt und so die nötige Vorlauftemperatur auf 50 °C gedrückt. Zwei kaskadierte Luft-Wärmepumpen mit 32 kW Gesamtleistung und ein 800-Liter-Pufferspeicher versorgen jetzt alle acht Wohnungen. Die gemessene Jahresarbeitszahl liegt nach dem ersten Winter bei 3,9.',
           facts: [
-            { label: 'Heizlast',          value: '18 kW Sole-WP' },
-            { label: 'Erdsonden',         value: '6 × 100 m' },
-            { label: 'Jahresarbeitszahl', value: 'gemessen 4,3' },
-            { label: 'Förderung',         value: '38 % BEG-EM' },
+            { label: 'Wohneinheiten', value: '8' },
+            { label: 'Leistung',      value: '32 kW Kaskade' },
+            { label: 'Jahresarbeitszahl', value: 'gemessen 3,9' },
+            { label: 'Förderung',     value: '55 % BEG' },
           ],
         }),
         buildProjectItem({
-          slug: 'baeckerei-deutz',
-          title: 'Bäckerei Deutz — Backstubensanierung',
-          excerpt: 'Komplette Trinkwasser- und Abwasserinstallation für eine handwerkliche Bäckerei mit angeschlossenem Café.',
-          heroImage: '1509440159596-0249088772ff',
-          summary: 'Eine traditionsreiche Bäckerei in Deutz wollte eine neue Backstube und ein angegliedertes Café eröffnen. Wir haben Frisch- und Abwasserinstallation komplett neu verlegt, einen Fettabscheider nach DIN EN 1825 dimensioniert und eine Brauchwasser-Wärmepumpe installiert, die die Abwärme der Backöfen nutzt. Inbetriebnahme zwei Tage vor Eröffnung — auf den Punkt.',
+          slug: 'zahnarztpraxis-bilk',
+          title: 'Zahnarztpraxis, Düsseldorf-Bilk',
+          excerpt: 'Komplette Sanitär- und Lüftungstechnik für eine Praxis-Neueröffnung — inklusive Trinkwasser-Hygienekonzept und Nacht-Installation.',
+          heroImage: '1629909613654-28e377c37b09',
+          summary: 'Eine Zahnarztpraxis in Bilk zog in neue Räume und brauchte vom Behandlungsstuhl-Anschluss bis zur Lüftung alles neu. Wir haben Frisch- und Abwasser nach DIN 1988 verlegt, ein Trinkwasser-Hygienekonzept mit Zirkulation und Spülstation erstellt und eine Lüftungsanlage mit Wärmerückgewinnung installiert. Die geräuschintensiven Arbeiten liefen über zwei Nächte, damit der Praxisbetrieb im selben Gebäude nicht stoppen musste.',
           facts: [
-            { label: 'Bauzeit',       value: '4 Wochen' },
-            { label: 'Gewerke',       value: '5 koordiniert' },
-            { label: 'Fettabscheider', value: 'NS 4, 1.040 l' },
-            { label: 'Warmwasser-WP', value: '300 l Speicher' },
+            { label: 'Bauzeit',  value: '6 Wochen' },
+            { label: 'Behandlungsplätze', value: '5' },
+            { label: 'Hygiene',  value: 'DIN 1988' },
+            { label: 'Lüftung',  value: 'mit WRG' },
           ],
         }),
       ],
     },
     {
-      key: 'news', label: 'Werkstattnotizen',
+      key: 'news', label: 'Magazin',
       items: [
         buildNewsItem({
-          slug: 'heizungstausch-foerderung-2025',
-          title: 'BEG-Förderung 2025: Was sich für Hausbesitzer:innen ändert',
-          excerpt: 'Die wichtigsten Änderungen am Förderprogramm — und wie sich der richtige Antragszeitpunkt schnell auf 5.000 € auswirken kann.',
-          heroImage: '1632937816203-bf6dc52b3f6c',
-          body: '<p>Zum 1. Januar 2025 hat das BAFA die Förderquoten für Heizungstausch angepasst. Wir haben die wichtigsten Änderungen für Eigentümer:innen in Köln zusammengefasst und zeigen anhand zweier realer Beispiele aus Sülz und Lindenthal, wie sich der richtige Antragszeitpunkt auf bis zu 5.000 € auswirken kann.</p><p>Der Klimabonus für Heizungen, die älter als 20 Jahre sind, bleibt erhalten — wird jetzt allerdings nur noch in Verbindung mit einem hydraulischen Abgleich gewährt. Was das in der Praxis bedeutet und welche Unterlagen Sie bereithalten sollten, erklären wir im Detail.</p>',
+          slug: 'foerderung-2025-baeder-waermepumpe',
+          title: 'Förderung 2025: Wärmepumpe und barrierefreies Bad clever kombinieren',
+          excerpt: 'BEG-Zuschuss für die Wärmepumpe, KfW-Zuschuss fürs altersgerechte Bad — wer beides zusammen plant, holt deutlich mehr heraus.',
+          heroImage: '1581244277943-fe4a9c777189',
+          body: '<p>2025 lohnt sich der Blick auf zwei Fördertöpfe gleichzeitig: Die BEG-Förderung bezuschusst den Heizungstausch mit bis zu 70 %, der KfW-Zuschuss „Altersgerecht Umbauen" greift bei bodengleichen Duschen und Haltegriffen. Wer eine Sanierung ohnehin plant, sollte beides in einem Aufwasch denken — der Gerüstaufbau, die Anfahrt und die Staubschutzwände fallen schließlich nur einmal an.</p><p>Wir zeigen an zwei realen Beispielen aus Oberkassel und Flingern, wie sich die Anträge sinnvoll staffeln lassen und welche Unterlagen Sie vor dem ersten Termin bereithalten sollten. Den Antrag selbst übernehmen wir — Sie bekommen den Bescheid direkt von der Behörde.</p>',
         }),
         buildNewsItem({
-          slug: 'frostschaden-vorbeugen',
-          title: 'Frostschäden vermeiden: Checkliste für den Winter',
-          excerpt: 'Eine Druckminderung im Herbst kann teure Rohrbrüche im Januar verhindern. Was zu prüfen ist und wann es Zeit für den Profi ist.',
-          heroImage: '1545194445-dddb8f4487c6',
-          body: '<p>Nach jedem Frost-Wochenende klingelt bei uns ab Montag früh um sieben das Notdienst-Telefon. Die meisten dieser Schäden wären vermeidbar gewesen. Wir teilen die Checkliste, die wir unseren Wartungskund:innen jedes Jahr im Oktober schicken.</p><p>Besonders kritisch: außen liegende Leitungen, ungedämmte Kellerräume und Ferienwohnungen. Drei Stunden Vorsorge im Herbst sparen im Schnitt drei Tage Trocknung im Januar.</p>',
+          slug: 'kleines-bad-grosse-wirkung',
+          title: 'Kleines Bad, große Wirkung: 5 Kniffe aus der Werkstatt',
+          excerpt: 'Wie aus 4 m² ein Bad wird, das größer wirkt, als es ist — ganz ohne Wand einreißen.',
+          heroImage: '1507652313519-d4e9174996dd',
+          body: '<p>Nicht jedes Bad lässt sich vergrößern — aber fast jedes lässt sich besser planen. Die häufigste Fehleinschätzung: Große Fliesen wirken in kleinen Räumen unruhig. Tatsächlich beruhigt ein durchgehendes Format Boden und Wand und lässt den Raum größer erscheinen. Eine bodengleiche Dusche ohne sichtbare Duschtasse tut den Rest.</p><p>Wir teilen fünf Kniffe, die wir in unserer Ausstellung am liebsten direkt am Modell zeigen: durchgehende Bodenfliese, wandhängendes WC, Spiegelschrank mit indirektem Licht, schmale Vorwand statt klobiger Unterschrank — und eine Nische statt Ablage­körbchen.</p>',
         }),
         buildNewsItem({
-          slug: 'wir-suchen-azubi',
-          title: 'Wir suchen Azubis für 2025 — und erklären, was uns unterscheidet',
-          excerpt: 'Drei Ausbildungsplätze, ein Meisterbetrieb in dritter Generation, zwei Berufsschultage und ein eigenes Lehrbad. Warum sich das lohnt.',
-          heroImage: '1565008576549-57569a49371d',
-          body: '<p>Wir bilden seit über 40 Jahren Anlagenmechaniker SHK aus. 2025 haben wir drei Plätze. Was wir bieten: eigenes Lehrbad, jeden Monat einen Übungstag mit unseren Meistern, geregelte Arbeitszeiten und vom ersten Tag an die ehrliche Ansage, was an diesem Beruf richtig anstrengend ist — und was richtig schön.</p><p>Bewerbungen bitte einfach per E-Mail oder per WhatsApp. Wir freuen uns auf Sie.</p>',
+          slug: 'wir-bilden-aus-2025',
+          title: 'Wir bilden aus: zwei Plätze für Anlagenmechaniker:innen SHK',
+          excerpt: 'Zwei Ausbildungsplätze für 2025, ein eigenes Schulungsbad und ein Team, das erklärt statt durchreicht. Warum sich das lohnt.',
+          heroImage: '1581092580497-e0d23cbdf1dc',
+          body: '<p>Seit 1974 bilden wir aus — und viele unserer Meister:innen haben hier gelernt. 2025 haben wir zwei Plätze für die Ausbildung zur Anlagenmechanikerin bzw. zum Anlagenmechaniker SHK. Was wir bieten: ein eigenes Schulungsbad, jeden Monat einen Übungstag mit den Meister:innen, geregelte Arbeitszeiten und vom ersten Tag an die ehrliche Ansage, was an diesem Beruf anstrengend ist — und was richtig schön.</p><p>Bewerbungen gerne formlos per E-Mail oder WhatsApp. Ein Praktikumstag zum Reinschnuppern ist jederzeit möglich.</p>',
         }),
       ],
     },
@@ -357,48 +335,42 @@ const tenant = {
     {
       slug: 'startseite', title: 'Startseite',
       seo: {
-        metaTitle: 'Müller & Söhne — SHK-Meisterbetrieb in Köln seit 1958',
-        metaDescription: 'Heizung, Sanitär, Klima, Bäder und 24/7-Notdienst aus Köln. Drei Generationen Meisterbetrieb, ein Ansprechpartner, festes Wort.',
+        metaTitle: 'Brüggemann Bäder & Wärme — Meisterbetrieb Düsseldorf seit 1974',
+        metaDescription: 'Premium-Bäder, Wärmepumpen, Heizung und 24/7-Notdienst aus Düsseldorf-Bilk. Zweite Generation Meisterbetrieb, ein Ansprechpartner, festes Wort.',
       },
       sections: [
         {
           type: 'hero',
           data: {
-            badgeText: 'Meisterbetrieb seit 1958',
+            badgeText: 'Meisterbetrieb seit 1974',
             badgeIcon: 'Award',
-            headline: 'Handwerk, das hält. Generation nach Generation.',
-            subline: 'Wir planen, installieren und warten Heizung, Bad und Klima für Familien und Unternehmen in Köln. Ein Ansprechpartner, ein Festpreis, ein festes Wort.',
-            bgImage: img('1581094271901-8022df4466f9'),
+            headline: 'Bäder und Wärme, die ein Leben lang halten.',
+            subline: 'Wir planen, bauen und warten Premium-Bäder, Wärmepumpen und Heizungen für Düsseldorf und Umgebung. Ein Ansprechpartner, ein Festpreis, ein festes Wort.',
+            bgImage: img('1620626011761-996317b8d101'),
             bgMode: 'image',
-            overlayColor: '#0E3A53',
+            overlayColor: OVERLAY,
             overlayOpacity: 0.6,
             imageEffect: 'kenBurns',
             primaryCta:   { label: 'Termin vereinbaren', href: '/kontakt', icon: 'CalendarCheck' },
             secondaryCta: { label: 'Leistungen ansehen', href: '/leistungen', icon: 'ArrowRight' },
             trustItems: [
-              'Meisterbetrieb der HwK Köln',
-              '24/7 Notdienst in Köln',
-              '4,9 / 5 bei Google (312 Bewertungen)',
+              'Meisterbetrieb der HwK Düsseldorf',
+              '24/7 Notdienst im Stadtgebiet',
+              '4,9 / 5 bei Google (286 Bewertungen)',
             ],
-            // The classic hero's default trust-strip background uses a buggy
-            // arbitrary-value Tailwind class (bg-[var(...)]/10) that renders
-            // as opaque white → white text on white. Setting trustStripColor
-            // bypasses that branch entirely and uses a clean translucent dark
-            // backing with full-opacity white text.
-            trustStripColor: 'rgba(8,28,42,0.55)',
+            trustStripColor: 'rgba(18,26,32,0.55)',
           },
-          styleOverrides: darkSectionTokens,
         },
         {
           type: 'socialProofBar',
           data: {
             bgStyle: 'light',
             items: [
-              { icon: 'Star',          value: '4,9 / 5',  label: '312 Bewertungen bei Google' },
-              { icon: 'Award',         value: 'Meister',  label: 'Eingetragen bei der HwK Köln' },
-              { icon: 'ShieldCheck',   value: '67 Jahre', label: 'Familienbetrieb seit 1958' },
-              { icon: 'Clock',         value: '< 60 Min', label: 'Notdienst-Reaktionszeit Köln' },
-              { icon: 'BadgeCheck',    value: '4.300+',   label: 'Anlagen unter Wartungsvertrag' },
+              { icon: 'Star',        value: '4,9 / 5',  label: '286 Bewertungen bei Google' },
+              { icon: 'Award',       value: 'Meister',  label: 'Eingetragen bei der HwK Düsseldorf' },
+              { icon: 'ShieldCheck', value: '50 Jahre', label: 'Familienbetrieb seit 1974' },
+              { icon: 'Clock',       value: '< 60 Min', label: 'Notdienst-Reaktionszeit Düsseldorf' },
+              { icon: 'BadgeCheck',  value: '3.100+',   label: 'Anlagen unter Wartungsvertrag' },
             ],
           },
         },
@@ -406,10 +378,10 @@ const tenant = {
           type: 'uspStrip',
           data: {
             items: [
-              { icon: 'Wrench',    title: 'Meisterbetrieb seit 1958', text: 'Dritte Generation, eigene Werkstatt.' },
-              { icon: 'Clock',     title: '24/7 Notdienst',           text: 'In Köln in der Regel < 60 Min vor Ort.' },
-              { icon: 'BadgeEuro', title: 'Festpreisgarantie',        text: 'Kein Aufschlag nach Auftrag.' },
-              { icon: 'Recycle',   title: 'Förderprofi',              text: 'BAFA & KfW — wir machen den Antrag.' },
+              { icon: 'Bath',      title: 'Bad aus einer Hand', text: '3D-Planung, eigene Ausstellung, ein Vertrag.' },
+              { icon: 'Clock',     title: '24/7 Notdienst',     text: 'In Düsseldorf in der Regel < 60 Min vor Ort.' },
+              { icon: 'BadgeEuro', title: 'Festpreisgarantie',  text: 'Kein Aufschlag nach Auftrag.' },
+              { icon: 'Recycle',   title: 'Förderprofi',        text: 'BEG, BAFA & KfW — wir machen den Antrag.' },
             ],
           },
         },
@@ -417,30 +389,30 @@ const tenant = {
           type: 'servicesGrid',
           data: {
             badgeText: 'Leistungen',
-            headline: 'Vier Kerndisziplinen — eine Handschrift',
-            subline: 'Wir bündeln Planung, Ausführung und Wartung in einer Hand. Keine Subunternehmer für sensible Gewerke, keine Schnittstellenverluste.',
+            headline: 'Vier Disziplinen, eine Handschrift',
+            subline: 'Wir bündeln Planung, Ausführung und Wartung in einer Hand — keine Subunternehmer für sensible Gewerke, keine Schnittstellenverluste.',
             ctaLabel: 'Alle Leistungen ansehen', ctaHref: '/leistungen',
             manualCards: [
-              { icon: 'Flame',    title: 'Heizungssanierung', text: 'Brennwert, Hybrid, Wärmepumpe — Fördermittel inklusive.', href: '/c/leistungen/heizungssanierung', mediaType: 'icon' },
-              { icon: 'Bath',     title: 'Badmodernisierung', text: '3D-Planung, ein Vertrag, Festpreis, Festtermin.',          href: '/c/leistungen/badmodernisierung', mediaType: 'icon' },
-              { icon: 'Leaf',     title: 'Wärmepumpen',       text: 'Sole und Luft, zertifizierte Monteure, JAZ > 4,0.',        href: '/c/leistungen/waermepumpe',       mediaType: 'icon' },
-              { icon: 'Settings', title: 'Wartung & Service', text: 'Jahreswartung mit Notdienst-Vorrang.',                     href: '/c/leistungen/wartung-service',   mediaType: 'icon' },
+              { icon: 'Bath',     title: 'Premium-Bäder',     text: '3D-Planung, Ausstellung, Festpreis, Festtermin.',          href: '/c/leistungen/premium-baeder',  mediaType: 'icon' },
+              { icon: 'Leaf',     title: 'Wärmepumpen',       text: 'Sole und Luft, Kältekreis-Schein, JAZ > 4,0.',            href: '/c/leistungen/waermepumpe',     mediaType: 'icon' },
+              { icon: 'Flame',    title: 'Heizung & Brennwert', text: 'Brennwert, Hybrid — fördergeprüft, WP-ready.',           href: '/c/leistungen/heizung',         mediaType: 'icon' },
+              { icon: 'Settings', title: 'Wartung & Service', text: 'Jahreswartung mit Notdienst-Vorrang.',                    href: '/c/leistungen/wartung-service', mediaType: 'icon' },
             ],
           },
         },
         {
           type: 'featureShowcase',
           data: {
-            headline: 'In der eigenen Werkstatt vorgefertigt — in Ihrem Haus eingebaut',
-            subline: 'Wir konfektionieren so viel wie möglich in unserer Werkstatt in Köln-Zollstock. Das verkürzt Ihre Bauzeit, hält den Bauplatz sauber und gibt uns Qualitätskontrolle, die auf Baustellen niemand bietet.',
-            image: img('1581094277802-a07db7a6bbfb'),
+            headline: 'Eine eigene Bad-Ausstellung — damit Sie nicht im Katalog raten müssen',
+            subline: 'In unserer Ausstellung in Düsseldorf-Bilk erleben Sie Armaturen, Fliesen und Lichtkonzepte in echt. Sie fassen an, vergleichen und entscheiden — bevor irgendetwas bestellt wird.',
+            image: img('1556228453-efd6c1ff04f6'),
             features: [
-              { icon: 'Factory',    title: 'Vorfertigung in Köln',     text: 'Rohrleitungen, Heizverteiler und Unterputz-Boxen werden bei uns gepresst, gedichtet und geprüft — bevor sie auf die Baustelle gehen.' },
-              { icon: 'ShieldCheck',title: 'Druck- und Dichtheitsprüfung', text: 'Jede Anlage läuft 24 Stunden auf Druck, bevor sie verputzt wird. Sie unterschreiben kein Werkstück ohne Prüfprotokoll.' },
-              { icon: 'Truck',      title: 'Sauberer Bauplatz',         text: 'Eigene Schmutzfangmatten, Staubschutzwände und tägliche Endreinigung sind in jedem Auftrag enthalten — keine Aufpreis-Position.' },
-              { icon: 'GraduationCap', title: 'Eigene Lehrwerkstatt',   text: 'Wir bilden seit 1981 aus. Unsere Monteure sind hier gelernt — nicht angelernt.' },
+              { icon: 'PenTool',       title: '3D-Planung vor Auftrag',  text: 'Sie sehen Ihr Bad mit Lichtkonzept und Materialprobe — bevor der erste Fliesenkleber angerührt wird.' },
+              { icon: 'Palette',       title: 'Material zum Anfassen',   text: 'Naturstein, Feinsteinzeug, Armaturen und Beleuchtung — in der Ausstellung in echt, nicht als Foto.' },
+              { icon: 'ShieldCheck',   title: 'Druck- & Dichtheitsprüfung', text: 'Jede Leitung läuft 24 Stunden auf Druck, bevor verputzt wird. Kein Werkstück ohne Prüfprotokoll.' },
+              { icon: 'GraduationCap', title: 'Eigene Lehrwerkstatt',    text: 'Wir bilden seit 1974 aus. Unsere Monteur:innen sind hier gelernt — nicht angelernt.' },
             ],
-            ctaPrimary: { label: 'Werkstatt besuchen', href: '/kontakt' },
+            ctaPrimary: { label: 'Ausstellung besuchen', href: '/kontakt' },
           },
           styleOverrides: { '--token-section-bg-alt': C.cream },
         },
@@ -448,37 +420,37 @@ const tenant = {
           type: 'processSteps',
           data: {
             badgeText: 'So arbeiten wir',
-            headline: 'Vier Schritte vom ersten Anruf bis zur warmen Wohnung',
+            headline: 'Vier Schritte vom ersten Anruf bis zum fertigen Bad',
             steps: [
-              { icon: 'Phone',          title: 'Anruf & Aufmaß',     text: 'Wir kommen kostenfrei vorbei, messen, hören zu und prüfen Förderfähigkeit.' },
-              { icon: 'PenTool',        title: 'Angebot & 3D-Plan',  text: 'Sie erhalten ein Festpreis-Angebot und — beim Bad — einen 3D-Plan.' },
-              { icon: 'Wrench',         title: 'Ausführung',         text: 'Eigene Monteure, koordinierte Gewerke, sauberer Bauplatz.' },
-              { icon: 'ClipboardCheck', title: 'Übergabe & Wartung', text: 'Schriftliches Protokoll, Einweisung, optional Wartungsvertrag.' },
+              { icon: 'Phone',          title: 'Anruf & Aufmaß',    text: 'Wir kommen kostenfrei vorbei, messen, hören zu und prüfen die Förderfähigkeit.' },
+              { icon: 'PenTool',        title: 'Entwurf & Festpreis', text: 'Sie erhalten einen 3D-Entwurf und ein verbindliches Festpreis-Angebot mit Termin.' },
+              { icon: 'Wrench',         title: 'Ausführung',        text: 'Eigene Monteur:innen, koordinierte Gewerke, täglich sauberer Bauplatz.' },
+              { icon: 'ClipboardCheck', title: 'Übergabe & Wartung', text: 'Schriftliches Protokoll, Einweisung und optional Wartungsvertrag.' },
             ],
           },
         },
         {
           type: 'bentoGrid',
           data: {
-            headline: 'Was uns von Schnell-Schnell-Betrieben unterscheidet',
-            subline: 'Fünf Dinge, an denen man einen guten SHK-Betrieb erkennt — lange bevor die Anlage läuft.',
+            headline: 'Woran man einen guten Meisterbetrieb erkennt',
+            subline: 'Fünf Dinge, an denen Sie Qualität erkennen — lange bevor die Anlage läuft oder die erste Fliese klebt.',
             items: [
-              { icon: 'FileSignature', title: 'Festpreis, schwarz auf weiß', text: 'Keine Überraschungen nach Auftrag. Was im Angebot steht, gilt — inklusive Termin.', span: '2' },
-              { icon: 'Microscope',    title: 'Vorab-Bestandsaufnahme',    text: 'Wir messen Heizkörper, Hydraulik und Dämmung — bevor wir Bauteile bestellen.' },
-              { icon: 'Wallet',        title: 'Förderung mitgedacht',      text: 'BAFA-Antrag, KfW-Brief, Energieberater-Kontakt — erledigt vom Büro.' },
-              { icon: 'BookOpenCheck', title: 'Anlagen-Tagebuch',          text: 'Jede Wartung wird dokumentiert. Sie erhalten ein PDF-Protokoll für Versicherung und Notar.' },
-              { icon: 'PhoneCall',     title: 'Direkt mit dem Meister',    text: 'Im Notfall niemand am Callcenter — Sie sprechen mit einem unserer sieben Meister.', span: '2' },
+              { icon: 'FileSignature', title: 'Festpreis, schwarz auf weiß', text: 'Keine Überraschungen nach Auftrag. Was im Angebot steht, gilt — inklusive Übergabetermin.', span: '2' },
+              { icon: 'Microscope',    title: 'Vorab-Bestandsaufnahme',    text: 'Wir messen Heizlast, Hydraulik und Untergrund — bevor Bauteile bestellt werden.' },
+              { icon: 'Wallet',        title: 'Förderung mitgedacht',      text: 'BEG-Antrag, KfW-Brief, Energieberater-Kontakt — erledigt aus dem Büro.' },
+              { icon: 'BookOpenCheck', title: 'Anlagen-Tagebuch',          text: 'Jede Wartung dokumentiert. Sie erhalten ein PDF-Protokoll für Versicherung und Notar.' },
+              { icon: 'PhoneCall',     title: 'Direkt mit dem Meister',    text: 'Im Notfall kein Callcenter — Sie sprechen mit einer unserer fünf Meister:innen.', span: '2' },
             ],
           },
         },
         {
           type: 'stats',
           data: {
-            headline: 'Drei Generationen in Zahlen',
+            headline: 'Zwei Generationen in Zahlen',
             stats: [
-              { icon: 'Calendar', value: '67',   suffix: ' Jahre', label: 'Meisterbetrieb' },
-              { icon: 'Users',    value: '14',                     label: 'Monteure & Meister' },
-              { icon: 'Wrench',   value: '4300', suffix: '+',      label: 'Anlagen im Service' },
+              { icon: 'Calendar', value: '50',   suffix: ' Jahre', label: 'Meisterbetrieb' },
+              { icon: 'Users',    value: '16',                     label: 'Monteur:innen & Meister' },
+              { icon: 'Bath',     value: '900',  suffix: '+',      label: 'Bäder gebaut' },
               { icon: 'Star',     value: '4,9',                    label: '★ bei Google' },
             ],
           },
@@ -486,29 +458,29 @@ const tenant = {
         {
           type: 'timeline',
           data: {
-            badge: 'Drei Generationen',
-            headline: 'Sechs Jahrzehnte Kölner Handwerks-Geschichte',
-            subline: 'Was 1958 in einer Hinterhof-Werkstatt in Sülz begann, ist heute ein 14-köpfiger Meisterbetrieb — mit derselben Handschrift.',
+            badge: 'Zwei Generationen',
+            headline: 'Fünf Jahrzehnte Düsseldorfer Handwerk',
+            subline: 'Was 1974 als Ein-Mann-Installateurbetrieb in Bilk begann, ist heute ein 16-köpfiger Meisterbetrieb — mit derselben Handschrift.',
             entries: [
-              { year: '1958', title: 'Gründung in Köln-Sülz',          text: 'Heinrich Müller, Installateurmeister, stellt die erste Werkbank in einer Hinterhof-Werkstatt auf. Zwei Gesellen, ein Lehrling, ein Lastenrad.' },
-              { year: '1981', title: 'Erste Lehrwerkstatt',             text: 'Werner Müller übernimmt den Betrieb von seinem Vater und richtet die erste eigene Lehrwerkstatt ein — bis heute Herzstück unserer Ausbildung.' },
-              { year: '1998', title: 'Umzug Vorgebirgstraße',          text: 'Neue Werkhalle, eigener Hof, Vorfertigung für größere Bauprojekte. Erste Komplettbäder mit eigenem Fliesenleger-Team.' },
-              { year: '2012', title: 'Wärmepumpen-Zertifizierung',     text: 'Anja Müller schließt den Kältekreis-Schein ab. Heute installieren wir 30+ Wärmepumpen pro Jahr im Bestand.' },
-              { year: '2018', title: 'Dritte Generation übernimmt',    text: 'Anja und Felix Müller führen den Betrieb gemeinsam. Werner bleibt als Senior-Berater an Bord — in jedem Erstgespräch.' },
-              { year: '2024', title: '67 Jahre, 14 Menschen, ein Wort', text: 'Sieben Meister, vier Gesellen, drei Auszubildende. 4.300 Anlagen unter Wartungsvertrag. Und ein Bürohund namens Bruno.' },
+              { year: '1974', title: 'Gründung in Düsseldorf-Bilk', text: 'Heinz Brüggemann, Installateurmeister, eröffnet einen Ein-Mann-Betrieb in einer Hofwerkstatt an der Aachener Straße.' },
+              { year: '1989', title: 'Erste eigene Bad-Ausstellung', text: 'Aus dem reinen Installationsbetrieb wird ein Bad-Spezialist. Die erste kleine Ausstellung zeigt sechs Komplettbäder.' },
+              { year: '2003', title: 'Lena Brüggemann steigt ein',   text: 'Tochter Lena beginnt nach Meisterschule und Innenarchitektur-Studium im Betrieb — und prägt die Planungs-Handschrift bis heute.' },
+              { year: '2014', title: 'Wärmepumpen-Kompetenz',        text: 'Eigene Kältekreis-Zertifizierung. Seitdem über 220 Wärmepumpen im Bestand installiert.' },
+              { year: '2019', title: 'Zweite Generation übernimmt',  text: 'Lena Brüggemann übernimmt die Geschäftsführung. Heinz bleibt als Senior-Berater in jedem Bad-Erstgespräch dabei.' },
+              { year: '2024', title: '50 Jahre, 16 Menschen, ein Wort', text: 'Fünf Meister:innen, sieben Gesell:innen, zwei Auszubildende, eine Bad-Ausstellung — und ein Werkstatthund namens Nelli.' },
             ],
           },
         },
         {
           type: 'statsCounter',
           data: {
-            headline: 'Was uns ausmacht',
-            subline: 'Kennzahlen, die wir messen — weil sie etwas über Qualität aussagen.',
+            headline: 'Was wir messen',
+            subline: 'Kennzahlen, die wir verfolgen — weil sie etwas über Qualität aussagen.',
             stats: [
-              { value: 97,    suffix: ' %',   label: 'Termintreue in 2024' },
-              { value: 4.3,                  label: 'JAZ unserer Wärmepumpen' },
+              { value: 96,    suffix: ' %',   label: 'Termintreue in 2024' },
+              { value: 4.1,                  label: 'JAZ unserer Wärmepumpen' },
               { value: 60,    suffix: ' Min', label: 'Notdienst-Reaktionszeit' },
-              { value: 280,   suffix: '+',    label: 'Wärmepumpen installiert' },
+              { value: 220,   suffix: '+',    label: 'Wärmepumpen installiert' },
             ],
           },
         },
@@ -518,9 +490,9 @@ const tenant = {
             badgeText: 'Kundenstimmen',
             headline: 'Was Auftraggeber:innen über uns sagen',
             items: [
-              { name: 'Familie Lenz',      context: 'Köln-Lindenthal',     quote: 'Heizungstausch in 3 Tagen, Festpreis eingehalten auf den Cent. Der Senior-Chef hat persönlich nachgeschaut.', rating: 5 },
-              { name: 'Dr. Karim Ostmann', context: 'Zahnarztpraxis Sülz', quote: 'Klimaanlage und Lüftung in der Praxis — über Nacht installiert, am nächsten Morgen pünktlich um 8 Uhr Patientenbetrieb.', rating: 5 },
-              { name: 'Andrea Kuper',      context: 'Hausverwaltung Kuper', quote: 'Wir betreuen 240 Wohneinheiten in Köln — Müller & Söhne ist seit Jahren unser verlässlichster SHK-Partner. Termintreu, kommunikativ.', rating: 5 },
+              { name: 'Familie Vahsen',   context: 'Spa-Bad, Oberkassel',      quote: 'Aus zwei winzigen Bädern wurde ein Traum. Festpreis auf den Cent eingehalten, und wir konnten die ganze Zeit in der Wohnung bleiben.', rating: 5 },
+              { name: 'Dr. Petra Sahin',  context: 'Zahnarztpraxis, Bilk',      quote: 'Die geräuschintensiven Arbeiten liefen nachts, damit unser Praxisbetrieb nicht stoppt. So eine Rücksicht erlebt man selten.', rating: 5 },
+              { name: 'WEG Flingern-Nord', context: '8 Wohneinheiten',          quote: 'Raus aus dem Gas ohne Heizkörpertausch — viele hielten das für unmöglich. Brüggemann hat es durchgerechnet und gebaut. JAZ 3,9.', rating: 5 },
             ],
           },
         },
@@ -530,13 +502,12 @@ const tenant = {
             badgeText: 'Häufige Fragen',
             headline: 'Was uns Kund:innen vor dem ersten Termin fragen',
             items: [
-              { question: 'Wie schnell sind Sie im Notfall vor Ort?', answer: 'In Köln und Umgebung in der Regel innerhalb von 60 Minuten — rund um die Uhr, 365 Tage im Jahr. Wartungskund:innen erhalten Vorrang.' },
-              { question: 'Übernehmen Sie auch die Förderanträge?',    answer: 'Ja, vollständig. Wir prüfen Ihre Förderfähigkeit kostenfrei vorab und stellen den BAFA-Antrag. Sie erhalten den Bescheid direkt von der Behörde.' },
-              { question: 'Bekomme ich einen Festpreis?',              answer: 'Für jede planbare Maßnahme ja. Bei Heizungstausch und Badmodernisierung erhalten Sie einen schriftlichen Festpreis — verbindlich, mit Termin.' },
-              { question: 'Arbeiten Sie mit Subunternehmern?',         answer: 'Bei sensiblen Gewerken (SHK, Kältekreis) ausschließlich mit eigenen Monteuren. Fliesenleger und Elektriker koordinieren wir aus einem festen Partnerkreis.' },
-              { question: 'Wie lange dauert ein Komplettbad?',         answer: 'Im Schnitt drei bis sechs Wochen ab Baubeginn. Wir nennen Ihnen mit dem Angebot einen verbindlichen Übergabetermin.' },
-              { question: 'Was kostet ein Heizungstausch ungefähr?',   answer: 'Für ein Einfamilienhaus liegen wir typischerweise zwischen 18.000 und 32.000 € brutto — abhängig von Anlagentyp, Heizkörper-Auslegung und gewünschter Förderkonstellation. Eine belastbare Zahl bekommen Sie nach dem kostenfreien Aufmaß.' },
-              { question: 'Wann lohnt sich eine Wärmepumpe wirklich?',  answer: 'Wenn Ihre Heizkörper für Vorlauftemperaturen unter 55 °C ausgelegt sind oder ausgelegt werden können — und Sie eine Dämmung ab Energieeffizienzklasse D haben. Wir prüfen das in zwei Stunden vor Ort und sagen Ihnen ehrlich, ob Hybrid- oder Brennwert-Lösung sinnvoller wäre.' },
+              { question: 'Wie schnell sind Sie im Notfall vor Ort?', answer: 'In Düsseldorf und Umgebung in der Regel innerhalb von 60 Minuten — rund um die Uhr, 365 Tage im Jahr. Wartungskund:innen erhalten Vorrang.' },
+              { question: 'Kann ich Ihre Bäder vorher ansehen?',       answer: 'Ja. In unserer Ausstellung in Bilk zeigen wir komplette Bäder, Armaturen und Materialien in echt. Termine gerne auch abends nach Vereinbarung.' },
+              { question: 'Übernehmen Sie die Förderanträge?',         answer: 'Vollständig. Wir prüfen Ihre Förderfähigkeit kostenfrei vorab und stellen BEG-, BAFA- oder KfW-Antrag. Den Bescheid erhalten Sie direkt von der Behörde.' },
+              { question: 'Bekomme ich einen Festpreis?',              answer: 'Für jede planbare Maßnahme ja. Bei Bad und Heizungstausch erhalten Sie einen schriftlichen Festpreis — verbindlich, mit Übergabetermin.' },
+              { question: 'Wie lange dauert ein Komplettbad?',         answer: 'Im Schnitt vier bis sieben Wochen ab Baubeginn. Den verbindlichen Übergabetermin nennen wir Ihnen mit dem Angebot.' },
+              { question: 'Wann lohnt sich eine Wärmepumpe wirklich?', answer: 'Wenn Ihre Heizkörper für Vorlauftemperaturen unter 55 °C ausgelegt sind oder werden können — und die Dämmung mindestens Effizienzklasse D erreicht. Wir prüfen das in zwei Stunden vor Ort und sagen ehrlich, ob Hybrid oder Wärmepumpe sinnvoller ist.' },
             ],
           },
         },
@@ -557,17 +528,17 @@ const tenant = {
     {
       slug: 'leistungen', title: 'Leistungen',
       seo: {
-        metaTitle: 'Leistungen — Heizung, Bad, Klima, Wartung in Köln',
-        metaDescription: 'Unser Leistungsspektrum als SHK-Meisterbetrieb in Köln: Heizungssanierung, Badmodernisierung, Wärmepumpen, Wartung & 24/7-Notdienst.',
+        metaTitle: 'Leistungen — Bäder, Wärmepumpen, Heizung in Düsseldorf',
+        metaDescription: 'Unser Leistungsspektrum als SHK-Meisterbetrieb in Düsseldorf: Premium-Bäder, Wärmepumpen, Heizung & Brennwert, Wartung und 24/7-Notdienst.',
       },
       sections: [
         {
           type: 'collectionHero',
           data: {
-            headline: 'Vier Kerndisziplinen, ein Meisterbetrieb',
-            subline: 'Wir behalten gerne den ganzen Bauablauf in der Hand — von Aufmaß und Förderantrag bis zur jährlichen Wartung.',
-            bgImage: img('1581244277943-fe4a9c777189'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.6,
+            headline: 'Vier Disziplinen, ein Meisterbetrieb',
+            subline: 'Wir behalten gerne den ganzen Bauablauf in der Hand — von Aufmaß und Förderantrag über die Ausstellung bis zur jährlichen Wartung.',
+            bgImage: img('1556909211-d5b2d8f5d3a5'),
+            overlayColor: OVERLAY, overlayOpacity: 0.6,
           },
           styleOverrides: darkSectionTokens,
         },
@@ -577,10 +548,10 @@ const tenant = {
             badgeText: 'Unser Portfolio',
             headline: 'Alle Leistungen im Überblick',
             manualCards: [
-              { icon: 'Flame',    title: 'Heizungssanierung', text: 'Brennwert, Hybrid und Wärmepumpe — inkl. Förderung.', href: '/c/leistungen/heizungssanierung', mediaType: 'icon' },
-              { icon: 'Bath',     title: 'Badmodernisierung', text: 'Komplettbad mit 3D-Plan und festem Übergabetermin.',  href: '/c/leistungen/badmodernisierung', mediaType: 'icon' },
-              { icon: 'Leaf',     title: 'Wärmepumpen',       text: 'Sole und Luft — installiert mit Kältekreis-Schein.',  href: '/c/leistungen/waermepumpe',       mediaType: 'icon' },
-              { icon: 'Settings', title: 'Wartung & Service', text: 'Jahreswartung, Notdienst-Vorrang, Protokoll.',        href: '/c/leistungen/wartung-service',   mediaType: 'icon' },
+              { icon: 'Bath',     title: 'Premium-Bäder',       text: 'Komplettbad mit 3D-Plan, Ausstellung und festem Übergabetermin.', href: '/c/leistungen/premium-baeder',  mediaType: 'icon' },
+              { icon: 'Leaf',     title: 'Wärmepumpen',         text: 'Sole und Luft — installiert mit Kältekreis-Schein.',              href: '/c/leistungen/waermepumpe',     mediaType: 'icon' },
+              { icon: 'Flame',    title: 'Heizung & Brennwert', text: 'Brennwert und Hybrid — fördergeprüft und WP-ready.',               href: '/c/leistungen/heizung',         mediaType: 'icon' },
+              { icon: 'Settings', title: 'Wartung & Service',   text: 'Jahreswartung, Notdienst-Vorrang, Protokoll.',                    href: '/c/leistungen/wartung-service', mediaType: 'icon' },
             ],
           },
         },
@@ -589,37 +560,37 @@ const tenant = {
           data: {
             badge: 'Wartungspakete',
             headline: 'Welches Wartungspaket passt zu Ihrer Anlage?',
-            text: 'Alle Pakete enthalten festen Wartungstermin im Wunschmonat, Vorrang im Notdienst und schriftliches Anlagenprotokoll. Preise verstehen sich pro Jahr inkl. MwSt.',
+            text: 'Alle Pakete enthalten festen Wartungstermin im Wunschmonat, Vorrang im Notdienst und schriftliches Anlagenprotokoll. Preise pro Jahr inkl. MwSt.',
             columns: [
               { label: 'Leistung' },
-              { label: 'Basis — 189 €' },
-              { label: 'Komfort — 289 €' },
-              { label: 'Komplett — 449 €' },
+              { label: 'Basis — 199 €' },
+              { label: 'Komfort — 299 €' },
+              { label: 'Komplett — 469 €' },
             ],
             highlightCol: 2,
             rows: [
-              { feature: 'Jahreswartung Heizung',          values: ['✓', '✓', '✓'] },
-              { feature: 'Schriftliches Anlagenprotokoll', values: ['✓', '✓', '✓'] },
-              { feature: 'Notdienst-Vorrang',              values: ['—', '✓', '✓'] },
-              { feature: 'Trinkwasser-Hygieneprüfung',     values: ['—', '✓', '✓'] },
-              { feature: 'Anfahrt Stadtgebiet Köln',       values: ['Aufpreis', 'inkl.', 'inkl.'] },
-              { feature: 'Material bei Notdienst',         values: ['nach Aufwand', 'nach Aufwand', '20 % Rabatt'] },
-              { feature: 'Heizkostenanalyse jährlich',     values: ['—', '—', '✓'] },
-              { feature: 'Förder-Check alle 2 Jahre',      values: ['—', '—', '✓'] },
+              { feature: 'Jahreswartung Heizung/Wärmepumpe', values: ['✓', '✓', '✓'] },
+              { feature: 'Schriftliches Anlagenprotokoll',   values: ['✓', '✓', '✓'] },
+              { feature: 'Notdienst-Vorrang',                values: ['—', '✓', '✓'] },
+              { feature: 'Trinkwasser-Hygieneprüfung',       values: ['—', '✓', '✓'] },
+              { feature: 'Anfahrt Stadtgebiet Düsseldorf',   values: ['Aufpreis', 'inkl.', 'inkl.'] },
+              { feature: 'Material bei Notdienst',           values: ['nach Aufwand', 'nach Aufwand', '20 % Rabatt'] },
+              { feature: 'Effizienz-Check Wärmepumpe',       values: ['—', '—', '✓'] },
+              { feature: 'Förder-Check alle 2 Jahre',        values: ['—', '—', '✓'] },
             ],
           },
         },
         {
           type: 'featureShowcase',
           data: {
-            headline: 'Warum Komplettbad bei uns dreimal schneller fertig wird',
-            subline: 'Ein Vertrag, ein Ansprechpartner, ein Termin — weil wir jedes Gewerk selbst koordinieren statt zu hoffen, dass der Subunternehmer pünktlich kommt.',
-            image: img('1552321554-5fefe8c9ef14'),
+            headline: 'Warum Ihr Komplettbad bei uns reibungslos läuft',
+            subline: 'Ein Vertrag, ein Ansprechpartner, ein Termin — weil wir jedes Gewerk selbst koordinieren, statt zu hoffen, dass der Subunternehmer pünktlich kommt.',
+            image: img('1507652313519-d4e9174996dd'),
             features: [
-              { icon: 'PenTool',     title: '3D-Planung vor Auftrag',     text: 'Sie sehen Ihr Bad mit Lichtkonzept und Materialprobe — bevor irgendetwas bestellt wird.' },
-              { icon: 'Handshake',   title: 'Alle Gewerke unter einem Dach', text: 'Fliesenleger, Elektriker, Trockenbauer aus festem Partnerkreis. Wir koordinieren — Sie müssen niemanden anrufen.' },
-              { icon: 'Calendar',    title: 'Übergabetermin garantiert',  text: 'Drei bis sechs Wochen ab Baubeginn. Verbindlich. Mit Vertragsstrafe bei Verzug aus unserem Verschulden.' },
-              { icon: 'Accessibility', title: 'KfW-förderfähig',          text: 'Bodengleiche Duschen und Haltegriffe werden über den KfW-Altersgerecht-Umbau bezuschusst — Antrag inklusive.' },
+              { icon: 'PenTool',     title: '3D-Planung vor Auftrag',       text: 'Sie sehen Ihr Bad mit Lichtkonzept und Materialprobe — bevor irgendetwas bestellt wird.' },
+              { icon: 'Handshake',   title: 'Alle Gewerke unter einem Dach', text: 'Fliesenleger, Elektriker, Trockenbauer aus festem Partnerkreis. Wir koordinieren — Sie rufen niemanden an.' },
+              { icon: 'Calendar',    title: 'Übergabetermin garantiert',    text: 'Vier bis sieben Wochen ab Baubeginn. Verbindlich, mit Vertragsstrafe bei Verzug aus unserem Verschulden.' },
+              { icon: 'Accessibility', title: 'KfW-förderfähig',            text: 'Bodengleiche Duschen und Haltegriffe werden über „Altersgerecht Umbauen" bezuschusst — Antrag inklusive.' },
             ],
             ctaPrimary: { label: 'Badtermin anfragen', href: '/kontakt' },
           },
@@ -630,9 +601,9 @@ const tenant = {
             badgeText: 'Kundenstimmen',
             headline: 'Was Auftraggeber:innen zu unseren Leistungen sagen',
             items: [
-              { name: 'Familie Wallraf',  context: 'Heizungstausch, Köln-Nippes',     quote: 'Drei Tage Bauzeit, sauberer Heizkeller, Förderbescheid kam direkt von der BAFA. So hätten wir nicht zu hoffen gewagt.',          rating: 5 },
-              { name: 'Sebastian Klein',  context: 'Komplettbad, Köln-Ehrenfeld',     quote: 'Fertig 4 Tage vor dem zugesagten Termin. Auf den Cent Festpreis. Wir empfehlen Familie Müller jeder Person, die uns fragt.', rating: 5 },
-              { name: 'Dr. med. Hofmann', context: 'Wärmepumpe, Köln-Lindenthal',      quote: 'Sehr saubere Planung. Die Jahresarbeitszahl liegt nach einem Jahr bei 4,2 — wie versprochen.',                          rating: 5 },
+              { name: 'Familie Conrad',  context: 'Komplettbad, Düsseldorf-Gerresheim', quote: 'Fertig vier Tage vor dem zugesagten Termin, auf den Cent Festpreis. Die Ausstellung hat uns die Entscheidung enorm erleichtert.', rating: 5 },
+              { name: 'M. Terhoeven',    context: 'Wärmepumpe, Meerbusch',               quote: 'Sehr saubere Planung mit raumweisem Abgleich. Die Jahresarbeitszahl liegt nach einem Jahr bei 4,2 — genau wie versprochen.',  rating: 5 },
+              { name: 'Praxis Dr. Sahin', context: 'Sanitär & Lüftung, Bilk',            quote: 'Hygienekonzept, Lüftung, Nacht-Installation — alles durchdacht. Pünktlich zur Eröffnung fertig.',                          rating: 5 },
             ],
           },
         },
@@ -652,17 +623,17 @@ const tenant = {
     {
       slug: 'ueber-uns', title: 'Über uns',
       seo: {
-        metaTitle: 'Über uns — Familienbetrieb in dritter Generation',
-        metaDescription: 'Müller & Söhne ist ein familiengeführter SHK-Meisterbetrieb in Köln. Drei Generationen, 14 Mitarbeitende, eigene Lehrwerkstatt — und ein klares Wort.',
+        metaTitle: 'Über uns — Familienbetrieb in zweiter Generation',
+        metaDescription: 'Brüggemann Bäder & Wärme ist ein familiengeführter SHK-Meisterbetrieb in Düsseldorf. Zwei Generationen, 16 Mitarbeitende, eigene Ausstellung — und ein klares Wort.',
       },
       sections: [
         {
           type: 'collectionHero',
           data: {
-            headline: 'Drei Generationen Handwerk in Köln',
-            subline: 'Was 1958 mit einer Werkbank in Köln-Sülz begann, ist heute ein Meisterbetrieb mit 14 Mitarbeitenden — und derselben Handschrift.',
+            headline: 'Zwei Generationen Handwerk in Düsseldorf',
+            subline: 'Was 1974 mit einer Hofwerkstatt in Bilk begann, ist heute ein Meisterbetrieb mit 16 Mitarbeitenden — und derselben Handschrift.',
             bgImage: img('1521791136064-7986c2920216'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.55,
+            overlayColor: OVERLAY, overlayOpacity: 0.55,
           },
           styleOverrides: darkSectionTokens,
         },
@@ -670,12 +641,12 @@ const tenant = {
           type: 'textImage',
           data: {
             badge: 'Unsere Geschichte',
-            headline: 'Vom Werkbank-Betrieb zum SHK-Spezialisten',
+            headline: 'Vom Installationsbetrieb zum Bad-Spezialisten',
             text:
-              '<p>1958 hat unser Großvater Heinrich Müller in einer Hinterhof-Werkstatt in Köln-Sülz die erste Werkbank aufgestellt. Sein Sohn Werner hat den Betrieb in den 80er-Jahren auf moderne Heizungstechnik umgestellt. Heute führen Anja und Felix Müller das Unternehmen in dritter Generation — mit denselben Grundsätzen: gutes Wort, festes Material, sauberer Bauplatz.</p>' +
-              '<p>Was uns wichtig ist: dass die Anlage in 20 Jahren immer noch läuft. Dass unsere Azubis Meister werden. Und dass der Briefkasten keine Mahnung enthält, weil wir das Fördergeld rechtzeitig beantragt haben.</p>',
-            image: img('1581094277802-a07db7a6bbfb'),
-            imageAlt: 'Werkstatt von Müller & Söhne in Köln',
+              '<p>1974 hat Heinz Brüggemann in einer Hofwerkstatt an der Aachener Straße den ersten Schraubstock festgezogen. In den 80ern wurde aus dem reinen Installationsbetrieb ein Bad-Spezialist — mit eigener Ausstellung. Heute führt Tochter Lena Brüggemann das Unternehmen in zweiter Generation, mit Meisterbrief und Innenarchitektur-Studium im Gepäck und denselben Grundsätzen: gutes Wort, festes Material, sauberer Bauplatz.</p>' +
+              '<p>Was uns wichtig ist: dass das Bad in 20 Jahren noch genauso schön ist. Dass unsere Azubis Meister:innen werden. Und dass im Briefkasten keine Mahnung landet, weil wir das Fördergeld rechtzeitig beantragt haben.</p>',
+            image: img('1581092580497-e0d23cbdf1dc'),
+            imageAlt: 'Werkstatt von Brüggemann in Düsseldorf',
             layout: 'image-right',
             primaryCta: { label: 'Team kennenlernen', href: '/ueber-uns', icon: 'Users' },
           },
@@ -684,16 +655,16 @@ const tenant = {
           type: 'timeline',
           data: {
             badge: 'Meilensteine',
-            headline: 'Sechs Jahrzehnte Kölner Familienbetrieb',
-            subline: 'Ein Strich auf der Zeitleiste pro Generation — und ein paar Erinnerungen dazwischen.',
+            headline: 'Fünf Jahrzehnte Düsseldorfer Familienbetrieb',
+            subline: 'Ein Strich auf der Zeitleiste pro Jahrzehnt — und ein paar Erinnerungen dazwischen.',
             entries: [
-              { year: '1958', title: 'Gründung in Köln-Sülz',          text: 'Heinrich Müller, Installateurmeister, stellt die erste Werkbank in einer Hinterhof-Werkstatt auf.' },
-              { year: '1971', title: 'Erste Zentralheizungen',          text: 'Umstellung von Einzelöfen auf Öl-Zentralheizungen prägt das Jahrzehnt — wir wachsen auf sechs Mitarbeitende.' },
-              { year: '1981', title: 'Eigene Lehrwerkstatt',            text: 'Werner Müller übernimmt und richtet die erste Lehrwerkstatt ein. Seitdem 47 Lehrlinge ausgebildet.' },
-              { year: '1998', title: 'Umzug in die Vorgebirgstraße',   text: 'Neue Werkhalle mit eigenem Hof, Vorfertigung für größere Projekte, erstes Komplettbad-Team.' },
-              { year: '2012', title: 'Wärmepumpen-Kompetenz',           text: 'Anja Müller schließt den Kältekreis-Schein ab. Bis heute 280+ Wärmepumpen installiert.' },
-              { year: '2018', title: 'Dritte Generation übernimmt',     text: 'Anja und Felix Müller führen den Betrieb gemeinsam. Werner bleibt Senior-Berater für jeden ersten Termin.' },
-              { year: '2024', title: 'Frischluft im Familienbetrieb',   text: 'Wir bilden so viele Azubis aus wie nie. Drei Plätze für 2025 sind ausgeschrieben.' },
+              { year: '1974', title: 'Gründung in Düsseldorf-Bilk',  text: 'Heinz Brüggemann, Installateurmeister, eröffnet einen Ein-Mann-Betrieb in einer Hofwerkstatt.' },
+              { year: '1982', title: 'Erste Mitarbeitende',          text: 'Der Betrieb wächst auf fünf Köpfe. Komplettbäder werden zum Schwerpunkt.' },
+              { year: '1989', title: 'Eigene Bad-Ausstellung',       text: 'Die erste Ausstellung zeigt sechs komplette Bäder — Kund:innen sollen anfassen, nicht raten.' },
+              { year: '2003', title: 'Lena Brüggemann steigt ein',   text: 'Nach Meisterschule und Innenarchitektur-Studium prägt sie die Planungs-Handschrift bis heute.' },
+              { year: '2014', title: 'Wärmepumpen-Kompetenz',        text: 'Kältekreis-Zertifizierung. Bis heute über 220 Wärmepumpen im Bestand installiert.' },
+              { year: '2019', title: 'Zweite Generation übernimmt',  text: 'Lena übernimmt die Geschäftsführung. Heinz bleibt Senior-Berater für jedes Bad-Erstgespräch.' },
+              { year: '2024', title: 'Frischluft im Familienbetrieb', text: 'Zwei Ausbildungsplätze für 2025 ausgeschrieben, eigenes Schulungsbad eingerichtet.' },
             ],
           },
         },
@@ -702,10 +673,10 @@ const tenant = {
           data: {
             headline: 'Was uns ausmacht — in Zahlen',
             stats: [
-              { icon: 'Calendar', value: '1958', label: 'Gründungsjahr' },
-              { icon: 'Users',    value: '14',   label: 'Mitarbeitende' },
-              { icon: 'Layers',   value: '3',    label: 'Generationen' },
-              { icon: 'Award',    value: '7',    label: 'Meister im Team' },
+              { icon: 'Calendar', value: '1974', label: 'Gründungsjahr' },
+              { icon: 'Users',    value: '16',   label: 'Mitarbeitende' },
+              { icon: 'Layers',   value: '2',    label: 'Generationen' },
+              { icon: 'Award',    value: '5',    label: 'Meister:innen im Team' },
             ],
           },
         },
@@ -714,19 +685,19 @@ const tenant = {
           data: {
             badgeText: 'Team',
             headline: 'Die Menschen hinter dem Meisterbetrieb',
-            subline: 'Sieben Meister, vier Gesellen, drei Auszubildende — und ein Bürohund namens Bruno.',
+            subline: 'Fünf Meister:innen, sieben Gesell:innen, zwei Auszubildende — und ein Werkstatthund namens Nelli.',
             members: [
-              { name: 'Anja Müller',    role: 'Geschäftsführerin / Meisterin SHK', image: img('1573496359142-b8d87734a5a2', 600), bio: 'Übernahm den Betrieb 2018 von ihrem Vater Werner. Spezialisiert auf Wärmepumpen-Planung.' },
-              { name: 'Felix Müller',   role: 'Technischer Leiter / Meister',      image: img('1507003211169-0a1dd7228f2d', 600), bio: 'Zuständig für Großprojekte und Bestandssanierung. Eigene Kältekreis-Zertifizierung.' },
-              { name: 'Thomas Wiegand', role: 'Werkstattleiter / Meister',         image: img('1500648767791-00dcc994a43e', 600), bio: 'Seit 1992 im Betrieb. Bildet seit 20 Jahren Azubis aus und führt unsere Lehrwerkstatt.' },
-              { name: 'Petra Eick',     role: 'Büroleitung / Förder-Spezialistin', image: img('1580489944761-15a19d654956', 600), bio: 'Kennt die BAFA-Förderrichtlinie auswendig. Wickelt jährlich über 80 Anträge ab.' },
+              { name: 'Lena Brüggemann',  role: 'Geschäftsführerin / Meisterin SHK',  image: img('1580489944761-15a19d654956', 600), bio: 'Übernahm den Betrieb 2019. Meisterin SHK mit Innenarchitektur-Studium — verantwortet die Bad-Planung.' },
+              { name: 'Heinz Brüggemann', role: 'Gründer / Senior-Berater',           image: img('1500648767791-00dcc994a43e', 600), bio: 'Gründete den Betrieb 1974. Heute in jedem Bad-Erstgespräch dabei — die Erfahrung von fünf Jahrzehnten.' },
+              { name: 'Marek Possiwan',   role: 'Technischer Leiter / Meister',        image: img('1507003211169-0a1dd7228f2d', 600), bio: 'Verantwortet Wärmepumpen und Großprojekte. Eigene Kältekreis-Zertifizierung.' },
+              { name: 'Sophie Reinartz',  role: 'Büroleitung / Förder-Spezialistin',   image: img('1573496359142-b8d87734a5a2', 600), bio: 'Kennt BEG- und KfW-Richtlinien auswendig und wickelt jährlich über 70 Anträge ab.' },
             ],
             valuesHeadline: 'Was uns wichtig ist',
             values: [
-              { icon: 'Handshake',   title: 'Wort halten',         text: 'Was im Angebot steht, gilt. Wenn wir uns verzählen, zahlen wir die Differenz — nicht Sie.' },
-              { icon: 'GraduationCap', title: 'Ausbilden',         text: 'Drei Auszubildende pro Jahrgang. Eigenes Lehrbad. Berufsschule wird bezahlt, nicht abgesessen.' },
-              { icon: 'Recycle',     title: 'Sauberer Bauplatz',   text: 'Staubschutz, Schmutzfangmatten und tägliche Endreinigung sind im Festpreis enthalten — keine Position extra.' },
-              { icon: 'Heart',       title: 'Lange Beziehungen',   text: 'Wir betreuen Anlagen, die wir selbst gebaut haben — manche seit drei Generationen. Wartung ist kein Cross-Selling.' },
+              { icon: 'Handshake',     title: 'Wort halten',       text: 'Was im Angebot steht, gilt. Wenn wir uns verkalkulieren, zahlen wir die Differenz — nicht Sie.' },
+              { icon: 'GraduationCap', title: 'Ausbilden',         text: 'Eigenes Schulungsbad, bezahlte Berufsschule, Übungstag mit dem Meister jeden Monat.' },
+              { icon: 'Recycle',       title: 'Sauberer Bauplatz', text: 'Staubschutz, Schmutzfangmatten und tägliche Endreinigung sind im Festpreis enthalten — keine Position extra.' },
+              { icon: 'Heart',         title: 'Lange Beziehungen', text: 'Wir warten Anlagen und Bäder, die wir selbst gebaut haben. Service ist kein Cross-Selling.' },
             ],
           },
         },
@@ -746,17 +717,17 @@ const tenant = {
     {
       slug: 'referenzen', title: 'Referenzen',
       seo: {
-        metaTitle: 'Referenzen — Ausgewählte Projekte aus Köln',
-        metaDescription: 'Vom denkmalgeschützten Gründerzeit-Haus bis zur Kita-Wärmepumpe: ausgewählte Projekte aus Köln und Umgebung.',
+        metaTitle: 'Referenzen — Ausgewählte Projekte aus Düsseldorf',
+        metaDescription: 'Vom Spa-Bad im Altbau bis zur Wärmepumpen-Kaskade im Mehrfamilienhaus: ausgewählte Projekte aus Düsseldorf und Umgebung.',
       },
       sections: [
         {
           type: 'collectionHero',
           data: {
             headline: 'Projekte, an denen wir hängen',
-            subline: 'Eine kleine Auswahl aus dem letzten Jahr — von der denkmalgeschützten Villa bis zur Kita-Wärmepumpe.',
-            bgImage: img('1521791055366-0d553872125f'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.6,
+            subline: 'Eine kleine Auswahl aus dem letzten Jahr — vom Spa-Bad im Altbau bis zur Wärmepumpen-Kaskade.',
+            bgImage: img('1565182999561-18d7dc61c393'),
+            overlayColor: OVERLAY, overlayOpacity: 0.6,
           },
           styleOverrides: darkSectionTokens,
         },
@@ -772,13 +743,13 @@ const tenant = {
         {
           type: 'portfolio',
           data: {
-            badgeText: 'Auszug aus drei Jahrzehnten',
+            badgeText: 'Auszug aus fünf Jahrzehnten',
             headline: 'Was wir gerne in Erinnerung behalten',
             subline: 'Drei Projekte, an die wir uns gerne erinnern — weil sie zeigen, was Handwerk leisten kann, wenn alle mitziehen.',
             projects: [
-              { title: 'Domhotel Tradition',     category: 'Hotel-Sanierung',          image: img('1564501049412-61c2a3083791'),  icon: 'Building2',  description: '38 Zimmer, Komplett-Sanierung von Bad und Heizung in 11 Wochen — bei laufendem Hotelbetrieb. Drei Etagen rollierend.', stats: [{label:'Zimmer',value:'38'},{label:'Bauzeit',value:'11 Wo.'}] },
-              { title: 'Bürohaus Rheinauhafen', category: 'Gebäudetechnik Büro',     image: img('1486325212027-8081e485255e'),  icon: 'Briefcase', description: '4.200 m² Bürofläche mit zentraler Lüftung, Kühldecken und Wärmerückgewinnung — nach DGNB-Gold zertifiziert.', stats: [{label:'Fläche',value:'4.200 m²'},{label:'JAZ',value:'4,1'}] },
-              { title: 'Sportverein Südstadt',  category: 'Vereinsanlage',           image: img('1505666287802-931dc83948e6'),  icon: 'Trophy',    description: 'Komplette Sanitäranlage für 600-Mitglieder-Verein — inklusive Trinkwasser-Hygienekonzept und Energierecycling der Duschen.', stats: [{label:'Duschen',value:'24'},{label:'Hygienekonzept',value:'DIN 1988'}] },
+              { title: 'Boutique-Hotel Carlstadt', category: 'Hotel-Sanierung',     image: img('1564501049412-61c2a3083791'), icon: 'Building2',  description: '24 Bäder in 9 Wochen komplett saniert — bei laufendem Hotelbetrieb, Etage für Etage. Naturstein, Regenduschen, leise Spültechnik.', stats: [{label:'Bäder',value:'24'},{label:'Bauzeit',value:'9 Wo.'}] },
+              { title: 'Stadtvilla Meerbusch',     category: 'Wärmepumpe & Bad',     image: img('1600585154340-be6161a56a0c'), icon: 'Home',       description: 'Sole-Wärmepumpe mit Erdsonden plus zwei Spa-Bäder in einem Zug — Gerüst und Anfahrt nur einmal, doppelte Förderung genutzt.', stats: [{label:'Erdsonden',value:'4 × 95 m'},{label:'JAZ',value:'4,4'}] },
+              { title: 'Wohnanlage Oberbilk',      category: 'Heizungsumstellung',   image: img('1486325212027-8081e485255e'), icon: 'Building',   description: '32 Wohneinheiten von Gas auf Luft-Wärmepumpen-Kaskaden umgestellt — im laufenden Betrieb, ohne dass jemand kalt duschen musste.', stats: [{label:'Einheiten',value:'32'},{label:'CO₂',value:'−68 %'}] },
             ],
             ctaLabel: 'Alle Projekte ansehen', ctaHref: '/referenzen',
           },
@@ -789,9 +760,9 @@ const tenant = {
             badgeText: 'Auftraggeber:innen',
             headline: 'Was Bauherren über unsere Projekte sagen',
             items: [
-              { name: 'Hausverwaltung Kuper',     context: '240 Wohneinheiten in Köln',  quote: 'Wir vergeben seit 2019 alle SHK-Aufträge an Müller & Söhne. Termintreue, saubere Dokumentation, eine Rechnung. Das spart uns Verwaltung.', rating: 5 },
-              { name: 'Kita-Träger St. Joseph',  context: '3 Kita-Standorte Köln',      quote: 'Sommerferien sind kurz. Bei Müller & Söhne können wir uns darauf verlassen, dass am ersten Schultag warm geduscht werden kann.',         rating: 5 },
-              { name: 'Atelier Mensching',        context: 'Architekturbüro Köln',      quote: 'Endlich ein SHK-Partner, der Pläne lesen kann und mit denkt. Wir spezifizieren grob — Felix Müller liefert den hydraulischen Abgleich dazu.',  rating: 5 },
+              { name: 'Hausverwaltung Rheinblick', context: '180 Wohneinheiten in Düsseldorf', quote: 'Seit 2018 vergeben wir alle SHK-Aufträge an Brüggemann. Termintreue, saubere Dokumentation, eine Rechnung — das spart uns Verwaltung.', rating: 5 },
+              { name: 'Boutique-Hotel Carlstadt',  context: '24 Bäder, Altstadt',             quote: 'Etage für Etage, ohne dass ein Gast es gemerkt hätte. Diese Planung war große Klasse.',                                          rating: 5 },
+              { name: 'Architekturbüro Lindgens',  context: 'Düsseldorf',                      quote: 'Endlich ein SHK-Partner, der Pläne lesen kann und mitdenkt. Wir spezifizieren grob — Marek Possiwan liefert den Abgleich dazu.',     rating: 5 },
             ],
           },
         },
@@ -807,21 +778,21 @@ const tenant = {
       ],
     },
 
-    // ── Werkstattnotizen (News) ──────────────────────────────────────────────
+    // ── Magazin (News) ───────────────────────────────────────────────────────
     {
-      slug: 'news', title: 'Werkstattnotizen',
+      slug: 'news', title: 'Magazin',
       seo: {
-        metaTitle: 'Werkstattnotizen — Aus dem Alltag eines Meisterbetriebs',
-        metaDescription: 'Aktuelle Notizen aus Werkstatt und Baustelle: Fördertipps, Wartungs-Checks, Karriere und Geschichten von Familienbetrieb zu Familienbetrieb.',
+        metaTitle: 'Magazin — Aus Werkstatt und Bad-Ausstellung',
+        metaDescription: 'Aktuelle Beiträge aus Werkstatt und Ausstellung: Fördertipps, Bad-Ideen, Wartungs-Checks und Geschichten aus einem Düsseldorfer Familienbetrieb.',
       },
       sections: [
         {
           type: 'collectionHero',
           data: {
-            headline: 'Notizen aus Werkstatt und Baustelle',
-            subline: 'Was uns gerade beschäftigt — von Förderänderungen bis zu Wartungs-Checklisten.',
-            bgImage: img('1581094288338-2314dddb7ece'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.6,
+            headline: 'Aus Werkstatt und Ausstellung',
+            subline: 'Was uns gerade beschäftigt — von Förderänderungen bis zu Bad-Ideen.',
+            bgImage: img('1556228720-195a672e8a03'),
+            overlayColor: OVERLAY, overlayOpacity: 0.6,
           },
           styleOverrides: darkSectionTokens,
         },
@@ -829,8 +800,8 @@ const tenant = {
           type: 'newsGrid',
           data: {
             collectionKey: 'news',
-            headline: 'Alle Werkstattnotizen',
-            subline: 'Notizen, Tipps und Geschichten aus dem Alltag eines SHK-Meisterbetriebs.',
+            headline: 'Alle Beiträge',
+            subline: 'Tipps, Ideen und Geschichten aus dem Alltag eines SHK-Meisterbetriebs.',
           },
         },
       ],
@@ -841,16 +812,16 @@ const tenant = {
       slug: 'kontakt', title: 'Kontakt',
       seo: {
         metaTitle: 'Kontakt — Termin, Notdienst, WhatsApp',
-        metaDescription: 'Direkter Draht zum Meisterbetrieb: Telefon, E-Mail, WhatsApp und Kontaktformular. 24/7 Notdienst für Köln und Umgebung.',
+        metaDescription: 'Direkter Draht zum Meisterbetrieb: Telefon, E-Mail, WhatsApp und Kontaktformular. 24/7 Notdienst für Düsseldorf und Umgebung.',
       },
       sections: [
         {
           type: 'collectionHero',
           data: {
             headline: 'Direkt zum Meisterbetrieb',
-            subline: 'Werktags zwischen 7:30 und 17 Uhr persönlich am Telefon. Notfälle 24/7. WhatsApp ganztägig.',
-            bgImage: img('1556761175-5973dc0f32e7'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.6,
+            subline: 'Werktags zwischen 7 und 17 Uhr persönlich am Telefon. Notfälle 24/7. WhatsApp ganztägig.',
+            bgImage: img('1423666639041-f56000c27a9a'),
+            overlayColor: OVERLAY, overlayOpacity: 0.6,
           },
           styleOverrides: darkSectionTokens,
         },
@@ -862,10 +833,10 @@ const tenant = {
             formEnabled: true,
             submitLabel: 'Anfrage senden',
             infoCards: [
-              { icon: 'Phone',  label: 'Telefon',         value: '+49 221 5894120' },
-              { icon: 'Mail',   label: 'E-Mail',          value: 'service@mueller-soehne-koeln.de' },
-              { icon: 'MapPin', label: 'Adresse',         value: 'Vorgebirgstraße 218, 50969 Köln' },
-              { icon: 'Clock',  label: 'Öffnungszeiten',  value: 'Mo–Do 7:30–17 · Fr 7:30–15:30 · 24/7 Notdienst' },
+              { icon: 'Phone',  label: 'Telefon',        value: '+49 211 4790360' },
+              { icon: 'Mail',   label: 'E-Mail',         value: 'service@brueggemann-duesseldorf.de' },
+              { icon: 'MapPin', label: 'Adresse',        value: 'Aachener Straße 64, 40223 Düsseldorf' },
+              { icon: 'Clock',  label: 'Öffnungszeiten', value: 'Mo–Do 7–17 · Fr 7–15 · 24/7 Notdienst' },
             ],
           },
         },
@@ -873,7 +844,7 @@ const tenant = {
           type: 'map',
           data: {
             headline: 'So finden Sie uns',
-            embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2509.4869091235814!2d6.945!3d50.901!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTDCsDU0JzAzLjYiTiA2wrA1NicyMi4wIkU!5e0!3m2!1sde!2sde!4v1700000000000',
+            embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2511!2d6.776!3d51.210!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDEyJzM2LjAiTiA2wrA0NicMzQuMCJF!5e0!3m2!1sde!2sde!4v1700000000000',
             height: 'm',
           },
         },
@@ -890,13 +861,13 @@ const tenant = {
           data: {
             headline: 'Impressum',
             blocks: [
-              { headline: 'Anbieter', text: '<p>Müller & Söhne Meisterbetrieb GmbH<br>Vorgebirgstraße 218<br>50969 Köln<br>Deutschland</p>' },
-              { headline: 'Vertretungsberechtigte Geschäftsführung', text: '<p>Anja Müller, Felix Müller</p>' },
-              { headline: 'Kontakt', text: '<p>Telefon: +49 221 5894120<br>E-Mail: service@mueller-soehne-koeln.de</p>' },
-              { headline: 'Registereintrag', text: '<p>Amtsgericht Köln, HRB 84221<br>Handwerkskammer zu Köln, Eintragungsnummer 12345</p>' },
-              { headline: 'Umsatzsteuer-Identifikationsnummer', text: '<p>USt-IdNr. gemäß § 27 a UStG: DE 245 678 901</p>' },
-              { headline: 'Aufsichtsbehörde', text: '<p>Handwerkskammer zu Köln, Heumarkt 12, 50667 Köln</p>' },
-              { headline: 'Berufsbezeichnung & berufsrechtliche Regelungen', text: '<p>Installateur- und Heizungsbauermeister (verliehen in der Bundesrepublik Deutschland). Es gelten die Regelungen der Handwerksordnung (HwO).</p>' },
+              { headline: 'Anbieter', text: '<p>Brüggemann Bäder & Wärme GmbH<br>Aachener Straße 64<br>40223 Düsseldorf<br>Deutschland</p>' },
+              { headline: 'Vertretungsberechtigte Geschäftsführung', text: '<p>Lena Brüggemann</p>' },
+              { headline: 'Kontakt', text: '<p>Telefon: +49 211 4790360<br>E-Mail: service@brueggemann-duesseldorf.de</p>' },
+              { headline: 'Registereintrag', text: '<p>Amtsgericht Düsseldorf, HRB 61240<br>Handwerkskammer Düsseldorf, Eintragungsnummer 24817</p>' },
+              { headline: 'Umsatzsteuer-Identifikationsnummer', text: '<p>USt-IdNr. gemäß § 27 a UStG: DE 312 488 760</p>' },
+              { headline: 'Aufsichtsbehörde', text: '<p>Handwerkskammer Düsseldorf, Georg-Schulhoff-Platz 1, 40221 Düsseldorf</p>' },
+              { headline: 'Berufsbezeichnung & berufsrechtliche Regelungen', text: '<p>Installateur- und Heizungsbauermeisterin (verliehen in der Bundesrepublik Deutschland). Es gelten die Regelungen der Handwerksordnung (HwO).</p>' },
               { headline: 'Haftungshinweis', text: '<p>Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>' },
             ],
           },
@@ -914,7 +885,7 @@ const tenant = {
           data: {
             headline: 'Datenschutzerklärung',
             blocks: [
-              { headline: '1. Verantwortlicher', text: '<p>Müller & Söhne Meisterbetrieb GmbH, Vorgebirgstraße 218, 50969 Köln, vertreten durch die Geschäftsführung Anja und Felix Müller.</p>' },
+              { headline: '1. Verantwortlicher', text: '<p>Brüggemann Bäder & Wärme GmbH, Aachener Straße 64, 40223 Düsseldorf, vertreten durch die Geschäftsführung Lena Brüggemann.</p>' },
               { headline: '2. Hosting', text: '<p>Diese Website wird bei Vercel Inc. (340 S Lemon Ave #4133, Walnut, CA 91789, USA) gehostet. Es gilt das EU-US Data Privacy Framework. Mit Vercel besteht ein Auftragsverarbeitungsvertrag.</p>' },
               { headline: '3. Erhebung allgemeiner Daten', text: '<p>Beim Aufruf der Website werden technisch notwendige Daten (IP-Adresse, Zeitpunkt, Browsertyp) verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Diese Daten werden nach 14 Tagen gelöscht.</p>' },
               { headline: '4. Cookies', text: '<p>Wir setzen ausschließlich technisch notwendige Cookies ein. Tracking- oder Marketing-Cookies werden nicht verwendet.</p>' },
@@ -929,8 +900,6 @@ const tenant = {
 };
 
 // ── builders for collection items ─────────────────────────────────────────────
-// NOTE: collection items default to published=false on create. The runner
-// auto-sets published=true when the item spec doesn't specify it explicitly.
 function buildServiceItem({ slug, title, excerpt, heroImage, intro, highlights }) {
   return {
     title, slug,
@@ -939,7 +908,7 @@ function buildServiceItem({ slug, title, excerpt, heroImage, intro, highlights }
       sections: [
         {
           id: uuid(), type: 'collectionHero',
-          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.6 },
+          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: OVERLAY, overlayOpacity: 0.6 },
           styleOverrides: darkSectionTokens,
         },
         {
@@ -982,7 +951,7 @@ function buildProjectItem({ slug, title, excerpt, heroImage, summary, facts }) {
       sections: [
         {
           id: uuid(), type: 'collectionHero',
-          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.6 },
+          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: OVERLAY, overlayOpacity: 0.6 },
           styleOverrides: darkSectionTokens,
         },
         {
@@ -1015,7 +984,7 @@ function buildNewsItem({ slug, title, excerpt, heroImage, body }) {
       sections: [
         {
           id: uuid(), type: 'collectionHero',
-          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.6 },
+          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: OVERLAY, overlayOpacity: 0.6 },
           styleOverrides: darkSectionTokens,
         },
         {
