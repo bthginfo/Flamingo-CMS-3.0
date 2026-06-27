@@ -14,6 +14,31 @@ export const POST = withApiHandler(async (req, auth) => {
   const pageId = crypto.randomUUID();
   const normalizedSlug = slug ? normalizeSlug(slug) : normalizeSlug(title);
 
+  // Validate + normalize sections BEFORE inserting the page row. The neon-http
+  // driver has no interactive transactions, so a validation 400 AFTER the insert
+  // would orphan the page row and a naive retry would then collide on the unique
+  // slug with a 500 — a long-standing pain point for AI agents writing content.
+  let sectionValues: Record<string, unknown>[] = [];
+  if (Array.isArray(sections) && sections.length > 0) {
+    const sectionErr = validateSections(sections, auth.tenant.industry);
+    if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
+    sectionValues = sections.map((s: any, i: number) => ({
+      id: s.id || crypto.randomUUID(),
+      tenantId: auth.tenantId,
+      pageId,
+      type: s.type,
+      data: normalizeSectionData(s.type, s.data || {}),
+      variant: s.variant || null,
+      visible: s.visible !== false,
+      container: s.container || 'default',
+      spacingTop: s.spacingTop || 'm',
+      spacingBottom: s.spacingBottom || 'm',
+      anchorId: s.anchorId || null,
+      styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
+      sortOrder: i,
+    }));
+  }
+
   await db.insert(pages).values({
     id: pageId,
     tenantId: auth.tenantId,
@@ -22,26 +47,15 @@ export const POST = withApiHandler(async (req, auth) => {
     status: 'published',
   });
 
-  if (Array.isArray(sections) && sections.length > 0) {
-    const sectionErr = validateSections(sections, auth.tenant.industry);
-    if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
-    await db.insert(pageSections).values(
-      sections.map((s: any, i: number) => ({
-        id: s.id || crypto.randomUUID(),
-        tenantId: auth.tenantId,
-        pageId,
-        type: s.type,
-        data: normalizeSectionData(s.type, s.data || {}),
-        variant: s.variant || null,
-        visible: s.visible !== false,
-        container: s.container || 'default',
-        spacingTop: s.spacingTop || 'm',
-        spacingBottom: s.spacingBottom || 'm',
-        anchorId: s.anchorId || null,
-        styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
-        sortOrder: i,
-      }))
-    );
+  if (sectionValues.length > 0) {
+    try {
+      await db.insert(pageSections).values(sectionValues as never);
+    } catch (e) {
+      // No transactions: clean up the page row we just inserted so the caller
+      // can retry without colliding on the unique slug.
+      await db.delete(pages).where(eq(pages.id, pageId)).catch(() => {});
+      throw e;
+    }
   }
 
   return NextResponse.json({ success: true, id: pageId, slug: normalizedSlug });

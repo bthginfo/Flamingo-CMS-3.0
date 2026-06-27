@@ -171,7 +171,9 @@ const ALLOWED_RAW_STYLE_OVERRIDE_VARS = COLOR_FIELD_CSS_VARS;
 
 const SAFE_DIMENSION_RE = /^-?\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw)?$/i;
 const SAFE_BORDER_RE = /^\d+(?:\.\d+)?px\s+(?:solid|dashed|dotted)\s+(.+)$/i;
-const SAFE_CSS_KEYWORD_RE = /^(?:none|normal|inherit|initial|unset)$/i;
+// `transparent` and `currentColor` are safe, common CSS colour keywords — an AI
+// agent (or a human) naturally writes them, so accept them instead of 400ing.
+const SAFE_CSS_KEYWORD_RE = /^(?:none|normal|inherit|initial|unset|transparent|currentcolor)$/i;
 const SAFE_VAR_RE = /^var\(--[a-z0-9-]+\)$/i;
 
 function isSafeStyleOverrideValue(value: string): boolean {
