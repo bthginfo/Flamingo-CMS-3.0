@@ -3,7 +3,7 @@ import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collections, collectionItems, globalSettings } from '@flamingo/db';
 import { publishedSnapshots, publishHistory } from '@flamingo/db';
-import { eq, asc, and, inArray, desc, ne } from 'drizzle-orm';
+import { eq, asc, and, inArray, desc } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { createHash } from 'crypto';
 import { getDraftSnapshot } from '@/lib/snapshot';
@@ -26,12 +26,14 @@ export async function POST(req: NextRequest) {
     const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
 
     // The neon-http driver has no interactive transactions, so this runs as a
-    // sequence of idempotent steps instead of db.transaction() (which threw and
-    // made publish always 500). Order matters: we insert the new active snapshot
-    // BEFORE deactivating the previous one, so there is never a window with zero
-    // active snapshots (a brief two-active window is harmless — readers take the
-    // highest version). Pages are flipped to published first; the snapshot is a
-    // version record, and the renderer serves the current state regardless.
+    // sequence of idempotent steps instead of db.transaction(). Order matters:
+    // there is a PARTIAL UNIQUE INDEX allowing only ONE active snapshot per
+    // tenant (one_active_per_tenant). Without transactions the index is enforced
+    // per-statement, so we must DEACTIVATE the current active snapshot BEFORE
+    // inserting the new active one — inserting first would momentarily create
+    // two active rows and violate the index (this was the real publish-500). The
+    // brief zero-active window is harmless: readers fall back to the draft, which
+    // holds the very content we are about to publish.
     await db.update(pages).set({ status: 'published' }).where(eq(pages.tenantId, auth.tenantId));
 
     const [currentActive] = await db
@@ -50,6 +52,16 @@ export async function POST(req: NextRequest) {
         .limit(1);
 
       const nextVersion = (latest?.version ?? 0) + 1;
+
+      // Deactivate any currently-active snapshot(s) FIRST to satisfy the
+      // one-active-per-tenant unique index before inserting the new active row.
+      await db.update(publishedSnapshots)
+        .set({ isActive: false })
+        .where(and(
+          eq(publishedSnapshots.tenantId, auth.tenantId),
+          eq(publishedSnapshots.isActive, true),
+        ));
+
       const [created] = await db.insert(publishedSnapshots).values({
         tenantId: auth.tenantId,
         version: nextVersion,
@@ -60,15 +72,6 @@ export async function POST(req: NextRequest) {
       }).returning({ id: publishedSnapshots.id });
 
       if (!created?.id) throw new Error('Published snapshot could not be created');
-
-      // Deactivate every other previously-active snapshot for this tenant.
-      await db.update(publishedSnapshots)
-        .set({ isActive: false })
-        .where(and(
-          eq(publishedSnapshots.tenantId, auth.tenantId),
-          eq(publishedSnapshots.isActive, true),
-          ne(publishedSnapshots.id, created.id),
-        ));
 
       await db.insert(publishHistory).values({
         tenantId: auth.tenantId,
