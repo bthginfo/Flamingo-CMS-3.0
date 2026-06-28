@@ -83,7 +83,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           {/* Badge */}
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-              className="inline-flex items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_26%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_12%,transparent)] px-5 py-2.5 text-sm text-[color:var(--token-on-dark-heading)] backdrop-blur-md mb-8">
+              className="inline-flex items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,#ffffff_24%,transparent)] bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-5 py-2.5 text-sm text-white backdrop-blur-md mb-8">
               <DynamicIcon name={badgeIcon} size={14} className="text-[color:var(--token-eyebrow)]" />
               <span className="font-medium" data-edit-path="badgeText">{badgeText}</span>
               {badgeStarsIcon && (
