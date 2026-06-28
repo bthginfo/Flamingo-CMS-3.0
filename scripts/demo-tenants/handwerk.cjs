@@ -537,7 +537,7 @@ const tenant = {
           data: {
             headline: 'Vier Disziplinen, ein Meisterbetrieb',
             subline: 'Wir behalten gerne den ganzen Bauablauf in der Hand — von Aufmaß und Förderantrag über die Ausstellung bis zur jährlichen Wartung.',
-            bgImage: img('1556909211-d5b2d8f5d3a5'),
+            bgImage: img('1616594039964-ae9021a400a0'),
             overlayColor: OVERLAY, overlayOpacity: 0.6,
           },
           styleOverrides: darkSectionTokens,

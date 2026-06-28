@@ -465,7 +465,10 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     if (s['--token-btn-bg'] && !section.data.btnBg) injected.btnBg = s['--token-btn-bg'];
     if (s['--token-btn-text'] && !section.data.btnText) injected.btnText = s['--token-btn-text'];
     if (s['--token-badge-bg'] && !section.data.badgeBg) injected.badgeBg = s['--token-badge-bg'];
-    if (s['--token-badge-text'] && !section.data.badgeText) injected.badgeText = s['--token-badge-text'];
+    // NOTE: --token-badge-text is the badge text COLOUR. It must NOT be injected
+    // into data.badgeText, which is the badge LABEL string — doing so rendered the
+    // colour value (e.g. "#FFFFFF") as the badge text. The colour is applied via
+    // the --token-badge-text CSS var directly; no data-prop bridge is needed.
     if (s['--token-card-border'] && !section.data.borderColor) injected.borderColor = s['--token-card-border'];
     if (s['--token-divider'] && !section.data.dividerColor) injected.dividerColor = s['--token-divider'];
     if (s['--token-divider'] && !section.data.lineColor) injected.lineColor = s['--token-divider'];
