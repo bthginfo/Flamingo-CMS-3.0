@@ -39,18 +39,18 @@ export function TattooBookingSection({ data }: Props) {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] text-sm">Name *</span>
+              <span className="text-[color:var(--token-label)] text-sm">Name *</span>
               <input required type="text" className="mt-1 w-full bg-[color-mix(in_srgb,var(--token-input-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-input-border)_10%,transparent)] rounded-lg px-4 py-3 text-[color:var(--token-on-dark-heading)] placeholder:text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_30%,transparent)] focus:outline-none focus:border-[color:color-mix(in_srgb,var(--token-input-border)_30%,transparent)]" placeholder="Dein Name" />
             </label>
             <label className="block">
-              <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] text-sm">E-Mail *</span>
+              <span className="text-[color:var(--token-label)] text-sm">E-Mail *</span>
               <input required type="email" className="mt-1 w-full bg-[color-mix(in_srgb,var(--token-input-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-input-border)_10%,transparent)] rounded-lg px-4 py-3 text-[color:var(--token-on-dark-heading)] placeholder:text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_30%,transparent)] focus:outline-none focus:border-[color:color-mix(in_srgb,var(--token-input-border)_30%,transparent)]" placeholder="deine@email.de" />
             </label>
           </div>
 
           {artists.length > 0 && (
             <label className="block">
-              <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] text-sm">Wunschkünstler</span>
+              <span className="text-[color:var(--token-label)] text-sm">Wunschkünstler</span>
               <select className="mt-1 w-full bg-[color-mix(in_srgb,var(--token-input-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-input-border)_10%,transparent)] rounded-lg px-4 py-3 text-[color:var(--token-on-dark-heading)] focus:outline-none focus:border-[color:color-mix(in_srgb,var(--token-input-border)_30%,transparent)]">
                 <option value="">Kein Wunsch / egal</option>
                 {artists.map(a => <option key={a} value={a}>{a}</option>)}
@@ -60,22 +60,22 @@ export function TattooBookingSection({ data }: Props) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label className="block">
-              <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] text-sm">Körperstelle</span>
+              <span className="text-[color:var(--token-label)] text-sm">Körperstelle</span>
               <input type="text" className="mt-1 w-full bg-[color-mix(in_srgb,var(--token-input-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-input-border)_10%,transparent)] rounded-lg px-4 py-3 text-[color:var(--token-on-dark-heading)] placeholder:text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_30%,transparent)] focus:outline-none focus:border-[color:color-mix(in_srgb,var(--token-input-border)_30%,transparent)]" placeholder="z.B. Unterarm, Rücken..." />
             </label>
             <label className="block">
-              <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] text-sm">Größe (ca.)</span>
+              <span className="text-[color:var(--token-label)] text-sm">Größe (ca.)</span>
               <input type="text" className="mt-1 w-full bg-[color-mix(in_srgb,var(--token-input-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-input-border)_10%,transparent)] rounded-lg px-4 py-3 text-[color:var(--token-on-dark-heading)] placeholder:text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_30%,transparent)] focus:outline-none focus:border-[color:color-mix(in_srgb,var(--token-input-border)_30%,transparent)]" placeholder="z.B. 10x10 cm" />
             </label>
           </div>
 
           <label className="block">
-            <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] text-sm">Motiv-Beschreibung *</span>
+            <span className="text-[color:var(--token-label)] text-sm">Motiv-Beschreibung *</span>
             <textarea required rows={4} className="mt-1 w-full bg-[color-mix(in_srgb,var(--token-input-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-input-border)_10%,transparent)] rounded-lg px-4 py-3 text-[color:var(--token-on-dark-heading)] placeholder:text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_30%,transparent)] focus:outline-none focus:border-[color:color-mix(in_srgb,var(--token-input-border)_30%,transparent)] resize-none" placeholder="Beschreib Deine Idee so genau wie möglich..." />
           </label>
 
           <label className="block">
-            <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] text-sm">Referenzbilder (optional)</span>
+            <span className="text-[color:var(--token-label)] text-sm">Referenzbilder (optional)</span>
             <div className="mt-1 border border-dashed border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] rounded-lg p-6 text-center text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_30%,transparent)] text-sm">
               Bilder hier ablegen oder klicken zum Hochladen
               <input type="file" multiple accept="image/png,image/jpeg,image/webp,image/gif,image/avif" className="hidden" />

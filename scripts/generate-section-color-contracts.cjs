@@ -200,10 +200,16 @@ function loadTemplateRegistry() {
 }
 
 // ----------------------------------------------------------------------
-// 3. Extract --token-* references from a template + local imports
-//    (3 levels deep). Stops at any import outside src/templates.
+// 3. Extract --token-* references from a template + followed imports
+//    (3 levels deep). Follows BOTH relative imports inside src/templates
+//    AND `@/components/...` alias imports: shared UI like
+//    InfiniteMovingCards or HoverEffect reads a dozen tokens the template
+//    file itself never mentions — without following the alias those roles
+//    were invisible to the CMS even though the FE painted them.
 // ----------------------------------------------------------------------
 const TOKEN_REF_RE = /var\(\s*(--token-[a-z0-9-]+)/gi;
+const SRC_DIR = path.join(ROOT, 'apps/renderer/src');
+const COMPONENTS_DIR = path.join(SRC_DIR, 'components');
 
 function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   if (seen.has(filePath) || depth > 3) return new Set();
@@ -214,12 +220,14 @@ function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   let m;
   const re = new RegExp(TOKEN_REF_RE.source, 'gi');
   while ((m = re.exec(src)) !== null) vars.add(m[1]);
-  // Follow relative imports inside src/templates only
-  const importRe = /import[\s\S]*?from\s+['"](\.[^'"]+)['"]/g;
+  const importRe = /import[\s\S]*?from\s+['"]((?:\.|@\/)[^'"]+)['"]/g;
   while ((m = importRe.exec(src)) !== null) {
-    const resolved = resolveImport(m[1], path.dirname(filePath));
+    const spec = m[1];
+    const resolved = spec.startsWith('@/')
+      ? resolveImport('./' + spec.slice(2), SRC_DIR)
+      : resolveImport(spec, path.dirname(filePath));
     if (!resolved) continue;
-    if (!resolved.startsWith(TEMPLATES_DIR)) continue;
+    if (!resolved.startsWith(TEMPLATES_DIR) && !resolved.startsWith(COMPONENTS_DIR)) continue;
     for (const v of extractTokenVars(resolved, depth + 1, seen)) vars.add(v);
   }
   return vars;
@@ -242,7 +250,13 @@ function build() {
   // (and therefore never trimmed) so an author's chosen text colour survives —
   // otherwise a section that reads only the on-dark slots loses its --token-heading
   // override and inherits the page's default. Mirrors how sectionBg is universal.
-  const UNIVERSAL_FIELDS = ['headingColor', 'bodyColor', 'mutedColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor']
+  // btnBg/btnText are universal too: globals.css repaints ANY
+  // `a[class*="bg-"]` / `button[class*="bg-"]` inside a section as soon as
+  // --token-btn-bg is set on it ([data-style][style*="--token-btn-bg"] rule),
+  // so the control is functional for every section that renders a button —
+  // even when the template never literally reads var(--token-btn-*). The
+  // editors' DOM scan hides the control for sections without any button.
+  const UNIVERSAL_FIELDS = ['headingColor', 'bodyColor', 'mutedColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'btnBg', 'btnText']
     .filter((f) => fieldOrder.includes(f));
   const addUniversal = (set) => { for (const f of UNIVERSAL_FIELDS) set.add(f); };
 

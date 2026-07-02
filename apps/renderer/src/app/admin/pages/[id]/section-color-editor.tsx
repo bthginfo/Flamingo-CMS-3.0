@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette, ChevronDown } from 'lucide-react';
 import { FIELD_DEFS, sortColorFields, type ColorFieldKey } from '@/lib/section-color-fields';
 import { resolveColorContractForSection } from '@/lib/section-color-resolver';
+import { scanSectionTokens } from '@/lib/scan-section-tokens';
 export { FIELD_DEFS, sortColorFields };
 export type { ColorFieldKey };
 
@@ -203,14 +204,11 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         if (doc) {
           const el = doc.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
           if (el) {
-            // Which tokens does this section ACTUALLY paint? Scan the rendered
-            // markup so the editor can hide fields the template never reads.
-            const found = new Set<string>();
-            const re = /var\(\s*(--token-[\w-]+)\s*(?:,[^)]*)?\)/g;
-            let m: RegExpExecArray | null;
-            const html = (el as HTMLElement).outerHTML;
-            while ((m = re.exec(html)) !== null) found.add(m[1]);
-            setUsedTokens(found);
+            // Which tokens does this section ACTUALLY paint? Mirrors the
+            // renderer: literal var(--token-*) reads in the markup plus the
+            // roles the renderer force-paints (heading/body/muted, card text
+            // inside card containers, badges, globally recoloured buttons).
+            setUsedTokens(scanSectionTokens(el));
 
             const styles = getComputedStyle(el);
             for (const v of allVarKeys) {

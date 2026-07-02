@@ -477,8 +477,13 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
       section = { ...section, data: { ...section.data, ...injected } };
     }
   }
-  const sectionColorCss = sectionStyle
-    ? `
+  // ALWAYS emitted — not gated on styleOverrides. Without this, a section that
+  // has no overrides yet is painted by a different regime than one with a
+  // single override (the unified chain only kicked in after the first value),
+  // and the CMS editors' DOM scans could not see the universal token slots on
+  // fresh sections — which hid the heading/body/muted controls exactly when
+  // the user needed them to set a first colour.
+  const sectionColorCss = `
 [data-section-id="${section.id}"][data-style] { --_card-h:${cardHeadingColorVar}; --_card-b:${cardBodyColorVar}; --_card-m:${cardMutedColorVar}; }
 [data-section-id="${section.id}"][data-style] [data-edit-collection],[data-section-id="${section.id}"][data-style] [data-card] { --token-heading:var(--_card-h); --token-on-dark-heading:var(--_card-h); --token-body:var(--_card-b); --token-on-dark-body:var(--_card-b); --token-card-body:var(--_card-b); --token-muted:var(--_card-m); --token-on-dark-muted:var(--_card-m); --token-card-muted:var(--_card-m); }
 [data-section-id="${section.id}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
@@ -488,14 +493,13 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
 [data-section-id="${section.id}"][data-style] [data-edit-collection] :is(p,li):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(p,li):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardBodyColorVar} !important; }
 [data-section-id="${section.id}"][data-style] [data-edit-collection] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardMutedColorVar} !important; }
 [data-section-id="${section.id}"][data-style] .section-badge { color: var(--token-badge-text, var(--style-badge-text, var(--style-accent-color, inherit))) !important; background-color: var(--token-badge-bg, var(--style-badge-bg, transparent)) !important; }
-`
-    : '';
+`;
   const sectionOverlayCss = buildImageOverlayCss(section);
   const sectionOverrideCss = `${sectionColorCss}${sectionOverlayCss ? `\n${sectionOverlayCss}` : ''}`.trim();
 
   if (isFullBleed) {
     return (
-      <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+      <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" data-style="" style={sectionStyle}>
         {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
@@ -509,7 +513,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+    <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} data-style="" style={sectionStyle}>
       {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>

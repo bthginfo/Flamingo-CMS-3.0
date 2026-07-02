@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { icons as lucideIcons, type LucideIcon } from 'lucide-react';
 import { FIELD_DEFS, type ColorFieldKey } from '@/lib/section-color-fields';
 import { getFieldsForSection } from '@/lib/section-color-resolver';
+import { scanSectionTokens } from '@/lib/scan-section-tokens';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // LIVE-PREVIEW EDIT OVERLAYS
@@ -371,12 +372,10 @@ function useUsedTokens(sectionId: string): Set<string> {
     if (!root) return;
     function scan() {
       if (!root) return;
-      const html = root.outerHTML;
-      const found = new Set<string>();
-      // Match every `var(--token-NAME)` occurrence (NAME = kebab letters/digits).
-      const re = /var\(\s*(--token-[\w-]+)\s*(?:,[^)]*)?\)/g;
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(html)) !== null) found.add(m[1]);
+      // Mirrors the renderer: literal var(--token-*) reads in the markup plus
+      // the roles the renderer force-paints (heading/body/muted, card text
+      // inside card containers, badges, globally recoloured buttons).
+      const found = scanSectionTokens(root);
       setTokens((prev) => {
         // Cheap shallow comparison so we don't trigger downstream renders.
         if (prev.size === found.size) {
