@@ -268,7 +268,7 @@ const services = [
     title: 'Lieferung & Montage',
     slug: 'lieferung-montage',
     excerpt: 'Geplant geliefert, sauber montiert, ohne Chaos im Treppenhaus.',
-    imageId: '1583958203904-cdcb402031fd',
+    imageId: '1441986300917-64674bd600d8',
     headline: 'Der Kauf endet nicht an der Kasse.',
     text: '<p>Wir planen Lieferfenster, Etagen, Altteil-Mitnahme und Montage vorab. So wird aus einem schönen Möbelstück kein logistischer Stress.</p>',
     cards: [
@@ -676,14 +676,14 @@ const pages = [
     seo: {
       metaTitle: 'Lieferung & Montage | Möbelhaus Lichtblick Regensburg',
       metaDescription: 'Planbare Möbellieferung und Montage in Regensburg: Terminfenster, Aufbau, Schutz und Altteil-Mitnahme.',
-      ogImage: img('1583958203904-cdcb402031fd', 1600),
+      ogImage: img('1441986300917-64674bd600d8', 1600),
     },
     sections: [
       section('collectionHero', {
         category: 'Service',
         headline: 'Lieferung, die nicht den halben Tag blockiert.',
         subline: 'Wir planen Aufbau, Etagen, Verpackung und Altteil-Mitnahme vorab.',
-        bgImage: img('1583958203904-cdcb402031fd'),
+        bgImage: img('1441986300917-64674bd600d8'),
         overlayColor: '#111820',
         overlayOpacity: 0.58,
       }, heroTokens),
@@ -701,7 +701,7 @@ const pages = [
         badge: 'Montage',
         headline: 'Gute Möbel verdienen einen guten Aufbau.',
         text: '<p>Unsere Montageteams kennen die Möbel, die sie liefern. Das spart Zeit, vermeidet Schäden und macht die Übergabe deutlich entspannter.</p>',
-        image: img('1583958203904-cdcb402031fd', 1400),
+        image: img('1441986300917-64674bd600d8', 1400),
         imageAlt: 'Möbellieferung und Montage',
         layout: 'image-left',
         items: [

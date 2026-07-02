@@ -24,7 +24,7 @@ const img = {
   pt: 'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=1800&q=85',
   cardio: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1800&q=85',
   functional: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=1800&q=85',
-  sauna: 'https://images.unsplash.com/photo-1545567214-bdd1a4a91be4?w=1800&q=85',
+  sauna: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1800&q=85',
   trainer1: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&q=85',
   trainer2: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&q=85',
   trainer3: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=1200&q=85',

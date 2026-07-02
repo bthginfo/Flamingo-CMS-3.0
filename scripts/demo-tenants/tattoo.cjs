@@ -185,7 +185,7 @@ function buildNewsItem({ slug, title, excerpt, imageId, body }) {
 const services = [
   { title: 'Fine Line', slug: 'fine-line', excerpt: 'Feine Linien, klare Motive und Platzierungen, die auch Jahre später funktionieren.', imageId: '1598300042247-d088f8ab3a91', intro: 'Fine Line sieht leicht aus, verzeiht aber wenig. Wir prüfen Linienbreite, Größe, Hautstelle und Alterung, bevor wir stechen.', bullets: ['Linien werden nicht zu fein geplant.', 'Platzierung wird am Körper geprüft.', 'Hautstruktur entscheidet mit.', 'Pflegehinweise sind konkret.'] },
   { title: 'Blackwork', slug: 'blackwork', excerpt: 'Kräftige Flächen, grafische Formen und saubere Kanten mit ruhiger Vorbereitung.', imageId: '1611501275019-9b5cda994e8d', intro: 'Blackwork braucht klare Komposition und Geduld. Wir planen Flächen, Negativräume und Sitzungsdauer so, dass das Ergebnis stark bleibt.', bullets: ['Form und Kontrast zuerst.', 'Sitzungen werden realistisch geplant.', 'Hautspannung wird berücksichtigt.', 'Heilung wird eng erklärt.'] },
-  { title: 'Botanical Tattoos', slug: 'botanical', excerpt: 'Pflanzenmotive zwischen Illustration und Körperform, ohne beliebige Pinterest-Kopie.', imageId: '1612335760859-475e8af16b5b', intro: 'Botanical Motifs leben von Richtung, Rhythmus und Luft. Wir zeichnen nicht einfach eine Blume, sondern platzieren sie passend zum Körper.', bullets: ['Referenzen werden übersetzt, nicht kopiert.', 'Blätter und Linien folgen der Bewegung.', 'Größe schützt die Details.', 'Nachsorge erhält Kontrast.'] },
+  { title: 'Botanical Tattoos', slug: 'botanical', excerpt: 'Pflanzenmotive zwischen Illustration und Körperform, ohne beliebige Pinterest-Kopie.', imageId: '1598371839696-5c5bb00bdc28', intro: 'Botanical Motifs leben von Richtung, Rhythmus und Luft. Wir zeichnen nicht einfach eine Blume, sondern platzieren sie passend zum Körper.', bullets: ['Referenzen werden übersetzt, nicht kopiert.', 'Blätter und Linien folgen der Bewegung.', 'Größe schützt die Details.', 'Nachsorge erhält Kontrast.'] },
   { title: 'Cover-up Beratung', slug: 'cover-up', excerpt: 'Ehrliche Einschätzung, was möglich ist, was Laser braucht und was besser nicht versprochen wird.', imageId: '1542727365-19732a80dcfd', intro: 'Nicht jedes alte Tattoo lässt sich sauber überdecken. Wir prüfen Kontrast, Narben, Größe und Motivrichtung und erklären die Optionen offen.', bullets: ['Keine unrealistischen Versprechen.', 'Laser-Optionen werden mitgedacht.', 'Motivgröße bleibt ehrlich.', 'Mehrere Sessions möglich.'] },
 ];
 
@@ -316,7 +316,7 @@ const tenant = {
       label: 'Studio Journal',
       items: [
         buildNewsItem({ title: 'Warum wir keine Mini-Tattoos versprechen', slug: 'keine-mini-versprechen', excerpt: 'Feine Linien brauchen trotzdem genug Größe, Abstand und ehrliche Planung.', imageId: '1598300042247-d088f8ab3a91', body: '<p>Sehr kleine Motive wirken auf dem Bildschirm oft perfekt. Auf Haut altern sie anders. Deshalb sprechen wir über Linienbreite, Hautstelle und Größe, bevor ein Motiv final wird.</p><p>Das ist keine Einschränkung, sondern Schutz für ein Tattoo, das Sie lange mögen.</p>' }),
-        buildNewsItem({ title: 'Nachsorge ohne Panik', slug: 'nachsorge-ohne-panik', excerpt: 'Was in den ersten Tagen wirklich zählt und was meistens nur Unsicherheit macht.', imageId: '1612335760859-475e8af16b5b', body: '<p>Nachsorge muss nicht kompliziert sein. Sauber halten, ruhig lassen, nicht überpflegen und bei Unsicherheit fragen. Wir geben nach jedem Termin klare Hinweise mit.</p>' }),
+        buildNewsItem({ title: 'Nachsorge ohne Panik', slug: 'nachsorge-ohne-panik', excerpt: 'Was in den ersten Tagen wirklich zählt und was meistens nur Unsicherheit macht.', imageId: '1598371839696-5c5bb00bdc28', body: '<p>Nachsorge muss nicht kompliziert sein. Sauber halten, ruhig lassen, nicht überpflegen und bei Unsicherheit fragen. Wir geben nach jedem Termin klare Hinweise mit.</p>' }),
         buildNewsItem({ title: 'Flash Day im Herbst', slug: 'flash-day-herbst', excerpt: 'Kleine Motive, feste Slots und Designs, die wir bewusst für diesen Tag zeichnen.', imageId: '1542727365-19732a80dcfd', body: '<p>Unser Flash Day ist kein Zufallsordner. Die Motive werden für Haut, Größe und Platzierung vorbereitet und nur in begrenzter Zahl gestochen.</p>' }),
       ],
     },
@@ -342,7 +342,7 @@ const tenant = {
         section('servicesGrid', { badgeText: 'Stile', headline: 'Vier Wege, ein Anspruch.', subline: 'Nicht jedes Motiv passt zu jeder Hautstelle. Wir beraten, bevor wir stechen.', manualCards: services.map((s, index) => ({ title: s.title, text: s.excerpt, icon: ['PenTool', 'CircleDot', 'Leaf', 'RefreshCw'][index], mediaType: 'icon', href: `/c/leistungen/${s.slug}` })) }),
         section('styleGallery', { headline: 'Stile mit Haltung', subline: 'Eine Auswahl, wie INK DISTRICT arbeitet.', styles: [
           { name: 'Fine Line', image: img('1598300042247-d088f8ab3a91', 1200), description: 'Fein, aber nicht zu klein geplant.' },
-          { name: 'Botanical', image: img('1612335760859-475e8af16b5b', 1200), description: 'Pflanzenmotive mit Körperbezug.' },
+          { name: 'Botanical', image: img('1598371839696-5c5bb00bdc28', 1200), description: 'Pflanzenmotive mit Körperbezug.' },
           { name: 'Blackwork', image: img('1611501275019-9b5cda994e8d', 1200), description: 'Kontrast, Fläche und klare Kante.' },
           { name: 'Micro Symbols', image: img('1542727365-19732a80dcfd', 1200), description: 'Reduziert, aber haltbar gedacht.' },
         ] }, lightTokens),
@@ -435,7 +435,7 @@ const tenant = {
         section('galleryGrid', { headline: 'Studio-Mood', subline: 'Ruhige Details aus dem Alltag.', columns: 3, images: [
           { src: img('1598300042247-d088f8ab3a91', 1000), alt: 'Tattoo Detail mit feinen Linien', caption: 'Linienprüfung' },
           { src: img('1611501275019-9b5cda994e8d', 1000), alt: 'Blackwork Tattoo Detail', caption: 'Kontrast' },
-          { src: img('1612335760859-475e8af16b5b', 1000), alt: 'Botanical Tattoo Motiv', caption: 'Botanical' },
+          { src: img('1598371839696-5c5bb00bdc28', 1000), alt: 'Botanical Tattoo Motiv', caption: 'Botanical' },
           { src: img('1542727365-19732a80dcfd', 1000), alt: 'Tattoo Studio Detail', caption: 'Vorbereitung' },
         ] }, smokeTokens),
         section('ctaBand', { badgeText: 'Eigenes Motiv?', headline: 'Portfolio inspiriert. Beratung entscheidet.', subline: 'Senden Sie uns gern Referenzen, aber erwarten Sie keine Kopie.', ctaPrimary: { label: 'Custom anfragen', href: '/kontakt', icon: 'Send' } }, darkTokens),
@@ -446,7 +446,7 @@ const tenant = {
       title: 'Pflege',
       seo: { metaTitle: 'Tattoo Nachsorge | INK DISTRICT', metaDescription: 'Klare Nachsorgehinweise für Tattoos: Reinigung, Pflege, Heilung und Warnzeichen.' },
       sections: [
-        collectionHero('Gute Heilung beginnt vor dem Termin.', 'Nachsorge ist einfacher, wenn vorher klar ist, was die Haut braucht.', '1612335760859-475e8af16b5b'),
+        collectionHero('Gute Heilung beginnt vor dem Termin.', 'Nachsorge ist einfacher, wenn vorher klar ist, was die Haut braucht.', '1598371839696-5c5bb00bdc28'),
         section('aftercareSteps', { headline: 'Die ersten Tage', subline: 'Konkret, ruhig und ohne Produkt-Chaos.', steps: [
           { title: 'Folie nach Anleitung entfernen', description: 'Nicht früher, nicht später aus Unsicherheit.' },
           { title: 'Lauwarm reinigen', description: 'Sanft, kurz und ohne Duftstoffe.' },

@@ -21,7 +21,7 @@ const img = {
   bouquetBride: 'https://images.unsplash.com/photo-1525772764200-be829a350797?w=1600&q=85',
   bouquetSpring: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1600&q=85',
   bouquetGreen: 'https://images.unsplash.com/photo-1502977249166-824b3a8a4d6d?w=1600&q=85',
-  bouquetWinter: 'https://images.unsplash.com/photo-1481973757065-c4647ed8c97b?w=1600&q=85',
+  bouquetWinter: 'https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=1600&q=85',
   wreath: 'https://images.unsplash.com/photo-1483794344563-d27a8d18014e?w=1600&q=85',
   plants: 'https://images.unsplash.com/photo-1463320726281-696a485928c7?w=1600&q=85',
   workshop: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1600&q=85',
@@ -33,7 +33,7 @@ const img = {
   team3: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=1200&q=85',
   rose: 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=1400&q=85',
   peony: 'https://images.unsplash.com/photo-1525772764200-be829a350797?w=1400&q=85',
-  ranunculus: 'https://images.unsplash.com/photo-1593691512429-7bd1a47ee46b?w=1400&q=85',
+  ranunculus: 'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?w=1400&q=85',
   eucalyptus: 'https://images.unsplash.com/photo-1469259943454-aa100abba749?w=1400&q=85',
 };
 

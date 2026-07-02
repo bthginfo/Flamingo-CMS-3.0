@@ -215,7 +215,7 @@ const services = [
     slug: 'vorsorge-check-up',
     title: 'Vorsorge & Check-up',
     excerpt: 'Gesundheitscheck, Impfstatus und Laborwerte ohne Panik, aber mit sauberer Einordnung.',
-    image: img('1581093458791-9d15482442f6'),
+    image: img('1579684385127-1ef15d508118'),
     body: 'Vorsorge ist dann gut, wenn sie verständlich bleibt. Wir prüfen Risikofaktoren, Impfstatus, Blutwerte und Lebenssituation und leiten daraus realistische Empfehlungen ab.',
     cards: [
       { icon: 'Activity', title: 'Check-up planen', text: 'Labor, Blutdruck, Anamnese und körperliche Untersuchung werden passend kombiniert.', items: ['Labor', 'Blutdruck', 'Anamnese'] },
@@ -390,7 +390,7 @@ const tenant = {
         slug: 'check-up-werte',
         excerpt: 'Laborwerte sind kein Orakel. Entscheidend ist, was sie im Zusammenhang mit Alltag, Vorgeschichte und Risiko bedeuten.',
         data: { excerpt: 'Laborwerte verständlich einordnen.', sections: [
-          { id: uuid(), ...collectionHero('Welche Werte beim Check-up wirklich wichtig sind', 'Ein kurzer Ratgeber zur sinnvollen Vorbereitung auf Vorsorge und Labor.', img('1581091012184-5c7edbe7f187'), 'Ratgeber') },
+          { id: uuid(), ...collectionHero('Welche Werte beim Check-up wirklich wichtig sind', 'Ein kurzer Ratgeber zur sinnvollen Vorbereitung auf Vorsorge und Labor.', img('1576091160550-2173dba999ef'), 'Ratgeber') },
           { id: uuid(), type: 'richText', data: { headline: 'Nicht jeder Wert braucht Aktion', content: '<p>Laborwerte helfen, wenn sie eingeordnet werden. Ein einzelner leicht erhöhter Wert ist oft weniger aussagekräftig als Verlauf, Beschwerden, Medikamente und familiäre Risiken.</p><p>Bringen Sie vorhandene Befunde mit. So können wir Veränderungen erkennen und unnötige Doppeluntersuchungen vermeiden.</p>' } },
           { id: uuid(), type: 'patientInfo', data: { headline: 'Vor dem Check-up', cards: services[1].cards } },
           { id: uuid(), ...cta('Check-up sinnvoll planen?', 'Wir sagen Ihnen, welche Untersuchung für Ihre Situation passt.') },
@@ -542,7 +542,7 @@ const tenant = {
           { src: practiceImage, alt: 'heller Empfang der Praxis', caption: 'Empfang', category: 'Ankommen' },
           { src: waitingImage, alt: 'ruhiger Wartebereich', caption: 'Wartebereich', category: 'Warten' },
           { src: diagnosticsImage, alt: 'Diagnostikarbeitsplatz', caption: 'Diagnostik', category: 'Untersuchung' },
-          { src: img('1511174511562-5f97f4f4e68d'), alt: 'Sprechzimmer mit Schreibtisch', caption: 'Sprechzimmer', category: 'Gespräch' },
+          { src: img('1666214280557-f1b5022eb634'), alt: 'Sprechzimmer mit Schreibtisch', caption: 'Sprechzimmer', category: 'Gespräch' },
         ] } },
         { type: 'equipmentHighlights', data: { headline: 'Ausstattung mit konkretem Nutzen.', subline: 'Technik ist nur sinnvoll, wenn sie zur Fragestellung passt.', items: [
           { title: 'EKG', text: 'Zur Einordnung von Herzrhythmus, Belastung und akuten Beschwerden.', image: img('1579154341098-e4e158cc7f55'), category: 'Diagnostik', benefitLabel: 'schnelle Orientierung' },
@@ -633,7 +633,7 @@ const tenant = {
       slug: 'news',
       title: 'Ratgeber',
       sections: [
-        collectionHero('Ratgeber ohne Panikmache.', 'Kurze Einordnungen aus dem Praxisalltag: Vorsorge, Akutbeschwerden und Befunde verständlich erklärt.', img('1581093458791-9d15482442f6'), 'Ratgeber'),
+        collectionHero('Ratgeber ohne Panikmache.', 'Kurze Einordnungen aus dem Praxisalltag: Vorsorge, Akutbeschwerden und Befunde verständlich erklärt.', img('1579684385127-1ef15d508118'), 'Ratgeber'),
         { type: 'newsPreview', data: { headline: 'Aktuelle Hinweise aus der Praxis', subline: 'Nicht als Ersatz für eine Untersuchung, sondern als Orientierung vor dem Termin.', collectionKey: 'news', linkLabel: 'Alle Beiträge', linkHref: '/news' } },
         { type: 'collectionList', data: { headline: 'Alle Ratgeber', subline: 'Lesen Sie, wie wir typische Fragen in der Praxis einordnen.', collectionKey: 'news', columns: 3, showImage: true, showExcerpt: true, showDate: true } },
         { type: 'patientInfo', data: { headline: 'Wichtig bei medizinischen Informationen', introText: 'Online-Texte können helfen, ersetzen aber keine individuelle medizinische Einschätzung.', cards: [
