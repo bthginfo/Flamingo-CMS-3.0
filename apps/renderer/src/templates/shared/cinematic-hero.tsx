@@ -22,7 +22,7 @@ export function CinematicHeroSection({ data }: Props) {
   const copyY = useTransform(scrollYProgress, [0, 1], ['-7%', '18%']);
   const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
-  const eyebrow = (data.eyebrow as string) || '';
+  const eyebrow = (data.eyebrow as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const image = (data.image as string) || (data.bgImage as string) || (data.backgroundImage as string) || '';

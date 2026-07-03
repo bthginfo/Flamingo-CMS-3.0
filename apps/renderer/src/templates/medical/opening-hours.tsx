@@ -5,11 +5,11 @@ import { Clock, ArrowRight } from 'lucide-react';
 import { baseHeader, CtaButton, SectionHeader, asButton, asList } from './shared';
 import type { SectionProps } from './types';
 
-type Day = { label?: string; hours?: string; note?: string; closed?: boolean };
+type Day = { label?: string; day?: string; hours?: string; note?: string; closed?: boolean };
 
 export function MedicalOpeningHoursSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Sprechzeiten', 'Zeiten');
-  const days = asList<Day>(data.days);
+  const days = asList<Day>(data.days).map((d) => d && ({ ...d, label: d.label ?? d.day }));
   const acuteCareText = (data.acuteCareText as string) || '';
   const holidayNote = (data.holidayNote as string) || '';
   const ctaPrimary = asButton(data.ctaPrimary);

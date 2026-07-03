@@ -115,9 +115,11 @@ function main() {
   const findings = [];
   for (const [key, keys] of [...written.entries()].sort()) {
     const [industry, type] = key.split('|');
-    const compName = industryByKey.get(`${industry}.${type}`) || sharedByType.get(type)
-      // borrowed from any industry:
-      || industryTypeComponent.find((e) => e.type === type)?.componentName;
+    // Borrowing mirrors getIndustryTemplates: {...ALL_TEMPLATES, ...SHARED, ...specific}
+    // — ALL_TEMPLATES is a reduce over all industries, so the LAST industry that
+    // defines the type wins, and SHARED overrides ALL.
+    const borrowed = [...industryTypeComponent].reverse().find((e) => e.type === type)?.componentName;
+    const compName = industryByKey.get(`${industry}.${type}`) || sharedByType.get(type) || borrowed;
     if (!compName) { findings.push({ key, missing: ['<NO TEMPLATE RESOLVED>'] }); continue; }
     const src = sourceFor(compName);
     if (!src) { findings.push({ key, missing: ['<NO SOURCE>'] }); continue; }
