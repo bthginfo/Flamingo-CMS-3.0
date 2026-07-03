@@ -12,7 +12,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
   const subline = (data.subline as string) || '';
   const text = (data.text as string) || (data.freeText as string) || '';
   const rawItems = (data.items || data.gifts) as Array<Record<string, string>> | undefined;
-  const items = (rawItems || []).map(g => ({ title: g.title || g.name || '', description: g.description || g.price || '', link: g.link, image: g.image }));
+  const items = (rawItems || []).map(g => ({ title: g.title || g.name || '', description: g.description || g.price || '', link: g.link, image: g.image, claimed: Boolean((g as Record<string, unknown>).claimed) }));
   const bankDetails = (data.bankDetails || data.bankInfo) as { holder?: string; iban?: string; bic?: string; note?: string } | undefined;
   const isBold = styleVariant === 'bold';
   const isModern = styleVariant === 'modern';
@@ -29,7 +29,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
               {items.map((item, i) => (
                 <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-baseline justify-between border-t border-[color:var(--token-card-border)] pt-4" data-edit-collection="items" data-edit-index={i}>
                   <div>
-                    <h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
+                    <h3 className={`font-light text-[color:var(--token-heading)] ${item.claimed ? 'line-through opacity-60' : ''}`} data-edit-path="title">{item.title}{item.claimed && <span className="ml-2 align-middle text-[10px] uppercase tracking-wide no-underline text-[color:var(--token-muted)]">bereits reserviert</span>}</h3>
                     {item.description && <p className="text-[color:var(--token-body)] text-sm mt-1" data-edit-path="description">{plain(item.description)}</p>}
                   </div>
                   {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] hover:opacity-70">Link →</a>}

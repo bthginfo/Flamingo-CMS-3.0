@@ -10,6 +10,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 export function CafeFaqSection({ data }: Props) {
   const headline = (data.headline as string) || 'FAQ';
+  const subline = (data.subline as string) || '';
   const items = (data.items as FaqItem[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -18,7 +19,8 @@ export function CafeFaqSection({ data }: Props) {
   return (
     <section ref={ref} className="py-20 md:py-28 bg-[var(--token-section-bg-alt)]">
       <div className="max-w-3xl mx-auto px-6">
-        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading)] text-center mb-10" data-edit-path="headline">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className={`text-3xl font-bold text-[color:var(--token-heading)] text-center ${subline ? 'mb-3' : 'mb-10'}`} data-edit-path="headline">{headline}</motion.h2>
+        {subline && <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-center text-[color:var(--token-body)] mb-10 max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</motion.p>}
         <div className="space-y-3">
           {items.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: i * 0.05 }} className="bg-[var(--token-card-bg)] rounded-lg border border-[color:var(--token-card-border)]" data-edit-collection="items" data-edit-index={i}>

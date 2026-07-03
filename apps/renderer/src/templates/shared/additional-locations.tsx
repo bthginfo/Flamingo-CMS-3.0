@@ -13,6 +13,7 @@ type LocationItem = {
   openingHours?: string;
   ctaLabel?: string;
   ctaHref?: string;
+  note?: string;
 };
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -27,7 +28,7 @@ function mapsHref(address?: string) {
 }
 
 export function AdditionalLocationsSection({ data }: Props) {
-  const badge = (data.badge as string) || '';
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const locations = ((data.locations as LocationItem[]) || []).filter(hasContent);
@@ -79,6 +80,7 @@ export function AdditionalLocationsSection({ data }: Props) {
                     <div>
                       {location.name && <h3 className="text-xl font-black leading-tight text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="name">{location.name}</h3>}
                       {location.address && <p className="mt-2 text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="address">{location.address}</p>}
+                      {location.note && <p className="mt-1 text-xs italic leading-5 text-[color:var(--token-muted)]" data-edit-path="note">{location.note}</p>}
                     </div>
                   </div>
 

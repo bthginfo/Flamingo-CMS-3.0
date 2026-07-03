@@ -10,6 +10,7 @@ type Testimonial = { text: string; name: string; source?: string; stars?: number
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function CafeTestimonialsSection({ data }: Props) {
+  const subline = (data.subline as string) || '';
   const headline = (data.headline as string) || 'Was unsere Gäste sagen';
   // Support both 'testimonials' array and 'items' array (AI sometimes uses 'items' with quote/rating/context)
   const rawTestimonials = (data.testimonials as Testimonial[]) || [];
@@ -24,6 +25,7 @@ export function CafeTestimonialsSection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
         <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading)] text-center mb-12" data-edit-path="headline">{headline}</motion.h2>
+        {subline && <p className="text-center text-[color:var(--token-body)] mt-3 max-w-xl mx-auto" data-edit-path="subline">{subline}</p>}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.1 }} className="bg-[var(--token-section-bg-alt)] p-6 rounded-xl" data-edit-collection="testimonials" data-edit-index={i}>

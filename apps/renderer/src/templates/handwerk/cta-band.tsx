@@ -13,6 +13,7 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
+  const ctaSecondary = data.ctaSecondary as { label: string; href: string; icon?: string } | undefined;
   // Colors come from styleOverrides (CSS vars: --style-section-bg, --style-heading-color, --style-accent-color)
   const colors = {
     bgColor: undefined as string | undefined,
@@ -20,13 +21,14 @@ export function CtaBandSection({ data, styleVariant }: Props) {
     accentColor: undefined as string | undefined,
   };
 
-  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
-  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
-  return <CtaClassic headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
+  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} ctaSecondary={ctaSecondary} colors={colors} />;
+  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} ctaSecondary={ctaSecondary} colors={colors} />;
+  return <CtaClassic headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} ctaSecondary={ctaSecondary} colors={colors} />;
 }
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
-type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
+type Cta = { label: string; href: string; icon?: string };
+type CProps = { headline: string; subline: string; badgeText: string; cta?: Cta; ctaSecondary?: Cta; colors?: ColorOverrides };
 const CTA_CARD_BG = 'linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg, #0f172a) 92%, #000) 0%, color-mix(in srgb, var(--token-accent) 30%, var(--token-card-bg, #0f172a)) 100%)';
 // This band always renders on a dark gradient (card-bg mixed toward black +
 // accent), so the heading must use the on-dark slot. Using --token-heading here
@@ -42,7 +44,7 @@ const CTA_CARD_BADGE_TEXT = 'var(--token-badge-text)';
 const CTA_CARD_BADGE_BORDER = 'var(--token-badge-border)';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
-function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
+function CtaClassic({ headline, subline, badgeText, cta, ctaSecondary, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -72,11 +74,18 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
           className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight !leading-[1.1] text-[var(--token-on-dark-heading,white)]" style={{ color: colors?.textColor ?? CTA_CARD_HEADING }} data-edit-path="headline">{headline}</motion.h2>
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="rt-content mx-auto mb-10 max-w-2xl text-lg leading-8 sm:text-xl" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-        {cta?.label && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
-          <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-text)] transition-all hover:-translate-y-0.5 hover:brightness-110">
-              <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
-            </a>
+        {(cta?.label || ctaSecondary?.label) && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }} className="flex flex-wrap items-center justify-center gap-4">
+            {cta?.label && (
+              <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-text)] transition-all hover:-translate-y-0.5 hover:brightness-110">
+                <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
+              </a>
+            )}
+            {ctaSecondary?.label && (
+              <a data-edit-link="ctaSecondary" href={ctaSecondary.href} className="group inline-flex items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#fff)_35%,transparent)] px-8 py-4 font-semibold transition-all hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--token-on-dark-heading,#fff)_10%,transparent)]" style={{ color: CTA_CARD_HEADING }}>
+                <span data-edit-path="label">{ctaSecondary.label}</span>{ctaSecondary.icon && <DynamicIcon editPath="ctaSecondary.icon" name={ctaSecondary.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
+              </a>
+            )}
           </motion.div>
         )}
       </div>
@@ -85,7 +94,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
 }
 
 /* ─── MODERN: Pure text, large font, underline link, white bg ─── */
-function CtaModern({ headline, subline, cta, colors }: CProps) {
+function CtaModern({ headline, subline, cta, ctaSecondary, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -103,17 +112,26 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
         {headline}
       </h2>
       {subline && <div className="rt-content mx-auto mt-6 max-w-2xl text-lg" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      {cta?.label && (
-        <a data-edit-link="cta" href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg)] pb-1 text-lg font-medium text-[color:var(--token-btn-text)] transition-colors hover:text-[color:var(--token-accent)]">
-          <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
-        </a>
+      {(cta?.label || ctaSecondary?.label) && (
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-8">
+          {cta?.label && (
+            <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg)] pb-1 text-lg font-medium text-[color:var(--token-btn-text)] transition-colors hover:text-[color:var(--token-accent)]">
+              <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
+            </a>
+          )}
+          {ctaSecondary?.label && (
+            <a data-edit-link="ctaSecondary" href={ctaSecondary.href} className="group inline-flex items-center gap-2 pb-1 text-lg font-medium opacity-80 transition-opacity hover:opacity-100" style={{ color: CTA_CARD_HEADING }}>
+              <span data-edit-path="label">{ctaSecondary.label}</span>{ctaSecondary.icon && <DynamicIcon editPath="ctaSecondary.icon" name={ctaSecondary.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
+            </a>
+          )}
+        </div>
       )}
     </motion.div>
   );
 }
 
 /* ─── BOLD: Full-width accent block, text left, angular ─── */
-function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
+function CtaBold({ headline, subline, badgeText, cta, ctaSecondary, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -132,10 +150,19 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight text-[var(--token-on-dark-heading,white)]" style={{ color: CTA_CARD_HEADING }} data-edit-path="headline">{headline}</h2>
         {subline && <div className="rt-content mt-3 max-w-xl font-medium" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {cta?.label && (
-        <a data-edit-link="cta" href={cta.href} className="inline-flex w-full shrink-0 items-center justify-between bg-[var(--token-btn-bg)] px-8 py-4 text-base font-bold uppercase tracking-wider text-[color:var(--token-btn-text)] shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow)_20%,transparent)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">
-          <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} />}
-        </a>
+      {(cta?.label || ctaSecondary?.label) && (
+        <div className="flex w-full shrink-0 flex-col gap-3 lg:w-auto">
+          {cta?.label && (
+            <a data-edit-link="cta" href={cta.href} className="inline-flex w-full items-center justify-between bg-[var(--token-btn-bg)] px-8 py-4 text-base font-bold uppercase tracking-wider text-[color:var(--token-btn-text)] shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow)_20%,transparent)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">
+              <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} />}
+            </a>
+          )}
+          {ctaSecondary?.label && (
+            <a data-edit-link="ctaSecondary" href={ctaSecondary.href} className="inline-flex w-full items-center justify-between border border-current px-8 py-4 text-base font-bold uppercase tracking-wider opacity-80 transition-opacity hover:opacity-100 lg:w-auto lg:justify-center lg:gap-3" style={{ color: CTA_CARD_HEADING }}>
+              <span data-edit-path="label">{ctaSecondary.label}</span>{ctaSecondary.icon && <DynamicIcon editPath="ctaSecondary.icon" name={ctaSecondary.icon} size={18} />}
+            </a>
+          )}
+        </div>
       )}
     </motion.div>
   );

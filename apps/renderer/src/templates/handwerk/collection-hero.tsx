@@ -15,10 +15,14 @@ type Props = {
  * CollectionHero — Blog/Article-style hero for collection detail pages.
  * Supports: headline, subline, bgImage, category, date, overlayColor, overlayOpacity
  */
+type Cta = { label?: string; href?: string };
+
 export function CollectionHeroSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const bgImage = (data.bgImage as string) || '';
+  const bgImage = (data.bgImage as string) || (data.backgroundImage as string) || '';
+  const primaryCta = (data.primaryCta as Cta) || undefined;
+  const secondaryCta = (data.secondaryCta as Cta) || undefined;
   const category = (data.category as string) || '';
   const date = (data.date as string) || '';
   const overlayColor = (data.overlayColor as string) || '#000000';
@@ -83,6 +87,26 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
             className="mt-4 text-lg md:text-xl text-[color:var(--token-on-dark-body)] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
+        )}
+
+        {(primaryCta?.label || secondaryCta?.label) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-8 flex flex-wrap items-center gap-4"
+          >
+            {primaryCta?.label && (
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-semibold text-[color:var(--token-btn-text)] transition-all hover:-translate-y-0.5 hover:brightness-110">
+                <span data-edit-path="label">{primaryCta.label}</span>
+              </a>
+            )}
+            {secondaryCta?.label && (
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#fff)_35%,transparent)] px-7 py-3.5 font-semibold text-[color:var(--token-on-dark-heading)] backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--token-on-dark-heading,#fff)_10%,transparent)]">
+                <span data-edit-path="label">{secondaryCta.label}</span>
+              </a>
+            )}
+          </motion.div>
         )}
       </div>
     </section>

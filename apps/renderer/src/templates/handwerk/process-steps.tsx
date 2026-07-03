@@ -3,23 +3,25 @@
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function ProcessStepsSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const badgeText = (data.badgeText as string) || '';
+  const subline = (data.subline as string) || '';
   const steps = (data.steps as { title: string; text: string; icon?: string }[]) || [];
 
-  if (styleVariant === 'modern') return <ProcessModern headline={headline} badgeText={badgeText} steps={steps} />;
-  if (styleVariant === 'bold') return <ProcessBold headline={headline} badgeText={badgeText} steps={steps} />;
-  return <ProcessClassic headline={headline} badgeText={badgeText} steps={steps} />;
+  if (styleVariant === 'modern') return <ProcessModern headline={headline} subline={subline} badgeText={badgeText} steps={steps} />;
+  if (styleVariant === 'bold') return <ProcessBold headline={headline} subline={subline} badgeText={badgeText} steps={steps} />;
+  return <ProcessClassic headline={headline} subline={subline} badgeText={badgeText} steps={steps} />;
 }
 
-type PProps = { headline: string; badgeText: string; steps: { title: string; text: string; icon?: string }[] };
+type PProps = { headline: string; subline?: string; badgeText: string; steps: { title: string; text: string; icon?: string }[] };
 
 /* ─── CLASSIC: Timeline with animated progress line, rounded cards, gradient bg ─── */
-function ProcessClassic({ headline, badgeText, steps }: PProps) {
+function ProcessClassic({ headline, subline, badgeText, steps }: PProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -32,6 +34,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
           {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
         <div className="relative max-w-4xl mx-auto">
           <div className="absolute bottom-0 left-[31px] top-0 hidden w-[2px] bg-[var(--token-card-border)] md:block">
@@ -59,7 +62,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
 }
 
 /* ─── MODERN: Numbered list, clean lines, generous spacing ─── */
-function ProcessModern({ headline, badgeText, steps }: PProps) {
+function ProcessModern({ headline, subline, badgeText, steps }: PProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -86,7 +89,7 @@ function ProcessModern({ headline, badgeText, steps }: PProps) {
 }
 
 /* ─── BOLD: Horizontal steps, numbered blocks, thick accents ─── */
-function ProcessBold({ headline, badgeText, steps }: PProps) {
+function ProcessBold({ headline, subline, badgeText, steps }: PProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 

@@ -350,8 +350,8 @@ const tenant = {
               { year: '2020', title: 'Die Karte wird kleiner',     text: 'Weniger Gerichte, bessere Vorbereitung, ruhigerer Service.' },
               { year: '2024', title: 'Weinabende starten',         text: 'Einmal im Monat wird aus dem Restaurant ein langer Tisch.' },
             ],
-            styleOverrides: warmLightTokens,
           },
+          styleOverrides: warmLightTokens,
         },
         {
           type: 'statsCounter',
@@ -364,8 +364,8 @@ const tenant = {
               { value: 30, label: 'Feierplätze' },
               { value: 4.8, suffix: '/5', label: 'Bewertung' },
             ],
-            styleOverrides: { '--token-section-bg': C.moss, ...darkSectionTokens },
           },
+          styleOverrides: { ...darkSectionTokens, '--token-section-bg': C.moss, '--token-section-bg-alt': C.moss },
         },
         {
           type: 'comparisonTable',

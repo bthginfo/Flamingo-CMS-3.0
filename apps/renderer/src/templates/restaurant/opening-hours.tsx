@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 import { asButton, asList, type SectionProps } from './types';
 
-type Day = { label?: string; hours?: string; note?: string; closed?: boolean };
+type Day = { label?: string; day?: string; hours?: string; note?: string; closed?: boolean };
 
 type OpeningHoursViewProps = {
   headline: string;
@@ -21,7 +21,7 @@ export function OpeningHoursSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Oeffnungszeiten';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || 'Besuchen Sie uns';
-  const days = asList<Day>(data.days);
+  const days = asList<Day>(data.days).map((d) => d && ({ ...d, label: d.label ?? d.day }));
   const kitchenHoursHeadline = (data.kitchenHoursHeadline as string) || '';
   const kitchenHoursText = (data.kitchenHoursText as string) || '';
   const holidayNote = (data.holidayNote as string) || '';

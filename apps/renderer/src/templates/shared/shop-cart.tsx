@@ -16,6 +16,8 @@ export function ShopCartSection({ data }: Props) {
   const continueLabel = (data.continueShoppingLabel as string) || 'Weiter einkaufen';
   const checkoutLabel = (data.checkoutLabel as string) || 'Zur Kasse';
   const shopBase = (data.basePath as string) || '/shop';
+  const checkoutPath = (data.checkoutPath as string) || `${shopBase.replace(/\/shop$/, '')}/checkout`;
+  const continueShoppingPath = (data.continueShoppingPath as string) || shopBase;
 
   const { items, totalCents, updateQuantity, removeItem } = useCart();
 
@@ -25,7 +27,7 @@ export function ShopCartSection({ data }: Props) {
         <ShoppingBag size={48} className="mx-auto mb-4 text-[color:var(--token-icon)]" />
         <h2 className="text-2xl font-bold mb-2 text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         <p className="text-[color:var(--token-muted)] mb-6">{emptyText}</p>
-        <Link href={shopBase} className="inline-block px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-xl font-medium hover:opacity-90 transition">
+        <Link href={continueShoppingPath} className="inline-block px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-xl font-medium hover:opacity-90 transition">
           {continueLabel}
         </Link>
       </section>
@@ -86,11 +88,11 @@ export function ShopCartSection({ data }: Props) {
               <p className="text-xs text-[color:var(--token-card-muted)] mt-2">Checkout ist in der Demo nicht verfügbar</p>
             </div>
           ) : (
-            <Link href={`${shopBase.replace(/\/shop$/, '')}/checkout`} className="block w-full text-center py-3 mt-4 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-medium rounded-xl hover:opacity-90 transition">
+            <Link href={checkoutPath} className="block w-full text-center py-3 mt-4 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-medium rounded-xl hover:opacity-90 transition">
               {checkoutLabel}
             </Link>
           )}
-          <Link href={shopBase} className="block w-full text-center py-2 mt-2 text-sm text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]">
+          <Link href={continueShoppingPath} className="block w-full text-center py-2 mt-2 text-sm text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]">
             {continueLabel}
           </Link>
         </div>

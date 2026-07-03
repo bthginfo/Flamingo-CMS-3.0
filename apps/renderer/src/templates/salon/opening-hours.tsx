@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
-type Day = { label?: string; hours?: string; note?: string; closed?: boolean };
+type Day = { label?: string; day?: string; hours?: string; note?: string; closed?: boolean };
 
 export function SalonOpeningHoursSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Oeffnungszeiten';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || 'Zeiten';
-  const days = asList<Day>(data.days);
+  const days = asList<Day>(data.days).map((d) => d && ({ ...d, label: d.label ?? d.day }));
   const bookingNote = (data.bookingNote as string) || '';
   const ctaPrimary = asButton(data.ctaPrimary);
 

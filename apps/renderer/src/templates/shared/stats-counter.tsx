@@ -43,7 +43,7 @@ function AnimatedNumber({ value, prefix, suffix, inView }: { value: number | str
 export function StatsCounterSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const badge = (data.badge as string) || '';
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
   const stats = (data.stats as Stat[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });

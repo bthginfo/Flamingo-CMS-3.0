@@ -9,24 +9,26 @@ const ICONS: Record<string, React.ElementType> = { clock: Clock, mappin: MapPin,
 
 export function WeddingEventScheduleSection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Tagesablauf';
+  const subline = (data.subline as string) || '';
   const headline = (data.headline as string) || 'Der schönste Tag';
   const events = (data.events as Array<{ time: string; title: string; description?: string; icon?: string; location?: string }>) || [];
 
-  if (styleVariant === 'modern') return <ScheduleModern badge={badge} headline={headline} events={events} />;
-  if (styleVariant === 'bold') return <ScheduleBold badge={badge} headline={headline} events={events} />;
-  return <ScheduleClassic badge={badge} headline={headline} events={events} />;
+  if (styleVariant === 'modern') return <ScheduleModern badge={badge} headline={headline} subline={subline} events={events} />;
+  if (styleVariant === 'bold') return <ScheduleBold badge={badge} headline={headline} subline={subline} events={events} />;
+  return <ScheduleClassic badge={badge} headline={headline} subline={subline} events={events} />;
 }
 
 type Event = { time: string; title: string; description?: string; icon?: string; location?: string };
-type P = { badge: string; headline: string; events: Event[] };
+type P = { badge: string; headline: string; subline?: string; events: Event[] };
 
-function ScheduleClassic({ badge, headline, events }: P) {
+function ScheduleClassic({ badge, headline, subline, events }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         </div>
         <div className="relative">
           <div className="absolute left-[23px] md:left-1/2 top-0 bottom-0 w-px bg-[var(--token-divider)]" />
@@ -61,12 +63,13 @@ function ScheduleClassic({ badge, headline, events }: P) {
   );
 }
 
-function ScheduleModern({ badge, headline, events }: P) {
+function ScheduleModern({ badge, headline, subline, events }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-4xl mx-auto">
         <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-20 break-words" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         <div className="space-y-0">
           {events.map((event, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] border-t border-[color:var(--token-card-border)] py-8" data-edit-collection="events" data-edit-index={i}>
@@ -84,12 +87,13 @@ function ScheduleModern({ badge, headline, events }: P) {
   );
 }
 
-function ScheduleBold({ badge, headline, events }: P) {
+function ScheduleBold({ badge, headline, subline, events }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
         <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-16 break-words" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         <div className="grid md:grid-cols-2 gap-4">
           {events.map((event, i) => {
             const Icon = ICONS[(event.icon || 'heart').toLowerCase()] || Heart;

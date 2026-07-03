@@ -11,9 +11,9 @@ type Column = { label: string };
 type Row = { feature: string; values: string[] };
 
 export function ComparisonTableSection({ data }: Props) {
-  const badge = (data.badge as string) || '';
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
-  const text = (data.text as string) || '';
+  const text = (data.text as string) || (data.subline as string) || '';
   const columns = (data.columns as Column[]) || [];
   const rows = (data.rows as Row[]) || [];
   const highlightCol = (data.highlightCol as number) ?? -1;

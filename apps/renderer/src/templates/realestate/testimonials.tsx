@@ -6,14 +6,17 @@ import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
 
-type Testimonial = { text: string; name: string; role: string; image?: string; stars?: number };
+type Testimonial = { text: string; name: string; role?: string; image?: string; stars?: number };
+type LooseItem = Testimonial & { quote?: string; context?: string; rating?: number };
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function RealestateTestimonialsSection({ data }: Props) {
   const headline = (data.headline as string) || 'Das sagen unsere Kunden';
   const subline = (data.subline as string) || '';
-  const testimonials = (data.testimonials as Testimonial[]) || [];
+  // `testimonials` {text,role,stars} is canonical; `items` {quote,context,rating} is the shared-testimonials shape.
+  const testimonials = (((data.testimonials as LooseItem[]) || (data.items as LooseItem[]) || []))
+    .map((t) => t && ({ ...t, text: t.text ?? t.quote ?? '', role: t.role ?? t.context, stars: t.stars ?? t.rating }));
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });

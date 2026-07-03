@@ -20,6 +20,11 @@ export function NewsPreviewSection({ data }: Props) {
   const linkPrefix = (data.linkPrefix as string) || '';
   const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
   const linkIcon = (data.linkIcon as string) || '';
+  const limit = Number(data.limit) > 0 ? Number(data.limit) : 3;
+  const columns = Number(data.columns) === 2 || Number(data.columns) === 4 ? Number(data.columns) : 3;
+  const showImage = data.showImage !== false;
+  const showDate = data.showDate !== false;
+  const showExcerpt = data.showExcerpt !== false;
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -49,8 +54,8 @@ export function NewsPreviewSection({ data }: Props) {
         </Link>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.slice(0, 3).map((item, i) => (
+      <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${columns === 2 ? '' : columns === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
+        {items.slice(0, limit).map((item, i) => (
           <motion.article
             key={i}
             initial={{ opacity: 0, y: 20 }}
@@ -58,19 +63,19 @@ export function NewsPreviewSection({ data }: Props) {
             transition={{ delay: i * 0.1 }}
            data-edit-collection="items" data-edit-index={i}>
             <Link href={`${detailBasePath}/${item.slug}`} className="group block">
-              {item.image && (
+              {showImage && item.image && (
                 <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">
                   <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               )}
-              {item.date && (
+              {showDate && item.date && (
                 <div className="mb-2 flex items-center gap-1.5 text-xs text-[color:var(--token-muted)]">
                   <Calendar size={12} />
                   {new Date(item.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
               <h3 className="line-clamp-2 text-lg font-semibold text-[color:var(--token-body)] transition-colors group-hover:text-[color:var(--token-accent)]" data-edit-path="title">{item.title}</h3>
-              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[color:var(--token-body)]">{item.excerpt}</p>}
+              {showExcerpt && item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[color:var(--token-body)]">{item.excerpt}</p>}
             </Link>
           </motion.article>
         ))}

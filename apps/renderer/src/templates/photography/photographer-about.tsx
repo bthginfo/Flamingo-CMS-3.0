@@ -12,6 +12,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
   const story = (data.story as string) || '';
   const image = (data.image as string) || '';
   const facts = (data.facts as string[]) || [];
+  const stats = (data.stats as Array<{ label: string; value: string }>) || [];
+  const signature = (data.signature as string) || '';
   const values = (data.values as Array<{ title: string; text: string }>) || [];
   const ctaLabel = (data.ctaLabel as string) || '';
   const ctaHref = (data.ctaHref as string) || '';
@@ -38,7 +40,18 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   {facts.map((fact, i) => <li key={i} className="text-[color:var(--token-muted)] text-sm" data-edit-collection="facts" data-edit-index={i}>{fact}</li>)}
                 </ul>
               )}
-              {values.length > 0 && (
+              {stats.length > 0 && (
+              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {stats.map((st, i) => (
+                  <div key={i} className="rounded-xl border border-[color-mix(in_srgb,var(--token-card-border)_60%,transparent)] p-4 text-center" data-edit-collection="stats" data-edit-index={i}>
+                    <div className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{st.value}</div>
+                    <div className="mt-1 text-xs uppercase tracking-wide text-[color:var(--token-muted)]" data-edit-path="label">{st.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {signature && <p className="mt-6 font-display text-2xl italic text-[color:var(--token-heading)]" data-edit-path="signature">{signature}</p>}
+            {values.length > 0 && (
                 <div className="mt-10 space-y-4 border-t border-[color:var(--token-card-border)] pt-8">
                   {values.map((v, i) => (
                     <div key={i} data-edit-collection="values" data-edit-index={i}>
@@ -77,7 +90,18 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-sm" data-edit-collection="facts" data-edit-index={i}><span className="text-[color:var(--token-eyebrow)]">—</span>{fact}</li>)}
                 </ul>
               )}
-              {values.length > 0 && (
+              {stats.length > 0 && (
+              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {stats.map((st, i) => (
+                  <div key={i} className="rounded-xl border border-[color-mix(in_srgb,var(--token-card-border)_60%,transparent)] p-4 text-center" data-edit-collection="stats" data-edit-index={i}>
+                    <div className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{st.value}</div>
+                    <div className="mt-1 text-xs uppercase tracking-wide text-[color:var(--token-muted)]" data-edit-path="label">{st.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {signature && <p className="mt-6 font-display text-2xl italic text-[color:var(--token-heading)]" data-edit-path="signature">{signature}</p>}
+            {values.length > 0 && (
                 <div className="mt-8 grid sm:grid-cols-2 gap-4">
                   {values.map((v, i) => (
                     <div key={i} className="border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] p-4" data-edit-collection="values" data-edit-index={i}>
@@ -121,6 +145,17 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                 ))}
               </ul>
             )}
+            {stats.length > 0 && (
+              <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {stats.map((st, i) => (
+                  <div key={i} className="rounded-xl border border-[color-mix(in_srgb,var(--token-card-border)_60%,transparent)] p-4 text-center" data-edit-collection="stats" data-edit-index={i}>
+                    <div className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{st.value}</div>
+                    <div className="mt-1 text-xs uppercase tracking-wide text-[color:var(--token-muted)]" data-edit-path="label">{st.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {signature && <p className="mt-6 font-display text-2xl italic text-[color:var(--token-heading)]" data-edit-path="signature">{signature}</p>}
             {values.length > 0 && (
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {values.map((v, i) => (

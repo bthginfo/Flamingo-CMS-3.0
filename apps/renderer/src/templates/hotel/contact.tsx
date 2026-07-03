@@ -21,8 +21,9 @@ export function HotelContactSection({ data, styleVariant }: SectionProps) {
   const contactCta = asButton(data.contactCta);
   const routeCta = asButton(data.routeCta);
   const image = (data.image as string) || '';
+  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
 
-  const props = { headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image };
+  const props = { headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl };
 
   if (styleVariant === 'modern') return <ContactModern {...props} />;
   if (styleVariant === 'bold') return <ContactBold {...props} />;
@@ -33,11 +34,11 @@ type Props = {
   headline: string; subline: string; badgeText: string; introText: string;
   submitLabel: string; formEnabled: boolean; formFields?: FormFieldDef[];
   infoCards: InfoCard[]; contactCta: { label?: string; href?: string };
-  routeCta: { label?: string; href?: string }; image: string;
+  routeCta: { label?: string; href?: string }; image: string; mapEmbedUrl?: string;
 };
 
 /* --- CLASSIC --- */
-function ContactClassic({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image }: Props) {
+function ContactClassic({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -62,6 +63,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
       </div>
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </motion.div>
     </div>
@@ -69,7 +71,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
 }
 
 /* --- MODERN --- */
-function ContactModern({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image }: Props) {
+function ContactModern({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl }: Props) {
   return (
     <div className="grid gap-12 lg:grid-cols-2">
       <div>
@@ -94,6 +96,7 @@ function ContactModern({ headline, subline, badgeText, introText, submitLabel, f
       </div>
       <div className="border border-black/10 bg-[var(--token-card-bg)] p-8">
         {image && <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
@@ -101,7 +104,7 @@ function ContactModern({ headline, subline, badgeText, introText, submitLabel, f
 }
 
 /* --- BOLD --- */
-function ContactBold({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image }: Props) {
+function ContactBold({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -126,6 +129,7 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
       </div>
       <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>

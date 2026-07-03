@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { MapPin, Car, Train, Plane, Phone } from 'lucide-react';
+import { MapPin, Car, Train, Plane, Phone, Star } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -73,6 +73,49 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
     );
   }
 
+  // Multi-venue form: every venue gets its own card (name, image, description,
+  // address, parking). The single-venue layout below stays for older data.
+  if (venues.length > 1) {
+    return (
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10 md:mb-16">
+            <span className="section-badge" data-edit-path="badge">{badge}</span>
+            <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+            {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+          </div>
+          <div className="grid gap-8 md:grid-cols-2">
+            {venues.map((venue, i) => (
+              <motion.article
+                key={i}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-lg"
+                data-edit-collection="venues" data-edit-index={i}
+              >
+                {venue.image && (
+                  <div className="relative aspect-[3/2]">
+                    <Image data-edit-image="image" src={venue.image} alt={venue.name || headline} fill className="object-cover" />
+                  </div>
+                )}
+                <div className="p-7">
+                  {venue.name && <h3 className="text-xl font-semibold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="name">{venue.name}</h3>}
+                  {venue.description && <p className="mt-3 leading-relaxed text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="description">{venue.description}</p>}
+                  <div className="mt-5 space-y-2.5 border-t border-[var(--token-card-border)] pt-5 text-sm">
+                    {venue.address && <p className="flex items-start gap-2.5 text-[color:var(--token-card-muted,var(--token-muted))]"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--token-icon)]" /><span data-edit-path="address">{venue.address}</span></p>}
+                    {venue.parkingInfo && <p className="flex items-start gap-2.5 text-[color:var(--token-card-muted,var(--token-muted))]"><Car className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--token-icon)]" /><span data-edit-path="parkingInfo">{venue.parkingInfo}</span></p>}
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-6xl mx-auto">
@@ -108,7 +151,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
   const rawDirections = (data.directions || data.sections) as Array<Record<string, string>> | undefined;
   const directions = (rawDirections || []).map(d => ({ icon: d.icon, title: d.title, text: d.text || d.content || '' }));
   const rawAccom = (data.accommodations || data.hotels) as Array<Record<string, string>> | undefined;
-  const accommodations = (rawAccom || []).map(a => ({ name: a.name, description: a.description || (a.distance ? `${a.distance}${a.specialRate ? ' — ' + a.specialRate : ''}` : ''), link: a.link, image: a.image }));
+  const accommodations = (rawAccom || []).map(a => ({ name: a.name, description: a.description || (a.distance ? `${a.distance}${a.specialRate ? ' — ' + a.specialRate : ''}` : ''), link: a.link, image: a.image, stars: Number(a.stars) || 0 }));
   const dirIcons: Record<string, React.ElementType> = { car: Car, train: Train, plane: Plane };
   const isBold = styleVariant === 'bold';
   const isModern = styleVariant === 'modern';
@@ -140,7 +183,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
               {accommodations.map((a, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="accommodations" data-edit-index={i}>
                   {a.image && <div className="relative h-40 mb-4"><Image data-edit-image="image" src={a.image} alt={a.name} fill className="object-cover" /></div>}
-                  <h4 className="font-medium text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>
+                  <h4 className="flex items-center gap-1.5 font-medium text-[color:var(--token-heading)]" data-edit-path="name">{a.name}{a.stars > 0 && <span className="inline-flex gap-0.5">{Array.from({ length: a.stars }).map((_, si) => <Star key={si} size={12} className="fill-[var(--token-rating-star)] text-[var(--token-rating-star)]" />)}</span>}</h4>
                   {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: a.description }} />}
                   {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] mt-3 inline-block hover:opacity-70">Details →</a>}
                 </motion.div>

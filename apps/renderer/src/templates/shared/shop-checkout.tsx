@@ -38,6 +38,9 @@ export function ShopCheckoutSection({ data }: Props) {
   const router = useRouter();
   const { items, totalCents, clearCart } = useCart();
   const isDemo = ((data.basePath as string) || '').startsWith('/demo/');
+  const requirePhone = data.requirePhone === true;
+  const showCompanyField = data.showCompanyField !== false;
+  const thankYouPath = (data.thankYouPath as string) || '/bestellung-abgeschlossen';
 
   // Demo mode: show notice instead of checkout
   if (isDemo) {
@@ -160,7 +163,7 @@ export function ShopCheckoutSection({ data }: Props) {
           return;
         }
         clearCart();
-        router.push('/bestellung-abgeschlossen');
+        router.push(thankYouPath);
       }
     } finally {
       setLoading(false);
@@ -208,11 +211,11 @@ export function ShopCheckoutSection({ data }: Props) {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Telefon</label>
-                  <input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="+49 ..." />
+                  <input value={form.phone} onChange={e => set('phone', e.target.value)} required={requirePhone} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="+49 ..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Firma</label>
-                  <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
+                  {showCompanyField && <><label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Firma</label>
+                  <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" /></>}
                 </div>
               </div>
               <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">

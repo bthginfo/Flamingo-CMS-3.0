@@ -13,14 +13,16 @@ export function LocationSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Lage & Anreise';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || 'Standort';
-  const addressText = (data.addressText as string) || '';
+  const addressText = (data.addressText as string) || (data.address as string) || '';
+  const phone = (data.phone as string) || '';
+  const email = (data.email as string) || '';
   const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
   const image = (data.image as string) || '';
   const transportItems = asList<TransportItem>(data.transportItems);
   const nearbyItems = asList<NearbyItem>(data.nearbyItems);
   const routeCta = asButton(data.routeCta);
 
-  const props = { headline, subline, badgeText, addressText, mapEmbedUrl, image, transportItems, nearbyItems, routeCta };
+  const props = { headline, subline, badgeText, addressText, phone, email, mapEmbedUrl, image, transportItems, nearbyItems, routeCta };
 
   if (styleVariant === 'modern') return <LocationModern {...props} />;
   if (styleVariant === 'bold') return <LocationBold {...props} />;
@@ -28,13 +30,14 @@ export function LocationSection({ data, styleVariant }: SectionProps) {
 }
 
 type Props = {
+  phone?: string; email?: string;
   headline: string; subline: string; badgeText: string; addressText: string;
   mapEmbedUrl: string; image: string; transportItems: TransportItem[];
   nearbyItems: NearbyItem[]; routeCta: { label?: string; href?: string };
 };
 
 /* --- CLASSIC --- */
-function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUrl, image, transportItems, nearbyItems, routeCta }: Props) {
+function LocationClassic({ headline, subline, badgeText, addressText, phone, email, mapEmbedUrl, image, transportItems, nearbyItems, routeCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -44,6 +47,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUr
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {addressText && <p className="text-[color:var(--token-muted)]">{addressText}</p>}
+        {(phone || email) && <p className="mt-1 text-sm text-[color:var(--token-muted)]">{phone && <a href={`tel:${phone.replace(/\s+/g, '')}`} className="hover:underline">{phone}</a>}{phone && email && ' · '}{email && <a href={`mailto:${email}`} className="hover:underline">{email}</a>}</p>}
         <div className="mt-6 grid gap-3">
           {transportItems.map((item, index) => (
             <motion.div key={`${item.label || 'item'}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="transportItems" data-edit-index={index}>
@@ -73,7 +77,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUr
 }
 
 /* --- MODERN --- */
-function LocationModern({ headline, subline, badgeText, addressText, mapEmbedUrl, image, transportItems, nearbyItems, routeCta }: Props) {
+function LocationModern({ headline, subline, badgeText, addressText, phone, email, mapEmbedUrl, image, transportItems, nearbyItems, routeCta }: Props) {
   return (
     <div className="grid gap-12 lg:grid-cols-2">
       <div>
@@ -112,7 +116,7 @@ function LocationModern({ headline, subline, badgeText, addressText, mapEmbedUrl
 }
 
 /* --- BOLD --- */
-function LocationBold({ headline, subline, badgeText, addressText, mapEmbedUrl, image, transportItems, nearbyItems, routeCta }: Props) {
+function LocationBold({ headline, subline, badgeText, addressText, phone, email, mapEmbedUrl, image, transportItems, nearbyItems, routeCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>

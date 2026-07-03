@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
-import { Compass, Mountain, MapPin, CheckCircle } from 'lucide-react';
+import { Compass, Mountain, MapPin, CheckCircle, Star } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
@@ -18,6 +18,10 @@ export function TourismHeroSection({ data, styleVariant }: SectionProps) {
   const locationLabel = (data.locationLabel as string) || '';
   const seasonLabel = (data.seasonLabel as string) || '';
   const trustItems = asList<string>(data.trustItems);
+  const trustStripColor = (data.trustStripColor as string) || '';
+  const badgeIcon = (data.badgeIcon as string) || '';
+  const ratingText = (data.ratingText as string) || '';
+  const availabilityHint = (data.availabilityHint as string) || '';
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
   const bgPosition = (data.bgPosition as string) || 'center';
@@ -27,7 +31,7 @@ export function TourismHeroSection({ data, styleVariant }: SectionProps) {
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  const props = { headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity};
+  const props = { headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity, trustStripColor, badgeIcon, ratingText, availabilityHint};
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -39,6 +43,7 @@ type HeroProps = {
   bgImageMobile?: string;
   bgColor: string; bgMode: string;
   locationLabel: string; seasonLabel: string; trustItems: string[];
+  trustStripColor?: string; badgeIcon?: string; ratingText?: string; availabilityHint?: string;
   primaryCta: ButtonValue; secondaryCta: ButtonValue;
   overlayColor?: string;
   overlayOpacity: number;
@@ -49,7 +54,7 @@ type HeroProps = {
 };
 
 /* ─── Classic: panoramic bg, green/lime gradient, mountain SVG, stagger ─── */
-function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity, trustStripColor, badgeIcon, ratingText, availabilityHint }: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg)]">
       {(bgMode === 'image' && bgImage) ? (
@@ -69,7 +74,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col items-center justify-center px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-4 flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_28%,transparent)] bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur-md">
           <Compass className="text-[color:var(--token-on-dark-heading)]" size={20} />
-          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-heading)]" data-edit-path="badgeText">{badgeText}</p>}
+          {badgeText && <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-heading)]" data-edit-path="badgeText">{badgeIcon && <DynamicIcon name={badgeIcon} size={13} />}{badgeText}</p>}
           <Mountain className="text-[color:var(--token-on-dark-heading)]" size={20} />
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[color:var(--token-on-dark-heading)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.62)' }} data-edit-path="headline">{headline}</motion.h1>
@@ -92,7 +97,9 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[color:var(--token-on-dark-muted)]">
           {locationLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur"><MapPin size={15} />{locationLabel}</span>}
           {seasonLabel && <span className="rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur">{seasonLabel}</span>}
-          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur"><CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}</span>)}
+          {ratingText && <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur" style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}><Star size={14} className="text-[color:var(--token-rating-star)]" />{ratingText}</span>}
+          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur" style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}><CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}</span>)}
+          {availabilityHint && <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur" style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}>{availabilityHint}</span>}
         </motion.div>
       </div>
     </section>

@@ -14,6 +14,7 @@ export function TourismContactSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Kontakt', 'Tourismusbuero');
   const introText = (data.introText as string) || '';
   const image = (data.image as string) || '';
+  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
   const formEnabled = (data.formEnabled as boolean) ?? true;
   const submitLabel = (data.submitLabel as string) || 'Anfrage senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;
@@ -21,19 +22,19 @@ export function TourismContactSection({ data, styleVariant }: SectionProps) {
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
 
-  const p = { header, introText, image, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta };
+  const p = { header, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta };
   if (styleVariant === 'modern') return <Modern {...p} />;
   if (styleVariant === 'bold') return <Bold {...p} />;
   return <Classic {...p} />;
 }
 
 type Props = {
-  header: { headline: string; subline: string; badgeText: string }; introText: string; image: string;
+  header: { headline: string; subline: string; badgeText: string }; introText: string; image: string; mapEmbedUrl?: string;
   formEnabled: boolean; submitLabel: string; formFields?: FormFieldDef[];
   infoCards: InfoCard[]; primaryCta: { label?: string; href?: string }; secondaryCta: { label?: string; href?: string };
 };
 
-function Classic({ header, introText, image, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
+function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
@@ -54,13 +55,14 @@ function Classic({ header, introText, image, formEnabled, submitLabel, formField
       </motion.div>
       <div className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
   );
 }
 
-function Modern({ header, introText, image, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
+function Modern({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -81,13 +83,14 @@ function Modern({ header, introText, image, formEnabled, submitLabel, formFields
       </div>
       <div className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
   );
 }
 
-function Bold({ header, introText, image, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
+function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -112,6 +115,7 @@ function Bold({ header, introText, image, formEnabled, submitLabel, formFields, 
       </div>
       <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>

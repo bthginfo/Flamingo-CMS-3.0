@@ -777,6 +777,12 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   galleryMoodboard: GalleryGridSection,
   locationAccess: MapSection,
   hostTeam: TeamSection,
+  // Type aliases for stored content: these names exist in tenant data (and are
+  // accepted by the API) but had no component — the sections silently rendered
+  // as NOTHING in production. Map them onto the equivalent shared templates.
+  contactForm: ContactSection,
+  contactLocation: LocationSection,
+  textBlock: RichTextSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render

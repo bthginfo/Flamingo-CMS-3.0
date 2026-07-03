@@ -19,6 +19,7 @@ export function MedicalHeroSection({ data, styleVariant }: SectionProps) {
   const specialtyLabel = (data.specialtyLabel as string) || '';
   const emergencyHint = (data.emergencyHint as string) || '';
   const trustItems = asList<string>(data.trustItems);
+  const trustStripColor = (data.trustStripColor as string) || '';
   const primaryCta = asButton(data.primaryCta);
   const emergencyCta = asButton(data.emergencyCta);
   const secondaryCta = asButton(data.secondaryCta);
@@ -29,7 +30,7 @@ export function MedicalHeroSection({ data, styleVariant }: SectionProps) {
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity};
+  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity, trustStripColor};
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -41,6 +42,7 @@ type HeroProps = {
   bgImageMobile?: string;
   bgColor: string; bgMode: string;
   specialtyLabel: string; emergencyHint: string; trustItems: string[];
+  trustStripColor?: string;
   primaryCta: ButtonValue; emergencyCta: ButtonValue; secondaryCta: ButtonValue;
   overlayColor?: string;
   overlayOpacity: number;
@@ -50,7 +52,7 @@ type HeroProps = {
 };
 
 /* ─── Classic: fullscreen teal gradient, heartbeat SVG, stagger, shield badge ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity, trustStripColor }: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg)]">
       {(bgMode === 'image' && bgImage) ? (
@@ -83,7 +85,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[color:var(--token-on-dark-body)]">
           {specialtyLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[var(--token-badge-bg)] px-4 py-2"><Heart size={15} className="text-[color:var(--token-icon)]" />{specialtyLabel}</span>}
           {emergencyHint && <span className="rounded-full bg-red-900/40 px-4 py-2">{emergencyHint}</span>}
-          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--token-badge-bg)] px-4 py-2"><CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}</span>)}
+          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--token-badge-bg)] px-4 py-2" style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}><CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}</span>)}
         </motion.div>
       </div>
     </section>

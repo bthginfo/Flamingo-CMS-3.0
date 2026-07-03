@@ -9,7 +9,8 @@ const HEIGHT: Record<string, string> = { s: 'h-64', m: 'h-[400px]', l: 'h-[500px
 
 export function MapSection({ data }: Props) {
   const headline = (data.headline as string) || '';
-  const embedUrl = (data.embedUrl as string) || '';
+  const embedUrl = (data.embedUrl as string) || (data.mapEmbedUrl as string) || '';
+  const address = (data.address as string) || '';
   const height = HEIGHT[(data.height as string) || 'm'] || HEIGHT.m;
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-50px' });
@@ -21,7 +22,14 @@ export function MapSection({ data }: Props) {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6 }}
     >
-      {headline && <h2 className="section-headline mb-10 text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+      {headline && <h2 className="section-headline mb-4 text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+      {address && (
+        <p className="mb-8 text-center text-[color:var(--token-muted)]">
+          <span data-edit-path="address">{address}</span>
+          {' · '}
+          <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`} target="_blank" rel="noreferrer" className="font-medium text-[color:var(--token-accent)] hover:underline">Route planen</a>
+        </p>
+      )}
       <div className="overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-2 shadow-xl">
         <div className="rounded-2xl overflow-hidden">
           {embedUrl ? (

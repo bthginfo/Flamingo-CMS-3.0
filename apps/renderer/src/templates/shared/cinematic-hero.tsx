@@ -25,13 +25,25 @@ export function CinematicHeroSection({ data }: Props) {
   const eyebrow = (data.eyebrow as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const image = (data.image as string) || '';
+  const image = (data.image as string) || (data.bgImage as string) || (data.backgroundImage as string) || '';
   const videoUrl = (data.videoUrl as string) || '';
   const primaryCta = (data.primaryCta as Cta) || {};
   const secondaryCta = (data.secondaryCta as Cta) || {};
   const facts = (data.facts as Fact[]) || [];
+  // trustItems (plain strings) render as fact labels when no facts are given.
+  const trustItems = Array.isArray(data.trustItems) ? (data.trustItems as string[]).map((t) => ({ value: '', label: t })) : [];
+  const factItems = facts.length ? facts : trustItems;
+  const trustStripColor = (data.trustStripColor as string) || '';
   const align = (data.align as string) || 'left';
-  const overlay = (data.overlay as string) || 'rgba(0,0,0,0.48)';
+  const overlayColor = (data.overlayColor as string) || '';
+  const overlayOpacity = typeof data.overlayOpacity === 'number' ? data.overlayOpacity : 0.48;
+  const hexToRgba = (hex: string, a: number) => {
+    const m = hex.trim().match(/^#([0-9a-f]{6})$/i);
+    if (!m) return hex;
+    const n = parseInt(m[1], 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+  };
+  const overlay = (data.overlay as string) || (overlayColor ? hexToRgba(overlayColor, overlayOpacity) : 'rgba(0,0,0,0.48)');
   const heroText = 'var(--token-on-dark-heading)';
   const heroBody = 'var(--token-on-dark-body)';
   const heroMuted = 'var(--token-on-dark-muted)';
@@ -72,10 +84,10 @@ export function CinematicHeroSection({ data }: Props) {
           {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-btn-secondary-border)] bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15" style={{ background: 'var(--token-badge-bg)', color: 'var(--token-badge-text)' }}><Play size={15} /><span data-edit-path="label">{secondaryCta.label}</span></a>}
         </div>
 
-        {facts.length > 0 && (
+        {factItems.length > 0 && (
           <div className="mt-10 grid w-full max-w-3xl grid-cols-2 gap-3 md:mt-12 md:grid-cols-4 md:gap-4">
-            {facts.map((fact, i) => (
-              <div key={i} className="rounded-2xl border border-[color:var(--token-card-border)] bg-transparent p-4 md:p-5" style={{ backgroundColor: 'transparent' }} data-edit-collection="facts" data-edit-index={i}>
+            {factItems.map((fact, i) => (
+              <div key={i} className="rounded-2xl border border-[color:var(--token-card-border)] p-4 md:p-5" style={{ backgroundColor: trustStripColor || 'transparent' }} data-edit-collection="facts" data-edit-index={i}>
                 <div className="text-2xl font-black" style={{ color: heroText }} data-edit-path="value">{fact.value}</div>
                 <div className="mt-1 text-xs" style={{ color: heroMuted }} data-edit-path="label">{fact.label}</div>
               </div>

@@ -7,10 +7,11 @@ import Image from 'next/image';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-type ProofItem = { value: string; label: string; icon?: string; logo?: string };
+type ProofItem = { value: string; label?: string; text?: string; icon?: string; logo?: string };
 
 export function SocialProofBarSection({ data }: Props) {
-  const items = (data.items as ProofItem[]) || [];
+  // {value,label} is canonical; older data uses {value,text}.
+  const items = ((data.items as ProofItem[]) || []).map((it) => it && ({ ...it, label: it.label ?? it.text ?? '' }));
   const bgStyle = (data.bgStyle as string) || 'light';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });

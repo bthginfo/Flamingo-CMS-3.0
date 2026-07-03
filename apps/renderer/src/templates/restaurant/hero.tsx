@@ -18,6 +18,7 @@ export function RestaurantHeroSection({ data, styleVariant }: SectionProps) {
   const bgColor = (data.bgColor as string) || '';
   const bgMode = (data.bgMode as string) || 'image';
   const trustItems = asList<string>(data.trustItems);
+  const trustStripColor = (data.trustStripColor as string) || '';
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
   const bgPosition = (data.bgPosition as string) || 'center';
@@ -27,7 +28,7 @@ export function RestaurantHeroSection({ data, styleVariant }: SectionProps) {
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  const props: HeroProps = { headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity};
+  const props: HeroProps = { headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity, trustStripColor};
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -45,6 +46,7 @@ type HeroProps = {
   bgColor: string;
   bgMode: string;
   trustItems: string[];
+  trustStripColor?: string;
   primaryCta: ButtonValue;
   secondaryCta: ButtonValue;
   overlayColor?: string;
@@ -56,7 +58,7 @@ type HeroProps = {
 };
 
 /* ─── CLASSIC: Fullscreen bg, warm gradient overlay, grain texture, spotlight, staggered fade-in ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity, trustStripColor }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-btn-bg)]" style={{ background: 'var(--token-section-bg, transparent)' }}>
       {/* Background image + overlays */}
@@ -132,7 +134,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           {/* Trust items */}
           {trustItems.length > 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }}
-              className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--token-on-dark-muted)]">
+              className={`mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--token-on-dark-muted)] ${trustStripColor ? 'rounded-2xl px-4 py-3' : ''}`} style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}>
               {trustItems.map((item) => (
                 <span key={item} className="flex items-center gap-2">
                   <CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}

@@ -11,18 +11,19 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 export function FaqSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const badgeText = (data.badgeText as string) || '';
+  const subline = (data.subline as string) || '';
   const items = (data.items as { question: string; answer: string }[]) || [];
   const expandFirst = data.expandFirst !== false;
 
-  if (styleVariant === 'modern') return <FaqModern headline={headline} badgeText={badgeText} items={items} expandFirst={expandFirst} />;
-  if (styleVariant === 'bold') return <FaqBold headline={headline} badgeText={badgeText} items={items} expandFirst={expandFirst} />;
-  return <FaqClassic headline={headline} badgeText={badgeText} items={items} expandFirst={expandFirst} />;
+  if (styleVariant === 'modern') return <FaqModern headline={headline} subline={subline} badgeText={badgeText} items={items} expandFirst={expandFirst} />;
+  if (styleVariant === 'bold') return <FaqBold headline={headline} subline={subline} badgeText={badgeText} items={items} expandFirst={expandFirst} />;
+  return <FaqClassic headline={headline} subline={subline} badgeText={badgeText} items={items} expandFirst={expandFirst} />;
 }
 
-type FProps = { headline: string; badgeText: string; items: { question: string; answer: string }[]; expandFirst: boolean };
+type FProps = { headline: string; subline?: string; badgeText: string; items: { question: string; answer: string }[]; expandFirst: boolean };
 
 /* ─── CLASSIC: Rounded cards, soft shadow, chevron icon ─── */
-function FaqClassic({ headline, badgeText, items, expandFirst }: FProps) {
+function FaqClassic({ headline, subline, badgeText, items, expandFirst }: FProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -31,6 +32,7 @@ function FaqClassic({ headline, badgeText, items, expandFirst }: FProps) {
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-14">
         {badgeText && <div className="section-badge"><HelpCircle size={14} /><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
       <div className="space-y-3">
         {items.map((item, i) => (
@@ -63,7 +65,7 @@ function FaqItemClassic({ question, answer, defaultOpen }: { question: string; a
 }
 
 /* ─── MODERN: Clean lines, no cards, subtle separator ─── */
-function FaqModern({ headline, badgeText, items, expandFirst }: FProps) {
+function FaqModern({ headline, subline, badgeText, items, expandFirst }: FProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -104,7 +106,7 @@ function FaqItemModern({ question, answer, defaultOpen }: { question: string; an
 }
 
 /* ─── BOLD: Thick borders, angular, numbered ─── */
-function FaqBold({ headline, badgeText, items, expandFirst }: FProps) {
+function FaqBold({ headline, subline, badgeText, items, expandFirst }: FProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 

@@ -17,7 +17,7 @@ function pickString(...values: unknown[]): string {
 }
 
 export function TextImageSection({ data, variant }: Props) {
-  const badge = (data.badge as string) || '';
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
   const text = (data.text as string) || '';
   const image = pickString(data.image, data.imageUrl, data.imageSrc, data.backgroundImage, data.bgImage, data.media);

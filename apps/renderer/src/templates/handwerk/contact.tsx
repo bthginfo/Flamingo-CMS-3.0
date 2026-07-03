@@ -11,18 +11,21 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function ContactSection({ data }: Props) {
   const headline = (data.headline as string) || 'Kontakt';
-  const introText = (data.introText as string) || '';
+  const introText = (data.introText as string) || (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const formEnabled = data.formEnabled !== false;
   const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;
+  const address = (data.address as string) || '';
+  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
+  const showMap = data.showMap !== false && Boolean(mapEmbedUrl);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   const infoCards = (data.infoCards as { icon: string; label: string; value: string }[]) || [
     { icon: 'phone', label: 'Telefon', value: '' },
     { icon: 'mail', label: 'E-Mail', value: '' },
-    { icon: 'map-pin', label: 'Standort', value: '' },
+    { icon: 'map-pin', label: 'Standort', value: address },
     { icon: 'clock', label: 'Öffnungszeiten', value: '' },
   ];
 
@@ -82,6 +85,24 @@ export function ContactSection({ data }: Props) {
           </motion.div>
         )}
       </div>
+
+      {showMap && (
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-10 overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-2 shadow-lg"
+        >
+          <iframe
+            src={mapEmbedUrl}
+            className="h-[380px] w-full rounded-2xl border-0"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Standort"
+          />
+        </motion.div>
+      )}
     </div>
   );
 }

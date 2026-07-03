@@ -7,10 +7,11 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 export function WeddingMenuSection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Menü';
+  const subline = (data.subline as string) || '';
   const headline = (data.headline as string) || 'Unser Hochzeitsmenü';
   const courses = (data.courses as Array<{ title: string; items: Array<{ name: string; description?: string; tags?: string[] }> }>) || [];
   const note = (data.note as string) || '';
-  const p = { badge, headline, courses, note };
+  const p = { badge, headline, subline, courses, note };
 
   if (styleVariant === 'modern') return <Modern {...p} />;
   if (styleVariant === 'bold') return <Bold {...p} />;
@@ -18,17 +19,18 @@ export function WeddingMenuSection({ data, styleVariant }: Props) {
 }
 
 type Course = { title: string; items: Array<{ name: string; description?: string; tags?: string[] }> };
-type P = { badge: string; headline: string; courses: Course[]; note: string };
+type P = { badge: string; headline: string; subline?: string; courses: Course[]; note: string };
 
 const tagIcons: Record<string, React.ElementType> = { vegan: Leaf, vegetarisch: Leaf, wein: Wine };
 
-function Classic({ badge, headline, courses, note }: P) {
+function Classic({ badge, headline, subline, courses, note }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         </div>
         <div className="space-y-12">
           {courses.map((course, i) => (
@@ -56,12 +58,13 @@ function Classic({ badge, headline, courses, note }: P) {
   );
 }
 
-function Modern({ badge, headline, courses, note }: P) {
+function Modern({ badge, headline, subline, courses, note }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-3xl mx-auto">
         <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         <div className="space-y-16">
           {courses.map((course, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} data-edit-collection="courses" data-edit-index={i}>
@@ -86,12 +89,13 @@ function Modern({ badge, headline, courses, note }: P) {
   );
 }
 
-function Bold({ badge, headline, courses, note }: P) {
+function Bold({ badge, headline, subline, courses, note }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-4xl mx-auto">
         <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         <div className="grid md:grid-cols-2 gap-8">
           {courses.map((course, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border)] p-6" data-edit-collection="courses" data-edit-index={i}>

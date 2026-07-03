@@ -6,10 +6,20 @@ import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
+// Semantic tones: a coloured accent bar + matching icon so the banner reads as
+// info/success/warning at a glance instead of a generic text block.
+const TONES: Record<string, { icon: string; color: string }> = {
+  info:    { icon: 'Info',          color: 'var(--token-accent)' },
+  success: { icon: 'CircleCheck',   color: 'var(--token-success)' },
+  warning: { icon: 'TriangleAlert', color: 'var(--token-danger)' },
+  danger:  { icon: 'CircleAlert',   color: 'var(--token-danger)' },
+};
+
 export function NoticeBannerSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const text = (data.text as string) || '';
+  const tone = TONES[(data.tone as string) || ''];
   const bgColor = 'var(--token-section-bg, transparent)';
   const textColor = 'var(--token-body, inherit)';
   const btnBg = 'var(--token-btn-bg)';
@@ -26,7 +36,13 @@ export function NoticeBannerSection({ data }: Props) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         className="max-w-5xl mx-auto px-6 py-12 md:py-16 text-center"
+        style={tone ? { borderTop: `3px solid ${tone.color}` } : undefined}
       >
+        {tone && (
+          <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full" style={{ background: `color-mix(in srgb, ${tone.color} 12%, transparent)`, color: tone.color }}>
+            <DynamicIcon name={tone.icon} size={22} />
+          </div>
+        )}
         {headline && <h2 className="text-2xl md:text-3xl font-bold mb-3" data-edit-path="headline">{headline}</h2>}
         {subline && <p className="text-lg md:text-xl opacity-80 mb-4" data-edit-path="subline">{plain(subline)}</p>}
         {text && <div className="opacity-70 leading-relaxed max-w-2xl mx-auto mb-6 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}

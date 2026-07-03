@@ -11,6 +11,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 type ProjectItem = {
   title: string;
   category?: string;
+  meta?: string;
   description?: string;
   image: string;
   href?: string;
@@ -22,7 +23,9 @@ export function PortfolioSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const projects = (data.projects as ProjectItem[]) || [];
+  // `projects` {category} is canonical; `items` {meta} is the older shape.
+  const projects = (((data.projects as ProjectItem[]) || (data.items as ProjectItem[]) || []))
+    .map((p) => p && ({ ...p, category: p.category ?? p.meta }));
   const ctaLabel = (data.ctaLabel as string) || '';
   const ctaHref = (data.ctaHref as string) || '';
   const ctaIcon = (data.ctaIcon as string) || '';

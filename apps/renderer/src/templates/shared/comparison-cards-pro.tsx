@@ -8,10 +8,13 @@ type Plan = { name: string; price?: string; note?: string; highlighted?: boolean
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function ComparisonCardsProSection({ data }: Props) {
-  const badge = (data.badge as string) || '';
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const plans = (data.plans as Plan[]) || [];
+  // `plans` {name,note,price} is canonical; `cards` {title,text,metric} is the older shape.
+  type LoosePlan = Plan & { title?: string; text?: string; metric?: string };
+  const plans = (((data.plans as LoosePlan[]) || (data.cards as LoosePlan[]) || []))
+    .map((p) => p && ({ ...p, name: p.name ?? p.title ?? '', note: p.note ?? p.text, price: p.price ?? p.metric }));
   if (!plans.length) return null;
 
   return (

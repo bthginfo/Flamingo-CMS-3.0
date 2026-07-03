@@ -7,13 +7,15 @@ import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-type BentoItem = { title: string; description?: string; icon?: string; image?: string; span?: string; size?: string };
+type BentoItem = { title: string; description?: string; text?: string; icon?: string; image?: string; span?: string; size?: string };
 
 export function BentoGridSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const badge = (data.badge as string) || '';
-  const items = (((data.items as BentoItem[]) || (data.cards as BentoItem[]) || [])).filter(item => item?.title || item?.description || item?.image || item?.icon);
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
+  const items = (((data.items as BentoItem[]) || (data.cards as BentoItem[]) || []))
+    .map((item) => item && ({ ...item, description: item.description ?? item.text }))
+    .filter(item => item?.title || item?.description || item?.image || item?.icon);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 

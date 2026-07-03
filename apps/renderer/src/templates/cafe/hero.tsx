@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
+import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -11,24 +12,34 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 export function CafeHeroSection({ data }: Props) {
   const headline = (data.headline as string) || 'Kaffee, Kuchen & gute Vibes';
   const subline = (data.subline as string) || '';
-  const bgImage = (data.bgImage as string) || '';
+  const badgeText = (data.badgeText as string) || '';
+  const badgeIcon = (data.badgeIcon as string) || '';
+  const bgImage = (data.bgImage as string) || (data.backgroundImage as string) || '';
+  const bgMode = (data.bgMode as string) || (bgImage ? 'image' : 'color');
+  const bgPosition = (data.bgPosition as string) || 'center';
+  const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? 0.5;
-  const primaryCta = data.primaryCta as { label: string; href: string } | undefined;
-  const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
+  const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
+  const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
   const openingHint = (data.openingHint as string) || '';
+  const trustItems = Array.isArray(data.trustItems) ? (data.trustItems as string[]) : [];
+  const trustStripColor = (data.trustStripColor as string) || '';
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
 
   return (
     <div ref={ref} className="relative min-h-[85vh] flex items-end overflow-hidden -mt-[112px] pt-[112px]">
-      {bgImage && (
-        <ImageEffectWrapper effect={imageEffect} className="absolute inset-0">
-          <Image data-edit-image="bgImage" src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+      {bgMode === 'image' && bgImage && (
+        <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill className="object-cover" style={{ objectPosition: bgPosition }} priority sizes="100vw" />
         </ImageEffectWrapper>
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" style={{ opacity: overlayOpacity }} />
+      {overlayColor
+        ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
+        : <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" style={{ opacity: overlayOpacity }} />}
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 pb-20 w-full">
         <motion.div
@@ -37,8 +48,13 @@ export function CafeHeroSection({ data }: Props) {
           transition={{ duration: 0.8 }}
           className="max-w-xl"
         >
+          {badgeText && (
+            <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--token-badge-border)] bg-[var(--token-badge-bg)] px-4 py-1.5 text-sm font-medium text-[color:var(--token-badge-text)] backdrop-blur" data-edit-path="badgeText">
+              {badgeIcon && <DynamicIcon name={badgeIcon} size={14} />}{badgeText}
+            </span>
+          )}
           {openingHint && (
-            <span className="inline-block text-[var(--token-accent)] text-sm font-medium mb-4 tracking-wide">{openingHint}</span>
+            <span className="block text-[var(--token-accent)] text-sm font-medium mb-4 tracking-wide">{openingHint}</span>
           )}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight" data-edit-path="headline">
             {headline}
@@ -50,16 +66,23 @@ export function CafeHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap gap-4 mt-8">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-accent)] hover:bg-[var(--token-accent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all" data-edit-path="label">
-                {primaryCta.label}
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-accent)] hover:brightness-110 text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all hover:-translate-y-0.5" data-edit-path="label">
+                {primaryCta.label}{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}
               </a>
             )}
             {secondaryCta && (
               <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-btn-secondary-text)] font-semibold rounded-full border border-[color:var(--token-btn-secondary-border)] backdrop-blur-sm transition-all" data-edit-path="label">
-                {secondaryCta.label}
+                {secondaryCta.label}{secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
               </a>
             )}
           </div>
+          {trustItems.length > 0 && (
+            <div className="mt-8 flex flex-wrap gap-3 text-sm text-[color:var(--token-on-dark-muted)]">
+              {trustItems.map((item) => (
+                <span key={item} className="rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur" style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}>{item}</span>
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
     </div>

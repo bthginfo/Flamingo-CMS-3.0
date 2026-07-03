@@ -8,23 +8,25 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 export function WeddingPartySection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Unsere Crew';
   const headline = (data.headline as string) || 'Trauzeugen & Begleitung';
-  const members = (data.members as Array<{ name: string; role: string; image?: string; text?: string }>) || [];
-  const p = { badge, headline, members };
+  const subline = (data.subline as string) || '';
+  const members = ((data.members as Array<{ name: string; role?: string; relationship?: string; image?: string; text?: string }>) || []).map((m) => m && ({ ...m, role: m.role ?? m.relationship ?? '' }));
+  const p = { badge, headline, subline, members };
 
   if (styleVariant === 'modern') return <Modern {...p} />;
   if (styleVariant === 'bold') return <Bold {...p} />;
   return <Classic {...p} />;
 }
 
-type P = { badge: string; headline: string; members: Array<{ name: string; role: string; image?: string; text?: string }> };
+type P = { badge: string; headline: string; subline?: string; members: Array<{ name: string; role: string; image?: string; text?: string }> };
 
-function Classic({ badge, headline, members }: P) {
+function Classic({ badge, headline, subline, members }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {members.map((m, i) => (
@@ -43,12 +45,13 @@ function Classic({ badge, headline, members }: P) {
   );
 }
 
-function Modern({ badge, headline, members }: P) {
+function Modern({ badge, headline, subline, members }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
         <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         <div className="grid md:grid-cols-2 gap-12">
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-6 items-start border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="members" data-edit-index={i}>
@@ -68,12 +71,13 @@ function Modern({ badge, headline, members }: P) {
   );
 }
 
-function Bold({ badge, headline, members }: P) {
+function Bold({ badge, headline, subline, members }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
         <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{subline}</p>}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border)] p-6 text-center hover:border-[color-mix(in_srgb,var(--token-card-border)_50%,transparent)] transition-colors" data-edit-collection="members" data-edit-index={i}>

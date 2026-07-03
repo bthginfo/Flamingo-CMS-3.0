@@ -13,17 +13,20 @@ export function TestimonialsSection({ data, styleVariant }: Props) {
   const badgeText = (data.badgeText as string) || 'Kundenstimmen';
   const ratingValue = (data.ratingValue as string) || '';
   const ratingCount = (data.ratingCount as string) || '';
-  const items = (data.items as { quote: string; name: string; context?: string; rating?: number }[]) || [];
+  const subline = (data.subline as string) || '';
+  // Accept both shapes: {name, context} (canonical) and {author, role} (older data).
+  const items = ((data.items as { quote: string; name?: string; author?: string; context?: string; role?: string; rating?: number }[]) || [])
+    .map((it) => it && ({ quote: it.quote, name: it.name ?? it.author ?? '', context: it.context ?? it.role, rating: it.rating }));
 
-  if (styleVariant === 'modern') return <TestimonialsModern headline={headline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
-  if (styleVariant === 'bold') return <TestimonialsBold headline={headline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
-  return <TestimonialsClassic headline={headline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
+  if (styleVariant === 'modern') return <TestimonialsModern headline={headline} subline={subline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
+  if (styleVariant === 'bold') return <TestimonialsBold headline={headline} subline={subline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
+  return <TestimonialsClassic headline={headline} subline={subline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
 }
 
-type TProps = { headline: string; badgeText: string; ratingValue: string; ratingCount: string; items: { quote: string; name: string; context?: string; rating?: number }[] };
+type TProps = { headline: string; subline?: string; badgeText: string; ratingValue: string; ratingCount: string; items: { quote: string; name: string; context?: string; rating?: number }[] };
 
 /* ─── CLASSIC: Carousel/infinite scroll, large quote marks, rounded cards ─── */
-function TestimonialsClassic({ headline, badgeText, ratingValue, ratingCount, items }: TProps) {
+function TestimonialsClassic({ headline, subline, badgeText, ratingValue, ratingCount, items }: TProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const cardItems = items.map(item => ({ quote: item.quote, name: item.name, title: item.context, rating: item.rating }));
@@ -33,6 +36,7 @@ function TestimonialsClassic({ headline, badgeText, ratingValue, ratingCount, it
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-14">
         <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         {(ratingValue || ratingCount) && (
           <div className="flex items-center justify-center gap-2 mt-5">
             <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={18} className="fill-[var(--token-accent)] text-[color:var(--token-rating-star)]" />)}</div>
@@ -48,7 +52,7 @@ function TestimonialsClassic({ headline, badgeText, ratingValue, ratingCount, it
 }
 
 /* ─── MODERN: Masonry-style grid, minimal quote styling, clean typography ─── */
-function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, items }: TProps) {
+function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingCount, items }: TProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -59,6 +63,7 @@ function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, ite
           <span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span>
         </div>
         {headline && <h2 className="text-4xl font-light tracking-tight text-[color:var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="mt-3 max-w-2xl text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
         {(ratingValue || ratingCount) && (
           <p className="mt-4 text-sm text-[color:var(--token-muted)]">{ratingValue && `${ratingValue}/5`}{ratingCount && ` · ${ratingCount}+ Bewertungen`}</p>
         )}
@@ -85,7 +90,7 @@ function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, ite
 }
 
 /* ─── BOLD: Horizontal scroll cards, thick borders, accent highlights, bold quote ─── */
-function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items }: TProps) {
+function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCount, items }: TProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -94,6 +99,7 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
         <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="mt-3 max-w-2xl text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
         {(ratingValue || ratingCount) && (
           <div className="flex items-center gap-2 mt-4">
             <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-[var(--token-accent)] text-[color:var(--token-rating-star)]" />)}</div>

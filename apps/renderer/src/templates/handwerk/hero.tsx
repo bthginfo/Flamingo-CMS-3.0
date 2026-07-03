@@ -19,7 +19,7 @@ export function HeroSection({ data, styleVariant }: Props) {
   const badgeStarsIcon = (data.badgeStarsIcon as string) || '';
   const trustItems = (data.trustItems as string[]) || [];
   const trustStripColor = (data.trustStripColor as string) || '';
-  const bgImage = (data.bgImage as string) || '';
+  const bgImage = (data.bgImage as string) || (data.backgroundImage as string) || '';
   const bgImageMobile = (data.bgImageMobile as string) || '';
   const bgColor = (data.bgColor as string) || '';
   const bgMode = (data.bgMode as string) || 'image';

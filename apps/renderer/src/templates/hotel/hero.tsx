@@ -18,6 +18,7 @@ export function HotelHeroSection({ data, styleVariant }: SectionProps) {
   const bgColor = (data.bgColor as string) || '';
   const bgMode = (data.bgMode as string) || 'image';
   const trustItems = asList<string>(data.trustItems);
+  const trustStripColor = (data.trustStripColor as string) || '';
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
   const availabilityHint = (data.availabilityHint as string) || '';
@@ -29,7 +30,7 @@ export function HotelHeroSection({ data, styleVariant }: SectionProps) {
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  const props: HeroProps = { headline, subline: plain(subline), badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity, imageEffect, imageEffectIntensity };
+  const props: HeroProps = { headline, subline: plain(subline), badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity, imageEffect, imageEffectIntensity, trustStripColor };
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
   return <HeroClassic {...props} />;
@@ -41,6 +42,7 @@ type HeroProps = {
   badgeText: string;
   badgeIcon: string;
   trustItems: string[];
+  trustStripColor?: string;
   bgImage: string;
   bgImageMobile?: string;
   bgColor: string;
@@ -58,7 +60,7 @@ type HeroProps = {
 };
 
 /* ─── CLASSIC: Fullscreen forest-green/gold gradient, serif feel, gold accents, staggered animations ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity, trustStripColor }: HeroProps) {
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
   const y = useTransform(scrollY, [0, 400], [0, 100]);
@@ -126,7 +128,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
           )}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[color:var(--token-on-dark-muted)]">
+          className={`mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[color:var(--token-on-dark-muted)] ${trustStripColor ? 'rounded-2xl px-4 py-3' : ''}`} style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}>
           {ratingText && <span className="inline-flex items-center gap-2"><Star size={14} className="text-[color:var(--token-rating-star)]" />{ratingText}</span>}
           {availabilityHint && <span className="rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-3 py-1 text-[color:var(--token-on-dark-heading)]">{availabilityHint}</span>}
           {trustItems.map((item) => (

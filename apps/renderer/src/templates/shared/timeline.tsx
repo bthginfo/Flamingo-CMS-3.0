@@ -9,10 +9,10 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 type TimelineEntry = { year: string; title: string; text: string };
 
 export function TimelineSection({ data }: Props) {
-  const badge = (data.badge as string) || '';
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const entries = (data.entries as TimelineEntry[]) || [];
+  const entries = (data.entries as TimelineEntry[]) || (data.items as TimelineEntry[]) || (data.steps as TimelineEntry[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 

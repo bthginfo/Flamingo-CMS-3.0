@@ -16,6 +16,7 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const bgColor = (data.bgColor as string) || '';
   const bgMode = (data.bgMode as string) || 'image';
   const trustItems = asList<string>(data.trustItems);
+  const trustStripColor = (data.trustStripColor as string) || '';
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
   const bookingHint = (data.bookingHint as string) || '';
@@ -27,7 +28,7 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity};
+  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity, trustStripColor};
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -38,7 +39,8 @@ type HeroProps = {
   headline: string; subline: string; badgeText: string; badgeIcon: string; bgImage: string;
   bgImageMobile?: string;
   bgColor: string; bgMode: string;
-  trustItems: string[]; primaryCta: ButtonValue; secondaryCta: ButtonValue;
+  trustItems: string[];
+  trustStripColor?: string; primaryCta: ButtonValue; secondaryCta: ButtonValue;
   bookingHint: string; ratingText: string;
   overlayColor?: string; overlayOpacity: number;
   bgPosition?: string;
@@ -47,7 +49,7 @@ type HeroProps = {
 };
 
 /* ─── CLASSIC: Fullscreen bg, organic rose gradient overlay, flowing curves, centered elegant typography ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity, trustStripColor }: HeroProps) {
   const heroHeading = 'var(--token-on-dark-heading)';
   const heroBody = 'var(--token-on-dark-body)';
   const heroMuted = 'var(--token-on-dark-muted)';
@@ -86,7 +88,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm">
           {bookingHint && <span className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{bookingHint}</span>}
           {ratingText && <span className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{ratingText}</span>}
-          {trustItems.map((item) => <span key={item} className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{item}</span>)}
+          {trustItems.map((item) => <span key={item} className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted, ...(trustStripColor ? { backgroundColor: trustStripColor } : {}) }}>{item}</span>)}
         </motion.div>
       </div>
     </section>

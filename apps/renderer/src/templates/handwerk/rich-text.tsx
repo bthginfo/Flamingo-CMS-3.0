@@ -4,7 +4,7 @@ type Props = { data: Record<string, unknown> };
 
 export function RichTextSection({ data }: Props) {
   const headline = (data.headline as string) || '';
-  const content = (data.content as string) || '';
+  const content = (data.content as string) || (data.text as string) || (data.html as string) || '';
   const clean = sanitizeHtml(content);
 
   return (

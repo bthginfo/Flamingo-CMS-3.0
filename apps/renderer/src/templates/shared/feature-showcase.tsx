@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { plain } from '@/lib/strip-html';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -13,24 +14,27 @@ function pickString(...values: unknown[]): string {
   return '';
 }
 
-function normalizeFeatures(value: unknown): string[] {
+type Feature = { text: string; icon?: string };
+
+function normalizeFeatures(value: unknown): Feature[] {
   if (!Array.isArray(value)) return [];
   return value
-    .map((item) => {
-      if (typeof item === 'string') return item;
+    .map((item): Feature | null => {
+      if (typeof item === 'string') return { text: item };
       if (item && typeof item === 'object') {
-        const feature = item as { title?: unknown; text?: unknown; label?: unknown };
-        return [feature.title, feature.text || feature.label].filter(Boolean).join(': ');
+        const feature = item as { title?: unknown; text?: unknown; label?: unknown; icon?: unknown };
+        const text = [feature.title, feature.text || feature.label].filter(Boolean).join(': ');
+        return text ? { text, icon: typeof feature.icon === 'string' ? feature.icon : undefined } : null;
       }
-      return '';
+      return null;
     })
-    .filter(Boolean);
+    .filter((f): f is Feature => Boolean(f));
 }
 
 export function FeatureShowcaseSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const badge = (data.badge as string) || '';
+  const badge = (data.badge as string) || (data.badgeText as string) || '';
   const text = (data.text as string) || '';
   const image = pickString(data.image, data.imageUrl, data.imageSrc, data.backgroundImage, data.bgImage, data.media);
   const features = normalizeFeatures(data.features);
@@ -91,10 +95,12 @@ export function FeatureShowcaseSection({ data }: Props) {
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
             {features.map((feat, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.3, delay: 0.3 + i * 0.06 }} className="flex items-center gap-2.5" data-edit-collection="features" data-edit-index={i}>
-                <div className="w-5 h-5 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] flex items-center justify-center flex-shrink-0">
-                  <svg className="w-3 h-3 text-[color:var(--token-accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                <div className="w-5 h-5 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] flex items-center justify-center flex-shrink-0 text-[color:var(--token-accent)]">
+                  {feat.icon
+                    ? <DynamicIcon name={feat.icon} size={12} />
+                    : <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>}
                 </div>
-                <span className="text-sm text-[color:var(--token-card-body,var(--token-body))]">{feat}</span>
+                <span className="text-sm text-[color:var(--token-card-body,var(--token-body))]">{feat.text}</span>
               </motion.div>
             ))}
           </div>

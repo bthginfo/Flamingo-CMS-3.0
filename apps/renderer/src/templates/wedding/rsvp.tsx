@@ -12,6 +12,10 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || 'Zusage';
   const subline = (data.subline as string) || 'Bitte gebt uns bis zum Stichtag Bescheid.';
   const deadline = (data.deadline as string) || '';
+  const maxGuests = Number(data.maxGuests) > 0 ? Number(data.maxGuests) : 10;
+  const showSongWish = data.showSongWish === true;
+  const showDietary = data.showDietary !== false;
+  const showAllergies = data.showAllergies === true;
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const submitted = status === 'success';
@@ -30,7 +34,8 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
       email: String(fd.get('email') || ''),
       attending: String(fd.get('attending') || 'yes'),
       guestCount: Number(fd.get('guestCount') || 1),
-      dietary: String(fd.get('dietary') || ''),
+      dietary: [String(fd.get('dietary') || ''), String(fd.get('allergies') || '')].filter(Boolean).join(' · '),
+      songWish: String(fd.get('songWish') || ''),
       comment: String(fd.get('comment') || ''),
     };
     try {
@@ -81,12 +86,26 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Anzahl Personen</label>
-              <input name="guestCount" type="number" min={1} max={10} defaultValue={1} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" />
+              <input name="guestCount" type="number" min={1} max={maxGuests} defaultValue={1} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" />
             </div>
+            {showDietary && (
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Essenswünsche / Allergien</label>
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Essenswünsche</label>
               <textarea name="dietary" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
             </div>
+            )}
+            {showAllergies && (
+            <div>
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Allergien</label>
+              <textarea name="allergies" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="z.B. Nüsse, Laktose..." />
+            </div>
+            )}
+            {showSongWish && (
+            <div>
+              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Songwunsch</label>
+              <input name="songWish" type="text" className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" placeholder="Welcher Song bringt euch auf die Tanzfläche?" />
+            </div>
+            )}
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Nachricht (optional)</label>
               <textarea name="comment" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="Eure Nachricht an uns..." />
@@ -127,12 +146,26 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Anzahl Personen</label>
-              <input name="guestCount" type="number" min={1} max={10} defaultValue={1} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] outline-none focus:border-[var(--token-card-border)]" />
+              <input name="guestCount" type="number" min={1} max={maxGuests} defaultValue={1} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] outline-none focus:border-[var(--token-card-border)]" />
             </div>
+            {showDietary && (
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Essenswünsche / Allergien</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Essenswünsche</label>
               <textarea name="dietary" rows={3} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
             </div>
+            )}
+            {showAllergies && (
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Allergien</label>
+              <textarea name="allergies" rows={2} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)] resize-none" placeholder="z.B. Nüsse, Laktose..." />
+            </div>
+            )}
+            {showSongWish && (
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Songwunsch</label>
+              <input name="songWish" type="text" className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)]" placeholder="Welcher Song bringt euch auf die Tanzfläche?" />
+            </div>
+            )}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Nachricht (optional)</label>
               <textarea name="comment" rows={2} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)] resize-none" placeholder="Eure Nachricht an uns..." />
@@ -177,15 +210,29 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
           </div>
           <div>
             <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Anzahl Personen</label>
-            <input name="guestCount" type="number" min={1} max={10} defaultValue={1} className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none" />
+            <input name="guestCount" type="number" min={1} max={maxGuests} defaultValue={1} className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none" />
           </div>
+          {showDietary && (
           <div>
-            <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Essenswünsche / Allergien</label>
+            <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Essenswünsche</label>
             <div className="relative">
               <UtensilsCrossed className="absolute left-3 top-3 w-4 h-4 text-[color:var(--token-body)]" />
               <textarea name="dietary" rows={3} className="w-full pl-10 pr-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
             </div>
           </div>
+          )}
+          {showAllergies && (
+          <div>
+            <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Allergien</label>
+            <textarea name="allergies" rows={2} className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none resize-none" placeholder="z.B. Nüsse, Laktose..." />
+          </div>
+          )}
+          {showSongWish && (
+          <div>
+            <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Songwunsch</label>
+            <input name="songWish" type="text" className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none" placeholder="Welcher Song bringt euch auf die Tanzfläche?" />
+          </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Nachricht (optional)</label>
             <textarea name="comment" rows={2} className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none resize-none" placeholder="Eure Nachricht an uns..." />
