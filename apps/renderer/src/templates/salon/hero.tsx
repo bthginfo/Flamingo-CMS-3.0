@@ -30,8 +30,6 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
 
   const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity, trustStripColor};
 
-  if (styleVariant === 'modern') return <HeroModern {...props} />;
-  if (styleVariant === 'bold') return <HeroBold {...props} />;
   return <HeroClassic {...props} />;
 }
 
@@ -95,68 +93,3 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
   );
 }
 
-/* ─── MODERN: Split layout (text left / image right), clean minimalist, dusty-rose accents ─── */
-function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
-  return (
-    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg)]">
-      {(bgMode === 'image' && bgImage) ? (
-        <>
-          <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover lg:left-1/2 lg:w-1/2${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="50vw" />
-          {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover lg:left-1/2 lg:w-1/2 md:hidden" priority sizes="50vw" />}
-        </>
-      ) : (bgMode === 'color' && bgColor) ? (
-        <div className="absolute inset-0 lg:left-1/2 lg:w-1/2" style={{ backgroundColor: bgColor }} />
-      ) : null}
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-8 lg:gap-16 px-6 py-12 md:py-20 lg:grid-cols-2">
-        <div className="max-w-xl">
-          {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
-          <h1 className="mt-6 text-3xl md:text-5xl font-light leading-[1.05] text-[color:var(--token-heading)] sm:text-6xl lg:text-7xl" data-edit-path="headline">{headline}</h1>
-          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-          <div className="mt-3 h-px w-16 bg-[var(--token-badge-bg)]" />
-          <div className="mt-8 flex flex-wrap gap-3">
-            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}</a>}
-            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{secondaryCta.label}</a>}
-          </div>
-          <div className="mt-10 flex flex-wrap gap-3 text-sm text-[color:var(--token-muted)]">
-            {bookingHint && <span className="border-b border-[var(--token-card-border)] pb-1">{bookingHint}</span>}
-            {ratingText && <span className="border-b border-[var(--token-card-border)] pb-1">{ratingText}</span>}
-            {trustItems.map((item) => <span key={item} className="border-b border-[var(--token-card-border)] pb-1">{item}</span>)}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── BOLD: Fullscreen dark, hot-pink diagonal stripe, uppercase brutalist ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
-  return (
-    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111]" style={{ background: 'var(--token-section-bg, transparent)' }}>
-      {(bgMode === 'image' && bgImage) ? (
-        <>
-          <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover opacity-30${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="100vw" />
-          {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover opacity-30 md:hidden" priority sizes="100vw" />}
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />) : (<div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)]" />)}
-        </>
-      ) : (bgMode === 'color' && bgColor) ? (
-        <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
-      ) : null}
-      {/* Diagonal hot-pink stripe */}
-      <div className="absolute inset-0 overflow-hidden"><div className="absolute -right-20 top-[20%] h-24 w-[140%] rotate-[-8deg] bg-[var(--token-badge-bg)]" /></div>
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h1 className="mt-5 text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[color:var(--token-on-dark-heading)] sm:text-7xl lg:text-9xl" data-edit-path="headline">{headline}</h1>
-        {subline && <div className="mt-7 max-w-2xl text-lg font-bold uppercase leading-8 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-        <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-btn-secondary-border)] px-6 py-3 font-black uppercase text-[color:var(--token-btn-secondary-text)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{secondaryCta.label}</a>}
-        </div>
-        <div className="mt-10 flex flex-wrap gap-3 text-sm font-bold uppercase text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">
-          {bookingHint && <span className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-2">{bookingHint}</span>}
-          {ratingText && <span className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-2">{ratingText}</span>}
-          {trustItems.map((item) => <span key={item} className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-2">{item}</span>)}
-        </div>
-      </div>
-    </section>
-  );
-}

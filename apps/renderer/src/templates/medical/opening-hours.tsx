@@ -15,8 +15,6 @@ export function MedicalOpeningHoursSection({ data, styleVariant }: SectionProps)
   const ctaPrimary = asButton(data.ctaPrimary);
 
   const props = { header, days, acuteCareText, holidayNote, ctaPrimary };
-  if (styleVariant === 'modern') return <Modern {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

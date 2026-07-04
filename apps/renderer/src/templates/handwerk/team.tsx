@@ -26,8 +26,6 @@ export function TeamSection({ data, styleVariant }: Props) {
 
   const common = { headline, subline, badgeText, storyHeadline, storyText, storyImage, valuesHeadline, membersHeadline, members, values, stats, ref, inView };
 
-  if (styleVariant === 'modern') return <TeamModern {...common} />;
-  if (styleVariant === 'bold') return <TeamBold {...common} />;
   return <TeamClassic {...common} />;
 }
 
@@ -104,96 +102,3 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
   );
 }
 
-/* ─── MODERN: Large photos, overlaid text, clean lines ─── */
-function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, storyImage, membersHeadline, members, values, valuesHeadline, stats, ref, inView }: TProps) {
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
-        {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[color:var(--token-muted)]"><span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[color:var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[color:var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </motion.div>
-      {(storyHeadline || storyText) && (
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-12 md:mb-24">
-          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[3/2] rounded-lg overflow-hidden"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
-          <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
-            {storyHeadline && <h3 className="mb-4 text-2xl font-light text-[color:var(--token-heading)]">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line leading-loose text-[color:var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
-          </div>
-        </div>
-      )}
-      {stats.length > 0 && (
-        <div className="flex flex-wrap gap-8 md:gap-12 mb-24 justify-center">
-          {stats.map((s, i) => <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}><div className="text-4xl font-light text-[color:var(--token-accent)]" data-edit-path="value">{s.value}</div><div className="mt-1 text-xs uppercase tracking-wider text-[color:var(--token-muted)]" data-edit-path="label">{s.label}</div></div>)}
-        </div>
-      )}
-      {members.length > 0 && (
-        <div>
-          <h3 className="mb-10 text-xl font-light text-[color:var(--token-heading)]">{membersHeadline}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {members.map((m, i) => (
-              <div key={i} className="group" data-edit-collection="members" data-edit-index={i}>
-                <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
-                  {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover grayscale transition-all duration-500 group-hover:grayscale-0" sizes="300px" /> : <div className="h-full w-full bg-[var(--token-card-bg)]" />}
-                </div>
-                <h4 className="font-medium text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-                <p className="text-sm text-[color:var(--token-muted)]" data-edit-path="role">{m.role}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ─── BOLD: Angular, accent stripe, thick borders ─── */
-function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, storyImage, membersHeadline, members, values, valuesHeadline, stats, ref, inView }: TProps) {
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-3 font-medium text-[color:var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </motion.div>
-      {(storyHeadline || storyText) && (
-        <div className="flex flex-col lg:flex-row gap-8 items-start mb-10 md:mb-16">
-          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-[var(--token-card-border)] shadow-[6px_6px_0_var(--token-shadow)]"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
-          <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
-            {storyHeadline && <h3 className="mb-3 text-xl font-bold uppercase text-[color:var(--token-heading)]">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line leading-relaxed text-[color:var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
-          </div>
-        </div>
-      )}
-      {stats.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 md:mb-16">
-          {stats.map((s, i) => (
-            <div key={i} className="bg-[var(--token-card-bg)] p-5 text-center text-[color:var(--token-body)]" data-edit-collection="stats" data-edit-index={i}>
-              <div className="text-2xl font-black text-[color:var(--token-accent)]" data-edit-path="value">{s.value}</div>
-              <div className="mt-1 text-xs uppercase tracking-wider text-[color:var(--token-muted)]" data-edit-path="label">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      )}
-      {members.length > 0 && (
-        <div>
-          <h3 className="mb-8 text-xl font-bold uppercase text-[color:var(--token-heading)]">{membersHeadline}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {members.map((m, i) => (
-              <div key={i} className="flex items-start gap-4 border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-4 shadow-[3px_3px_0_var(--token-accent)]" data-edit-collection="members" data-edit-index={i}>
-                <div className="relative w-20 h-20 shrink-0 overflow-hidden">
-                  {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" sizes="80px" /> : <div className="h-full w-full bg-[var(--token-muted)]" />}
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold uppercase text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-                  <p className="text-xs font-bold uppercase text-[color:var(--token-accent)]" data-edit-path="role">{m.role}</p>
-                  {m.bio && <div className="rt-content mt-1 text-xs text-[color:var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}

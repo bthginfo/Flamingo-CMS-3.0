@@ -12,8 +12,6 @@ export function InsuranceInfoSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Versicherung & Abrechnung', 'Info');
   const items = asList<Insurance>(data.items);
 
-  if (styleVariant === 'modern') return <Modern header={header} items={items} />;
-  if (styleVariant === 'bold') return <Bold header={header} items={items} />;
   return <Classic header={header} items={items} />;
 }
 

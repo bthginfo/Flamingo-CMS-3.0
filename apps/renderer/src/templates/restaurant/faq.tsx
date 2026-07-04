@@ -16,8 +16,6 @@ export function RestaurantFaqSection({ data, styleVariant }: SectionProps) {
 
   const props = { headline, subline, badgeText, items, ctaPrimary };
 
-  if (styleVariant === 'modern') return <FaqModern {...props} />;
-  if (styleVariant === 'bold') return <FaqBold {...props} />;
   return <FaqClassic {...props} />;
 }
 
@@ -65,34 +63,3 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
   );
 }
 
-function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
-  return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-14">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <Accordion items={items} variant="modern" />
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
-    </div>
-  );
-}
-
-function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
-  return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-10">
-        {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-on-dark-heading)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 shadow-[4px_4px_0_var(--token-card-border)]">
-        <Accordion items={items} variant="bold" />
-      </div>
-      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{ctaPrimary.label}</a></div>}
-    </div>
-  );
-}

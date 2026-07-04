@@ -14,8 +14,6 @@ export function WeddingCoupleStorySection({ data, styleVariant }: Props) {
   const milestones = (data.milestones as Milestone[]) || [];
   const p = { badge, headline, story, image, milestones };
 
-  if (styleVariant === 'modern') return <Modern {...p} />;
-  if (styleVariant === 'bold') return <Bold {...p} />;
   return <Classic {...p} />;
 }
 

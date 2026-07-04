@@ -12,8 +12,6 @@ export function WeddingPartySection({ data, styleVariant }: Props) {
   const members = ((data.members as Array<{ name: string; role?: string; relationship?: string; image?: string; text?: string }>) || []).map((m) => m && ({ ...m, role: m.role ?? m.relationship ?? '' }));
   const p = { badge, headline, subline, members };
 
-  if (styleVariant === 'modern') return <Modern {...p} />;
-  if (styleVariant === 'bold') return <Bold {...p} />;
   return <Classic {...p} />;
 }
 

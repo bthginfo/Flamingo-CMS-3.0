@@ -16,8 +16,6 @@ export function WeddingDresscodeSection({ data, styleVariant }: Props) {
   const note = (data.note as string) || '';
   const p = { badge, headline, text, colors, hints, dos, donts, note };
 
-  if (styleVariant === 'modern') return <Modern {...p} />;
-  if (styleVariant === 'bold') return <Bold {...p} />;
   return <Classic {...p} />;
 }
 

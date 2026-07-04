@@ -16,8 +16,6 @@ export function RestaurantGallerySection({ data, styleVariant }: SectionProps) {
 
   const props = { headline, subline, badgeText, images, ctaPrimary };
 
-  if (styleVariant === 'modern') return <GalleryModern {...props} />;
-  if (styleVariant === 'bold') return <GalleryBold {...props} />;
   return <GalleryClassic {...props} />;
 }
 
@@ -47,52 +45,3 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
   );
 }
 
-function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Props) {
-  return (
-    <div>
-      <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <div className="grid gap-px border border-black/5 sm:grid-cols-2 lg:grid-cols-3">
-        {images.map((img, i) => (
-          <figure key={`${img.src}-${i}`} className="group overflow-hidden border border-black/5 bg-[var(--token-card-bg)]" data-edit-collection="images" data-edit-index={i}>
-            {img.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
-            <figcaption className="p-5">
-              {img.category && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="category">{img.category}</p>}
-              {img.caption && <p className="mt-1 text-sm font-light text-[color:var(--token-heading)]" data-edit-path="caption">{img.caption}</p>}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
-    </div>
-  );
-}
-
-function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props) {
-  return (
-    <div className="bg-[var(--token-btn-bg)] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
-      <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase" data-edit-path="headline">{headline}</h2>
-        <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-4 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {images.map((img, i) => (
-          <figure key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="images" data-edit-index={i}>
-            {img.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
-            <figcaption className="p-4">
-              {img.category && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="category">{img.category}</p>}
-              {img.caption && <p className="mt-1 text-sm font-bold" data-edit-path="caption">{img.caption}</p>}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
-    </div>
-  );
-}

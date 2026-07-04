@@ -18,8 +18,6 @@ export function MedicalTestimonialsSection({ data, styleVariant }: SectionProps)
 
   const props = { ...h, ratingValue, ratingCount, items, ctaPrimary };
 
-  if (styleVariant === 'modern') return <Mod {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

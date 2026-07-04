@@ -23,8 +23,6 @@ export function MedicalLocationContactSection({ data, styleVariant }: SectionPro
   const secondaryCta = asButton(data.secondaryCta);
 
   const props = { header, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta };
-  if (styleVariant === 'modern') return <Modern {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

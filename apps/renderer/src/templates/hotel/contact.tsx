@@ -25,8 +25,6 @@ export function HotelContactSection({ data, styleVariant }: SectionProps) {
 
   const props = { headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl };
 
-  if (styleVariant === 'modern') return <ContactModern {...props} />;
-  if (styleVariant === 'bold') return <ContactBold {...props} />;
   return <ContactClassic {...props} />;
 }
 
@@ -43,7 +41,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-6 max-w-3xl">
-          {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
+          {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
@@ -70,68 +68,3 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
   );
 }
 
-/* --- MODERN --- */
-function ContactModern({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl }: Props) {
-  return (
-    <div className="grid gap-12 lg:grid-cols-2">
-      <div>
-        <div className="mb-8 max-w-3xl">
-          {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-        </div>
-        {introText && <div className="font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-        <div className="mt-8 grid gap-4">
-          {infoCards.map((card, index) => (
-            <div key={`${card.label || 'item'}-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="infoCards" data-edit-index={index}>
-              <DynamicIcon editPath="icon" name={card.icon || 'mail'} size={18} className="text-[color:var(--token-muted)]" />
-              <div><p className="text-xs font-light text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-light text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 flex flex-wrap gap-4">
-          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="font-light text-[color:var(--token-heading)] underline underline-offset-4" data-edit-path="label">{contactCta.label}</a>}
-          {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="font-light text-[color:var(--token-muted)] underline underline-offset-4" data-edit-path="label">{routeCta.label}</a>}
-        </div>
-      </div>
-      <div className="border border-black/10 bg-[var(--token-card-bg)] p-8">
-        {image && <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
-        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
-      </div>
-    </div>
-  );
-}
-
-/* --- BOLD --- */
-function ContactBold({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl }: Props) {
-  return (
-    <div className="grid gap-10 lg:grid-cols-2">
-      <div>
-        <div className="mb-6 max-w-3xl">
-          {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-        </div>
-        {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-        <div className="mt-6 grid gap-3">
-          {infoCards.map((card, index) => (
-            <div key={`${card.label || 'item'}-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
-              <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} /></div>
-              <div><p className="text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-black text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{contactCta.label}</a>}
-          {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="border-2 border-[var(--token-card-border)] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
-        </div>
-      </div>
-      <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]">
-        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
-        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
-      </div>
-    </div>
-  );
-}

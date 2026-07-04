@@ -12,8 +12,6 @@ export function SeasonTeaserSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Die beste Zeit fuer Ihren Besuch', 'Saison');
   const seasons = asList<Season>(data.seasons);
 
-  if (styleVariant === 'modern') return <Modern header={header} seasons={seasons} />;
-  if (styleVariant === 'bold') return <Bold header={header} seasons={seasons} />;
   return <Classic header={header} seasons={seasons} />;
 }
 

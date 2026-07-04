@@ -23,8 +23,6 @@ export function TourismContactSection({ data, styleVariant }: SectionProps) {
   const secondaryCta = asButton(data.secondaryCta);
 
   const p = { header, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta };
-  if (styleVariant === 'modern') return <Modern {...p} />;
-  if (styleVariant === 'bold') return <Bold {...p} />;
   return <Classic {...p} />;
 }
 

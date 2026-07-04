@@ -25,8 +25,6 @@ export function MedicalStorySection({ data, styleVariant }: SectionProps) {
 
   const props = { ...h, storyText, imagePrimary, imageSecondary, founderName, founderRole, founderQuote, values, milestones, ctaPrimary };
 
-  if (styleVariant === 'modern') return <Mod {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

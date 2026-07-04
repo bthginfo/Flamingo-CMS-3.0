@@ -13,8 +13,6 @@ export function EventsCalendarSection({ data, styleVariant }: SectionProps) {
   const events = asList<EventItem>(data.events);
   const fallbackText = (data.fallbackText as string) || '';
 
-  if (styleVariant === 'modern') return <Modern header={header} events={events} fallbackText={fallbackText} />;
-  if (styleVariant === 'bold') return <Bold header={header} events={events} fallbackText={fallbackText} />;
   return <Classic header={header} events={events} fallbackText={fallbackText} />;
 }
 

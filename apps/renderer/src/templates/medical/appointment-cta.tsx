@@ -15,8 +15,6 @@ export function AppointmentCtaSection({ data, styleVariant }: SectionProps) {
   const notes = asList<string>(data.notes);
 
   const props = { header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes };
-  if (styleVariant === 'modern') return <Modern {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

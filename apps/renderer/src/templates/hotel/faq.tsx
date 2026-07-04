@@ -15,8 +15,6 @@ export function HotelFaqSection({ data, styleVariant }: SectionProps) {
 
   const props = { headline, subline, badgeText, items, ctaPrimary };
 
-  if (styleVariant === 'modern') return <FaqModern {...props} />;
-  if (styleVariant === 'bold') return <FaqBold {...props} />;
   return <FaqClassic {...props} />;
 }
 
@@ -30,7 +28,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -47,46 +45,3 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
   );
 }
 
-/* --- MODERN --- */
-function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
-  return (
-    <div>
-      <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <div className="divide-y divide-black/10 border-y border-black/10">
-        {items.map((item, index) => (
-          <details key={`${item.question || 'item'}-${index}`} className="group py-6" data-edit-collection="items" data-edit-index={index}>
-            <summary className="cursor-pointer font-light text-[color:var(--token-heading)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-4 text-sm font-light leading-7 text-[color:var(--token-muted)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
-          </details>
-        ))}
-      </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex font-light text-[color:var(--token-heading)] underline underline-offset-4" data-edit-path="label">{ctaPrimary.label}</a>}
-    </div>
-  );
-}
-
-/* --- BOLD --- */
-function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
-  return (
-    <div>
-      <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]">
-        {items.map((item, index) => (
-          <details key={`${item.question || 'item'}-${index}`} className="group border-b-2 border-[var(--token-card-border)] p-5 last:border-b-0" data-edit-collection="items" data-edit-index={index}>
-            <summary className="cursor-pointer font-black uppercase text-[color:var(--token-heading)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
-          </details>
-        ))}
-      </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{ctaPrimary.label}</a>}
-    </div>
-  );
-}

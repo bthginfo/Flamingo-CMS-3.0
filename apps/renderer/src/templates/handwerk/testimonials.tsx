@@ -18,8 +18,6 @@ export function TestimonialsSection({ data, styleVariant }: Props) {
   const items = ((data.items as { quote: string; name?: string; author?: string; context?: string; role?: string; rating?: number }[]) || [])
     .map((it) => it && ({ quote: it.quote, name: it.name ?? it.author ?? '', context: it.context ?? it.role, rating: it.rating }));
 
-  if (styleVariant === 'modern') return <TestimonialsModern headline={headline} subline={subline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
-  if (styleVariant === 'bold') return <TestimonialsBold headline={headline} subline={subline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
   return <TestimonialsClassic headline={headline} subline={subline} badgeText={badgeText} ratingValue={ratingValue} ratingCount={ratingCount} items={items} />;
 }
 
@@ -51,80 +49,3 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
   );
 }
 
-/* ─── MODERN: Masonry-style grid, minimal quote styling, clean typography ─── */
-function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingCount, items }: TProps) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10 md:mb-16">
-        <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[color:var(--token-muted)]">
-          <span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span>
-        </div>
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[color:var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <p className="mt-3 max-w-2xl text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
-        {(ratingValue || ratingCount) && (
-          <p className="mt-4 text-sm text-[color:var(--token-muted)]">{ratingValue && `${ratingValue}/5`}{ratingCount && ` · ${ratingCount}+ Bewertungen`}</p>
-        )}
-      </motion.div>
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-        {items.map((item, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="break-inside-avoid rounded-lg border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8"
-           data-edit-collection="items" data-edit-index={i}>
-            <p className="leading-relaxed text-[color:var(--token-body)] italic"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>
-            <div className="mt-6 border-t border-[var(--token-card-border)] pt-4">
-              <p className="text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</p>
-              {item.context && <p className="mt-0.5 text-xs text-[color:var(--token-muted)]">{item.context}</p>}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── BOLD: Horizontal scroll cards, thick borders, accent highlights, bold quote ─── */
-function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCount, items }: TProps) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <p className="mt-3 max-w-2xl text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
-        {(ratingValue || ratingCount) && (
-          <div className="flex items-center gap-2 mt-4">
-            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-[var(--token-accent)] text-[color:var(--token-rating-star)]" />)}</div>
-            <span className="text-sm font-bold text-[color:var(--token-body)]">{ratingValue}/5</span>
-          </div>
-        )}
-      </motion.div>
-      <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory -mx-6 px-6">
-        {items.map((item, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: 30 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow)]"
-           data-edit-collection="items" data-edit-index={i}>
-            <Quote size={24} className="mb-3 text-[color:var(--token-quote)]" />
-            <div className="rt-content font-medium leading-relaxed text-[color:var(--token-body)]" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />
-            <div className="mt-4 border-t-2 border-[var(--token-card-border)] pt-3">
-              <p className="text-sm font-bold uppercase tracking-wide text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</p>
-              {item.context && <p className="mt-0.5 text-xs text-[color:var(--token-muted)]">{item.context}</p>}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}

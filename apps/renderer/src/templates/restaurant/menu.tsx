@@ -36,12 +36,6 @@ export function MenuSection({ data, styleVariant }: SectionProps) {
   const footnote = (data.footnote as string) || '';
   const ctaPrimary = asButton(data.ctaPrimary);
 
-  if (styleVariant === 'bold') {
-    return <MenuBold headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
-  }
-  if (styleVariant === 'modern') {
-    return <MenuModern headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
-  }
   return <MenuClassic headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
 }
 
@@ -66,34 +60,6 @@ function MenuClassic(props: MenuViewProps) {
       </div>
       <MenuFooter {...props} />
     </motion.div>
-  );
-}
-
-function MenuModern(props: MenuViewProps) {
-  return (
-    <div className="space-y-12">
-      <MenuHeader {...props} align="left" />
-      <div className="grid gap-8 lg:grid-cols-2">
-        {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="modern"  data-edit-collection="categories" data-edit-index={index}/>
-        ))}
-      </div>
-      <MenuFooter {...props} />
-    </div>
-  );
-}
-
-function MenuBold(props: MenuViewProps) {
-  return (
-    <div className="bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] p-6 sm:p-10 shadow-sm">
-      <MenuHeader {...props} align="left" inverted />
-      <div className="grid gap-5">
-        {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="bold"  data-edit-collection="categories" data-edit-index={index}/>
-        ))}
-      </div>
-      <MenuFooter {...props} inverted />
-    </div>
   );
 }
 

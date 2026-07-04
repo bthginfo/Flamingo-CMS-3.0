@@ -12,8 +12,6 @@ export function PracticeTeamSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Praxisteam', 'Assistenz');
   const members = asList<Member>(data.members);
 
-  if (styleVariant === 'modern') return <Modern header={header} members={members} />;
-  if (styleVariant === 'bold') return <Bold header={header} members={members} />;
   return <Classic header={header} members={members} />;
 }
 

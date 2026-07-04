@@ -13,8 +13,6 @@ export function ProcessStepsSection({ data, styleVariant }: Props) {
   const subline = (data.subline as string) || '';
   const steps = (data.steps as { title: string; text: string; icon?: string }[]) || [];
 
-  if (styleVariant === 'modern') return <ProcessModern headline={headline} subline={subline} badgeText={badgeText} steps={steps} />;
-  if (styleVariant === 'bold') return <ProcessBold headline={headline} subline={subline} badgeText={badgeText} steps={steps} />;
   return <ProcessClassic headline={headline} subline={subline} badgeText={badgeText} steps={steps} />;
 }
 
@@ -61,58 +59,3 @@ function ProcessClassic({ headline, subline, badgeText, steps }: PProps) {
   );
 }
 
-/* ─── MODERN: Numbered list, clean lines, generous spacing ─── */
-function ProcessModern({ headline, subline, badgeText, steps }: PProps) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
-        {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[color:var(--token-muted)]"><span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[color:var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
-      </motion.div>
-      <div className="max-w-3xl mx-auto space-y-0">
-        {steps.map((step, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="flex gap-8 border-b border-[var(--token-card-border)] py-10 last:border-b-0" data-edit-collection="steps" data-edit-index={i}>
-            <div className="shrink-0 text-3xl font-extralight text-[color:var(--token-muted)] md:text-5xl">{String(i + 1).padStart(2, '0')}</div>
-            <div>
-              <h3 className="mb-2 text-lg font-medium text-[color:var(--token-heading)]" data-edit-path="title">{step.title}</h3>
-              <div className="rt-content leading-relaxed text-[color:var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── BOLD: Horizontal steps, numbered blocks, thick accents ─── */
-function ProcessBold({ headline, subline, badgeText, steps }: PProps) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
-      </motion.div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {steps.map((step, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="relative border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow)]" data-edit-collection="steps" data-edit-index={i}>
-            <div className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center bg-[var(--token-accent)] text-sm font-black text-[color:var(--token-badge-text)]">
-              {i + 1}
-            </div>
-            <div className="pt-6">
-              <h3 className="mb-2 text-base font-bold uppercase tracking-wide text-[color:var(--token-heading)]" data-edit-path="title">{step.title}</h3>
-              <div className="rt-content text-sm leading-relaxed text-[color:var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}

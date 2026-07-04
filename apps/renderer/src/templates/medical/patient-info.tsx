@@ -13,8 +13,6 @@ export function PatientInfoSection({ data, styleVariant }: SectionProps) {
   const cards = asList<InfoCard>(data.cards);
 
   const props = { header, introText, cards };
-  if (styleVariant === 'modern') return <Modern {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

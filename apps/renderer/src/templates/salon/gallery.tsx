@@ -14,8 +14,6 @@ export function SalonGallerySection({ data, styleVariant }: SectionProps) {
 
   const props = { headline, subline, badgeText, images };
 
-  if (styleVariant === 'modern') return <GalleryModern {...props} />;
-  if (styleVariant === 'bold') return <GalleryBold {...props} />;
   return <GalleryClassic {...props} />;
 }
 
@@ -44,48 +42,3 @@ function GalleryClassic({ headline, subline, badgeText, images }: Props) {
   );
 }
 
-function GalleryModern({ headline, subline, badgeText, images }: Props) {
-  return (
-    <div>
-      <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {images.map((img, i) => (
-          <article key={`${img.src}-${i}`} className="group" data-edit-collection="images" data-edit-index={i}>
-            {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
-            <div className="mt-3">
-              {img.category && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="category">{img.category}</p>}
-              {(img.caption || img.alt) && <p className="mt-1 text-sm font-light text-[color:var(--token-heading)]" data-edit-path="caption">{img.caption || img.alt}</p>}
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function GalleryBold({ headline, subline, badgeText, images }: Props) {
-  return (
-    <div>
-      <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {images.map((img, i) => (
-          <article key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="images" data-edit-index={i}>
-            {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
-            <div className="p-4">
-              {img.category && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="category">{img.category}</span>}
-              {(img.caption || img.alt) && <p className="mt-2 text-sm font-bold uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="caption">{img.caption || img.alt}</p>}
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  );
-}

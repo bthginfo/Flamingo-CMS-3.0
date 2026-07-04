@@ -25,8 +25,6 @@ export function RestaurantContactSection({ data, styleVariant }: SectionProps) {
 
   const props = { headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta };
 
-  if (styleVariant === 'modern') return <Modern {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

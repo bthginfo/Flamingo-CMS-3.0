@@ -13,8 +13,6 @@ export function VisitorInfoSection({ data, styleVariant }: SectionProps) {
   const introText = (data.introText as string) || '';
   const blocks = asList<InfoBlock>(data.blocks);
 
-  if (styleVariant === 'modern') return <Modern header={header} introText={plain(introText)} blocks={blocks} />;
-  if (styleVariant === 'bold') return <Bold header={header} introText={plain(introText)} blocks={blocks} />;
   return <Classic header={header} introText={plain(introText)} blocks={blocks} />;
 }
 

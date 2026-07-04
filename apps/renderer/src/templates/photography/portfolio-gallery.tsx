@@ -10,7 +10,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 type GalleryImage = { src: string; alt?: string; category?: string; location?: string };
 
-export function PortfolioGallerySection({ data, styleVariant }: Props) {
+export function PortfolioGallerySection({ data }: Props) {
   const badge = (data.badge as string) || 'Portfolio';
   const headline = (data.headline as string) || 'Meine Arbeiten';
   const subline = (data.subline as string) || '';
@@ -39,48 +39,39 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
     return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = ''; };
   }, [lightbox, navigate]);
 
-  const isBold = styleVariant === 'bold';
-  const isModern = styleVariant === 'modern';
-
-  const sectionClasses = isBold ? 'py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : isModern ? 'py-24 md:py-36 px-4 md:px-6' : 'py-12 md:py-24 px-4 md:px-6 bg-[var(--token-card-bg)]';
+  const filterButtonClass = (active: boolean) =>
+    `px-4 py-2 rounded-full text-sm font-medium transition-colors ${active
+      ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)]'
+      : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-[var(--token-section-bg-alt,theme(colors.gray.200))]'}`;
 
   return (
-    <section className={sectionClasses}>
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-card-bg)]">
       <div className="max-w-7xl mx-auto">
-        <div className={isModern ? 'mb-16' : 'text-center mb-12'}>
-          {isBold && <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>}
-          {isModern && <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>}
-          {!isBold && !isModern && <span className="section-badge" data-edit-path="badge">{badge}</span>}
-          {isModern ? (
-            <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] break-words" data-edit-path="headline">{headline}</h2>
-          ) : isBold ? (
-            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide break-words" data-edit-path="headline">{headline}</h2>
-          ) : (
-            <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          )}
-          {subline && !isModern && !isBold && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+        <div className="text-center mb-12">
+          <span className="section-badge" data-edit-path="badge">{badge}</span>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
 
         {categories.length > 1 && (
-          <div className={`flex flex-wrap ${isModern ? '' : 'justify-center'} gap-2 mb-10`}>
-            <button onClick={() => setFilter(null)} className={isModern ? `px-3 py-1.5 text-sm transition-colors ${!filter ? 'text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)]' : 'text-[color:var(--token-body)] hover:text-[color:var(--token-heading)]'}` : isBold ? `px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors ${!filter ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] hover:text-[color:var(--token-on-dark-heading)] border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]'}` : `px-4 py-2 rounded-full text-sm font-medium transition-colors ${!filter ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-[var(--token-section-bg-alt,theme(colors.gray.200))]'}`}>
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
+            <button onClick={() => setFilter(null)} className={filterButtonClass(!filter)}>
               Alle
             </button>
             {categories.map(cat => (
-              <button key={cat} onClick={() => setFilter(cat)} className={isModern ? `px-3 py-1.5 text-sm transition-colors ${filter === cat ? 'text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)]' : 'text-[color:var(--token-body)] hover:text-[color:var(--token-heading)]'}` : isBold ? `px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors ${filter === cat ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] hover:text-[color:var(--token-on-dark-heading)] border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]'}` : `px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === cat ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-[var(--token-section-bg-alt,theme(colors.gray.200))]'}`}>
+              <button key={cat} onClick={() => setFilter(cat)} className={filterButtonClass(filter === cat)}>
                 {cat}
               </button>
             ))}
           </div>
         )}
 
-        <div className={isModern ? 'grid grid-cols-2 md:grid-cols-4 gap-1' : isBold ? 'columns-2 md:columns-3 lg:columns-4 gap-2 space-y-2' : 'columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3'}>
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
           <AnimatePresence mode="popLayout">
             {filtered.map((img, i) => (
-              <motion.div key={img.src} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} className={`${isModern ? 'relative aspect-square' : 'break-inside-avoid'} cursor-pointer group relative ${!isModern ? 'rounded-lg' : ''} overflow-hidden`} onClick={() => setLightbox(i)} data-edit-collection="filtered" data-edit-index={i}>
-                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} {...(isModern ? { fill: true, className: 'object-cover transition-transform duration-500 group-hover:scale-105' } : { width: 600, height: 800, className: 'w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105' })} />
-                {isBold && <div className="absolute inset-0 border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" />}
-                <div className={`absolute inset-0 ${isBold ? 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)]' : 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_30%,transparent)]'} transition-colors duration-300 flex items-end`}>
+              <motion.div key={img.src} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} className="break-inside-avoid cursor-pointer group relative rounded-lg overflow-hidden" onClick={() => setLightbox(i)} data-edit-collection="filtered" data-edit-index={i}>
+                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} width={600} height={800} className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_30%,transparent)] transition-colors duration-300 flex items-end">
                   {(img.alt || img.location) && (
                     <div className="p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[color:var(--token-on-dark-heading)] text-sm">
                       {img.alt && <p className="font-medium">{img.alt}</p>}
@@ -94,8 +85,8 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
         </div>
 
         {cta?.label && (
-          <div className={`${isModern ? '' : 'text-center'} mt-12`}>
-            <a data-edit-link="cta" href={cta.href} className={isModern ? 'inline-block text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] hover:opacity-70' : isBold ? 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity' : 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg'}>
+          <div className="text-center mt-12">
+            <a data-edit-link="cta" href={cta.href} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg">
               <span data-edit-path="label">{cta.label}</span>
               {cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} />}
             </a>

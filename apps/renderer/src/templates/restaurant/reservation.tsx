@@ -38,8 +38,6 @@ export function ReservationSection({ data, styleVariant }: SectionProps) {
 
   const props: ReservationViewProps = { headline, subline, badgeText, introText, formEnabled, submitLabel, phoneCta, externalBookingCta, partySizeOptions, timeHint, policyText, image };
 
-  if (styleVariant === 'bold') return <ReservationBold {...props} />;
-  if (styleVariant === 'modern') return <ReservationModern {...props} />;
   return <ReservationClassic {...props} />;
 }
 
@@ -136,56 +134,6 @@ function ReservationClassic(props: ReservationViewProps) {
         {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} />}
       </div>
     </motion.div>
-  );
-}
-
-function ReservationModern(props: ReservationViewProps) {
-  return (
-    <div className="grid gap-16 lg:grid-cols-[1fr_0.8fr]">
-      <div className="space-y-6">
-        {props.badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{props.badgeText}</p>}
-        <h2 className="text-3xl font-light text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{props.headline}</h2>
-        <div className="h-px w-16 bg-[var(--token-badge-bg)]" />
-        {props.subline && <div className="font-light leading-relaxed text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: props.subline }} />}
-        {props.introText && <p className="font-light leading-7 text-[color:var(--token-muted)]">{plain(props.introText)}</p>}
-        <div className="flex flex-wrap gap-4">
-          {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]"><CalendarDays size={17} /><span data-edit-path="label">{props.externalBookingCta.label}</span></a>}
-          {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 font-light text-[color:var(--token-muted)]"><Phone size={17} /><span data-edit-path="label">{props.phoneCta.label}</span></a>}
-        </div>
-        {props.timeHint && <p className="text-sm font-light text-[color:var(--token-muted)]">{props.timeHint}</p>}
-        {props.policyText && <p className="text-xs font-light text-[color:var(--token-muted)]">{props.policyText}</p>}
-      </div>
-      <div className="border border-black/5 p-6">
-        {props.image && <div className="relative mb-6 aspect-[4/3] overflow-hidden border border-black/5"><Image data-edit-image="image" src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} />}
-      </div>
-    </div>
-  );
-}
-
-function ReservationBold(props: ReservationViewProps) {
-  return (
-    <div className="bg-[var(--token-btn-bg)] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
-      <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr]">
-        <div className="space-y-6">
-          {props.badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{props.badgeText}</p>}
-          <h2 className="text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{props.headline}</h2>
-          <div className="h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-          {props.subline && <div className="text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: props.subline }} />}
-          {props.introText && <p className="leading-7 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_65%,transparent)]">{plain(props.introText)}</p>}
-          <div className="flex flex-wrap gap-3">
-            {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><CalendarDays size={17} /><span data-edit-path="label">{props.externalBookingCta.label}</span></a>}
-            {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-none border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_40%,transparent)] px-6 py-3 font-bold uppercase"><Phone size={17} /><span data-edit-path="label">{props.phoneCta.label}</span></a>}
-          </div>
-          {props.timeHint && <p className="text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)]">{props.timeHint}</p>}
-          {props.policyText && <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)]">{props.policyText}</p>}
-        </div>
-        <div className="border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] p-5 shadow-[4px_4px_0_rgba(255,255,255,0.15)]">
-          {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)]"><Image data-edit-image="image" src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} dark />}
-        </div>
-      </div>
-    </div>
   );
 }
 

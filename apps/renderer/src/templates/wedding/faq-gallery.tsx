@@ -12,40 +12,6 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'FAQ';
   const headline = (data.headline as string) || 'Häufige Fragen';
   const items = (data.items as Array<{ question: string; answer: string }>) || [];
-  const isBold = styleVariant === 'bold';
-  const isModern = styleVariant === 'modern';
-
-  if (isModern) {
-    return (
-      <section className="py-24 md:py-36 px-4 md:px-6">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
-          <div className="space-y-0">
-            {items.map((item, i) => (
-              <FaqItem key={i} question={item.question} answer={plain(item.answer)} index={i} variant="modern"  data-edit-collection="items" data-edit-index={i}/>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (isBold) {
-    return (
-      <section className="py-16 md:py-24 px-4 md:px-6">
-        <div className="max-w-3xl mx-auto">
-          <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
-          <div className="space-y-2">
-            {items.map((item, i) => (
-              <FaqItem key={i} question={item.question} answer={plain(item.answer)} index={i} variant="bold"  data-edit-collection="items" data-edit-index={i}/>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
@@ -106,45 +72,6 @@ export function WeddingGallerySection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Galerie';
   const headline = (data.headline as string) || 'Momente';
   const images = (data.images as Array<{ src: string; alt?: string }>) || [];
-  const isBold = styleVariant === 'bold';
-  const isModern = styleVariant === 'modern';
-
-  if (isModern) {
-    return (
-      <section className="py-24 md:py-36 px-4 md:px-6">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
-            {images.map((img, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative aspect-square" data-edit-collection="images" data-edit-index={i}>
-                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (isBold) {
-    return (
-      <section className="py-16 md:py-24 px-4 md:px-6">
-        <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
-          <div className="columns-2 md:columns-3 gap-2 space-y-2">
-            {images.map((img, i) => (
-              <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative break-inside-avoid overflow-hidden" data-edit-collection="images" data-edit-index={i}>
-                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} width={600} height={800} className="w-full h-auto object-cover" />
-                <div className="absolute inset-0 border border-[color:var(--token-card-border)]" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">

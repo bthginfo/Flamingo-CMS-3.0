@@ -14,8 +14,6 @@ export function EmergencyInfoSection({ data, styleVariant }: SectionProps) {
   const ctaPrimary = asButton(data.ctaPrimary);
 
   const props = { header, introText, items, ctaPrimary };
-  if (styleVariant === 'modern') return <Modern {...props} />;
-  if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 

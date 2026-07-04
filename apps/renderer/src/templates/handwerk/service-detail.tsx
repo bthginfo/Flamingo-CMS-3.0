@@ -16,8 +16,6 @@ export function ServiceDetailSection({ data, styleVariant }: Props) {
   const badgeText = (data.badgeText as string) || '';
   const items = (data.items as ServiceItem[]) || [];
 
-  if (styleVariant === 'modern') return <ServiceModern headline={headline} subline={plain(subline)} badgeText={badgeText} items={items} />;
-  if (styleVariant === 'bold') return <ServiceBold headline={headline} subline={plain(subline)} badgeText={badgeText} items={items} />;
   return <ServiceClassic headline={headline} subline={plain(subline)} badgeText={badgeText} items={items} />;
 }
 
@@ -71,88 +69,3 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
   );
 }
 
-/* ─── MODERN: Full-width images, overlaid text, minimal ─── */
-function ServiceModern({ headline, subline, badgeText, items }: SProps) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
-        {badgeText && <div className="flex items-center gap-3 text-sm text-[color:var(--token-muted)] mb-4 tracking-wide uppercase"><span className="w-8 h-px bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
-        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-[color:var(--token-body)] tracking-tight" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="text-lg text-[color:var(--token-body)] mt-4 max-w-2xl rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </motion.div>
-      <div className="space-y-20">
-        {items.map((item, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.1 }} data-edit-collection="items" data-edit-index={i}>
-            {item.mediaType === 'image' && item.image && (
-              <div className="relative aspect-[21/9] rounded-lg overflow-hidden mb-8">
-                <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover" sizes="100vw" />
-              </div>
-            )}
-            <div className="max-w-2xl">
-              <h3 className="text-2xl font-medium text-[color:var(--token-body)] mb-3" data-edit-path="title">{item.title}</h3>
-              <p className="text-[color:var(--token-body)] leading-loose rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
-              {item.features && item.features.length > 0 && (
-                <div className="flex flex-wrap gap-3 mt-4">
-                  {item.features.map((f, fi) => <span key={fi} className="text-xs text-[color:var(--token-muted)] border border-[var(--token-card-border)] rounded px-3 py-1" data-edit-collection="features" data-edit-index={fi}>{f}</span>)}
-                </div>
-              )}
-              {item.ctaLabel && item.ctaHref && (
-                <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[color:var(--token-body)] font-medium mt-6 border-b border-[var(--token-card-border)] pb-0.5 hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={14} />}
-                </a>
-              )}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── BOLD: Stacked cards, thick borders, numbered ─── */
-function ServiceBold({ headline, subline, badgeText, items }: SProps) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
-  return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
-        {badgeText && <span className="inline-block bg-[var(--token-icon)] text-[color:var(--token-body)] font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4" data-edit-path="badgeText">{badgeText}</span>}
-        {headline && <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tight text-[color:var(--token-body)]" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="text-[color:var(--token-body)] mt-3 font-medium rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </motion.div>
-      <div className="space-y-6">
-        {items.map((item, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-shadow)] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={i}>
-            {item.mediaType === 'image' && item.image && (
-              <div className="relative w-full lg:w-64 aspect-[4/3] lg:aspect-square shrink-0 overflow-hidden">
-                <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover" sizes="256px" />
-              </div>
-            )}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="w-8 h-8 bg-[var(--token-icon)] text-[color:var(--token-body)] font-black text-sm flex items-center justify-center">{i + 1}</span>
-                <h3 className="font-bold uppercase tracking-wide text-lg text-[color:var(--token-body)]" data-edit-path="title">{item.title}</h3>
-              </div>
-              <p className="text-[color:var(--token-body)] leading-relaxed rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
-              {item.features && item.features.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {item.features.map((f, fi) => <span key={fi} className="text-xs font-bold uppercase bg-[color-mix(in_srgb,var(--token-card-bg)_70%,var(--token-icon)_30%)] text-[color:var(--token-body)] px-2 py-1" data-edit-collection="features" data-edit-index={fi}>{f}</span>)}
-                </div>
-              )}
-              {item.ctaLabel && item.ctaHref && (
-                <a href={item.ctaHref} className="inline-flex items-center gap-2 mt-4 font-bold uppercase text-sm text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={14} />}
-                </a>
-              )}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}

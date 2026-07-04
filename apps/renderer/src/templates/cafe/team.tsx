@@ -15,8 +15,6 @@ export function CafeTeamSection({ data, styleVariant }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
 
-  if (styleVariant === 'modern') return <Modern headline={headline} subline={plain(subline)} members={members} ref={ref} inView={inView} />;
-  if (styleVariant === 'bold') return <Bold headline={headline} subline={plain(subline)} members={members} ref={ref} inView={inView} />;
   return <Classic headline={headline} subline={plain(subline)} members={members} ref={ref} inView={inView} />;
 }
 

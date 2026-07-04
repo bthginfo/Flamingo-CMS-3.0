@@ -19,8 +19,6 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const submitted = status === 'success';
-  const isBold = styleVariant === 'bold';
-  const isModern = styleVariant === 'modern';
 
   const deadlineStr = deadline ? new Date(deadline).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 
@@ -49,131 +47,11 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-lg mx-auto text-center">
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${isBold ? 'bg-[color-mix(in_srgb,var(--token-badge-bg)_20%,transparent)]' : 'bg-[var(--token-success-bg)]'}`}>
-            <Check className={`w-8 h-8 ${isBold ? 'text-[color:var(--token-check)]' : 'text-[var(--token-check)]'}`} />
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center bg-[var(--token-success-bg)]`}>
+            <Check className={`w-8 h-8 text-[var(--token-check)]`} />
           </motion.div>
           <h2 className="text-2xl font-semibold text-[color:var(--token-heading)]">Vielen Dank!</h2>
-          <p className={`mt-3 ${isBold ? 'text-[color:var(--token-muted)]' : 'text-[color:var(--token-muted)]'}`}>Wir haben eure Antwort erhalten und freuen uns auf euch.</p>
-        </div>
-      </section>
-    );
-  }
-
-  if (isModern) {
-    return (
-      <section className="py-24 md:py-36 px-4 md:px-6">
-        <div className="max-w-md mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-4 break-words" data-edit-path="headline">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-body)] text-sm mb-2" data-edit-path="subline">{plain(subline)}</p>}
-          {deadlineStr && <p className="text-[color:var(--token-body)] text-xs uppercase tracking-wider mb-12">Bis {deadlineStr}</p>}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {status === 'error' && <p className="text-sm text-[var(--token-danger)] flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Name(n)</label>
-              <input name="name" type="text" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" placeholder="Vor- und Nachname" />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">E-Mail</label>
-              <input name="email" type="email" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" placeholder="eure@email.de" />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Zusage</label>
-              <div className="flex gap-6 py-2">
-                <label className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]"><input type="radio" name="attending" value="yes" defaultChecked className="accent-[var(--token-icon)]" /> Wir kommen</label>
-                <label className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]"><input type="radio" name="attending" value="no" className="accent-[var(--token-icon)]" /> Leider nicht</label>
-              </div>
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Anzahl Personen</label>
-              <input name="guestCount" type="number" min={1} max={maxGuests} defaultValue={1} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" />
-            </div>
-            {showDietary && (
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Essenswünsche</label>
-              <textarea name="dietary" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
-            </div>
-            )}
-            {showAllergies && (
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Allergien</label>
-              <textarea name="allergies" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="z.B. Nüsse, Laktose..." />
-            </div>
-            )}
-            {showSongWish && (
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Songwunsch</label>
-              <input name="songWish" type="text" className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)]" placeholder="Welcher Song bringt euch auf die Tanzfläche?" />
-            </div>
-            )}
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-label)] mb-2">Nachricht (optional)</label>
-              <textarea name="comment" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-input-border)] focus:border-[color:var(--token-input-border)] outline-none bg-transparent text-[color:var(--token-input-text)] resize-none" placeholder="Eure Nachricht an uns..." />
-            </div>
-            <button type="submit" disabled={status === 'loading'} className="w-full py-3 border border-[color:var(--token-card-border)] text-[color:var(--token-heading)] text-sm uppercase tracking-[0.2em] hover:bg-[var(--token-section-bg-alt)] hover:text-[color:var(--token-on-dark-heading)] transition-colors mt-8 disabled:opacity-50">
-              {status === 'loading' ? 'Wird gesendet…' : 'Zusagen'}
-            </button>
-          </form>
-        </div>
-      </section>
-    );
-  }
-
-  if (isBold) {
-    return (
-      <section className="py-16 md:py-24 px-4 md:px-6">
-        <div className="max-w-lg mx-auto">
-          <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words" data-edit-path="headline">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-muted)] mb-2" data-edit-path="subline">{plain(subline)}</p>}
-          {deadlineStr && <p className="text-[color:var(--token-eyebrow)] text-sm font-bold mb-10">Bis {deadlineStr}</p>}
-          <form onSubmit={handleSubmit} className="space-y-5 border-2 border-[color:var(--token-card-border)] p-8">
-            {status === 'error' && <p className="text-sm text-[var(--token-danger)] flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Name(n)</label>
-              <input name="name" type="text" required className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)]" placeholder="Vor- und Nachname" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">E-Mail</label>
-              <input name="email" type="email" required className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)]" placeholder="eure@email.de" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Zusage</label>
-              <div className="flex gap-6 py-2">
-                <label className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]"><input type="radio" name="attending" value="yes" defaultChecked className="accent-brand-accent" /> Wir kommen</label>
-                <label className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]"><input type="radio" name="attending" value="no" className="accent-brand-accent" /> Leider nicht</label>
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Anzahl Personen</label>
-              <input name="guestCount" type="number" min={1} max={maxGuests} defaultValue={1} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] outline-none focus:border-[var(--token-card-border)]" />
-            </div>
-            {showDietary && (
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Essenswünsche</label>
-              <textarea name="dietary" rows={3} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
-            </div>
-            )}
-            {showAllergies && (
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Allergien</label>
-              <textarea name="allergies" rows={2} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)] resize-none" placeholder="z.B. Nüsse, Laktose..." />
-            </div>
-            )}
-            {showSongWish && (
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Songwunsch</label>
-              <input name="songWish" type="text" className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)]" placeholder="Welcher Song bringt euch auf die Tanzfläche?" />
-            </div>
-            )}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)] mb-2">Nachricht (optional)</label>
-              <textarea name="comment" rows={2} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt)] border-2 border-[color:var(--token-card-border)] text-[color:var(--token-heading)] placeholder:text-[color:var(--token-muted)] outline-none focus:border-[var(--token-card-border)] resize-none" placeholder="Eure Nachricht an uns..." />
-            </div>
-            <button type="submit" disabled={status === 'loading'} className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity disabled:opacity-50">
-              <Send className="w-4 h-4" /> {status === 'loading' ? 'Wird gesendet…' : 'Zusagen'}
-            </button>
-          </form>
+          <p className={`mt-3 text-[color:var(--token-muted)]`}>Wir haben eure Antwort erhalten und freuen uns auf euch.</p>
         </div>
       </section>
     );
@@ -223,14 +101,14 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
           )}
           {showAllergies && (
           <div>
-            <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Allergien</label>
-            <textarea name="allergies" rows={2} className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none resize-none" placeholder="z.B. Nüsse, Laktose..." />
+            <label className="block text-sm font-medium text-[color:var(--token-label)] mb-1">Allergien</label>
+            <textarea name="allergies" rows={2} className="w-full px-4 py-3 border border-[color:var(--token-input-border)] text-[color:var(--token-input-text)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none resize-none" placeholder="z.B. Nüsse, Laktose..." />
           </div>
           )}
           {showSongWish && (
           <div>
-            <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Songwunsch</label>
-            <input name="songWish" type="text" className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none" placeholder="Welcher Song bringt euch auf die Tanzfläche?" />
+            <label className="block text-sm font-medium text-[color:var(--token-label)] mb-1">Songwunsch</label>
+            <input name="songWish" type="text" className="w-full px-4 py-3 border border-[color:var(--token-input-border)] text-[color:var(--token-input-text)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none" placeholder="Welcher Song bringt euch auf die Tanzfläche?" />
           </div>
           )}
           <div>

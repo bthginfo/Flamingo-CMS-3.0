@@ -16,8 +16,6 @@ export function PlacesMapSection({ data, styleVariant }: SectionProps) {
   const mapFallbackText = (data.mapFallbackText as string) || 'Karte im CMS hinterlegen';
 
   const p = { header, mapEmbedUrl, places, ctaPrimary, mapFallbackText };
-  if (styleVariant === 'modern') return <Modern {...p} />;
-  if (styleVariant === 'bold') return <Bold {...p} />;
   return <Classic {...p} />;
 }
 

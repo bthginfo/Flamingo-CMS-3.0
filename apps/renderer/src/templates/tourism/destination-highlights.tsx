@@ -13,8 +13,6 @@ export function DestinationHighlightsSection({ data, styleVariant }: SectionProp
   const items = asList<Highlight>(data.items);
   const ctaPrimary = asButton(data.ctaPrimary);
 
-  if (styleVariant === 'modern') return <Modern header={header} items={items} ctaPrimary={ctaPrimary} />;
-  if (styleVariant === 'bold') return <Bold header={header} items={items} ctaPrimary={ctaPrimary} />;
   return <Classic header={header} items={items} ctaPrimary={ctaPrimary} />;
 }
 

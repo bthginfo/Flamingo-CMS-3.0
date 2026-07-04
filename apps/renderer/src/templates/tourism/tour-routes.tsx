@@ -13,8 +13,6 @@ export function TourRoutesSection({ data, styleVariant }: SectionProps) {
   const routes = asList<TourRoute>(data.routes);
   const ctaPrimary = asButton(data.ctaPrimary);
 
-  if (styleVariant === 'modern') return <Modern header={header} routes={routes} ctaPrimary={ctaPrimary} />;
-  if (styleVariant === 'bold') return <Bold header={header} routes={routes} ctaPrimary={ctaPrimary} />;
   return <Classic header={header} routes={routes} ctaPrimary={ctaPrimary} />;
 }
 

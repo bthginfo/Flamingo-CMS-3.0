@@ -12,8 +12,6 @@ export function EquipmentHighlightsSection({ data, styleVariant }: SectionProps)
   const header = baseHeader(data, 'Ausstattung', 'Praxis');
   const items = asList<Equipment>(data.items);
 
-  if (styleVariant === 'modern') return <Modern header={header} items={items} />;
-  if (styleVariant === 'bold') return <Bold header={header} items={items} />;
   return <Classic header={header} items={items} />;
 }
 

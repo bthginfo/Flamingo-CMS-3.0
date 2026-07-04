@@ -11,8 +11,6 @@ export function TourismGallerySection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Galerie', 'Einblicke');
   const images = asList<GalleryImage>(data.images);
 
-  if (styleVariant === 'modern') return <Modern header={header} images={images} />;
-  if (styleVariant === 'bold') return <Bold header={header} images={images} />;
   return <Classic header={header} images={images} />;
 }
 

@@ -17,62 +17,6 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || 'Euer Weg zu perfekten Fotos';
   const subline = (data.subline as string) || '';
   const steps = (data.steps as Step[]) || [];
-  const isBold = styleVariant === 'bold';
-  const isModern = styleVariant === 'modern';
-
-  if (isModern) {
-    return (
-      <section className="py-24 md:py-36 px-4 md:px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
-          <div className="space-y-0">
-            {steps.map((step, i) => {
-              const Icon = ICONS[(step.icon || 'camera').toLowerCase()] || Camera;
-              return (
-                <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex gap-8 border-t border-[color:var(--token-card-border)] py-8">
-                  <div className="flex flex-col items-center gap-2 shrink-0">
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-body)]">{String(i + 1).padStart(2, '0')}</span>
-                    <Icon className="w-4 h-4 text-[color:var(--token-body)]" />
-                  </div>
-                  <div>
-                    <h3 className="font-light text-[color:var(--token-heading)] text-lg" data-edit-path="title">{step.title}</h3>
-                    <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (isBold) {
-    return (
-      <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]">
-        <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {steps.map((step, i) => {
-              const Icon = ICONS[(step.icon || 'camera').toLowerCase()] || Camera;
-              return (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[color:var(--token-eyebrow)] font-black text-2xl">{String(i + 1).padStart(2, '0')}</span>
-                    <Icon className="w-5 h-5 text-[color:var(--token-eyebrow)]" />
-                  </div>
-                  <h3 className="font-bold text-[color:var(--token-on-dark-heading)] mb-2" data-edit-path="title">{step.title}</h3>
-                  <div className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] text-sm rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
