@@ -61,7 +61,7 @@ const heroStyle = { heroHeading: colors.onDark, heroBody: colors.onDarkSoft, bad
 const phone = '+49 841 8899 4411';
 const email = 'events@lichtwerk-loft.de';
 const address = 'Am Speicher 12, 85049 Ingolstadt';
-const mapsEmbed = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2628.0!2d11.4252!3d48.7610!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zQW0gU3BlaWNoZXIgMTIsIDg1MDQ5IEluZ29sc3RhZHQ!5e0!3m2!1sde!2sde!4v1710000000000';
+const mapsEmbed = 'https://www.google.com/maps?q=Am%20Speicher%2012%2C%2085049%20Ingolstadt&output=embed';
 
 const navItems = [
   { label: 'Startseite', href: '/', type: 'link' },

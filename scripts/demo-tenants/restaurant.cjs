@@ -631,7 +631,7 @@ const tenant = {
           type: 'map',
           data: {
             headline: 'So finden Sie uns',
-            embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2367!2d9.978!3d53.585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTPCsDM1JzA2LjAiTiA5wrA1OCc0MC44IkU!5e0!3m2!1sde!2sde!4v1700000000000',
+            embedUrl: 'https://www.google.com/maps?q=Lehmweg%2018%2C%2020251%20Hamburg&output=embed',
             height: 'm',
           },
         },

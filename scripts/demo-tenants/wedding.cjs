@@ -621,7 +621,7 @@ const pages = [
         type: 'map',
         data: {
           headline: 'Gut Sonnenhof · Starnberg',
-          embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10642.977!2d11.328!3d47.999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479dd67c6d5f5b1f%3A0x0!2sStarnberg!5e0!3m2!1sde!2sde!4v1710000000000',
+          embedUrl: 'https://www.google.com/maps?q=Sonnenhof%207%2C%2082319%20Starnberg&output=embed',
           height: 'm',
         },
       },

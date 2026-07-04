@@ -844,7 +844,7 @@ const tenant = {
           type: 'map',
           data: {
             headline: 'So finden Sie uns',
-            embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2511!2d6.776!3d51.210!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDEyJzM2LjAiTiA2wrA0NicMzQuMCJF!5e0!3m2!1sde!2sde!4v1700000000000',
+            embedUrl: 'https://www.google.com/maps?q=Aachener%20Stra%C3%9Fe%2064%2C%2040223%20D%C3%BCsseldorf&output=embed',
             height: 'm',
           },
         },

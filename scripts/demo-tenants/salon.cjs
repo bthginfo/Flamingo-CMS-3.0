@@ -404,7 +404,7 @@ const pages = [
     sections: [
       { type: 'collectionHero', data: collectionHeroData({ category: 'Kontakt', headline: 'Schreiben Sie uns kurz, worum es geht.', subline: 'Mit ein paar Angaben können wir besser einschätzen, welcher Termin wirklich passt.', bgImage: img('1519415510236-718bdfcd89c8') }), styleOverrides: darkSectionTokens() },
       { type: 'bookingCta', data: { headline: 'So kommen wir am schnellsten zum passenden Termin.', subline: 'Wir melden uns persönlich zurück und schlagen die passende Terminlänge vor.', introText: 'Für Farbe oder Korrektur helfen aktuelle Haarbilder und ein Wunschbild.', onlineCta: { label: 'Formular nutzen', href: '#kontaktformular' }, phoneCta: { label: 'Anrufen', href: 'tel:+498924881740' }, whatsappCta: { label: 'WhatsApp schreiben', href: 'https://wa.me/498924881740' }, notes: ['Farbtermine bitte mit Foto anfragen', 'Samstage frühzeitig planen', 'Korrekturen nur nach Einschätzung'] }, styleOverrides: blushTokens },
-      { type: 'locationContact', data: { headline: 'Atelier Isabelle am Gärtnerplatz.', subline: 'Zentral, ruhig im ersten Obergeschoss und gut erreichbar mit U-Bahn und Tram.', image: img('1519415510236-718bdfcd89c8'), mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2678.385!2d11.573!3d48.131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%C3%BCllerstra%C3%9Fe%2042%2C%2080469%20M%C3%BCnchen!5e0!3m2!1sde!2sde!4v1710000000000', formEnabled: true, infoCards: [
+      { type: 'locationContact', data: { headline: 'Atelier Isabelle am Gärtnerplatz.', subline: 'Zentral, ruhig im ersten Obergeschoss und gut erreichbar mit U-Bahn und Tram.', image: img('1519415510236-718bdfcd89c8'), mapEmbedUrl: 'https://www.google.com/maps?q=M%C3%BCllerstra%C3%9Fe%2042%2C%2080469%20M%C3%BCnchen&output=embed', formEnabled: true, infoCards: [
         { icon: 'Phone', label: 'Telefon', value: '+49 89 2488 1740' },
         { icon: 'Mail', label: 'E-Mail', value: 'hello@atelier-isabelle.de' },
         { icon: 'MapPin', label: 'Adresse', value: 'Müllerstraße 42, 80469 München' },
@@ -418,7 +418,7 @@ const pages = [
         { label: 'Freitag', hours: '10:00-19:00' },
         { label: 'Samstag', hours: '09:00-15:00' },
       ] }, styleOverrides: blushTokens },
-      { type: 'map', data: { headline: 'So finden Sie uns.', embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2678.385!2d11.573!3d48.131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%C3%BCllerstra%C3%9Fe%2042%2C%2080469%20M%C3%BCnchen!5e0!3m2!1sde!2sde!4v1710000000000', height: 'm' }, styleOverrides: lightTokens },
+      { type: 'map', data: { headline: 'So finden Sie uns.', embedUrl: 'https://www.google.com/maps?q=M%C3%BCllerstra%C3%9Fe%2042%2C%2080469%20M%C3%BCnchen&output=embed', height: 'm' }, styleOverrides: lightTokens },
       { type: 'faq', data: { headline: 'Vor der Anfrage.', items: faqs.slice(0, 4) }, styleOverrides: lightTokens },
     ],
   },

@@ -759,7 +759,7 @@ const tenant = {
         }, paper),
         s('map', {
           headline: 'Frankfurt als Basis, unterwegs in Rhein-Main.',
-          embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2564.845246873826!2d8.67673531593108!3d50.12652977927019!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bd0ea5699a9f71%3A0xe13b87f1b428c9e2!2sGlauburgstra%C3%9Fe%2C%2060318%20Frankfurt%20am%20Main!5e0!3m2!1sde!2sde!4v1715000000000!5m2!1sde!2sde',
+          embedUrl: 'https://www.google.com/maps?q=Glauburgstra%C3%9Fe%2034%2C%2060318%20Frankfurt%20am%20Main&output=embed',
           height: 'm',
         }, light),
         s('textImage', {

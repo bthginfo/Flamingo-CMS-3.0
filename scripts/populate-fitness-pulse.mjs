@@ -57,7 +57,7 @@ const heroStyle = { heroHeading: colors.onDark, heroBody: colors.onDarkSoft, bad
 const phone = '+49 89 7711 2233';
 const email = 'hello@pulse-studio.de';
 const address = 'Westendstraße 41, 80339 München';
-const mapsEmbed = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2671.0!2d11.5360!3d48.1380!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zV2VzdGVuZHN0cmHDn2UgNDEsIDgwMzM5IE3DvG5jaGVu!5e0!3m2!1sde!2sde!4v1710000000000';
+const mapsEmbed = 'https://www.google.com/maps?q=Westendstra%C3%9Fe%2041%2C%2080339%20M%C3%BCnchen&output=embed';
 
 const navItems = [
   { label: 'Startseite', href: '/', type: 'link' },
