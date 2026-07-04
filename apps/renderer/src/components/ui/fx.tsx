@@ -35,15 +35,18 @@ export function NumberTicker({ value, duration = 1.6, className }: { value: numb
 
 /** Travelling light beam around a card's border. Parent needs `relative` and
  * `overflow-hidden` with a border-radius; the beam reads --token-accent. */
-export function BorderBeam({ duration = 7, size = 140 }: { duration?: number; size?: number }) {
+export function BorderBeam({ duration = 7, size = 120 }: { duration?: number; size?: number }) {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] [mask:linear-gradient(#fff,#fff)_content-box,linear-gradient(#fff,#fff)] [mask-composite:exclude] p-px">
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 rounded-[inherit] border-2 border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]"
+    >
       <div
         className="absolute aspect-square animate-fx-beam"
         style={{
           width: size,
           offsetPath: `rect(0 auto auto 0 round ${size}px)`,
-          background: 'radial-gradient(closest-side, var(--token-accent), transparent 70%)',
+          background: 'linear-gradient(to left, var(--token-accent), transparent)',
           animationDuration: `${duration}s`,
         }}
       />
