@@ -57,6 +57,9 @@ import { AvailabilityCalendarSection, BookingCtaProSection, BookingDateRangeSect
 import { TemplateAdvantageSection } from './shared/template-advantage';
 import { PrinciplesGridSection } from './shared/principles-grid';
 import { GlowHeroSection } from './shared/glow-hero';
+import { ServiceTabsSection } from './shared/service-tabs';
+import { PriceCalculatorSection } from './shared/price-calculator';
+import { JobListingsSection } from './shared/job-listings';
 import { CollectionListSection } from './shared/collection-list';
 import { InstagramFeedSection } from './shared/instagram-feed';
 import { ShopProductGridSection } from './shared/shop-product-grid';
@@ -749,6 +752,9 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   bookingCtaPro: BookingCtaProSection,
   templateAdvantage: TemplateAdvantageSection,
   principlesGrid: PrinciplesGridSection,
+  serviceTabs: ServiceTabsSection,
+  priceCalculator: PriceCalculatorSection,
+  jobListings: JobListingsSection,
   glowHero: GlowHeroSection,
   floristHero: GlowHeroSection,
   bouquetShowcase: ProductShowcaseSection,

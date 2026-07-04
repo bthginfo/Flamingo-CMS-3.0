@@ -13,8 +13,8 @@ export function HeaderBannerSection({ data }: Props) {
 
   if (dismissed || items.length === 0) return null;
 
-  const bgClass = style === 'warning' ? 'bg-[var(--token-accent)] text-[var(--token-accent)]'
-    : style === 'info' ? 'bg-[var(--token-accent)] text-[var(--token-on-dark-heading,white)]'
+  const bgClass = style === 'warning' ? 'bg-[var(--token-accent)] text-[color:var(--token-on-dark-heading)] font-semibold'
+    : style === 'info' ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]'
     : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-body)]';
 
   return (
