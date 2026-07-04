@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { mediaAssets } from '@flamingo/db';
-import { eq, and, desc, inArray } from 'drizzle-orm';
+import { eq, and, desc, inArray, ne } from 'drizzle-orm';
 import { del } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 
@@ -153,6 +153,16 @@ export async function saveMediaRecord(data: {
   return row;
 }
 
+/** Legacy content-addressed uploads (media/<sha256>.<ext>) are SHARED across
+ * tenants: identical files map to the same blob. The physical blob may only be
+ * deleted when no other media record — of ANY tenant — still points at it. */
+async function blobHasOtherReferences(db: ReturnType<typeof getDb>, blobUrl: string, excludeId: string) {
+  const [other] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
+    .where(and(eq(mediaAssets.blobUrl, blobUrl), ne(mediaAssets.id, excludeId)))
+    .limit(1);
+  return Boolean(other);
+}
+
 export async function deleteMediaAsset(id: string) {
   const tenantId = await requireTenant();
   const db = getDb();
@@ -161,9 +171,11 @@ export async function deleteMediaAsset(id: string) {
     .limit(1);
   if (!asset || asset.tenantId !== tenantId) throw new Error('Not found');
 
-  // Delete from Vercel Blob
+  // Delete from Vercel Blob — unless another record (any tenant) shares it
   try {
-    await del(asset.blobUrl);
+    if (!(await blobHasOtherReferences(db, asset.blobUrl, id))) {
+      await del(asset.blobUrl);
+    }
   } catch {
     // Blob may already be deleted, continue
   }
@@ -229,6 +241,11 @@ export async function deleteMediaFolder(folder: string) {
 
   await Promise.allSettled(
     blobUrls.map(async (blobUrl) => {
+      // Skip blobs still referenced by records outside this folder (any tenant)
+      const folderIds = new Set(assets.map(a => a.id));
+      const refs = await db.select({ id: mediaAssets.id }).from(mediaAssets)
+        .where(eq(mediaAssets.blobUrl, blobUrl));
+      if (refs.some(r => !folderIds.has(r.id))) return;
       await del(blobUrl);
     }),
   );

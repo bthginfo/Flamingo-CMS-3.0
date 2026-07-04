@@ -38,7 +38,7 @@ const NAV: { href: string; label: string; icon: typeof LayoutDashboard; tour?: s
 
 const RENDERER_URL = '';
 
-export function Sidebar({ tenantId, industry }: { tenantId: string; industry: string }) {
+export function Sidebar({ tenantId, industry, inboxUnread = 0 }: { tenantId: string; industry: string; inboxUnread?: number }) {
   const pathname = usePathname();
   const router = useRouter();
   const preview = usePreview();
@@ -111,7 +111,10 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)} data-tour={item.tour}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive ? 'bg-white/10 text-white font-medium' : 'text-sidebar-muted hover:text-white hover:bg-white/5'}`}>
                 <item.icon size={18} className={isActive ? 'text-sidebar-active' : ''} />
-                {item.label}
+                <span className="flex-1 flex items-center justify-between gap-2">
+                  {item.label}
+                  {item.href === '/admin/inbox' && inboxUnread > 0 && <span className="min-w-[20px] rounded-full bg-admin-accent px-1.5 py-0.5 text-center text-[11px] font-bold leading-none text-white">{inboxUnread > 99 ? '99+' : inboxUnread}</span>}
+                </span>
               </Link>
             );
           })}
@@ -148,8 +151,16 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
             return (
               <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined} data-tour={item.tour}
                 className={`flex items-center gap-3 rounded-lg text-sm transition-colors ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'} ${isActive ? 'bg-white/10 text-white font-medium' : 'text-sidebar-muted hover:text-white hover:bg-white/5'}`}>
-                <item.icon size={18} className={`shrink-0 ${isActive ? 'text-sidebar-active' : ''}`} />
-                {!collapsed && item.label}
+                <span className="relative shrink-0">
+                  <item.icon size={18} className={`shrink-0 ${isActive ? 'text-sidebar-active' : ''}`} />
+                  {collapsed && item.href === '/admin/inbox' && inboxUnread > 0 && <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-admin-accent ring-2 ring-sidebar" />}
+                </span>
+                {!collapsed && (
+                <span className="flex-1 flex items-center justify-between gap-2">
+                  {item.label}
+                  {item.href === '/admin/inbox' && inboxUnread > 0 && <span className="min-w-[20px] rounded-full bg-admin-accent px-1.5 py-0.5 text-center text-[11px] font-bold leading-none text-white">{inboxUnread > 99 ? '99+' : inboxUnread}</span>}
+                </span>
+                )}
               </Link>
             );
           })}

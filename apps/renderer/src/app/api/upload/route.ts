@@ -26,11 +26,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const tenantId = session.tenantId || process.env.FIXED_TENANT_ID;
         if (!tenantId) throw new Error('Unauthorized — no tenant resolved');
 
+        // Random suffix + no overwrite: the blob store is shared across ALL
+        // tenants, and clients choose the pathname (brand upload even sends the
+        // raw filename). Without the suffix, two tenants uploading "logo.png"
+        // would silently overwrite each other's asset — including maliciously.
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'],
           maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
-          addRandomSuffix: false,
-          allowOverwrite: true,
+          addRandomSuffix: true,
+          allowOverwrite: false,
           tokenPayload: JSON.stringify({ tenantId }),
         };
       },

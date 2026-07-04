@@ -300,6 +300,46 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   useEffect(() => { setPage(initialPage); }, [initialPage]);
   useEffect(() => { setSections(initialSections); }, [initialSections]);
 
+  // ── Data-loss protection ─────────────────────────────────────────────
+  // 1) Never let the browser close/navigate away over unsaved changes.
+  useEffect(() => {
+    if (!hasDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [hasDirty]);
+
+  // 2) Crash recovery: unsaved section edits are mirrored to localStorage on
+  //    every change and offered for restore when the editor reopens.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(`flamingo-draft-${initialPage.id}`);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as { ts: number; entries: [string, Record<string, unknown>][] };
+      if (!draft.entries?.length || Date.now() - draft.ts > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(`flamingo-draft-${initialPage.id}`);
+        return;
+      }
+      toast('Ungespeicherter Entwurf gefunden', {
+        description: `Änderungen von ${new Date(draft.ts).toLocaleString('de-DE')} wiederherstellen?`,
+        duration: 15000,
+        action: {
+          label: 'Wiederherstellen',
+          onClick: () => {
+            for (const [id, data] of draft.entries) pendingChanges.current.set(id, data);
+            setSections(prev => prev.map(sec => {
+              const restored = pendingChanges.current.get(sec.id);
+              return restored ? { ...sec, data: restored } : sec;
+            }));
+            setHasDirty(true);
+            setSaved(false);
+          },
+        },
+      });
+    } catch { /* corrupt draft — ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function handleReorder(newOrder: Section[]) {
     setSections(newOrder);
     startTransition(async () => {
@@ -381,6 +421,9 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     pendingChanges.current.set(sectionId, saveData);
     setHasDirty(true);
     setSaved(false);
+    try {
+      localStorage.setItem(`flamingo-draft-${page.id}`, JSON.stringify({ ts: Date.now(), entries: Array.from(pendingChanges.current.entries()) }));
+    } catch { /* quota/private mode — draft mirror is best-effort */ }
     if (preview.isOpen) {
       const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current, { sectionId, data: saveData });
       // Always include collections so collection-driven sections (lists,
@@ -420,6 +463,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
           return newData ? { ...sec, data: newData } : sec;
         }));
         pendingChanges.current.clear();
+        try { localStorage.removeItem(`flamingo-draft-${page.id}`); } catch { /* best-effort */ }
         setHasDirty(false);
         setSaved(true);
         preview.refresh();
