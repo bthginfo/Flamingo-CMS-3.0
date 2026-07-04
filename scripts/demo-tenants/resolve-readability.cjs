@@ -81,25 +81,59 @@ function scanTenant(key, flagged) {
   const styleRe = /data-section-id="([0-9a-f-]+)"\]\[data-style\]\s*\{([^}]*)\}/gi;
   let sm; while ((sm = styleRe.exec(html))) { cardVars[sm[1]] = extractProps(sm[2]); }
 
-  // Each section wrapper: <... data-section-id="ID" ... style="--token-…">
-  const secRe = /data-section-id="([0-9a-f-]+)"[^>]*style="([^"]*--token[^"]*)"/gi;
+  // Media-overlay sections (photo heroes) are identifiable by their injected
+  // heading rule: its terminal fallback is #ffffff instead of `inherit`.
+  const mediaSections = new Set();
+  const headRuleRe = /data-section-id="([0-9a-f-]+)"\]\[data-style\]\s*:is\(h1[^{]*\{\s*color:\s*([^;}]*)/gi;
+  let hm; while ((hm = headRuleRe.exec(html))) { if (hm[2].includes('#ffffff')) mediaSections.add(hm[1]); }
+
+  // Each section wrapper opening tag. Attribute ORDER is not guaranteed —
+  // `style` may come before `data-section-id` — so match the whole tag and
+  // pull the attributes out separately. The `\s` before style=" keeps the
+  // data-style="" attribute from matching as a substring.
+  const tagRe = /<[a-z]+[^>]*\bdata-section-id="([0-9a-f-]+)"[^>]*>/gi;
   let s; const seen = new Set();
-  while ((s = secRe.exec(html))) {
+  while ((s = tagRe.exec(html))) {
     const id = s[1];
     if (seen.has(id)) continue; seen.add(id);
-    const map = { ...rootMap, ...extractProps(s[2]), ...(cardVars[id] || {}) };
+    const styleAttr = (s[0].match(/\sstyle="([^"]*)"/) || [])[1] || '';
+    const map = { ...rootMap, ...extractProps(styleAttr), ...(cardVars[id] || {}) };
 
     const bgRaw = map['--token-section-bg'];
     const bg0 = resolveVar(bgRaw, map);
-    if (!bg0 || (parseColor(bgRaw) && parseColor(bgRaw)[3] < 1)) continue; // skip image/translucent/unknown bg
+
+    // Media-overlay sections (photo behind text, dark overlay in practice):
+    // the section bg cannot be judged, but the TEXT can — the unified chain
+    // must not resolve to a dark colour there. A heading that resolves dark
+    // is the "dark headline on a dark photo" bug; unresolved is fine (it
+    // falls through to the light terminal fallback).
+    if (mediaSections.has(id)) {
+      for (const fgVar of ['--token-heading', '--token-body']) {
+        const fg0 = resolveVar(map[fgVar] || `var(${fgVar})`, map);
+        if (fg0 && fg0[3] > 0.5 && lum(over(fg0, [0, 0, 0, 1])) < 0.25) {
+          flagged.push({ key, id: id.slice(0, 8), fgVar, fg: rgb(fg0), bg: 'photo+overlay', ratio: 'dark-on-media' });
+        }
+      }
+      continue;
+    }
+
+    if (!bg0 || (parseColor(bgRaw) && parseColor(bgRaw)[3] < 1)) continue; // skip translucent/unknown bg
     const bg = bg0[3] < 1 ? over(bg0, [255, 255, 255, 1]) : bg0;
 
-    for (const fgVar of ['--token-heading', '--token-body', '--_card-h', '--_card-b']) {
+    // Card backdrop: card text renders on the CARD bg, not the section bg.
+    // Composite translucent card fills over the section bg first.
+    const cardBg0 = resolveVar(map['--token-card-bg'] || 'var(--token-card-bg)', map);
+    const cardBg = cardBg0 ? (cardBg0[3] < 1 ? over(cardBg0, bg) : cardBg0) : bg;
+
+    for (const [fgVar, base] of [
+      ['--token-heading', bg], ['--token-body', bg],
+      ['--_card-h', cardBg], ['--_card-b', cardBg],
+    ]) {
       const fg0 = resolveVar(map[fgVar] || `var(${fgVar})`, map);
       if (!fg0) continue;
-      const fg = fg0[3] < 1 ? over(fg0, bg) : fg0;
-      const ratio = contrast(fg, bg);
-      if (ratio < FLOOR) flagged.push({ key, id: id.slice(0, 8), fgVar, fg: rgb(fg), bg: rgb(bg), ratio: ratio.toFixed(2) });
+      const fg = fg0[3] < 1 ? over(fg0, base) : fg0;
+      const ratio = contrast(fg, base);
+      if (ratio < FLOOR) flagged.push({ key, id: id.slice(0, 8), fgVar, fg: rgb(fg), bg: rgb(base), ratio: ratio.toFixed(2) });
     }
   }
 }

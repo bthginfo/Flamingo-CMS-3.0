@@ -84,18 +84,27 @@ function rawRequest(method, urlStr, headers, bodyStr) {
 
 // ── colour key mapping ────────────────────────────────────────────────────────
 const FIELD_CSS = fieldCssVars();
+// A short key may fan out to SEVERAL fields. Under the unified colour system
+// there is no dark/light branch — the renderer resolves --token-heading FIRST
+// (falling back to on-dark), and the page-level default for --token-heading is
+// the tenant's dark ink. A hero that only sets the on-dark slots therefore
+// renders its headline in dark ink on a dark photo. hero* keys must write BOTH
+// the plain slot and its on-dark twin so the section's text colour always wins.
 const SHORT_TO_FIELD = {
-  heading: 'headingColor', body: 'bodyColor', muted: 'mutedColor', icon: 'iconColor',
+  heading: ['headingColor', 'onDarkHeading'], body: ['bodyColor', 'onDarkBody'], muted: ['mutedColor', 'onDarkMuted'],
+  icon: 'iconColor',
   quote: 'quoteMark', cardBorder: 'borderColor', accent: 'accentColor',
-  heroHeading: 'onDarkHeading', heroBody: 'onDarkBody', heroMuted: 'onDarkMuted',
+  heroHeading: ['headingColor', 'onDarkHeading'], heroBody: ['bodyColor', 'onDarkBody'], heroMuted: ['mutedColor', 'onDarkMuted'],
 };
 function toCssVars(styleOverrides) {
   const out = {};
   for (const [k, v] of Object.entries(styleOverrides || {})) {
     if (typeof k === 'string' && k.startsWith('--')) { out[k] = v; continue; }
-    const field = SHORT_TO_FIELD[k] || k;
-    const cssVar = FIELD_CSS[field];
-    if (cssVar) out[cssVar] = v;
+    const fields = SHORT_TO_FIELD[k] || k;
+    for (const field of Array.isArray(fields) ? fields : [fields]) {
+      const cssVar = FIELD_CSS[field];
+      if (cssVar && !(cssVar in out)) out[cssVar] = v;
+    }
   }
   return out;
 }

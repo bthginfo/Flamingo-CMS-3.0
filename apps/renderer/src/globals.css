@@ -243,9 +243,15 @@ html {
      defines --token-btn-bg in its inline style, so an unqualified `… a` / `… button`
      selector here would paint a button background behind EVERY link and button on
      the page (logo, nav, footer) — that was the "coloured box behind text" bug.
-     Keep the [class*="bg-"] qualifier so only real buttons are affected. */
-  [data-style][style*="--token-btn-bg"] a[class*="bg-"],
-  [data-style][style*="--token-btn-bg"] button[class*="bg-"] {
+     Keep the [class*="bg-"] qualifier so only real buttons are affected.
+     The :has() exclusion keeps CARD-shaped anchors out: a product/collection
+     card is often one big <a class="… bg-[var(--token-card-bg)] …"> that
+     contains an image and a heading — repainting it with the button colour
+     turned every card into a solid brand-coloured block with unreadable text
+     (the florist "burgundy cards" bug). A real button never contains an
+     image or a heading. */
+  [data-style][style*="--token-btn-bg"] a[class*="bg-"]:not(:has(img, picture, h1, h2, h3, h4, [data-card])),
+  [data-style][style*="--token-btn-bg"] button[class*="bg-"]:not(:has(img, picture, h1, h2, h3, h4, [data-card])) {
     background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-primary))) !important;
     color: var(--token-btn-text, var(--brand-btn-text, white)) !important;
   }
