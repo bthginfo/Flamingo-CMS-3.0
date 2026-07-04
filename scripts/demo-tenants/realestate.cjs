@@ -726,7 +726,7 @@ const tenant = {
           { label: 'Altstadt', distance: '10 Min. Rad', icon: 'shopping' },
           { label: 'Schulen & Kitas', distance: 'im Umfeld', icon: 'school' },
         ] }, styleOverrides: mistTokens },
-        { type: 'faq', data: { headline: 'Kontakt: gut zu wissen', items: faqs }, styleOverrides: softTokens },
+        { type: 'faqContactSplit', data: { badge: 'Gut zu wissen', headline: 'Kontakt: die häufigsten Fragen.', subline: 'Und falls Ihre Frage fehlt: Die Kontaktkarte rechts führt direkt zu uns.', items: faqs, contactTitle: 'Lieber direkt sprechen?', contactText: 'Kurze Fragen klären wir am schnellsten am Telefon — oder Sie schreiben uns.', phone: '+49 911 2388410', email: 'hallo@stadtkante-immobilien.de', cta: { label: 'Anfrage senden', href: '#kontakt' } }, styleOverrides: softTokens },
       ],
     },
     {

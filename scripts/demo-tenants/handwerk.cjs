@@ -788,6 +788,22 @@ const tenant = {
           },
         },
         {
+          type: 'galleryPro',
+          data: {
+            badge: 'Einblicke',
+            headline: 'Baustellen, die man zeigen kann.',
+            subline: 'Nach Gewerk filterbar — jedes Bild öffnet sich in der Großansicht.',
+            images: [
+              { src: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=900&q=82', alt: 'Bad mit Naturstein', category: 'Bäder', caption: 'Naturstein-Bad, Oberkassel' },
+              { src: 'https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=900&q=82', alt: 'Walk-in-Dusche', category: 'Bäder', caption: 'Walk-in-Dusche mit Rinne' },
+              { src: 'https://images.unsplash.com/photo-1585129777188-94600bc7b4b3?auto=format&fit=crop&w=900&q=82', alt: 'Waschtisch', category: 'Bäder', caption: 'Doppelwaschtisch, Eiche' },
+              { src: 'https://images.unsplash.com/photo-1613274554329-70f997f5789f?auto=format&fit=crop&w=900&q=82', alt: 'Wärmepumpe außen', category: 'Wärmepumpe', caption: 'Kaskade, Mehrfamilienhaus' },
+              { src: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=900&q=82', alt: 'Heizungsraum', category: 'Heizung', caption: 'Technikraum nach Sanierung' },
+              { src: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=900&q=82', alt: 'Montagearbeit', category: 'Heizung', caption: 'Hydraulischer Abgleich' },
+            ],
+          },
+        },
+        {
           type: 'testimonials',
           data: {
             badgeText: 'Auftraggeber:innen',

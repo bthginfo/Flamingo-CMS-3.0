@@ -391,7 +391,7 @@ const pages = [
         { year: '2022', title: 'Drei Spezialistinnen', text: 'Das Team wächst gezielt, nicht beliebig.' },
         { year: 'Heute', title: 'Ruhige Termine', text: 'Weniger Slots, bessere Vorbereitung, klarere Ergebnisse.' },
       ] }, styleOverrides: blushTokens },
-      { type: 'teamShowcase', data: { badgeText: 'Team', headline: 'Menschen, die zuhören können.', subline: 'Jede im Team hat einen eigenen Fokus. Der Ton bleibt gleich: ruhig, klar und ehrlich.', members: teamMembers }, styleOverrides: lightTokens },
+      { type: 'teamSpotlight', data: { badge: 'Team', headline: 'Menschen, die zuhören können.', subline: 'Jede im Team hat einen eigenen Fokus — beim Überfahren der Karten zeigen sich Haltung und Schwerpunkte.', members: teamMembers.map((m) => ({ name: m.name, role: m.role, image: m.image, quote: m.bio, focus: m.specialties })) }, styleOverrides: lightTokens },
       { type: 'expertiseGrid', data: { headline: 'Woran wir arbeiten.', subline: 'Unsere Qualität steckt in vielen kleinen Entscheidungen.', items: [
         { icon: 'Palette', title: 'Farblehre', text: 'Hautunterton, Ausgangsfarbe und Pflegeaufwand werden gemeinsam betrachtet.' },
         { icon: 'Scissors', title: 'Schnitttechnik', text: 'Form wird so gesetzt, dass sie herauswachsen darf.' },

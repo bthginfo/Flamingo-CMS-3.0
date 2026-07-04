@@ -552,15 +552,15 @@ const tenant = {
       sections: [
         section('hero', { headline: 'Mitten in Wilten, schnell erreichbar.', subline: 'SPIRAL liegt an der Andreas-Hofer-Straße. Gut für Kaffee vor Terminen, Brunch am Wochenende und Takeaway auf dem Weg durch die Stadt.', badgeText: 'Kontakt', badgeIcon: 'MapPin', bgMode: 'image', bgImage: img('1517245386807-bb43f82c33c4'), overlayColor: '#1B100B', overlayOpacity: 0.58, primaryCta: { label: 'Route öffnen', href: 'https://maps.google.com/?q=Andreas-Hofer-Stra%C3%9Fe%207%206020%20Innsbruck', icon: 'MapPin' }, secondaryCta: { label: 'Nachricht senden', href: 'mailto:hello@spiral-coffee.at', icon: 'Mail' }, trustItems: ['Andreas-Hofer-Straße', 'Di-So geöffnet', 'WhatsApp möglich'], trustStripColor: 'rgba(35,21,15,0.62)' }, heroTokens),
         section('contactLocation', { headline: 'Hier findest Du uns.', subline: 'ÖPNV, Fahrrad und kurze Wege aus Wilten.', address: 'Andreas-Hofer-Straße 7, 6020 Innsbruck', phone: '+43 512 908144', email: 'hello@spiral-coffee.at', mapEmbedUrl: 'https://www.google.com/maps?q=Andreas-Hofer-Stra%C3%9Fe%207%206020%20Innsbruck&output=embed' }, lightTokens),
-        section('openingHours', { headline: 'Öffnungszeiten', subline: 'Montag ist Ruhetag. Feiertage kündigen wir im Journal und auf Instagram an.', days: [
-          { day: 'Montag', hours: 'geschlossen' },
-          { day: 'Dienstag', hours: '09:30-17:00' },
-          { day: 'Mittwoch', hours: '09:30-17:00' },
-          { day: 'Donnerstag', hours: '09:30-17:00' },
-          { day: 'Freitag', hours: '09:30-18:00' },
-          { day: 'Samstag', hours: '09:30-18:00' },
-          { day: 'Sonntag', hours: '10:00-15:00' },
-        ] }, greenTokens),
+        section('openingStatus', { badge: 'Öffnungszeiten', headline: 'Komm einfach vorbei.', subline: 'Der Status zeigt live, ob gerade offen ist. Montag ist Ruhetag — Feiertage kündigen wir im Journal und auf Instagram an.', days: [
+          { day: 'Montag', closed: true },
+          { day: 'Dienstag', hours: '09:30 – 17:00' },
+          { day: 'Mittwoch', hours: '09:30 – 17:00' },
+          { day: 'Donnerstag', hours: '09:30 – 17:00' },
+          { day: 'Freitag', hours: '09:30 – 18:00' },
+          { day: 'Samstag', hours: '09:30 – 18:00' },
+          { day: 'Sonntag', hours: '10:00 – 15:00' },
+        ], address: 'Andreas-Hofer-Straße 7, 6020 Innsbruck', phone: '+43 512 908144', openLabel: 'Jetzt geöffnet — komm vorbei!', closedLabel: 'Gerade geschlossen' }, greenTokens),
         section('contactForm', { headline: 'Schreib uns kurz.', subline: 'Für Gruppen, Events, Feedback oder Fragen zur Karte.', submitLabel: 'Nachricht senden' }),
         section('faq', { headline: 'Vor dem Besuch', subline: 'Ein paar praktische Antworten.', items: [
           { question: 'Gibt es Parkplätze?', answer: 'Nicht direkt vor der Tür. Mit Öffis, Fahrrad oder zu Fuß ist es deutlich entspannter.' },

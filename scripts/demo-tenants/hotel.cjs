@@ -714,6 +714,16 @@ const tenant = {
           { name: 'Elena Gruber', role: 'Spa & Anwendungen', image: img('1508214751196-bcfd4ca60f91'), bio: 'Mag langsames Tempo, klare Termine und Anwendungen ohne Produktshow.' },
         ], valuesHeadline: 'Was uns wichtig ist', values: storyData().values, stats: storyData().stats }, styleOverrides: lightTokens },
         { type: 'timeline', data: { badge: 'Geschichte', headline: 'Nicht alles neu. Aber alles bewusster.', subline: 'Unser Haus hat sich Schritt für Schritt verändert.', entries: storyData().milestones }, styleOverrides: softGreenTokens },
+        { type: 'ctaSplit', data: {
+          badge: 'Direkt anfragen',
+          headline: 'Lernen Sie das Haus kennen, bevor Sie buchen.',
+          text: '<p>Schreiben Sie uns Reisezeit, Anlass und Wünsche — wir antworten persönlich und ehrlich, auch wenn ein anderes Zimmer oder Termin besser passt.</p>',
+          image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=82',
+          checklist: ['Antwort innerhalb von 24 Stunden', 'Beste-Preis-Garantie bei Direktbuchung', 'Persönliche Zimmerempfehlung', 'Flexible Stornierung bis 7 Tage'],
+          primaryCta: { label: 'Unverbindlich anfragen', href: '/kontakt' },
+          secondaryCta: { label: 'Zimmer ansehen', href: '/zimmer' },
+          note: 'Direktbucher erhalten late Check-out nach Verfügbarkeit.',
+        }, styleOverrides: lightTokens },
         { type: 'gallery', data: { headline: 'Ein paar Blicke ins Haus.', images: [
           { src: img('1500534314209-a25ddb2bd429'), alt: 'Außenansicht am Waldrand', caption: 'Waldrand' },
           { src: img('1566073771259-6a8506099945'), alt: 'Zimmer mit Bergblick', caption: 'Panorama Suite' },

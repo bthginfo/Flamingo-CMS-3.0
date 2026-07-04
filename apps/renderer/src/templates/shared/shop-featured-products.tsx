@@ -56,18 +56,23 @@ export function ShopFeaturedProductsSection({ data }: Props) {
       <div className={`grid grid-cols-2 ${colsClass} gap-4 md:gap-6`}>
         {products.map(product => (
           <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
-            <div className="rounded-2xl border border-[var(--token-card-border)] overflow-hidden hover:shadow-md transition-shadow">
+            <div className="relative rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              {product.comparePriceCents && product.comparePriceCents > product.priceCents && (
+                <span className="absolute left-3 top-3 z-10 rounded-full bg-[var(--token-btn-bg)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-[color:var(--token-btn-text)] shadow">
+                  −{Math.round((1 - product.priceCents / product.comparePriceCents) * 100)} %
+                </span>
+              )}
               <div className="aspect-square bg-[color:var(--token-section-bg-alt,var(--token-card-bg))] overflow-hidden">
                 {product.images?.[0] ? (
-                  <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={32} className="text-[var(--token-muted,theme(colors.zinc.200))]" /></div>
                 )}
               </div>
-              <div className="p-3">
-                <h3 className="font-medium text-sm truncate" data-edit-path="title">{product.title}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="font-bold">{formatPrice(product.priceCents)}</span>
+              <div className="p-3.5">
+                <h3 className="font-medium text-sm truncate text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{product.title}</h3>
+                <div className="flex items-baseline gap-2 mt-1.5">
+                  <span className="font-bold text-[color:var(--token-price)]">{formatPrice(product.priceCents)}</span>
                   {product.comparePriceCents && <span className="text-xs text-[color:var(--token-muted)] line-through">{formatPrice(product.comparePriceCents)}</span>}
                 </div>
               </div>
