@@ -28,7 +28,7 @@ export const showcaseSite: DemoSite = {
         {
           ...B, id: 'sc-intro', type: 'richText',
           data: {
-            content: '<h2>Verfügbare Sektionen</h2><p>Flamingo CMS bietet über 80 verschiedene Sektionstypen. Allgemeine Sektionen sind branchenunabhängig nutzbar, dazu kommen spezialisierte Bausteine für jede Branche.</p><p>Klicken Sie auf die Kacheln, um jede Sektion in Aktion zu sehen.</p>',
+            content: '<h2>Verfügbare Sektionen</h2><p>Flamingo CMS bietet über 100 verschiedene Sektionstypen. Allgemeine Sektionen sind branchenunabhängig nutzbar, dazu kommen spezialisierte Bausteine für jede Branche.</p><p>Klicken Sie auf die Kacheln, um jede Sektion in Aktion zu sehen — weiter unten finden Sie ausgewählte Sektionen live zum Ausprobieren.</p>',
           },
         },
         {
@@ -289,6 +289,70 @@ export const showcaseSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'sc-florist', type: 'servicesGrid',
+          data: {
+            headline: '🌸 Floristik',
+            subline: 'Für Blumenläden, Floristen und Hochzeitsfloristik.',
+            badgeText: 'Floristik',
+            manualCards: [
+              { title: 'Bouquet-Showcase', text: 'Sträuße und Gestecke mit Preisen.', icon: 'flower', mediaType: 'icon', href: '/demo/florist' },
+              { title: 'Anlass-Mosaik', text: 'Bild-Mosaik nach Anlässen (Hochzeit, Trauer, Geburtstag).', icon: 'grid3x3', mediaType: 'icon', href: '/demo/florist' },
+              { title: 'Hochzeitsfloristik', text: 'Immersiver Banner für Braut- und Dekofloristik.', icon: 'heart', mediaType: 'icon', href: '/demo/florist' },
+              { title: 'Workshops', text: 'Kranzbinden & Co. mit Buchungs-CTA.', icon: 'calendar', mediaType: 'icon', href: '/demo/florist' },
+              { title: 'Saison-Kampagne', text: 'Aktionsstreifen für saisonale Angebote.', icon: 'sun', mediaType: 'icon', href: '/demo/florist' },
+              { title: 'Material-Galerie', text: 'Blumen und Materialien filterbar.', icon: 'image', mediaType: 'icon', href: '/demo/florist' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'sc-fitness', type: 'servicesGrid',
+          data: {
+            headline: '💪 Fitness & Studio',
+            subline: 'Für Fitnessstudios, Personal Trainer und Kursanbieter.',
+            badgeText: 'Fitness',
+            manualCards: [
+              { title: 'Programm-Grid', text: 'Kurse und Trainingsprogramme im Überblick.', icon: 'dumbbell', mediaType: 'icon', href: '/demo/fitness' },
+              { title: 'Kursplan', text: 'Wochenplan mit Zeiten, Level und Trainern.', icon: 'calendar', mediaType: 'icon', href: '/demo/fitness' },
+              { title: 'Trainer-Profile', text: 'Team mit Spezialisierungen.', icon: 'users', mediaType: 'icon', href: '/demo/fitness' },
+              { title: 'Mitgliedschaften', text: 'Tarife im Premium-Vergleich.', icon: 'creditCard', mediaType: 'icon', href: '/demo/fitness' },
+              { title: 'Transformationen', text: 'Erfolgsgeschichten mit Vorher/Nachher.', icon: 'trendingUp', mediaType: 'icon', href: '/demo/fitness' },
+              { title: 'Probetraining-CTA', text: 'Immersiver CTA für das erste Training.', icon: 'zap', mediaType: 'icon', href: '/demo/fitness' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'sc-location', type: 'servicesGrid',
+          data: {
+            headline: '🎪 Eventlocation',
+            subline: 'Für Veranstaltungsräume, Eventflächen und Tagungshäuser.',
+            badgeText: 'Location',
+            manualCards: [
+              { title: 'Flächen-Showcase', text: 'Räume und Flächen mit Kapazitäten.', icon: 'building', mediaType: 'icon', href: '/demo/location' },
+              { title: 'Event-Typen', text: 'Hochzeit, Firmenevent, Tagung als Mosaik.', icon: 'partyPopper', mediaType: 'icon', href: '/demo/location' },
+              { title: 'Pakete', text: 'Miet-Pakete im Vergleich.', icon: 'creditCard', mediaType: 'icon', href: '/demo/location' },
+              { title: 'Ausstattung', text: 'Technik und Amenities als Bento-Grid.', icon: 'grid3x3', mediaType: 'icon', href: '/demo/location' },
+              { title: 'Verfügbarkeits-CTA', text: 'Terminverfügbarkeit anfragen.', icon: 'calendarCheck', mediaType: 'icon', href: '/demo/location' },
+              { title: 'Anfahrt & Umgebung', text: 'Karte mit Anreise-Infos.', icon: 'mapPin', mediaType: 'icon', href: '/demo/location' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'sc-retail', type: 'servicesGrid',
+          data: {
+            headline: '🛍️ Einzelhandel',
+            subline: 'Für Boutiquen, Concept Stores und Fachgeschäfte.',
+            badgeText: 'Retail',
+            manualCards: [
+              { title: 'Produkt-Showcase', text: 'Sortiment-Highlights mit Preisen.', icon: 'shoppingBag', mediaType: 'icon', href: '/demo/retail' },
+              { title: 'Kategorie-Mosaik', text: 'Sortimentsbereiche als Bild-Mosaik.', icon: 'grid3x3', mediaType: 'icon', href: '/demo/retail' },
+              { title: 'Showroom-Banner', text: 'Immersiver Store-Banner mit Highlights.', icon: 'store', mediaType: 'icon', href: '/demo/retail' },
+              { title: 'Beratungstermin', text: 'Persönliche Beratung buchen.', icon: 'calendar', mediaType: 'icon', href: '/demo/retail' },
+              { title: 'Marken-Logos', text: 'Geführte Marken als Marquee.', icon: 'building', mediaType: 'icon', href: '/demo/retail' },
+              { title: 'Inspirations-Grid', text: 'Lifestyle-Looks mit Hover-Overlay.', icon: 'image', mediaType: 'icon', href: '/demo/retail' },
+            ],
+          },
+        },
+        {
           ...B, id: 'sc-premium', type: 'servicesGrid',
           data: {
             headline: '✨ Premium-Sektionen',
@@ -307,6 +371,9 @@ export const showcaseSite: DemoSite = {
               { title: 'Spotlight Cards', text: 'Premium-Karten mit Maus-Spotlight, Bildern, Icons und Links.', icon: 'sparkles', mediaType: 'icon' },
               { title: 'Scroll Story', text: 'Sticky Storytelling mit Scroll-Fortschritt und visuellen Kapiteln.', icon: 'listOrdered', mediaType: 'icon' },
               { title: 'Premium-Vergleich', text: 'Hochwertige Vergleichsmatrix für Pakete, Angebote oder Leistungen.', icon: 'columns', mediaType: 'icon' },
+              { title: 'Leistungs-Tabs', text: 'Interaktive Tabs mit Bild, Feature-Liste und CTA pro Leistung.', icon: 'layoutList', mediaType: 'icon' },
+              { title: 'Preis-Kalkulator', text: 'Interaktiver Kostenrechner mit Optionen und Live-Summe.', icon: 'calculator', mediaType: 'icon' },
+              { title: 'Stellenangebote', text: 'Karriere-Sektion mit Job-Karten und Benefits.', icon: 'briefcase', mediaType: 'icon' },
             ],
           },
         },
@@ -402,6 +469,99 @@ export const showcaseSite: DemoSite = {
             slides: [
               { imageBefore: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80', imageAfter: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80', labelBefore: 'Vorher', labelAfter: 'Nachher', caption: 'Komplette Badsanierung in 2 Wochen.' },
               { imageBefore: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&q=80', imageAfter: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80', labelBefore: 'Alt', labelAfter: 'Neu', caption: 'Wohnzimmer-Renovierung mit neuer Raumaufteilung.' },
+            ],
+          },
+        },
+        // Live-Demo: Leistungs-Tabs
+        {
+          ...B, id: 'sc-service-tabs', type: 'serviceTabs',
+          data: {
+            badge: 'Neu',
+            headline: 'Leistungen interaktiv erkunden statt scrollen.',
+            subline: 'Leistungs-Tabs bündeln mehrere Angebote in einer Sektion — jede Registerkarte mit eigenem Bild, Featureliste und CTA.',
+            tabs: [
+              { label: 'Beratung', icon: 'messageCircle', title: 'Strategische Beratung', text: '<p>Vom ersten Gespräch bis zum Konzept: Wir analysieren Ziele, Zielgruppen und Wettbewerb und leiten daraus eine klare Roadmap ab.</p>', image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&q=80', features: ['Kostenloses Erstgespräch', 'Wettbewerbsanalyse', 'Klare Roadmap in 5 Tagen'], cta: { label: 'Beratung anfragen', href: '#kontakt' } },
+              { label: 'Umsetzung', icon: 'hammer', title: 'Professionelle Umsetzung', text: '<p>Unser Team setzt das Konzept um — termintreu, transparent und mit wöchentlichen Updates zum Fortschritt.</p>', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80', features: ['Fester Ansprechpartner', 'Wöchentliche Updates', 'Festpreisgarantie'], cta: { label: 'Projekt starten', href: '#kontakt' } },
+              { label: 'Betreuung', icon: 'shieldCheck', title: 'Laufende Betreuung', text: '<p>Nach dem Launch bleiben wir an Ihrer Seite: Wartung, Optimierung und schnelle Hilfe, wenn es darauf ankommt.</p>', image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&q=80', features: ['Reaktionszeit unter 24h', 'Monatliche Optimierung', 'Persönlicher Support'], cta: { label: 'Betreuung sichern', href: '#kontakt' } },
+            ],
+          },
+        },
+        // Live-Demo: Preis-Kalkulator
+        {
+          ...B, id: 'sc-price-calculator', type: 'priceCalculator',
+          data: {
+            badge: 'Neu',
+            headline: 'Was kostet mein Projekt?',
+            subline: 'Der Preis-Kalkulator gibt Besuchern sofort ein Preisgefühl — und liefert Ihnen qualifizierte Anfragen.',
+            currency: '€',
+            basePrice: 890,
+            baseLabel: 'Basis-Paket',
+            priceNote: 'Unverbindliche Schätzung — das finale Angebot erstellen wir individuell nach einem kurzen Gespräch.',
+            options: [
+              { label: 'Umfang', description: 'Wie viele Seiten braucht Ihr Auftritt?', type: 'select', choices: [{ label: 'Onepager', price: 0 }, { label: '5 Seiten', price: 490 }, { label: '10+ Seiten', price: 990 }] },
+              { label: 'Texterstellung', description: 'Professionelle SEO-Texte für alle Seiten.', type: 'toggle', price: 350 },
+              { label: 'Logo-Design', description: 'Neues Logo inkl. 3 Entwürfen.', type: 'toggle', price: 450 },
+              { label: 'Zusätzliche Sprachen', description: 'Mehrsprachige Website (pro Sprache).', type: 'quantity', price: 290, min: 0, max: 5 },
+            ],
+            cta: { label: 'Unverbindliches Angebot anfordern', href: '#kontakt' },
+          },
+        },
+        // Live-Demo: Stellenangebote
+        {
+          ...B, id: 'sc-job-listings', type: 'jobListings',
+          data: {
+            badge: 'Neu',
+            headline: 'Werde Teil unseres Teams',
+            subline: 'Die Karriere-Sektion präsentiert offene Stellen mit Benefits — inklusive Empty-State für Initiativbewerbungen.',
+            benefits: ['4-Tage-Woche möglich', '100% Remote-Option', 'Weiterbildungsbudget', '30 Tage Urlaub'],
+            jobs: [
+              { title: 'Projektleiter:in Webprojekte', location: 'München', type: 'Vollzeit', schedule: 'ab sofort', text: 'Du steuerst Kundenprojekte von der Anfrage bis zum Launch und bist die Schnittstelle zwischen Kunde und Team.', tags: ['Projektmanagement', 'Kundenkontakt'], href: '#kontakt' },
+              { title: 'Frontend-Entwickler:in', location: 'Remote', type: 'Voll-/Teilzeit', schedule: 'ab sofort', text: 'Du baust performante, barrierefreie Interfaces mit React und Next.js.', tags: ['React', 'TypeScript', 'Tailwind'], href: '#kontakt' },
+              { title: 'Werkstudent:in Content', location: 'München / Remote', type: 'Werkstudium', schedule: 'flexibel', text: 'Du unterstützt bei Texten, Bildern und der Pflege von Kundenwebsites.', tags: ['Content', 'SEO'], href: '#kontakt' },
+            ],
+            contactCta: { label: 'Initiativ bewerben', href: '#kontakt' },
+          },
+        },
+        // Live-Demo: Bento Grid
+        {
+          ...B, id: 'sc-bento', type: 'bentoGrid',
+          data: {
+            headline: 'Stärken asymmetrisch inszenieren',
+            subline: 'Das Bento-Grid bricht das klassische Kachelraster auf und lenkt den Blick auf das Wichtigste.',
+            items: [
+              { title: 'Alles aus einer Hand', text: 'Design, Technik, Texte und Betreuung — koordiniert von einem festen Ansprechpartner.', icon: 'layers', span: '2' },
+              { title: 'Blitzschnell', text: 'Ladezeiten unter einer Sekunde.', icon: 'zap' },
+              { title: 'DSGVO-konform', text: 'Hosting in Deutschland.', icon: 'shieldCheck' },
+              { title: 'Messbar besser', text: 'Mehr Anfragen durch klare Nutzerführung und saubere Technik.', icon: 'trendingUp', span: '2' },
+            ],
+          },
+        },
+        // Live-Demo: Animierte Zahlen
+        {
+          ...B, id: 'sc-stats', type: 'statsCounter',
+          data: {
+            headline: 'Zahlen, die für sich sprechen',
+            subline: 'Scroll-getriggerte Zähler machen Erfolge sichtbar.',
+            stats: [
+              { value: 120, suffix: '+', label: 'Projekte umgesetzt' },
+              { value: 98, suffix: '%', label: 'Weiterempfehlungsrate' },
+              { value: 14, label: 'Jahre Erfahrung' },
+              { value: 'seit 2011', label: 'am Markt' },
+            ],
+          },
+        },
+        // Live-Demo: Bewertungs-Marquee
+        {
+          ...B, id: 'sc-marquee', type: 'testimonialMarquee',
+          data: {
+            headline: 'Was Kunden sagen',
+            items: [
+              { quote: 'Von der Beratung bis zum Launch alles top — und danach erreichbar wie am ersten Tag.', name: 'Sandra M.', role: 'Physiotherapie-Praxis', rating: 5 },
+              { quote: 'Unsere Anfragen haben sich seit der neuen Website verdoppelt.', name: 'Thomas K.', role: 'Zimmerei', rating: 5 },
+              { quote: 'Endlich eine Agentur, die zuhört und mitdenkt.', name: 'Aylin D.', role: 'Kosmetikstudio', rating: 5 },
+              { quote: 'Schnell, transparent, fair. Klare Empfehlung.', name: 'Jonas B.', role: 'Café-Betreiber', rating: 5 },
+              { quote: 'Das CMS ist so einfach, dass wir alles selbst pflegen.', name: 'Petra L.', role: 'Ferienhof', rating: 5 },
+              { quote: 'Der Preis-Kalkulator bringt uns jede Woche neue qualifizierte Anfragen.', name: 'Murat Ö.', role: 'Umzugsunternehmen', rating: 5 },
             ],
           },
         },
