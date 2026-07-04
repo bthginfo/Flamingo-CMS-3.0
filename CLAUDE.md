@@ -39,6 +39,29 @@ cssVar, e.g. `headingColor` → `--token-heading`).
   role-coverage (`--strict`) + crosstalk. Must be green before pushing colour
   changes. (`tattoo-booking` has one known benign `label` gap.)
 
+## Template architecture (post-cleanup)
+
+- styleVariants (`modern`/`bold`/`minimal`) are GONE — `effectiveStyleVariant`
+  is hardcoded `'classic'` and all variant branches/functions were deleted
+  (−40 kB First-Load JS on the tenant route). Do not reintroduce them.
+- Shared primitives live in `templates/shared/industry-kit.tsx`
+  (SectionProps/ButtonValue/asButton/asList + SectionHeader/CtaButton/
+  ImageCard/IconRows). The per-industry `types.ts`/`shared.tsx` of medical/
+  tourism/salon/hotel/restaurant are thin re-exports. medical↔tourism
+  story/faq/testimonials are wrappers around `templates/shared/
+  industry-sections.tsx` (defaults = copy + fallback icon only).
+- Every section type needs: registry entry (`templates/index.ts`
+  SHARED_TEMPLATES or industry map), catalog entry (`admin/pages/[id]/
+  section-types.ts`), data schema (`lib/section-data-schemas.ts`) AND
+  preview data (`lib/section-preview-data.ts` — otherwise /demo/showcase
+  previews render blank).
+- `/demo/showcase` is NOT a tenant page: it's a static route
+  (`app/demo/showcase/page.tsx`) that renders `/section-preview?type=X` in
+  an iframe per catalogued type.
+- Demo-tenant admin access without PATs: `GET /admin/demo-login?industry=<key>`
+  issues a 1h admin JWT (rate-limited 10/h per IP). AI-API PATs can only be
+  (re)created via the admin UI server action and REVOKE existing tokens.
+
 ## Backend gotchas (these cost hours — do not re-learn them)
 
 - **The DB driver (neon-http) has NO transactions.** Two consequences:
@@ -52,11 +75,11 @@ cssVar, e.g. `headingColor` → `--token-heading`).
      so a naive retry collides on the unique slug with a `500`. Always make the
      FIRST POST clean; if you must retry, delete the partial row by slug first.
 - **styleOverrides are validated strictly per section type.** The API rejects
-  any `--token-*` a section doesn't render ("is not used by section type X").
-  `/api/v1/instructions sectionStyleContracts` is INCOMPLETE (only lists a
-  tenant's `availableSectionTypes`; borrowed types like `story`,
-  `contactLocation` are validated but absent). Resolve the full contract via the
-  generated files instead (see `scripts/demo-tenants/_lib/contracts.cjs`).
+  any `--token-*` a section doesn't render ("is not used by section type X",
+  with a "Did you mean …?" hint). `/api/v1/instructions sectionStyleContracts`
+  is now COMPLETE: borrowed/alias types (`story`, `contactLocation`, …) are
+  appended with `source: 'borrowed'`. `scripts/demo-tenants/_lib/contracts.cjs`
+  resolves the same contracts offline from the generated files.
 - The keyword `transparent` is rejected as a style value — use `rgba(0,0,0,0)`.
 - **Node's `https`/`fetch` ignore `HTTPS_PROXY`** in the sandbox, so direct
   egress is blocked. Tunnel via an HTTP CONNECT agent using `HTTPS_PROXY` +
