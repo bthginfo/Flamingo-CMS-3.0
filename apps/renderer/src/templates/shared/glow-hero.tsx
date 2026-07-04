@@ -1,5 +1,7 @@
 'use client';
 
+import { WordReveal } from '@/components/ui/fx';
+
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { plain } from '@/lib/strip-html';
@@ -67,7 +69,7 @@ export function GlowHeroSection({ data }: Props) {
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 py-16 md:py-24">
         <div className="max-w-5xl">
           {eyebrow && <div className="mb-5 text-xs font-bold uppercase tracking-[0.24em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{eyebrow}</div>}
-          <h1 className="text-5xl font-black leading-none text-[color:var(--token-heading)] md:text-7xl lg:text-8xl" data-edit-path="headline">{headline}</h1>
+          <h1 className="text-5xl font-black leading-none text-[color:var(--token-heading)] md:text-7xl lg:text-8xl" data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-subheading)] md:text-xl" data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}

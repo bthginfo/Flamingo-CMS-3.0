@@ -760,3 +760,12 @@ html {
   }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
 }
+
+/* FX primitives (components/ui/fx.tsx) */
+@keyframes fx-beam {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+.animate-fx-beam {
+  animation: fx-beam 7s linear infinite;
+}

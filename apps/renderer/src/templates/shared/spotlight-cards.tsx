@@ -1,5 +1,7 @@
 'use client';
 
+import { TiltCard } from '@/components/ui/fx';
+
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
@@ -24,6 +26,7 @@ export function SpotlightCardsSection({ data }: Props) {
       <div className="grid gap-4 md:grid-cols-3">
         {cards.map((card, i) => {
           const body = (
+            <TiltCard max={6}>
             <motion.article
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -46,6 +49,7 @@ export function SpotlightCardsSection({ data }: Props) {
                 </div>
               </div>
             </motion.article>
+            </TiltCard>
           );
           return card.href ? <a key={i} href={card.href}>{body}</a> : <div key={i}>{body}</div>;
         })}

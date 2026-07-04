@@ -1,5 +1,7 @@
 'use client';
 
+import { NumberTicker } from '@/components/ui/fx';
+
 import { motion } from 'framer-motion';
 import { Award, CheckCircle2, Quote, Star } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
@@ -30,7 +32,10 @@ export function ProofWallSection({ data }: Props) {
           {proofs.map((proof, index) => (
             <motion.div key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm" data-edit-collection="proofs" data-edit-index={index}>
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_14%,transparent)] text-[color:var(--token-icon)]"><Award size={19} /></div>
-              {proof.value && <div className="text-3xl font-black text-[color:var(--token-stat-value)]" data-edit-path="value">{proof.value}</div>}
+              {proof.value && (() => {
+                const m = String(proof.value).match(/^([\d.,]+)(.*)$/);
+                return <div className="text-3xl font-black text-[color:var(--token-stat-value)]" data-edit-path="value">{m ? <><NumberTicker value={m[1]} />{m[2]}</> : proof.value}</div>;
+              })()}
               <div className="mt-1 font-semibold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{plain(proof.label)}</div>
               {proof.note && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="note">{plain(proof.note)}</div>}
             </motion.div>
