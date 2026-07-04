@@ -236,7 +236,7 @@ const tenant = {
           slug: 'heizung',
           title: 'Heizung & Brennwert',
           excerpt: 'Vom Brennwertkessel bis zur Hybridanlage — fördergeprüft, sauber installiert und auf einen späteren Wärmepumpen­betrieb vorbereitet.',
-          heroImage: '1631545806609-c11c8a4f9f1d',
+          heroImage: '1621905251189-08b45d6a269e',
           intro: 'Nicht jedes Haus ist heute schon wärmepumpen­bereit. Wir prüfen ehrlich, ob eine Hybridlösung oder ein Brennwertkessel der sinnvollere Schritt ist — und legen die Anlage so aus, dass der Umstieg auf die Wärmepumpe später ohne Komplettumbau gelingt.',
           highlights: [
             { icon: 'Flame',     title: 'Brennwert & Hybrid',   text: 'Marken wie Viessmann, Vaillant und Buderus — installiert vom eigenen Meisterbetrieb, nicht durchgereicht.' },

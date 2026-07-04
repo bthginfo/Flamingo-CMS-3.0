@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 
 const SALT_ROUNDS = 12;
-const COOKIE_NAME = 'flamingo_admin_session';
+import { SESSION_COOKIE_NAME as COOKIE_NAME } from './cookie';
 const JWT_ALG = 'HS256';
 
 // ─── Password hashing ───────────────────────────────────────────────
@@ -41,9 +41,7 @@ export async function verifySessionToken(token: string): Promise<{ tenantId: str
 }
 
 // ─── Cookie helpers ─────────────────────────────────────────────────
-export function getSessionCookieName() {
-  return COOKIE_NAME;
-}
+export { getSessionCookieName, SESSION_COOKIE_NAME } from './cookie';
 
 export function buildSessionCookie(token: string, isProduction: boolean): string {
   const maxAge = 7 * 24 * 60 * 60; // 7 days

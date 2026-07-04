@@ -18,11 +18,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       request,
       token: process.env.BLOB_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async (pathname) => {
+        // A valid admin session is ALWAYS required. FIXED_TENANT_ID only scopes
+        // single-tenant deployments — treating it as an auth fallback would let
+        // anonymous visitors mint upload tokens on those deployments.
         const session = await getSession();
-        const tenantId = session?.tenantId || process.env.FIXED_TENANT_ID;
-        if (!tenantId) {
-          throw new Error('Unauthorized — no valid session and no FIXED_TENANT_ID');
-        }
+        if (!session) throw new Error('Unauthorized — admin session required');
+        const tenantId = session.tenantId || process.env.FIXED_TENANT_ID;
+        if (!tenantId) throw new Error('Unauthorized — no tenant resolved');
 
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'],

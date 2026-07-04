@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getSessionCookieName } from '@flamingo/auth';
+import { getSessionCookieName } from '@flamingo/auth/cookie';
 
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;

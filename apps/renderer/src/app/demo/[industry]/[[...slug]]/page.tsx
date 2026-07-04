@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import { prefixInternalHref } from '@/lib/link-prefix';
 import { notFound } from 'next/navigation';
 import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@/lib/snapshot';
 import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
@@ -380,17 +381,17 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
         industryKey={industry}
         defaultStyle={tenantStyle.activeStyle}
         siteData={{
-          navItems: navData.items.map(item => ({ ...item, href: item.href.startsWith('/demo/') ? item.href : `${demoPrefix}${item.href}` })),
-          cta: navData.cta ? { ...navData.cta, href: navData.cta.href.startsWith('/demo/') ? navData.cta.href : `${demoPrefix}${navData.cta.href}` } : { label: '', href: '' },
+          navItems: navData.items.map(item => ({ ...item, href: prefixInternalHref(item.href, demoPrefix) as string })),
+          cta: navData.cta ? { ...navData.cta, href: prefixInternalHref(navData.cta.href, demoPrefix) as string } : { label: '', href: '' },
           brand: brandData.brand,
           contact: brandData.contact,
           socialLinks: brandData.socialLinks,
           footer: footerData ? {
             columns: (footerData.columns || []).map(col => ({
               ...col,
-              items: (col.items || []).map(item => ({ ...item, href: item.href && !item.href.startsWith('/demo/') ? `${demoPrefix}${item.href}` : item.href })),
+              items: (col.items || []).map(item => ({ ...item, href: prefixInternalHref(item.href, demoPrefix) as string })),
             })),
-            legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: l.href?.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}` })),
+            legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: prefixInternalHref(l.href, demoPrefix) as string })),
           } : { columns: [], legalLinks: [] },
         }}
         darkBg={false}
@@ -408,17 +409,17 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
         industryKey={industry}
         defaultStyle={tenantStyle.activeStyle}
         siteData={{
-          navItems: navData.items.map(item => ({ ...item, href: item.href.startsWith('/demo/') ? item.href : `${demoPrefix}${item.href}` })),
-          cta: navData.cta ? { ...navData.cta, href: navData.cta.href.startsWith('/demo/') ? navData.cta.href : `${demoPrefix}${navData.cta.href}` } : { label: '', href: '' },
+          navItems: navData.items.map(item => ({ ...item, href: prefixInternalHref(item.href, demoPrefix) as string })),
+          cta: navData.cta ? { ...navData.cta, href: prefixInternalHref(navData.cta.href, demoPrefix) as string } : { label: '', href: '' },
           brand: brandData.brand,
           contact: brandData.contact,
           socialLinks: brandData.socialLinks,
           footer: footerData ? {
             columns: (footerData.columns || []).map(col => ({
               ...col,
-              items: (col.items || []).map(item => ({ ...item, href: item.href && !item.href.startsWith('/demo/') ? `${demoPrefix}${item.href}` : item.href })),
+              items: (col.items || []).map(item => ({ ...item, href: prefixInternalHref(item.href, demoPrefix) as string })),
             })),
-            legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: l.href?.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}` })),
+            legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: prefixInternalHref(l.href, demoPrefix) as string })),
           } : { columns: [], legalLinks: [] },
         }}
         darkBg={false}
@@ -444,17 +445,17 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}
       siteData={{
-        navItems: navData.items.map(item => ({ ...item, href: item.href.startsWith('/demo/') ? item.href : `${demoPrefix}${item.href}` })),
-        cta: navData.cta ? { ...navData.cta, href: navData.cta.href.startsWith('/demo/') ? navData.cta.href : `${demoPrefix}${navData.cta.href}` } : { label: '', href: '' },
+        navItems: navData.items.map(item => ({ ...item, href: prefixInternalHref(item.href, demoPrefix) as string })),
+        cta: navData.cta ? { ...navData.cta, href: prefixInternalHref(navData.cta.href, demoPrefix) as string } : { label: '', href: '' },
         brand: brandData.brand,
         contact: brandData.contact,
         socialLinks: brandData.socialLinks,
         footer: footerData ? {
           columns: (footerData.columns || []).map(col => ({
             ...col,
-            items: (col.items || []).map(item => ({ ...item, href: item.href && !item.href.startsWith('/demo/') ? `${demoPrefix}${item.href}` : item.href })),
+            items: (col.items || []).map(item => ({ ...item, href: prefixInternalHref(item.href, demoPrefix) as string })),
           })),
-          legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: l.href?.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}` })),
+          legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: prefixInternalHref(l.href, demoPrefix) as string })),
         } : { columns: [], legalLinks: [] },
       }}
       darkBg={firstIsHero}

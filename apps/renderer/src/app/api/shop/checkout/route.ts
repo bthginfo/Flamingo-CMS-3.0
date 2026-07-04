@@ -88,8 +88,17 @@ async function reserveOrderNumber(db: ReturnType<typeof getDb>, tenantId: string
   return `${prefix}-${String(reservedNumber).padStart(4, '0')}`;
 }
 
+const ALLOWED_PAYMENT_METHODS = new Set(['prepayment', 'invoice', 'pickup', 'cash', 'stripe', 'paypal', 'sumup']);
+const MAX_ORDER_ITEMS = 100;
+
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+    if (!body || typeof body !== 'object') throw new Error('not an object');
+  } catch {
+    return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
+  }
   const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
@@ -104,10 +113,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode, idempotencyKey } = body;
+  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode, idempotencyKey } = body as Record<string, any>;
 
   if (!name || !email || !items?.length) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+  if (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: 'Ungültige E-Mail-Adresse.' }, { status: 400 });
+  }
+  if (!ALLOWED_PAYMENT_METHODS.has(paymentMethod)) {
+    return NextResponse.json({ error: 'Ungültige Zahlungsart.' }, { status: 400 });
+  }
+  if (!Array.isArray(items) || items.length > MAX_ORDER_ITEMS) {
+    // Every item costs product lookups — an unbounded list is a DoS vector.
+    return NextResponse.json({ error: 'Zu viele Positionen im Warenkorb.' }, { status: 400 });
   }
 
   const db = getDb();
