@@ -60,6 +60,11 @@ import { GlowHeroSection } from './shared/glow-hero';
 import { ServiceTabsSection } from './shared/service-tabs';
 import { PriceCalculatorSection } from './shared/price-calculator';
 import { JobListingsSection } from './shared/job-listings';
+import { CtaSplitSection } from './shared/cta-split';
+import { OpeningStatusSection } from './shared/opening-status';
+import { TeamSpotlightSection } from './shared/team-spotlight';
+import { FaqContactSplitSection } from './shared/faq-contact-split';
+import { GalleryProSection } from './shared/gallery-pro';
 import { CollectionListSection } from './shared/collection-list';
 import { InstagramFeedSection } from './shared/instagram-feed';
 import { ShopProductGridSection } from './shared/shop-product-grid';
@@ -755,6 +760,11 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   serviceTabs: ServiceTabsSection,
   priceCalculator: PriceCalculatorSection,
   jobListings: JobListingsSection,
+  ctaSplit: CtaSplitSection,
+  openingStatus: OpeningStatusSection,
+  teamSpotlight: TeamSpotlightSection,
+  faqContactSplit: FaqContactSplitSection,
+  galleryPro: GalleryProSection,
   glowHero: GlowHeroSection,
   floristHero: GlowHeroSection,
   bouquetShowcase: ProductShowcaseSection,

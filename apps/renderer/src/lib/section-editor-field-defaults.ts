@@ -518,6 +518,28 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "badgeText": "",
     "emptyText": ""
   },
+  "ctaSplit": {
+    "badgeText": "",
+    "reversed": false,
+    "subline": ""
+  },
+  "openingStatus": {
+    "badgeText": "",
+    "closedLabel": "",
+    "note": "",
+    "openLabel": ""
+  },
+  "teamSpotlight": {
+    "badgeText": ""
+  },
+  "faqContactSplit": {
+    "badgeText": "",
+    "whatsapp": ""
+  },
+  "galleryPro": {
+    "badgeText": "",
+    "categories": []
+  },
   "glowHero": {
     "bgImage": "",
     "bgPosition": ""
