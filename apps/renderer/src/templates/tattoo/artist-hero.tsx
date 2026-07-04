@@ -15,7 +15,7 @@ export function ArtistHeroSection({ data }: Props) {
   const experience = (data.experience as string) || '';
 
   return (
-    <section className="py-20 px-6 bg-[var(--token-section-bg-alt)]">
+    <section className="py-20 px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row gap-10 lg:gap-14 items-center md:items-start">
           {image && (
