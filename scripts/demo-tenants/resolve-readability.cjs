@@ -82,10 +82,18 @@ function scanTenant(key, flagged) {
   let sm; while ((sm = styleRe.exec(html))) { cardVars[sm[1]] = extractProps(sm[2]); }
 
   // Media-overlay sections (photo heroes) are identifiable by their injected
-  // heading rule: its terminal fallback is #ffffff instead of `inherit`.
+  // heading rule: it either carries the light literal default (#ffffff /
+  // rgba(255…)) or the section's own literal override — never the page-token
+  // var() chain (that chain would resolve to the page's dark ink there).
   const mediaSections = new Set();
-  const headRuleRe = /data-section-id="([0-9a-f-]+)"\]\[data-style\]\s*:is\(h1[^{]*\{\s*color:\s*([^;}]*)/gi;
-  let hm; while ((hm = headRuleRe.exec(html))) { if (hm[2].includes('#ffffff')) mediaSections.add(hm[1]); }
+  const mediaHeadExpr = {}; // sectionId -> the colour expression the rule paints
+  const headRuleRe = /data-section-id="([0-9a-f-]+)"\]\[data-style\]\s*:is\(h1[^{]*\{\s*color:\s*([^;}]*?)\s*!important/gi;
+  let hm; while ((hm = headRuleRe.exec(html))) {
+    const expr = hm[2].trim();
+    // A media rule is one whose expression is NOT the page-token chain.
+    if (!expr.startsWith('var(--token-heading')) { mediaSections.add(hm[1]); mediaHeadExpr[hm[1]] = expr; }
+    else if (expr.includes('#ffffff')) { mediaSections.add(hm[1]); mediaHeadExpr[hm[1]] = expr; }
+  }
 
   // Each section wrapper opening tag. Attribute ORDER is not guaranteed —
   // `style` may come before `data-section-id` — so match the whole tag and
@@ -103,16 +111,13 @@ function scanTenant(key, flagged) {
     const bg0 = resolveVar(bgRaw, map);
 
     // Media-overlay sections (photo behind text, dark overlay in practice):
-    // the section bg cannot be judged, but the TEXT can — the unified chain
-    // must not resolve to a dark colour there. A heading that resolves dark
-    // is the "dark headline on a dark photo" bug; unresolved is fine (it
-    // falls through to the light terminal fallback).
+    // the section bg cannot be judged, but the PAINTED heading colour can —
+    // resolve exactly the expression the injected rule paints. A dark result
+    // is the "dark headline on a dark photo" bug.
     if (mediaSections.has(id)) {
-      for (const fgVar of ['--token-heading', '--token-body']) {
-        const fg0 = resolveVar(map[fgVar] || `var(${fgVar})`, map);
-        if (fg0 && fg0[3] > 0.5 && lum(over(fg0, [0, 0, 0, 1])) < 0.25) {
-          flagged.push({ key, id: id.slice(0, 8), fgVar, fg: rgb(fg0), bg: 'photo+overlay', ratio: 'dark-on-media' });
-        }
+      const fg0 = resolveVar(mediaHeadExpr[id], map);
+      if (fg0 && fg0[3] > 0.5 && lum(over(fg0, [0, 0, 0, 1])) < 0.25) {
+        flagged.push({ key, id: id.slice(0, 8), fgVar: 'heading(painted)', fg: rgb(fg0), bg: 'photo+overlay', ratio: 'dark-on-media' });
       }
       continue;
     }

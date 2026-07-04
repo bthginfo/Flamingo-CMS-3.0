@@ -409,19 +409,35 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   // on-dark alias (so it doesn't matter which the data used), then the global
   // style default. There is no "this section is dark" branch — you pick the
   // section background AND the text colour, and the renderer paints exactly that.
-  // hasMediaOverlay only changes the TERMINAL fallback: a section whose
-  // background is a photo (hero) has no colour to derive from, so unset text
-  // defaults to light instead of inheriting the page's dark default.
+  //
+  // MEDIA sections (photo/overlay behind the text) are the one exception to the
+  // var() chain: the page-level defaults define --token-heading etc. on the page
+  // wrapper, so a blind var(--token-heading, …) ALWAYS resolves to the page's
+  // dark ink there and the light terminal fallback is unreachable — that painted
+  // dark headlines onto dark hero photos whenever a hero had no own overrides.
+  // On media sections only the section's OWN overrides may override the light
+  // default; page-level tokens must not bleed through.
   const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay);
-  const headFb = hasMediaOverlay ? '#ffffff' : 'inherit';
-  const bodyFb = hasMediaOverlay ? 'rgba(255,255,255,0.86)' : 'inherit';
-  const mutedFb = hasMediaOverlay ? 'rgba(255,255,255,0.72)' : 'inherit';
-  const headingColorVar = `var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, var(--style-text-primary, ${headFb}))))`;
-  const bodyColorVar = `var(--token-body, var(--token-on-dark-body, var(--style-body-color, var(--style-text-secondary, ${bodyFb}))))`;
-  const mutedColorVar = `var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, var(--style-text-secondary, ${mutedFb}))))`;
-  const cardHeadingColorVar = `var(--token-card-heading, var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, ${headFb}))))`;
-  const cardBodyColorVar = `var(--token-card-body, var(--token-body, var(--token-on-dark-body, var(--style-body-color, ${bodyFb}))))`;
-  const cardMutedColorVar = `var(--token-card-muted, var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, ${mutedFb}))))`;
+  const ownOverrides = (section.styleOverrides ?? {}) as Record<string, unknown>;
+  const own = (...keys: string[]) => {
+    for (const k of keys) { const v = ownOverrides[k]; if (typeof v === 'string' && v) return v; }
+    return null;
+  };
+  const headingColorVar = hasMediaOverlay
+    ? (own('--token-heading', '--token-on-dark-heading') ?? '#ffffff')
+    : 'var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, var(--style-text-primary, inherit))))';
+  const bodyColorVar = hasMediaOverlay
+    ? (own('--token-body', '--token-on-dark-body') ?? 'rgba(255,255,255,0.86)')
+    : 'var(--token-body, var(--token-on-dark-body, var(--style-body-color, var(--style-text-secondary, inherit))))';
+  const mutedColorVar = hasMediaOverlay
+    ? (own('--token-muted', '--token-on-dark-muted') ?? 'rgba(255,255,255,0.72)')
+    : 'var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, var(--style-text-secondary, inherit))))';
+  // Cards keep the full chain even on media sections: they sit on an opaque
+  // --token-card-bg, so the page-level text defaults are the right backdrop-
+  // matched colours for them.
+  const cardHeadingColorVar = `var(--token-card-heading, var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, ${hasMediaOverlay ? '#ffffff' : 'inherit'}))))`;
+  const cardBodyColorVar = `var(--token-card-body, var(--token-body, var(--token-on-dark-body, var(--style-body-color, ${hasMediaOverlay ? 'rgba(255,255,255,0.86)' : 'inherit'}))))`;
+  const cardMutedColorVar = `var(--token-card-muted, var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, ${hasMediaOverlay ? 'rgba(255,255,255,0.72)' : 'inherit'}))))`;
 
   // Per-section color overrides (from CMS) applied as inline CSS vars
   const overrideStyle = section.styleOverrides
