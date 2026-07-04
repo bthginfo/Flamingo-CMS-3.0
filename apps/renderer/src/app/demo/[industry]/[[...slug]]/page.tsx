@@ -3,7 +3,8 @@ import { prefixInternalHref } from '@/lib/link-prefix';
 import { notFound } from 'next/navigation';
 import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@/lib/snapshot';
 import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
-import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
+import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage } from '@/lib/tenant-data';
+import type { Metadata } from 'next';
 import { DemoPageShell } from '../../demo-page-shell';
 import { getDemoSite } from '../../pages';
 import { getDemoSiteData, type IndustryKey } from '../../demo-data';
@@ -300,6 +301,43 @@ function injectCollections(sections: SnapshotSection[], collections: SnapshotCol
     }
     return section;
   });
+}
+
+// Demo pages previously fell back to the root layout's generic
+// "Flamingo CMS" title — visitors saw no tenant branding in the tab and
+// shares had no description. Mirror the tenant route's SEO resolution.
+export async function generateMetadata({ params }: { params: Promise<{ industry: string; slug?: string[] }> }): Promise<Metadata> {
+  try {
+    const { industry, slug } = await params;
+    const dbIndustry = INDUSTRY_MAP[industry];
+    if (!dbIndustry) return {};
+    const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase', shop: 'demo-shop' };
+    const tenantId = SLUG_MAP[industry]
+      ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
+      : await resolveDemoTenant(dbIndustry, industry);
+    if (!tenantId) return {};
+    const [snapshot, seoGlobal] = await Promise.all([
+      getActiveSnapshot(tenantId),
+      getTenantSeoGlobal(tenantId),
+    ]);
+    const targetSlug = slug?.join('/') || '';
+    const page = snapshot?.pages.find(p =>
+      p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
+    );
+    if (!page) return seoGlobal?.defaultTitle ? { title: seoGlobal.defaultTitle, description: seoGlobal.defaultDescription || undefined } : {};
+    const seoPage = await getTenantSeoPage(tenantId, page.id);
+    const pageTitle = seoPage?.metaTitle || page.title;
+    const title = seoGlobal?.titleTemplate ? seoGlobal.titleTemplate.replace('%s', pageTitle) : pageTitle;
+    const description = seoPage?.metaDescription || seoGlobal?.defaultDescription || undefined;
+    const ogImage = seoPage?.ogImage || seoGlobal?.defaultOgImage || undefined;
+    return {
+      title,
+      description,
+      openGraph: { title, description, ...(ogImage ? { images: [ogImage] } : {}) },
+    };
+  } catch {
+    return {};
+  }
 }
 
 export default async function DemoPage({ params }: { params: Promise<{ industry: string; slug?: string[] }> }) {
