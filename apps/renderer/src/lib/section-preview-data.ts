@@ -1900,4 +1900,42 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       },
     ],
   },
+  serviceTabs: {
+    badge: 'Leistungen',
+    headline: 'Leistungen interaktiv erkunden statt scrollen.',
+    subline: 'Jede Registerkarte mit eigenem Bild, Featureliste und Call-to-Action.',
+    tabs: [
+      { label: 'Beratung', icon: 'messageCircle', title: 'Strategische Beratung', text: '<p>Vom ersten Gespräch bis zum Konzept: Wir analysieren Ziele, Zielgruppen und Wettbewerb und leiten daraus eine klare Roadmap ab.</p>', image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&q=80', features: ['Kostenloses Erstgespräch', 'Wettbewerbsanalyse', 'Klare Roadmap in 5 Tagen'], cta: { label: 'Beratung anfragen', href: '#kontakt' } },
+      { label: 'Umsetzung', icon: 'hammer', title: 'Professionelle Umsetzung', text: '<p>Unser Team setzt das Konzept um — termintreu, transparent und mit wöchentlichen Updates zum Fortschritt.</p>', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80', features: ['Fester Ansprechpartner', 'Wöchentliche Updates', 'Festpreisgarantie'], cta: { label: 'Projekt starten', href: '#kontakt' } },
+      { label: 'Betreuung', icon: 'shieldCheck', title: 'Laufende Betreuung', text: '<p>Nach dem Launch bleiben wir an Ihrer Seite: Wartung, Optimierung und schnelle Hilfe, wenn es darauf ankommt.</p>', image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&q=80', features: ['Reaktionszeit unter 24h', 'Monatliche Optimierung', 'Persönlicher Support'], cta: { label: 'Betreuung sichern', href: '#kontakt' } },
+    ],
+  },
+  priceCalculator: {
+    badge: 'Preisrechner',
+    headline: 'Was kostet mein Projekt?',
+    subline: 'Optionen wählen und sofort ein Preisgefühl bekommen — Anfragen kommen vorqualifiziert bei Ihnen an.',
+    currency: '€',
+    basePrice: 890,
+    baseLabel: 'Basis-Paket',
+    priceNote: 'Unverbindliche Schätzung — das finale Angebot erstellen wir individuell nach einem kurzen Gespräch.',
+    options: [
+      { label: 'Umfang', description: 'Wie viele Seiten braucht Ihr Auftritt?', type: 'select', choices: [{ label: 'Onepager', price: 0 }, { label: '5 Seiten', price: 490 }, { label: '10+ Seiten', price: 990 }] },
+      { label: 'Texterstellung', description: 'Professionelle SEO-Texte für alle Seiten.', type: 'toggle', price: 350 },
+      { label: 'Logo-Design', description: 'Neues Logo inkl. 3 Entwürfen.', type: 'toggle', price: 450 },
+      { label: 'Zusätzliche Sprachen', description: 'Mehrsprachige Website (pro Sprache).', type: 'quantity', price: 290, min: 0, max: 5 },
+    ],
+    cta: { label: 'Unverbindliches Angebot anfordern', href: '#kontakt' },
+  },
+  jobListings: {
+    badge: 'Karriere',
+    headline: 'Werde Teil unseres Teams',
+    subline: 'Offene Stellen mit Benefits — inklusive Empty-State für Initiativbewerbungen.',
+    benefits: ['4-Tage-Woche möglich', '100% Remote-Option', 'Weiterbildungsbudget', '30 Tage Urlaub'],
+    jobs: [
+      { title: 'Projektleiter:in Webprojekte', location: 'München', type: 'Vollzeit', schedule: 'ab sofort', text: 'Du steuerst Kundenprojekte von der Anfrage bis zum Launch und bist die Schnittstelle zwischen Kunde und Team.', tags: ['Projektmanagement', 'Kundenkontakt'], href: '#kontakt' },
+      { title: 'Frontend-Entwickler:in', location: 'Remote', type: 'Voll-/Teilzeit', schedule: 'ab sofort', text: 'Du baust performante, barrierefreie Interfaces mit React und Next.js.', tags: ['React', 'TypeScript', 'Tailwind'], href: '#kontakt' },
+      { title: 'Werkstudent:in Content', location: 'München / Remote', type: 'Werkstudium', schedule: 'flexibel', text: 'Du unterstützt bei Texten, Bildern und der Pflege von Kundenwebsites.', tags: ['Content', 'SEO'], href: '#kontakt' },
+    ],
+    contactCta: { label: 'Initiativ bewerben', href: '#kontakt' },
+  },
 };
