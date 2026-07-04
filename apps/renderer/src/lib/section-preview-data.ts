@@ -107,7 +107,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     items: [
       { title: 'Hochzeiten', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=900&q=85', href: '#kontakt', size: 'large' },
       { title: 'Geburtstage', image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=900&q=85', href: '#kontakt' },
-      { title: 'Trauerfloristik', image: 'https://images.unsplash.com/photo-1509719662284-8f8d7b14f562?w=900&q=85', href: '#kontakt' },
+      { title: 'Trauerfloristik', image: 'https://images.unsplash.com/photo-1487070183336-b863922373d4?w=900&q=85', href: '#kontakt' },
       { title: 'Business & Events', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=85', href: '#kontakt' },
     ],
   },
@@ -149,7 +149,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     categories: ['Saison', 'Hochzeit', 'Trockenblumen'],
     items: [
       { name: 'Pfingstrosen', category: 'Saison', image: 'https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=600&q=85' },
-      { name: 'Eukalyptus', category: 'Hochzeit', image: 'https://images.unsplash.com/photo-1509719662284-8f8d7b14f562?w=600&q=85' },
+      { name: 'Eukalyptus', category: 'Hochzeit', image: 'https://images.unsplash.com/photo-1487070183336-b863922373d4?w=600&q=85' },
       { name: 'Trockenblumen', category: 'Trockenblumen', image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=600&q=85' },
     ],
   },
@@ -177,7 +177,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Coaches, die wirklich begleiten.',
     subline: 'Zeige Spezialisierungen, Rollen und Persönlichkeit Deines Teams.',
     members: [
-      { name: 'Lea Sommer', role: 'Head Coach', image: 'https://images.unsplash.com/photo-1609899464726-209befaac5a5?w=500&q=80', bio: 'Krafttraining, Mobility und Trainingsplanung.' },
+      { name: 'Lea Sommer', role: 'Head Coach', image: 'https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=500&q=80', bio: 'Krafttraining, Mobility und Trainingsplanung.' },
       { name: 'Jonas Kern', role: 'Personal Trainer', image: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=500&q=80', bio: 'Athletik, HIIT und Technik-Coaching.' },
       { name: 'Mira Wolf', role: 'Yoga Coach', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&q=80', bio: 'Yoga, Breathwork und Regeneration.' },
     ],
@@ -437,7 +437,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       comparePriceCents: 149900,
       images: [
         'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=1000&q=85',
-        'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=1000&q=85',
+        'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1000&q=85',
       ],
       stock: 4,
       isDigital: false,
@@ -472,7 +472,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     basePath: '/shop',
     shopGridPath: '/shop',
     categories: [
-      { id: 'cat-1', name: 'Wohnen', slug: 'wohnen', description: 'Sofas, Sessel und Wohnaccessoires.', image: 'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=900&q=80' },
+      { id: 'cat-1', name: 'Wohnen', slug: 'wohnen', description: 'Sofas, Sessel und Wohnaccessoires.', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80' },
       { id: 'cat-2', name: 'Büro', slug: 'buero', description: 'Tische, Stühle und Stauraum für produktive Räume.', image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80' },
       { id: 'cat-3', name: 'Accessoires', slug: 'accessoires', description: 'Leuchten, Teppiche und Details mit Wirkung.', image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=900&q=80' },
     ],
@@ -1159,7 +1159,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Wellness & Spa',
     badgeText: 'Spa',
     introText: 'Entspannen Sie Körper und Geist in unserem 500m² Spa-Bereich.',
-    imagePrimary: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6f?w=800&q=80',
+    imagePrimary: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80',
     treatments: [
       { name: 'Hot-Stone-Massage', duration: '60 Min.', price: '89 €' },
       { name: 'Gesichtsbehandlung', duration: '45 Min.', price: '69 €' },
@@ -1212,7 +1212,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     images: [
       { src: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80', alt: 'Lobby', category: 'Hotel' },
       { src: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80', alt: 'Suite', category: 'Zimmer' },
-      { src: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6f?w=600&q=80', alt: 'Spa', category: 'Wellness' },
+      { src: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80', alt: 'Spa', category: 'Wellness' },
     ],
     subline: "",
     ctaPrimary: { label: '', href: '' },
@@ -1761,7 +1761,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Unsere Welten',
     subline: 'Finden Sie Ihren Stil.',
     items: [
-      { image: 'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=800&q=80', title: 'Wohnzimmer', href: '#', size: 'large' },
+      { image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80', title: 'Wohnzimmer', href: '#', size: 'large' },
       { image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80', title: 'Schlafzimmer', href: '#', size: 'small' },
       { image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80', title: 'Küche', href: '#', size: 'small' },
       { image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80', title: 'Büro', href: '#', size: 'large' },
@@ -1795,8 +1795,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     subline: 'Filtern Sie nach Kategorie.',
     categories: ['Holz', 'Stoff', 'Leder', 'Metall'],
     items: [
-      { image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80', name: 'Eiche Natur', category: 'Holz' },
-      { image: 'https://images.unsplash.com/photo-1558618019-a11c04b2e4c8?w=400&q=80', name: 'Walnuss Dunkel', category: 'Holz' },
+      { image: 'https://images.unsplash.com/photo-1517705008128-361805f42e86?w=400&q=80', name: 'Eiche Natur', category: 'Holz' },
+      { image: 'https://images.unsplash.com/photo-1610725664285-7c57e6eeac3f?w=400&q=80', name: 'Walnuss Dunkel', category: 'Holz' },
       { image: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&q=80', name: 'Leinen Sand', category: 'Stoff' },
       { image: 'https://images.unsplash.com/photo-1585264550248-1778be3b6368?w=400&q=80', name: 'Leder Cognac', category: 'Leder' },
       { image: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=400&q=80', name: 'Messing gebürstet', category: 'Metall' },
@@ -1816,7 +1816,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Lassen Sie sich inspirieren',
     subline: 'Einblicke in realisierte Projekte unserer Kunden.',
     items: [
-      { image: 'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=600&q=80', title: 'Loft Berlin', href: '#' },
+      { image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80', title: 'Loft Berlin', href: '#' },
       { image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80', title: 'Villa am See', href: '#' },
       { image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80', title: 'Penthouse München', href: '#' },
       { image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80', title: 'Office Hamburg', href: '#' },

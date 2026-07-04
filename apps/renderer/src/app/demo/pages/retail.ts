@@ -30,7 +30,7 @@ export const retailSite: DemoSite = {
             headline: 'Unsere Welten',
             subline: 'Finden Sie Ihren Bereich.',
             items: [
-              { image: 'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=800&q=80', title: 'Wohnzimmer', href: '#', size: 'large' },
+              { image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80', title: 'Wohnzimmer', href: '#', size: 'large' },
               { image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80', title: 'Büro & Office', href: '#', size: 'small' },
               { image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80', title: 'Schlafzimmer', href: '#', size: 'small' },
               { image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80', title: 'Küche & Essen', href: '#', size: 'large' },
@@ -103,8 +103,8 @@ export const retailSite: DemoSite = {
             subline: 'Filtern Sie nach Kategorie.',
             categories: ['Holz', 'Stoff', 'Leder', 'Metall'],
             items: [
-              { image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80', name: 'Eiche Natur', category: 'Holz' },
-              { image: 'https://images.unsplash.com/photo-1558618019-a11c04b2e4c8?w=400&q=80', name: 'Walnuss Dunkel', category: 'Holz' },
+              { image: 'https://images.unsplash.com/photo-1517705008128-361805f42e86?w=400&q=80', name: 'Eiche Natur', category: 'Holz' },
+              { image: 'https://images.unsplash.com/photo-1610725664285-7c57e6eeac3f?w=400&q=80', name: 'Walnuss Dunkel', category: 'Holz' },
               { image: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&q=80', name: 'Leinen Sand', category: 'Stoff' },
               { image: 'https://images.unsplash.com/photo-1585264550248-1778be3b6368?w=400&q=80', name: 'Leder Cognac', category: 'Leder' },
               { image: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=400&q=80', name: 'Messing gebürstet', category: 'Metall' },
@@ -117,7 +117,7 @@ export const retailSite: DemoSite = {
             headline: 'Lassen Sie sich inspirieren',
             subline: 'Einblicke in realisierte Projekte unserer Kunden.',
             items: [
-              { image: 'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=600&q=80', title: 'Loft Berlin', href: '#' },
+              { image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80', title: 'Loft Berlin', href: '#' },
               { image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80', title: 'Villa am See', href: '#' },
               { image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80', title: 'Office Hamburg', href: '#' },
               { image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80', title: 'Küche Köln', href: '#' },
