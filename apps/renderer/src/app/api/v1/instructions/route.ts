@@ -7,6 +7,11 @@ import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types
 import { ensureShopPages } from '@/lib/shop-pages';
 import { FIELD_DEFS, type ColorFieldKey } from '@/lib/section-color-fields';
 import { getFieldsForSection } from '@/lib/section-color-resolver';
+import {
+  SECTION_COLOR_CONTRACTS_GENERATED,
+  SECTION_COLOR_CONTRACTS_GENERIC,
+  SECTION_COLOR_CONTRACTS_ANY,
+} from '@/lib/section-color-contracts-generated';
 import { getSectionSchemas } from '@/lib/section-data-schemas';
 
 export async function GET(req: NextRequest) {
@@ -102,6 +107,7 @@ export async function GET(req: NextRequest) {
       'Only use section types listed in availableSectionTypes.',
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
       'Section colors are NOT normal data fields. Put per-section colors into section.styleOverrides using exact field names or CSS variables from sectionStyleContracts[type].colorFields.',
+      'sectionStyleContracts is COMPLETE: it also contains entries with source="borrowed" for section types that are valid in stored content but not offered in this industry\'s picker. When updating such a section, use exactly its listed colorFields.',
       'For every section with an image, dark background or overlay, explicitly set contrasting text/button colors in styleOverrides. Do not rely on global theme colors when contrast is uncertain.',
       'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --token-btn-bg with a readable --token-btn-text. WCAG AA requires a contrast ratio of 4.5:1 for body text and 3:1 for large text.',
       'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
@@ -686,16 +692,45 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
   };
 }
 
+const INDUSTRY_CONTRACT_ALIASES: Record<string, string> = { handwerk: 'tradesman' };
+
+/** Every section type the style validator accepts for this industry — the
+ * curated catalog PLUS borrowed/alias types that exist only in stored content
+ * (e.g. `story`, `contactLocation`). Derived from the generated colour
+ * contracts so the list can never drift from what the API validates. */
+function getAllValidatedSectionTypes(industry?: string): string[] {
+  const normalized = (industry || '').trim().toLowerCase();
+  const resolved = INDUSTRY_CONTRACT_ALIASES[normalized] ?? normalized;
+  const pascal = resolved ? resolved.charAt(0).toUpperCase() + resolved.slice(1) : '';
+  const types = new Set<string>();
+  for (const key of Object.keys(SECTION_COLOR_CONTRACTS_GENERIC)) types.add(key);
+  for (const key of Object.keys(SECTION_COLOR_CONTRACTS_ANY)) types.add(key);
+  if (pascal) {
+    for (const key of Object.keys(SECTION_COLOR_CONTRACTS_GENERATED)) {
+      if (key.endsWith(pascal)) types.add(key.slice(0, -pascal.length));
+    }
+  }
+  return [...types];
+}
+
 function getSectionStyleContracts(sectionTypes: Array<{ type?: string; id?: string; label?: string }>, industry?: string) {
   const available = new Set(sectionTypes.map(section => section.type || section.id).filter(Boolean));
-  return sectionTypes
+  // Borrowed/alias types: validated by the write endpoints but not part of the
+  // curated picker list. Without them the contract list was incomplete and AI
+  // clients had no way to know the allowed styleOverride keys for e.g. `story`.
+  const borrowed = getAllValidatedSectionTypes(industry)
+    .filter(type => !available.has(type))
+    .sort()
+    .map(type => ({ type, id: undefined as string | undefined, label: type, borrowed: true }));
+  return [...sectionTypes.map(s => ({ ...s, borrowed: false })), ...borrowed]
     .map(section => {
       const type = section.type || section.id;
-      if (!type || !available.has(type)) return null;
+      if (!type) return null;
       const colorFields = getFieldsForSection(type, industry);
       return {
         type,
         label: section.label || type,
+        ...(section.borrowed ? { source: 'borrowed', note: 'Nicht im Section-Picker dieser Branche, aber in gespeichertem Content gültig — styleOverrides werden gegen genau diese colorFields validiert.' } : {}),
         colorFields: colorFields.map(field => ({
           field,
           cssVar: FIELD_DEFS[field].cssVar,

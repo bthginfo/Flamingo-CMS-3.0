@@ -314,12 +314,44 @@ export function validateStyleOverridesForApi(
       if (value == null || value === '') continue;
       const field = styleOverrideKeyToField(key);
       if (!field || !allowedKeys.has(key)) {
-        const allowedFields = getFieldsForSection(sectionType, industry).join(', ');
-        return `${location}.${key} is not used by section type "${sectionType}". Allowed color fields for this section: ${allowedFields}.`;
+        const allowed = getFieldsForSection(sectionType, industry);
+        const suggestion = closestMatch(key, [...allowedKeys, ...allowed]);
+        return `${location}.${key} is not used by section type "${sectionType}". Allowed color fields for this section: ${allowed.join(', ')}.${suggestion ? ` Did you mean "${suggestion}"?` : ''}`;
       }
     }
   }
   return null;
+}
+
+/** Nearest allowed key by edit distance — powers "Did you mean …?" hints. */
+function closestMatch(input: string, candidates: string[]): string | null {
+  const normalize = (s: string) => s.toLowerCase().replace(/^--token-/, '').replace(/[^a-z0-9]/g, '');
+  const needle = normalize(input);
+  if (!needle) return null;
+  let best: { key: string; dist: number } | null = null;
+  for (const candidate of candidates) {
+    const hay = normalize(candidate);
+    const dist = levenshtein(needle, hay);
+    if (dist <= Math.max(2, Math.floor(hay.length / 3)) && (!best || dist < best.dist)) {
+      best = { key: candidate, dist };
+    }
+  }
+  return best?.key ?? null;
+}
+
+function levenshtein(a: string, b: string): number {
+  if (a === b) return 0;
+  const prev = new Array(b.length + 1).fill(0).map((_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let diag = prev[0];
+    prev[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = prev[j];
+      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diag = tmp;
+    }
+  }
+  return prev[b.length];
 }
 
 function sanitizeValue(value: unknown): unknown {
