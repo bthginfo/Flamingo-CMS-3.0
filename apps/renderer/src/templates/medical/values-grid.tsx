@@ -30,36 +30,3 @@ function Classic({ header, items }: Props) {
   );
 }
 
-function Modern({ header, items }: Props) {
-  return (
-    <div>
-      <SectionHeader {...header} />
-      <div className="grid gap-6 md:grid-cols-3">
-        {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-5" data-edit-collection="items" data-edit-index={index}>
-            <IconRows items={[item]} />
-          </article>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Bold({ header, items }: Props) {
-  return (
-    <div>
-      <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
-        {header.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
-      </div>
-      <div className="grid gap-6 md:grid-cols-3">
-        {items.map((item, index) => (
-          <article key={`${item.title || 'item'}-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={index}>
-            <IconRows items={[item]} />
-          </article>
-        ))}
-      </div>
-    </div>
-  );
-}
