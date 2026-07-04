@@ -3,12 +3,16 @@
 export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknown>> = {
   "hero": {
     "align": "",
+    "backgroundImage": "",
     "eyebrow": "",
     "facts": [],
     "image": "",
     "imageEffect": "",
     "imageEffectIntensity": 0,
     "overlay": "",
+    "overlayColor": "",
+    "trustItems": [],
+    "trustStripColor": "",
     "videoUrl": ""
   },
   "servicesGrid": {
@@ -19,27 +23,42 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "manualCards": []
   },
   "processSteps": {
-    "badgeText": ""
+    "badgeText": "",
+    "subline": ""
   },
   "testimonials": {
     "ratingCount": 0,
-    "ratingValue": 0
+    "ratingValue": 0,
+    "subline": ""
   },
   "faq": {
     "badgeText": "",
-    "expandFirst": false
+    "expandFirst": false,
+    "subline": ""
   },
   "ctaBand": {
-    "badgeText": ""
+    "badgeText": "",
+    "ctaSecondary": {
+      "label": "",
+      "href": ""
+    }
   },
   "contact": {
+    "address": "",
     "badgeText": "",
     "formFields": [],
-    "introText": ""
+    "introText": "",
+    "mapEmbedUrl": "",
+    "showMap": false
+  },
+  "map": {
+    "address": "",
+    "mapEmbedUrl": ""
   },
   "portfolio": {
     "badgeText": "",
     "ctaIcon": "",
+    "items": [],
     "subline": ""
   },
   "team": {
@@ -53,17 +72,31 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "valuesHeadline": ""
   },
   "newsPreview": {
+    "collectionBasePath": "",
     "collectionKey": "",
+    "columns": 3,
+    "limit": 0,
     "linkHref": "",
     "linkIcon": "",
     "linkLabel": "",
+    "linkPrefix": "",
+    "showDate": false,
+    "showExcerpt": false,
+    "showImage": "",
     "subline": ""
   },
   "newsGrid": {
+    "collectionBasePath": "",
     "collectionKey": "",
+    "columns": 3,
+    "limit": 0,
     "linkHref": "",
     "linkIcon": "",
     "linkLabel": "",
+    "linkPrefix": "",
+    "showDate": false,
+    "showExcerpt": false,
+    "showImage": "",
     "subline": ""
   },
   "galleryGrid": {
@@ -71,7 +104,12 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "subline": ""
   },
   "richText": {
-    "headline": ""
+    "headline": "",
+    "html": "",
+    "text": ""
+  },
+  "legalContent": {
+    "content": ""
   },
   "videoEmbed": {
     "badge": "",
@@ -80,12 +118,20 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "videoUrl": ""
   },
   "freeText": {
-    "headline": ""
+    "headline": "",
+    "html": "",
+    "text": ""
   },
   "textImage": {
+    "backgroundImage": "",
     "badge": "",
+    "badgeText": "",
+    "bgImage": "",
+    "imageSrc": "",
+    "imageUrl": "",
     "items": [],
     "layout": "",
+    "media": "",
     "primaryCta": {
       "label": "",
       "href": ""
@@ -96,17 +142,31 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     }
   },
   "collectionHero": {
+    "backgroundImage": "",
     "bgPosition": "",
     "imageEffect": "",
     "imageEffectIntensity": 0,
-    "overlayColor": ""
+    "overlayColor": "",
+    "primaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "secondaryCta": {
+      "label": "",
+      "href": ""
+    }
   },
   "story": {
+    "backgroundImage": "",
     "badge": "",
+    "bgImage": "",
     "image": "",
     "imageAlt": "",
+    "imageSrc": "",
+    "imageUrl": "",
     "items": [],
     "layout": "",
+    "media": "",
     "primaryCta": {
       "label": "",
       "href": ""
@@ -124,15 +184,27 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "_slug": "",
     "tenantId": ""
   },
+  "shopCart": {
+    "checkoutPath": "",
+    "continueShoppingPath": ""
+  },
   "shopCheckout": {
     "code": "",
     "error": false,
     "paypalUrl": "",
+    "requirePhone": "",
+    "showCompanyField": false,
     "stripeUrl": "",
     "success": false,
     "sumupUrl": "",
     "tenantId": "",
+    "thankYouPath": "",
     "valid": false
+  },
+  "shopThankYou": {
+    "continueShoppingPath": "",
+    "ctaLabel": "",
+    "orderNumberLabel": 0
   },
   "shopFeaturedProducts": {
     "categorySlug": "",
@@ -151,6 +223,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   "weddingFloristry": {
     "overlayOpacity": 0
   },
+  "additionalLocations": {
+    "badgeText": ""
+  },
   "fitnessHero": {
     "bgImage": "",
     "bgPosition": "",
@@ -162,6 +237,11 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "ctaLabel": "",
     "services": []
   },
+  "courseSchedule": {
+    "badgeText": "",
+    "items": [],
+    "steps": []
+  },
   "trainerProfiles": {
     "badgeText": "",
     "membersHeadline": "",
@@ -172,6 +252,10 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "values": [],
     "valuesHeadline": ""
   },
+  "membershipPlans": {
+    "badgeText": "",
+    "cards": []
+  },
   "trialSessionCta": {
     "imagePosition": "",
     "overlay": "",
@@ -180,10 +264,21 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
       "href": ""
     }
   },
+  "studioAmenities": {
+    "badgeText": "",
+    "cards": []
+  },
   "locationHero": {
     "align": "",
+    "backgroundImage": "",
+    "badgeText": "",
+    "bgImage": "",
     "imageEffect": "",
     "imageEffectIntensity": 0,
+    "overlayColor": "",
+    "overlayOpacity": 0,
+    "trustItems": [],
+    "trustStripColor": "",
     "videoUrl": ""
   },
   "availabilityCta": {
@@ -194,10 +289,24 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
       "href": ""
     }
   },
+  "locationPackages": {
+    "badgeText": "",
+    "cards": []
+  },
+  "amenitiesGrid": {
+    "badgeText": "",
+    "cards": []
+  },
   "floorPlanOverview": {
+    "backgroundImage": "",
     "badge": "",
+    "badgeText": "",
+    "bgImage": "",
+    "imageSrc": "",
+    "imageUrl": "",
     "items": [],
     "layout": "",
+    "media": "",
     "secondaryCta": {
       "label": "",
       "href": ""
@@ -205,6 +314,10 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   },
   "galleryMoodboard": {
     "columns": 3
+  },
+  "locationAccess": {
+    "address": "",
+    "mapEmbedUrl": ""
   },
   "hostTeam": {
     "badgeText": "",
@@ -217,6 +330,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "valuesHeadline": ""
   },
   "heroHandwerk": {
+    "backgroundImage": "",
     "badgeIcon": "",
     "badgeStarsIcon": "",
     "badgeText": "",
@@ -244,6 +358,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "trustStripColor": ""
   },
   "heroEcommerce": {
+    "backgroundImage": "",
     "badgeIcon": "",
     "badgeStarsIcon": "",
     "badgeText": "",
@@ -284,16 +399,41 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
       "label": "",
       "href": ""
     },
+    "subline": "",
+    "tone": ""
+  },
+  "comparisonTable": {
+    "badgeText": "",
     "subline": ""
   },
   "socialProofBar": {
     "bgStyle": ""
   },
+  "timeline": {
+    "badgeText": "",
+    "items": [],
+    "steps": []
+  },
   "statsCounter": {
     "badge": "",
+    "badgeText": "",
     "subline": ""
   },
+  "bentoGrid": {
+    "badgeText": "",
+    "cards": []
+  },
   "featureShowcase": {
+    "backgroundImage": "",
+    "badgeText": "",
+    "bgImage": "",
+    "ctaPrimary": {
+      "label": "",
+      "href": ""
+    },
+    "imageSrc": "",
+    "imageUrl": "",
+    "media": "",
     "reversed": false
   },
   "logoMarquee": {
@@ -302,12 +442,13 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "subline": ""
   },
   "collectionList": {
-    "showDate": true,
-    "showExcerpt": true,
-    "showImage": true,
-    "sortBy": "date-desc"
+    "showDate": false,
+    "showExcerpt": false,
+    "showImage": "",
+    "sortBy": ""
   },
-  "verticalTimeline": {
+  "instagramFeed": {
+    "sourceTenantSlug": ""
   },
   "beforeAfterSlider": {
     "aspectRatio": ""
@@ -317,66 +458,87 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   },
   "cinematicHero": {
     "align": "",
+    "backgroundImage": "",
+    "badgeText": "",
+    "bgImage": "",
     "imageEffect": "",
     "imageEffectIntensity": 0,
+    "overlayColor": "",
+    "overlayOpacity": 0,
+    "trustItems": [],
+    "trustStripColor": "",
     "videoUrl": ""
   },
   "immersiveCtaBanner": {
     "imagePosition": ""
   },
+  "proofWall": {
+    "stats": [],
+    "testimonials": ""
+  },
+  "comparisonCardsPro": {
+    "badgeText": "",
+    "cards": []
+  },
   "popup": {
     "showMode": "",
     "triggerDelayMs": 0
+  },
+  "bookingWidget": {
+    "ctaHref": "",
+    "tenantId": ""
+  },
+  "bookingSlotPicker": {
+    "ctaHref": "",
+    "tenantId": ""
+  },
+  "bookingDateRange": {
+    "ctaHref": "",
+    "tenantId": ""
+  },
+  "availabilityCalendar": {
+    "ctaHref": "",
+    "tenantId": ""
+  },
+  "resourceBookingShowcase": {
+    "ctaHref": "",
+    "tenantId": ""
+  },
+  "bookingCtaPro": {
+    "ctaHref": "",
+    "tenantId": ""
+  },
+  "serviceTabs": {
+    "badgeText": ""
+  },
+  "priceCalculator": {
+    "badgeText": ""
+  },
+  "jobListings": {
+    "badgeText": "",
+    "emptyText": ""
   },
   "glowHero": {
     "bgImage": "",
     "bgPosition": ""
   },
-  "bookingWidget": {
-    "badge": "Booking",
-    "headline": "Termin oder Anfrage senden",
-    "subline": "Wählen Sie aus, was Sie buchen möchten. Wir melden uns mit allen Details.",
+  "contactForm": {
+    "address": "",
+    "badgeText": "",
+    "formEnabled": false,
+    "formFields": [],
+    "headline": "",
+    "infoCards": [],
+    "introText": "",
+    "mapEmbedUrl": "",
+    "showMap": false,
+    "subline": "",
     "submitLabel": ""
   },
-  "bookingSlotPicker": {
-    "badge": "Tages-Slots",
-    "headline": "Datum wählen und freie Uhrzeiten sehen",
-    "subline": "Perfekt für Restaurants, Cafés, Salons, Kurse oder Probetrainings mit konkreten Uhrzeiten.",
-    "submitLabel": "Slot anfragen"
-  },
-  "bookingDateRange": {
-    "badge": "Zeitraum",
-    "headline": "Aufenthalt, Raum oder Location anfragen",
-    "subline": "Für Hotel, Apartment, Eventraum, Location oder mehrtägige Leistungen mit Start- und Enddatum.",
-    "submitLabel": "Zeitraum anfragen"
-  },
-  "availabilityCalendar": {
-    "badge": "Verfügbarkeit",
-    "headline": "Verfügbare Termine finden",
-    "subline": "Prüfen Sie freie Zeiten, ganze Tage oder Datumsbereiche.",
-    "submitLabel": ""
-  },
-  "resourceBookingShowcase": {
-    "badge": "Buchen",
-    "headline": "Ressource auswählen",
-    "subline": "Wählen Sie den passenden Raum, Tisch, Mitarbeiter oder Service.",
-    "submitLabel": ""
-  },
-  "bookingCtaPro": {
-    "badge": "Direkt buchen",
-    "headline": "Jetzt passenden Termin sichern",
-    "subline": "Senden Sie eine Anfrage oder buchen Sie direkt, je nachdem wie diese Website eingerichtet ist.",
-    "submitLabel": ""
-  },
-  "instagramFeed": {
-    "badgeText": "Instagram",
-    "headline": "Folge uns auf Instagram",
-    "subline": "Aktuelle Eindrücke direkt aus unserem Account",
-    "layout": "grid",
-    "columns": 3,
-    "maxPosts": 9,
-    "showCaptions": true,
-    "showProfileLink": true,
-    "ctaLabel": "Auf Instagram folgen"
+  "textBlock": {
+    "content": "",
+    "headline": "",
+    "html": "",
+    "text": ""
   }
 };
