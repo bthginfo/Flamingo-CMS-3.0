@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { prefixInternalHref } from '@/lib/link-prefix';
 import { resolveDemoTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
 import { DemoPageShell } from '../../../../demo-page-shell';
@@ -63,15 +64,10 @@ export default async function DemoCollectionDetailPage({
       siteData={{
         navItems: navData.items.map((item) => ({
           ...item,
-          href: item.href.startsWith('/demo/') ? item.href : `${demoPrefix}${item.href}`,
+          href: prefixInternalHref(item.href, demoPrefix) as string,
         })),
         cta: navData.cta
-          ? {
-              ...navData.cta,
-              href: navData.cta.href.startsWith('/demo/')
-                ? navData.cta.href
-                : `${demoPrefix}${navData.cta.href}`,
-            }
+          ? { ...navData.cta, href: prefixInternalHref(navData.cta.href, demoPrefix) as string }
           : { label: '', href: '' },
         brand: brandData.brand,
         contact: brandData.contact,
@@ -82,15 +78,12 @@ export default async function DemoCollectionDetailPage({
                 ...col,
                 items: col.items.map((item) => ({
                   ...item,
-                  href:
-                    item.href && !item.href.startsWith('/demo/')
-                      ? `${demoPrefix}${item.href}`
-                      : item.href,
+                  href: prefixInternalHref(item.href, demoPrefix) as string,
                 })),
               })),
               legalLinks: footerData.legalLinks.map((l) => ({
                 ...l,
-                href: l.href.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}`,
+                href: prefixInternalHref(l.href, demoPrefix) as string,
               })),
             }
           : { columns: [], legalLinks: [] },
