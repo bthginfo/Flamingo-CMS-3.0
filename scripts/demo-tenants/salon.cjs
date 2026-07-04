@@ -361,6 +361,16 @@ const pages = [
         { feature: 'Vorab-Foto sinnvoll', values: ['optional', 'ja', 'unbedingt'] },
         { feature: 'Preis fix planbar', values: ['meist ja', 'teilweise', 'erst nach Sichtung'] },
       ], highlightCol: 1 }, styleOverrides: lightTokens },
+      { type: 'serviceTabs', data: {
+        badge: 'Auf einen Blick',
+        headline: 'Drei Wege zu Ihrem Look.',
+        subline: 'Schnitt, Farbe oder Pflege — jede Behandlung beginnt mit ehrlicher Beratung.',
+        tabs: [
+          { label: 'Schnitt', icon: 'scissors', title: 'Präzisionsschnitt', text: '<p>Ein Schnitt, der zu Haarstruktur, Alltag und Stylingaufwand passt — und auch nach sechs Wochen noch eine Form hat.</p>', image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=82', features: ['Beratung & Analyse inklusive', 'Wasch-, Schneide- & Stylingzeit 75–90 Min.', 'Nachschnitt-Empfehlung schriftlich'], cta: { label: 'Schnitt anfragen', href: '/kontakt' } },
+          { label: 'Farbe', icon: 'palette', title: 'Farbe & Balayage', text: '<p>Farbkonzepte, die mit Ihrem Naturton arbeiten statt gegen ihn — inklusive ehrlicher Aussage, was in einer Sitzung erreichbar ist.</p>', image: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=82', features: ['Strähnentechnik nach Gesichtsform', 'Olaplex-Schutz inklusive', 'Pflegeplan für zuhause'], cta: { label: 'Farbberatung buchen', href: '/kontakt' } },
+          { label: 'Pflege', icon: 'sparkles', title: 'Treatments & Kopfhaut', text: '<p>Aufbau-Treatments und Kopfhautanalyse für Haar, das nicht nur heute glänzt — abgestimmt auf Ihre Haarhistorie.</p>', image: 'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1200&q=82', features: ['Analyse vor jeder Behandlung', 'Produkte ohne Verkaufsdruck', 'Wirkung nach 3 Anwendungen sichtbar'], cta: { label: 'Pflege anfragen', href: '/kontakt' } },
+        ],
+      }, styleOverrides: lightTokens },
       { type: 'ctaBand', data: { badgeText: 'Unsicher?', headline: 'Schicken Sie lieber einmal zu viel ein Foto.', subline: 'Wir sagen Ihnen, ob Schnitt, Farbe oder Beratung zuerst sinnvoll ist.', ctaPrimary: { label: 'Anfrage senden', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens(C.plum) },
     ],
   },

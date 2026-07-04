@@ -682,6 +682,16 @@ const tenant = {
           { question: 'Gibt es Technik?', answer: 'Screen, Moderationsmaterial und stabiles WLAN sind vorhanden.' },
           { question: 'Kann Spa integriert werden?', answer: 'Ja, aber bewusst als ruhiges Zeitfenster, nicht als Pflichtprogramm.' },
         ] }, styleOverrides: lightTokens },
+        { type: 'serviceTabs', data: {
+          badge: 'Auf einen Blick',
+          headline: 'Drei Arten, hier anzukommen.',
+          subline: 'Ob Auszeit, Genuss oder konzentriertes Arbeiten — jede Ebene des Hauses hat ihren eigenen Rhythmus.',
+          tabs: [
+            { label: 'Wohnen', icon: 'bedDouble', title: 'Zimmer & Suiten', text: '<p>Ruhige Materialien, echte Dunkelheit und Betten, über die Gäste noch zuhause sprechen. Kein Zimmer gleicht dem anderen.</p>', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=82', features: ['Bergblick oder Gartenruhe', 'Späte Abreise nach Verfügbarkeit', 'Hunde in ausgewählten Zimmern'], cta: { label: 'Zimmer ansehen', href: '/zimmer' } },
+            { label: 'Spa', icon: 'waves', title: 'Wellness & Ruhe', text: '<p>Panoramapool, Saunen und Anwendungen mit Zeitpuffer — der Spa ist bewusst nicht auf Durchsatz geplant.</p>', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=82', features: ['Adults-only Ruhebereich', 'Anwendungen mit 15 Min. Nachruhe', 'Textilfreie & textile Zonen'], cta: { label: 'Spa entdecken', href: '/wellness' } },
+            { label: 'Kulinarik', icon: 'utensilsCrossed', title: 'Restaurant & Weinkeller', text: '<p>Regionale Küche mit klarer Handschrift, dazu ein Weinkeller, der Entdeckungen über Etiketten stellt.</p>', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=82', features: ['Halbpension mit Wahlfreiheit', 'Vegetarische Linie gleichwertig', 'Weinbegleitung glasweise'], cta: { label: 'Einblick Kulinarik', href: '/kulinarik' } },
+          ],
+        }, styleOverrides: lightTokens },
         sectionCta('Planen Sie ein kleines Format?', 'Schreiben Sie uns Anlass, Gruppengröße und Wunschzeitraum. Wir machen daraus einen klaren Vorschlag.', 'Format anfragen', '/kontakt'),
       ],
     },

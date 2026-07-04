@@ -579,6 +579,17 @@ const tenant = {
             ],
           },
         },
+        { type: 'jobListings', data: {
+          badge: 'Karriere',
+          headline: 'Wir suchen Menschen, die gern Gastgeber sind.',
+          subline: 'Kleines Team, kleine Karte, ehrliche Arbeitszeiten — Gastronomie, die sich gut anfühlt.',
+          benefits: ['2 feste freie Tage', 'Trinkgeld transparent geteilt', 'Personalessen inklusive', 'Weinschulungen'],
+          jobs: [
+            { title: 'Chef de Partie (m/w/d)', location: 'am Markt', type: 'Vollzeit', schedule: 'ab sofort', text: 'Kleine Karte, saisonale Produkte, ehrliches Handwerk — kein Convenience-Theater.', tags: ['Küche'], href: '/kontakt' },
+            { title: 'Service / Gastgeber:in', location: 'am Markt', type: 'Voll-/Teilzeit', schedule: 'nach Absprache', text: 'Sie führen durch den Abend, empfehlen Wein und behalten den Raum im Blick.', tags: ['Service', 'Quereinstieg möglich'], href: '/kontakt' },
+          ],
+          contactCta: { label: 'Kurz vorstellen', href: '/kontakt' },
+        } },
         sectionCta('Lust, bei uns Platz zu nehmen?', 'Reservieren Sie einen Tisch — oder schauen Sie sich erst die Karte an.', 'Tisch anfragen', '/reservierung'),
       ],
     },

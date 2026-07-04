@@ -596,6 +596,17 @@ const tenant = {
           { year: 'Laufend', title: 'Nachfassen', text: 'Offene Rückmeldungen werden im Team nachgehalten.' },
         ] } },
         faqSection(),
+        { type: 'jobListings', data: {
+          badge: 'Karriere',
+          headline: 'Verstärkung fürs Praxisteam.',
+          subline: 'Wir arbeiten ruhig, strukturiert und mit Zeit für Erklärung — auch untereinander.',
+          benefits: ['Geregelte Arbeitszeiten', 'Fortbildung bezahlt + freigestellt', 'Keine Wochenenddienste', 'ÖPNV-Zuschuss'],
+          jobs: [
+            { title: 'MFA (m/w/d)', location: 'Stuttgart-West', type: 'Voll-/Teilzeit', schedule: 'ab sofort', text: 'Empfang, Labor und Assistenz in einer Praxis, die Hektik bewusst reduziert hat.', tags: ['MFA', 'Teilzeit möglich'], href: '/kontakt' },
+            { title: 'Auszubildende:r MFA', location: 'Stuttgart-West', type: 'Ausbildung', schedule: 'ab September', text: 'Strukturierte Ausbildung mit fester Mentorin und echtem Patientenkontakt ab dem ersten Monat.', tags: ['Ausbildung'], href: '/kontakt' },
+          ],
+          contactCta: { label: 'Initiativ bewerben', href: '/kontakt' },
+        } },
         cta('Sie möchten uns kennenlernen?', 'Senden Sie uns kurz Ihr Anliegen. Wir melden uns mit einem passenden Terminweg.'),
       ],
       seo: { metaTitle: 'Team', metaDescription: 'Das Team der Praxis am Stadtgarten: Ärztliche Versorgung, Praxismanagement und klare Befundkommunikation in Stuttgart-West.' },

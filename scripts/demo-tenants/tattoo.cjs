@@ -183,7 +183,7 @@ function buildNewsItem({ slug, title, excerpt, imageId, body }) {
 }
 
 const services = [
-  { title: 'Fine Line', slug: 'fine-line', excerpt: 'Feine Linien, klare Motive und Platzierungen, die auch Jahre später funktionieren.', imageId: '1598300042247-d088f8ab3a91', intro: 'Fine Line sieht leicht aus, verzeiht aber wenig. Wir prüfen Linienbreite, Größe, Hautstelle und Alterung, bevor wir stechen.', bullets: ['Linien werden nicht zu fein geplant.', 'Platzierung wird am Körper geprüft.', 'Hautstruktur entscheidet mit.', 'Pflegehinweise sind konkret.'] },
+  { title: 'Fine Line', slug: 'fine-line', excerpt: 'Feine Linien, klare Motive und Platzierungen, die auch Jahre später funktionieren.', imageId: '1562962230-16e4623d36e6', intro: 'Fine Line sieht leicht aus, verzeiht aber wenig. Wir prüfen Linienbreite, Größe, Hautstelle und Alterung, bevor wir stechen.', bullets: ['Linien werden nicht zu fein geplant.', 'Platzierung wird am Körper geprüft.', 'Hautstruktur entscheidet mit.', 'Pflegehinweise sind konkret.'] },
   { title: 'Blackwork', slug: 'blackwork', excerpt: 'Kräftige Flächen, grafische Formen und saubere Kanten mit ruhiger Vorbereitung.', imageId: '1611501275019-9b5cda994e8d', intro: 'Blackwork braucht klare Komposition und Geduld. Wir planen Flächen, Negativräume und Sitzungsdauer so, dass das Ergebnis stark bleibt.', bullets: ['Form und Kontrast zuerst.', 'Sitzungen werden realistisch geplant.', 'Hautspannung wird berücksichtigt.', 'Heilung wird eng erklärt.'] },
   { title: 'Botanical Tattoos', slug: 'botanical', excerpt: 'Pflanzenmotive zwischen Illustration und Körperform, ohne beliebige Pinterest-Kopie.', imageId: '1598371839696-5c5bb00bdc28', intro: 'Botanical Motifs leben von Richtung, Rhythmus und Luft. Wir zeichnen nicht einfach eine Blume, sondern platzieren sie passend zum Körper.', bullets: ['Referenzen werden übersetzt, nicht kopiert.', 'Blätter und Linien folgen der Bewegung.', 'Größe schützt die Details.', 'Nachsorge erhält Kontrast.'] },
   { title: 'Cover-up Beratung', slug: 'cover-up', excerpt: 'Ehrliche Einschätzung, was möglich ist, was Laser braucht und was besser nicht versprochen wird.', imageId: '1542727365-19732a80dcfd', intro: 'Nicht jedes alte Tattoo lässt sich sauber überdecken. Wir prüfen Kontrast, Narben, Größe und Motivrichtung und erklären die Optionen offen.', bullets: ['Keine unrealistischen Versprechen.', 'Laser-Optionen werden mitgedacht.', 'Motivgröße bleibt ehrlich.', 'Mehrere Sessions möglich.'] },
@@ -191,7 +191,7 @@ const services = [
 
 const portfolioItems = [
   { title: 'Botanical Spine', slug: 'botanical-spine', excerpt: 'Feine Pflanzenlinie entlang der Wirbelsäule, bewusst reduziert.', imageId: '1611501275019-9b5cda994e8d', style: 'Botanical Fine Line', detail: 'Das Motiv wurde aus drei Referenzen neu gezeichnet und am Körper so gespiegelt, dass die Linie ruhig bleibt.' },
-  { title: 'Graphischer Unterarm', slug: 'graphischer-unterarm', excerpt: 'Blackwork mit klaren Flächen, viel Negativraum und sauberer Kante.', imageId: '1598300042247-d088f8ab3a91', style: 'Blackwork', detail: 'Die Komposition nutzt die Unterarmform und vermeidet zu kleine Details, damit das Tattoo lange lesbar bleibt.' },
+  { title: 'Graphischer Unterarm', slug: 'graphischer-unterarm', excerpt: 'Blackwork mit klaren Flächen, viel Negativraum und sauberer Kante.', imageId: '1565058379802-bbe93b2f703a', style: 'Blackwork', detail: 'Die Komposition nutzt die Unterarmform und vermeidet zu kleine Details, damit das Tattoo lange lesbar bleibt.' },
   { title: 'Kleine Erinnerung', slug: 'kleine-erinnerung', excerpt: 'Minimalistisches Symbol, leise platziert und mit genug Abstand zur Hautbewegung.', imageId: '1542727365-19732a80dcfd', style: 'Micro Tattoo', detail: 'Wir haben das Motiv bewusst etwas größer gesetzt als die Vorlage, damit es nicht nach kurzer Zeit verläuft.' },
 ];
 
@@ -315,7 +315,7 @@ const tenant = {
       key: 'news',
       label: 'Studio Journal',
       items: [
-        buildNewsItem({ title: 'Warum wir keine Mini-Tattoos versprechen', slug: 'keine-mini-versprechen', excerpt: 'Feine Linien brauchen trotzdem genug Größe, Abstand und ehrliche Planung.', imageId: '1598300042247-d088f8ab3a91', body: '<p>Sehr kleine Motive wirken auf dem Bildschirm oft perfekt. Auf Haut altern sie anders. Deshalb sprechen wir über Linienbreite, Hautstelle und Größe, bevor ein Motiv final wird.</p><p>Das ist keine Einschränkung, sondern Schutz für ein Tattoo, das Sie lange mögen.</p>' }),
+        buildNewsItem({ title: 'Warum wir keine Mini-Tattoos versprechen', slug: 'keine-mini-versprechen', excerpt: 'Feine Linien brauchen trotzdem genug Größe, Abstand und ehrliche Planung.', imageId: '1565058379802-bbe93b2f703a', body: '<p>Sehr kleine Motive wirken auf dem Bildschirm oft perfekt. Auf Haut altern sie anders. Deshalb sprechen wir über Linienbreite, Hautstelle und Größe, bevor ein Motiv final wird.</p><p>Das ist keine Einschränkung, sondern Schutz für ein Tattoo, das Sie lange mögen.</p>' }),
         buildNewsItem({ title: 'Nachsorge ohne Panik', slug: 'nachsorge-ohne-panik', excerpt: 'Was in den ersten Tagen wirklich zählt und was meistens nur Unsicherheit macht.', imageId: '1598371839696-5c5bb00bdc28', body: '<p>Nachsorge muss nicht kompliziert sein. Sauber halten, ruhig lassen, nicht überpflegen und bei Unsicherheit fragen. Wir geben nach jedem Termin klare Hinweise mit.</p>' }),
         buildNewsItem({ title: 'Flash Day im Herbst', slug: 'flash-day-herbst', excerpt: 'Kleine Motive, feste Slots und Designs, die wir bewusst für diesen Tag zeichnen.', imageId: '1542727365-19732a80dcfd', body: '<p>Unser Flash Day ist kein Zufallsordner. Die Motive werden für Haut, Größe und Platzierung vorbereitet und nur in begrenzter Zahl gestochen.</p>' }),
       ],
@@ -332,7 +332,7 @@ const tenant = {
           eyebrow: 'Tattoo-Studio Berlin-Kreuzberg',
           headline: 'Tattoos, die leise beginnen und lange bleiben.',
           subline: 'INK DISTRICT plant Fine Line, Blackwork und Botanical Motifs mit ruhiger Beratung, sauberer Platzierung und klarer Nachsorge.',
-          image: img('1598300042247-d088f8ab3a91'),
+          image: img('1565058379802-bbe93b2f703a'),
           glowColor: 'rgba(216,167,93,0.42)',
           primaryCta: { label: 'Motiv anfragen', href: '/kontakt' },
           secondaryCta: { label: 'Portfolio ansehen', href: '/portfolio' },
@@ -341,7 +341,7 @@ const tenant = {
         section('socialProofBar', { items: [{ icon: 'ShieldCheck', label: 'Hygiene klar erklärt' }, { icon: 'Pencil', label: 'Custom statt Kopie' }, { icon: 'Clock', label: 'Termine mit Ruhe' }, { icon: 'HeartPulse', label: 'Nachsorge inklusive' }] }, smokeTokens),
         section('servicesGrid', { badgeText: 'Stile', headline: 'Vier Wege, ein Anspruch.', subline: 'Nicht jedes Motiv passt zu jeder Hautstelle. Wir beraten, bevor wir stechen.', manualCards: services.map((s, index) => ({ title: s.title, text: s.excerpt, icon: ['PenTool', 'CircleDot', 'Leaf', 'RefreshCw'][index], mediaType: 'icon', href: `/c/leistungen/${s.slug}` })) }),
         section('styleGallery', { headline: 'Stile mit Haltung', subline: 'Eine Auswahl, wie INK DISTRICT arbeitet.', styles: [
-          { name: 'Fine Line', image: img('1598300042247-d088f8ab3a91', 1200), description: 'Fein, aber nicht zu klein geplant.' },
+          { name: 'Fine Line', image: img('1562962230-16e4623d36e6', 1200), description: 'Fein, aber nicht zu klein geplant.' },
           { name: 'Botanical', image: img('1598371839696-5c5bb00bdc28', 1200), description: 'Pflanzenmotive mit Körperbezug.' },
           { name: 'Blackwork', image: img('1611501275019-9b5cda994e8d', 1200), description: 'Kontrast, Fläche und klare Kante.' },
           { name: 'Micro Symbols', image: img('1542727365-19732a80dcfd', 1200), description: 'Reduziert, aber haltbar gedacht.' },
@@ -430,10 +430,10 @@ const tenant = {
       title: 'Portfolio',
       seo: { metaTitle: 'Tattoo Portfolio | INK DISTRICT', metaDescription: 'Portfolio von INK DISTRICT Berlin: Fine Line, Blackwork und Botanical Tattoos.' },
       sections: [
-        collectionHero('Nicht jede Arbeit muss laut sein.', 'Eine Auswahl aus Tattoos, bei denen Linie, Platzierung und Nachsorge zusammenpassen.', '1598300042247-d088f8ab3a91'),
+        collectionHero('Nicht jede Arbeit muss laut sein.', 'Eine Auswahl aus Tattoos, bei denen Linie, Platzierung und Nachsorge zusammenpassen.', '1565058379802-bbe93b2f703a'),
         section('collectionList', { headline: 'Portfolio ansehen', subline: 'Detailseiten zeigen Kontext, Stil und Pflegehinweise.', collectionKey: 'portfolio', columns: 3, showImage: true, showDate: false, showExcerpt: true, showSortControls: false }),
         section('galleryGrid', { headline: 'Studio-Mood', subline: 'Ruhige Details aus dem Alltag.', columns: 3, images: [
-          { src: img('1598300042247-d088f8ab3a91', 1000), alt: 'Tattoo Detail mit feinen Linien', caption: 'Linienprüfung' },
+          { src: img('1565058379802-bbe93b2f703a', 1000), alt: 'Tattoo Detail mit feinen Linien', caption: 'Linienprüfung' },
           { src: img('1611501275019-9b5cda994e8d', 1000), alt: 'Blackwork Tattoo Detail', caption: 'Kontrast' },
           { src: img('1598371839696-5c5bb00bdc28', 1000), alt: 'Botanical Tattoo Motiv', caption: 'Botanical' },
           { src: img('1542727365-19732a80dcfd', 1000), alt: 'Tattoo Studio Detail', caption: 'Vorbereitung' },
@@ -473,7 +473,7 @@ const tenant = {
           badge: 'Studio-Story',
           headline: 'Keine Laufkundschaft-Atmosphäre. Keine Motiv-Hektik.',
           text: '<p>Wir haben INK DISTRICT gegründet, weil viele Tattoo-Anfragen zu schnell beantwortet werden: Preis, Termin, fertig. Für uns beginnt gute Arbeit früher.</p><p>Wir wollen verstehen, warum ein Motiv wichtig ist, wo es sitzen soll und wie es nach Jahren noch wirken kann. Deshalb planen wir langsamer, stechen konzentrierter und erklären mehr.</p>',
-          image: img('1598300042247-d088f8ab3a91', 1400),
+          image: img('1565058379802-bbe93b2f703a', 1400),
           imageAlt: 'Tattoo Studio mit ruhiger Arbeitsfläche',
           layout: 'image-left',
           items: [
@@ -518,8 +518,23 @@ const tenant = {
       title: 'Kontakt',
       seo: { metaTitle: 'Kontakt & Tattoo-Anfrage | INK DISTRICT', metaDescription: 'Tattoo-Anfrage an INK DISTRICT Berlin-Kreuzberg senden: Motividee, Größe, Körperstelle und Referenzen.' },
       sections: [
-        collectionHero('Motiv anfragen.', 'Je klarer die Anfrage, desto besser können wir einschätzen, welcher Artist und welches Zeitfenster passt.', '1598300042247-d088f8ab3a91'),
+        collectionHero('Motiv anfragen.', 'Je klarer die Anfrage, desto besser können wir einschätzen, welcher Artist und welches Zeitfenster passt.', '1565058379802-bbe93b2f703a'),
         section('tattooBooking', { headline: 'Tattoo-Anfrage', subline: 'Bitte senden Sie Motividee, Körperstelle, ungefähre Größe und Referenzen. Wir melden uns mit Einschätzung und nächstem Schritt.', artists: ['Lea Novak', 'Miro Sander', 'Noor Ali', 'Noch offen'] }, lightTokens),
+        section('priceCalculator', {
+          badge: 'Preis-Schätzer',
+          headline: 'Womit sollten Sie rechnen?',
+          subline: 'Eine ehrliche Spanne statt Lockangebot — der finale Preis hängt von Motiv, Detailgrad und Haut ab und wird im Vorgespräch festgelegt.',
+          currency: '€',
+          basePrice: 120,
+          baseLabel: 'Mindestpreis (Setup, Hygiene, Nachsorge-Set)',
+          priceNote: 'Unverbindliche Orientierung. Verbindlich wird der Preis nach dem Vorgespräch — inklusive schriftlicher Session-Planung.',
+          options: [
+            { label: 'Größe', description: 'Längste Kante des Motivs', type: 'select', choices: [{ label: 'bis 8 cm', price: 0 }, { label: '8–15 cm', price: 180 }, { label: '15–25 cm', price: 420 }, { label: 'größer / Sleeve-Start', price: 780 }] },
+            { label: 'Custom-Design', description: 'Individueller Entwurf statt Flash-Vorlage, inkl. einer Korrekturschleife.', type: 'toggle', price: 90 },
+            { label: 'Farbe', description: 'Farbige Umsetzung statt Blackwork/Fine Line.', type: 'toggle', price: 60 },
+          ],
+          cta: { label: 'Motiv anfragen', href: '#kontakt' },
+        }, lightTokens),
         section('contact', { badgeText: 'Studio', headline: 'Berlin-Kreuzberg, ruhig gelegen.', introText: 'Termine nur nach Vereinbarung. Kurze Beratungen planen wir so, dass wirklich Zeit für Motiv und Fragen bleibt.', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: [
           { icon: 'MapPin', label: 'Adresse', value: 'Reichenberger Straße 48, 10999 Berlin' },
           { icon: 'Phone', label: 'Telefon', value: '+49 30 2332 1840' },

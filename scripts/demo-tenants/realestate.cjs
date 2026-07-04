@@ -655,6 +655,16 @@ const tenant = {
           { question: 'Bekomme ich nur einen Preis?', answer: 'Sie bekommen eine realistische Spanne und eine Erklärung, was diese Spanne beeinflusst.' },
           { question: 'Ist die Bewertung kostenlos?', answer: 'Die erste Einschätzung ist kostenlos. Umfangreiche Gutachten sind ein separates Thema.' },
         ] }, styleOverrides: lightTokens },
+        { type: 'serviceTabs', data: {
+          badge: 'Leistungen',
+          headline: 'Drei Situationen, drei klare Wege.',
+          subline: 'Verkaufen, bewerten oder vermieten — jede Situation braucht eine andere Strategie.',
+          tabs: [
+            { label: 'Verkaufen', icon: 'home', title: 'Verkauf mit Strategie', text: '<p>Zielgruppenanalyse, ehrliche Preisstrategie und eine Vermarktung, die zum Objekt passt — nicht umgekehrt.</p>', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=82', features: ['Ø 34 Tage bis zur Beurkundung', 'Professionelles Exposé inklusive', 'Diskrete Off-Market-Option'], cta: { label: 'Verkauf besprechen', href: '/kontakt' } },
+            { label: 'Bewerten', icon: 'calculator', title: 'Bewertung mit Begründung', text: '<p>Eine Zahl ist schnell genannt. Wir erklären, wie sie zustande kommt — mit Vergleichsobjekten und Marktdaten aus Ihrem Stadtteil.</p>', image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=82', features: ['Vor-Ort-Termin in 2 Stunden', 'Schriftliche Einordnung', 'Kostenlos für Eigentümer'], cta: { label: 'Bewertung starten', href: '/kontakt' } },
+            { label: 'Vermieten', icon: 'keyRound', title: 'Vermietung ohne Bauchgefühl', text: '<p>Mieterauswahl mit Substanz: Bonität, Selbstauskunft und ein Übergabeprotokoll, das späteren Streit vermeidet.</p>', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=82', features: ['Marktgerechte Mietpreisanalyse', 'Vollständige Bewerberprüfung', 'Rechtssichere Verträge'], cta: { label: 'Vermietung anfragen', href: '/kontakt' } },
+          ],
+        }, styleOverrides: lightTokens },
         ctaBand('Eine Zahl ohne Erklärung hilft selten.', 'Schicken Sie uns Adresse, Objektart und Ziel. Wir melden uns mit einem sinnvollen nächsten Schritt.', 'Bewertung starten', '/kontakt'),
       ],
     },

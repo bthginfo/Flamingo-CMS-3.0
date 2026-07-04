@@ -662,6 +662,22 @@ const tenant = {
             { question: 'Gibt es Nutzungsrechte?', answer: 'Ja. Private Nutzung ist enthalten. Business- und Presseeinsatz klären wir transparent im Angebot.' },
           ],
         }, paper),
+        s('priceCalculator', {
+          badge: 'Shooting-Rechner',
+          headline: 'Was kostet Ihr Shooting?',
+          subline: 'Stellen Sie Ihr Shooting zusammen — das verbindliche Angebot folgt nach einem kurzen Vorgespräch.',
+          currency: '€',
+          basePrice: 290,
+          baseLabel: 'Portrait-Session (60 Min., 10 bearbeitete Bilder)',
+          priceNote: 'Unverbindliche Orientierung inkl. privater Nutzungsrechte. Business- und Presselizenzen kalkulieren wir individuell.',
+          options: [
+            { label: 'Shooting-Art', description: 'Wofür entstehen die Bilder?', type: 'select', choices: [{ label: 'Portrait', price: 0 }, { label: 'Business/Team', price: 190 }, { label: 'Reportage/Event', price: 420 }] },
+            { label: 'Zweite Location', description: 'Ortswechsel innerhalb der Stadt, inkl. Wegzeit.', type: 'toggle', price: 90 },
+            { label: 'Express-Bearbeitung', description: 'Erste Auswahl in 48 Stunden.', type: 'toggle', price: 120 },
+            { label: 'Zusätzliche Bilder', description: 'Weitere final bearbeitete Bilder.', type: 'quantity', price: 15, min: 0, max: 30 },
+          ],
+          cta: { label: 'Shooting anfragen', href: '/kontakt' },
+        }, paper),
         s('ctaBand', {
           badgeText: 'Bereit?',
           headline: 'Dann sortieren wir Ihr Shooting gemeinsam.',

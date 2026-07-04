@@ -608,6 +608,25 @@ const tenant = {
           },
         },
         {
+          type: 'priceCalculator',
+          data: {
+            badge: 'Kostenrechner',
+            headline: 'Was kostet Ihr neues Bad?',
+            subline: 'Stellen Sie Ihr Projekt zusammen und bekommen Sie sofort eine realistische Preisspanne — das verbindliche Festpreis-Angebot folgt nach dem kostenlosen Aufmaß.',
+            currency: '€',
+            basePrice: 12900,
+            baseLabel: 'Komplettbad bis 6 m² (Demontage, Rohinstallation, Standard-Ausstattung)',
+            priceNote: 'Unverbindliche Schätzung auf Basis unserer Projekte 2024/25. Festpreis nach kostenlosem Aufmaß vor Ort.',
+            options: [
+              { label: 'Badgröße', description: 'Grundfläche Ihres Bades', type: 'select', choices: [{ label: 'bis 6 m²', price: 0 }, { label: '6–10 m²', price: 4900 }, { label: 'über 10 m²', price: 9800 }] },
+              { label: 'Bodengleiche Dusche', description: 'Inklusive Abdichtung und Entwässerungsrinne.', type: 'toggle', price: 2400 },
+              { label: 'Fußbodenheizung', description: 'Elektrisch, inkl. Regler — spürbar komfortabler.', type: 'toggle', price: 1600 },
+              { label: 'Premium-Ausstattung', description: 'Markenkeramik, Unterputz-Armaturen, Glasabtrennung.', type: 'toggle', price: 3900 },
+            ],
+            cta: { label: 'Kostenloses Aufmaß anfragen', href: '/kontakt' },
+          },
+        },
+        {
           type: 'ctaBand',
           data: {
             headline: 'Sie wissen noch nicht, welche Leistung passt?',
@@ -699,6 +718,20 @@ const tenant = {
               { icon: 'Recycle',       title: 'Sauberer Bauplatz', text: 'Staubschutz, Schmutzfangmatten und tägliche Endreinigung sind im Festpreis enthalten — keine Position extra.' },
               { icon: 'Heart',         title: 'Lange Beziehungen', text: 'Wir warten Anlagen und Bäder, die wir selbst gebaut haben. Service ist kein Cross-Selling.' },
             ],
+          },
+        },
+        {
+          type: 'jobListings',
+          data: {
+            badge: 'Karriere',
+            headline: 'Wir suchen Verstärkung.',
+            subline: 'Meisterbetrieb in zweiter Generation, moderne Ausstattung, ehrliche Planung — auch bei den Arbeitszeiten.',
+            benefits: ['Übertariflich + Weihnachtsgeld', '4-Tage-Woche möglich', 'Eigenes Servicefahrzeug', 'Weiterbildung zum Meister gefördert'],
+            jobs: [
+              { title: 'Anlagenmechaniker:in SHK', location: 'Düsseldorf', type: 'Vollzeit', schedule: 'ab sofort', text: 'Bäder, Wärmepumpen und Heizungsanlagen — abwechslungsreiche Projekte statt Fließband-Wartung.', tags: ['Geselle/Meisterin', 'Führerschein B'], href: '/kontakt' },
+              { title: 'Auszubildende:r Anlagenmechanik SHK', location: 'Düsseldorf', type: 'Ausbildung', schedule: 'ab August', text: 'Drei Gesellen, ein Meister und echte Baustellen ab Woche eins — Übernahmegarantie bei bestandener Prüfung.', tags: ['Ausbildung', 'Übernahmegarantie'], href: '/kontakt' },
+            ],
+            contactCta: { label: 'Initiativ bewerben', href: '/kontakt' },
           },
         },
         {
