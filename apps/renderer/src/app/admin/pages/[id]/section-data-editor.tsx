@@ -347,6 +347,7 @@ return FIELD_HELP[key];
 function HelpHint({ fieldKey }: { fieldKey: string }) {
   const help = FIELD_HELP[fieldKey];
   if (!help) return null;
+  return <p className="mt-1 text-[11px] leading-4 text-zinc-400">{help}</p>;
 }
 
 // Generic section data editor that renders a form per section type.
@@ -420,6 +421,18 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     return [...parentPath, candidates[0] || `${fieldName}Position`];
   }
 
+  // Walks the type defaults along a data path; numeric segments fall back to
+  // the first default entry so nested arrays (e.g. rows[].links) resolve too.
+  function defaultsAtPath(path: Array<string | number>): unknown {
+    let current: unknown = defaults;
+    for (const key of path) {
+      if (Array.isArray(current)) current = current[typeof key === 'number' ? key : 0] ?? current[0];
+      else if (isRecord(current)) current = current[String(key)];
+      else return undefined;
+    }
+    return current;
+  }
+
   function createEmptyLike(sample: unknown): unknown {
     if (typeof sample === 'string') return '';
     if (typeof sample === 'number') return 0;
@@ -479,17 +492,29 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if (/icon/i.test(fieldName)) {
         return <IconPickerField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
       }
-      return <><Field key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} multiline={multiline} /><HelpHint fieldKey={String(path[path.length - 1])} /></>;
+      return (
+        <div key={renderKey}>
+          <Field label={label} value={value} onChange={(v) => updateAtPath(path, v)} multiline={multiline} />
+          <HelpHint fieldKey={fieldName} />
+        </div>
+      );
     }
 
     if (Array.isArray(value)) {
-      // Use first item as template; fall back to defaults if array is empty
-      const sample = value[0] ?? (Array.isArray(defaults[String(path[0])]) ? (defaults[String(path[0])] as unknown[])[0] : '') ?? '';
+      // Item shape = union of the type defaults' sample keys and every key
+      // seen on any stored item, so optional fields (e.g. ctaLabel/ctaHref)
+      // stay editable even when the stored items don't carry them yet.
+      const defaultsForPath = defaultsAtPath(path);
+      const defaultSample = Array.isArray(defaultsForPath) ? defaultsForPath[0] : undefined;
+      const itemShape: Record<string, unknown> = {};
+      if (isRecord(defaultSample)) for (const [k, v] of Object.entries(defaultSample)) itemShape[k] = v;
+      for (const item of value) if (isRecord(item)) for (const [k, v] of Object.entries(item)) if (!(k in itemShape)) itemShape[k] = v;
+      const hasShape = Object.keys(itemShape).length > 0;
+      const sample = hasShape ? itemShape : (value[0] ?? defaultSample ?? '');
       return (
         <div key={renderKey} className="space-y-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs font-semibold text-zinc-600">{label}</span>
-            <HelpHint fieldKey={String(path[path.length - 1])} />
             {typeof path[path.length - 1] === 'string' && <HelpHint fieldKey={String(path[path.length - 1])} />}
             <button type="button" className="text-xs font-medium text-blue-600 hover:underline" onClick={() => updateAtPath(path, [...value, createEmptyLike(sample)])}>+ Eintrag</button>
           </div>
@@ -497,11 +522,11 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
             {value.map((item, index) => (
               <div key={`${renderKey}.${index}`} className="relative rounded-xl border border-zinc-200 bg-white p-3 pt-8 shadow-sm">
                 <button type="button" className="absolute right-3 top-2 text-xs text-red-500 hover:text-red-600" onClick={() => updateAtPath(path, value.filter((_, itemIndex) => itemIndex !== index))}>Entfernen</button>
-                {isRecord(item) ? (
+                {isRecord(item) && hasShape ? (
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    {Object.entries(item).map(([childKey, childValue]) => (
+                    {Object.keys(itemShape).map((childKey) => (
                       <div key={childKey} className={/text|description|subline|content|bio|answer/i.test(childKey) ? 'md:col-span-2' : undefined}>
-                        {renderValue([...path, index, childKey], fieldLabel(childKey), childValue)}
+                        {renderValue([...path, index, childKey], fieldLabel(childKey), item[childKey] ?? createEmptyLike(itemShape[childKey]))}
                       </div>
                     ))}
                   </div>
@@ -2005,21 +2030,22 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
   const [packages, setPackages] = useState<{ name: string; price: string; description: string; features: string[]; highlighted: boolean; ctaLabel: string; ctaHref: string }[]>(
     ((data.packages as unknown[]) || []).map((p: unknown) => {
       const pkg = p as Record<string, unknown>;
+      const cta = (pkg.cta as { label?: string; href?: string } | undefined) || {};
       return {
-        name: (pkg.name as string) || '',
+        name: (pkg.name as string) || (pkg.title as string) || '',
         price: (pkg.price as string) || '',
         description: (pkg.description as string) || '',
         features: (pkg.features as string[]) || [],
         highlighted: (pkg.highlighted as boolean) || false,
-        ctaLabel: (pkg.ctaLabel as string) || '',
-        ctaHref: (pkg.ctaHref as string) || '',
+        ctaLabel: (pkg.ctaLabel as string) || cta.label || '',
+        ctaHref: (pkg.ctaHref as string) || cta.href || '',
       };
     })
   );
   useReport({ ...d, packages } as unknown as Record<string, unknown>, onChange);
 
-  function updatePkg(i: number, field: string, val: unknown) {
-    setPackages(packages.map((p, idx) => idx === i ? { ...p, [field]: val } : p));
+  function updatePkg(i: number, fields: Record<string, unknown>) {
+    setPackages(prev => prev.map((p, idx) => idx === i ? { ...p, ...fields } : p));
   }
 
   return (
@@ -2033,19 +2059,19 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-3">
             <button onClick={() => setPackages(packages.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Field label={fieldLabel('name')} value={pkg.name} onChange={(v) => updatePkg(i, 'name', v)} />
-              <Field label={fieldLabel('price')} value={pkg.price} onChange={(v) => updatePkg(i, 'price', v)} placeholder="z.B. ab 490€" />
+              <Field label={fieldLabel('name')} value={pkg.name} onChange={(v) => updatePkg(i, { name: v })} />
+              <Field label={fieldLabel('price')} value={pkg.price} onChange={(v) => updatePkg(i, { price: v })} placeholder="z.B. ab 490€" />
             </div>
-            <Field label="Beschreibung" value={pkg.description} onChange={(v) => updatePkg(i, 'description', v)} multiline />
+            <Field label="Beschreibung" value={pkg.description} onChange={(v) => updatePkg(i, { description: v })} multiline />
             <div className="mt-2">
               <p className="text-xs text-zinc-500 mb-1">Features (eins pro Zeile)</p>
-              <textarea className="admin-input text-xs w-full" rows={3} value={pkg.features.join('\n')} onChange={(e) => updatePkg(i, 'features', e.target.value.split('\n').filter(Boolean))} />
+              <textarea className="admin-input text-xs w-full" rows={3} value={pkg.features.join('\n')} onChange={(e) => updatePkg(i, { features: e.target.value.split('\n').filter(Boolean) })} />
             </div>
             <div className="mt-2">
-              <ButtonField label="CTA" value={{ label: pkg.ctaLabel, href: pkg.ctaHref }} onChange={(v) => { updatePkg(i, 'ctaLabel', v.label); updatePkg(i, 'ctaHref', v.href); }} />
+              <ButtonField label="CTA" value={{ label: pkg.ctaLabel, href: pkg.ctaHref }} onChange={(v) => updatePkg(i, { ctaLabel: v.label, ctaHref: v.href })} />
             </div>
             <label className="flex items-center gap-2 mt-2 text-xs text-zinc-600">
-              <input type="checkbox" checked={pkg.highlighted} onChange={(e) => updatePkg(i, 'highlighted', e.target.checked)} />
+              <input type="checkbox" checked={pkg.highlighted} onChange={(e) => updatePkg(i, { highlighted: e.target.checked })} />
               Hervorgehoben
             </label>
           </div>

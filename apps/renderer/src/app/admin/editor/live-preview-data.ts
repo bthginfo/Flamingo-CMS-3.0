@@ -19,6 +19,10 @@ export function buildLiveSections(
   });
 }
 
+// Storage convention for localized section data: the locale variants live
+// under `de`/`en`/… and the DEFAULT locale's fields additionally live FLAT on
+// the object — validators, search and locale-less render paths read the flat
+// fields. This merge keeps that invariant on every save.
 export function mergeLocalizedSectionData({
   sectionId,
   data,
@@ -38,9 +42,24 @@ export function mergeLocalizedSectionData({
 
   const section = sections.find((candidate) => candidate.id === sectionId);
   const existingData = pendingChanges.get(sectionId) ?? section?.data ?? {};
-  if (existingData._localized) {
-    return { ...existingData, [activeLocale]: data };
-  }
+  const reserved = new Set<string>(['_localized', ...i18n.locales, i18n.defaultLocale, activeLocale]);
+  const flatOf = (value: Record<string, unknown>) =>
+    Object.fromEntries(Object.entries(value).filter(([key]) => !reserved.has(key)));
 
-  return { _localized: true, [i18n.defaultLocale]: existingData, [activeLocale]: data };
+  const locales: Record<string, unknown> = { _localized: true };
+  if (existingData._localized) {
+    for (const [key, value] of Object.entries(existingData)) {
+      if (key !== '_localized' && reserved.has(key)) locales[key] = value;
+    }
+  } else {
+    locales[i18n.defaultLocale] = flatOf(existingData);
+  }
+  if (!(i18n.defaultLocale in locales)) locales[i18n.defaultLocale] = flatOf(existingData);
+  locales[activeLocale] = data;
+
+  const defaultData = locales[i18n.defaultLocale];
+  const flat = defaultData && typeof defaultData === 'object' && !Array.isArray(defaultData)
+    ? flatOf(defaultData as Record<string, unknown>)
+    : {};
+  return { ...flat, ...locales };
 }

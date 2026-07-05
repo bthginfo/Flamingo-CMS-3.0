@@ -186,17 +186,24 @@ function remapSectionDataRecord(sourceData: Record<string, unknown>, targetType:
   return nextData;
 }
 
+const LOCALE_KEY_RE = /^[a-z]{2}(-[A-Z]{2})?$/;
+
 export function remapSectionDataForType(data: Record<string, unknown>, targetType: string): Record<string, unknown> {
   if (data._localized) {
-    const localizedData = data as Record<string, unknown>;
+    // Localized sections keep the default locale's fields FLAT on the object
+    // next to the locale variants — only remap plain-object keys that look
+    // like locale codes as locales, everything else is flat content.
     const nextLocalized: Record<string, unknown> = { _localized: true };
-    for (const [locale, localeValue] of Object.entries(localizedData)) {
-      if (locale === '_localized') continue;
-      nextLocalized[locale] = localeValue && typeof localeValue === 'object'
-        ? remapSectionDataRecord(localeValue as Record<string, unknown>, targetType)
-        : getSectionSeedData(targetType);
+    const flatSource: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (key === '_localized') continue;
+      if (LOCALE_KEY_RE.test(key) && value && typeof value === 'object' && !Array.isArray(value)) {
+        nextLocalized[key] = remapSectionDataRecord(value as Record<string, unknown>, targetType);
+      } else {
+        flatSource[key] = value;
+      }
     }
-    return nextLocalized;
+    return { ...remapSectionDataRecord(flatSource, targetType), ...nextLocalized };
   }
 
   return remapSectionDataRecord(data, targetType);

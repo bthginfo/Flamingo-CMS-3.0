@@ -85,7 +85,10 @@ export function SectionEditorCard({
       </div>
       {expanded && (
         <div className="p-4">
-          <IndustrySectionDataEditor industry={industry} type={section.type} data={editorData} onChange={stableOnChange} sectionId={section.id} />
+          {/* Keyed by locale: the per-type editors hold their form state in
+              useState(data) and would otherwise keep showing (and save!) the
+              previous locale's content after a locale-tab switch. */}
+          <IndustrySectionDataEditor key={`${section.type}:${activeLocale || 'default'}`} industry={industry} type={section.type} data={editorData} onChange={stableOnChange} sectionId={section.id} />
           <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} industry={industry} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>

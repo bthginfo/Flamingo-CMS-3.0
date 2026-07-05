@@ -38,10 +38,18 @@ export function scanSectionTokens(root: Element): Set<string> {
   if (clone.querySelector('.section-badge')) {
     found.add('--token-badge-bg');
     found.add('--token-badge-text');
+    // globals.css paints the badge border from --style-badge-border, which the
+    // renderer normalizes from --token-badge-border.
+    found.add('--token-badge-border');
   }
   if (clone.querySelector('a[class*="bg-"], button[class*="bg-"]')) {
     found.add('--token-btn-bg');
     found.add('--token-btn-text');
+  }
+  // globals.css recolours hr/divide-*/border-b elements from
+  // --style-divider-color (normalized from --token-divider) once set.
+  if (clone.querySelector('hr, [class*="divide-"], [class*="divider"], [class*="border-b"], [class*="border-t"]')) {
+    found.add('--token-divider');
   }
   return found;
 }
