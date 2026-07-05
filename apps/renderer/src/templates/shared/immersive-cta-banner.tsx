@@ -1,5 +1,7 @@
 'use client';
 
+import { NumberTicker } from '@/components/ui/fx';
+
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useRef } from 'react';
@@ -64,7 +66,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
                 className="rounded-2xl border p-5 backdrop-blur-xl"
                 style={{ background: metricCardBg, borderColor: metricBorder }}
                data-edit-collection="metrics" data-edit-index={index}>
-                <div className="text-3xl font-black text-[color:var(--token-stat-value)]" data-edit-path="value">{metric.value}</div>
+                <div className="text-3xl font-black text-[color:var(--token-stat-value)]" data-edit-path="value">{(() => { const m = String(metric.value).match(/^([\d.,]+)(.*)$/); return m ? <><NumberTicker value={m[1]} />{m[2]}</> : metric.value; })()}</div>
                 <div className="mt-1 text-sm" style={{ color: mutedColor }} data-edit-path="label">{metric.label}</div>
               </motion.div>
             ))}

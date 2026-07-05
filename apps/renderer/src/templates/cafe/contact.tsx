@@ -79,7 +79,7 @@ export function CafeContactSection({ data }: Props) {
               <DynamicContactForm
                 fields={formFields}
                 submitLabel={submitLabel}
-                className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] shadow-sm p-8 space-y-5"
+                className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl p-8 space-y-5"
               />
             </motion.div>
           )}

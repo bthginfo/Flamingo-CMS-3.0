@@ -1,5 +1,7 @@
 'use client';
 
+import { WordReveal } from '@/components/ui/fx';
+
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
@@ -48,9 +50,7 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
             </motion.div>
           )}
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-5xl sm:text-7xl lg:text-9xl font-black leading-[0.9] text-[color:var(--token-on-dark-heading)] uppercase tracking-tight" data-edit-path="headline">
-            {headline}
-          </motion.h1>
+            className="text-5xl sm:text-7xl lg:text-9xl font-black leading-[0.9] text-[color:var(--token-on-dark-heading)] uppercase tracking-tight" data-edit-path="headline"><WordReveal text={headline} /></motion.h1>
           {subline && (
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}
               className="mt-6 text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] max-w-xl leading-relaxed" dangerouslySetInnerHTML={{ __html: subline }} />

@@ -1,5 +1,7 @@
 'use client';
 
+import { WordReveal } from '@/components/ui/fx';
+
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
@@ -56,9 +58,7 @@ export function CafeHeroSection({ data }: Props) {
           {openingHint && (
             <span className="block text-[var(--token-accent)] text-sm font-medium mb-4 tracking-wide">{openingHint}</span>
           )}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight" data-edit-path="headline">
-            {headline}
-          </h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight" data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && (
             <p className="text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] mt-5 leading-relaxed" data-edit-path="subline">
               {plain(subline)}

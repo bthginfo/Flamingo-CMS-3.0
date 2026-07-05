@@ -1,5 +1,7 @@
 'use client';
 
+import { WordReveal } from '@/components/ui/fx';
+
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
@@ -47,9 +49,7 @@ export function ConsultingHeroSection({ data }: Props) {
           transition={{ duration: 0.8 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{ color: heroHeading }} data-edit-path="headline">
-            {headline}
-          </h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{ color: heroHeading }} data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && (
             <p className="text-lg md:text-xl mt-6 max-w-2xl mx-auto leading-relaxed" style={{ color: heroBody }} data-edit-path="subline">
               {plain(subline)}

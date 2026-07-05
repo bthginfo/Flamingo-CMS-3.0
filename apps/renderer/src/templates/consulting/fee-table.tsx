@@ -1,5 +1,7 @@
 'use client';
 
+import { BorderBeam } from '@/components/ui/fx';
+
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
@@ -33,6 +35,7 @@ export function FeeTableSection({ data }: Props) {
             transition={{ delay: i * 0.1 }}
             className={`relative p-8 rounded-xl border ${fee.highlighted ? 'border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-badge-bg)_40%,transparent)] ring-1 ring-brand-primary/20' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'} text-center`}
            data-edit-collection="fees" data-edit-index={i}>
+            {fee.highlighted && <BorderBeam />}
             {fee.highlighted && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>
             )}

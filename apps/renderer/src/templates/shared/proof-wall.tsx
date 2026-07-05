@@ -30,7 +30,7 @@ export function ProofWallSection({ data }: Props) {
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
           {proofs.map((proof, index) => (
-            <motion.div key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm" data-edit-collection="proofs" data-edit-index={index}>
+            <motion.div key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="proofs" data-edit-index={index}>
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_14%,transparent)] text-[color:var(--token-icon)]"><Award size={19} /></div>
               {proof.value && (() => {
                 const m = String(proof.value).match(/^([\d.,]+)(.*)$/);

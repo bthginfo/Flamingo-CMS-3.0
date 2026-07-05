@@ -1,5 +1,7 @@
 'use client';
 
+import { BorderBeam } from '@/components/ui/fx';
+
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
 
@@ -42,7 +44,8 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
         </div>
         <div className={`grid gap-8 ${gridCols}`}>
           {packages.map((pkg, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`relative rounded-2xl p-5 md:p-8 ${pkg.highlighted ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]' : 'bg-[var(--token-card-bg)] shadow-sm border border-[color:var(--token-card-border)]'}`} data-edit-collection="packages" data-edit-index={i}>
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`relative rounded-2xl p-5 md:p-8 ${pkg.highlighted ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]' : 'bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl border border-[color:var(--token-card-border)]'}`} data-edit-collection="packages" data-edit-index={i}>
+              {pkg.highlighted && <BorderBeam />}
               {pkg.highlighted && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-badge-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">Beliebt</span>}
               <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{pkg.name}</h3>
               {pkg.price && (

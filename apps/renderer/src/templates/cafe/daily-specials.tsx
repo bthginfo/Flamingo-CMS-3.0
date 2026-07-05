@@ -33,7 +33,7 @@ export function DailySpecialsSection({ data }: Props) {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.1 }}
-              className="flex items-start gap-4 bg-[var(--token-card-bg)] rounded-lg p-5 border border-[var(--token-accent)] shadow-sm"
+              className="flex items-start gap-4 bg-[var(--token-card-bg)] rounded-lg p-5 border border-[var(--token-accent)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl"
              data-edit-collection="specials" data-edit-index={i}>
               {item.day && (
                 <span className="text-xs font-bold uppercase text-[var(--token-accent)] bg-[var(--token-accent)] px-2.5 py-1 rounded-full whitespace-nowrap">{item.day}</span>

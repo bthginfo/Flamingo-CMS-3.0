@@ -49,7 +49,7 @@ export function MarketReportSection({ data }: Props) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.1 }}
-                className="rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm shadow-black/5"
+                className="rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl shadow-black/5"
               >
                 <Icon size={20} className="mb-3 text-[color:var(--token-icon)]" />
                 <p className="text-3xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">

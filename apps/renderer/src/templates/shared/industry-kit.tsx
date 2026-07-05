@@ -53,7 +53,7 @@ export function CtaButton({ cta }: { cta: ButtonValue }) {
 
 export function ImageCard({ image, title, text, meta, cta }: { image?: string; title?: string; text?: string; meta?: string; cta?: ButtonValue }) {
   return (
-    <article className="group overflow-hidden rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm">
+    <article className="group overflow-hidden rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl">
       {image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={image} alt={title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
       <div className="p-5">
         {meta && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]">{meta}</p>}

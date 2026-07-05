@@ -1,5 +1,7 @@
 'use client';
 
+import { WordReveal } from '@/components/ui/fx';
+
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
@@ -37,9 +39,7 @@ export function RealestateHeroSection({ data }: Props) {
           transition={{ duration: 0.8 }}
           className="max-w-2xl"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight tracking-tight" data-edit-path="headline">
-            {headline}
-          </h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight tracking-tight" data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && (
             <p className="text-lg md:text-xl text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] mt-6 leading-relaxed" data-edit-path="subline">
               {plain(subline)}

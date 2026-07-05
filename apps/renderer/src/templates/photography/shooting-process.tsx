@@ -34,7 +34,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
               const isLeft = i % 2 === 0;
               return (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="relative md:grid md:grid-cols-2 md:gap-12 items-center pl-16 md:pl-0">
-                  <div className="absolute left-6 md:left-1/2 top-0 -translate-x-1/2 w-12 h-12 rounded-full bg-[var(--token-card-bg)] border-2 border-[color-mix(in_srgb,var(--token-card-border)_20%,transparent)] flex items-center justify-center shadow-sm">
+                  <div className="absolute left-6 md:left-1/2 top-0 -translate-x-1/2 w-12 h-12 rounded-full bg-[var(--token-card-bg)] border-2 border-[color-mix(in_srgb,var(--token-card-border)_20%,transparent)] flex items-center justify-center shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl">
                     <Icon className="w-5 h-5 text-[color:var(--token-icon)]" />
                   </div>
                   <div className={`${isLeft ? 'md:text-right md:pr-12' : 'md:col-start-2 md:pl-12'}`}>

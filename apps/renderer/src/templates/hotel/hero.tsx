@@ -1,5 +1,7 @@
 'use client';
 
+import { WordReveal } from '@/components/ui/fx';
+
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
@@ -101,9 +103,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         )}
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}
           className="text-5xl sm:text-6xl lg:text-8xl font-semibold text-[color:var(--token-on-dark-heading)] leading-[0.98]"
-          style={{ textShadow: '0 2px 30px rgba(0,0,0,0.4)' }} data-edit-path="headline">
-          {headline}
-        </motion.h1>
+          style={{ textShadow: '0 2px 30px rgba(0,0,0,0.4)' }} data-edit-path="headline"><WordReveal text={headline} /></motion.h1>
         {subline && (
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.7 }}
             className="mt-7 max-w-2xl mx-auto text-lg leading-8 text-[color:var(--token-on-dark-body)] rt-content"

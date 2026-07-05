@@ -1,5 +1,7 @@
 'use client';
 
+import { NumberTicker } from '@/components/ui/fx';
+
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
@@ -29,7 +31,7 @@ export function SignatureGridSection({ data }: Props) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {traits.map((trait, index) => (
-          <motion.article key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm" data-edit-collection="traits" data-edit-index={index}>
+          <motion.article key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="traits" data-edit-index={index}>
             {trait.icon && <DynamicIcon editPath="icon" name={trait.icon} size={28} className="mb-6 text-[color:var(--token-icon)]" />}
             <h3 className="text-xl font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{trait.title}</h3>
             {trait.text && <p className="mt-3 text-sm leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(trait.text)}</p>}
@@ -37,7 +39,7 @@ export function SignatureGridSection({ data }: Props) {
         ))}
         {stats.map((stat, index) => (
           <div key={`stat-${index}`} className="rounded-3xl bg-[var(--token-section-bg-alt)] p-6 text-[color:var(--token-on-dark-heading)]" data-edit-collection="stats" data-edit-index={index}>
-            <div className="text-4xl font-black text-[color:var(--token-stat-value)]" data-edit-path="value">{stat.value}</div>
+            <div className="text-4xl font-black text-[color:var(--token-stat-value)]" data-edit-path="value">{(() => { const m = String(stat.value).match(/^([\d.,]+)(.*)$/); return m ? <><NumberTicker value={m[1]} />{m[2]}</> : stat.value; })()}</div>
             <div className="mt-2 text-sm text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="label">{stat.label}</div>
           </div>
         ))}

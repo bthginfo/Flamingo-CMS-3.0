@@ -1,5 +1,7 @@
 'use client';
 
+import { NumberTicker } from '@/components/ui/fx';
+
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Star } from 'lucide-react';
@@ -34,7 +36,7 @@ export function SocialProofBarSection({ data }: Props) {
             ) : item.icon === 'star' ? (
               <div className="flex gap-0.5 mb-1">{Array.from({ length: 5 }).map((_, si) => <Star key={si} size={14} className="fill-[var(--token-rating-star)] text-[var(--token-rating-star)]"  data-edit-collection="length" data-edit-index={si}/>)}</div>
             ) : null}
-            <span className="text-2xl md:text-3xl font-bold leading-tight" data-edit-path="value">{item.value}</span>
+            <span className="text-2xl md:text-3xl font-bold leading-tight" data-edit-path="value">{(() => { const m = String(item.value).match(/^([\d.,]+)(.*)$/); return m ? <><NumberTicker value={m[1]} />{m[2]}</> : item.value; })()}</span>
             <span className="text-xs text-[color:var(--token-card-body,var(--token-body))] md:text-sm" data-edit-path="label">{item.label}</span>
           </motion.div>
         ))}

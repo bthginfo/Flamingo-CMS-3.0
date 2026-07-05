@@ -1,5 +1,7 @@
 'use client';
 
+import { NumberTicker } from '@/components/ui/fx';
+
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Home, ArrowRight } from 'lucide-react';
@@ -50,7 +52,7 @@ export function ValuationCtaSection({ data }: Props) {
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
-                  <p className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{stat.value}</p>
+                  <p className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{(() => { const m = String(stat.value).match(/^([\d.,]+)(.*)$/); return m ? <><NumberTicker value={m[1]} />{m[2]}</> : stat.value; })()}</p>
                   <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>
               ))}

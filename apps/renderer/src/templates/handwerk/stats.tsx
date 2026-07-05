@@ -56,7 +56,7 @@ export function StatsSection({ data }: Props) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: i * 0.1 }}
-            className="text-center p-6 rounded-2xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm"
+            className="text-center p-6 rounded-2xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl"
            data-edit-collection="stats" data-edit-index={i}>
             {stat.icon && (
               <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--token-icon)_14%,transparent)] flex items-center justify-center text-[color:var(--token-icon)]">

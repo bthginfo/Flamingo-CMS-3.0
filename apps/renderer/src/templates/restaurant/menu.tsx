@@ -51,7 +51,7 @@ type MenuViewProps = {
 
 function MenuClassic(props: MenuViewProps) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-sm overflow-hidden">
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl overflow-hidden">
       <MenuHeader {...props} align="center" />
       <div className="divide-y divide-black/10">
         {props.categories.map((category, index) => (

@@ -66,7 +66,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
           {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           {deadlineStr && <p className="text-sm text-[color:var(--token-icon)] font-medium mt-4">Bitte bis {deadlineStr}</p>}
         </div>
-        <form onSubmit={handleSubmit} className="space-y-5 bg-[var(--token-card-bg)] p-8 rounded-2xl shadow-sm border border-[color:var(--token-card-border)]">
+        <form onSubmit={handleSubmit} className="space-y-5 bg-[var(--token-card-bg)] p-8 rounded-2xl shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl border border-[color:var(--token-card-border)]">
           {status === 'error' && <p className="text-sm text-[var(--token-danger)] flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
           <div>
             <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Name(n)</label>
