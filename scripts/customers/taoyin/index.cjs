@@ -8,7 +8,21 @@ const chiNeiTsang = require('./page-chi-nei-tsang.cjs');
 const psychotherapie = require('./page-psychotherapie.cjs');
 const { legal, collections } = require('./_carryover.cjs');
 
-module.exports = {
+// Stored convention: default-locale (de) fields live flat on the data object
+// PLUS the de/en/es copies — validators and the renderer read the flat fields.
+function flatten(node) {
+  if (Array.isArray(node)) return node.map(flatten);
+  if (node && typeof node === 'object') {
+    if (node._localized && node.de) {
+      const out = { ...flatten(node.de), _localized: true, de: flatten(node.de), en: flatten(node.en || {}), es: flatten(node.es || {}) };
+      return out;
+    }
+    return Object.fromEntries(Object.entries(node).map(([k, v]) => [k, flatten(v)]));
+  }
+  return node;
+}
+
+module.exports = flatten({
   slug: 'taoyin',
   wipe: true,
   navigation: {
@@ -43,4 +57,4 @@ module.exports = {
   collections,
   pages: [startseite, taoyin, qiGong, chiNeiTsang, psychotherapie, about, kontakt, ...legal],
   publish: true,
-};
+});
