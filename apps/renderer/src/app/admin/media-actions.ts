@@ -62,9 +62,46 @@ async function probeMediaUrl(url: string): Promise<'ok' | 'missing' | 'unknown'>
 export async function getMediaAssets(): Promise<MediaAsset[]> {
   const tenantId = await requireTenant();
   const db = getDb();
-  const rows = await db.select().from(mediaAssets)
+  let rows = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.tenantId, tenantId))
     .orderBy(desc(mediaAssets.createdAt));
+
+  // Self-heal duplicate rows for the same blob URL (the upload webhook and the
+  // client's saveMediaRecord used to race each other into two inserts). Keep
+  // the richest row, merge missing metadata from the rest, and delete the
+  // redundant DB rows — the blob itself is shared, so only rows are removed.
+  const groups = new Map<string, typeof rows>();
+  for (const row of rows) {
+    const key = normalizeMediaUrl(row.blobUrl, row.pathname, row.filename);
+    if (!key) continue;
+    const group = groups.get(key);
+    if (group) group.push(row); else groups.set(key, [row]);
+  }
+  const duplicateIds = new Set<string>();
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    const score = (r: typeof group[number]) =>
+      (r.size > 0 ? 4 : 0) + (r.width ? 2 : 0) + (r.alt?.trim() ? 1 : 0);
+    group.sort((a, b) => score(b) - score(a) || a.createdAt.getTime() - b.createdAt.getTime());
+    const keeper = group[0];
+    const merge: Partial<typeof keeper> = {};
+    for (const dupe of group.slice(1)) {
+      if (!keeper.alt?.trim() && dupe.alt?.trim()) { merge.alt = dupe.alt; keeper.alt = dupe.alt; }
+      if (!keeper.folder && dupe.folder) { merge.folder = dupe.folder; keeper.folder = dupe.folder; }
+      if (!keeper.width && dupe.width) { merge.width = dupe.width; merge.height = dupe.height; keeper.width = dupe.width; keeper.height = dupe.height; }
+      if (!keeper.size && dupe.size) { merge.size = dupe.size; keeper.size = dupe.size; }
+      duplicateIds.add(dupe.id);
+    }
+    if (Object.keys(merge).length) {
+      await db.update(mediaAssets).set(merge).where(eq(mediaAssets.id, keeper.id));
+    }
+  }
+  if (duplicateIds.size) {
+    await db.delete(mediaAssets)
+      .where(and(eq(mediaAssets.tenantId, tenantId), inArray(mediaAssets.id, [...duplicateIds])));
+    rows = rows.filter(row => !duplicateIds.has(row.id));
+  }
+
   const normalizedAssets = rows
     .map(r => {
       const normalizedUrl = normalizeMediaUrl(r.blobUrl, r.pathname, r.filename);
@@ -147,7 +184,17 @@ export async function saveMediaRecord(data: {
       tenantId,
       blobUrl: normalizedBlobUrl,
       ...patch,
-    }).returning();
+    }).returning()
+      .catch(async () => {
+        // The upload-completed webhook may have inserted a bookkeeping row for
+        // the same blob between our check and this insert (unique index).
+        // Converge on that row instead of surfacing an upload error.
+        const [raced] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
+          .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.blobUrl, normalizedBlobUrl)))
+          .limit(1);
+        if (!raced) throw new Error('Media record could not be saved');
+        return db.update(mediaAssets).set(patch).where(eq(mediaAssets.id, raced.id)).returning();
+      });
 
   revalidatePath('/admin/media');
   return row;

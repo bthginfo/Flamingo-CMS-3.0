@@ -314,6 +314,9 @@ export const mediaAssets = pgTable('media_assets', {
   index('media_assets_tenant_idx').on(t.tenantId),
   index('media_assets_mime_idx').on(t.tenantId, t.mimeType),
   index('media_assets_folder_idx').on(t.tenantId, t.folder),
+  // One library row per blob per tenant — the upload webhook and the client's
+  // saveMediaRecord write concurrently; without this they race into duplicates.
+  uniqueIndex('media_assets_tenant_blob_idx').on(t.tenantId, t.blobUrl),
 ]);
 
 // ─── 18. collections ─────────────────────────────────────────────────

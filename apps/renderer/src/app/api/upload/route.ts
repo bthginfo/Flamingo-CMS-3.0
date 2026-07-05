@@ -46,6 +46,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           const payload = tokenPayload ? JSON.parse(tokenPayload) as { tenantId?: string } : {};
           const tenantId = payload.tenantId;
           if (!tenantId) return;
+          // The admin client records the upload itself via saveMediaRecord
+          // (with real size/dimensions/folder) right after upload() resolves.
+          // This callback fires concurrently and used to race that write into
+          // a duplicate library row. Give the client a head start — this path
+          // only needs to catch uploads whose client never reported back.
+          await new Promise((resolve) => setTimeout(resolve, 5000));
           const filename = (blob.pathname.split('/').pop() || 'upload').slice(0, 255);
           const db = getDb();
           const [existing] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
