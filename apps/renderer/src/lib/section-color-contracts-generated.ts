@@ -430,6 +430,7 @@ export const SECTION_COLOR_CONTRACTS_GENERIC: Partial<Record<string, ColorFieldK
   ctaSplit: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'check'],
   deliveryTimeline: ['sectionBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'cardIconColor', 'headingWeight', 'headingTracking'],
   editorialFeatureRail: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'btnBg', 'btnText', 'badgeText', 'borderColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'onDarkHeading', 'eyebrow'],
+  editorialHero: ['sectionBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'eyebrow', 'btnSecondaryBorder'],
   embed: ['sectionBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor'],
   eventCalendar: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'priceColor'],
   eventTypes: ['sectionBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'onDarkHeading', 'cardRadius', 'headingWeight', 'headingTracking'],
@@ -531,6 +532,7 @@ export const SECTION_COLOR_CONTRACTS_GENERIC: Partial<Record<string, ColorFieldK
   videoEmbed: ['sectionBg', 'headingColor', 'bodyColor', 'mutedColor', 'btnBg', 'btnText', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor'],
   weddingFloristry: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'borderColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'cardIconColor', 'onDarkHeading', 'cardRadius', 'buttonRadius'],
   workshopBooking: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'cardRadius', 'buttonRadius', 'cardShadow', 'headingWeight', 'headingTracking'],
+  zigzagShowcase: ['sectionBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'badgeBg', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'eyebrow'],
 };
 
 // Cross-industry UNION per type. Last-resort fallback that mirrors the renderer borrowing a component from ALL_TEMPLATES when a section is used in an industry that does not define it. Superset by design; the runtime DOM scan hides fields the rendered variant does not paint.

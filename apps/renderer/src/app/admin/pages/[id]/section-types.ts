@@ -86,6 +86,8 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'teamSpotlight', label: 'Team-Spotlight', description: 'Portrait-Karten mit Hover-Reveal (Zitat, Schwerpunkte, Social Links)', category: 'Team & Personen' },
   { type: 'faqContactSplit', label: 'FAQ + Kontakt', description: 'Animiertes FAQ-Akkordeon mit Kontaktkarte in der Seitenleiste', category: 'Social Proof' },
   { type: 'galleryPro', label: 'Galerie Pro', description: 'Filterbare Masonry-Galerie mit Lightbox und Hover-Captions', category: 'Medien' },
+  { type: 'editorialHero', label: 'Editorial Hero', description: 'Ruhiger, heller Hero mit Eyebrow, großer Headline und überlappenden Fotos', category: 'Premium' },
+  { type: 'zigzagShowcase', label: 'Zickzack-Showcase', description: 'Alternierende Bild-Text-Reihen mit Eyebrow, Links und Foto-Akzentrahmen', category: 'Inhalt' },
   { type: 'offerCampaignStrip', label: 'Offer Campaign Strip', description: 'Kampagnenbanner mit Angebot, Bild, Benefits, Deadline und CTA', category: 'Premium' },
   { type: 'beforeAfterStoryPro', label: 'Before/After Story Pro', description: 'Vorher/Nachher-Case mit Problem, Lösung, Ergebnis und Kennzahlen', category: 'Premium' },
   { type: 'signatureGrid', label: 'Signature Grid', description: 'Premium-Grid mit starkem Bild, Markenmerkmalen und Proof-Daten', category: 'Premium' },

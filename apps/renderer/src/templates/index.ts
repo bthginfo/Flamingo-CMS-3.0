@@ -65,6 +65,8 @@ import { OpeningStatusSection } from './shared/opening-status';
 import { TeamSpotlightSection } from './shared/team-spotlight';
 import { FaqContactSplitSection } from './shared/faq-contact-split';
 import { GalleryProSection } from './shared/gallery-pro';
+import { ZigzagShowcaseSection } from './shared/zigzag-showcase';
+import { EditorialHeroSection } from './shared/editorial-hero';
 import { CollectionListSection } from './shared/collection-list';
 import { InstagramFeedSection } from './shared/instagram-feed';
 import { ShopProductGridSection } from './shared/shop-product-grid';
@@ -765,6 +767,8 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   teamSpotlight: TeamSpotlightSection,
   faqContactSplit: FaqContactSplitSection,
   galleryPro: GalleryProSection,
+  zigzagShowcase: ZigzagShowcaseSection,
+  editorialHero: EditorialHeroSection,
   glowHero: GlowHeroSection,
   floristHero: GlowHeroSection,
   bouquetShowcase: ProductShowcaseSection,

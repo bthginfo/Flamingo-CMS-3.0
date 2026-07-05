@@ -2003,4 +2003,21 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { src: 'https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=82', alt: 'Dachterrasse', category: 'Sanierung', caption: 'Terrasse mit Weitblick' },
     ],
   },
+  editorialHero: {
+    eyebrow: 'Willkommen',
+    headline: 'Ruhe, die man schon auf der Startseite spürt.',
+    text: '<p>Ein heller, editorialer Einstieg für Marken, die nicht laut sein müssen: große Typografie, weiche Formen und Fotos mit Charakter.</p>',
+    imagePrimary: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=900&q=82',
+    imageSecondary: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=82',
+    primaryCta: { label: 'Termin anfragen', href: '#kontakt' },
+    secondaryCta: { label: 'Mehr erfahren', href: '#angebote' },
+    hint: 'Kostenloses Kennenlern-Gespräch — ohne Verpflichtung.',
+  },
+  zigzagShowcase: {
+    rows: [
+      { eyebrow: 'Sanfter Einstieg', headline: 'Tao Basis', text: '<p>Die Grundlagen ruhiger Bewegungspraxis: Atmung, Ausrichtung und einfache Folgen, die sich gut anfühlen — vom ersten Termin an.</p>', image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1000&q=82', links: [{ label: 'Mehr erfahren', href: '#' }, { label: 'Kurs ansehen', href: '#' }] },
+      { eyebrow: 'Für Fortgeschrittene', headline: 'Medizinisches Qi Gong', text: '<p>Gezielte Übungsreihen für Regeneration und Energiefluss — präzise angeleitet und individuell angepasst.</p>', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1000&q=82', links: [{ label: 'Mehr erfahren', href: '#' }] },
+      { eyebrow: 'Körperarbeit', headline: 'Chi Nei Tsang', text: '<p>Tiefe, achtsame Bauchraum-Massage, die Spannungen löst und die Selbstregulation stärkt.</p>', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1000&q=82', links: [{ label: 'Behandlung anfragen', href: '#' }, { label: 'Ausbildung entdecken', href: '#' }] },
+    ],
+  },
 };

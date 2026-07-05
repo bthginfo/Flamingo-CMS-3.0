@@ -540,6 +540,14 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "badgeText": "",
     "categories": []
   },
+  "zigzagShowcase": {
+    "startRight": ""
+  },
+  "editorialHero": {
+    "badgeText": "",
+    "image": "",
+    "subline": ""
+  },
   "glowHero": {
     "bgImage": "",
     "bgPosition": ""
