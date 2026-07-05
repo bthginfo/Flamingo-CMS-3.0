@@ -175,6 +175,42 @@ module.exports = { about: {
  "title": "Kontakt",
  "sections": [
   {
+   "type": "editorialHero",
+   "data": {
+    "_localized": true,
+    "de": {
+     "eyebrow": "Kontakt & Anfahrt",
+     "headline": "Schön, dass du da bist.",
+     "text": "<p>Ob Qi Gong, Tao Yin, Chi Nei Tsang oder Psychotherapie — melde dich gerne. Du findest das Zentrum <strong>Bei der Schleifmühle 34b</strong> in Ingolstadt, nur wenige Minuten von der Altstadt entfernt.</p>",
+     "imagePrimary": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/689c709e31ebcac5995a9622_a9db9b1a-d5b1-4270-a1b0-8044de34b697.avif",
+     "imageSecondary": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371146ec6241e81774b7_Estela-byaylin-52-min.jpg",
+     "primaryCta": { "label": "Jetzt anrufen", "href": "tel:+4915115539416" },
+     "secondaryCta": { "label": "E-Mail schreiben", "href": "mailto:info@taoyin-zentrum.de" },
+     "hint": "Termine nach Vereinbarung — auch per WhatsApp erreichbar."
+    },
+    "en": {
+     "eyebrow": "Contact & directions",
+     "headline": "Lovely to have you here.",
+     "text": "<p>Whether Qi Gong, Tao Yin, Chi Nei Tsang or psychotherapy — feel free to get in touch. You will find the centre at <strong>Bei der Schleifmühle 34b</strong> in Ingolstadt, just a few minutes from the old town.</p>",
+     "imagePrimary": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/689c709e31ebcac5995a9622_a9db9b1a-d5b1-4270-a1b0-8044de34b697.avif",
+     "imageSecondary": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371146ec6241e81774b7_Estela-byaylin-52-min.jpg",
+     "primaryCta": { "label": "Call now", "href": "tel:+4915115539416" },
+     "secondaryCta": { "label": "Write an email", "href": "mailto:info@taoyin-zentrum.de" },
+     "hint": "Appointments by arrangement — also reachable via WhatsApp."
+    },
+    "es": {
+     "eyebrow": "Contacto y cómo llegar",
+     "headline": "Qué alegría tenerte aquí.",
+     "text": "<p>Ya sea Qi Gong, Tao Yin, Chi Nei Tsang o psicoterapia, no dudes en escribirme. Encontrarás el centro en <strong>Bei der Schleifmühle 34b</strong>, en Ingolstadt, a pocos minutos del casco antiguo.</p>",
+     "imagePrimary": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/689c709e31ebcac5995a9622_a9db9b1a-d5b1-4270-a1b0-8044de34b697.avif",
+     "imageSecondary": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371146ec6241e81774b7_Estela-byaylin-52-min.jpg",
+     "primaryCta": { "label": "Llamar ahora", "href": "tel:+4915115539416" },
+     "secondaryCta": { "label": "Escribir un correo", "href": "mailto:info@taoyin-zentrum.de" },
+     "hint": "Citas con reserva previa; también disponible por WhatsApp."
+    }
+   }
+  },
+  {
    "type": "contact",
    "data": {
     "_localized": true,
@@ -283,31 +319,31 @@ module.exports = { about: {
      "subline": "Appointments by arrangement — fastest by phone or WhatsApp.",
      "days": [
       {
-       "day": "Montag",
+       "day": "Monday",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Dienstag",
+       "day": "Tuesday",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Mittwoch",
+       "day": "Wednesday",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Donnerstag",
+       "day": "Thursday",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Freitag",
+       "day": "Friday",
        "hours": "09:00 – 16:00"
       },
       {
-       "day": "Samstag",
+       "day": "Saturday",
        "note": "by arrangement"
       },
       {
-       "day": "Sonntag",
+       "day": "Sunday",
        "closed": true
       }
      ],
@@ -322,31 +358,31 @@ module.exports = { about: {
      "subline": "Citas con reserva previa; lo más rápido: teléfono o WhatsApp.",
      "days": [
       {
-       "day": "Montag",
+       "day": "Lunes",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Dienstag",
+       "day": "Martes",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Mittwoch",
+       "day": "Miércoles",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Donnerstag",
+       "day": "Jueves",
        "hours": "09:00 – 18:00"
       },
       {
-       "day": "Freitag",
+       "day": "Viernes",
        "hours": "09:00 – 16:00"
       },
       {
-       "day": "Samstag",
+       "day": "Sábado",
        "note": "con cita previa"
       },
       {
-       "day": "Sonntag",
+       "day": "Domingo",
        "closed": true
       }
      ],
