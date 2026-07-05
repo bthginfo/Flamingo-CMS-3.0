@@ -1,0 +1,76 @@
+{
+ "impressum": [
+  {
+   "type": "collectionHero",
+   "data": {
+    "bgImage": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=1800&q=85",
+    "subline": "Angaben gemäß § 5 TMG aus der bestehenden Website.",
+    "category": "Rechtliches",
+    "headline": "Impressum",
+    "overlayColor": "#263042",
+    "overlayOpacity": 0.45
+   }
+  },
+  {
+   "type": "legalContent",
+   "data": {
+    "blocks": [
+     {
+      "text": "<p>Estela und Paul Fuchs<br />Universal Healing Tao Center Ingolstadt<br />Venusstrasse 10<br />85080 Gaimersheim</p>",
+      "headline": "Angaben gemäß § 5 TMG"
+     },
+     {
+      "text": "<p>Telefon: +49 (0) 8458 343641<br />Telefax: +49 (0) 8458 343641<br />E-Mail: pkfuchs@hotmail.com</p>",
+      "headline": "Kontakt"
+     },
+     {
+      "text": "<p>Heilpraktiker/in für Psychotherapie, Bundesrepublik Deutschland<br />Aufsichtsbehörde: Landratsamt Eichstätt</p>",
+      "headline": "Berufsbezeichnung"
+     },
+     {
+      "text": "<p>Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz: 171/218/80989</p>",
+      "headline": "Umsatzsteuer-ID"
+     }
+    ],
+    "headline": "Impressum"
+   }
+  }
+ ],
+ "datenschutz": [
+  {
+   "type": "collectionHero",
+   "data": {
+    "bgImage": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1800&q=85",
+    "subline": "Datenschutzhinweise und Haftungsausschluss aus der bestehenden Website.",
+    "category": "Rechtliches",
+    "headline": "Datenschutz",
+    "overlayColor": "#263042",
+    "overlayOpacity": 0.45
+   }
+  },
+  {
+   "type": "legalContent",
+   "data": {
+    "blocks": [
+     {
+      "text": "<p>Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>",
+      "headline": "Haftung für Inhalte"
+     },
+     {
+      "text": "<p>Diese Website kann Links zu externen Webseiten Dritter enthalten, auf deren Inhalte kein Einfluss besteht. Für diese fremden Inhalte wird keine Gewähr übernommen.</p>",
+      "headline": "Haftung für Links"
+     },
+     {
+      "text": "<p>Diese Website verwendet Cookies, kleine Textdateien, die auf Ihrem Computer platziert werden, um eine bessere Benutzererfahrung zu ermöglichen.</p>",
+      "headline": "Cookies"
+     },
+     {
+      "text": "<p>Bei Fragen wenden Sie sich bitte an Estela Fuchs über die auf der Kontaktseite genannten Kontaktdaten.</p>",
+      "headline": "Kontakt Datenschutz"
+     }
+    ],
+    "headline": "Datenschutz und Haftung"
+   }
+  }
+ ]
+}
