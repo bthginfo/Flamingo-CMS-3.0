@@ -1,4 +1,4 @@
-// Taoyin Zentrum Ingolstadt — Kundenseite, neu strukturiert (13->8 Seiten + 4 Wegweiser).
+// Taoyin Zentrum Ingolstadt — Kundenseite, neu strukturiert + vollständig lokalisiert (de/en/es).
 // Backup des Vorzustands: Session-Scratchpad taoyin-dump.json
 module.exports = {
  "slug": "taoyin",
@@ -4262,75 +4262,220 @@ module.exports = {
     {
      "type": "serviceTabs",
      "data": {
-      "badge": "Vier Zugänge",
-      "headline": "Ein Ziel, vier Wege dorthin.",
-      "subline": "Jeder Zugang hat seinen eigenen Rhythmus — alle führen zurück zu Ruhe, Energie und innerer Balance.",
-      "tabs": [
-       {
-        "label": "Qi Gong",
-        "icon": "wind",
-        "title": "Medizinisches Qi Gong",
-        "text": "<p>Langsame, präzise Bewegung, die Atem, Aufmerksamkeit und Energiefluss verbindet. Ideal als regelmäßige Praxis gegen Anspannung und Erschöpfung.</p>",
-        "image": "https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1200&q=82",
-        "features": [
-         "Wöchentliche Kurse in kleiner Gruppe",
-         "Für jedes Alter und jede Konstitution",
-         "Ohne Vorkenntnisse"
-        ],
-        "cta": {
-         "label": "Kurse ansehen",
-         "href": "/kurse-workshops"
+      "_localized": true,
+      "de": {
+       "badge": "Vier Zugänge",
+       "headline": "Ein Ziel, vier Wege dorthin.",
+       "subline": "Jeder Zugang hat seinen eigenen Rhythmus — alle führen zurück zu Ruhe, Energie und innerer Balance.",
+       "tabs": [
+        {
+         "label": "Qi Gong",
+         "icon": "wind",
+         "title": "Medizinisches Qi Gong",
+         "text": "<p>Langsame, präzise Bewegung, die Atem, Aufmerksamkeit und Energiefluss verbindet. Ideal als regelmäßige Praxis gegen Anspannung und Erschöpfung.</p>",
+         "image": "https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Wöchentliche Kurse in kleiner Gruppe",
+          "Für jedes Alter und jede Konstitution",
+          "Ohne Vorkenntnisse"
+         ],
+         "cta": {
+          "label": "Kurse ansehen",
+          "href": "/kurse-workshops"
+         }
+        },
+        {
+         "label": "Tao Basis",
+         "icon": "compass",
+         "title": "Tao Basis — der Einstieg",
+         "text": "<p>Die Grundlagen taoistischer Praxis: innere Ausrichtung, Atmung, einfache Übungsfolgen. Der beste Startpunkt, wenn alles neu ist.</p>",
+         "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Kompakter Einführungszyklus",
+          "Übungen für zuhause",
+          "Basis für alle weiteren Wege"
+         ],
+         "cta": {
+          "label": "Tao Basis entdecken",
+          "href": "/angebote"
+         }
+        },
+        {
+         "label": "Chi Nei Tsang",
+         "icon": "heartHandshake",
+         "title": "Chi Nei Tsang — Behandlung & Ausbildung",
+         "text": "<p>Taoistische Bauchraum-Massage, die tief sitzende Spannung löst und die Selbstregulation stärkt. Als Einzelbehandlung oder als fundierte Ausbildung.</p>",
+         "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Einzelbehandlung ca. 60–90 Min.",
+          "Zertifizierte Ausbildungsgänge",
+          "Ruhige, achtsame Arbeitsweise"
+         ],
+         "cta": {
+          "label": "Behandlung anfragen",
+          "href": "/kontakt"
+         }
+        },
+        {
+         "label": "Psychotherapie",
+         "icon": "brain",
+         "title": "Ganzheitliche Psychotherapie",
+         "text": "<p>Gesprächs- und körperorientierte Begleitung nach dem Heilpraktikergesetz — wenn Themen mehr Raum brauchen als eine Übungspraxis geben kann.</p>",
+         "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Einzel- und Paartherapie",
+          "Verhaltenstherapeutische Methoden",
+          "Vertraulich & auf Augenhöhe"
+         ],
+         "cta": {
+          "label": "Mehr zur Psychotherapie",
+          "href": "/psychotherapie"
+         }
         }
-       },
-       {
-        "label": "Tao Basis",
-        "icon": "compass",
-        "title": "Tao Basis — der Einstieg",
-        "text": "<p>Die Grundlagen taoistischer Praxis: innere Ausrichtung, Atmung, einfache Übungsfolgen. Der beste Startpunkt, wenn alles neu ist.</p>",
-        "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=82",
-        "features": [
-         "Kompakter Einführungszyklus",
-         "Übungen für zuhause",
-         "Basis für alle weiteren Wege"
-        ],
-        "cta": {
-         "label": "Tao Basis entdecken",
-         "href": "/angebote"
+       ]
+      },
+      "en": {
+       "badge": "Four paths",
+       "headline": "One goal, four ways to get there.",
+       "subline": "Each path has its own rhythm — all lead back to calm, energy and inner balance.",
+       "tabs": [
+        {
+         "label": "Qi Gong",
+         "icon": "wind",
+         "title": "Medical Qi Gong",
+         "text": "<p>Slow, precise movement connecting breath, attention and energy flow. Ideal as a regular practice against tension and exhaustion.</p>",
+         "image": "https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Weekly classes in small groups",
+          "For every age and constitution",
+          "No prior experience needed"
+         ],
+         "cta": {
+          "label": "See classes",
+          "href": "/kurse-workshops"
+         }
+        },
+        {
+         "label": "Tao Basis",
+         "icon": "compass",
+         "title": "Tao Basis — the entry point",
+         "text": "<p>The foundations of Taoist practice: inner alignment, breathing, simple sequences. The best starting point when everything is new.</p>",
+         "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Compact introductory cycle",
+          "Exercises for home",
+          "Basis for all further paths"
+         ],
+         "cta": {
+          "label": "Discover Tao Basis",
+          "href": "/angebote"
+         }
+        },
+        {
+         "label": "Chi Nei Tsang",
+         "icon": "heartHandshake",
+         "title": "Chi Nei Tsang — treatment & training",
+         "text": "<p>Taoist abdominal massage that releases deep-seated tension and strengthens self-regulation. As a single treatment or a well-founded training.</p>",
+         "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Single treatment approx. 60–90 min.",
+          "Certified training courses",
+          "Calm, mindful way of working"
+         ],
+         "cta": {
+          "label": "Request treatment",
+          "href": "/kontakt"
+         }
+        },
+        {
+         "label": "Psychotherapy",
+         "icon": "brain",
+         "title": "Holistic psychotherapy",
+         "text": "<p>Talk- and body-oriented support under the German Heilpraktiker law — when topics need more room than an exercise practice can give.</p>",
+         "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Individual and couples therapy",
+          "Behavioural-therapy methods",
+          "Confidential & at eye level"
+         ],
+         "cta": {
+          "label": "More about psychotherapy",
+          "href": "/psychotherapie"
+         }
         }
-       },
-       {
-        "label": "Chi Nei Tsang",
-        "icon": "heartHandshake",
-        "title": "Chi Nei Tsang — Behandlung & Ausbildung",
-        "text": "<p>Taoistische Bauchraum-Massage, die tief sitzende Spannung löst und die Selbstregulation stärkt. Als Einzelbehandlung oder als fundierte Ausbildung.</p>",
-        "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=82",
-        "features": [
-         "Einzelbehandlung ca. 60–90 Min.",
-         "Zertifizierte Ausbildungsgänge",
-         "Ruhige, achtsame Arbeitsweise"
-        ],
-        "cta": {
-         "label": "Behandlung anfragen",
-         "href": "/kontakt"
+       ]
+      },
+      "es": {
+       "badge": "Cuatro caminos",
+       "headline": "Una meta, cuatro caminos.",
+       "subline": "Cada camino tiene su propio ritmo: todos llevan de vuelta a la calma, la energía y el equilibrio interior.",
+       "tabs": [
+        {
+         "label": "Qi Gong",
+         "icon": "wind",
+         "title": "Qi Gong medicinal",
+         "text": "<p>Movimiento lento y preciso que une respiración, atención y flujo de energía. Ideal como práctica regular contra la tensión y el agotamiento.</p>",
+         "image": "https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Clases semanales en grupos pequeños",
+          "Para cualquier edad y constitución",
+          "Sin experiencia previa"
+         ],
+         "cta": {
+          "label": "Ver cursos",
+          "href": "/kurse-workshops"
+         }
+        },
+        {
+         "label": "Tao Basis",
+         "icon": "compass",
+         "title": "Tao Basis: el comienzo",
+         "text": "<p>Los fundamentos de la práctica taoísta: alineación interior, respiración, secuencias sencillas. El mejor punto de partida cuando todo es nuevo.</p>",
+         "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Ciclo de introducción compacto",
+          "Ejercicios para casa",
+          "Base para todos los demás caminos"
+         ],
+         "cta": {
+          "label": "Descubrir Tao Basis",
+          "href": "/angebote"
+         }
+        },
+        {
+         "label": "Chi Nei Tsang",
+         "icon": "heartHandshake",
+         "title": "Chi Nei Tsang: tratamiento y formación",
+         "text": "<p>Masaje abdominal taoísta que libera tensiones profundas y fortalece la autorregulación. Como tratamiento individual o formación certificada.</p>",
+         "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Sesión individual de 60–90 min.",
+          "Formaciones certificadas",
+          "Trabajo tranquilo y consciente"
+         ],
+         "cta": {
+          "label": "Solicitar tratamiento",
+          "href": "/kontakt"
+         }
+        },
+        {
+         "label": "Psicoterapia",
+         "icon": "brain",
+         "title": "Psicoterapia holística",
+         "text": "<p>Acompañamiento verbal y corporal según la ley alemana de Heilpraktiker, cuando los temas necesitan más espacio del que puede dar la práctica.</p>",
+         "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1200&q=82",
+         "features": [
+          "Terapia individual y de pareja",
+          "Métodos de terapia conductual",
+          "Confidencial y de igual a igual"
+         ],
+         "cta": {
+          "label": "Más sobre psicoterapia",
+          "href": "/psychotherapie"
+         }
         }
-       },
-       {
-        "label": "Psychotherapie",
-        "icon": "brain",
-        "title": "Ganzheitliche Psychotherapie",
-        "text": "<p>Gesprächs- und körperorientierte Begleitung nach dem Heilpraktikergesetz — wenn Themen mehr Raum brauchen als eine Übungspraxis geben kann.</p>",
-        "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1200&q=82",
-        "features": [
-         "Einzel- und Paartherapie",
-         "Verhaltenstherapeutische Methoden",
-         "Vertraulich & auf Augenhöhe"
-        ],
-        "cta": {
-         "label": "Mehr zur Psychotherapie",
-         "href": "/psychotherapie"
-        }
-       }
-      ]
+       ]
+      }
      }
     },
     {
@@ -4736,25 +4881,70 @@ module.exports = {
     {
      "type": "ctaSplit",
      "data": {
-      "badge": "Erster Schritt",
-      "headline": "Du musst nicht wissen, was „das Richtige\" ist.",
-      "text": "<p>Schreib mir kurz, was dich beschäftigt — ob Anspannung, Erschöpfung, ein körperliches Thema oder einfach Neugier auf die Praxis. Ich melde mich persönlich und wir finden gemeinsam den Einstieg, der zu dir passt.</p>",
-      "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
-      "checklist": [
-       "Antwort innerhalb von 1–2 Werktagen",
-       "Kostenloses Kennenlern-Gespräch",
-       "Keine Vorkenntnisse nötig",
-       "Diskret & ohne Verpflichtung"
-      ],
-      "primaryCta": {
-       "label": "Nachricht schreiben",
-       "href": "/kontakt"
+      "_localized": true,
+      "de": {
+       "badge": "Erster Schritt",
+       "headline": "Du musst nicht wissen, was „das Richtige\" ist.",
+       "text": "<p>Schreib mir kurz, was dich beschäftigt — ob Anspannung, Erschöpfung, ein körperliches Thema oder einfach Neugier auf die Praxis. Ich melde mich persönlich und wir finden gemeinsam den Einstieg, der zu dir passt.</p>",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "checklist": [
+        "Antwort innerhalb von 1–2 Werktagen",
+        "Kostenloses Kennenlern-Gespräch",
+        "Keine Vorkenntnisse nötig",
+        "Diskret & ohne Verpflichtung"
+       ],
+       "primaryCta": {
+        "label": "Nachricht schreiben",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Angebote ansehen",
+        "href": "/angebote"
+       },
+       "note": "Auch per Telefon erreichbar: +49 151 15539416"
       },
-      "secondaryCta": {
-       "label": "Angebote ansehen",
-       "href": "/angebote"
+      "en": {
+       "checklist": [
+        "Reply within 1–2 working days",
+        "Free get-to-know call",
+        "No prior experience needed",
+        "Confidential & without obligation"
+       ],
+       "primaryCta": {
+        "label": "Write a message",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Explore offerings",
+        "href": "/angebote"
+       },
+       "note": "Also available by phone: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "First step",
+       "headline": "You don’t need to know what “the right thing” is.",
+       "text": "<p>Write me briefly what is on your mind — tension, exhaustion, a physical issue or simply curiosity about the practice. I will reply personally and we will find the entry point that suits you.</p>"
       },
-      "note": "Auch per Telefon erreichbar: +49 151 15539416"
+      "es": {
+       "checklist": [
+        "Respuesta en 1–2 días laborables",
+        "Charla de contacto gratuita",
+        "No se requiere experiencia previa",
+        "Confidencial y sin compromiso"
+       ],
+       "primaryCta": {
+        "label": "Escríbeme",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Ver ofertas",
+        "href": "/angebote"
+       },
+       "note": "También por teléfono: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "Primer paso",
+       "headline": "No necesitas saber qué es «lo correcto».",
+       "text": "<p>Escríbeme brevemente qué te preocupa: tensión, agotamiento, un tema físico o simple curiosidad por la práctica. Te responderé personalmente y encontraremos juntos el camino que te convenga.</p>"
+      }
      }
     }
    ]
@@ -4890,12 +5080,31 @@ module.exports = {
     {
      "type": "collectionList",
      "data": {
-      "headline": "Kurse, Behandlung & Ausbildung",
-      "subline": "Die vier Kernangebote des Zentrums im Überblick.",
-      "collectionKey": "leistungen",
-      "columns": 2,
-      "showDate": false,
-      "showSortControls": false
+      "_localized": true,
+      "de": {
+       "headline": "Kurse, Behandlung & Ausbildung",
+       "subline": "Die vier Kernangebote des Zentrums im Überblick.",
+       "collectionKey": "leistungen",
+       "columns": 2,
+       "showDate": false,
+       "showSortControls": false
+      },
+      "en": {
+       "headline": "Courses, treatment & training",
+       "subline": "The four core offerings of the centre at a glance.",
+       "collectionKey": "leistungen",
+       "columns": 2,
+       "showDate": false,
+       "showSortControls": false
+      },
+      "es": {
+       "headline": "Cursos, tratamiento y formación",
+       "subline": "Las cuatro ofertas principales del centro de un vistazo.",
+       "collectionKey": "leistungen",
+       "columns": 2,
+       "showDate": false,
+       "showSortControls": false
+      }
      }
     },
     {
@@ -5261,46 +5470,132 @@ module.exports = {
     {
      "type": "collectionList",
      "data": {
-      "headline": "Therapeutische Methoden",
-      "subline": "Aus der psychotherapeutischen Arbeit — einzeln oder kombiniert.",
-      "collectionKey": "therapien",
-      "columns": 4,
-      "showImage": true,
-      "showDate": false,
-      "showExcerpt": false,
-      "showSortControls": false
+      "_localized": true,
+      "de": {
+       "headline": "Therapeutische Methoden",
+       "subline": "Aus der psychotherapeutischen Arbeit — einzeln oder kombiniert.",
+       "collectionKey": "therapien",
+       "columns": 4,
+       "showImage": true,
+       "showDate": false,
+       "showExcerpt": false,
+       "showSortControls": false
+      },
+      "en": {
+       "headline": "Therapeutic methods",
+       "subline": "From the psychotherapeutic work — individually or combined.",
+       "collectionKey": "therapien",
+       "columns": 4,
+       "showImage": true,
+       "showDate": false,
+       "showExcerpt": false,
+       "showSortControls": false
+      },
+      "es": {
+       "headline": "Métodos terapéuticos",
+       "subline": "Del trabajo psicoterapéutico, individuales o combinados.",
+       "collectionKey": "therapien",
+       "columns": 4,
+       "showImage": true,
+       "showDate": false,
+       "showExcerpt": false,
+       "showSortControls": false
+      }
      }
     },
     {
      "type": "faqContactSplit",
      "data": {
-      "badge": "Fragen & Kontakt",
-      "headline": "Was Menschen vor dem ersten Termin wissen wollen.",
-      "items": [
-       {
-        "answer": "Nein. Viele Angebote sind für Einsteiger geeignet. Wir beginnen ruhig und passen Übungen oder Behandlung an deine Situation an.",
-        "question": "Brauche ich Vorerfahrung?"
-       },
-       {
-        "answer": "Chi Nei Tsang ist eine taoistische Bauchmassage, die Organe, Atem, Meridiane und emotionale Spannung achtsam einbezieht.",
-        "question": "Was ist Chi Nei Tsang?"
-       },
-       {
-        "answer": "Ja. Eine kurze Anfrage per Telefon, WhatsApp oder E-Mail ist sinnvoll, um den passenden Einstieg zu finden.",
-        "question": "Kann ich zuerst ein Gespräch führen?"
-       },
-       {
-        "answer": "Im Taoyin Zentrum Ingolstadt, Bei der Schleifmühle 34b, 85049 Ingolstadt.",
-        "question": "Wo findet das statt?"
+      "_localized": true,
+      "de": {
+       "badge": "Fragen & Kontakt",
+       "headline": "Was Menschen vor dem ersten Termin wissen wollen.",
+       "items": [
+        {
+         "answer": "Nein. Viele Angebote sind für Einsteiger geeignet. Wir beginnen ruhig und passen Übungen oder Behandlung an deine Situation an.",
+         "question": "Brauche ich Vorerfahrung?"
+        },
+        {
+         "answer": "Chi Nei Tsang ist eine taoistische Bauchmassage, die Organe, Atem, Meridiane und emotionale Spannung achtsam einbezieht.",
+         "question": "Was ist Chi Nei Tsang?"
+        },
+        {
+         "answer": "Ja. Eine kurze Anfrage per Telefon, WhatsApp oder E-Mail ist sinnvoll, um den passenden Einstieg zu finden.",
+         "question": "Kann ich zuerst ein Gespräch führen?"
+        },
+        {
+         "answer": "Im Taoyin Zentrum Ingolstadt, Bei der Schleifmühle 34b, 85049 Ingolstadt.",
+         "question": "Wo findet das statt?"
+        }
+       ],
+       "contactTitle": "Direkter Draht",
+       "contactText": "Für Kurse, Behandlung, Ausbildung oder psychotherapeutische Anfragen — ich nehme mir Zeit.",
+       "phone": "+49 151 15539416",
+       "email": "info@taoyin-zentrum.de",
+       "cta": {
+        "label": "Nachricht schreiben",
+        "href": "/kontakt"
        }
-      ],
-      "contactTitle": "Direkter Draht",
-      "contactText": "Für Kurse, Behandlung, Ausbildung oder psychotherapeutische Anfragen — ich nehme mir Zeit.",
-      "phone": "+49 151 15539416",
-      "email": "info@taoyin-zentrum.de",
-      "cta": {
-       "label": "Nachricht schreiben",
-       "href": "/kontakt"
+      },
+      "en": {
+       "badge": "Questions & contact",
+       "headline": "What people ask before their first appointment.",
+       "items": [
+        {
+         "answer": "No. Many offerings are suitable for beginners. We start calmly and adapt exercises or treatment to your situation.",
+         "question": "Do I need previous experience?"
+        },
+        {
+         "answer": "Chi Nei Tsang is a Taoist abdominal massage that mindfully includes organs, breath, meridians and emotional tension.",
+         "question": "What is Chi Nei Tsang?"
+        },
+        {
+         "answer": "Yes. A short request by phone, WhatsApp or email is helpful to find the right starting point.",
+         "question": "Can I talk first?"
+        },
+        {
+         "answer": "At Taoyin Center Ingolstadt, Bei der Schleifmühle 34b, 85049 Ingolstadt.",
+         "question": "Where does it take place?"
+        }
+       ],
+       "contactTitle": "Direct line",
+       "contactText": "For courses, treatment, training or psychotherapy enquiries — I take my time.",
+       "phone": "+49 151 15539416",
+       "email": "info@taoyin-zentrum.de",
+       "cta": {
+        "label": "Write a message",
+        "href": "/kontakt"
+       }
+      },
+      "es": {
+       "badge": "Preguntas y contacto",
+       "headline": "Lo que la gente pregunta antes de su primera cita.",
+       "items": [
+        {
+         "answer": "No. Muchas ofertas son adecuadas para principiantes. Empezamos con calma y adaptamos ejercicios o tratamiento a tu situación.",
+         "question": "¿Necesito experiencia previa?"
+        },
+        {
+         "answer": "Chi Nei Tsang es un masaje abdominal taoísta que incluye con atención órganos, respiración, meridianos y tensión emocional.",
+         "question": "¿Qué es Chi Nei Tsang?"
+        },
+        {
+         "answer": "Sí. Una breve consulta por teléfono, WhatsApp o email ayuda a encontrar el punto de partida adecuado.",
+         "question": "¿Puedo hablar primero?"
+        },
+        {
+         "answer": "En el Centro Taoyin Ingolstadt, Bei der Schleifmühle 34b, 85049 Ingolstadt.",
+         "question": "¿Dónde tiene lugar?"
+        }
+       ],
+       "contactTitle": "Línea directa",
+       "contactText": "Para cursos, tratamientos, formación o consultas de psicoterapia: me tomo el tiempo necesario.",
+       "phone": "+49 151 15539416",
+       "email": "info@taoyin-zentrum.de",
+       "cta": {
+        "label": "Escríbeme",
+        "href": "/kontakt"
+       }
       }
      }
     }
@@ -5541,37 +5836,103 @@ module.exports = {
     {
      "type": "collectionList",
      "data": {
-      "headline": "Methoden im Überblick",
-      "collectionKey": "therapien",
-      "columns": 4,
-      "showImage": true,
-      "showDate": false,
-      "showExcerpt": false,
-      "showSortControls": false
+      "_localized": true,
+      "de": {
+       "headline": "Methoden im Überblick",
+       "collectionKey": "therapien",
+       "columns": 4,
+       "showImage": true,
+       "showDate": false,
+       "showExcerpt": false,
+       "showSortControls": false
+      },
+      "en": {
+       "headline": "Methods at a glance",
+       "collectionKey": "therapien",
+       "columns": 4,
+       "showImage": true,
+       "showDate": false,
+       "showExcerpt": false,
+       "showSortControls": false
+      },
+      "es": {
+       "headline": "Métodos de un vistazo",
+       "collectionKey": "therapien",
+       "columns": 4,
+       "showImage": true,
+       "showDate": false,
+       "showExcerpt": false,
+       "showSortControls": false
+      }
      }
     },
     {
      "type": "ctaSplit",
      "data": {
-      "badge": "Vertraulich",
-      "headline": "Manche Themen brauchen einen geschützten Raum.",
-      "text": "<p>Schreib mir kurz, was dich beschäftigt — ob Anspannung, Erschöpfung, ein körperliches Thema oder einfach Neugier auf die Praxis. Ich melde mich persönlich und wir finden gemeinsam den Einstieg, der zu dir passt.</p>",
-      "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
-      "checklist": [
-       "Antwort innerhalb von 1–2 Werktagen",
-       "Kostenloses Kennenlern-Gespräch",
-       "Keine Vorkenntnisse nötig",
-       "Diskret & ohne Verpflichtung"
-      ],
-      "primaryCta": {
-       "label": "Nachricht schreiben",
-       "href": "/kontakt"
+      "_localized": true,
+      "de": {
+       "badge": "Vertraulich",
+       "headline": "Manche Themen brauchen einen geschützten Raum.",
+       "text": "<p>Schreib mir kurz, was dich beschäftigt — ob Anspannung, Erschöpfung, ein körperliches Thema oder einfach Neugier auf die Praxis. Ich melde mich persönlich und wir finden gemeinsam den Einstieg, der zu dir passt.</p>",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "checklist": [
+        "Antwort innerhalb von 1–2 Werktagen",
+        "Kostenloses Kennenlern-Gespräch",
+        "Keine Vorkenntnisse nötig",
+        "Diskret & ohne Verpflichtung"
+       ],
+       "primaryCta": {
+        "label": "Nachricht schreiben",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Methoden ansehen",
+        "href": "/psychotherapie"
+       },
+       "note": "Auch per Telefon erreichbar: +49 151 15539416"
       },
-      "secondaryCta": {
-       "label": "Methoden ansehen",
-       "href": "/psychotherapie"
+      "en": {
+       "checklist": [
+        "Reply within 1–2 working days",
+        "Free get-to-know call",
+        "No prior experience needed",
+        "Confidential & without obligation"
+       ],
+       "primaryCta": {
+        "label": "Write a message",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Explore offerings",
+        "href": "/angebote"
+       },
+       "note": "Also available by phone: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "Confidential",
+       "headline": "Some topics need a protected space.",
+       "text": "<p>Write me briefly what is on your mind. I will reply personally and we will find the entry point that suits you.</p>"
       },
-      "note": "Auch per Telefon erreichbar: +49 151 15539416"
+      "es": {
+       "checklist": [
+        "Respuesta en 1–2 días laborables",
+        "Charla de contacto gratuita",
+        "No se requiere experiencia previa",
+        "Confidencial y sin compromiso"
+       ],
+       "primaryCta": {
+        "label": "Escríbeme",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Ver ofertas",
+        "href": "/angebote"
+       },
+       "note": "También por teléfono: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "Confidencial",
+       "headline": "Algunos temas necesitan un espacio protegido.",
+       "text": "<p>Escríbeme brevemente qué te preocupa. Te responderé personalmente y encontraremos juntos el camino adecuado.</p>"
+      }
      }
     }
    ]
@@ -5775,25 +6136,70 @@ module.exports = {
     {
      "type": "ctaSplit",
      "data": {
-      "badge": "Kursplatz anfragen",
-      "headline": "Kleine Gruppen, echter Kontakt.",
-      "text": "<p>Die Kurse leben von persönlicher Begleitung — deshalb sind die Plätze begrenzt. Schreib mir, welcher Kurs dich interessiert, und ich melde mich mit den nächsten Terminen.</p>",
-      "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
-      "checklist": [
-       "Antwort innerhalb von 1–2 Werktagen",
-       "Kostenloses Kennenlern-Gespräch",
-       "Keine Vorkenntnisse nötig",
-       "Diskret & ohne Verpflichtung"
-      ],
-      "primaryCta": {
-       "label": "Nachricht schreiben",
-       "href": "/kontakt"
+      "_localized": true,
+      "de": {
+       "badge": "Kursplatz anfragen",
+       "headline": "Kleine Gruppen, echter Kontakt.",
+       "text": "<p>Die Kurse leben von persönlicher Begleitung — deshalb sind die Plätze begrenzt. Schreib mir, welcher Kurs dich interessiert, und ich melde mich mit den nächsten Terminen.</p>",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "checklist": [
+        "Antwort innerhalb von 1–2 Werktagen",
+        "Kostenloses Kennenlern-Gespräch",
+        "Keine Vorkenntnisse nötig",
+        "Diskret & ohne Verpflichtung"
+       ],
+       "primaryCta": {
+        "label": "Nachricht schreiben",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Angebote ansehen",
+        "href": "/angebote"
+       },
+       "note": "Auch per Telefon erreichbar: +49 151 15539416"
       },
-      "secondaryCta": {
-       "label": "Angebote ansehen",
-       "href": "/angebote"
+      "en": {
+       "checklist": [
+        "Reply within 1–2 working days",
+        "Free get-to-know call",
+        "No prior experience needed",
+        "Confidential & without obligation"
+       ],
+       "primaryCta": {
+        "label": "Write a message",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Explore offerings",
+        "href": "/angebote"
+       },
+       "note": "Also available by phone: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "Reserve a spot",
+       "headline": "Small groups, real contact.",
+       "text": "<p>The courses live on personal guidance — places are limited. Write me which course interests you and I will get back to you with the next dates.</p>"
       },
-      "note": "Auch per Telefon erreichbar: +49 151 15539416"
+      "es": {
+       "checklist": [
+        "Respuesta en 1–2 días laborables",
+        "Charla de contacto gratuita",
+        "No se requiere experiencia previa",
+        "Confidencial y sin compromiso"
+       ],
+       "primaryCta": {
+        "label": "Escríbeme",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Ver ofertas",
+        "href": "/angebote"
+       },
+       "note": "También por teléfono: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "Reservar plaza",
+       "headline": "Grupos pequeños, contacto real.",
+       "text": "<p>Los cursos viven del acompañamiento personal, por eso las plazas son limitadas. Escríbeme qué curso te interesa y te enviaré las próximas fechas.</p>"
+      }
      }
     }
    ]
@@ -5877,58 +6283,166 @@ module.exports = {
     {
      "type": "galleryPro",
      "data": {
-      "badge": "Einblicke",
-      "headline": "Der Raum und die Arbeit.",
-      "images": [
-       {
-        "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5370c877743c4a7999300_Estela-byaylin-3.jpg",
-        "alt": "Estela Fuchs 1"
-       },
-       {
-        "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371146ec6241e81774b7_Estela-byaylin-52-min.jpg",
-        "alt": "Estela Fuchs 2"
-       },
-       {
-        "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53713513520b6bbe5b786_Estela-byaylin-33-min.jpg",
-        "alt": "Estela Fuchs 3"
-       },
-       {
-        "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53718065ce01562873ef1_Estela-byaylin-43.jpg",
-        "alt": "Estela Fuchs 4"
-       },
-       {
-        "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371f98928ab373b92ff9_Estela-byaylin-59-min.jpg",
-        "alt": "Estela Fuchs 5"
-       },
-       {
-        "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c537205b0c2bd091d7b6a5_Estela-byaylin-58-min.jpg",
-        "alt": "Estela Fuchs 6"
-       }
-      ]
+      "_localized": true,
+      "de": {
+       "badge": "Einblicke",
+       "headline": "Der Raum und die Arbeit.",
+       "images": [
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5370c877743c4a7999300_Estela-byaylin-3.jpg",
+         "alt": "Estela Fuchs 1"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371146ec6241e81774b7_Estela-byaylin-52-min.jpg",
+         "alt": "Estela Fuchs 2"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53713513520b6bbe5b786_Estela-byaylin-33-min.jpg",
+         "alt": "Estela Fuchs 3"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53718065ce01562873ef1_Estela-byaylin-43.jpg",
+         "alt": "Estela Fuchs 4"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371f98928ab373b92ff9_Estela-byaylin-59-min.jpg",
+         "alt": "Estela Fuchs 5"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c537205b0c2bd091d7b6a5_Estela-byaylin-58-min.jpg",
+         "alt": "Estela Fuchs 6"
+        }
+       ]
+      },
+      "en": {
+       "badge": "Impressions",
+       "headline": "The space and the work.",
+       "images": [
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5370c877743c4a7999300_Estela-byaylin-3.jpg",
+         "alt": "Estela Fuchs 1"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371146ec6241e81774b7_Estela-byaylin-52-min.jpg",
+         "alt": "Estela Fuchs 2"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53713513520b6bbe5b786_Estela-byaylin-33-min.jpg",
+         "alt": "Estela Fuchs 3"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53718065ce01562873ef1_Estela-byaylin-43.jpg",
+         "alt": "Estela Fuchs 4"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371f98928ab373b92ff9_Estela-byaylin-59-min.jpg",
+         "alt": "Estela Fuchs 5"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c537205b0c2bd091d7b6a5_Estela-byaylin-58-min.jpg",
+         "alt": "Estela Fuchs 6"
+        }
+       ]
+      },
+      "es": {
+       "badge": "Impresiones",
+       "headline": "El espacio y el trabajo.",
+       "images": [
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5370c877743c4a7999300_Estela-byaylin-3.jpg",
+         "alt": "Estela Fuchs 1"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371146ec6241e81774b7_Estela-byaylin-52-min.jpg",
+         "alt": "Estela Fuchs 2"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53713513520b6bbe5b786_Estela-byaylin-33-min.jpg",
+         "alt": "Estela Fuchs 3"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c53718065ce01562873ef1_Estela-byaylin-43.jpg",
+         "alt": "Estela Fuchs 4"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c5371f98928ab373b92ff9_Estela-byaylin-59-min.jpg",
+         "alt": "Estela Fuchs 5"
+        },
+        {
+         "src": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68c537205b0c2bd091d7b6a5_Estela-byaylin-58-min.jpg",
+         "alt": "Estela Fuchs 6"
+        }
+       ]
+      }
      }
     },
     {
      "type": "ctaSplit",
      "data": {
-      "badge": "Kennenlernen",
-      "headline": "Am einfachsten lernt man sich im Gespräch kennen.",
-      "text": "<p>Schreib mir kurz, was dich beschäftigt — ob Anspannung, Erschöpfung, ein körperliches Thema oder einfach Neugier auf die Praxis. Ich melde mich persönlich und wir finden gemeinsam den Einstieg, der zu dir passt.</p>",
-      "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
-      "checklist": [
-       "Antwort innerhalb von 1–2 Werktagen",
-       "Kostenloses Kennenlern-Gespräch",
-       "Keine Vorkenntnisse nötig",
-       "Diskret & ohne Verpflichtung"
-      ],
-      "primaryCta": {
-       "label": "Nachricht schreiben",
-       "href": "/kontakt"
+      "_localized": true,
+      "de": {
+       "badge": "Kennenlernen",
+       "headline": "Am einfachsten lernt man sich im Gespräch kennen.",
+       "text": "<p>Schreib mir kurz, was dich beschäftigt — ob Anspannung, Erschöpfung, ein körperliches Thema oder einfach Neugier auf die Praxis. Ich melde mich persönlich und wir finden gemeinsam den Einstieg, der zu dir passt.</p>",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "checklist": [
+        "Antwort innerhalb von 1–2 Werktagen",
+        "Kostenloses Kennenlern-Gespräch",
+        "Keine Vorkenntnisse nötig",
+        "Diskret & ohne Verpflichtung"
+       ],
+       "primaryCta": {
+        "label": "Nachricht schreiben",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Angebote ansehen",
+        "href": "/angebote"
+       },
+       "note": "Auch per Telefon erreichbar: +49 151 15539416"
       },
-      "secondaryCta": {
-       "label": "Angebote ansehen",
-       "href": "/angebote"
+      "en": {
+       "checklist": [
+        "Reply within 1–2 working days",
+        "Free get-to-know call",
+        "No prior experience needed",
+        "Confidential & without obligation"
+       ],
+       "primaryCta": {
+        "label": "Write a message",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Explore offerings",
+        "href": "/angebote"
+       },
+       "note": "Also available by phone: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "Get to know me",
+       "headline": "The easiest way to meet is a conversation.",
+       "text": "<p>Write me briefly what is on your mind. I will reply personally and we will find the entry point that suits you.</p>"
       },
-      "note": "Auch per Telefon erreichbar: +49 151 15539416"
+      "es": {
+       "checklist": [
+        "Respuesta en 1–2 días laborables",
+        "Charla de contacto gratuita",
+        "No se requiere experiencia previa",
+        "Confidencial y sin compromiso"
+       ],
+       "primaryCta": {
+        "label": "Escríbeme",
+        "href": "/kontakt"
+       },
+       "secondaryCta": {
+        "label": "Ver ofertas",
+        "href": "/angebote"
+       },
+       "note": "También por teléfono: +49 151 15539416",
+       "image": "https://cdn.prod.website-files.com/6890d61524a7dba397203fde/68a58efe38dc7923d3429fdd_Taoyin_Image%202.png",
+       "badge": "Conocerse",
+       "headline": "La forma más sencilla de conocerse es conversando.",
+       "text": "<p>Escríbeme brevemente qué te preocupa. Te responderé personalmente y encontraremos el camino adecuado.</p>"
+      }
      }
     }
    ]
@@ -6292,42 +6806,118 @@ module.exports = {
     {
      "type": "collectionHero",
      "data": {
-      "headline": "Leistungen — jetzt unter Angebote",
-      "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
-      "category": "Umzug"
+      "_localized": true,
+      "de": {
+       "headline": "Leistungen — jetzt unter Angebote",
+       "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
+       "category": "Umzug"
+      },
+      "en": {
+       "headline": "Leistungen — now under Offerings",
+       "subline": "We reorganised the content so you can find things faster.",
+       "category": "Moved"
+      },
+      "es": {
+       "headline": "Leistungen — ahora en Ofertas",
+       "subline": "Hemos reorganizado el contenido para que encuentres todo más rápido.",
+       "category": "Movido"
+      }
      }
     },
     {
      "type": "ctaLinks",
      "data": {
-      "headline": "Hier geht es weiter",
-      "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
-      "links": [
-       {
-        "label": "Alle Angebote",
-        "href": "/angebote",
-        "icon": "compass",
-        "description": "Kurse, Behandlung & Ausbildung im Überblick."
-       },
-       {
-        "label": "Psychotherapie",
-        "href": "/psychotherapie",
-        "icon": "brain",
-        "description": "Methoden und Ablauf der therapeutischen Arbeit."
-       },
-       {
-        "label": "Über mich",
-        "href": "/ueber-mich",
-        "icon": "user",
-        "description": "Estela Fuchs und das Zentrum."
-       },
-       {
-        "label": "Kontakt",
-        "href": "/kontakt",
-        "icon": "mail",
-        "description": "Fragen, Termine, Kennenlernen."
-       }
-      ]
+      "_localized": true,
+      "de": {
+       "headline": "Hier geht es weiter",
+       "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
+       "links": [
+        {
+         "label": "Alle Angebote",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Kurse, Behandlung & Ausbildung im Überblick."
+        },
+        {
+         "label": "Psychotherapie",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methoden und Ablauf der therapeutischen Arbeit."
+        },
+        {
+         "label": "Über mich",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs und das Zentrum."
+        },
+        {
+         "label": "Kontakt",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Fragen, Termine, Kennenlernen."
+        }
+       ]
+      },
+      "en": {
+       "headline": "Continue here",
+       "subline": "This content has found a new home.",
+       "links": [
+        {
+         "label": "All offerings",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Courses, treatment & training at a glance."
+        },
+        {
+         "label": "Psychotherapy",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methods and process of the therapeutic work."
+        },
+        {
+         "label": "About me",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs and the centre."
+        },
+        {
+         "label": "Contact",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Questions, appointments, getting to know each other."
+        }
+       ]
+      },
+      "es": {
+       "headline": "Continúa aquí",
+       "subline": "Este contenido tiene un nuevo hogar.",
+       "links": [
+        {
+         "label": "Todas las ofertas",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Cursos, tratamiento y formación de un vistazo."
+        },
+        {
+         "label": "Psicoterapia",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Métodos y proceso del trabajo terapéutico."
+        },
+        {
+         "label": "Sobre mí",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs y el centro."
+        },
+        {
+         "label": "Contacto",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Preguntas, citas, primer contacto."
+        }
+       ]
+      }
      }
     }
    ]
@@ -6339,42 +6929,118 @@ module.exports = {
     {
      "type": "collectionHero",
      "data": {
-      "headline": "Therapien — jetzt unter Angebote",
-      "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
-      "category": "Umzug"
+      "_localized": true,
+      "de": {
+       "headline": "Therapien — jetzt unter Angebote",
+       "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
+       "category": "Umzug"
+      },
+      "en": {
+       "headline": "Therapien — now under Offerings",
+       "subline": "We reorganised the content so you can find things faster.",
+       "category": "Moved"
+      },
+      "es": {
+       "headline": "Therapien — ahora en Ofertas",
+       "subline": "Hemos reorganizado el contenido para que encuentres todo más rápido.",
+       "category": "Movido"
+      }
      }
     },
     {
      "type": "ctaLinks",
      "data": {
-      "headline": "Hier geht es weiter",
-      "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
-      "links": [
-       {
-        "label": "Alle Angebote",
-        "href": "/angebote",
-        "icon": "compass",
-        "description": "Kurse, Behandlung & Ausbildung im Überblick."
-       },
-       {
-        "label": "Psychotherapie",
-        "href": "/psychotherapie",
-        "icon": "brain",
-        "description": "Methoden und Ablauf der therapeutischen Arbeit."
-       },
-       {
-        "label": "Über mich",
-        "href": "/ueber-mich",
-        "icon": "user",
-        "description": "Estela Fuchs und das Zentrum."
-       },
-       {
-        "label": "Kontakt",
-        "href": "/kontakt",
-        "icon": "mail",
-        "description": "Fragen, Termine, Kennenlernen."
-       }
-      ]
+      "_localized": true,
+      "de": {
+       "headline": "Hier geht es weiter",
+       "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
+       "links": [
+        {
+         "label": "Alle Angebote",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Kurse, Behandlung & Ausbildung im Überblick."
+        },
+        {
+         "label": "Psychotherapie",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methoden und Ablauf der therapeutischen Arbeit."
+        },
+        {
+         "label": "Über mich",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs und das Zentrum."
+        },
+        {
+         "label": "Kontakt",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Fragen, Termine, Kennenlernen."
+        }
+       ]
+      },
+      "en": {
+       "headline": "Continue here",
+       "subline": "This content has found a new home.",
+       "links": [
+        {
+         "label": "All offerings",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Courses, treatment & training at a glance."
+        },
+        {
+         "label": "Psychotherapy",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methods and process of the therapeutic work."
+        },
+        {
+         "label": "About me",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs and the centre."
+        },
+        {
+         "label": "Contact",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Questions, appointments, getting to know each other."
+        }
+       ]
+      },
+      "es": {
+       "headline": "Continúa aquí",
+       "subline": "Este contenido tiene un nuevo hogar.",
+       "links": [
+        {
+         "label": "Todas las ofertas",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Cursos, tratamiento y formación de un vistazo."
+        },
+        {
+         "label": "Psicoterapia",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Métodos y proceso del trabajo terapéutico."
+        },
+        {
+         "label": "Sobre mí",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs y el centro."
+        },
+        {
+         "label": "Contacto",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Preguntas, citas, primer contacto."
+        }
+       ]
+      }
      }
     }
    ]
@@ -6386,42 +7052,118 @@ module.exports = {
     {
      "type": "collectionHero",
      "data": {
-      "headline": "Behandlung — jetzt unter Angebote",
-      "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
-      "category": "Umzug"
+      "_localized": true,
+      "de": {
+       "headline": "Behandlung — jetzt unter Angebote",
+       "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
+       "category": "Umzug"
+      },
+      "en": {
+       "headline": "Behandlung — now under Offerings",
+       "subline": "We reorganised the content so you can find things faster.",
+       "category": "Moved"
+      },
+      "es": {
+       "headline": "Behandlung — ahora en Ofertas",
+       "subline": "Hemos reorganizado el contenido para que encuentres todo más rápido.",
+       "category": "Movido"
+      }
      }
     },
     {
      "type": "ctaLinks",
      "data": {
-      "headline": "Hier geht es weiter",
-      "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
-      "links": [
-       {
-        "label": "Alle Angebote",
-        "href": "/angebote",
-        "icon": "compass",
-        "description": "Kurse, Behandlung & Ausbildung im Überblick."
-       },
-       {
-        "label": "Psychotherapie",
-        "href": "/psychotherapie",
-        "icon": "brain",
-        "description": "Methoden und Ablauf der therapeutischen Arbeit."
-       },
-       {
-        "label": "Über mich",
-        "href": "/ueber-mich",
-        "icon": "user",
-        "description": "Estela Fuchs und das Zentrum."
-       },
-       {
-        "label": "Kontakt",
-        "href": "/kontakt",
-        "icon": "mail",
-        "description": "Fragen, Termine, Kennenlernen."
-       }
-      ]
+      "_localized": true,
+      "de": {
+       "headline": "Hier geht es weiter",
+       "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
+       "links": [
+        {
+         "label": "Alle Angebote",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Kurse, Behandlung & Ausbildung im Überblick."
+        },
+        {
+         "label": "Psychotherapie",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methoden und Ablauf der therapeutischen Arbeit."
+        },
+        {
+         "label": "Über mich",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs und das Zentrum."
+        },
+        {
+         "label": "Kontakt",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Fragen, Termine, Kennenlernen."
+        }
+       ]
+      },
+      "en": {
+       "headline": "Continue here",
+       "subline": "This content has found a new home.",
+       "links": [
+        {
+         "label": "All offerings",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Courses, treatment & training at a glance."
+        },
+        {
+         "label": "Psychotherapy",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methods and process of the therapeutic work."
+        },
+        {
+         "label": "About me",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs and the centre."
+        },
+        {
+         "label": "Contact",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Questions, appointments, getting to know each other."
+        }
+       ]
+      },
+      "es": {
+       "headline": "Continúa aquí",
+       "subline": "Este contenido tiene un nuevo hogar.",
+       "links": [
+        {
+         "label": "Todas las ofertas",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Cursos, tratamiento y formación de un vistazo."
+        },
+        {
+         "label": "Psicoterapia",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Métodos y proceso del trabajo terapéutico."
+        },
+        {
+         "label": "Sobre mí",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs y el centro."
+        },
+        {
+         "label": "Contacto",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Preguntas, citas, primer contacto."
+        }
+       ]
+      }
      }
     }
    ]
@@ -6433,42 +7175,118 @@ module.exports = {
     {
      "type": "collectionHero",
      "data": {
-      "headline": "Über uns — jetzt unter Angebote",
-      "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
-      "category": "Umzug"
+      "_localized": true,
+      "de": {
+       "headline": "Über uns — jetzt unter Angebote",
+       "subline": "Wir haben die Inhalte neu geordnet, damit du schneller findest, was du suchst.",
+       "category": "Umzug"
+      },
+      "en": {
+       "headline": "Über uns — now under Offerings",
+       "subline": "We reorganised the content so you can find things faster.",
+       "category": "Moved"
+      },
+      "es": {
+       "headline": "Über uns — ahora en Ofertas",
+       "subline": "Hemos reorganizado el contenido para que encuentres todo más rápido.",
+       "category": "Movido"
+      }
      }
     },
     {
      "type": "ctaLinks",
      "data": {
-      "headline": "Hier geht es weiter",
-      "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
-      "links": [
-       {
-        "label": "Alle Angebote",
-        "href": "/angebote",
-        "icon": "compass",
-        "description": "Kurse, Behandlung & Ausbildung im Überblick."
-       },
-       {
-        "label": "Psychotherapie",
-        "href": "/psychotherapie",
-        "icon": "brain",
-        "description": "Methoden und Ablauf der therapeutischen Arbeit."
-       },
-       {
-        "label": "Über mich",
-        "href": "/ueber-mich",
-        "icon": "user",
-        "description": "Estela Fuchs und das Zentrum."
-       },
-       {
-        "label": "Kontakt",
-        "href": "/kontakt",
-        "icon": "mail",
-        "description": "Fragen, Termine, Kennenlernen."
-       }
-      ]
+      "_localized": true,
+      "de": {
+       "headline": "Hier geht es weiter",
+       "subline": "Diese Inhalte haben ein neues Zuhause bekommen.",
+       "links": [
+        {
+         "label": "Alle Angebote",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Kurse, Behandlung & Ausbildung im Überblick."
+        },
+        {
+         "label": "Psychotherapie",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methoden und Ablauf der therapeutischen Arbeit."
+        },
+        {
+         "label": "Über mich",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs und das Zentrum."
+        },
+        {
+         "label": "Kontakt",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Fragen, Termine, Kennenlernen."
+        }
+       ]
+      },
+      "en": {
+       "headline": "Continue here",
+       "subline": "This content has found a new home.",
+       "links": [
+        {
+         "label": "All offerings",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Courses, treatment & training at a glance."
+        },
+        {
+         "label": "Psychotherapy",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Methods and process of the therapeutic work."
+        },
+        {
+         "label": "About me",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs and the centre."
+        },
+        {
+         "label": "Contact",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Questions, appointments, getting to know each other."
+        }
+       ]
+      },
+      "es": {
+       "headline": "Continúa aquí",
+       "subline": "Este contenido tiene un nuevo hogar.",
+       "links": [
+        {
+         "label": "Todas las ofertas",
+         "href": "/angebote",
+         "icon": "compass",
+         "description": "Cursos, tratamiento y formación de un vistazo."
+        },
+        {
+         "label": "Psicoterapia",
+         "href": "/psychotherapie",
+         "icon": "brain",
+         "description": "Métodos y proceso del trabajo terapéutico."
+        },
+        {
+         "label": "Sobre mí",
+         "href": "/ueber-mich",
+         "icon": "user",
+         "description": "Estela Fuchs y el centro."
+        },
+        {
+         "label": "Contacto",
+         "href": "/kontakt",
+         "icon": "mail",
+         "description": "Preguntas, citas, primer contacto."
+        }
+       ]
+      }
      }
     }
    ]
