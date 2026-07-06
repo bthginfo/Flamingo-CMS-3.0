@@ -328,6 +328,17 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     className="inline-flex items-center justify-center gap-2 w-full text-center bg-brand-primary text-white font-semibold py-4 rounded-full text-lg hover:bg-brand-dark transition"
                   />
                 </motion.div>
+                {i18n && i18n.locales.length > 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: navItems.length * 0.05 + 0.15 }}
+                    className="mt-6"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <LanguageSwitcher locales={i18n.locales} currentLocale={i18n.currentLocale} defaultLocale={i18n.defaultLocale} style="inline" />
+                  </motion.div>
+                )}
               </nav>
 
               <div className="px-8 pb-8 flex flex-col gap-2 text-sm" style={{ color: mobileMutedColor }}>
