@@ -88,6 +88,11 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'galleryPro', label: 'Galerie Pro', description: 'Filterbare Masonry-Galerie mit Lightbox und Hover-Captions', category: 'Medien' },
   { type: 'editorialHero', label: 'Editorial Hero', description: 'Ruhiger, heller Hero mit Eyebrow, großer Headline und überlappenden Fotos', category: 'Premium' },
   { type: 'zigzagShowcase', label: 'Zickzack-Showcase', description: 'Alternierende Bild-Text-Reihen mit Eyebrow, Links und Foto-Akzentrahmen', category: 'Inhalt' },
+  { type: 'nextMatchHero', label: 'Nächstes Spiel (Hero)', description: 'Aufmacher mit dem nächsten Spiel: Teams, Logos, Datum, Halle und Ticket-CTA', category: 'Verein & Sport' },
+  { type: 'matchSchedule', label: 'Spielplan', description: 'Terminliste mit Datum, Wettbewerb, Heim/Auswärts, Gegner, Halle und Ergebnis', category: 'Verein & Sport' },
+  { type: 'leagueTable', label: 'Tabelle', description: 'Ligatabelle mit Rang, Spielen, Siegen, Punkten und Hervorhebung des eigenen Teams', category: 'Verein & Sport' },
+  { type: 'teamRoster', label: 'Kader', description: 'Spielerkarten mit Trikotnummer, Foto, Name, Position und Nation', category: 'Verein & Sport' },
+  { type: 'sponsorsWall', label: 'Sponsoren-Wand', description: 'Partnerlogos nach Stufen (Haupt-, Premium-, Förderpartner) mit Links', category: 'Verein & Sport' },
   { type: 'offerCampaignStrip', label: 'Offer Campaign Strip', description: 'Kampagnenbanner mit Angebot, Bild, Benefits, Deadline und CTA', category: 'Premium' },
   { type: 'beforeAfterStoryPro', label: 'Before/After Story Pro', description: 'Vorher/Nachher-Case mit Problem, Lösung, Ergebnis und Kennzahlen', category: 'Premium' },
   { type: 'signatureGrid', label: 'Signature Grid', description: 'Premium-Grid mit starkem Bild, Markenmerkmalen und Proof-Daten', category: 'Premium' },
@@ -434,8 +439,22 @@ export const LOCATION_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const VEREIN_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'nextMatchHero', label: 'Nächstes Spiel (Hero)', description: 'Aufmacher mit dem nächsten Spiel: Teams, Logos, Datum, Halle und Ticket-CTA' },
+  { type: 'matchSchedule', label: 'Spielplan', description: 'Terminliste mit Datum, Wettbewerb, Heim/Auswärts, Gegner, Halle und Ergebnis' },
+  { type: 'leagueTable', label: 'Tabelle', description: 'Ligatabelle mit Rang, Spielen, Punkten und Hervorhebung des eigenen Teams' },
+  { type: 'teamRoster', label: 'Kader', description: 'Spielerkarten mit Trikotnummer, Foto, Name, Position und Nation' },
+  { type: 'sponsorsWall', label: 'Sponsoren-Wand', description: 'Partnerlogos nach Stufen mit Links' },
+  { type: 'statsCounter', label: 'Kennzahlen', description: 'Vereinszahlen: Gründungsjahr, Mitglieder, Titel, Mannschaften' },
+  { type: 'timeline', label: 'Vereinsgeschichte', description: 'Meilensteine und Erfolge im Zeitverlauf' },
+  { type: 'newsPreview', label: 'News', description: 'Aktuelle Meldungen aus dem Verein' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Vereinskontakt' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/News-Hero für Detail-Seiten' },
+];
+
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tradesman: TRADESMAN_SECTION_TYPES,
+  verein: VEREIN_SECTION_TYPES,
   photography: PHOTOGRAPHY_SECTION_TYPES,
   consulting: CONSULTING_SECTION_TYPES,
   wedding: WEDDING_SECTION_TYPES,
@@ -456,6 +475,7 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
 
 const INDUSTRY_LABELS: Record<string, string> = {
   tradesman: 'Handwerk',
+  verein: 'Verein & Sport',
   photography: 'Fotografie',
   consulting: 'Kanzlei & Beratung',
   wedding: 'Hochzeit',

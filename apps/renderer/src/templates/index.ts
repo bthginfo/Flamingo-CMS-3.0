@@ -67,6 +67,7 @@ import { FaqContactSplitSection } from './shared/faq-contact-split';
 import { GalleryProSection } from './shared/gallery-pro';
 import { ZigzagShowcaseSection } from './shared/zigzag-showcase';
 import { EditorialHeroSection } from './shared/editorial-hero';
+import { NextMatchHeroSection, MatchScheduleSection, LeagueTableSection, TeamRosterSection, SponsorsWallSection } from './shared/club-sections';
 import { CollectionListSection } from './shared/collection-list';
 import { InstagramFeedSection } from './shared/instagram-feed';
 import { ShopProductGridSection } from './shared/shop-product-grid';
@@ -661,6 +662,36 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     legalContent: LegalContentSection,
     collectionHero: CollectionHeroSection,
   },
+  verein: {
+    hero: CinematicHeroSection,
+    nextMatchHero: NextMatchHeroSection,
+    matchSchedule: MatchScheduleSection,
+    leagueTable: LeagueTableSection,
+    teamRoster: TeamRosterSection,
+    sponsorsWall: SponsorsWallSection,
+    editorialHero: EditorialHeroSection,
+    zigzagShowcase: ZigzagShowcaseSection,
+    statsCounter: StatsCounterSection,
+    processSteps: ProcessStepsSection,
+    principlesGrid: PrinciplesGridSection,
+    bentoGrid: BentoGridSection,
+    comparisonCardsPro: ComparisonCardsProSection,
+    galleryPro: GalleryProSection,
+    timeline: TimelineSection,
+    testimonials: TestimonialsSection,
+    faq: FaqSection,
+    contact: ContactSection,
+    map: MapSection,
+    team: TeamSection,
+    newsPreview: NewsPreviewSection,
+    newsGrid: NewsPreviewSection,
+    immersiveCtaBanner: ImmersiveCtaBannerSection,
+    ctaBand: CtaBandSection,
+    logoCloud: LogoCloudSection,
+    richText: RichTextSection,
+    legalContent: LegalContentSection,
+    collectionHero: CollectionHeroSection,
+  },
 };
 
 // Shared/generic sections available to ALL templates
@@ -718,6 +749,12 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   logoMarquee: LogoMarqueeSection,
   collectionList: CollectionListSection,
   instagramFeed: InstagramFeedSection,
+  // Verein / Sportclub
+  nextMatchHero: NextMatchHeroSection,
+  matchSchedule: MatchScheduleSection,
+  leagueTable: LeagueTableSection,
+  teamRoster: TeamRosterSection,
+  sponsorsWall: SponsorsWallSection,
   shopProductDetail: ShopProductDetailSection,
   shopCart: ShopCartSection,
   shopCheckout: ShopCheckoutSection,

@@ -329,6 +329,145 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "values": [],
     "valuesHeadline": ""
   },
+  "nextMatchHero": {
+    "badge": "",
+    "badgeText": "",
+    "bgImage": "",
+    "matches": "",
+    "players": "",
+    "rows": [],
+    "subline": "",
+    "tiers": ""
+  },
+  "matchSchedule": {
+    "awayLogo": "",
+    "awayTeam": "",
+    "badge": "",
+    "bgImage": "",
+    "competition": "",
+    "dateLabel": "",
+    "eyebrow": "",
+    "homeLogo": "",
+    "homeTeam": "",
+    "image": "",
+    "players": "",
+    "primaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "rows": [],
+    "secondaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "tiers": "",
+    "venue": ""
+  },
+  "leagueTable": {
+    "awayLogo": "",
+    "awayTeam": "",
+    "badge": "",
+    "bgImage": "",
+    "competition": "",
+    "dateLabel": "",
+    "eyebrow": "",
+    "homeLogo": "",
+    "homeTeam": "",
+    "image": "",
+    "matches": "",
+    "players": "",
+    "primaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "secondaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "tiers": "",
+    "venue": ""
+  },
+  "teamRoster": {
+    "awayLogo": "",
+    "awayTeam": "",
+    "badge": "",
+    "bgImage": "",
+    "competition": "",
+    "dateLabel": "",
+    "eyebrow": "",
+    "homeLogo": "",
+    "homeTeam": "",
+    "image": "",
+    "matches": "",
+    "primaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "rows": [],
+    "secondaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "tiers": "",
+    "venue": ""
+  },
+  "sponsorsWall": {
+    "awayLogo": "",
+    "awayTeam": "",
+    "badge": "",
+    "bgImage": "",
+    "competition": "",
+    "dateLabel": "",
+    "eyebrow": "",
+    "homeLogo": "",
+    "homeTeam": "",
+    "image": "",
+    "matches": "",
+    "players": "",
+    "primaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "rows": [],
+    "secondaryCta": {
+      "label": "",
+      "href": ""
+    },
+    "venue": ""
+  },
+  "editorialHero": {
+    "badgeText": "",
+    "image": "",
+    "subline": ""
+  },
+  "zigzagShowcase": {
+    "startRight": ""
+  },
+  "statsCounter": {
+    "badge": "",
+    "badgeText": "",
+    "subline": ""
+  },
+  "bentoGrid": {
+    "badgeText": "",
+    "cards": []
+  },
+  "comparisonCardsPro": {
+    "badgeText": "",
+    "cards": []
+  },
+  "galleryPro": {
+    "badgeText": "",
+    "categories": []
+  },
+  "timeline": {
+    "badgeText": "",
+    "items": [],
+    "steps": []
+  },
+  "immersiveCtaBanner": {
+    "imagePosition": ""
+  },
   "heroHandwerk": {
     "backgroundImage": "",
     "badgeIcon": "",
@@ -409,20 +548,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   "socialProofBar": {
     "bgStyle": ""
   },
-  "timeline": {
-    "badgeText": "",
-    "items": [],
-    "steps": []
-  },
-  "statsCounter": {
-    "badge": "",
-    "badgeText": "",
-    "subline": ""
-  },
-  "bentoGrid": {
-    "badgeText": "",
-    "cards": []
-  },
   "featureShowcase": {
     "backgroundImage": "",
     "badgeText": "",
@@ -469,16 +594,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "trustStripColor": "",
     "videoUrl": ""
   },
-  "immersiveCtaBanner": {
-    "imagePosition": ""
-  },
   "proofWall": {
     "stats": [],
     "testimonials": ""
-  },
-  "comparisonCardsPro": {
-    "badgeText": "",
-    "cards": []
   },
   "popup": {
     "showMode": "",
@@ -535,18 +653,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   "faqContactSplit": {
     "badgeText": "",
     "whatsapp": ""
-  },
-  "galleryPro": {
-    "badgeText": "",
-    "categories": []
-  },
-  "zigzagShowcase": {
-    "startRight": ""
-  },
-  "editorialHero": {
-    "badgeText": "",
-    "image": "",
-    "subline": ""
   },
   "glowHero": {
     "bgImage": "",
