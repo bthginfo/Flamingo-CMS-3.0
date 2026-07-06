@@ -349,14 +349,14 @@ const pages = [
         { title: 'Umsetzungsbegleitung', price: 'individuell', description: 'Begleitung über mehrere Wochen oder Monate mit klarer Zielsetzung.', icon: 'MoveRight' },
       ], footnote: 'Alle Preise verstehen sich als Orientierungswerte. Umfang, Reisezeiten und interne Vorbereitung klären wir vor Angebotserstellung.' }, light),
       faqSection('Fragen zu Leistungen und Zusammenarbeit'),
-      cta('Nicht sicher, welches Format passt?', 'Schicken Sie uns kurz die Ausgangslage. Wir empfehlen ehrlich, was sinnvoll ist.'),
+      section('immersiveCtaBanner', { badge: 'Erstgespräch', headline: 'Nicht sicher, welches Format passt?', subline: 'Schicken Sie uns kurz die Ausgangslage. Wir empfehlen ehrlich, was sinnvoll ist.', image: img.strategy, overlay: 'rgba(16,24,34,0.62)', primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' } }),
     ],
   },
   {
     slug: 'referenzen',
     title: 'Cases',
     sections: [
-      hero('Cases, die nicht nach Beratungsfolien klingen.', 'Vier Situationen aus Mittelstand, Agentur, Nachfolge und Handel. Unterschiedliche Ausgangslagen, gleiche Logik: Klarheit vor Aktionismus.', img.workshop, { secondaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' } }),
+      section('cinematicHero', { eyebrow: 'Cases', headline: 'Cases, die nicht nach Beratungsfolien klingen.', subline: 'Vier Situationen aus Mittelstand, Agentur, Nachfolge und Handel. Unterschiedliche Ausgangslagen, gleiche Logik: Klarheit vor Aktionismus.', image: img.workshop, overlay: 'rgba(16,24,34,0.6)', align: 'left', primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' }, facts: [ { value: '4', label: 'Branchen' }, { value: '25+', label: 'Mandate' }, { value: '1', label: 'klare Logik' } ] }),
       section('collectionList', { badge: 'Cases', headline: 'Ausgewählte Mandate', subline: 'Was wir zeigen können, bleibt anonymisiert. Die Muster dahinter sind trotzdem konkret.', collectionKey: 'referenzen', layout: 'cards' }, light),
       section('beforeAfterStoryPro', { badge: 'Beispiel', headline: 'Vom operativen Dauerstress zu klaren Übergaben.', beforeTitle: 'Vorher', beforeText: 'Führungskräfte waren in jede Eskalation involviert. Entscheidungen hingen an wenigen Personen.', afterTitle: 'Nachher', afterText: 'Rollen, Übergaben und Eskalationslogik sind geklärt. Führung entscheidet weniger, aber besser.', metrics: [{ value: '30%', label: 'weniger Abstimmungsaufwand' }, { value: '6 Wochen', label: 'bis zum ersten Rollout' }], cta: { label: 'Ähnliches Thema besprechen', href: '/kontakt' } }, alt),
       section('testimonials', { badgeText: 'Mandanten', headline: 'Veränderung muss im Betrieb ankommen.', items: testimonials }, light),
@@ -367,7 +367,7 @@ const pages = [
     slug: 'ueber-uns',
     title: 'Über uns',
     sections: [
-      hero('Beratung ohne Theater, aber mit Haltung.', 'Wir arbeiten strukturiert, direkt und nah genug an der Umsetzung, damit Empfehlungen nicht im System hängen bleiben.', img.boardroom, { trustItems: ['diskret', 'mittelstandserfahren', 'umsetzungsnah', 'klar im Ton'] }),
+      section('editorialHero', { eyebrow: 'Über uns', headline: 'Beratung ohne Theater, aber mit Haltung.', text: '<p>Wir arbeiten strukturiert, direkt und nah genug an der Umsetzung, damit Empfehlungen nicht im System hängen bleiben.</p>', imagePrimary: img.boardroom, primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' }, hint: 'diskret · mittelstandserfahren · umsetzungsnah' }),
       section('textImage', { badge: 'Haltung', headline: 'Wir verkaufen keine Transformationsromantik.', text: '<p>Unternehmen brauchen nicht immer mehr Ideen. Oft brauchen sie weniger Nebel: klare Entscheidungen, echte Prioritäten und eine Umsetzung, die zu den Menschen und Kapazitäten passt.</p><p>Deshalb arbeiten wir mit Geschäftsführungen, Führungsteams und Schlüsselpersonen. Nicht neben dem Unternehmen, sondern dort, wo Entscheidungen wirklich entstehen.</p>', image: img.workshop, imagePosition: 'right', cta: { label: 'Leistungen ansehen', href: '/leistungen' } }, light),
       section('team', { badgeText: 'Team', headline: 'Senior genug für schwierige Gespräche.', subline: 'Kleine Teams, klare Verantwortliche und keine wechselnde Junior-Besetzung im Hintergrund.', members: teamMembers }, alt),
       section('principlesGrid', { badge: 'Prinzipien', headline: 'Worauf wir bestehen.', subline: 'Gute Beratung muss Komplexität reduzieren, nicht beeindrucken.', principles: [
@@ -377,14 +377,14 @@ const pages = [
         { eyebrow: '04', title: 'Ehrlichkeit vor Komfort', text: 'Wir sagen auch, wenn ein Thema noch nicht entscheidungsreif ist.' },
       ], cta: { label: 'Arbeitsweise besprechen', href: '/kontakt' } }, light),
       section('stats', { headline: 'Erfahrung mit gewachsenen Strukturen.', stats: [{ value: '18+', label: 'Jahre Erfahrung' }, { value: '120+', label: 'Mandate' }, { value: '3', label: 'Senior-Berater' }, { value: '90', suffix: ' Tage', label: 'Umsetzungsfokus' }] }, alt),
-      cta('Passt diese Haltung zu Ihrem Unternehmen?', 'Dann lohnt sich ein erstes Gespräch.'),
+      section('immersiveCtaBanner', { badge: 'Kennenlernen', headline: 'Passt diese Haltung zu Ihrem Unternehmen?', subline: 'Dann lohnt sich ein erstes Gespräch.', image: img.boardroom, overlay: 'rgba(16,24,34,0.62)', primaryCta: { label: 'Gespräch anfragen', href: '/kontakt' } }),
     ],
   },
   {
     slug: 'news',
     title: 'Insights',
     sections: [
-      hero('Insights für bessere Entscheidungen.', 'Gedanken zu Wachstum, Nachfolge, Prozessen und Führung. Direkt genug für die Praxis, ruhig genug für gute Entscheidungen.', img.finance, { secondaryCta: { label: 'Kontakt', href: '/kontakt' } }),
+      section('editorialHero', { eyebrow: 'Insights', headline: 'Insights für bessere Entscheidungen.', text: '<p>Gedanken zu Wachstum, Nachfolge, Prozessen und Führung. Direkt genug für die Praxis, ruhig genug für gute Entscheidungen.</p>', imagePrimary: img.finance, primaryCta: { label: 'Kontakt', href: '/kontakt' } }),
       section('publications', { badgeText: 'Beiträge', headline: 'Einordnung ohne Buzzword-Show.', subline: 'Kurze Beiträge für Unternehmen, die nicht noch mehr Schlagworte brauchen, sondern bessere Entscheidungen.', articles: newsItems.map((item) => ({ title: item.title, excerpt: item.excerpt, date: '4. Juni 2026', category: 'Insight', href: `/c/news/${item.slug}`, image: item.image })), ctaLabel: 'Gespräch anfragen', ctaHref: '/kontakt' }, light),
       section('newsGrid', { badge: 'Archiv', headline: 'Alle Beiträge', subline: 'Alle aktuellen Gedanken und Einordnungen.', collectionKey: 'news', limit: 12 }, alt),
     ],
@@ -393,7 +393,7 @@ const pages = [
     slug: 'kontakt',
     title: 'Kontakt',
     sections: [
-      hero('Sagen Sie uns, wo es gerade hakt.', 'Ein gutes Erstgespräch braucht keine perfekte Vorbereitung. Ausgangslage, Ziel und ein paar Zahlen reichen für den Start.', img.city, { trustItems: ['Antwort meist binnen 24h', 'vertraulich', 'klarer nächster Schritt'] }),
+      section('editorialHero', { eyebrow: 'Kontakt', headline: 'Sagen Sie uns, wo es gerade hakt.', text: '<p>Ein gutes Erstgespräch braucht keine perfekte Vorbereitung. Ausgangslage, Ziel und ein paar Zahlen reichen für den Start.</p>', imagePrimary: img.city, primaryCta: { label: 'Nachricht senden', href: '#form' }, hint: 'Antwort meist binnen 24 h · vertraulich' }),
       section('contact', { badgeText: 'Kontakt', headline: 'Kurze Anfrage, klare Rückmeldung.', subline: 'Beschreiben Sie knapp, worum es geht. Wir melden uns mit Rückfragen und einer ehrlichen Einschätzung.', introText: '<p>Am hilfreichsten sind Branche, Unternehmensgröße, aktueller Engpass und was sich in den nächsten 90 Tagen verändern soll.</p>', phone, email, address, formEnabled: true, submitLabel: 'Erstgespräch anfragen', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Büro', value: address }, { icon: 'Clock', label: 'Rückmeldung', value: 'meist innerhalb von 24 Stunden' }], formFields: [{ name: 'name', label: 'Name', type: 'text', required: true, halfWidth: true }, { name: 'email', label: 'E-Mail', type: 'email', required: true, halfWidth: true }, { name: 'company', label: 'Unternehmen', type: 'text', halfWidth: true }, { name: 'topic', label: 'Thema', type: 'select', options: ['Strategie & Wachstum', 'Prozesse', 'Führung & Organisation', 'Nachfolge', 'Digitalisierung', 'Sparring'] }, { name: 'message', label: 'Ausgangslage', type: 'textarea', required: true }] }, light),
       section('map', { badge: 'Standort', headline: 'München als Basis, Mandate im DACH-Raum.', subline: 'Viele Mandate starten remote und werden durch gezielte Vor-Ort-Termine ergänzt.', address, mapEmbedUrl: 'https://www.google.com/maps?q=Brienner%20Stra%C3%9Fe%2045%2C%2080333%20M%C3%BCnchen&output=embed' }, alt),
       faqSection('Fragen vor dem Erstgespräch'),

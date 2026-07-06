@@ -229,7 +229,7 @@ const pages = [
     trialSessionCta(),
   ] },
   { slug: 'programme', title: 'Programme', sections: [
-    hero('Programme für jedes Ziel.', 'Krafttraining, HIIT, Yoga und Personal Coaching — kombinierbar, modular, mit Plan.', img.weights, { eyebrow: 'Programme', primaryCta: { label: 'Probetraining', href: '/kontakt' }, secondaryCta: { label: 'Kursplan', href: '/kursplan' } }),
+    section('editorialHero', { eyebrow: 'Programme', headline: 'Programme für jedes Ziel.', text: '<p>Krafttraining, HIIT, Yoga und Personal Coaching — kombinierbar, modular, mit Plan.</p>', imagePrimary: img.weights, primaryCta: { label: 'Probetraining', href: '/kontakt' }, secondaryCta: { label: 'Kursplan', href: '/kursplan' } }),
     programGrid(),
     section('processSteps', { badgeText: 'So startest du', headline: 'Vier Schritte zum ersten Workout.', steps: [
       { title: '1. Anfragen', text: 'Per Formular oder WhatsApp — wir antworten innerhalb 24 Std.' },
@@ -241,7 +241,7 @@ const pages = [
     ctaBanner('Bereit für das erste Workout?', 'Wir machen es dir leicht — Probetraining ohne Verpflichtung.'),
   ] },
   { slug: 'kursplan', title: 'Kursplan', sections: [
-    hero('Über 40 Kurse pro Woche.', 'Vom frühen HIIT bis zum späten Yoga — sechs Tage die Woche.', img.hiit, { eyebrow: 'Kursplan', primaryCta: { label: 'Kurs reservieren', href: '/kontakt' }, secondaryCta: { label: 'Trainer', href: '/trainer' } }),
+    section('cinematicHero', { eyebrow: 'Kursplan', headline: 'Über 40 Kurse pro Woche.', subline: 'Vom frühen HIIT bis zum späten Yoga — sechs Tage die Woche.', image: img.hiit, overlay: 'rgba(10,6,18,0.62)', align: 'left', primaryCta: { label: 'Kurs reservieren', href: '/kontakt' }, facts: [ { value: '40+', label: 'Kurse pro Woche' }, { value: '6', label: 'Tage geöffnet' }, { value: '4', label: 'Coaches' } ] }),
     courseSchedule(),
     section('textImage', { badgeText: 'Buchung', headline: 'So buchst du Kurse.', subline: 'In der Pulse-App, in der Member-Lounge oder vor Ort.', text: '<p>Kurse buchst du über unsere App oder im Studio. Plätze sind 14 Tage im Voraus freigeschaltet.</p><p>Bei Wartelisten bekommst du automatisch Bescheid, sobald ein Platz frei wird. Stornieren ohne Gebühr bis 4 Stunden vorher.</p>', image: img.community, primaryCta: { label: 'App-Zugang anfragen', href: '/kontakt' } }, light),
     section('faq', { headline: 'Häufige Fragen', items: [
@@ -251,7 +251,7 @@ const pages = [
     ] }, alt),
   ] },
   { slug: 'coaching', title: 'Coaching', sections: [
-    hero('1:1-Coaching mit echtem Plan.', 'Personal Training, Ernährungsberatung und nachhaltige Trainingsplanung — kein Bootcamp-Drama.', img.pt, { eyebrow: 'Coaching', primaryCta: { label: 'Beratung anfragen', href: '/kontakt' }, secondaryCta: { label: 'Trainer ansehen', href: '/trainer' } }),
+    section('editorialHero', { eyebrow: 'Coaching', headline: '1:1-Coaching mit echtem Plan.', text: '<p>Personal Training, Ernährungsberatung und nachhaltige Trainingsplanung — kein Bootcamp-Drama.</p>', imagePrimary: img.pt, primaryCta: { label: 'Beratung anfragen', href: '/kontakt' }, secondaryCta: { label: 'Trainer ansehen', href: '/trainer' } }),
     transformationStories(),
     section('servicesGrid', { headline: 'Was Coaching beinhaltet', manualCards: [
       { icon: 'Activity', title: 'Bewegungsanalyse', text: 'Wir prüfen Haltung, Bewegungsmuster und mögliche Einschränkungen.' },
@@ -273,7 +273,7 @@ const pages = [
     ] }, alt),
   ] },
   { slug: 'mitgliedschaften', title: 'Mitgliedschaften', sections: [
-    hero('Faire Preise, klare Bedingungen.', 'Drei Tarife — monatlich kündbar, keine Aufnahmegebühr.', img.studio, { eyebrow: 'Mitgliedschaft', primaryCta: { label: 'Tarif wählen', href: '#tarife' }, secondaryCta: { label: 'Probetraining', href: '/kontakt' } }),
+    section('editorialHero', { eyebrow: 'Mitgliedschaft', headline: 'Faire Preise, klare Bedingungen.', text: '<p>Drei Tarife — monatlich kündbar, keine Aufnahmegebühr.</p>', imagePrimary: img.studio, primaryCta: { label: 'Tarif wählen', href: '#tarife' }, hint: 'Monatlich kündbar · keine Aufnahmegebühr' }),
     membershipPlans(),
     section('faq', { headline: 'Häufige Fragen zur Mitgliedschaft', items: [
       { q: 'Gibt es eine Mindestlaufzeit?', a: 'Nein. Alle Tarife sind monatlich kündbar.' },
@@ -284,7 +284,7 @@ const pages = [
     ctaBanner('Noch unsicher welcher Tarif?', 'Wir empfehlen den passenden Tarif nach dem Probetraining.', 'Probetraining buchen'),
   ] },
   { slug: 'kontakt', title: 'Kontakt', sections: [
-    hero('Schreib uns — wir antworten persönlich.', 'Per Formular, WhatsApp oder Telefon. Kein Chatbot, kein Verkaufsdruck.', img.studio, { eyebrow: 'Kontakt' }),
+    section('editorialHero', { eyebrow: 'Kontakt', headline: 'Schreib uns — wir antworten persönlich.', text: '<p>Per Formular, WhatsApp oder Telefon. Kein Chatbot, kein Verkaufsdruck.</p>', imagePrimary: img.studio, primaryCta: { label: 'Nachricht senden', href: '#form' } }),
     section('contact', { badgeText: 'Kontaktformular', headline: 'Probetraining oder Anfrage.', subline: 'Wir melden uns innerhalb eines Werktags.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Wunsch oder Frage', submitLabel: 'Anfrage senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
     section('map', { headline: 'Mitten im Westend', mapEmbedUrl: mapsEmbed }, alt),
     section('openingHours', { headline: 'Öffnungszeiten', days: [{ label: 'Mo - Fr', hours: '06:30-22:00' }, { label: 'Sa - So', hours: '08:00-18:00' }, { label: '24/7', hours: 'für Studio- & Coach-Mitglieder' }] }, light),

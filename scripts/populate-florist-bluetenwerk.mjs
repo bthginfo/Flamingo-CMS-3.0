@@ -274,7 +274,7 @@ const pages = [
     ctaBanner('Soll dein Anlass blühen?', 'Schreib uns Anlass, Datum und Stil — wir antworten persönlich mit einem konkreten Vorschlag.'),
   ] },
   { slug: 'straeusse', title: 'Sträuße', sections: [
-    hero('Sträuße — locker, saisonal, gut gebunden.', 'Vier Kategorien, viele Varianten. Wir binden gerne nach deinen Farben und deinem Anlass.', img.atelier, { eyebrow: 'Sortiment', primaryCta: { label: 'Strauß anfragen', href: '/kontakt' }, secondaryCta: { label: 'Material ansehen', href: '#material' } }),
+    section('editorialHero', { eyebrow: 'Sortiment', headline: 'Sträuße — locker, saisonal, gut gebunden.', text: '<p>Vier Kategorien, viele Varianten. Wir binden gerne nach deinen Farben und deinem Anlass.</p>', imagePrimary: img.atelier, primaryCta: { label: 'Strauß anfragen', href: '/kontakt' }, secondaryCta: { label: 'Material ansehen', href: '#material' } }),
     bouquetShowcase(),
     materialGallery(),
     deliveryTimeline(),
@@ -282,7 +282,7 @@ const pages = [
     ctaBanner('Du hast einen Farbwunsch?', 'Nenn uns die Töne, den Anlass und das Budget — wir gestalten passend.'),
   ] },
   { slug: 'hochzeiten', title: 'Hochzeiten', sections: [
-    hero('Hochzeitsfloristik aus einer Hand.', 'Von der ersten Beratung bis zum letzten Tischlauf — wir begleiten euch durch jede florale Entscheidung.', img.bride, { eyebrow: 'Hochzeit', primaryCta: { label: 'Hochzeitsanfrage', href: '/kontakt' }, secondaryCta: { label: 'Inspiration', href: '#inspiration' } }),
+    section('cinematicHero', { eyebrow: 'Hochzeit', headline: 'Hochzeitsfloristik aus einer Hand.', subline: 'Von der ersten Beratung bis zum letzten Tischlauf — wir begleiten euch durch jede florale Entscheidung.', image: img.bride, overlay: 'rgba(36,20,32,0.55)', align: 'left', primaryCta: { label: 'Hochzeitsanfrage', href: '/kontakt' }, facts: [ { value: '60+', label: 'Hochzeiten begleitet' }, { value: '1', label: 'Ansprechpartnerin' }, { value: '100%', label: 'Saisonmaterial' } ] }),
     weddingShowroom(),
     section('processSteps', { badgeText: 'Ablauf', headline: 'Wie wir eure Hochzeit planen.', subline: 'Vier Schritte vom Erstgespräch bis zum Tag selbst.', steps: [
       { title: 'Beratung', text: 'Wir hören zu — Location, Stil, Farben, Budget. Erst dann schlagen wir vor.' },
@@ -311,20 +311,20 @@ const pages = [
     ctaBanner('Möchtest du einen Workshop verschenken?', 'Wir stellen dir gerne einen personalisierten Gutschein aus.', 'Gutschein anfragen'),
   ] },
   { slug: 'saison', title: 'Saison', sections: [
-    hero('Was die Saison gerade gibt.', 'Wir arbeiten mit dem, was wirklich blüht — keine Importe um jeden Preis.', img.bouquetSpring, { eyebrow: 'Saison', primaryCta: { label: 'Saisonstrauß bestellen', href: '/kontakt' }, secondaryCta: { label: 'Material', href: '#material' } }),
+    section('editorialHero', { eyebrow: 'Saison', headline: 'Was die Saison gerade gibt.', text: '<p>Wir arbeiten mit dem, was wirklich blüht — keine Importe um jeden Preis.</p>', imagePrimary: img.bouquetSpring, primaryCta: { label: 'Saisonstrauß bestellen', href: '/kontakt' } }),
     seasonalCampaign(),
     materialGallery(),
     membershipPlans(),
     section('newsGrid', { headline: 'Aus dem Atelierjournal', subline: 'Notizen zur Saison.', collectionKey: 'news' }, alt),
   ] },
   { slug: 'ueber-uns', title: 'Über uns', sections: [
-    hero('Ein Atelier für Saison, Stil und ehrliche Beratung.', 'Blütenwerk Atelier wurde 2018 von Vivian gegründet — aus dem Wunsch, anders zu binden.', img.atelier, { eyebrow: 'Atelier', primaryCta: { label: 'Beratung anfragen', href: '/kontakt' }, secondaryCta: { label: 'Sortiment', href: '/straeusse' } }),
+    section('editorialHero', { eyebrow: 'Atelier', headline: 'Ein Atelier für Saison, Stil und ehrliche Beratung.', text: '<p>Blütenwerk Atelier wurde 2018 von Vivian gegründet — aus dem Wunsch, anders zu binden.</p>', imagePrimary: img.atelier, imageSecondary: img.bouquetSpring, primaryCta: { label: 'Beratung anfragen', href: '/kontakt' } }),
     section('textImage', { badgeText: 'Geschichte', headline: 'Warum wir lieber saisonal binden.', subline: 'Aus der Überzeugung, dass Blumen mehr sind als Deko.', text: '<p>Blütenwerk Atelier entstand aus dem Wunsch, ehrlicher mit Material umzugehen. Wir wollten weg von glatten Importen und hin zu echten Saisonkompositionen, die nach der Jahreszeit aussehen, in der sie geschnitten wurden.</p><p>Heute arbeiten wir mit einem festen Netzwerk regionaler Hofgärtner, leiten Workshops und planen Hochzeiten mit klarem Konzept statt Trend-Kopie.</p>', image: img.atelier, primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' } }, light),
     teamSection(),
     section('stats', { items: [{ value: '8 Jahre', label: 'Atelier' }, { value: '300+', label: 'Sträuße / Jahr' }, { value: '45+', label: 'Hochzeiten' }, { value: '80 %', label: 'Regionale Blumen' }] }, alt),
   ] },
   { slug: 'kontakt', title: 'Kontakt', sections: [
-    hero('Schreib uns, was blühen soll.', 'Anlass, Datum, Stil — je konkreter du wirst, desto besser können wir planen.', img.atelier, { eyebrow: 'Kontakt', primaryCta: { label: 'Anfrage starten', href: '#form' }, secondaryCta: { label: 'WhatsApp', href: 'https://wa.me/498944552211' } }),
+    section('editorialHero', { eyebrow: 'Kontakt', headline: 'Schreib uns, was blühen soll.', text: '<p>Anlass, Datum, Stil — je konkreter du wirst, desto besser können wir planen.</p>', imagePrimary: img.atelier, primaryCta: { label: 'Anfrage starten', href: '#form' }, secondaryCta: { label: 'WhatsApp', href: 'https://wa.me/498944552211' } }),
     section('contact', { badgeText: 'Kontaktformular', headline: 'Beratung anfragen.', subline: 'Wir antworten meist innerhalb eines Werktags.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Anlass, Datum, Stil, Budget', submitLabel: 'Anfrage senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
     section('map', { headline: 'Atelier am Gärtnerplatz', subline: 'Sichtbar, klein, immer mit Werkstattgeruch.', mapEmbedUrl: mapsEmbed }, alt),
     section('openingHours', { headline: 'Öffnungszeiten', days: [{ label: 'Dienstag bis Freitag', hours: '10:00-18:30' }, { label: 'Samstag', hours: '9:00-15:00' }, { label: 'Sonntag/Montag', hours: 'geschlossen' }], bookingNote: 'Hochzeiten und Workshops nach Termin.' }, light),

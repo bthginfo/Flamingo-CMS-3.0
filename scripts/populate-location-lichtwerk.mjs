@@ -251,7 +251,7 @@ const pages = [
     availabilityCta(),
   ] },
   { slug: 'raeume', title: 'Räume', sections: [
-    hero('Sechs Räume — kombinierbar und einzeln buchbar.', 'Vom Loft bis zur Bibliothek, von der Dachterrasse bis zum Coworking Space.', img.loft, { eyebrow: 'Räume', primaryCta: { label: 'Besichtigung', href: '/kontakt' }, secondaryCta: { label: 'Galerie', href: '/galerie' } }),
+    section('editorialHero', { eyebrow: 'Räume', headline: 'Sechs Räume — kombinierbar und einzeln buchbar.', text: '<p>Vom Loft bis zur Bibliothek, von der Dachterrasse bis zum Coworking Space.</p>', imagePrimary: img.loft, primaryCta: { label: 'Besichtigung', href: '/kontakt' }, secondaryCta: { label: 'Galerie', href: '/galerie' } }),
     spaceShowcase(),
     floorPlanOverview(),
     amenitiesGrid(),
@@ -276,7 +276,7 @@ const pages = [
     ] }, alt),
   ] },
   { slug: 'hochzeiten', title: 'Hochzeiten', sections: [
-    hero('Eure Hochzeit im Lichtwerk Loft.', 'Trauung im Garten, Empfang auf der Terrasse, Dinner & Tanz im Loft — alles an einem Ort.', img.wedding, { eyebrow: 'Hochzeit', primaryCta: { label: 'Anfrage senden', href: '/kontakt' }, secondaryCta: { label: 'Pakete', href: '#pakete' } }),
+    section('cinematicHero', { eyebrow: 'Hochzeit', headline: 'Eure Hochzeit im Lichtwerk Loft.', subline: 'Trauung im Garten, Empfang auf der Terrasse, Dinner & Tanz im Loft — alles an einem Ort.', image: img.wedding, overlay: 'rgba(24,18,12,0.55)', align: 'left', primaryCta: { label: 'Anfrage senden', href: '/kontakt' }, facts: [ { value: '120', label: 'Gäste im Loft' }, { value: '3', label: 'Bereiche kombinierbar' }, { value: '1', label: 'fester Ansprechpartner' } ] }),
     section('textImage', { badgeText: 'Komplettlösung', headline: 'Eine Location, alle Momente.', subline: 'Standesamt, Trauung, Empfang, Dinner und Party.', text: '<p>Wir bieten alles, was du für deine Hochzeit brauchst, an einem Ort. Standesamtliche und freie Trauungen in Garten oder Bibliothek, Empfang auf der Dachterrasse, Dinner & Tanz im Loft.</p><p>Du musst nicht zwischen Locations wechseln. Deine Gäste auch nicht. Das macht den Tag deutlich entspannter.</p>', image: img.wedding, primaryCta: { label: 'Wedding-Paket ansehen', href: '#pakete' } }, light),
     locationPackages(),
     galleryMoodboard(),
@@ -288,7 +288,7 @@ const pages = [
     ctaBanner('Verfügbarkeit prüfen?', 'Wir antworten innerhalb 24 Std. mit konkretem Vorschlag.', 'Hochzeitsanfrage'),
   ] },
   { slug: 'coworking', title: 'Coworking', sections: [
-    hero('Coworking & Team-Tage.', 'Tagsüber Coworking-Plätze, abends Eventlocation — beides am selben Speicher.', img.coworking, { eyebrow: 'Coworking', primaryCta: { label: 'Tagesticket sichern', href: '/kontakt' }, secondaryCta: { label: 'Team-Tag', href: '#team' } }),
+    section('editorialHero', { eyebrow: 'Coworking', headline: 'Coworking & Team-Tage.', text: '<p>Tagsüber Coworking-Plätze, abends Eventlocation — beides am selben Speicher.</p>', imagePrimary: img.coworking, primaryCta: { label: 'Tagesticket sichern', href: '/kontakt' }, secondaryCta: { label: 'Team-Tag planen', href: '#team' } }),
     section('servicesGrid', { headline: 'Was du bekommst', manualCards: [
       { icon: 'Briefcase', title: '16 Plätze', text: 'Schreibtische mit Bürostuhl, höhenverstellbar.' },
       { icon: 'Wifi', title: 'Glasfaser', text: 'Eigenes Netz, redundante Anbindung.' },
@@ -310,13 +310,13 @@ const pages = [
     ctaBanner('Möchtest du den Raum live sehen?', 'Wir machen gerne eine Besichtigung — auch am Abend oder Wochenende.', 'Besichtigung anfragen'),
   ] },
   { slug: 'ueber-uns', title: 'Über uns', sections: [
-    hero('Lichtwerk Loft — aus dem Speicher 12 in Ingolstadt.', 'Wir haben den Speicher 2019 übernommen und 2021 als Eventlocation eröffnet.', img.loft, { eyebrow: 'Story', primaryCta: { label: 'Besichtigung anfragen', href: '/kontakt' }, secondaryCta: { label: 'Räume', href: '/raeume' } }),
+    section('editorialHero', { eyebrow: 'Story', headline: 'Lichtwerk Loft — aus dem Speicher 12 in Ingolstadt.', text: '<p>Wir haben den Speicher 2019 übernommen und 2021 als Eventlocation eröffnet.</p>', imagePrimary: img.loft, imageSecondary: img.mood1, primaryCta: { label: 'Besichtigung anfragen', href: '/kontakt' } }),
     section('textImage', { badgeText: 'Story', headline: 'Aus Industriegeschichte wird Event-Bühne.', subline: 'Der Speicher 12 hat eine 120-jährige Geschichte.', text: '<p>Der Speicher wurde 1903 erbaut und war bis in die 80er als Lager für Getreide in Betrieb. 2019 haben wir ihn übernommen und in zwei Jahren behutsam in eine Eventlocation umgebaut.</p><p>Stahlträger, Backstein und Holz sind erhalten geblieben. Hinzugekommen: moderne Lichttechnik, Catering-Küche, Bar-Setup und Dachterrasse.</p>', image: img.loft, primaryCta: { label: 'Räume entdecken', href: '/raeume' } }, light),
     hostTeam(),
     section('stats', { items: [{ value: '2021', label: 'Eröffnung' }, { value: '200+', label: 'Events / Jahr' }, { value: '6', label: 'Räume' }, { value: '4,9/5', label: 'Bewertung' }] }, alt),
   ] },
   { slug: 'kontakt', title: 'Kontakt', sections: [
-    hero('Schreib uns — wir antworten persönlich.', 'Per Formular, WhatsApp oder Telefon. Innerhalb 24 Std. mit konkretem Vorschlag.', img.ballroom, { eyebrow: 'Kontakt', primaryCta: { label: 'Formular nutzen', href: '#form' }, secondaryCta: { label: 'Anrufen', href: `tel:${phone.replace(/\s/g, '')}` } }),
+    section('editorialHero', { eyebrow: 'Kontakt', headline: 'Schreib uns — wir antworten persönlich.', text: '<p>Per Formular, WhatsApp oder Telefon. Innerhalb 24 Std. mit konkretem Vorschlag.</p>', imagePrimary: img.ballroom, primaryCta: { label: 'Formular nutzen', href: '#form' }, secondaryCta: { label: 'Anrufen', href: `tel:${phone.replace(/\s/g, '')}` } }),
     section('contact', { badgeText: 'Anfrage', headline: 'Verfügbarkeit prüfen.', subline: 'Datum, Anlass und ungefähre Gästezahl — mehr brauchen wir für den ersten Vorschlag nicht.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Datum, Anlass, Gästezahl', submitLabel: 'Anfrage senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
     section('locationAccess', { headline: 'Anfahrt & Umgebung', subline: 'Direkt am Donauufer, 5 Min. von der A9.', mapEmbedUrl: mapsEmbed, infoCards: [{ icon: 'Car', label: 'Auto', value: '40 Stellplätze direkt am Haus' }, { icon: 'Train', label: 'Bahn', value: 'Hbf Ingolstadt + 12 Min. Taxi' }, { icon: 'Plane', label: 'Flughafen', value: 'München Airport · 70 km' }] }, alt),
     section('openingHours', { headline: 'Bürozeiten', days: [{ label: 'Mo - Fr', hours: '09:00-18:00', note: 'für Anfragen & Beratung' }, { label: 'Events', hours: 'nach Vereinbarung' }] }, light),
