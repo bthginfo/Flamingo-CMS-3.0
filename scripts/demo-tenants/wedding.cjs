@@ -152,6 +152,53 @@ function cta(headline = 'Sagt uns bitte, ob Ihr dabei seid.', subline = 'Die Rü
   };
 }
 
+function edHero(eyebrow, headline, text, image, opts = {}) {
+  return {
+    type: 'editorialHero',
+    data: {
+      eyebrow,
+      headline,
+      text: `<p>${text}</p>`,
+      imagePrimary: image,
+      ...(opts.imageSecondary ? { imageSecondary: opts.imageSecondary } : {}),
+      primaryCta: opts.primaryCta || { label: 'Zur RSVP', href: '/rsvp' },
+      ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
+      ...(opts.hint ? { hint: opts.hint } : {}),
+    },
+  };
+}
+
+function cineHero(eyebrow, headline, subline, image, facts) {
+  return {
+    type: 'cinematicHero',
+    data: {
+      eyebrow,
+      headline,
+      subline,
+      image,
+      overlay: 'rgba(42,23,20,0.56)',
+      align: 'left',
+      primaryCta: { label: 'Zur RSVP', href: '/rsvp' },
+      ...(facts ? { facts } : {}),
+    },
+  };
+}
+
+function imCta(headline, subline, image) {
+  return {
+    type: 'immersiveCtaBanner',
+    data: {
+      badge: 'Rückmeldung',
+      headline,
+      subline,
+      image,
+      overlay: 'rgba(42,23,20,0.6)',
+      primaryCta: { label: 'Jetzt zusagen', href: '/rsvp' },
+      secondaryCta: { label: 'Fragen? Schreibt uns', href: '/kontakt' },
+    },
+  };
+}
+
 function faqSection() {
   return {
     type: 'faq',
@@ -448,7 +495,7 @@ const pages = [
         styleOverrides: sageSection,
       },
       faqSection(),
-      { id: uuid(), ...cta('Alles gefunden?', 'Wenn nicht, schreibt uns kurz. Wir ergänzen lieber eine Info, als dass Ihr suchen müsst.') },
+      { id: uuid(), ...imCta('Alles gefunden?', 'Wenn nicht, schreibt uns kurz. Wir ergänzen lieber eine Info, als dass Ihr suchen müsst.', flowersImage) },
     ],
   },
   {
@@ -460,7 +507,7 @@ const pages = [
       ogImage: ringsImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Warum dieser Tag zu uns passen soll.', 'Wir mögen klare Worte, gutes Essen und Menschen, die bleiben, wenn es nicht perfekt läuft.', ringsImage, 'Über uns') },
+      { id: uuid(), ...edHero('Über uns', 'Warum dieser Tag zu uns passen soll.', 'Wir mögen klare Worte, gutes Essen und Menschen, die bleiben, wenn es nicht perfekt läuft.', ringsImage, { secondaryCta: { label: 'Unsere Geschichte', href: '/geschichte' } }) },
       {
         id: uuid(),
         type: 'textImage',
@@ -523,7 +570,7 @@ const pages = [
       ogImage: gardenImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Unser Hochzeitstag', 'Ein Ablauf mit klaren Zeiten, aber ohne steifes Programm.', gardenImage, '12. September 2026') },
+      { id: uuid(), ...cineHero('12. September 2026', 'Unser Hochzeitstag', 'Ein Ablauf mit klaren Zeiten, aber ohne steifes Programm.', gardenImage, [ { value: '15:00', label: 'Freie Trauung' }, { value: '18:30', label: 'Dinner' }, { value: '21:30', label: 'Party' } ]) },
       {
         id: uuid(),
         type: 'eventSchedule',
@@ -572,7 +619,7 @@ const pages = [
         styleOverrides: lightSection,
       },
       faqSection(),
-      { id: uuid(), ...cta('Fehlt Euch eine Info zum Tag?', 'Schreibt uns lieber einmal zu früh als am Samstag mit Stress.') },
+      { id: uuid(), ...imCta('Fehlt Euch eine Info zum Tag?', 'Schreibt uns lieber einmal zu früh als am Samstag mit Stress.', gardenImage) },
     ],
   },
   {
@@ -584,7 +631,7 @@ const pages = [
       ogImage: venueImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Ein Ort für alles.', 'Trauung, Dinner und Party bleiben am Gut Sonnenhof. Das macht den Tag ruhiger.', venueImage, 'Location') },
+      { id: uuid(), ...cineHero('Location', 'Ein Ort für alles.', 'Trauung, Dinner und Party bleiben am Gut Sonnenhof. Das macht den Tag ruhiger.', venueImage) },
       {
         id: uuid(),
         type: 'venueInfo',
@@ -655,7 +702,7 @@ const pages = [
       ogImage: travelImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Gut ankommen, gut heimkommen.', 'Auto, Bahn, Hotel und Shuttle in einem Überblick.', travelImage, 'Anreise') },
+      { id: uuid(), ...edHero('Anreise', 'Gut ankommen, gut heimkommen.', 'Auto, Bahn, Hotel und Shuttle in einem Überblick.', travelImage, { primaryCta: { label: 'Route planen', href: 'https://maps.google.com/?q=Gut+Sonnenhof' }, secondaryCta: { label: 'Hotels ansehen', href: '#hotels' } }) },
       {
         id: uuid(),
         type: 'travelInfo',
@@ -710,7 +757,7 @@ const pages = [
         styleOverrides: lightSection,
       },
       faqSection(),
-      { id: uuid(), ...cta('Braucht Ihr Hilfe bei der Anreise?', 'Schreibt uns kurz, wenn Ihr unsicher seid. Wir verbinden Euch auch gern mit anderen Gästen.') },
+      { id: uuid(), ...imCta('Braucht Ihr Hilfe bei der Anreise?', 'Schreibt uns kurz, wenn Ihr unsicher seid. Wir verbinden Euch auch gern mit anderen Gästen.', travelImage) },
     ],
   },
   {
@@ -722,7 +769,7 @@ const pages = [
       ogImage: flowersImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Seid Ihr dabei?', 'Bitte gebt uns bis 30. Juni Bescheid. Auch Absagen helfen uns beim Planen.', flowersImage, 'RSVP') },
+      { id: uuid(), ...edHero('RSVP', 'Seid Ihr dabei?', 'Bitte gebt uns bis 30. Juni Bescheid. Auch Absagen helfen uns beim Planen.', flowersImage, { primaryCta: { label: 'Jetzt antworten', href: '#rsvp' }, hint: 'Antwortfrist: 30. Juni — auch Absagen helfen uns.' }) },
       {
         id: uuid(),
         type: 'rsvp',
@@ -780,7 +827,7 @@ const pages = [
       ogImage: flowersImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Sommerlich festlich, aber bitte tragbar.', 'Wir wünschen uns warme Farben, Bewegung und Outfits, in denen Ihr Euch wohlfühlt.', flowersImage, 'Dresscode') },
+      { id: uuid(), ...edHero('Dresscode', 'Sommerlich festlich, aber bitte tragbar.', 'Wir wünschen uns warme Farben, Bewegung und Outfits, in denen Ihr Euch wohlfühlt.', flowersImage) },
       {
         id: uuid(),
         type: 'dresscode',
@@ -886,7 +933,7 @@ const pages = [
         styleOverrides: sageSection,
       },
       faqSection(),
-      { id: uuid(), ...cta('Ihr bringt Euch selbst mit.', 'Alles Weitere ist schön, aber nicht nötig.') },
+      { id: uuid(), ...imCta('Ihr bringt Euch selbst mit.', 'Alles Weitere ist schön, aber nicht nötig.', ringsImage) },
     ],
   },
   {
@@ -898,7 +945,7 @@ const pages = [
       ogImage: ringsImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Unsere Geschichte ist eher leise gewachsen.', 'Kein großer Knall, sondern viele kleine Entscheidungen füreinander.', ringsImage, 'Über uns') },
+      { id: uuid(), ...edHero('Unsere Geschichte', 'Unsere Geschichte ist eher leise gewachsen.', 'Kein großer Knall, sondern viele kleine Entscheidungen füreinander.', ringsImage) },
       {
         id: uuid(),
         type: 'coupleStory',
@@ -962,7 +1009,7 @@ const pages = [
         },
         styleOverrides: sageSection,
       },
-      { id: uuid(), ...cta('Jetzt seid Ihr Teil davon.', 'Danke, dass Ihr diesen Tag mit uns teilt.') },
+      { id: uuid(), ...imCta('Jetzt seid Ihr Teil davon.', 'Danke, dass Ihr diesen Tag mit uns teilt.', ringsImage) },
     ],
   },
   {
@@ -974,7 +1021,7 @@ const pages = [
       ogImage: heroImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Momente, die den Tag tragen.', 'Ein paar Bilder für Stimmung, Farben und Vorfreude.', heroImage, 'Galerie') },
+      { id: uuid(), ...cineHero('Galerie', 'Momente, die den Tag tragen.', 'Ein paar Bilder für Stimmung, Farben und Vorfreude.', heroImage) },
       {
         id: uuid(),
         type: 'gallery',
@@ -1021,7 +1068,7 @@ const pages = [
         styleOverrides: lightSection,
       },
       faqSection(),
-      { id: uuid(), ...cta('Ihr habt ein Foto von uns?', 'Bringt es gern mit oder schickt es vorher. Wir sammeln ein kleines Gästebuch.') },
+      { id: uuid(), ...imCta('Ihr habt ein Foto von uns?', 'Bringt es gern mit oder schickt es vorher. Wir sammeln ein kleines Gästebuch.', heroImage) },
     ],
   },
   {
@@ -1084,7 +1131,7 @@ const pages = [
       ogImage: flowersImage,
     },
     sections: [
-      { id: uuid(), ...collectionHero('Fragt lieber kurz nach.', 'Wenn etwas unklar ist, ist eine Nachricht besser als Rätselraten.', flowersImage, 'Kontakt') },
+      { id: uuid(), ...edHero('Kontakt', 'Fragt lieber kurz nach.', 'Wenn etwas unklar ist, ist eine Nachricht besser als Rätselraten.', flowersImage, { primaryCta: { label: 'Nachricht schreiben', href: '#kontakt' } }) },
       {
         id: uuid(),
         type: 'contact',

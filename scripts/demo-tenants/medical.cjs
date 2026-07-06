@@ -143,6 +143,53 @@ function cta(headline = 'Möchten Sie Ihr Anliegen einordnen lassen?', subline =
   };
 }
 
+function edHero(eyebrow, headline, text, image, opts = {}) {
+  return {
+    type: 'editorialHero',
+    data: {
+      eyebrow,
+      headline,
+      text: `<p>${text}</p>`,
+      imagePrimary: image,
+      ...(opts.imageSecondary ? { imageSecondary: opts.imageSecondary } : {}),
+      primaryCta: opts.primaryCta || { label: 'Termin anfragen', href: '/kontakt' },
+      ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
+      ...(opts.hint ? { hint: opts.hint } : {}),
+    },
+  };
+}
+
+function cineHero(eyebrow, headline, subline, image, facts) {
+  return {
+    type: 'cinematicHero',
+    data: {
+      eyebrow,
+      headline,
+      subline,
+      image,
+      overlay: 'rgba(6,39,46,0.58)',
+      align: 'left',
+      primaryCta: { label: 'Termin anfragen', href: '/kontakt' },
+      ...(facts ? { facts } : {}),
+    },
+  };
+}
+
+function imCta(headline, subline, image = img('1576091160550-2173dba999ef')) {
+  return {
+    type: 'immersiveCtaBanner',
+    data: {
+      badge: 'Termin & Rückruf',
+      headline,
+      subline,
+      image,
+      overlay: 'rgba(6,39,46,0.62)',
+      primaryCta: { label: 'Termin anfragen', href: '/kontakt' },
+      secondaryCta: { label: 'Telefon: 0711 2486190', href: 'tel:+497112486190' },
+    },
+  };
+}
+
 function faqSection() {
   return {
     type: 'faq',
@@ -492,7 +539,7 @@ const tenant = {
       slug: 'leistungen',
       title: 'Leistungen',
       sections: [
-        collectionHero('Leistungen mit klarer Einordnung.', 'Wir behandeln nicht nur einzelne Werte, sondern schauen auf Beschwerden, Verlauf und Alltag.', img('1581595219315-a187dd40c322'), 'Medizinische Leistungen'),
+        edHero('Medizinische Leistungen', 'Leistungen mit klarer Einordnung.', 'Wir behandeln nicht nur einzelne Werte, sondern schauen auf Beschwerden, Verlauf und Alltag.', img('1581595219315-a187dd40c322'), { secondaryCta: { label: 'Terminarten ansehen', href: '/termine' } }),
         { type: 'serviceOverview', data: { headline: 'Unsere Schwerpunkte', subline: 'Vier Bereiche, die viele Anliegen in der Praxis sinnvoll abdecken.', items: services.map((s) => ({ title: s.title, text: s.excerpt, image: s.image, icon: 'Stethoscope', cta: { label: 'Mehr dazu', href: `/c/leistungen/${s.slug}` } })) } },
         { type: 'collectionList', data: { headline: 'Alle Leistungen', subline: 'Jede Leistung mit Details, Vorbereitung und Termin-Hinweisen.', collectionKey: 'leistungen', columns: 2, showImage: true, showExcerpt: true } },
         { type: 'comparisonTable', data: { badge: 'Terminarten', headline: 'Welche Terminart passt?', text: 'Damit Anliegen nicht im falschen Zeitfenster landen.', columns: [{ label: 'Akut' }, { label: 'Geplant' }, { label: 'Befund' }], rows: [
@@ -501,7 +548,7 @@ const tenant = {
           { feature: 'Kontaktweg', values: ['Telefonisch anmelden', 'Formular oder Telefon', 'Termin zur Besprechung'] },
         ], highlightCol: -1 } },
         faqSection(),
-        cta('Nicht sicher, welche Leistung passt?', 'Beschreiben Sie kurz Ihr Anliegen. Wir ordnen es vor dem Termin ein.'),
+        imCta('Nicht sicher, welche Leistung passt?', 'Beschreiben Sie kurz Ihr Anliegen. Wir ordnen es vor dem Termin ein.'),
       ],
       seo: { metaTitle: 'Leistungen', metaDescription: 'Hausärztliche Leistungen der Praxis am Stadtgarten: Versorgung, Vorsorge, Diagnostik und Akutsprechstunde in Stuttgart-West.' },
     },
@@ -509,7 +556,7 @@ const tenant = {
       slug: 'termine',
       title: 'Termine',
       sections: [
-        collectionHero('Termine ohne Rätselraten.', 'Akut, Kontrolle, Vorsorge oder Befundgespräch: Der passende Termin beginnt mit der richtigen Einordnung.', img('1576091160550-2173dba999ef'), 'Termine'),
+        cineHero('Termine', 'Termine ohne Rätselraten.', 'Akut, Kontrolle, Vorsorge oder Befundgespräch: Der passende Termin beginnt mit der richtigen Einordnung.', img('1576091160550-2173dba999ef'), [ { value: 'Akut', label: 'heute einordnen' }, { value: 'Geplant', label: 'Vorsorge & Kontrolle' }, { value: 'Befund', label: 'in Ruhe besprechen' } ]),
         { type: 'appointmentCta', data: { headline: 'Termin oder Rückruf anfragen', subline: 'Wir melden uns mit einem passenden Vorschlag oder sagen, wenn ein anderer Kontaktweg sinnvoller ist.', introText: 'Bitte senden Sie über das Formular keine vollständigen Diagnosen oder sensiblen Unterlagen. Eine kurze Einordnung reicht.', onlineCta: { label: 'Anfrage senden', href: '/kontakt' }, phoneCta: { label: '0711 2486190', href: 'tel:+497112486190' }, notes: ['Akute Beschwerden bitte telefonisch anmelden.', 'Bei Lebensgefahr immer 112.', 'Für Bereitschaftsdienst außerhalb der Sprechzeiten: 116 117.'] } },
         { type: 'openingHours', data: { headline: 'Sprechzeiten', days: [
           { label: 'Montag', hours: '08:00 – 12:30 · 15:00 – 18:00' },
@@ -537,7 +584,7 @@ const tenant = {
       slug: 'praxis',
       title: 'Praxis',
       sections: [
-        collectionHero('Eine Praxis, die nicht nach Hektik aussieht.', 'Ruhige Räume, klare Wege und kurze Distanzen helfen, dass Termine geordnet bleiben.', practiceImage, 'Praxisräume'),
+        edHero('Praxisräume', 'Eine Praxis, die nicht nach Hektik aussieht.', 'Ruhige Räume, klare Wege und kurze Distanzen helfen, dass Termine geordnet bleiben.', practiceImage, { hint: 'Barrierearmer Zugang · zentrale Lage in Stuttgart-West' }),
         { type: 'practiceGallery', data: { badgeText: 'Einblicke', headline: 'Räume mit Orientierung.', subline: 'Empfang, Wartebereich, Labor und Sprechzimmer sind bewusst klar gehalten.', images: [
           { src: practiceImage, alt: 'heller Empfang der Praxis', caption: 'Empfang', category: 'Ankommen' },
           { src: waitingImage, alt: 'ruhiger Wartebereich', caption: 'Wartebereich', category: 'Warten' },
@@ -561,7 +608,7 @@ const tenant = {
           { icon: 'Phone', label: 'Telefon', value: '0711 2486190' },
           { icon: 'Mail', label: 'E-Mail', value: 'kontakt@praxis-stadtgarten.de' },
         ] } },
-        cta('Möchten Sie vor dem Termin etwas klären?', 'Eine kurze Anfrage reicht. Wir melden uns mit dem passenden Kontaktweg.'),
+        imCta('Möchten Sie vor dem Termin etwas klären?', 'Eine kurze Anfrage reicht. Wir melden uns mit dem passenden Kontaktweg.', practiceImage),
       ],
       seo: { metaTitle: 'Praxisräume & Ausstattung', metaDescription: 'Praxisräume, Diagnostik und Standort der Praxis am Stadtgarten in Stuttgart-West.' },
     },
@@ -569,7 +616,7 @@ const tenant = {
       slug: 'team',
       title: 'Team',
       sections: [
-        collectionHero('Medizin ist Teamarbeit.', 'Vom Empfang bis zum Befundgespräch: Gute Abläufe brauchen klare Rollen.', teamImage, 'Team'),
+        cineHero('Team', 'Medizin ist Teamarbeit.', 'Vom Empfang bis zum Befundgespräch: Gute Abläufe brauchen klare Rollen.', teamImage),
         { type: 'doctorTeam', data: { badgeText: 'Ärztinnen & Praxisorganisation', headline: 'Menschen, die zuhören und sortieren.', subline: 'Unser Team verbindet medizinische Erfahrung mit ruhiger Kommunikation.', doctors: [
           { name: 'Dr. Helena Berger', title: 'Fachärztin für Allgemeinmedizin', specialty: 'Vorsorge, Innere Medizin, Ultraschall', bio: 'Achtet darauf, dass Patientinnen und Patienten Befunde wirklich verstehen.', image: teamImage, languages: ['Deutsch', 'Englisch'], appointmentCta: { label: 'Termin anfragen', href: '/kontakt' } },
           { name: 'Dr. Tobias Kern', title: 'Facharzt für Allgemeinmedizin', specialty: 'Akutmedizin, EKG, chronische Erkrankungen', bio: 'Priorisiert akute Beschwerden und erklärt Therapieentscheidungen klar.', image: img('1537368910025-700350fe46c7'), languages: ['Deutsch'], appointmentCta: { label: 'Kontakt aufnehmen', href: '/kontakt' } },
@@ -607,7 +654,7 @@ const tenant = {
           ],
           contactCta: { label: 'Initiativ bewerben', href: '/kontakt' },
         } },
-        cta('Sie möchten uns kennenlernen?', 'Senden Sie uns kurz Ihr Anliegen. Wir melden uns mit einem passenden Terminweg.'),
+        imCta('Sie möchten uns kennenlernen?', 'Senden Sie uns kurz Ihr Anliegen. Wir melden uns mit einem passenden Terminweg.', teamImage),
       ],
       seo: { metaTitle: 'Team', metaDescription: 'Das Team der Praxis am Stadtgarten: Ärztliche Versorgung, Praxismanagement und klare Befundkommunikation in Stuttgart-West.' },
     },
@@ -615,7 +662,7 @@ const tenant = {
       slug: 'ueber-uns',
       title: 'Über uns',
       sections: [
-        collectionHero('Hausarztpraxis mit ruhigem Anspruch.', 'Wir glauben, dass gute Medizin auch gute Erklärung braucht.', img('1576091160550-2173dba999ef'), 'Über uns'),
+        edHero('Über uns', 'Hausarztpraxis mit ruhigem Anspruch.', 'Wir glauben, dass gute Medizin auch gute Erklärung braucht.', img('1576091160550-2173dba999ef')),
         { type: 'textImage', data: { badge: 'Haltung', headline: 'Wir nehmen Tempo raus, wo Hektik nichts verbessert.', text: '<p>Die Praxis am Stadtgarten ist eine hausärztliche Praxis für Menschen, die nicht nur eine Diagnose, sondern eine verständliche Einordnung möchten. Wir behandeln akute Beschwerden, begleiten chronische Verläufe und planen Vorsorge so, dass sie zum Leben passt.</p><p>Unser Anspruch ist nicht, alles lauter zu machen. Wir wollen sauber zuhören, gezielt untersuchen und klar sagen, was der nächste sinnvolle Schritt ist.</p>', image: waitingImage, imageAlt: 'ruhiger Wartebereich', layout: 'image-left', primaryCta: { label: 'Praxis kennenlernen', href: '/praxis', icon: 'ArrowRight' } } },
         { type: 'statsCounter', data: { headline: 'Kleine Praxis, klare Verantwortung.', stats: [
           { value: 3, label: 'Teamrollen' },
@@ -662,7 +709,7 @@ const tenant = {
       slug: 'kontakt',
       title: 'Kontakt',
       sections: [
-        collectionHero('Kurze Nachricht, klare Rückmeldung.', 'Bitte nennen Sie Anlass, Dringlichkeit und Rückrufnummer. Wir melden uns mit dem passenden nächsten Schritt.', img('1519494026892-80bbd2d6fd0d'), 'Kontakt'),
+        edHero('Kontakt', 'Kurze Nachricht, klare Rückmeldung.', 'Bitte nennen Sie Anlass, Dringlichkeit und Rückrufnummer. Wir melden uns mit dem passenden nächsten Schritt.', img('1519494026892-80bbd2d6fd0d'), { primaryCta: { label: 'Jetzt anrufen', href: 'tel:+497112486190' }, secondaryCta: { label: 'E-Mail schreiben', href: 'mailto:kontakt@praxis-stadtgarten.de' } }),
         { type: 'contact', data: { badgeText: 'Praxis kontaktieren', headline: 'Wie können wir helfen?', introText: 'Bitte senden Sie keine ausführlichen sensiblen Diagnosen über das Formular. Eine kurze Einordnung genügt für den richtigen Kontaktweg.', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: [
           { icon: 'Phone', label: 'Telefon', value: '0711 2486190' },
           { icon: 'Mail', label: 'E-Mail', value: 'kontakt@praxis-stadtgarten.de' },
@@ -702,7 +749,7 @@ const tenant = {
           { quote: 'Die Praxis wirkt ruhig, aber nicht langsam.', name: 'Patientin', context: 'Befund', rating: 5 },
         ] } },
         faqSection(),
-        cta('Möchten Sie Ihren Weg klären?', 'Wir helfen bei der Einordnung, welche Terminart zu Ihrem Anliegen passt.'),
+        imCta('Möchten Sie Ihren Weg klären?', 'Wir helfen bei der Einordnung, welche Terminart zu Ihrem Anliegen passt.'),
       ],
       seo: { metaTitle: 'Patientenwege', metaDescription: 'Typische Patientenwege der Praxis am Stadtgarten: Vorsorge, Akutsprechstunde und Befundgespräch verständlich erklärt.' },
     },

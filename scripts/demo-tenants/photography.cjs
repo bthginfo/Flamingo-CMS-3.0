@@ -511,15 +511,14 @@ const tenant = {
         metaDescription: 'Hochzeitsreportagen, Portraits, Business- und Familienfotografie in Frankfurt und Rhein-Main.',
       },
       sections: [
-        s('collectionHero', {
+        s('editorialHero', {
+          eyebrow: 'Leistungen',
           headline: 'Fotografie, die zum Anlass passt.',
-          subline: 'Vier Formate, bewusst unterschiedlich geplant.',
-          bgImage: photos.camera,
-          category: 'Leistungen',
-          overlayColor: '#000000',
-          overlayOpacity: 0.52,
-          bgPosition: 'center 52%',
-        }, heroDark),
+          text: '<p>Vier Formate, bewusst unterschiedlich geplant — vom Business-Portrait bis zur freien Reportage.</p>',
+          imagePrimary: photos.camera,
+          primaryCta: { label: 'Anfrage senden', href: '/kontakt' },
+          secondaryCta: { label: 'Portfolio ansehen', href: '/portfolio' },
+        }),
         s('servicesGrid', {
           badgeText: 'Übersicht',
           headline: 'Wählen Sie den Einstieg, der Ihrem Vorhaben am nächsten kommt.',
@@ -555,12 +554,15 @@ const tenant = {
           ],
           highlightCol: 1,
         }, paper),
-        s('ctaBand', {
-          badgeText: 'Noch unsicher?',
+        s('immersiveCtaBanner', {
+          badge: 'Noch unsicher?',
           headline: 'Eine kurze Nachricht reicht für eine erste Richtung.',
           subline: 'Ich sage ehrlich, welches Format sinnvoll ist und wo wir schlanker planen können.',
-          ctaPrimary: { label: 'Anfrage senden', href: '/kontakt', icon: 'Send' },
-        }, paper),
+          image: photos.gallery2,
+          overlay: 'rgba(0,0,0,0.58)',
+          primaryCta: { label: 'Anfrage senden', href: '/kontakt' },
+          secondaryCta: { label: 'Pakete ansehen', href: '/leistungen' },
+        }),
       ],
     },
     {
@@ -571,15 +573,15 @@ const tenant = {
         metaDescription: 'Portfolio von Lisa Morgenthaler Fotografie: natürliche Reportagen, Portraits, Familien- und Businessbilder.',
       },
       sections: [
-        s('collectionHero', {
+        s('cinematicHero', {
+          eyebrow: 'Portfolio',
           headline: 'Bilder, die nicht nach Anleitung aussehen.',
           subline: 'Ein Querschnitt aus Reportagen, Portraits, Familienmomenten und Business-Strecken.',
-          bgImage: photos.gallery2,
-          category: 'Portfolio',
-          overlayColor: '#000000',
-          overlayOpacity: 0.5,
-          bgPosition: 'center 40%',
-        }, heroDark),
+          image: photos.gallery2,
+          overlay: 'rgba(0,0,0,0.5)',
+          align: 'left',
+          primaryCta: { label: 'Shooting anfragen', href: '/kontakt' },
+        }),
         s('portfolioGallery', {
           headline: 'Galerie',
           images: [
@@ -607,12 +609,14 @@ const tenant = {
           ctaLabel: 'Leistungen ansehen',
           ctaHref: '/leistungen',
         }, light),
-        s('ctaBand', {
-          badgeText: 'Eigene Geschichte?',
+        s('immersiveCtaBanner', {
+          badge: 'Eigene Geschichte?',
           headline: 'Wenn Ihnen der Ton gefällt, sprechen wir über Ihren Anlass.',
           subline: 'Ein kurzes Briefing genügt, damit ich eine sinnvolle Empfehlung geben kann.',
-          ctaPrimary: { label: 'Shooting anfragen', href: '/kontakt', icon: 'Send' },
-        }, paper),
+          image: photos.street,
+          overlay: 'rgba(0,0,0,0.58)',
+          primaryCta: { label: 'Shooting anfragen', href: '/kontakt' },
+        }),
       ],
     },
     {
@@ -623,15 +627,14 @@ const tenant = {
         metaDescription: 'Vom Vorgespräch bis zur Galerie: So läuft ein Shooting mit Lisa Morgenthaler Fotografie ab.',
       },
       sections: [
-        s('collectionHero', {
+        s('editorialHero', {
+          eyebrow: 'Ablauf',
           headline: 'Gut vorbereitet, damit es leicht wirkt.',
-          subline: 'Der Ablauf ist klar, aber nie steif.',
-          bgImage: photos.process,
-          category: 'Ablauf',
-          overlayColor: '#000000',
-          overlayOpacity: 0.54,
-          bgPosition: 'center 45%',
-        }, heroDark),
+          text: '<p>Der Ablauf ist klar, aber nie steif: Briefing, Shooting, Auswahl — Schritt für Schritt erklärt.</p>',
+          imagePrimary: photos.process,
+          primaryCta: { label: 'Anfrage senden', href: '/kontakt' },
+          hint: 'Antwort in der Regel innerhalb von 24 Stunden.',
+        }),
         s('shootingProcess', {
           headline: 'Vier Schritte, die Ruhe in den Tag bringen.',
           subline: 'Sie wissen vorher, was passiert. Gleichzeitig bleibt genug Raum für echte Momente.',
@@ -694,15 +697,14 @@ const tenant = {
         metaDescription: 'Über Lisa Morgenthaler: Fotografin in Frankfurt für dokumentarische Reportagen, Portraits und Business-Bilder.',
       },
       sections: [
-        s('collectionHero', {
+        s('editorialHero', {
+          eyebrow: 'Über mich',
           headline: 'Ich mag Bilder, die nicht nach Anweisung aussehen.',
-          subline: 'Meine Kamera ist selten der Mittelpunkt. Ich beobachte, sortiere Licht und gebe nur kurze Hinweise.',
-          bgImage: photos.street,
-          category: 'Über mich',
-          overlayColor: '#000000',
-          overlayOpacity: 0.52,
-          bgPosition: 'center 45%',
-        }, heroDark),
+          text: '<p>Meine Kamera ist selten der Mittelpunkt. Ich beobachte, sortiere Licht und gebe nur kurze Hinweise.</p>',
+          imagePrimary: photos.street,
+          imageSecondary: photos.camera,
+          primaryCta: { label: 'Kennenlernen', href: '/kontakt' },
+        }),
         s('photographerAbout', {
           headline: 'Ruhig im Auftreten, genau im Blick.',
           text: '<p>Ich komme aus dem Kommunikationsdesign und habe früh gemerkt, dass Bilder am stärksten sind, wenn sie nicht zu viel behaupten. Mich interessieren Gesten, Pausen, Übergänge und Menschen, die kurz vergessen, dass eine Kamera da ist.</p><p>In Frankfurt arbeite ich für Paare, Familien, Selbstständige und kleine Teams, die klare Bilder wollen, aber keine große Show.</p>',

@@ -558,7 +558,7 @@ const tenant = {
       title: 'Zimmer & Angebote',
       seo: pageSeo('Zimmer, Suiten und Retreat-Angebote in Seefeld', 'Zimmer und Angebote im Alpenglow Resort & Spa: Waldzimmer, Panorama Suite, Spa Loft und Retreat-Formate in Seefeld.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Zimmer & Angebote', headline: 'Ein Aufenthalt, der zum Tempo passt.', subline: 'Zimmer, Suiten und kleine Formate für ruhige Tage am Waldrand.', bgImage: img('1566073771259-6a8506099945') }), styleOverrides: darkSectionTokens() },
+        cineHeroSec('Zimmer & Angebote', 'Ein Aufenthalt, der zum Tempo passt.', 'Zimmer, Suiten und kleine Formate für ruhige Tage am Waldrand.', img('1566073771259-6a8506099945'), [ { value: '18', label: 'Zimmer & Suiten' }, { value: '1.180 m', label: 'über dem Alltag' }, { value: '4', label: 'Saunen & Ruheräume' } ]),
         { type: 'servicesGrid', data: { badgeText: 'Auswahl', headline: 'Vier Möglichkeiten, im Alpenglow anzukommen.', subline: 'Vom ruhigen Zimmer bis zum Offsite: jedes Angebot hat eine klare Rolle.', ctaLabel: 'Anfrage senden', ctaHref: '/kontakt', manualCards: offerCards() }, styleOverrides: lightTokens },
         { type: 'roomShowcase', data: { badgeText: 'Zimmer', headline: 'Nicht jedes Zimmer muss alles können.', subline: 'Wichtig ist, dass es zu Ihrem Aufenthalt passt.', rooms: rooms(), footerText: 'Alle Zimmer enthalten Frühstück, Spa-Zugang und persönliche Vorbereitung vor Anreise.' }, styleOverrides: lightTokens },
         { type: 'comparisonTable', data: {
@@ -595,7 +595,7 @@ const tenant = {
         }, styleOverrides: lightTokens },
         { type: 'collectionList', data: { headline: 'Alle Zimmer und Angebote', collectionKey: 'leistungen', columns: 4, showImage: true, showExcerpt: true, showDate: false, showSortControls: false }, styleOverrides: lightTokens },
         { type: 'faq', data: { headline: 'Fragen zu Zimmern & Angeboten', items: faqItems() }, styleOverrides: lightTokens },
-        sectionCta('Sie müssen noch nicht genau wissen, was passt.', 'Beschreiben Sie kurz Reisezeit, Gäste und Anlass. Wir empfehlen das passende Zimmer.', 'Empfehlung anfragen', '/kontakt'),
+        imCtaSec('Sie müssen noch nicht genau wissen, was passt.', 'Beschreiben Sie kurz Reisezeit, Gäste und Anlass. Wir empfehlen das passende Zimmer.', img('1566073771259-6a8506099945')),
       ],
     },
     {
@@ -603,7 +603,7 @@ const tenant = {
       title: 'Spa',
       seo: pageSeo('Spa und Wellness im Alpenglow Resort Seefeld', 'Ruhiger Spa-Bereich in Seefeld mit Sauna, Pool, Anwendungen und kleinen Auszeit-Paketen im Alpenglow Resort & Spa.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Spa', headline: 'Wärme, Wasser, Ruhe. Nicht mehr.', subline: 'Ein Spa für Menschen, die keinen Wellness-Zirkus suchen.', bgImage: img('1544161515-4ab6ce6db874') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Spa', 'Wärme, Wasser, Ruhe. Nicht mehr.', 'Ein Spa für Menschen, die keinen Wellness-Zirkus suchen.', img('1544161515-4ab6ce6db874'), { hint: 'Täglich 7–21 Uhr · ab 16 Jahren' }),
         { type: 'wellness', data: wellnessData(), styleOverrides: softGreenTokens },
         { type: 'featureShowcase', data: {
           headline: 'Ein Spa, der nicht fordert.',
@@ -639,7 +639,7 @@ const tenant = {
       title: 'Kulinarik',
       seo: pageSeo('Frühstück und Abendkarte im Hotel in Seefeld', 'Regionale Kulinarik im Alpenglow Resort: ruhiges Frühstück, kleine Abendkarte, Tee-Bar und Weine in Seefeld in Tirol.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Kulinarik', headline: 'Gutes Essen muss nicht laut auftreten.', subline: 'Frühstück, kleine Abendkarte und Weine mit Sinn für den Tag.', bgImage: img('1496412705862-e0088f16f791') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Kulinarik', 'Gutes Essen muss nicht laut auftreten.', 'Frühstück, kleine Abendkarte und Weine mit Sinn für den Tag.', img('1496412705862-e0088f16f791'), { secondaryCta: { label: 'Abendkarte ansehen', href: '#karte' } }),
         { type: 'hotelDining', data: diningData(), styleOverrides: lightTokens },
         { type: 'portfolio', data: { badgeText: 'Küche', headline: 'Was morgens und abends auf den Tisch kommt.', subline: 'Keine endlose Karte, sondern gute Anker für den Tag.', projects: [
           { title: 'Bergfrühstück', category: 'morgens', description: 'Brot, Eier, Joghurt, Käse, Obst, Kaffee und ruhige Zeit.', image: img('1496412705862-e0088f16f791'), stats: [{ label: 'Zeit', value: '7:30-10:30' }] },
@@ -658,7 +658,7 @@ const tenant = {
           { question: 'Muss ich für das Abendessen reservieren?', answer: 'Empfohlen, weil unsere Abendkarte bewusst klein geplant ist.' },
           { question: 'Kann ich nur zum Essen kommen?', answer: 'Nach Verfügbarkeit ja, Hausgäste haben aber Vorrang.' },
         ] }, styleOverrides: lightTokens },
-        sectionCta('Ein Abend im Haus?', 'Wenn Sie bei uns essen möchten, schreiben Sie es direkt in die Anfrage. Wir planen den Tisch mit.', 'Tisch mit anfragen', '/kontakt'),
+        imCtaSec('Ein Abend im Haus?', 'Wenn Sie bei uns essen möchten, schreiben Sie es direkt in die Anfrage. Wir planen den Tisch mit.', img('1496412705862-e0088f16f791')),
       ],
     },
     {
@@ -666,7 +666,7 @@ const tenant = {
       title: 'Retreats',
       seo: pageSeo('Retreats und kleine Offsites im Hotel in Seefeld', 'Kleine Retreats, Team-Offsites und private Formate im Alpenglow Resort & Spa in Seefeld mit Raum, Küche und Spa.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Retreats', headline: 'Kleine Gruppen brauchen gute Ordnung.', subline: 'Räume, Zimmer, Essen und Pausen aus einer Hand.', bgImage: img('1497366754035-f200968a6e72') }), styleOverrides: darkSectionTokens() },
+        cineHeroSec('Retreats', 'Kleine Gruppen brauchen gute Ordnung.', 'Räume, Zimmer, Essen und Pausen aus einer Hand.', img('1497366754035-f200968a6e72')),
         { type: 'eventSpaces', data: eventsData(), styleOverrides: lightTokens },
         { type: 'processSteps', data: { badgeText: 'Ablauf', headline: 'So planen wir ein kleines Format.', steps: [
           { icon: 'Users', title: 'Gruppe verstehen', text: 'Personen, Ziele, Energielevel und gewünschte Ruhe klären.' },
@@ -700,7 +700,7 @@ const tenant = {
       title: 'Über uns',
       seo: pageSeo('Über Alpenglow Resort & Spa in Seefeld', 'Über das Alpenglow Resort & Spa: Gastgeber, Hausgeschichte, Werte und Team des Boutique-Hotels in Seefeld.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Über uns', headline: 'Wir mögen Häuser, die nicht schreien.', subline: 'Ein paar Menschen, ein alter Ort, viele bewusste Entscheidungen.', bgImage: img('1519681393784-d120267933ba') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Über uns', 'Wir mögen Häuser, die nicht schreien.', 'Ein paar Menschen, ein alter Ort, viele bewusste Entscheidungen.', img('1519681393784-d120267933ba')),
         { type: 'story', data: storyData(), styleOverrides: lightTokens },
         { type: 'textImage', data: { badge: 'Haltung', headline: 'Gastgeben heißt für uns: gut vorbereiten und dann Raum lassen.', text: `${p('Wir fragen lieber einmal mehr vor der Anreise, damit vor Ort weniger erklärt werden muss. Ob Zimmerlage, Frühstückszeit, Allergie, Spa-Wunsch oder Anreise: Ein guter Aufenthalt beginnt lange vor dem Check-in.')}${p('Unser Haus ist nicht auf maximale Auslastung optimiert, sondern auf Wiederkommen. Das merkt man an kleinen Dingen: genug Personal beim Frühstück, klare Wege, wenig Lärm und eine Rezeption, die erreichbar bleibt.')}`, image: img('1500534314209-a25ddb2bd429'), imageAlt: 'Alpenglow Resort am Waldrand', layout: 'image-left', items: [
           { icon: 'ShieldCheck', title: 'klar vorbereitet', text: 'Wünsche und Besonderheiten stehen vor Anreise im Team.' },
@@ -730,7 +730,7 @@ const tenant = {
           { src: img('1544161515-4ab6ce6db874'), alt: 'Spa-Bereich', caption: 'Spa' },
           { src: img('1496412705862-e0088f16f791'), alt: 'Frühstück', caption: 'Frühstück' },
         ] }, styleOverrides: lightTokens },
-        sectionCta('Lernen Sie uns vor der Buchung kennen.', 'Eine kurze Nachricht reicht oft, damit wir ehrlich sagen können, ob unser Haus zu Ihrem Aufenthalt passt.', 'Direkt schreiben', '/kontakt'),
+        imCtaSec('Lernen Sie uns vor der Buchung kennen.', 'Eine kurze Nachricht reicht oft, damit wir ehrlich sagen können, ob unser Haus zu Ihrem Aufenthalt passt.', img('1519681393784-d120267933ba')),
       ],
     },
     {
@@ -738,7 +738,7 @@ const tenant = {
       title: 'Kontakt',
       seo: pageSeo('Kontakt und Direktanfrage Alpenglow Resort Seefeld', 'Kontakt zum Alpenglow Resort & Spa in Seefeld: Direktanfrage, Telefon, E-Mail, Adresse, Anreise und Rezeption.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Kontakt', headline: 'Schreiben Sie uns lieber direkt.', subline: 'Dann können wir ehrlich sagen, welches Zimmer und welcher Zeitraum passen.', bgImage: img('1500534314209-a25ddb2bd429') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Kontakt', 'Schreiben Sie uns lieber direkt.', 'Dann können wir ehrlich sagen, welches Zimmer und welcher Zeitraum passen.', img('1500534314209-a25ddb2bd429'), { primaryCta: { label: 'Jetzt anrufen', href: 'tel:+43521248190' }, secondaryCta: { label: 'E-Mail schreiben', href: 'mailto:servus@alpenglow-seefeld.at' } }),
         { type: 'contact', data: { headline: 'Direktanfrage senden', subline: 'Nennen Sie Zeitraum, Personenanzahl und was Ihnen wichtig ist. Wir antworten persönlich.', formEnabled: true, infoCards: contactInfoCards(), mapEmbedUrl: 'https://www.google.com/maps?q=M%C3%B6serer%20Stra%C3%9Fe%2018%2C%206100%20Seefeld%20in%20Tirol&output=embed' }, styleOverrides: lightTokens },
         { type: 'location', data: { headline: 'Seefeld, Waldrand, kurze Wege.', subline: 'Ruhig genug für Rückzug, nah genug für Bahnhof, Ortskern und Wege in die Berge.', addressText: 'Möserer Straße 18, 6100 Seefeld in Tirol', mapEmbedUrl: 'https://www.google.com/maps?q=M%C3%B6serer%20Stra%C3%9Fe%2018%2C%206100%20Seefeld%20in%20Tirol&output=embed', image: img('1500534314209-a25ddb2bd429'), transportItems: [
           { icon: 'Train', label: 'Bahnhof Seefeld', value: 'ca. 7 Minuten per Taxi' },
@@ -780,7 +780,7 @@ const tenant = {
           { question: 'Kann ich Fragen zu einem Beitrag stellen?', answer: 'Ja, am besten per E-Mail oder direkt in der Aufenthaltsanfrage.' },
           { question: 'Wie oft erscheinen Beiträge?', answer: 'Unregelmäßig, aber bewusst. Lieber wenige gute Notizen als Pflichtcontent.' },
         ] }, styleOverrides: lightTokens },
-        sectionCta('Lieber selbst ankommen als lesen?', 'Dann schicken Sie uns Zeitraum und Wünsche. Wir melden uns mit einer Empfehlung.', 'Aufenthalt anfragen', '/kontakt'),
+        imCtaSec('Lieber selbst ankommen als lesen?', 'Dann schicken Sie uns Zeitraum und Wünsche. Wir melden uns mit einer Empfehlung.', img('1500534314209-a25ddb2bd429')),
       ],
     },
     {
@@ -826,6 +826,53 @@ function sectionCta(headline, subline, label, href) {
       ctaPrimary: { label, href, icon: 'ArrowRight' },
     },
     styleOverrides: darkSectionTokens(C.forest),
+  };
+}
+
+function edHeroSec(eyebrow, headline, text, image, opts = {}) {
+  return {
+    type: 'editorialHero',
+    data: {
+      eyebrow,
+      headline,
+      text: `<p>${text}</p>`,
+      imagePrimary: image,
+      ...(opts.imageSecondary ? { imageSecondary: opts.imageSecondary } : {}),
+      primaryCta: opts.primaryCta || { label: 'Aufenthalt anfragen', href: '/kontakt' },
+      ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
+      ...(opts.hint ? { hint: opts.hint } : {}),
+    },
+  };
+}
+
+function cineHeroSec(eyebrow, headline, subline, image, facts) {
+  return {
+    type: 'cinematicHero',
+    data: {
+      eyebrow,
+      headline,
+      subline,
+      image,
+      overlay: 'rgba(15,32,28,0.56)',
+      align: 'left',
+      primaryCta: { label: 'Aufenthalt anfragen', href: '/kontakt' },
+      ...(facts ? { facts } : {}),
+    },
+  };
+}
+
+function imCtaSec(headline, subline, image) {
+  return {
+    type: 'immersiveCtaBanner',
+    data: {
+      badge: 'Direkt fragen',
+      headline,
+      subline,
+      image,
+      overlay: 'rgba(15,32,28,0.62)',
+      primaryCta: { label: 'Aufenthalt anfragen', href: '/kontakt' },
+      secondaryCta: { label: 'Telefon: +43 5212 48190', href: 'tel:+43521248190' },
+    },
   };
 }
 

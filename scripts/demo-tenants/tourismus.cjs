@@ -456,7 +456,7 @@ const tenant = {
       title: 'Erlebnisse',
       seo: { metaTitle: 'Erlebnisse in Mittenwald und Karwendel', metaDescription: 'Familienrunden, Genussrouten, Winterwege und aussichtsreiche Tage rund um Mittenwald - klar beschrieben und saisonal eingeordnet.' },
       sections: [
-        { type: 'collectionHero', data: collectionHero({ category: 'Erlebnisse', headline: 'Nicht jede Idee muss ein Gipfel sein.', subline: 'Gute Urlaubstage koennen leicht, ruhig, kulturell oder sehr frueh beginnen.', bgImage: img('1501785888041-af3ef285b470') }), styleOverrides: darkSectionTokens() },
+        cineHeroSec('Erlebnisse', 'Nicht jede Idee muss ein Gipfel sein.', 'Gute Urlaubstage koennen leicht, ruhig, kulturell oder sehr frueh beginnen.', img('1501785888041-af3ef285b470'), [ { value: '32', label: 'kuratierte Erlebnisse' }, { value: '4', label: 'Jahreszeiten' }, { value: '1', label: 'ehrliche Empfehlung' } ]),
         { type: 'servicesGrid', data: { badgeText: 'Auswahl', headline: 'Vier Einstiege fuer Ihren Reisetag.', subline: 'Von Familie bis Winterruhe: jedes Erlebnis hat eine klare Rolle.', ctaLabel: 'Reiseidee fragen', ctaHref: '/kontakt', manualCards: experienceCards() }, styleOverrides: lightTokens },
         { type: 'experienceGrid', data: { headline: 'Erlebnisse mit Kontext.', subline: 'Dauer, Zielgruppe und Stimmung stehen direkt dabei.', items: routeItems().map((r) => ({ title: r.title, text: r.text, image: r.image, category: r.difficultyLabel, durationLabel: r.durationLabel, priceLabel: r.lengthLabel, cta: r.cta })) }, styleOverrides: sandTokens },
         { type: 'comparisonTable', data: { badge: 'Einordnung', headline: 'Welches Erlebnis passt zu welchem Tag?', text: 'Eine erste Orientierung, bevor wir konkret planen.', columns: [{ label: 'Familie' }, { label: 'Aktiv' }, { label: 'Ruhig' }], rows: [
@@ -467,7 +467,7 @@ const tenant = {
         ], highlightCol: 0 }, styleOverrides: lightTokens },
         { type: 'collectionList', data: { headline: 'Alle Erlebnisse', subline: 'Mit Details, Hinweisen und passenden Alternativen.', collectionKey: 'erlebnisse', columns: 4, showImage: true, showExcerpt: true, showDate: false, showSortControls: false }, styleOverrides: greenTokens },
         { type: 'faq', data: { headline: 'Erlebnisse: gut zu wissen', items: faqItems() }, styleOverrides: lightTokens },
-        sharedCta(),
+        imCtaSec('Welcher Tag darf es werden?', 'Beschreiben Sie kurz, wie Sie reisen. Wir antworten mit zwei, drei Ideen statt einer endlosen Liste.', img('1501785888041-af3ef285b470')),
       ],
     },
     {
@@ -475,7 +475,7 @@ const tenant = {
       title: 'Routen',
       seo: { metaTitle: 'Routen rund um Mittenwald', metaDescription: 'Routen mit Laenge, Dauer, Schwierigkeit, Einkehr und Rueckweg rund um Mittenwald, Lautersee, Ferchensee und Kranzberg.' },
       sections: [
-        { type: 'collectionHero', data: collectionHero({ category: 'Routen', headline: 'Routen, die vor Ort funktionieren.', subline: 'Nicht nur schoen auf der Karte, sondern realistisch fuer Wetter, Zeit und Kondition.', bgImage: img('1500534314209-a25ddb2bd429') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Routen', 'Routen, die vor Ort funktionieren.', 'Nicht nur schoen auf der Karte, sondern realistisch fuer Wetter, Zeit und Kondition.', img('1500534314209-a25ddb2bd429'), { secondaryCta: { label: 'Saison pruefen', href: '/saison' } }),
         { type: 'tourRoutes', data: { headline: 'Ausgewaehlte Routen.', subline: 'Kurz, konkret und mit den wichtigsten Eckdaten.', routes: routeItems() }, styleOverrides: lightTokens },
         { type: 'visitorInfo', data: { headline: 'Was in jeder Route mitgeprueft wird.', subline: 'Damit der Tag nicht an Kleinigkeiten scheitert.', introText: 'Wir beschreiben Wege so, dass Sie unterwegs weniger interpretieren muessen.', blocks: [
           { title: 'Startpunkt', text: 'Wo Sie gut beginnen und wie Sie ohne Umweg hinkommen.', icon: 'MapPin', items: ['Bahnhof', 'Parkplatz', 'Bus'] },
@@ -503,7 +503,7 @@ const tenant = {
       title: 'Orte',
       seo: { metaTitle: 'Orte und Karte rund um Mittenwald', metaDescription: 'Lautersee, Ferchensee, Kranzberg und Mittenwald mit lokaler Einordnung, Distanzen und Tipps fuer gute Zeitfenster.' },
       sections: [
-        { type: 'collectionHero', data: collectionHero({ category: 'Orte', headline: 'Manche Orte brauchen weniger Programm.', subline: 'Wir zeigen, wann sie wirken, wie Sie hinkommen und was in der Naehe Sinn ergibt.', bgImage: img('1519451241324-20b4ea2c4220') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Orte', 'Manche Orte brauchen weniger Programm.', 'Wir zeigen, wann sie wirken, wie Sie hinkommen und was in der Naehe Sinn ergibt.', img('1519451241324-20b4ea2c4220')),
         { type: 'placesMap', data: { badgeText: 'Karte', headline: 'Orte mit echter Einordnung.', subline: 'Nicht jeder Punkt auf der Karte ist fuer jeden Tag gleich gut.', mapEmbedUrl: 'https://www.google.com/maps?q=Mittenwald%2C%20Karwendel&output=embed', places: destinationHighlights().map((d, index) => ({ ...d, distanceLabel: ['2 km vom Zentrum', '3 km vom Bahnhof', 'im Ortskern', '6 km Richtung Elmau'][index], address: ['Lautersee, Mittenwald', 'Kranzberg, Mittenwald', 'Obermarkt, Mittenwald', 'Ferchensee, Mittenwald'][index] })), ctaPrimary: { label: 'Ort passend planen', href: '/kontakt' } }, styleOverrides: lightTokens },
         { type: 'destinationHighlights', data: { badgeText: 'Highlights', headline: 'Vier Orte, vier unterschiedliche Rollen.', subline: 'See, Aussicht, Kultur und Winterruhe sind keine Konkurrenz - sie passen zu unterschiedlichen Tagen.', items: destinationHighlights(), ctaPrimary: { label: 'Reiseidee fragen', href: '/kontakt' } }, styleOverrides: sandTokens },
         { type: 'portfolio', data: { badgeText: 'Bilder', headline: 'So sieht die Region nicht im Prospekt, sondern am Tag aus.', subline: 'Ein paar Eindruecke fuer Licht, Wege und Stimmung.', projects: [
@@ -525,7 +525,7 @@ const tenant = {
       title: 'Saison',
       seo: { metaTitle: 'Saison-Tipps fuer Mittenwald und Karwendel', metaDescription: 'Fruehjahr, Sommer, Herbst und Winter rund um Mittenwald: welche Wege passen, worauf man achten sollte und wann Alternativen besser sind.' },
       sections: [
-        { type: 'collectionHero', data: collectionHero({ category: 'Saison', headline: 'Der gleiche Weg ist nie derselbe Tag.', subline: 'Jahreszeit, Wetter, Licht und Andrang veraendern jede Empfehlung.', bgImage: img('1519681393784-d120267933ba') }), styleOverrides: darkSectionTokens() },
+        cineHeroSec('Saison', 'Der gleiche Weg ist nie derselbe Tag.', 'Jahreszeit, Wetter, Licht und Andrang veraendern jede Empfehlung.', img('1519681393784-d120267933ba')),
         { type: 'seasonTeaser', data: { headline: 'Vier Jahreszeiten, vier Planungslogiken.', subline: 'Wir ordnen nicht nur Monate, sondern echte Bedingungen ein.', seasons: seasons() }, styleOverrides: lightTokens },
         { type: 'eventsCalendar', data: { headline: 'Saisonale Formate.', subline: 'Kleine, konkrete Anlaesse statt Dauerbespielung.', events: events() }, styleOverrides: sandTokens },
         { type: 'timeline', data: { badge: 'Planungsjahr', headline: 'Was wir wann besonders pruefen.', subline: 'Damit Empfehlungen nicht aus der Zeit fallen.', entries: [
@@ -541,7 +541,7 @@ const tenant = {
           { feature: 'Winter', values: ['mittel', 'gut', 'sehr gut'] },
         ], highlightCol: 2 }, styleOverrides: lightTokens },
         { type: 'faq', data: { headline: 'Saisonfragen', items: faqItems() }, styleOverrides: sandTokens },
-        sharedCta(),
+        imCtaSec('Der richtige Tag ist planbar.', 'Sagen Sie uns Zeitraum und Tempo — wir sagen Ihnen, welcher Tag in welcher Saison wirklich traegt.', img('1519681393784-d120267933ba')),
       ],
     },
     {
@@ -549,7 +549,7 @@ const tenant = {
       title: 'Ueber uns',
       seo: { metaTitle: 'Ueber Karwendel Kompass', metaDescription: 'Karwendel Kompass aus Mittenwald: lokale Routenberatung, Saisonwissen und klare Empfehlungen fuer Gaeste, Familien und Gruppen.' },
       sections: [
-        { type: 'collectionHero', data: collectionHero({ category: 'Ueber uns', headline: 'Wir moegen Tourismus, der leiser hilft.', subline: 'Nicht mehr Programm, sondern bessere Orientierung.', bgImage: img('1519451241324-20b4ea2c4220') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Ueber uns', 'Wir moegen Tourismus, der leiser hilft.', 'Nicht mehr Programm, sondern bessere Orientierung.', img('1519451241324-20b4ea2c4220')),
         { type: 'textImage', data: { badge: 'Haltung', headline: 'Wir zeigen nicht alles. Wir sortieren.', text: `${p('Karwendel Kompass ist ein kleiner Infopunkt fuer Menschen, die ihren Urlaub nicht aus zwanzig Tabs zusammensetzen wollen. Wir hoeren zu, fragen nach und schlagen Wege vor, die wirklich zu Zeit, Wetter und Kondition passen.')}${p('Unser Anspruch ist einfach: Wer mit unserer Empfehlung losgeht, soll unterwegs weniger zweifeln. Deshalb sind Rueckweg, Einkehr, OePNV und Alternative Teil derselben Antwort.')}`, image: img('1527631746610-bca00a040d60'), imageAlt: 'Mittenwald im Karwendel', layout: 'image-left', items: [
           { icon: 'Compass', title: 'regional eng', text: 'Wir bleiben rund um Mittenwald, weil gute Empfehlungen Naehe brauchen.' },
           { icon: 'CloudSun', title: 'saisonal ehrlich', text: 'Ein schoener Plan ist nur gut, wenn er am konkreten Tag funktioniert.' },
@@ -595,7 +595,7 @@ const tenant = {
       title: 'Kontakt',
       seo: { metaTitle: 'Reiseidee anfragen', metaDescription: 'Karwendel Kompass kontaktieren: Zeitraum, Personen, Interessen und Kondition nennen - wir antworten mit konkreter Empfehlung fuer Mittenwald und Karwendel.' },
       sections: [
-        { type: 'collectionHero', data: collectionHero({ category: 'Kontakt', headline: 'Erzaehlen Sie uns kurz, wie der Tag sein soll.', subline: 'Wir antworten mit einer konkreten, ehrlichen Empfehlung.', bgImage: img('1500534314209-a25ddb2bd429') }), styleOverrides: darkSectionTokens() },
+        edHeroSec('Kontakt', 'Erzaehlen Sie uns kurz, wie der Tag sein soll.', 'Wir antworten mit einer konkreten, ehrlichen Empfehlung.', img('1500534314209-a25ddb2bd429'), { primaryCta: { label: 'Nachricht schreiben', href: '#kontakt' } }),
         { type: 'tourismContact', data: { headline: 'Reiseidee senden', subline: 'Zeitraum, Personen, Kondition, Wetterwunsch und Interessen reichen fuer den ersten Vorschlag.', mapEmbedUrl: 'https://www.google.com/maps?q=Obermarkt%2012%2C%2082481%20Mittenwald&output=embed', formEnabled: true, infoCards: contactCards() }, styleOverrides: lightTokens },
         { type: 'contact', data: { badgeText: 'Direktkontakt', headline: 'Wir melden uns persoenlich.', introText: 'Ihre Anfrage landet nicht in einem anonymen Portal. Wir schauen sie mit Ortskenntnis an und antworten konkret.', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: contactCards() }, styleOverrides: sandTokens },
         { type: 'placesMap', data: { badgeText: 'Infopunkt', headline: 'Mittenwald als Ausgangspunkt.', subline: 'Unser Infopunkt liegt nah am Bahnhof und am Obermarkt.', mapEmbedUrl: 'https://www.google.com/maps?q=Obermarkt%2012%2C%2082481%20Mittenwald&output=embed', places: [
@@ -662,6 +662,43 @@ const tenant = {
     },
   ],
 };
+
+function edHeroSec(eyebrow, headline, text, image, opts = {}) {
+  return {
+    type: 'editorialHero',
+    data: {
+      eyebrow, headline, text: `<p>${text}</p>`, imagePrimary: image,
+      ...(opts.imageSecondary ? { imageSecondary: opts.imageSecondary } : {}),
+      primaryCta: opts.primaryCta || { label: 'Reiseidee anfragen', href: '/kontakt' },
+      ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
+      ...(opts.hint ? { hint: opts.hint } : {}),
+    },
+  };
+}
+
+function cineHeroSec(eyebrow, headline, subline, image, facts) {
+  return {
+    type: 'cinematicHero',
+    data: {
+      eyebrow, headline, subline, image,
+      overlay: 'rgba(12,36,48,0.55)', align: 'left',
+      primaryCta: { label: 'Reiseidee anfragen', href: '/kontakt' },
+      ...(facts ? { facts } : {}),
+    },
+  };
+}
+
+function imCtaSec(headline, subline, image) {
+  return {
+    type: 'immersiveCtaBanner',
+    data: {
+      badge: 'Karwendel Kompass', headline, subline, image,
+      overlay: 'rgba(12,36,48,0.6)',
+      primaryCta: { label: 'Reiseidee anfragen', href: '/kontakt' },
+      secondaryCta: { label: 'Routen entdecken', href: '/routen' },
+    },
+  };
+}
 
 function sharedCta() {
   return { type: 'ctaBand', data: { badgeText: 'Karwendel Kompass', headline: 'Lieber passend planen als alles sehen wollen.', subline: 'Sagen Sie uns kurz, wie Sie reisen. Wir sortieren die Region fuer Ihren konkreten Zeitraum.', ctaPrimary: { label: 'Reiseidee anfragen', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens(C.lake) };
