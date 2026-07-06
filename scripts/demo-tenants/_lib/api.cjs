@@ -128,6 +128,7 @@ class Api {
   openingHours(body)  { return this.request('PUT',  '/api/v1/content/opening-hours', body); }
   seoGlobal(body)     { return this.request('PUT',  '/api/v1/content/seo', body); }
   seoPage(id, body)   { return this.request('PUT',  `/api/v1/content/seo/${id}`, body); }
+  i18nConfig(body)    { return this.request('PATCH','/api/v1/content/i18n', body); }
   createPage(body)    { return this.request('POST', '/api/v1/content/pages', body); }
   updatePage(id, body){ return this.request('PUT',  `/api/v1/content/pages/${id}`, body); }
   patchPage(id, body) { return this.request('PATCH',`/api/v1/content/pages/${id}`, body); }

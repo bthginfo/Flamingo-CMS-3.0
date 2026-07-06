@@ -189,6 +189,14 @@ async function run(tenant) {
     log('  wiped', (dbg.pages||[]).length, 'pages and items from', (dbg.collections||[]).length, 'collections');
   }
 
+  // Enable languages BEFORE pages so localized section data validates against
+  // the tenant's locale allow-list. tenant.i18n = { locales:[…], defaultLocale }.
+  if (tenant.i18n && Array.isArray(tenant.i18n.locales) && tenant.i18n.locales.length) {
+    log('PATCH i18n', tenant.i18n.locales.join(','));
+    try { await api.i18nConfig({ enabled: true, locales: tenant.i18n.locales, defaultLocale: tenant.i18n.defaultLocale }); }
+    catch (e) { log('  warn: i18n config failed', e.message); }
+  }
+
   if (tenant.brand)        { log('PUT brand');         await api.brand(tenant.brand); }
   if (tenant.contact)      { log('PUT contact');       await api.contact(tenant.contact); }
   if (tenant.design)       { log('PUT design');        await api.design(tenant.design); }
@@ -236,8 +244,29 @@ async function run(tenant) {
   }
 
   // Navigation + footer come AFTER pages so the slugs they reference exist.
-  if (tenant.navigation) { log('PUT navigation'); await api.navigation(tenant.navigation); }
-  if (tenant.footer)     { log('PUT footer');     await api.footer(tenant.footer); }
+  // The API expects { items, cta:{label,href} } — map the tenant's convenience
+  // ctaLabel/ctaHref shape. Localized variants (navigationI18n / footerI18n =
+  // { en:{…}, es:{…} }) are PUT per locale so the switcher swaps nav + footer.
+  const navBody = (nav) => ({
+    items: nav.items || [],
+    cta: nav.cta || (nav.ctaLabel ? { label: nav.ctaLabel, href: nav.ctaHref || '/kontakt' } : undefined),
+  });
+  if (tenant.navigation) {
+    log('PUT navigation');
+    await api.navigation(navBody(tenant.navigation));
+    for (const [loc, nav] of Object.entries(tenant.navigationI18n || {})) {
+      log('PUT navigation', loc);
+      await api.navigation({ ...navBody(nav), locale: loc });
+    }
+  }
+  if (tenant.footer) {
+    log('PUT footer');
+    await api.footer(tenant.footer);
+    for (const [loc, foot] of Object.entries(tenant.footerI18n || {})) {
+      log('PUT footer', loc);
+      await api.footer({ ...foot, locale: loc });
+    }
+  }
 
   // Collection items.
   if (Array.isArray(tenant.collections)) {
