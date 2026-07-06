@@ -667,6 +667,25 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
       'No placeholder labels like "Mehr erfahren" repeated everywhere; CTAs should be specific to the action.',
       'Use branch-specific sections before generic shared sections when available.',
     ],
+    // The single biggest quality gap of AI-built sites is mechanical repetition:
+    // every page opens with the same hero and closes with the same CTA band.
+    // /validate now emits "variety.*" warnings when this happens — treat them as
+    // must-fix. Build variety in from the start with these rules.
+    varietyRules: [
+      'Rotate the OPENING section type across pages. No hero/opener type should cover more than ~half of the content pages. Cycle through the hero variants available for this industry (e.g. editorialHero, cinematicHero, collectionHero, glowHero, hero).',
+      'Rotate the CLOSING section type. Do not end every page with the same ctaBand — alternate ctaBand, immersiveCtaBanner, faq, contact, ctaSplit.',
+      'Never reuse a headline verbatim across sections. Each headline is unique and specific.',
+      'CTA labels are action-specific and rarely repeated (max ~4 uses of any single label site-wide).',
+      'Vary the middle of each page too: the sequence of section types should differ noticeably page to page, not a fixed template stamped N times.',
+      'Give each page its own hero image; do not reuse one image as the hero of every page.',
+    ],
+    seoRules: [
+      'Set per-page SEO via PUT /api/v1/content/seo/:pageId with { metaTitle, metaDescription }.',
+      'metaTitle max 70 characters, metaDescription max 170 characters — the API rejects longer values with a 400.',
+      'Set a global template via PUT /api/v1/content/seo: { titleTemplate: "%s | <Brand> <City>", defaultTitle, defaultDescription, defaultOgImage, locale }.',
+      'If titleTemplate already appends the brand/city, do NOT repeat the brand name inside each page metaTitle.',
+      'Every metaDescription is unique and reflects that page; include the city/region for local SEO where relevant.',
+    ],
     colorRules: [
       'Global design colors should establish readable defaults for all light sections: sectionBg, cardBg, heading, body, muted, btnBg, btnText, badgeBg, badgeText.',
       'For every image hero or dark/overlay section, set overlayColor/overlayOpacity and section.styleOverrides for --token-heading, --token-body, --token-muted, --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted.',

@@ -135,6 +135,84 @@ export const GET = withApiHandler(async (_req, auth) => {
     }
   }
 
+  // ── Variety / anti-repetition audit ───────────────────────────────────
+  // The most common failure of AI-built sites is mechanical repetition: every
+  // page opens with the same hero type and closes with the same CTA band, and
+  // CTA labels/headlines repeat verbatim. These are warnings (they don't block
+  // publish) but the AI is told to react to warnings, so they drive real
+  // variety instead of a template stamped N times.
+  const LEGAL_SLUGS = new Set(['impressum', 'datenschutz', 'agb', 'widerrufsbelehrung']);
+  const contentPages = allPages.filter((p) => !LEGAL_SLUGS.has(p.slug));
+  const localizedFirst = (data: Record<string, unknown>): Record<string, unknown> => {
+    if (data && data._localized) {
+      const first = Object.entries(data).find(([k]) => k !== '_localized' && /^[a-z]{2}(-[A-Z]{2})?$/.test(k));
+      if (first && first[1] && typeof first[1] === 'object') return first[1] as Record<string, unknown>;
+    }
+    return data;
+  };
+
+  if (contentPages.length >= 4) {
+    const openers: Record<string, number> = {};
+    const closers: Record<string, number> = {};
+    for (const p of contentPages) {
+      const secs = sectionsByPage.get(p.id) || [];
+      if (!secs.length) continue;
+      openers[secs[0].type] = (openers[secs[0].type] || 0) + 1;
+      closers[secs[secs.length - 1].type] = (closers[secs[secs.length - 1].type] || 0) + 1;
+    }
+    const total = contentPages.length;
+    const topOpener = Object.entries(openers).sort((a, b) => b[1] - a[1])[0];
+    const topCloser = Object.entries(closers).sort((a, b) => b[1] - a[1])[0];
+    // More than ~65% of pages sharing one opener/closer type reads as a stamped template.
+    if (topOpener && topOpener[1] > Math.max(3, Math.ceil(total * 0.65))) {
+      contentIssues.push({
+        severity: 'warning',
+        message: `${topOpener[1]} of ${total} content pages open with the same section type "${topOpener[0]}". Vary the opening section across pages.`,
+        location: 'variety.openers',
+        hint: 'Mix hero styles per page — e.g. editorialHero, cinematicHero, collectionHero, glowHero. No opener type should cover more than ~half the pages.',
+      });
+    }
+    if (topCloser && topCloser[1] > Math.max(3, Math.ceil(total * 0.65))) {
+      contentIssues.push({
+        severity: 'warning',
+        message: `${topCloser[1]} of ${total} content pages end with the same section type "${topCloser[0]}". Vary the closing section.`,
+        location: 'variety.closers',
+        hint: 'Alternate closers — e.g. ctaBand, immersiveCtaBanner, faq, contact — so the ending does not feel copy-pasted.',
+      });
+    }
+  }
+
+  // Repeated CTA labels / headlines verbatim across many sections.
+  const ctaLabelCounts: Record<string, number> = {};
+  const headlineCounts: Record<string, number> = {};
+  for (const s of allSections) {
+    const data = localizedFirst((s.data || {}) as Record<string, unknown>);
+    const cta = (data.ctaPrimary || data.primaryCta || data.cta) as { label?: string } | undefined;
+    const label = cta?.label?.trim();
+    if (label) ctaLabelCounts[label] = (ctaLabelCounts[label] || 0) + 1;
+    const headline = typeof data.headline === 'string' ? data.headline.trim() : '';
+    if (headline) headlineCounts[headline] = (headlineCounts[headline] || 0) + 1;
+  }
+  for (const [label, n] of Object.entries(ctaLabelCounts)) {
+    if (n >= 5) {
+      contentIssues.push({
+        severity: 'warning',
+        message: `The CTA label "${label}" is used ${n} times. Make CTAs specific to each section's action.`,
+        location: 'variety.ctaLabels',
+        hint: 'Replace generic repeated CTAs with action-specific labels (e.g. "Zimmer ansehen", "Termin anfragen", "Menü öffnen").',
+      });
+    }
+  }
+  for (const [headline, n] of Object.entries(headlineCounts)) {
+    if (n >= 3) {
+      contentIssues.push({
+        severity: 'warning',
+        message: `The headline "${headline}" appears ${n} times verbatim. Write a distinct headline per section.`,
+        location: 'variety.headlines',
+      });
+    }
+  }
+
   // ── Collections / collection items audit ──────────────────────────────
   const allCollections = await db.select().from(collections).where(eq(collections.tenantId, auth.tenantId));
   const collectionIds = allCollections.map(c => c.id);
