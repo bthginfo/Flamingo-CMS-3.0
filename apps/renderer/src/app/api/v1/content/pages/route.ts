@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
 import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection } from '@/lib/api-utils';
 
@@ -13,6 +13,18 @@ export const POST = withApiHandler(async (req, auth) => {
   const db = getDb();
   const pageId = crypto.randomUUID();
   const normalizedSlug = slug ? normalizeSlug(slug) : normalizeSlug(title);
+
+  // A duplicate slug otherwise surfaces as an opaque 500 from the unique index.
+  // Return a clear 409 so an AI agent knows to update the existing page (PUT
+  // /pages/:id) or choose a different slug instead of blindly retrying.
+  const [clash] = await db.select({ id: pages.id }).from(pages)
+    .where(and(eq(pages.tenantId, auth.tenantId), eq(pages.slug, normalizedSlug))).limit(1);
+  if (clash) {
+    return NextResponse.json({
+      error: `A page with slug "${normalizedSlug}" already exists. Update it with PUT /api/v1/content/pages/${clash.id}, or choose a different slug.`,
+      existingPageId: clash.id,
+    }, { status: 409 });
+  }
 
   // Validate + normalize sections BEFORE inserting the page row. The neon-http
   // driver has no interactive transactions, so a validation 400 AFTER the insert
