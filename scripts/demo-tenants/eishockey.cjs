@@ -3,14 +3,15 @@
 // industry='verein' existiert und PAT_EISHOCKEY gesetzt ist:
 //   PAT_EISHOCKEY=flm_pat_… node -e "const {run}=require('./scripts/demo-tenants/_lib/runner.cjs');const t=require('./scripts/demo-tenants/eishockey.cjs');t.pat=process.env.PAT_EISHOCKEY;run(t)"
 // Inhaltlich identisch zur Code-Demo unter /demo/eishockey.
+// Nur verifizierte, thematisch passende Bilder. Teamlogos leer → Initialen-Wappen.
 const IMG = {
-  arena: 'https://images.unsplash.com/photo-1580692475446-c2fabbbe4c46?auto=format&fit=crop&w=1800&q=80',
-  action: 'https://images.unsplash.com/photo-1552089123-2d26226fc1b8?auto=format&fit=crop&w=1600&q=80',
+  arena: 'https://images.unsplash.com/photo-1607627000458-210e8d2bdb1d?auto=format&fit=crop&w=1800&q=80',
+  action: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?auto=format&fit=crop&w=1600&q=80',
   action2: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?auto=format&fit=crop&w=1600&q=80',
   crowd: 'https://images.unsplash.com/photo-1607627000458-210e8d2bdb1d?auto=format&fit=crop&w=1600&q=80',
-  youth: 'https://images.unsplash.com/photo-1519766304817-4f37bda74a26?auto=format&fit=crop&w=1600&q=80',
-  logoHome: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=200&q=80',
-  logoAway: 'https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=200&q=80',
+  youth: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=1600&q=80',
+  logoHome: '',
+  logoAway: '',
   p1: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&w=500&q=80',
   p2: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80',
   p3: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80',

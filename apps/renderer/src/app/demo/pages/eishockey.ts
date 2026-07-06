@@ -6,14 +6,14 @@ import type { DemoSite } from './types';
 const B = { visible: true, variant: null, container: 'default' as const, spacingTop: 'l' as const, spacingBottom: 'l' as const, anchorId: null };
 const FULL = { ...B, container: 'full' as const, spacingTop: 'none' as const, spacingBottom: 'none' as const };
 
+// Nur verifizierte, thematisch passende Unsplash-Bilder. Teamlogos bewusst
+// leer → die Section rendert saubere Initialen-Wappen statt Fake-Logos.
 const IMG = {
-  arena: 'https://images.unsplash.com/photo-1580692475446-c2fabbbe4c46?auto=format&fit=crop&w=1800&q=80',
-  action: 'https://images.unsplash.com/photo-1552089123-2d26226fc1b8?auto=format&fit=crop&w=1600&q=80',
+  arena: 'https://images.unsplash.com/photo-1607627000458-210e8d2bdb1d?auto=format&fit=crop&w=1800&q=80', // Flutlicht-Atmosphäre
+  action: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?auto=format&fit=crop&w=1600&q=80', // Eishockey-Tor auf dem Eis
   action2: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?auto=format&fit=crop&w=1600&q=80',
   crowd: 'https://images.unsplash.com/photo-1607627000458-210e8d2bdb1d?auto=format&fit=crop&w=1600&q=80',
-  youth: 'https://images.unsplash.com/photo-1519766304817-4f37bda74a26?auto=format&fit=crop&w=1600&q=80',
-  logoHome: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=200&q=80',
-  logoAway: 'https://images.unsplash.com/photo-1543357480-c60d40007a3f?auto=format&fit=crop&w=200&q=80',
+  youth: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=1600&q=80', // Nachwuchs-Team
   p1: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&w=500&q=80',
   p2: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80',
   p3: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80',
@@ -83,7 +83,7 @@ const nextMatch = {
     eyebrow: 'Nächstes Heimspiel', headline: 'Komm in die Arena!',
     competition: 'Oberliga Süd', dateLabel: 'Sa 12.10. · 19:30 Uhr',
     homeTeam: 'Donau Panther', awayTeam: 'EV Landshut',
-    homeLogo: IMG.logoHome, awayLogo: IMG.logoAway,
+    homeLogo: '', awayLogo: '',
     venue: 'Saturn-Arena Ingolstadt · Jahnstraße 10',
     image: IMG.arena,
     primaryCta: { label: 'Tickets sichern', href: '/demo/eishockey/spielplan' },

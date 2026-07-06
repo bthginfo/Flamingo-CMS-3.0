@@ -11,6 +11,27 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
 const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 
+// Initials from a team name (e.g. "EHC Donau Panther" → "EDP", "EV Landshut" → "EL").
+function initials(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return '?';
+  if (words.length === 1) return words[0].slice(0, 3).toUpperCase();
+  return words.map((w) => w[0]).join('').slice(0, 3).toUpperCase();
+}
+
+// Team crest: real logo if provided, otherwise a clean monogram badge — much
+// better than a random photo standing in for a logo.
+function TeamCrest({ logo, name, editKey }: { logo: string; name: string; editKey: string }) {
+  if (logo) {
+    return <img data-edit-image={editKey} src={logo} alt={name} className="h-16 w-16 object-contain md:h-20 md:w-20" />;
+  }
+  return (
+    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-lg font-black tracking-tight text-[color:var(--token-badge-text)] ring-1 ring-[var(--token-card-border)] md:h-20 md:w-20 md:text-2xl" aria-hidden>
+      {initials(name)}
+    </div>
+  );
+}
+
 // ── NextMatchHero — großer Aufmacher mit dem nächsten Spiel ──────────────────
 type MatchCta = { label?: string; href?: string };
 export function NextMatchHeroSection({ data }: Props) {
@@ -38,15 +59,16 @@ export function NextMatchHeroSection({ data }: Props) {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mx-auto mt-10 grid max-w-3xl grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-xl md:gap-8 md:p-10">
           <div className="flex flex-col items-center gap-3">
-            {homeLogo && <img data-edit-image="homeLogo" src={homeLogo} alt={homeTeam} className="h-16 w-16 object-contain md:h-20 md:w-20" />}
+            <TeamCrest logo={homeLogo} name={homeTeam} editKey="homeLogo" />
             <span className="text-sm font-bold text-[color:var(--token-heading)] md:text-lg" data-edit-path="homeTeam">{homeTeam}</span>
           </div>
           <div className="text-center">
-            <span className="block text-3xl font-black text-[color:var(--token-accent)] md:text-5xl">VS</span>
+            <span className="block text-2xl font-black text-[color:var(--token-accent)] md:text-4xl">:</span>
+            <span className="mt-1 block text-[11px] font-bold uppercase tracking-widest text-[color:var(--token-muted)]">vs</span>
             {dateLabel && <span className="mt-2 block text-xs font-medium text-[color:var(--token-muted)] md:text-sm" data-edit-path="dateLabel">{dateLabel}</span>}
           </div>
           <div className="flex flex-col items-center gap-3">
-            {awayLogo && <img data-edit-image="awayLogo" src={awayLogo} alt={awayTeam} className="h-16 w-16 object-contain md:h-20 md:w-20" />}
+            <TeamCrest logo={awayLogo} name={awayTeam} editKey="awayLogo" />
             <span className="text-sm font-bold text-[color:var(--token-heading)] md:text-lg" data-edit-path="awayTeam">{awayTeam}</span>
           </div>
         </motion.div>
@@ -80,16 +102,20 @@ export function MatchScheduleSection({ data }: Props) {
         </div>
         <div className="overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm">
           {matches.map((m, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[var(--token-card-border)] px-5 py-4 last:border-b-0" data-edit-collection="matches" data-edit-index={i}>
-              <div className="flex w-24 shrink-0 items-center gap-2 text-xs font-semibold text-[color:var(--token-muted)]"><CalendarDays size={14} className="text-[color:var(--token-icon)]" /><span data-edit-path="dateLabel">{m.dateLabel || ''}</span></div>
-              {m.competition && <span className="rounded-full bg-[var(--token-badge-bg)] px-2.5 py-0.5 text-[11px] font-semibold text-[color:var(--token-badge-text)]" data-edit-path="competition">{m.competition}</span>}
-              <div className="flex min-w-0 flex-1 items-center justify-center gap-2 text-sm font-bold text-[color:var(--token-heading)]">
-                <span className="truncate text-right" data-edit-path="homeTeam">{m.homeTeam || ''}</span>
-                <span className="shrink-0 rounded bg-[var(--token-section-bg-alt)] px-2 py-0.5 text-[color:var(--token-accent)]">{m.result || 'vs'}</span>
-                <span className="truncate" data-edit-path="awayTeam">{m.awayTeam || ''}</span>
+            <div key={i} className="grid grid-cols-[3.25rem_1fr_auto] items-center gap-3 border-b border-[var(--token-card-border)] px-4 py-4 transition-colors last:border-b-0 hover:bg-[var(--token-section-bg-alt)] sm:grid-cols-[5.5rem_1fr_5.5rem] sm:px-5" data-edit-collection="matches" data-edit-index={i}>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 text-sm font-bold text-[color:var(--token-heading)]"><CalendarDays size={13} className="shrink-0 text-[color:var(--token-icon)]" /><span data-edit-path="dateLabel">{m.dateLabel || ''}</span></div>
+                {m.competition && <div className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-wide text-[color:var(--token-muted)]" data-edit-path="competition">{m.competition}</div>}
               </div>
-              {m.homeGame !== undefined && <span className={`rounded px-2 py-0.5 text-[11px] font-bold uppercase ${m.homeGame ? 'bg-[var(--token-accent)]/15 text-[color:var(--token-accent)]' : 'text-[color:var(--token-muted)]'}`}>{m.homeGame ? 'Heim' : 'Auswärts'}</span>}
-              {m.ticketHref && <a href={m.ticketHref} className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--token-icon)] hover:underline"><Ticket size={13} />Tickets</a>}
+              <div className="flex min-w-0 items-center justify-center gap-2 sm:gap-3">
+                <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-[color:var(--token-heading)]" data-edit-path="homeTeam">{m.homeTeam || ''}</span>
+                <span className="shrink-0 rounded-md bg-[var(--token-section-bg-alt)] px-2.5 py-1 text-sm font-black tabular-nums text-[color:var(--token-accent)]">{m.result || '–:–'}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-bold text-[color:var(--token-heading)]" data-edit-path="awayTeam">{m.awayTeam || ''}</span>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                {m.homeGame !== undefined && <span className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${m.homeGame ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_15%,transparent)] text-[color:var(--token-accent)]' : 'text-[color:var(--token-muted)]'}`}>{m.homeGame ? 'Heim' : 'Ausw.'}</span>}
+                {m.ticketHref && <a href={m.ticketHref} className="inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--token-icon)] hover:underline"><Ticket size={12} />Tickets</a>}
+              </div>
             </div>
           ))}
         </div>
@@ -159,9 +185,11 @@ export function TeamRosterSection({ data }: Props) {
         <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {players.map((p, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i % 5) * 0.05 }} className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 hover:shadow-xl" data-edit-collection="players" data-edit-index={i}>
-              <div className="relative aspect-[3/4] overflow-hidden bg-[var(--token-section-bg-alt)]">
-                {p.image && <img data-edit-image="image" src={p.image} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />}
-                {p.number && <span className="absolute right-2 top-2 text-3xl font-black text-[color:var(--token-accent)] opacity-90">{p.number}</span>}
+              <div className="relative aspect-[3/4] overflow-hidden bg-[color:color-mix(in_srgb,var(--token-heading)_8%,var(--token-section-bg-alt))]">
+                {p.image
+                  ? <img data-edit-image="image" src={p.image} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  : <div className="flex h-full w-full items-center justify-center"><span className="text-6xl font-black text-[color:color-mix(in_srgb,var(--token-heading)_16%,transparent)]">{p.number || (p.name ? p.name[0] : '?')}</span></div>}
+                {p.number && <span className="absolute right-2 top-2 rounded-md bg-[var(--token-btn-bg)] px-2 py-0.5 text-lg font-black tabular-nums text-[color:var(--token-btn-text)] shadow">{p.number}</span>}
               </div>
               <div className="p-3 text-center">
                 <p className="truncate font-bold text-[color:var(--token-heading)]" data-edit-path="name">{p.name || ''}</p>

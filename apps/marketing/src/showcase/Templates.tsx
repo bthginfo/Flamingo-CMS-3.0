@@ -180,7 +180,7 @@ const TEMPLATES = [
     name: 'Verein & Sport',
     tagline: 'Eishockey · Fußball · Sportverein',
     description: 'Nächstes Spiel, Spielplan, Live-Tabelle, Kader, Sponsoren und Vereinsgeschichte als dynamische Website für Sportvereine.',
-    image: 'https://images.unsplash.com/photo-1580692475446-c2fabbbe4c46?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=800&q=80',
     color: '#dc2626',
     features: ['Nächstes Spiel (Hero)', 'Spielplan & Ergebnisse', 'Live-Tabelle', 'Kader-Übersicht', 'Sponsoren-Wand', 'Vereinsgeschichte'],
     status: 'live' as const,
