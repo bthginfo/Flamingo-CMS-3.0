@@ -385,7 +385,7 @@ const tenant = {
       title: 'Leistungen',
       seo: { metaTitle: 'Tattoo-Stile & Beratung | INK DISTRICT', metaDescription: 'Fine Line, Blackwork, Botanical Tattoos und Cover-up Beratung bei INK DISTRICT Berlin.' },
       sections: [
-        collectionHero('Stile, Beratung und saubere Entscheidungen.', 'Unsere Leistungen sind keine Paketliste. Sie helfen, die richtige Richtung für Ihr Motiv zu finden.', '1611501275019-9b5cda994e8d'),
+        section('editorialHero', { eyebrow: 'Leistungen', headline: 'Stile, Beratung und saubere Entscheidungen.', text: '<p>Unsere Leistungen sind keine Paketliste. Sie helfen, die richtige Richtung für Ihr Motiv zu finden.</p>', imagePrimary: img('1611501275019-9b5cda994e8d'), primaryCta: { label: 'Motiv anfragen', href: '/kontakt' }, secondaryCta: { label: 'Artists ansehen', href: '/artists' } }),
         section('servicesGrid', { headline: 'Was wir anbieten', subline: 'Jede Karte führt zu einer Detailseite mit mehr Kontext.', manualCards: services.map((s, index) => ({ title: s.title, text: s.excerpt, icon: ['PenTool', 'CircleDot', 'Leaf', 'RefreshCw'][index], mediaType: 'icon', href: `/c/leistungen/${s.slug}` })) }),
         section('comparisonTable', { badge: 'Orientierung', headline: 'Welcher Stil passt wozu?', text: 'Eine erste Orientierung. Die endgültige Entscheidung treffen wir anhand von Motiv und Körperstelle.', columns: [{ label: 'Fine Line' }, { label: 'Blackwork' }, { label: 'Botanical' }], highlightCol: 0, rows: [
           { feature: 'Wirkung', values: ['fein', 'grafisch', 'organisch'] },
@@ -399,7 +399,7 @@ const tenant = {
           { label: 'Halber Tag', value: 'ab 420 €', note: 'je nach Aufwand' },
           { label: 'Cover-up', value: 'nach Beratung', note: 'Laser ggf. empfohlen' },
         ] }, lightTokens),
-        section('ctaBand', { badgeText: 'Motiv prüfen', headline: 'Nicht sicher, welcher Stil passt?', subline: 'Schick uns Deine Idee. Wir sortieren sie gemeinsam.', ctaPrimary: { label: 'Beratung anfragen', href: '/kontakt', icon: 'Send' } }, darkTokens),
+        section('immersiveCtaBanner', { badge: 'Motiv prüfen', headline: 'Nicht sicher, welcher Stil passt?', subline: 'Schick uns Deine Idee. Wir sortieren sie gemeinsam.', image: img('1611501275019-9b5cda994e8d'), overlay: 'rgba(10,10,12,0.64)', primaryCta: { label: 'Beratung anfragen', href: '/kontakt' } }),
       ],
     },
     {
@@ -407,7 +407,7 @@ const tenant = {
       title: 'Artists',
       seo: { metaTitle: 'Artists | INK DISTRICT Berlin', metaDescription: 'Das Team von INK DISTRICT: Fine Line, Blackwork und Botanical Tattoos in Berlin-Kreuzberg.' },
       sections: [
-        collectionHero('Drei Artists, drei Handschriften.', 'Wir matchen Motiv und Artist bewusst, statt jede Anfrage irgendwo einzusortieren.', '1542727365-19732a80dcfd'),
+        section('cinematicHero', { eyebrow: 'Artists', headline: 'Drei Artists, drei Handschriften.', subline: 'Wir matchen Motiv und Artist bewusst, statt jede Anfrage irgendwo einzusortieren.', image: img('1542727365-19732a80dcfd'), overlay: 'rgba(10,10,12,0.6)', align: 'left', primaryCta: { label: 'Motiv anfragen', href: '/kontakt' }, facts: [ { value: '3', label: 'Artists' }, { value: '12+', label: 'Jahre Erfahrung' }, { value: '100%', label: 'Custom-Arbeiten' } ] }),
         section('artistGrid', { headline: 'Wer bei uns sticht', subline: 'Jede Person hat einen klaren Schwerpunkt.', artists: [
           { name: 'Lea Novak', image: img('1494790108377-be9c29b29330', 900), styles: ['Fine Line', 'Botanical'], bio: 'Lea arbeitet ruhig, fein und mit viel Blick für Körperlinien.', instagram: '@lea.inkdistrict', href: '/kontakt' },
           { name: 'Miro Sander', image: img('1500648767791-00dcc994a43e', 900), styles: ['Blackwork', 'Graphic'], bio: 'Miro denkt in Flächen, Kanten und Negativraum.', instagram: '@miro.blackwork', href: '/kontakt' },
@@ -438,7 +438,7 @@ const tenant = {
           { src: img('1598371839696-5c5bb00bdc28', 1000), alt: 'Botanical Tattoo Motiv', caption: 'Botanical' },
           { src: img('1542727365-19732a80dcfd', 1000), alt: 'Tattoo Studio Detail', caption: 'Vorbereitung' },
         ] }, smokeTokens),
-        section('ctaBand', { badgeText: 'Eigenes Motiv?', headline: 'Portfolio inspiriert. Beratung entscheidet.', subline: 'Senden Sie uns gern Referenzen, aber erwarten Sie keine Kopie.', ctaPrimary: { label: 'Custom anfragen', href: '/kontakt', icon: 'Send' } }, darkTokens),
+        section('immersiveCtaBanner', { badge: 'Eigenes Motiv?', headline: 'Portfolio inspiriert. Beratung entscheidet.', subline: 'Senden Sie uns gern Referenzen, aber erwarten Sie keine Kopie.', image: img('1565058379802-bbe93b2f703a'), overlay: 'rgba(10,10,12,0.64)', primaryCta: { label: 'Custom anfragen', href: '/kontakt' } }),
       ],
     },
     {
@@ -446,7 +446,7 @@ const tenant = {
       title: 'Pflege',
       seo: { metaTitle: 'Tattoo Nachsorge | INK DISTRICT', metaDescription: 'Klare Nachsorgehinweise für Tattoos: Reinigung, Pflege, Heilung und Warnzeichen.' },
       sections: [
-        collectionHero('Gute Heilung beginnt vor dem Termin.', 'Nachsorge ist einfacher, wenn vorher klar ist, was die Haut braucht.', '1598371839696-5c5bb00bdc28'),
+        section('editorialHero', { eyebrow: 'Nachsorge', headline: 'Gute Heilung beginnt vor dem Termin.', text: '<p>Nachsorge ist einfacher, wenn vorher klar ist, was die Haut braucht.</p>', imagePrimary: img('1598371839696-5c5bb00bdc28'), primaryCta: { label: 'Frage stellen', href: '/kontakt' }, hint: 'Bei Rötungen oder Unsicherheit: lieber einmal zu früh melden.' }),
         section('aftercareSteps', { headline: 'Die ersten Tage', subline: 'Konkret, ruhig und ohne Produkt-Chaos.', steps: [
           { title: 'Folie nach Anleitung entfernen', description: 'Nicht früher, nicht später aus Unsicherheit.' },
           { title: 'Lauwarm reinigen', description: 'Sanft, kurz und ohne Duftstoffe.' },
@@ -468,7 +468,7 @@ const tenant = {
       title: 'Über uns',
       seo: { metaTitle: 'Über INK DISTRICT | Tattoo-Studio Berlin', metaDescription: 'INK DISTRICT ist ein ruhiges Tattoo-Studio in Berlin-Kreuzberg mit Fokus auf Beratung, Hygiene, Fine Line und Blackwork.' },
       sections: [
-        collectionHero('Ein Studio, das lieber sauber plant als laut verkauft.', 'INK DISTRICT ist aus der Idee entstanden, Tattoo-Beratung ruhiger, ehrlicher und besser nachvollziehbar zu machen.', '1542727365-19732a80dcfd'),
+        section('editorialHero', { eyebrow: 'Studio', headline: 'Ein Studio, das lieber sauber plant als laut verkauft.', text: '<p>INK DISTRICT ist aus der Idee entstanden, Tattoo-Beratung ruhiger, ehrlicher und besser nachvollziehbar zu machen.</p>', imagePrimary: img('1542727365-19732a80dcfd'), imageSecondary: img('1565058379802-bbe93b2f703a'), primaryCta: { label: 'Kennenlernen', href: '/kontakt' } }),
         section('textImage', {
           badge: 'Studio-Story',
           headline: 'Keine Laufkundschaft-Atmosphäre. Keine Motiv-Hektik.',
@@ -500,7 +500,7 @@ const tenant = {
           { eyebrow: '03', title: 'Sauberkeit ist sichtbar', text: 'Hygiene ist kein Backstage-Thema, sondern Teil der Beratung.' },
           { eyebrow: '04', title: 'Heilung zählt mit', text: 'Das Tattoo ist erst gut, wenn es sauber verheilt.' },
         ], cta: { label: 'Anfrage senden', href: '/kontakt' } }, lightTokens),
-        section('ctaBand', { badgeText: 'Studio kennenlernen', headline: 'Passt unsere Haltung zu Ihrem Motiv?', subline: 'Dann schreiben Sie uns. Wenn nicht, sagen wir es ebenfalls ehrlich.', ctaPrimary: { label: 'Motiv anfragen', href: '/kontakt', icon: 'Send' } }, darkTokens),
+        section('immersiveCtaBanner', { badge: 'Studio kennenlernen', headline: 'Passt unsere Haltung zu Ihrem Motiv?', subline: 'Dann schreiben Sie uns. Wenn nicht, sagen wir es ebenfalls ehrlich.', image: img('1542727365-19732a80dcfd'), overlay: 'rgba(10,10,12,0.64)', primaryCta: { label: 'Motiv anfragen', href: '/kontakt' } }),
       ],
     },
     {

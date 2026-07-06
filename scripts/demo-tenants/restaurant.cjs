@@ -417,7 +417,7 @@ const tenant = {
         metaDescription: 'Speisekarte und Angebote von Salzkorn in Hamburg: Abendkarte, Samstags-Lunch, Weinabende und private Feiern.',
       },
       sections: [
-        sectionCollectionHero('Speisekarte, aber ohne Überforderung', 'Kleine Karte, klare Herkunft, Gerichte mit genug Ruhe in der Vorbereitung.', '1514933651103-005eec06c04b', 'Speisekarte'),
+        edHeroSec('Speisekarte', 'Speisekarte, aber ohne Überforderung', 'Kleine Karte, klare Herkunft, Gerichte mit genug Ruhe in der Vorbereitung.', '1514933651103-005eec06c04b', { secondaryCta: { label: 'Weinabende ansehen', href: '/events' } }),
         { type: 'servicesGrid', data: { badgeText: 'Angebote', headline: 'Wählen Sie nicht aus Masse, sondern aus Haltung', subline: 'Unsere Formate sind bewusst übersichtlich — und genau deshalb gut planbar.', ctaLabel: 'Tisch anfragen', ctaHref: '/reservierung', manualCards: offerCards() } },
         { type: 'menu', data: menuData('Auszug aus der aktuellen Karte', 'Die genaue Karte wechselt je nach Saison, Markt und Serviceplanung.') },
         { type: 'signatureDishes', data: { headline: 'Signatures aus Küche und Weinkeller', dishes: [
@@ -433,7 +433,7 @@ const tenant = {
         ], highlightCol: 0 } },
         { type: 'collectionList', data: { headline: 'Alle Angebote im Detail', subline: 'Mehr Kontext zu Karte, Lunch, Weinabenden und Feiern.', collectionKey: 'leistungen', columns: 4, showImage: true, showExcerpt: true, showDate: false, showSortControls: false } },
         { type: 'faq', data: { headline: 'Fragen zur Karte', items: restaurantFaq() } },
-        sectionCta('Lust auf einen Abend bei Salzkorn?', 'Reservieren Sie frühzeitig für Freitag und Samstag. Unter der Woche finden wir meistens schneller einen Tisch.', 'Tisch anfragen', '/reservierung'),
+        imCtaSec('Lust auf einen Abend bei Salzkorn?', 'Reservieren Sie frühzeitig für Freitag und Samstag. Unter der Woche finden wir meistens schneller einen Tisch.', '1514933651103-005eec06c04b'),
       ],
     },
 
@@ -445,7 +445,7 @@ const tenant = {
         metaDescription: 'Tisch bei Salzkorn anfragen: Datum, Uhrzeit, Personenanzahl und Wünsche senden. Wir bestätigen persönlich.',
       },
       sections: [
-        sectionCollectionHero('Reservieren heißt bei uns: kurz schreiben, persönlich hören', 'Wir bestätigen nicht automatisch, sondern so, dass der Tisch wirklich passt.', '1517248135467-4c7edcad34c4', 'Reservierung'),
+        edHeroSec('Reservierung', 'Reservieren heißt bei uns: kurz schreiben, persönlich hören', 'Wir bestätigen nicht automatisch, sondern so, dass der Tisch wirklich passt.', '1517248135467-4c7edcad34c4', { primaryCta: { label: 'Jetzt reservieren', href: '#reservierung' }, hint: 'Freitag und Samstag früh reservieren — unter der Woche geht es meist spontan.' }),
         {
           type: 'reservation',
           data: {
@@ -489,7 +489,7 @@ const tenant = {
         metaDescription: 'Events bei Salzkorn: Weinabende, Teig-Werkstatt, Sonntagstafel und private Feiern in Hamburg-Eppendorf.',
       },
       sections: [
-        sectionCollectionHero('Kleine Abende, an die man sich erinnert', 'Wein, Küche, lange Tische und Formate, die nicht nach Veranstaltungshalle klingen.', '1510812431401-41d2bd2722f3', 'Events'),
+        cineHeroSec('Events', 'Kleine Abende, an die man sich erinnert', 'Wein, Küche, lange Tische und Formate, die nicht nach Veranstaltungshalle klingen.', '1510812431401-41d2bd2722f3', [ { value: '30', label: 'Plätze für private Feiern' }, { value: '5', label: 'Weine pro Weinabend' }, { value: '4', label: 'Gänge' } ]),
         { type: 'events', data: eventsData('Aktuelle Termine und Formate') },
         { type: 'portfolio', data: { badgeText: 'Momente', headline: 'So sehen Abende bei uns aus', subline: 'Ein Restaurant, drei Stimmungen: Weinabend, Werkstatt und private Tafel.', projects: [
           { title: 'Weinabend Loire', category: 'Weinabend', description: 'Vier Gänge, fünf Weine, ein langer Tisch.', image: img('1510812431401-41d2bd2722f3'), href: '/c/events/wein-loire', icon: 'Wine', stats: [{ label: 'Plätze', value: '22' }, { label: 'Gänge', value: '4' }] },
@@ -504,7 +504,7 @@ const tenant = {
           { title: 'Kein Mindestumsatz-Theater', text: 'Wir sagen offen, ab wann sich ein Format für beide Seiten trägt.', icon: 'Scale', span: '2' },
         ] } },
         { type: 'faq', data: { headline: 'Fragen zu Events', items: restaurantFaq() } },
-        sectionCta('Einen besonderen Abend planen?', 'Schreiben Sie uns Anlass, Personenanzahl und Wunschtermin — wir machen einen Vorschlag.', 'Event anfragen', '/kontakt'),
+        imCtaSec('Einen besonderen Abend planen?', 'Schreiben Sie uns Anlass, Personenanzahl und Wunschtermin — wir machen einen Vorschlag.', '1510812431401-41d2bd2722f3'),
       ],
     },
 
@@ -516,7 +516,7 @@ const tenant = {
         metaDescription: 'Salzkorn ist ein inhabergeführtes Restaurant in Hamburg-Eppendorf. Jonas Brandt in der Küche, Mira Halász im Gastraum — kleine Karte, klare Haltung.',
       },
       sections: [
-        sectionCollectionHero('Zwei Menschen, ein Gastraum, eine Haltung', 'Was 2016 als ruhige Gegenbewegung zur Sternegastronomie begann, ist heute ein vertrautes Restaurant am Lehmweg.', '1551218808-94e220e084d2', 'Über uns'),
+        edHeroSec('Über uns', 'Zwei Menschen, ein Gastraum, eine Haltung', 'Was 2016 als ruhige Gegenbewegung zur Sternegastronomie begann, ist heute ein vertrautes Restaurant am Lehmweg.', '1551218808-94e220e084d2', { imageSecondary: '1517248135467-4c7edcad34c4' }),
         {
           type: 'textImage',
           data: {
@@ -615,7 +615,7 @@ const tenant = {
         metaDescription: 'So erreichen Sie Salzkorn in Hamburg-Eppendorf: Telefon, E-Mail, WhatsApp und Anfrageformular.',
       },
       sections: [
-        sectionCollectionHero('Direkt zu uns', 'Persönlich, nicht über drei Ecken. Schreiben Sie oder rufen Sie an.', '1552566626-52f8b828add9', 'Kontakt'),
+        edHeroSec('Kontakt', 'Direkt zu uns', 'Persönlich, nicht über drei Ecken. Schreiben Sie oder rufen Sie an.', '1552566626-52f8b828add9', { primaryCta: { label: 'Jetzt anrufen', href: 'tel:+494047112380' }, secondaryCta: { label: 'Nachricht schreiben', href: '#kontakt' } }),
         {
           type: 'contact',
           data: {
@@ -708,6 +708,43 @@ function sectionCollectionHero(headline, subline, imageId, category) {
       bgPosition: 'center 48%', imageEffect: 'kenBurns', imageEffectIntensity: 'subtle',
     },
     styleOverrides: heroTokens,
+  };
+}
+
+function edHeroSec(eyebrow, headline, text, imageId, opts = {}) {
+  return {
+    type: 'editorialHero',
+    data: {
+      eyebrow, headline, text: `<p>${text}</p>`, imagePrimary: img(imageId),
+      ...(opts.imageSecondary ? { imageSecondary: img(opts.imageSecondary) } : {}),
+      primaryCta: opts.primaryCta || { label: 'Tisch anfragen', href: '/reservierung' },
+      ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
+      ...(opts.hint ? { hint: opts.hint } : {}),
+    },
+  };
+}
+
+function cineHeroSec(eyebrow, headline, subline, imageId, facts) {
+  return {
+    type: 'cinematicHero',
+    data: {
+      eyebrow, headline, subline, image: img(imageId),
+      overlay: 'rgba(26,36,26,0.58)', align: 'left',
+      primaryCta: { label: 'Tisch anfragen', href: '/reservierung' },
+      ...(facts ? { facts } : {}),
+    },
+  };
+}
+
+function imCtaSec(headline, subline, imageId) {
+  return {
+    type: 'immersiveCtaBanner',
+    data: {
+      badge: 'Direkt anfragen', headline, subline, image: img(imageId),
+      overlay: 'rgba(26,36,26,0.62)',
+      primaryCta: { label: 'Tisch anfragen', href: '/reservierung' },
+      secondaryCta: { label: 'Jetzt anrufen', href: 'tel:+494047112380' },
+    },
   };
 }
 

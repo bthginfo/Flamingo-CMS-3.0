@@ -533,14 +533,15 @@ const tenant = {
       },
       sections: [
         {
-          type: 'collectionHero',
+          type: 'editorialHero',
           data: {
+            eyebrow: 'Leistungen',
             headline: 'Vier Disziplinen, ein Meisterbetrieb',
-            subline: 'Wir behalten gerne den ganzen Bauablauf in der Hand — von Aufmaß und Förderantrag über die Ausstellung bis zur jährlichen Wartung.',
-            bgImage: img('1616594039964-ae9021a400a0'),
-            overlayColor: OVERLAY, overlayOpacity: 0.6,
+            text: '<p>Wir behalten gerne den ganzen Bauablauf in der Hand — von Aufmaß und Förderantrag über die Ausstellung bis zur jährlichen Wartung.</p>',
+            imagePrimary: img('1616594039964-ae9021a400a0'),
+            primaryCta: { label: 'Projekt anfragen', href: '/kontakt' },
+            secondaryCta: { label: 'Referenzen ansehen', href: '/referenzen' },
           },
-          styleOverrides: darkSectionTokens,
         },
         {
           type: 'servicesGrid',
@@ -627,13 +628,16 @@ const tenant = {
           },
         },
         {
-          type: 'ctaBand',
+          type: 'immersiveCtaBanner',
           data: {
+            badge: 'Beratung',
             headline: 'Sie wissen noch nicht, welche Leistung passt?',
             subline: 'Rufen Sie an oder schreiben Sie auf WhatsApp — wir hören zu und sagen Ihnen ehrlich, was sinnvoll ist.',
-            ctaPrimary: { label: 'Beratung anfragen', href: '/kontakt', icon: 'PhoneCall' },
+            image: img('1616594039964-ae9021a400a0'),
+            overlay: 'rgba(20,28,38,0.62)',
+            primaryCta: { label: 'Beratung anfragen', href: '/kontakt' },
+            secondaryCta: { label: 'Jetzt anrufen', href: 'tel:+4921155667788' },
           },
-          styleOverrides: { '--token-section-bg': C.brand, ...darkSectionTokens },
         },
       ],
     },
@@ -647,14 +651,15 @@ const tenant = {
       },
       sections: [
         {
-          type: 'collectionHero',
+          type: 'editorialHero',
           data: {
+            eyebrow: 'Über uns',
             headline: 'Zwei Generationen Handwerk in Düsseldorf',
-            subline: 'Was 1974 mit einer Hofwerkstatt in Bilk begann, ist heute ein Meisterbetrieb mit 16 Mitarbeitenden — und derselben Handschrift.',
-            bgImage: img('1521791136064-7986c2920216'),
-            overlayColor: OVERLAY, overlayOpacity: 0.55,
+            text: '<p>Was 1974 mit einer Hofwerkstatt in Bilk begann, ist heute ein Meisterbetrieb mit 16 Mitarbeitenden — und derselben Handschrift.</p>',
+            imagePrimary: img('1521791136064-7986c2920216'),
+            primaryCta: { label: 'Projekt anfragen', href: '/kontakt' },
+            hint: 'Meisterbetrieb seit 1974 · 16 Mitarbeitende · Düsseldorf-Bilk',
           },
-          styleOverrides: darkSectionTokens,
         },
         {
           type: 'textImage',
@@ -755,14 +760,17 @@ const tenant = {
       },
       sections: [
         {
-          type: 'collectionHero',
+          type: 'cinematicHero',
           data: {
+            eyebrow: 'Referenzen',
             headline: 'Projekte, an denen wir hängen',
             subline: 'Eine kleine Auswahl aus dem letzten Jahr — vom Spa-Bad im Altbau bis zur Wärmepumpen-Kaskade.',
-            bgImage: img('1565182999561-18d7dc61c393'),
-            overlayColor: OVERLAY, overlayOpacity: 0.6,
+            image: img('1565182999561-18d7dc61c393'),
+            overlay: 'rgba(20,28,38,0.58)',
+            align: 'left',
+            primaryCta: { label: 'Projekt anfragen', href: '/kontakt' },
+            facts: [ { value: '50+', label: 'Projekte pro Jahr' }, { value: '2', label: 'Generationen' }, { value: '24/7', label: 'Notdienst' } ],
           },
-          styleOverrides: darkSectionTokens,
         },
         {
           type: 'collectionList',
@@ -816,13 +824,15 @@ const tenant = {
           },
         },
         {
-          type: 'ctaBand',
+          type: 'immersiveCtaBanner',
           data: {
+            badge: 'Ihr Projekt',
             headline: 'Ihr Projekt könnte das nächste sein.',
             subline: 'Sprechen Sie uns an — wir besprechen Ihr Vorhaben unverbindlich.',
-            ctaPrimary: { label: 'Termin vereinbaren', href: '/kontakt', icon: 'CalendarCheck' },
+            image: img('1565182999561-18d7dc61c393'),
+            overlay: 'rgba(20,28,38,0.62)',
+            primaryCta: { label: 'Termin vereinbaren', href: '/kontakt' },
           },
-          styleOverrides: { '--token-section-bg': C.brand, ...darkSectionTokens },
         },
       ],
     },
@@ -865,14 +875,15 @@ const tenant = {
       },
       sections: [
         {
-          type: 'collectionHero',
+          type: 'editorialHero',
           data: {
+            eyebrow: 'Kontakt',
             headline: 'Direkt zum Meisterbetrieb',
-            subline: 'Werktags zwischen 7 und 17 Uhr persönlich am Telefon. Notfälle 24/7. WhatsApp ganztägig.',
-            bgImage: img('1423666639041-f56000c27a9a'),
-            overlayColor: OVERLAY, overlayOpacity: 0.6,
+            text: '<p>Werktags zwischen 7 und 17 Uhr persönlich am Telefon. Notfälle 24/7. WhatsApp ganztägig.</p>',
+            imagePrimary: img('1423666639041-f56000c27a9a'),
+            primaryCta: { label: 'Projekt anfragen', href: '/kontakt' },
+            secondaryCta: { label: 'Notdienst: 24/7', href: 'tel:+4921155667788' },
           },
-          styleOverrides: darkSectionTokens,
         },
         {
           type: 'contact',

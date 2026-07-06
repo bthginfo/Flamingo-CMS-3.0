@@ -343,7 +343,7 @@ const pages = [
     title: 'Leistungen',
     seo: pageSeo('Leistungen für Schnitt, Farbe und Styling', 'Schnitt, Farbe, Colour Correction und Bridal Styling im Atelier Isabelle München. Ruhige Beratung und klare Terminplanung.'),
     sections: [
-      { type: 'collectionHero', data: collectionHeroData({ category: 'Leistungen', headline: 'Haare brauchen keinen Druck, sondern Richtung.', subline: 'Unsere Leistungen sind bewusst kuratiert: Schnitt, Farbe, Korrektur und Styling mit sauberer Beratung.', bgImage: img('1519415510236-718bdfcd89c8') }), styleOverrides: darkSectionTokens() },
+      { type: 'editorialHero', data: { eyebrow: 'Leistungen', headline: 'Haare brauchen keinen Druck, sondern Richtung.', text: '<p>Unsere Leistungen sind bewusst kuratiert: Schnitt, Farbe, Korrektur und Styling mit sauberer Beratung.</p>', imagePrimary: img('1519415510236-718bdfcd89c8'), primaryCta: { label: 'Termin anfragen', href: '/kontakt' }, secondaryCta: { label: 'Preise ansehen', href: '#preise' } } },
       { type: 'servicesGrid', data: { badgeText: 'Übersicht', headline: 'Wählen Sie den passenden Einstieg.', subline: 'Jede Detailseite erklärt, was sinnvoll ist, wie der Termin abläuft und wann wir vorher Rückfragen stellen.', manualCards: serviceCards }, styleOverrides: lightTokens },
       { type: 'serviceMenu', data: { headline: 'Leistungen nach Bedarf.', subline: 'Nicht jede Anfrage braucht denselben Termin. Wir sortieren vorab.', ctaPrimary: { label: 'Termin anfragen', href: '/kontakt' }, categories: [
         { title: 'Schnitt', text: 'Form, Kontur, Bewegung.', image: img('1522337360788-8b13dee7a37e'), category: 'Cut', services: ['Signature Cut', 'Curly Check', 'Pony & Kontur', 'Pflegeberatung'] },
@@ -371,7 +371,7 @@ const pages = [
           { label: 'Pflege', icon: 'sparkles', title: 'Treatments & Kopfhaut', text: '<p>Aufbau-Treatments und Kopfhautanalyse für Haar, das nicht nur heute glänzt — abgestimmt auf Ihre Haarhistorie.</p>', image: 'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=1200&q=82', features: ['Analyse vor jeder Behandlung', 'Produkte ohne Verkaufsdruck', 'Wirkung nach 3 Anwendungen sichtbar'], cta: { label: 'Pflege anfragen', href: '/kontakt' } },
         ],
       }, styleOverrides: lightTokens },
-      { type: 'ctaBand', data: { badgeText: 'Unsicher?', headline: 'Schicken Sie lieber einmal zu viel ein Foto.', subline: 'Wir sagen Ihnen, ob Schnitt, Farbe oder Beratung zuerst sinnvoll ist.', ctaPrimary: { label: 'Anfrage senden', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens(C.plum) },
+      { type: 'immersiveCtaBanner', data: { badge: 'Unsicher?', headline: 'Schicken Sie lieber einmal zu viel ein Foto.', subline: 'Wir sagen Ihnen, ob Schnitt, Farbe oder Beratung zuerst sinnvoll ist.', image: img('1562322140-8baeececf3df'), overlay: 'rgba(43,26,42,0.6)', primaryCta: { label: 'Anfrage senden', href: '/kontakt' }, secondaryCta: { label: 'Jetzt anrufen', href: 'tel:+498924881740' } } },
     ],
   },
   {
@@ -379,7 +379,7 @@ const pages = [
     title: 'Über uns',
     seo: pageSeo('Über Atelier Isabelle', 'Ein ruhiges Hair Studio am Gärtnerplatz in München: Team, Haltung und Arbeitsweise des Atelier Isabelle.'),
     sections: [
-      { type: 'collectionHero', data: collectionHeroData({ category: 'Über uns', headline: 'Ein Salon darf leise sein und trotzdem präzise.', subline: 'Atelier Isabelle steht für Beratung, Handwerk und Looks, die nicht nach Verkaufsdruck aussehen.', bgImage: img('1519415510236-718bdfcd89c8') }), styleOverrides: darkSectionTokens() },
+      { type: 'editorialHero', data: { eyebrow: 'Über uns', headline: 'Ein Salon darf leise sein und trotzdem präzise.', text: '<p>Atelier Isabelle steht für Beratung, Handwerk und Looks, die nicht nach Verkaufsdruck aussehen.</p>', imagePrimary: img('1519415510236-718bdfcd89c8'), imageSecondary: img('1562322140-8baeececf3df'), primaryCta: { label: 'Kennenlernen', href: '/kontakt' } } },
       { type: 'textImage', data: { badge: 'Haltung', headline: 'Wir mögen Haare, die nicht jeden Morgen diskutiert werden müssen.', text: p('Unser Studio ist klein, ruhig und bewusst organisiert. Wir nehmen weniger Termine an, damit Beratung nicht untergeht und Ergebnisse nachvollziehbar bleiben.'), image: img('1522337360788-8b13dee7a37e'), imageAlt: 'Ruhiger Salonarbeitsplatz', layout: 'image-left', items: [
         { icon: 'MessageCircle', title: 'Beratung ohne Druck', text: 'Wir empfehlen nur, was fachlich und alltagstauglich Sinn ergibt.' },
         { icon: 'Scissors', title: 'Handwerk vor Hype', text: 'Trends sind gut, wenn sie zu Gesicht, Haar und Zeitbudget passen.' },
@@ -404,7 +404,7 @@ const pages = [
         { icon: 'Star', value: '4,9/5', label: 'Bewertung' },
         { icon: 'Clock', value: 'Puffer', label: 'zwischen Terminen' },
       ] }, styleOverrides: lightTokens },
-      { type: 'ctaBand', data: { badgeText: 'Erster Kontakt', headline: 'Sagen Sie uns, was Ihr Haar können soll.', subline: 'Wir melden uns mit einer ehrlichen Einschätzung zum passenden Termin.', ctaPrimary: { label: 'Termin anfragen', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens(C.plum) },
+      { type: 'immersiveCtaBanner', data: { badge: 'Erster Kontakt', headline: 'Sagen Sie uns, was Ihr Haar können soll.', subline: 'Wir melden uns mit einer ehrlichen Einschätzung zum passenden Termin.', image: img('1519415510236-718bdfcd89c8'), overlay: 'rgba(43,26,42,0.6)', primaryCta: { label: 'Termin anfragen', href: '/kontakt' } } },
     ],
   },
   {
@@ -412,7 +412,7 @@ const pages = [
     title: 'Kontakt',
     seo: pageSeo('Kontakt und Termin anfragen', 'Atelier Isabelle München: Termin für Schnitt, Farbe, Styling oder Beratung anfragen. Mit Adresse, Öffnungszeiten und Kontaktformular.'),
     sections: [
-      { type: 'collectionHero', data: collectionHeroData({ category: 'Kontakt', headline: 'Schreiben Sie uns kurz, worum es geht.', subline: 'Mit ein paar Angaben können wir besser einschätzen, welcher Termin wirklich passt.', bgImage: img('1519415510236-718bdfcd89c8') }), styleOverrides: darkSectionTokens() },
+      { type: 'cinematicHero', data: { eyebrow: 'Kontakt', headline: 'Schreiben Sie uns kurz, worum es geht.', subline: 'Mit ein paar Angaben können wir besser einschätzen, welcher Termin wirklich passt.', image: img('1519415510236-718bdfcd89c8'), overlay: 'rgba(43,26,42,0.56)', align: 'left', primaryCta: { label: 'Jetzt anrufen', href: 'tel:+498924881740' } } },
       { type: 'bookingCta', data: { headline: 'So kommen wir am schnellsten zum passenden Termin.', subline: 'Wir melden uns persönlich zurück und schlagen die passende Terminlänge vor.', introText: 'Für Farbe oder Korrektur helfen aktuelle Haarbilder und ein Wunschbild.', onlineCta: { label: 'Formular nutzen', href: '#kontaktformular' }, phoneCta: { label: 'Anrufen', href: 'tel:+498924881740' }, whatsappCta: { label: 'WhatsApp schreiben', href: 'https://wa.me/498924881740' }, notes: ['Farbtermine bitte mit Foto anfragen', 'Samstage frühzeitig planen', 'Korrekturen nur nach Einschätzung'] }, styleOverrides: blushTokens },
       { type: 'locationContact', data: { headline: 'Atelier Isabelle am Gärtnerplatz.', subline: 'Zentral, ruhig im ersten Obergeschoss und gut erreichbar mit U-Bahn und Tram.', image: img('1519415510236-718bdfcd89c8'), mapEmbedUrl: 'https://www.google.com/maps?q=M%C3%BCllerstra%C3%9Fe%2042%2C%2080469%20M%C3%BCnchen&output=embed', formEnabled: true, infoCards: [
         { icon: 'Phone', label: 'Telefon', value: '+49 89 2488 1740' },
