@@ -91,8 +91,86 @@ export const GET = withApiHandler(async (_req, auth) => {
 });
 
 /**
+ * PATCH /api/v1/content/i18n
+ *
+ * Enable/configure the tenant's languages so an AI agent can set up a
+ * multilingual site end-to-end via the API (previously only possible in the
+ * admin UI). Body: { enabled?: boolean, locales?: string[]|"de,en,es",
+ *                    defaultLocale?: string }.
+ * Locales must be BCP-47-ish (xx or xx-XX). The default locale is always
+ * included and, if given, must be one of the locales.
+ */
+export const PATCH = withApiHandler(async (req, auth) => {
+  const body = await req.json();
+  const db = getDb();
+
+  const [tenant] = await db.select({
+    i18nEnabled: tenants.i18nEnabled,
+    i18nLocales: tenants.i18nLocales,
+    i18nDefaultLocale: tenants.i18nDefaultLocale,
+    i18nMaxLanguages: tenants.i18nMaxLanguages,
+  }).from(tenants).where(eq(tenants.id, auth.tenantId)).limit(1);
+  if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+
+  const LOCALE_RE = /^[a-z]{2}(-[A-Z]{2})?$/;
+  const rawLocales = Array.isArray(body.locales)
+    ? body.locales
+    : typeof body.locales === 'string'
+      ? body.locales.split(',')
+      : undefined;
+
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+
+  if (rawLocales) {
+    const cleaned = rawLocales.map((l: unknown) => String(l).trim()).filter(Boolean);
+    const invalid = cleaned.filter((l: string) => !LOCALE_RE.test(l));
+    if (invalid.length) {
+      return NextResponse.json({ error: `Invalid locale code(s): ${invalid.join(', ')}. Use "de", "en", "es", "en-US" …` }, { status: 400 });
+    }
+    const defaultLocale = typeof body.defaultLocale === 'string' && body.defaultLocale.trim()
+      ? body.defaultLocale.trim()
+      : (cleaned[0] || tenant.i18nDefaultLocale);
+    if (!LOCALE_RE.test(defaultLocale)) {
+      return NextResponse.json({ error: `Invalid defaultLocale "${defaultLocale}"` }, { status: 400 });
+    }
+    const unique = Array.from(new Set([defaultLocale, ...cleaned]));
+    // Hard ceiling to keep the switcher usable and prevent abuse; the per-tenant
+    // plan limit (i18nMaxLanguages) is raised to fit the request within that
+    // ceiling — the PAT is an admin-equivalent credential in this product.
+    const HARD_MAX = 8;
+    if (unique.length > HARD_MAX) {
+      return NextResponse.json({ error: `At most ${HARD_MAX} languages are supported; got ${unique.length}` }, { status: 400 });
+    }
+    updates.i18nLocales = unique.join(',');
+    updates.i18nDefaultLocale = defaultLocale;
+    if (unique.length > tenant.i18nMaxLanguages) updates.i18nMaxLanguages = unique.length;
+  } else if (typeof body.defaultLocale === 'string' && body.defaultLocale.trim()) {
+    const current = tenant.i18nLocales.split(',').map(l => l.trim()).filter(Boolean);
+    if (!current.includes(body.defaultLocale.trim())) {
+      return NextResponse.json({ error: `defaultLocale "${body.defaultLocale}" is not in the enabled locales (${current.join(', ')})` }, { status: 400 });
+    }
+    updates.i18nDefaultLocale = body.defaultLocale.trim();
+  }
+
+  if (typeof body.enabled === 'boolean') updates.i18nEnabled = body.enabled;
+
+  await db.update(tenants).set(updates).where(eq(tenants.id, auth.tenantId));
+
+  const [fresh] = await db.select({
+    enabled: tenants.i18nEnabled,
+    locales: tenants.i18nLocales,
+    defaultLocale: tenants.i18nDefaultLocale,
+  }).from(tenants).where(eq(tenants.id, auth.tenantId)).limit(1);
+
+  return NextResponse.json({
+    success: true,
+    i18n: { enabled: fresh.enabled, locales: fresh.locales.split(','), defaultLocale: fresh.defaultLocale },
+  });
+});
+
+/**
  * PUT /api/v1/content/i18n
- * 
+ *
  * Update locale-specific data for sections (page sections) and/or collection items.
  * 
  * Body: {
