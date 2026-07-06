@@ -603,11 +603,19 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         onCopySection={handleCopySection}
         copySources={copySources}
         copySourcesLoading={copySourcesLoading}
-        renderSection={(section) => (
+        renderSection={(section) => {
+          // Show the section's PENDING (unsaved) data in the editor, not just the
+          // last-saved `section.data`. With i18n the card is re-keyed per locale,
+          // so it remounts on every locale switch; if it read the committed data
+          // it would drop edits made to a locale as soon as you tab away and back.
+          // pendingChanges holds the full localized structure for every locale.
+          const pending = pendingChanges.current.get(section.id);
+          const effectiveSection = pending ? { ...section, data: pending } : section;
+          return (
           <div data-section-card-id={section.id} className="transition-shadow rounded-lg">
           <SectionEditorCard
             key={section.id}
-            section={section}
+            section={effectiveSection}
             industry={industry}
             sectionTypes={sectionTypes}
             resolvedVars={resolvedVars}
@@ -622,7 +630,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             i18n={i18n}
           />
           </div>
-        )}
+          );
+        }}
       />
       <EditorActionBar
         previewOpen={preview.isOpen}
