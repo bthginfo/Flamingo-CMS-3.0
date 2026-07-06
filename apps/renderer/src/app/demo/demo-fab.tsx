@@ -21,6 +21,7 @@ const INDUSTRIES = [
   { key: 'tattoo', label: 'Tattoo Studio' },
   { key: 'shop', label: 'Weinhandel (Shop)' },
   { key: 'retail', label: 'Möbelhaus (Retail)' },
+  { key: 'eishockey', label: 'Verein & Sport' },
   { key: 'showcase', label: 'Sektionen-Demo' },
 ] as const;
 
