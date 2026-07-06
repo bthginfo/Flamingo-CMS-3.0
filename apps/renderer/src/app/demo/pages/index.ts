@@ -15,6 +15,7 @@ import { retailSite } from './retail';
 import { floristSite } from './florist';
 import { fitnessSite } from './fitness';
 import { locationSite } from './location';
+import { eishockeySite } from './eishockey';
 import type { DemoSite } from './types';
 
 export type { DemoSite, DemoPage } from './types';
@@ -37,6 +38,7 @@ const SITES: Record<string, DemoSite> = {
   florist: floristSite,
   fitness: fitnessSite,
   location: locationSite,
+  eishockey: eishockeySite,
 };
 
 export function getDemoSite(industryKey: string): DemoSite | undefined {

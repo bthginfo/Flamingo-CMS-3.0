@@ -67,6 +67,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   florist: 'florist',
   fitness: 'fitness',
   location: 'location',
+  eishockey: 'verein',
 };
 
 function isHeroSection(type?: string | null): boolean {

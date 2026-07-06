@@ -4,7 +4,7 @@ import { sql } from 'drizzle-orm';
 // ─── Enums ────────────────────────────────────────────────────────────
 export const industryEnum = pgEnum('industry', [
   'tradesman', 'restaurant', 'salon', 'hotel', 'tourism',
-  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce', 'retail', 'florist', 'location',
+  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce', 'retail', 'florist', 'location', 'verein',
 ]);
 
 export const tenantStatusEnum = pgEnum('tenant_status', ['active', 'suspended', 'provisioning']);

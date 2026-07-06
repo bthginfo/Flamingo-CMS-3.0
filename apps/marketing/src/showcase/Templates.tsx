@@ -19,6 +19,7 @@ const DEMO_LINKS: Record<string, string> = {
   florist: 'https://www.demo.flamingomedia.online/demo/florist',
   fitness: 'https://www.demo.flamingomedia.online/demo/fitness',
   location: 'https://www.demo.flamingomedia.online/demo/location',
+  eishockey: 'https://www.demo.flamingomedia.online/demo/eishockey',
   shop: 'https://www.demo.flamingomedia.online/demo/shop',
   retail: 'https://www.demo.flamingomedia.online/demo/retail',
 };
@@ -172,6 +173,16 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80',
     color: '#b45309',
     features: ['Räume & Kapazitäten', 'Eventarten', 'Pakete', 'Ausstattung', 'Mood-Galerie', 'Anfrage-CTA'],
+    status: 'live' as const,
+  },
+  {
+    key: 'eishockey',
+    name: 'Verein & Sport',
+    tagline: 'Eishockey · Fußball · Sportverein',
+    description: 'Nächstes Spiel, Spielplan, Live-Tabelle, Kader, Sponsoren und Vereinsgeschichte als dynamische Website für Sportvereine.',
+    image: 'https://images.unsplash.com/photo-1580692475446-c2fabbbe4c46?w=800&q=80',
+    color: '#dc2626',
+    features: ['Nächstes Spiel (Hero)', 'Spielplan & Ergebnisse', 'Live-Tabelle', 'Kader-Übersicht', 'Sponsoren-Wand', 'Vereinsgeschichte'],
     status: 'live' as const,
   },
   {

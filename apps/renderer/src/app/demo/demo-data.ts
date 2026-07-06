@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'fitness' | 'location' | 'showcase';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'fitness' | 'location' | 'eishockey' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -342,6 +342,26 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
       columns: [
         { title: 'Location', items: [{ text: 'Räume', href: '/demo/location/raeume' }, { text: 'Events', href: '/demo/location/events' }, { text: 'Coworking', href: '/demo/location/coworking' }] },
         { title: 'Planung', items: [{ text: 'Galerie', href: '/demo/location/galerie' }, { text: 'Kontakt', href: '/demo/location/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  eishockey: {
+    brand: { companyName: 'EHC Donau Panther', tagline: 'Eishockey aus Leidenschaft — seit 1978', primaryColor: '#dc2626' },
+    contact: { phone: '+49 841 555 010', email: 'info@donau-panther.de', address: 'Saturn-Arena, Jahnstraße 10, 85049 Ingolstadt' },
+    socialLinks: { instagram: '#', facebook: '#' },
+    navItems: [
+      { label: 'Spielplan', href: '/demo/eishockey/spielplan' },
+      { label: 'Kader', href: '/demo/eishockey/kader' },
+      { label: 'Verein', href: '/demo/eishockey/verein' },
+      { label: 'Sponsoren', href: '/demo/eishockey/sponsoren' },
+      { label: 'Kontakt', href: '/demo/eishockey/kontakt' },
+    ],
+    cta: { label: 'Tickets', href: '/demo/eishockey/spielplan' },
+    footer: {
+      columns: [
+        { title: 'Team', items: [{ text: 'Spielplan', href: '/demo/eishockey/spielplan' }, { text: 'Kader', href: '/demo/eishockey/kader' }, { text: 'Tabelle', href: '/demo/eishockey/spielplan' }] },
+        { title: 'Verein', items: [{ text: 'Über uns', href: '/demo/eishockey/verein' }, { text: 'Sponsoren', href: '/demo/eishockey/sponsoren' }, { text: 'Kontakt', href: '/demo/eishockey/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },

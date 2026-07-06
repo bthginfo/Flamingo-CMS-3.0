@@ -25,6 +25,7 @@ const INDUSTRIES = [
   { key: 'florist', label: 'Floristik' },
   { key: 'fitness', label: 'Fitness' },
   { key: 'location', label: 'Location' },
+  { key: 'verein', label: 'Verein & Sport' },
 ] as const;
 
 function toShowcaseSection(section: SectionTypeDefinition, industry: string, industryLabel: string): ShowcaseSection {

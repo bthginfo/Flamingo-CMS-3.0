@@ -501,6 +501,7 @@ function ShowcaseFooter() {
               <li><a href="https://www.demo.flamingomedia.online/demo/florist" className="hover:text-accent">Floristik</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/fitness" className="hover:text-accent">Fitness</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/location" className="hover:text-accent">Location</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/eishockey" className="hover:text-accent">Verein &amp; Sport</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/shop" className="hover:text-accent">Online-Shop</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/retail" className="hover:text-accent">Einzelhandel</a></li>
             </ul>
