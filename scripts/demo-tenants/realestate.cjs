@@ -567,7 +567,7 @@ const tenant = {
       title: 'Leistungen',
       seo: pageSeo('Immobilienmakler Leistungen in Nürnberg', 'Leistungen von Stadtkante Immobilien: Immobilienverkauf, Bewertung, Kaufberatung, Objektprüfung und Vermarktung in Nürnberg.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Leistungen', headline: 'Immobilienarbeit mit klaren Rollen.', subline: 'Bewertung, Verkauf, Kaufberatung und Objektprüfung greifen ineinander, statt nebeneinander zu laufen.', bgImage: img('1560518883-ce09059eeffa') }), styleOverrides: imageTokens },
+        { type: 'editorialHero', data: { eyebrow: 'Leistungen', headline: 'Immobilienarbeit mit klaren Rollen.', text: '<p>Bewertung, Verkauf, Kaufberatung und Objektprüfung greifen ineinander, statt nebeneinander zu laufen.</p>', imagePrimary: img('1560518883-ce09059eeffa'), primaryCta: { label: 'Bewertung anfragen', href: '/bewertung' }, secondaryCta: { label: 'Referenzen ansehen', href: '/referenzen' } } },
         { type: 'servicesGrid', data: { badgeText: 'Schwerpunkte', headline: 'Vier Wege, wie wir helfen.', subline: 'Je nach Ziel startet der Prozess an einer anderen Stelle.', ctaLabel: 'Leistung besprechen', ctaHref: '/kontakt', manualCards: [
           { title: 'Immobilie verkaufen', text: 'Preisstrategie, Unterlagen, Exposé, Besichtigungen und Verhandlung aus einer Hand.', icon: 'KeyRound', href: '/verkaufen' },
           { title: 'Immobilie bewerten', text: 'Realistische Spanne mit Lage, Zustand, Nachfrage und Vergleichsdaten.', icon: 'LineChart', href: '/bewertung' },
@@ -587,7 +587,7 @@ const tenant = {
           { icon: 'Map', title: 'Strategie wählen', text: 'Bewertung, Verkauf oder Kaufberatung bekommen klare nächste Schritte.' },
           { icon: 'ArrowRight', title: 'Umsetzen', text: 'Wir begleiten konkret, dokumentiert und ohne Streuverlust.' },
         ] }, styleOverrides: lightTokens },
-        ctaBand('Welche Leistung passt zu Ihrer Situation?', 'Schreiben Sie uns kurz, wo Sie stehen. Wir ordnen den nächsten Schritt ein.', 'Leistung anfragen', '/kontakt'),
+        { type: 'immersiveCtaBanner', data: { badge: 'Nächster Schritt', headline: 'Welche Leistung passt zu Ihrer Situation?', subline: 'Schreiben Sie uns kurz, wo Sie stehen. Wir ordnen den nächsten Schritt ein.', image: img('1560518883-ce09059eeffa'), overlay: 'rgba(20,28,38,0.62)', primaryCta: { label: 'Leistung anfragen', href: '/kontakt' }, secondaryCta: { label: 'Bewertung starten', href: '/bewertung' } } },
       ],
     },
     {
@@ -595,7 +595,7 @@ const tenant = {
       title: 'Kaufen',
       seo: pageSeo('Immobilien kaufen in Nürnberg', 'Wohnungen und Häuser in Nürnberg mit sauberer Einordnung, geprüften Unterlagen und persönlicher Besichtigung über Stadtkante Immobilien.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Kaufen', headline: 'Nicht jedes Objekt passt zu jedem Leben.', subline: 'Wir zeigen nicht möglichst viele Immobilien, sondern die, bei denen Lage, Grundriss und Zustand wirklich zu Ihrer Suche passen.', bgImage: img('1505693416388-ac5ce068fe85') }), styleOverrides: imageTokens },
+        { type: 'cinematicHero', data: { eyebrow: 'Kaufen', headline: 'Nicht jedes Objekt passt zu jedem Leben.', subline: 'Wir zeigen nicht möglichst viele Immobilien, sondern die, bei denen Lage, Grundriss und Zustand wirklich zu Ihrer Suche passen.', image: img('1505693416388-ac5ce068fe85'), overlay: 'rgba(20,28,38,0.56)', align: 'left', primaryCta: { label: 'Suchprofil senden', href: '/kontakt' } } },
         { type: 'propertyShowcase', data: { headline: 'Aktuelle Objekte', subline: 'Drei Beispiele aus unserem aktuellen Bestand.', properties: propertyCards }, styleOverrides: lightTokens },
         { type: 'collectionList', data: { headline: 'Alle Objekte', collectionKey: 'objekte', collectionBasePath: '/c/objekte', columns: 3, showImage: true, showExcerpt: true, showDate: false, showSortControls: false }, styleOverrides: mistTokens },
         { type: 'processSteps', data: { badgeText: 'Kaufberatung', headline: 'So prüfen wir, ob ein Objekt zu Ihnen passt.', steps: [
@@ -618,7 +618,7 @@ const tenant = {
       title: 'Verkaufen',
       seo: pageSeo('Immobilie verkaufen in Nürnberg', 'Immobilienverkauf in Nürnberg mit Bewertung, Unterlagenprüfung, Exposé, Besichtigungssteuerung und ruhiger Verhandlung.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Verkaufen', headline: 'Ein Verkauf ist kein Inserat. Er ist ein Prozess.', subline: 'Wir bereiten Verkauf, Preis, Unterlagen und Kommunikation so vor, dass Sie nicht bei jeder Anfrage neu improvisieren müssen.', bgImage: img('1564013799919-ab600027ffc6') }), styleOverrides: imageTokens },
+        { type: 'editorialHero', data: { eyebrow: 'Verkaufen', headline: 'Ein Verkauf ist kein Inserat. Er ist ein Prozess.', text: '<p>Wir bereiten Verkauf, Preis, Unterlagen und Kommunikation so vor, dass Sie nicht bei jeder Anfrage neu improvisieren müssen.</p>', imagePrimary: img('1564013799919-ab600027ffc6'), primaryCta: { label: 'Verkauf anfragen', href: '/kontakt' }, hint: 'Erstgespräch und Ersteinschätzung sind kostenfrei.' } },
         { type: 'featureShowcase', data: { badge: 'Vorbereitung', headline: 'Wir gehen erst online, wenn die Grundlage stimmt.', subline: 'Ein starker Verkauf braucht weniger Lärm und mehr Klarheit.', image: img('1560518883-ce09059eeffa'), features: ['Unterlagencheck vor Vermarktungsstart.', 'Preisstrategie mit Vergleichsdaten und Objektlogik.', 'Bild- und Textkonzept passend zur Zielgruppe.', 'Besichtigungen mit qualifizierten Interessenten.'], ctaLabel: 'Verkauf besprechen', ctaHref: '/kontakt' }, styleOverrides: lightTokens },
         { type: 'comparisonTable', data: { badge: 'Vergleich', headline: 'Was wir anders machen.', text: 'Nicht lauter, sondern strukturierter.', columns: [{ label: 'Standard' }, { label: 'Stadtkante' }], highlightCol: 1, rows: [
           { feature: 'Start', values: ['Inserat schnell online', 'Unterlagen und Preis zuerst sauber'] },
@@ -633,7 +633,7 @@ const tenant = {
           { year: '04', title: 'Abschluss', text: 'Verhandlung, Notar, Übergabe und Dokumentation.' },
         ] }, styleOverrides: softTokens },
         { type: 'referencesSold', data: { headline: 'So sieht ein sauberer Abschluss aus.', subline: 'Verkäufe, bei denen nicht nur Tempo, sondern auch Passung gestimmt hat.', totalSold: '148+ vermittelte Objekte', properties: soldProperties }, styleOverrides: darkSolidTokens },
-        ctaBand('Wollen Sie wissen, was Ihr Verkauf braucht?', 'Ein kurzes Gespräch reicht oft, um Preis, Timing und nächste Schritte klarer zu sehen.', 'Verkauf anfragen', '/kontakt'),
+        { type: 'immersiveCtaBanner', data: { badge: 'Verkauf', headline: 'Wollen Sie wissen, was Ihr Verkauf braucht?', subline: 'Ein kurzes Gespräch reicht oft, um Preis, Timing und nächste Schritte klarer zu sehen.', image: img('1564013799919-ab600027ffc6'), overlay: 'rgba(20,28,38,0.62)', primaryCta: { label: 'Verkauf anfragen', href: '/kontakt' } } },
       ],
     },
     {
@@ -673,7 +673,7 @@ const tenant = {
       title: 'Referenzen',
       seo: pageSeo('Verkaufte Immobilien in Nürnberg', 'Referenzen von Stadtkante Immobilien: verkaufte Wohnungen, Häuser und Kapitalanlagen in Nürnberg und Umgebung.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Referenzen', headline: 'Verkauft ist erst gut, wenn es nachvollziehbar war.', subline: 'Ein Blick auf Objekte, bei denen Strategie, Zielgruppe und Abschluss zusammengepasst haben.', bgImage: img('1494526585095-c41746248156') }), styleOverrides: imageTokens },
+        { type: 'cinematicHero', data: { eyebrow: 'Referenzen', headline: 'Verkauft ist erst gut, wenn es nachvollziehbar war.', subline: 'Ein Blick auf Objekte, bei denen Strategie, Zielgruppe und Abschluss zusammengepasst haben.', image: img('1494526585095-c41746248156'), overlay: 'rgba(20,28,38,0.56)', align: 'left', primaryCta: { label: 'Objekt besprechen', href: '/kontakt' }, facts: [ { value: '90+', label: 'begleitete Verkäufe' }, { value: '38', label: 'Tage Ø Vermarktung' }, { value: '4,9', label: 'Bewertung' } ] } },
         { type: 'referencesSold', data: { headline: 'Ausgewählte Verkäufe', subline: 'Nicht vollständig, aber typisch für unsere Arbeit.', totalSold: '148+ Vermittlungen', properties: soldProperties }, styleOverrides: lightTokens },
         { type: 'statsCounter', data: { headline: 'Ein paar Zahlen aus der Praxis.', subline: 'Kurz gehalten, weil Zahlen nur mit Kontext etwas bedeuten.', stats: [
           { value: 148, suffix: '+', label: 'Verkäufe' },
@@ -682,7 +682,7 @@ const tenant = {
           { value: 4.9, label: 'Bewertung' },
         ] }, styleOverrides: mistTokens },
         { type: 'testimonials', data: { headline: 'Stimmen aus abgeschlossenen Verkäufen.', items: homeSections().find((s) => s.type === 'testimonials').data.items }, styleOverrides: lightTokens },
-        ctaBand('Ihr Objekt muss nicht wie eine Referenz wirken.', 'Es muss richtig eingeordnet werden. Genau damit starten wir.', 'Objekt besprechen', '/kontakt'),
+        { type: 'immersiveCtaBanner', data: { badge: 'Ihr Objekt', headline: 'Ihr Objekt muss nicht wie eine Referenz wirken.', subline: 'Es muss richtig eingeordnet werden. Genau damit starten wir.', image: img('1494526585095-c41746248156'), overlay: 'rgba(20,28,38,0.62)', primaryCta: { label: 'Objekt besprechen', href: '/kontakt' } } },
       ],
     },
     {
@@ -690,7 +690,7 @@ const tenant = {
       title: 'Über uns',
       seo: pageSeo('Über Stadtkante Immobilien Nürnberg', 'Über Stadtkante Immobilien: Team, Haltung und Arbeitsweise des Maklerbüros in Nürnberg.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Über uns', headline: 'Wir mögen Immobilienarbeit ohne Show.', subline: 'Gute Maklerarbeit ist sichtbar in Vorbereitung, nicht in Lautstärke.', bgImage: img('1522708323590-d24dbb6b0267') }), styleOverrides: imageTokens },
+        { type: 'editorialHero', data: { eyebrow: 'Über uns', headline: 'Wir mögen Immobilienarbeit ohne Show.', text: '<p>Gute Maklerarbeit ist sichtbar in Vorbereitung, nicht in Lautstärke.</p>', imagePrimary: img('1522708323590-d24dbb6b0267'), primaryCta: { label: 'Kennenlernen', href: '/kontakt' } } },
         { type: 'textImage', data: { badge: 'Haltung', headline: 'Wir erklären lieber zu viel als zu wenig.', text: `${p('Immobilienentscheidungen sind selten nur wirtschaftlich. Sie hängen an Erinnerungen, Plänen, Familie, Finanzierung und manchmal auch an Unsicherheit. Darum arbeiten wir ruhig und konkret.')}${p('Unser Ziel ist nicht, jeden Preis schönzureden. Unser Ziel ist, dass Eigentümer und Käufer verstehen, worauf sie sich einlassen.')}`, image: img('1560518883-ce09059eeffa'), imageAlt: 'Beratung im Immobilienbüro', layout: 'image-left', items: [
           { icon: 'MessageSquareText', title: 'klar sprechen', text: 'Keine Fachbegriffe als Nebelwand.' },
           { icon: 'Map', title: 'lokal denken', text: 'Nürnberg ist nicht ein Markt, sondern viele Mikrolagen.' },
@@ -710,7 +710,7 @@ const tenant = {
           { icon: 'Users', title: 'Menschliche Entscheidungen', text: 'Immobilien sind Vermögen und Zuhause zugleich.' },
           { icon: 'FileCheck', title: 'Dokumentation', text: 'Was besprochen wird, bleibt nachvollziehbar.' },
         ] }, styleOverrides: lightTokens },
-        ctaBand('Passt unsere Art zu Ihrem Verkauf?', 'Dann lernen wir uns in einem ruhigen Erstgespräch kennen.', 'Gespräch anfragen', '/kontakt'),
+        { type: 'immersiveCtaBanner', data: { badge: 'Kennenlernen', headline: 'Passt unsere Art zu Ihrem Verkauf?', subline: 'Dann lernen wir uns in einem ruhigen Erstgespräch kennen.', image: img('1522708323590-d24dbb6b0267'), overlay: 'rgba(20,28,38,0.62)', primaryCta: { label: 'Gespräch anfragen', href: '/kontakt' } } },
       ],
     },
     {
@@ -718,7 +718,7 @@ const tenant = {
       title: 'Kontakt',
       seo: pageSeo('Kontakt Stadtkante Immobilien Nürnberg', 'Kontakt zu Stadtkante Immobilien in Nürnberg: Bewertung, Verkauf, Kaufberatung und Besichtigung anfragen.'),
       sections: [
-        { type: 'collectionHero', data: collectionHeroData({ category: 'Kontakt', headline: 'Erzählen Sie uns kurz, worum es geht.', subline: 'Adresse, Objektart oder Suchwunsch reichen für den Anfang. Wir melden uns persönlich.', bgImage: img('1486406146926-c627a92ad1ab') }), styleOverrides: imageTokens },
+        { type: 'editorialHero', data: { eyebrow: 'Kontakt', headline: 'Erzählen Sie uns kurz, worum es geht.', text: '<p>Adresse, Objektart oder Suchwunsch reichen für den Anfang. Wir melden uns persönlich.</p>', imagePrimary: img('1486406146926-c627a92ad1ab'), primaryCta: { label: 'Nachricht schreiben', href: '#kontakt' } } },
         { type: 'contact', data: { headline: 'Direkt anfragen', subline: 'Wir antworten in der Regel innerhalb eines Werktags.', introText: 'Je konkreter Ihre Angaben sind, desto genauer können wir den nächsten Schritt empfehlen.', badgeText: 'Nürnberg', phone: '+49 911 2388410', email: 'hallo@stadtkante-immobilien.de', address: 'Pilotystraße 12, 90408 Nürnberg', hours: 'Mo-Fr 9:00-18:00, Termine nach Vereinbarung', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: contactCards }, styleOverrides: lightTokens },
         { type: 'locationHighlight', data: { headline: 'Büro in der Nordstadt.', subline: 'Ruhig erreichbar, nah an Stadtpark, Altstadt und den Lagen, in denen wir viel arbeiten.', description: p('Unser Büro liegt in der Pilotystraße. Beratungstermine finden nach Vereinbarung statt, damit Unterlagen und Fragen vorbereitet sind.'), image: img('1522708323590-d24dbb6b0267'), pois: [
           { label: 'Stadtpark', distance: '6 Min. zu Fuß', icon: 'nature' },

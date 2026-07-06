@@ -532,14 +532,14 @@ const pages = [
       ogImage: img('1598928506311-c55ded91a20c', 1600),
     },
     sections: [
-      section('collectionHero', {
-        category: 'Sortiment',
+      section('editorialHero', {
+        eyebrow: 'Sortiment',
         headline: 'Kuratiert statt vollgestellt.',
-        subline: 'Wir zeigen Möbel, Materialien und Leuchten, die sich sinnvoll kombinieren lassen.',
-        bgImage: img('1598928506311-c55ded91a20c'),
-        overlayColor: '#111820',
-        overlayOpacity: 0.55,
-      }, heroTokens),
+        text: '<p>Wir zeigen Möbel, Materialien und Leuchten, die sich sinnvoll kombinieren lassen.</p>',
+        imagePrimary: img('1598928506311-c55ded91a20c'),
+        primaryCta: { label: 'Beratung anfragen', href: '/kontakt' },
+        secondaryCta: { label: 'Leistungen ansehen', href: '/leistungen' },
+      }),
       section('categoryMosaic', {
         headline: 'Unsere wichtigsten Bereiche.',
         subline: 'Nicht jedes Stück steht immer im Showroom. Aber jede Kategorie ist beratbar.',
@@ -584,12 +584,14 @@ const pages = [
         showExcerpt: true,
         showSortControls: false,
       }, warmTokens),
-      section('ctaBand', {
-        badgeText: 'Nicht sicher?',
+      section('immersiveCtaBanner', {
+        badge: 'Nicht sicher?',
         headline: 'Lieber einmal live fühlen als zehn Tabs offen lassen.',
         subline: 'Wir legen Materialien zusammen und zeigen Ihnen, was im Raum wirklich funktioniert.',
-        ctaPrimary: { label: 'Showroom-Termin', href: '/kontakt', icon: 'CalendarDays' },
-      }, ctaTokens),
+        image: img('1598928506311-c55ded91a20c'),
+        overlay: 'rgba(17,24,32,0.62)',
+        primaryCta: { label: 'Showroom-Termin', href: '/kontakt' },
+      }),
     ],
   },
   {
@@ -679,14 +681,16 @@ const pages = [
       ogImage: img('1441986300917-64674bd600d8', 1600),
     },
     sections: [
-      section('collectionHero', {
-        category: 'Service',
+      section('cinematicHero', {
+        eyebrow: 'Service',
         headline: 'Lieferung, die nicht den halben Tag blockiert.',
         subline: 'Wir planen Aufbau, Etagen, Verpackung und Altteil-Mitnahme vorab.',
-        bgImage: img('1441986300917-64674bd600d8'),
-        overlayColor: '#111820',
-        overlayOpacity: 0.58,
-      }, heroTokens),
+        image: img('1441986300917-64674bd600d8'),
+        overlay: 'rgba(17,24,32,0.58)',
+        align: 'left',
+        primaryCta: { label: 'Liefertermin anfragen', href: '/kontakt' },
+        facts: [ { value: '48h', label: 'Termin-Rückmeldung' }, { value: '2', label: 'Personen-Team' }, { value: '100%', label: 'Altteil-Mitnahme' } ],
+      }),
       section('deliveryTimeline', {
         headline: 'So kommt Ihr Möbelstück an.',
         subline: 'Verlässlich, sauber und mit einem klaren Ansprechpartner.',
@@ -732,12 +736,14 @@ const pages = [
           { question: 'Liefert ihr außerhalb Regensburg?', answer: 'Ja, nach Absprache in die Region. Wir nennen die Lieferkosten transparent vorab.' },
         ],
       }, paperTokens),
-      section('ctaBand', {
-        badgeText: 'Lieferung planen',
+      section('immersiveCtaBanner', {
+        badge: 'Lieferung planen',
         headline: 'Ein gutes Möbelstück soll gut ankommen.',
         subline: 'Wir klären die Details, bevor es eng wird.',
-        ctaPrimary: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'Send' },
-      }, ctaTokens),
+        image: img('1441986300917-64674bd600d8'),
+        overlay: 'rgba(17,24,32,0.62)',
+        primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
+      }),
     ],
   },
   {
@@ -825,14 +831,13 @@ const pages = [
       ogImage: img('1600210492486-724fe5c67fb0', 1600),
     },
     sections: [
-      section('collectionHero', {
-        category: 'Leistungen',
+      section('editorialHero', {
+        eyebrow: 'Leistungen',
         headline: 'Möbel kaufen ist leicht. Richtig auswählen ist Beratung.',
-        subline: 'Unsere Leistungen helfen, aus schönen Einzelstücken einen funktionierenden Raum zu machen.',
-        bgImage: img('1600210492486-724fe5c67fb0'),
-        overlayColor: '#111820',
-        overlayOpacity: 0.58,
-      }, heroTokens),
+        text: '<p>Unsere Leistungen helfen, aus schönen Einzelstücken einen funktionierenden Raum zu machen.</p>',
+        imagePrimary: img('1600210492486-724fe5c67fb0'),
+        primaryCta: { label: 'Beratung anfragen', href: '/kontakt' },
+      }),
       section('servicesGrid', {
         badgeText: 'Alles im Überblick',
         headline: 'Wobei wir Sie begleiten.',
@@ -894,14 +899,15 @@ const pages = [
       ogImage: img('1598928506311-c55ded91a20c', 1600),
     },
     sections: [
-      section('collectionHero', {
-        category: 'Über uns',
+      section('editorialHero', {
+        eyebrow: 'Über uns',
         headline: 'Ein Möbelhaus, das lieber erklärt als überredet.',
-        subline: 'Seit 1998 beraten wir in Regensburg Menschen, die Räume bewusst einrichten wollen.',
-        bgImage: img('1598928506311-c55ded91a20c'),
-        overlayColor: '#111820',
-        overlayOpacity: 0.55,
-      }, heroTokens),
+        text: '<p>Seit 1998 beraten wir in Regensburg Menschen, die Räume bewusst einrichten wollen.</p>',
+        imagePrimary: img('1598928506311-c55ded91a20c'),
+        imageSecondary: img('1600607687920-4e2a09cf159d'),
+        primaryCta: { label: 'Kennenlernen', href: '/kontakt' },
+        hint: 'Seit 1998 in Regensburg · Beratung ohne Verkaufsdruck',
+      }),
       section('textImage', {
         badge: 'Unsere Geschichte',
         headline: 'Lichtblick begann mit einem kleinen Laden und einer klaren Idee.',
@@ -964,12 +970,15 @@ const pages = [
         ],
         cta: { label: 'Showroom besuchen', href: '/kontakt' },
       }, warmTokens),
-      section('ctaBand', {
-        badgeText: 'Vorbeikommen',
+      section('immersiveCtaBanner', {
+        badge: 'Vorbeikommen',
         headline: 'Der beste Eindruck entsteht im Raum.',
         subline: 'Besuchen Sie uns in Regensburg und bringen Sie gern Fotos Ihres Zuhauses mit.',
-        ctaPrimary: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'MapPin' },
-      }, ctaTokens),
+        image: img('1600210492486-724fe5c67fb0'),
+        overlay: 'rgba(17,24,32,0.62)',
+        primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
+        secondaryCta: { label: 'Anfahrt ansehen', href: '/kontakt' },
+      }),
     ],
   },
   {

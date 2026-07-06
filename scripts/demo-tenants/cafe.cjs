@@ -446,7 +446,7 @@ const tenant = {
           { question: 'Wie früh sollte ich anfragen?', answer: 'Für Gruppen am Wochenende gern mindestens eine Woche vorher.' },
           { question: 'Gibt es feste Pakete?', answer: 'Wir haben Grundformate, passen sie aber an Personenzahl und Uhrzeit an.' },
         ] }),
-        section('ctaBand', { badgeText: 'Angebot planen', headline: 'Ein Format im SPIRAL?', subline: 'Schreib uns kurz, was Du vorhast. Wir antworten ehrlich und konkret.', ctaPrimary: { label: 'Angebot anfragen', href: '/kontakt', icon: 'Send' } }, darkSectionTokens),
+        section('immersiveCtaBanner', { badge: 'Angebot planen', headline: 'Ein Format im SPIRAL?', subline: 'Schreib uns kurz, was Du vorhast. Wir antworten ehrlich und konkret.', image: img('1495474472287-4d71bcdd2085'), overlay: 'rgba(27,16,11,0.62)', primaryCta: { label: 'Angebot anfragen', href: '/kontakt' } }),
       ],
     },
     {
@@ -454,7 +454,7 @@ const tenant = {
       title: 'Karte',
       seo: { metaTitle: 'Karte | SPIRAL Coffee & Plants', metaDescription: 'Kaffee, Brunch, Kuchen und kleine Teller im SPIRAL Coffee & Plants in Innsbruck-Wilten.' },
       sections: [
-        section('hero', { headline: 'Kleine Karte. Gute Gründe.', subline: 'Wir kochen und brühen lieber weniger, aber klarer: Kaffee, Brunch, Kuchen und kleine Teller.', badgeText: 'Karte', badgeIcon: 'Menu', bgMode: 'image', bgImage: img('1442512595331-e89e73853f31'), overlayColor: '#1B100B', overlayOpacity: 0.6, primaryCta: { label: 'Brunch ansehen', href: '#brunch', icon: 'Utensils' }, secondaryCta: { label: 'Tisch anfragen', href: '/kontakt', icon: 'Send' }, trustItems: ['Espresso Bar', 'Filter', 'Brunch', 'Kuchen'], trustStripColor: 'rgba(35,21,15,0.62)' }, heroTokens),
+        section('editorialHero', { eyebrow: 'Karte', headline: 'Kleine Karte. Gute Gründe.', text: '<p>Wir kochen und brühen lieber weniger, aber klarer: Kaffee, Brunch, Kuchen und kleine Teller.</p>', imagePrimary: img('1442512595331-e89e73853f31'), primaryCta: { label: 'Brunch ansehen', href: '#brunch' }, secondaryCta: { label: 'Tisch anfragen', href: '/kontakt' }, hint: 'Espresso Bar · Filter · Brunch · Kuchen' }),
         section('drinkMenu', { headline: 'Getränke', subline: 'Kaffee zuerst. Alles andere danach.', categories: [
           { title: 'Kaffee', items: [{ name: 'Espresso', description: 'Hausröstung', price: '2,90 €' }, { name: 'Cappuccino', description: 'Bio-Milch oder Hafer', price: '4,20 €' }, { name: 'Flat White', description: 'doppio, cremig', price: '4,40 €' }, { name: 'Batch Brew', description: 'wechselnde Bohne', price: '3,80 €' }] },
           { title: 'Kalt & ohne Kaffee', items: [{ name: 'Iced Matcha', description: 'Hafer, Vanille optional', price: '5,20 €' }, { name: 'Hauslimo', description: 'Zitrone, Minze, wenig Zucker', price: '4,60 €' }, { name: 'Kombucha', description: 'nach Verfügbarkeit', price: '4,90 €' }] },
@@ -472,7 +472,7 @@ const tenant = {
           { feature: 'Anfrage', values: ['nein', 'ab 4 Personen', 'ja'] },
         ] }),
         section('collectionList', { headline: 'Angebote', subline: 'Formate, die über die normale Karte hinausgehen.', collectionKey: 'angebote', columns: 3, showImage: true, showDate: false, showExcerpt: true, showSortControls: false }),
-        section('ctaBand', { badgeText: 'Karte & Gruppe', headline: 'Mit mehreren Personen?', subline: 'Wir halten keine riesigen Flächen frei, planen kleine Gruppen aber gern sauber ein.', ctaPrimary: { label: 'Kurz anfragen', href: '/kontakt', icon: 'Send' } }, darkSectionTokens),
+        section('immersiveCtaBanner', { badge: 'Karte & Gruppe', headline: 'Mit mehreren Personen?', subline: 'Wir halten keine riesigen Flächen frei, planen kleine Gruppen aber gern sauber ein.', image: img('1442512595331-e89e73853f31'), overlay: 'rgba(27,16,11,0.62)', primaryCta: { label: 'Kurz anfragen', href: '/kontakt' } }),
       ],
     },
     {
@@ -480,7 +480,7 @@ const tenant = {
       title: 'Events',
       seo: { metaTitle: 'Events im Café | SPIRAL Coffee & Plants', metaDescription: 'Kleine Café-Events in Innsbruck: Tastings, Plant Swaps und ruhige Abende im SPIRAL.' },
       sections: [
-        section('hero', { headline: 'Abende, die nicht laut sein müssen.', subline: 'Nach Ladenschluss wird SPIRAL zum kleinen Raum für Kaffee, Pflanzen, Musik und Gespräche.', badgeText: 'Events', badgeIcon: 'Calendar', bgMode: 'image', bgImage: img('1517248135467-4c7edcad34c4'), overlayColor: '#1B100B', overlayOpacity: 0.58, primaryCta: { label: 'Termine ansehen', href: '#termine', icon: 'Calendar' }, secondaryCta: { label: 'Eigenes Format', href: '/kontakt', icon: 'Send' }, trustItems: ['kleine Gruppen', 'ruhige Formate', 'Kaffee & Pflanzen'], trustStripColor: 'rgba(35,21,15,0.62)' }, heroTokens),
+        section('cinematicHero', { eyebrow: 'Events', headline: 'Abende, die nicht laut sein müssen.', subline: 'Nach Ladenschluss wird SPIRAL zum kleinen Raum für Kaffee, Pflanzen, Musik und Gespräche.', image: img('1517248135467-4c7edcad34c4'), overlay: 'rgba(27,16,11,0.6)', align: 'left', primaryCta: { label: 'Termine ansehen', href: '#termine' }, secondaryCta: { label: 'Eigenes Format', href: '/kontakt' } }),
         section('cafeEventCalendar', { headline: 'Nächste Termine', subline: 'Wir halten die Liste kurz und aktuell.', events: [
           { title: 'Filter Tasting', date: '2026-06-18', time: '18:30', category: 'Kaffee', description: 'Drei Bohnen, drei Methoden, viele Fragen.', image: img('1497935586351-b67a49e012bf', 1200) },
           { title: 'Plant Swap', date: '2026-07-04', time: '17:00', category: 'Community', description: 'Ableger tauschen, Kaffee trinken, Tipps mitnehmen.', image: img('1485955900006-10f4d324d411', 1200) },
@@ -498,7 +498,7 @@ const tenant = {
           { icon: 'Coffee', title: 'Abend halten', text: 'Wir kümmern uns um Raum, Bar und Stimmung.' },
           { icon: 'Heart', title: 'Nachwirken', text: 'Kein großes Event, sondern ein guter Abend.' },
         ] }),
-        section('ctaBand', { badgeText: 'Eigene Idee?', headline: 'Ein kleiner Abend im SPIRAL?', subline: 'Schreib uns, was Du vorhast. Wir sagen ehrlich, ob unser Raum dazu passt.', ctaPrimary: { label: 'Event anfragen', href: '/kontakt', icon: 'Send' } }, darkSectionTokens),
+        section('immersiveCtaBanner', { badge: 'Eigene Idee?', headline: 'Ein kleiner Abend im SPIRAL?', subline: 'Schreib uns, was Du vorhast. Wir sagen ehrlich, ob unser Raum dazu passt.', image: img('1517248135467-4c7edcad34c4'), overlay: 'rgba(27,16,11,0.62)', primaryCta: { label: 'Event anfragen', href: '/kontakt' } }),
         section('faq', { headline: 'Häufig gefragt', subline: 'Kurz vorab.', items: [
           { question: 'Wie viele Personen passen?', answer: 'Je nach Format 8 bis 24 Personen.' },
           { question: 'Gibt es Alkohol?', answer: 'Manchmal Wein und Aperitif, aber immer passend zum Format.' },
@@ -512,7 +512,7 @@ const tenant = {
       title: 'Über uns',
       seo: { metaTitle: 'Über uns | SPIRAL Coffee & Plants', metaDescription: 'Die Geschichte hinter SPIRAL Coffee & Plants in Innsbruck-Wilten.' },
       sections: [
-        section('hero', { headline: 'Warm, braun, lebendig, nah.', subline: 'SPIRAL ist ein Café, das lieber langsam besser wird als schnell größer.', badgeText: 'Über SPIRAL', badgeIcon: 'Leaf', bgMode: 'image', bgImage: img('1511081692775-05d0f180a065'), overlayColor: '#1B100B', overlayOpacity: 0.58, primaryCta: { label: 'Karte ansehen', href: '/karte', icon: 'Menu' }, secondaryCta: { label: 'Kontakt', href: '/kontakt', icon: 'Send' }, trustItems: ['Wilten', 'Specialty Coffee', 'kleine Karte'], trustStripColor: 'rgba(35,21,15,0.62)' }, heroTokens),
+        section('editorialHero', { eyebrow: 'Über SPIRAL', headline: 'Warm, braun, lebendig, nah.', text: '<p>SPIRAL ist ein Café, das lieber langsam besser wird als schnell größer.</p>', imagePrimary: img('1511081692775-05d0f180a065'), imageSecondary: img('1442512595331-e89e73853f31'), primaryCta: { label: 'Karte ansehen', href: '/karte' }, hint: 'Wilten · Specialty Coffee · kleine Karte' }),
         section('textImage', { badge: 'Unsere Idee', headline: 'Ein Ort, der Sie kurz aus dem Tempo nimmt.', text: '<p>Wir glauben nicht, dass ein Café alles sein muss. SPIRAL ist kein Büro, kein Restaurant, kein Concept Store. Es ist ein guter Raum für Kaffee, Brunch, Gespräche und kleine Pausen.</p><p>Die Pflanzen kamen erst zufällig. Heute gehören sie dazu, weil sie genau das tun, was wir auch wollen: den Raum ruhiger machen.</p>', image: img('1517701604599-bb29b565090c'), imageAlt: 'Café mit Pflanzen und Holz', layout: 'image-left', items: [{ icon: 'Coffee', title: 'Kaffee zuerst', text: 'Jede Entscheidung startet an der Bar.' }, { icon: 'Leaf', title: 'Grün statt Kulisse', text: 'Pflanzen sind Teil des Raums.' }, { icon: 'Users', title: 'Nahbar bleiben', text: 'Wir planen für Menschen, nicht für Reichweite.' }, { icon: 'Clock', title: 'Zeit lassen', text: 'Gute Abläufe dürfen leise sein.' }] }),
         section('timeline', { badge: 'Geschichte', headline: 'Langsam gewachsen.', subline: 'SPIRAL ist nicht als Konzeptfolie gestartet.', entries: [
           { year: '2019', title: 'Zwei Tische', text: 'Ein kleiner Raum, eine Maschine und viele Nachbarn.' },
@@ -550,7 +550,7 @@ const tenant = {
       title: 'Kontakt',
       seo: { metaTitle: 'Kontakt | SPIRAL Coffee & Plants Innsbruck', metaDescription: 'Adresse, Öffnungszeiten und Kontakt zum SPIRAL Coffee & Plants in Innsbruck-Wilten.' },
       sections: [
-        section('hero', { headline: 'Mitten in Wilten, schnell erreichbar.', subline: 'SPIRAL liegt an der Andreas-Hofer-Straße. Gut für Kaffee vor Terminen, Brunch am Wochenende und Takeaway auf dem Weg durch die Stadt.', badgeText: 'Kontakt', badgeIcon: 'MapPin', bgMode: 'image', bgImage: img('1517245386807-bb43f82c33c4'), overlayColor: '#1B100B', overlayOpacity: 0.58, primaryCta: { label: 'Route öffnen', href: 'https://maps.google.com/?q=Andreas-Hofer-Stra%C3%9Fe%207%206020%20Innsbruck', icon: 'MapPin' }, secondaryCta: { label: 'Nachricht senden', href: 'mailto:hello@spiral-coffee.at', icon: 'Mail' }, trustItems: ['Andreas-Hofer-Straße', 'Di-So geöffnet', 'WhatsApp möglich'], trustStripColor: 'rgba(35,21,15,0.62)' }, heroTokens),
+        section('editorialHero', { eyebrow: 'Kontakt', headline: 'Mitten in Wilten, schnell erreichbar.', text: '<p>SPIRAL liegt an der Andreas-Hofer-Straße. Gut für Kaffee vor Terminen, Brunch am Wochenende und Takeaway auf dem Weg durch die Stadt.</p>', imagePrimary: img('1517245386807-bb43f82c33c4'), primaryCta: { label: 'Route öffnen', href: 'https://maps.google.com/?q=Andreas-Hofer-Stra%C3%9Fe%207%206020%20Innsbruck' }, secondaryCta: { label: 'Nachricht senden', href: 'mailto:hello@spiral-coffee.at' }, hint: 'Di–So geöffnet · WhatsApp möglich' }),
         section('contactLocation', { headline: 'Hier findest Du uns.', subline: 'ÖPNV, Fahrrad und kurze Wege aus Wilten.', address: 'Andreas-Hofer-Straße 7, 6020 Innsbruck', phone: '+43 512 908144', email: 'hello@spiral-coffee.at', mapEmbedUrl: 'https://www.google.com/maps?q=Andreas-Hofer-Stra%C3%9Fe%207%206020%20Innsbruck&output=embed' }, lightTokens),
         section('openingStatus', { badge: 'Öffnungszeiten', headline: 'Komm einfach vorbei.', subline: 'Der Status zeigt live, ob gerade offen ist. Montag ist Ruhetag — Feiertage kündigen wir im Journal und auf Instagram an.', days: [
           { day: 'Montag', closed: true },
