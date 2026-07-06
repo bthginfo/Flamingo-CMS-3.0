@@ -124,3 +124,10 @@ cssVar, e.g. `headingColor` → `--token-heading`).
   <noreply@anthropic.com>`.
 - Match surrounding code style. Run `apps/renderer` `npx tsc --noEmit` and the
   colour gate before pushing renderer changes.
+- After template data-field changes: `npm run sync:section-surface` and commit
+  the regenerated defaults (CI gate: `npm run check:section-surface`).
+- **DB migrations are NOT auto-applied.** New SQL files in
+  `packages/db/drizzle/` must be applied manually against the production DB:
+  `DATABASE_URL=… pnpm --filter @flamingo/db push` (or run the SQL directly).
+  The sandbox has no `DATABASE_URL` — applying migrations is a user action.
+  Pending: `0012_media_assets_dedupe_unique.sql` (media duplicate guard).

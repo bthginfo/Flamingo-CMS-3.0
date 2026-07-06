@@ -62,9 +62,19 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
   return NextResponse.json({ success: true });
 });
 
+const PATCH_ALLOWED_KEYS = new Set(['title', 'slug', 'visible', 'patchSections']);
+
 export const PATCH = withApiHandlerParams(async (req, auth, params) => {
   const { id } = params;
   const body = await req.json();
+  // Reject unknown keys instead of silently ignoring them — callers sending
+  // e.g. `sections` (the PUT shape) would otherwise get a 200 no-op.
+  const unknownKeys = Object.keys(body).filter((key) => !PATCH_ALLOWED_KEYS.has(key));
+  if (unknownKeys.length) {
+    return NextResponse.json({
+      error: `Unknown PATCH field(s): ${unknownKeys.join(', ')}. Allowed: ${[...PATCH_ALLOWED_KEYS].join(', ')}. To replace all sections use PUT with { sections }.`,
+    }, { status: 400 });
+  }
   const db = getDb();
 
   const [page] = await db.select().from(pages).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));

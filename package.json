@@ -27,6 +27,7 @@
     "check:tokens": "node scripts/gate-tokens.cjs --strict",
     "check:env-contract": "tsx scripts/check-env-contract.ts",
     "sync:section-surface": "tsx scripts/sync-section-surface.ts",
+    "check:section-surface": "tsx scripts/sync-section-surface.ts --check",
     "db:generate": "pnpm --filter @flamingo/db generate",
     "db:push": "pnpm --filter @flamingo/db push"
   },

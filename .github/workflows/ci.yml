@@ -32,6 +32,11 @@ jobs:
       - run: pnpm audit:crosstalk
       - run: pnpm check:hardcoded-colors
 
+      # Guard the admin editor field surface: fails if a template's data reads
+      # changed without regenerating section-editor-field-defaults.ts
+      # (npm run sync:section-surface).
+      - run: pnpm check:section-surface
+
       # Unit tests (node:test via tsx — runs on the CI Node version, no build).
       - run: pnpm test
 
