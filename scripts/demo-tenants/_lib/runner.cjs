@@ -189,13 +189,10 @@ async function run(tenant) {
     log('  wiped', (dbg.pages||[]).length, 'pages and items from', (dbg.collections||[]).length, 'collections');
   }
 
-  // Enable languages BEFORE pages so localized section data validates against
-  // the tenant's locale allow-list. tenant.i18n = { locales:[…], defaultLocale }.
-  if (tenant.i18n && Array.isArray(tenant.i18n.locales) && tenant.i18n.locales.length) {
-    log('PATCH i18n', tenant.i18n.locales.join(','));
-    try { await api.i18nConfig({ enabled: true, locales: tenant.i18n.locales, defaultLocale: tenant.i18n.defaultLocale }); }
-    catch (e) { log('  warn: i18n config failed', e.message); }
-  }
+  // NOTE: enabling languages is a paid, admin-only setting and CANNOT be set
+  // via the API. A tenant that carries localized (_localized) content must
+  // already have its locales enabled in the admin UI. tenant.i18n is only a
+  // hint for humans; the runner does not (and must not) toggle it.
 
   if (tenant.brand)        { log('PUT brand');         await api.brand(tenant.brand); }
   if (tenant.contact)      { log('PUT contact');       await api.contact(tenant.contact); }

@@ -628,7 +628,9 @@ module.exports = flatten({
   slug: 'estela-fuchs',
   host: 'flamingo-estela-fuchs.vercel.app',
   wipe: true,
-  i18n: { locales: ['de', 'en', 'es'], defaultLocale: 'de' },
+  // i18n (de/en/es) is enabled on this tenant in the admin (paid, admin-only —
+  // NOT settable via the API). The localized _localized content below only
+  // renders because those locales are already enabled account-side.
   seoGlobal: {
     titleTemplate: '%s | Estela Fuchs Ingolstadt',
     defaultTitle: 'Estela Fuchs — Heilpraktikerin für Psychotherapie Ingolstadt',

@@ -130,4 +130,5 @@ cssVar, e.g. `headingColor` → `--token-heading`).
   `packages/db/drizzle/` must be applied manually against the production DB:
   `DATABASE_URL=… pnpm --filter @flamingo/db push` (or run the SQL directly).
   The sandbox has no `DATABASE_URL` — applying migrations is a user action.
-  Pending: `0012_media_assets_dedupe_unique.sql` (media duplicate guard).
+  Applied through 0013 (media dedupe unique + `verein` industry enum). No
+  pending migrations.

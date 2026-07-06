@@ -270,11 +270,11 @@ i18n — MEHRSPRACHIGKEIT:
 ═══════════════════════════════════════════
 
 Prüfe ZUERST ob i18n aktiv ist: Der Response enthält ein "tenant.i18nEnabled" Feld.
-Wenn i18nEnabled = false, der Nutzer aber eine mehrsprachige Website möchte:
-- Aktiviere die Sprachen selbst: PATCH /api/v1/content/i18n
-  { "enabled": true, "locales": ["de","en","es"], "defaultLocale": "de" }
-- Antwort enthält die aktive Konfiguration. Danach wie unten weitermachen.
-- Wenn der Nutzer NICHT explizit mehrsprachig will → diesen Abschnitt ignorieren.
+Wenn i18nEnabled = false → ignoriere diesen Abschnitt komplett. Mehrsprachigkeit
+ist ein kostenpflichtiges, kontobezogenes Feature und kann NICHT über die API
+aktiviert werden. Der Kontoinhaber aktiviert die Sprachen im Admin unter
+"Funktionen → Mehrsprachigkeit". Versuche NICHT, i18n zu aktivieren oder die
+Anzahl der Sprachen zu ändern (PATCH /content/i18n antwortet mit 403).
 
 Wenn i18nEnabled = true:
 
