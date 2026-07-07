@@ -358,6 +358,31 @@ export function SectionDataEditor({ type, data, onChange, sectionId }: { type: s
 
 type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string };
 
+// Position/focus companions of an image field (bgPosition, imagePosition,
+// <img>Position, …) are edited by the ImageUploadField's built-in Fokuspunkt
+// picker. Rendering them again as standalone text fields showed the focal point
+// twice. Collect the companion keys that belong to an image field at the same
+// object level so the field iteration can skip them.
+function imagePositionCompanionKeys(obj: Record<string, unknown>): Set<string> {
+  const hidden = new Set<string>();
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value !== 'string') continue;
+    if (!/image|background|photo|avatar|poster|logo/i.test(key)) continue;
+    const companions = [
+      `${key}Position`,
+      `${key}Focus`,
+      `${key}ObjectPosition`,
+      key === 'image' || key === 'src' ? 'imagePosition' : '',
+      key === 'bgImage' ? 'bgPosition' : '',
+      key === 'bgImageMobile' ? 'bgPositionMobile' : '',
+    ];
+    for (const companion of companions) {
+      if (companion && companion in obj) hidden.add(companion);
+    }
+  }
+  return hidden;
+}
+
 // Generic structured editor for schema-shaped section data.
 function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
   const defaults = type ? { ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}), ...(SECTION_PREVIEW_DATA[type] || {}) } : {};
@@ -545,11 +570,12 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if ('label' in value && 'href' in value) {
         return <ButtonField key={renderKey} label={label} value={{ label: String(value.label ?? ''), href: String(value.href ?? ''), icon: typeof value.icon === 'string' ? value.icon : undefined }} onChange={(v) => updateAtPath(path, v)} />;
       }
+      const hiddenChildKeys = imagePositionCompanionKeys(value as Record<string, unknown>);
       return (
         <div key={renderKey} className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
           <p className="mb-3 text-xs font-semibold text-zinc-600">{label}</p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {entries.map(([childKey, childValue]) => (
+            {entries.filter(([childKey]) => !hiddenChildKeys.has(childKey)).map(([childKey, childValue]) => (
               <div key={childKey} className={/text|description|subline|content|bio|answer/i.test(childKey) ? 'md:col-span-2' : undefined}>
                 {renderValue([...path, childKey], fieldLabel(childKey), childValue)}
               </div>
@@ -562,7 +588,8 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     return <Field key={renderKey} label={label} value={String(value ?? '')} onChange={(v) => updateAtPath(path, v)} />;
   }
 
-  const keys = Object.keys(source);
+  const hiddenKeys = imagePositionCompanionKeys(source);
+  const keys = Object.keys(source).filter((key) => !hiddenKeys.has(key));
   if (keys.length === 0) {
     return <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-3 text-sm text-zinc-600">Für diese Section sind aktuell keine editierbaren Felder definiert.</div>;
   }
@@ -658,24 +685,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
             <ImageUploadField label="Hintergrundbild (Mobil, optional)" value={d.bgImageMobile} onChange={(v) => setD({ ...d, bgImageMobile: v })} position={d.bgPositionMobile} onPositionChange={(v) => setD({ ...d, bgPositionMobile: v })} />
             {d.bgImage && (
               <>
-              <div className="mt-3">
-                <span className="text-xs font-medium text-zinc-600 block mb-1.5">Bildposition Desktop (Fokuspunkt)</span>
-                <div className="inline-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
-                  {(['top left','top center','top right','center left','center','center right','bottom left','bottom center','bottom right'] as const).map(pos => (
-                    <button key={pos} type="button" onClick={() => setD({ ...d, bgPosition: pos })} className={`w-7 h-7 rounded text-[9px] leading-none transition-colors ${d.bgPosition === pos ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-zinc-200 text-zinc-400'}`} title={pos}>●</button>
-                  ))}
-                </div>
-              </div>
-              {d.bgImageMobile && (
-                <div className="mt-3">
-                  <span className="text-xs font-medium text-zinc-600 block mb-1.5">Bildposition Mobil (Fokuspunkt)</span>
-                  <div className="inline-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
-                    {(['top left','top center','top right','center left','center','center right','bottom left','bottom center','bottom right'] as const).map(pos => (
-                      <button key={pos} type="button" onClick={() => setD({ ...d, bgPositionMobile: pos })} className={`w-7 h-7 rounded text-[9px] leading-none transition-colors ${d.bgPositionMobile === pos ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-zinc-200 text-zinc-400'}`} title={pos}>●</button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Fokuspunkt is set directly on each ImageUploadField above
+                  (desktop + mobile) — no separate position grid needed. */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 <label className="block col-span-2">
                   <span className="text-xs font-medium text-zinc-600">Overlay</span>
