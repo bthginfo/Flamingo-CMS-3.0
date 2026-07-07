@@ -45,7 +45,7 @@ export function EditorActionBar({
         >
           <MonitorPlay size={16} /> Vorschau
         </button>
-        <PreviewNudge variant="top-right" />
+        <PreviewNudge variant="top-right" priority={3} />
       </div>
       {!showPublish ? (
         <button

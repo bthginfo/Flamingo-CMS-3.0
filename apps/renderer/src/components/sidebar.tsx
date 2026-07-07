@@ -174,7 +174,7 @@ export function Sidebar({ tenantId, industry, inboxUnread = 0 }: { tenantId: str
               <MonitorPlay size={18} />
               {!collapsed && 'Vorschau'}
             </button>
-            {!collapsed && <PreviewNudge variant="right" compact />}
+            {!collapsed && <PreviewNudge variant="right" compact priority={1} />}
           </div>
           <button onClick={async () => { await logoutAction(); router.push('/admin/login'); }} title={collapsed ? 'Abmelden' : undefined}
             className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>

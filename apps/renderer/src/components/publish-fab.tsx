@@ -50,7 +50,7 @@ export function PublishFab() {
         >
           <MonitorPlay size={16} /> Vorschau
         </button>
-        <PreviewNudge variant="top-right" />
+        <PreviewNudge variant="top-right" priority={2} />
       </div>
       {showSave ? (
         <button
