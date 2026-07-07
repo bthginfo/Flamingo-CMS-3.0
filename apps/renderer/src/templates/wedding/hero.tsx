@@ -37,6 +37,7 @@ export function WeddingHeroSection({ data }: Props) {
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? -1; // -1 = use default style overlay
+  const overlayScrim = overlayOpacity > 0 ? overlayOpacity : 0.5;
   const countdown = useCountdown(date);
   const formattedDate = new Date(date).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -51,7 +52,10 @@ export function WeddingHeroSection({ data }: Props) {
             <Image data-edit-image="bgImage" src={bgImage} alt={names} fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority />
             {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt={names} fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority />}
           </ImageEffectWrapper>
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-b from-[color-mix(in_srgb,var(--token-section-bg-alt)_60%,transparent)] via-[color-mix(in_srgb,var(--token-section-bg-alt)_40%,transparent)] to-[color-mix(in_srgb,var(--token-section-bg-alt)_60%,transparent)]" />}
+          {/* Names/date render on-dark WHITE — needs a DARK scrim, not the light
+              --token-section-bg-alt veil that washed the text out. Soft, even
+              darkening keeps the romantic look while staying legible. */}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, rgba(20,14,12,${(overlayScrim * 0.9).toFixed(2)}) 0%, rgba(20,14,12,${(overlayScrim * 0.55).toFixed(2)}) 45%, rgba(20,14,12,${(overlayScrim * 0.85).toFixed(2)}) 100%)` }} />}
         </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-[color-mix(in_srgb,var(--token-icon)_5%,transparent)] via-white to-[color-mix(in_srgb,var(--token-subheading)_5%,transparent)]" />

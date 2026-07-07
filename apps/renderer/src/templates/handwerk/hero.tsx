@@ -74,6 +74,12 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
   const opacity = useTransform(scrollY, [0, fadeStart, fadeEnd], [1, 1, 0]);
   const y = useTransform(scrollY, [0, fadeEnd], [0, 100]);
   const useBgImage = bgMode === 'image' && bgImage;
+  // The headline/subline render in on-dark WHITE, so the image needs a DARK
+  // scrim — not the light --token-section-bg-alt veil this used to fall back to
+  // (that washed white text out to near-invisible over bright photos). Honour an
+  // explicit overlayOpacity, otherwise use a legible default. Left-heavy to match
+  // the left-aligned copy.
+  const scrimAlpha = overlayOpacity > 0 ? overlayOpacity : 0.65;
 
   return (
     <div ref={ref} className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden -mt-[112px] pt-[112px]">
@@ -83,7 +89,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority={!bgImageMobile} fetchPriority={bgImageMobile ? 'low' : 'high'} sizes="100vw" />
             {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority fetchPriority="high" sizes="100vw" />}
           </ImageEffectWrapper>
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-r from-[color-mix(in_srgb,var(--token-section-bg-alt)_90%,transparent)] via-[color-mix(in_srgb,var(--token-section-bg-alt)_70%,transparent)] to-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)]" />}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0" style={{ background: `linear-gradient(to right, rgba(10,15,25,${Math.min(0.9, scrimAlpha + 0.05).toFixed(2)}) 0%, rgba(10,15,25,${(scrimAlpha * 0.72).toFixed(2)}) 52%, rgba(10,15,25,${(scrimAlpha * 0.42).toFixed(2)}) 100%)` }} />}
         </>
       ) : bgMode === 'color' && bgColor ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />

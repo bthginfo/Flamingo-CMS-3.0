@@ -26,7 +26,9 @@ export function ValuationCtaSection({ data }: Props) {
       {bgImage ? (
         <>
           <img data-edit-image="bgImage" src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_80%,transparent)]" />
+          {/* Heading/subline render on-dark WHITE — needs a DARK scrim, not the
+              light --token-section-bg-alt veil that washed them out over photos. */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-900/70 to-slate-800/70" />
         </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800" />

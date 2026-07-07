@@ -42,7 +42,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-section-bg)] via-[var(--token-card-bg)] to-[var(--token-section-bg)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(10,15,25,0.96),rgba(10,15,25,0.88))]" />
       )}
 
       {/* Content */}

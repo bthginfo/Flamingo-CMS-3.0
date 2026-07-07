@@ -34,7 +34,12 @@ export function ConsultingHeroSection({ data }: Props) {
           <Image data-edit-image="bgImage" src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
         </ImageEffectWrapper>
       )}
-      <div className="absolute inset-0 bg-[var(--token-section-bg-alt)]" style={{ opacity: bgImage ? overlayOpacity : 1 }} />
+      {/* Copy renders in on-dark WHITE, so the backdrop must be DARK — the old
+          --token-section-bg-alt veil is a light page tone and washed white text
+          out. Dark scrim over the photo; solid dark gradient when there's none. */}
+      {bgImage
+        ? <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, rgba(10,15,25,${Math.min(0.88, overlayOpacity + 0.05).toFixed(2)}) 0%, rgba(10,15,25,${(overlayOpacity * 0.7).toFixed(2)}) 100%)` }} />
+        : <div className="absolute inset-0 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_100%)]" />}
 
       {/* Subtle pattern */}
       <div className="absolute inset-0 opacity-5">
