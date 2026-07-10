@@ -4,8 +4,7 @@ import { getDb } from '@/lib/db';
 import { pages, tenantAddons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
-import { ensureShopPages } from '@/lib/shop-pages';
-import { FIELD_DEFS, type ColorFieldKey } from '@/lib/section-color-fields';
+import { FIELD_DEFS, PUBLIC_COLOR_FIELD_KEYS, type ColorFieldKey } from '@/lib/section-color-fields';
 import { getFieldsForSection } from '@/lib/section-color-resolver';
 import {
   SECTION_COLOR_CONTRACTS_GENERATED,
@@ -13,6 +12,7 @@ import {
   SECTION_COLOR_CONTRACTS_ANY,
 } from '@/lib/section-color-contracts-generated';
 import { getSectionSchemas } from '@/lib/section-data-schemas';
+import { buildAiAgentContract, buildAiAgentPrompt } from '@/lib/ai-agent-guidance';
 
 export async function GET(req: NextRequest) {
   const auth = await validatePat(req.headers.get('authorization'));
@@ -28,9 +28,6 @@ export async function GET(req: NextRequest) {
     .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'booking')));
   const hasBooking = bookingAddon?.active === true;
 
-  // Ensure shop pages exist when shop is active
-  if (hasShop) await ensureShopPages(auth.tenantId);
-
   const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
 
   const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry, { hasShop, hasBooking });
@@ -39,8 +36,9 @@ export async function GET(req: NextRequest) {
     const key = s.type || s.id || '';
     return key !== 'freeHtml' && key !== 'htmlBlock' && key !== 'html';
   });
+  const sectionDataSchemas = getSectionSchemas(auth.tenant.industry);
 
-  return NextResponse.json({
+  const response: Record<string, unknown> = {
     tenant: auth.tenant,
     tenantId: auth.tenantId,
     hasShopAddon: hasShop,
@@ -52,16 +50,25 @@ export async function GET(req: NextRequest) {
     },
     existingPages: tenantPages,
     availableSectionTypes: allowedSectionTypes,
-    sectionDataSchemas: getSectionSchemas(auth.tenant.industry),
+    sectionDataSchemas,
     styleSystem: getStyleSystemInstructions(),
     sectionStyleContracts: getSectionStyleContracts(allowedSectionTypes, auth.tenant.industry),
     aiContentPlaybook: getAiContentPlaybook(auth.tenant.industry, { hasShop, hasBooking }),
+    agentContract: buildAiAgentContract({
+      tenantName: auth.tenant.name,
+      industry: auth.tenant.industry,
+      allowedSections: allowedSectionTypes,
+      existingPages: tenantPages,
+      sectionSchemas: sectionDataSchemas,
+      hasShop,
+      hasBooking,
+    }),
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logoUrl, faviconUrl, etc.)' },
       contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address, whatsapp, whatsappEnabled, whatsappColor)' },
       navigation: { method: 'PUT', path: '/api/v1/content/navigation', description: 'Set nav items + CTA' },
       footer: { method: 'PUT', path: '/api/v1/content/footer', description: 'Set footer columns + legal links + CTA' },
-      createPage: { method: 'POST', path: '/api/v1/content/pages', description: 'Create a new page with sections' },
+      createPage: { method: 'POST', path: '/api/v1/content/pages', description: 'Create or idempotently update a page. Send upsert: true so retries and corrections update an existing slug instead of returning 409.' },
       updatePage: { method: 'PUT', path: '/api/v1/content/pages/:id', description: 'Update a page (title, sections)' },
       deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a page' },
       seoGlobal: { method: 'PUT', path: '/api/v1/content/seo', description: 'Set global SEO defaults (titleTemplate, defaultDescription, canonicalBase, locale)' },
@@ -120,7 +127,8 @@ export async function GET(req: NextRequest) {
       ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
       ...(hasBooking ? ['This tenant has the BOOKING addon active. You may use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase and bookingCtaPro sections where they make sense. Use bookingSlotPicker for restaurants/cafes/salons/appointments where the visitor chooses a day and sees available times. Use bookingDateRange for hotels, apartments, locations, rooms and multi-day requests. The actual booking logic is configured in Admin > Funktionen > Buchungen.'] : ['This tenant does NOT have the booking addon. Do NOT use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase or bookingCtaPro. Keep simple reservation/contact sections if needed.']),
     ],
-    instructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
+    instructions: buildAiAgentPrompt(auth.tenant.name, auth.tenant.industry),
+    legacyInstructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
 
 ═══════════════════════════════════════════
 PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
@@ -217,11 +225,11 @@ A) JEDES Background+Text-Paar MUSS WCAG AA erfüllen:
    - Button-Text auf Button-Bg:  ≥ 4.5:1
 
 B) WENN sectionBg DUNKEL ist (Helligkeit < 50%, also rel. Luminanz < 0.5):
-   MUSST du im SELBEN Section/Design-Payload SETZEN:
-   - onDarkHeading: "#ffffff"  (oder ähnlich hell)
-   - onDarkBody:    "rgba(255,255,255,0.85)"
-   - onDarkMuted:   "rgba(255,255,255,0.6)"
-   ANSONSTEN bleibt der Default-Dark-Text aktiv → unsichtbar auf dunklem Hintergrund.
+   MUSST du im SELBEN Section/Design-Payload die normalen Text-Slots passend hell SETZEN:
+   - heading / --token-heading: "#ffffff"  (oder ähnlich hell)
+   - body / --token-body:       "rgba(255,255,255,0.85)"
+   - muted / --token-muted:     "rgba(255,255,255,0.6)"
+   Die internen Dark-Aliases werden automatisch daraus abgeleitet. Sende KEINE onDark*-Felder.
 
    Beispiel (Dark CTA-Band):
    {
@@ -229,9 +237,9 @@ B) WENN sectionBg DUNKEL ist (Helligkeit < 50%, also rel. Luminanz < 0.5):
      "data": { "headline": "...", "subline": "..." },
      "styleOverrides": {
        "--token-section-bg": "#0f4c4c",
-       "--token-on-dark-heading": "#ffffff",
-       "--token-on-dark-body": "rgba(255,255,255,0.88)",
-       "--token-on-dark-muted": "rgba(255,255,255,0.65)",
+       "--token-heading": "#ffffff",
+       "--token-body": "rgba(255,255,255,0.88)",
+       "--token-muted": "rgba(255,255,255,0.65)",
        "--token-btn-bg": "#f5e8d8",
        "--token-btn-text": "#0f4c4c"
      }
@@ -251,8 +259,8 @@ F) VERBOTENE KOMBINATIONEN (führen zu unsichtbaren Texten in der Live-Vorschau)
    ❌ sectionBg: #ffffff + heading: #f5f5f5    (weiß-grau auf weiß)
    ❌ sectionBg: #0a0a0a + heading: #1a1a1a    (fast-schwarz auf schwarz)
    ❌ btnBg: #ffffff + btnText: #cccccc        (hellgrau auf weiß)
-   ❌ Dunkler Header (#1a1a1a) ohne onDarkHeading gesetzt
-   ❌ Hero mit dunklem Bild ohne overlayOpacity ≥ 0.4 + onDarkHeading
+   ❌ Dunkler Header (#1a1a1a) ohne helle heading/body/muted Textfarben
+   ❌ Hero mit dunklem Bild ohne overlayOpacity ≥ 0.4 + helle heading/body/muted Textfarben
 
 G) SICHERER WORKFLOW:
    1) Setze JEDES Mal wenn du eine eigene sectionBg setzt AUCH passende Text-Farben.
@@ -260,10 +268,10 @@ G) SICHERER WORKFLOW:
    3) Fixe alle "colorIssues" bevor /publish aufgerufen wird.
    4) Der Server lehnt ungültige styleOverrides (#xyz, "primary", "blue", unbekannte Keys) mit 400 und konkretem Pfad ab — korrigiere die Werte statt sie erneut zu senden.
 
-H) AUTO-FIX: Wenn du PUT /content/design mit einem dunklen sectionBg ohne onDark*-Tokens sendest,
-   setzt der Server automatisch onDarkHeading/Body/Muted auf weiße Defaults. Das ist eine Rettungsleine,
-   keine Erlaubnis — die Response enthält ein "autoFixes"-Array, das du in deinem nächsten Schritt
-   prüfen und ggf. mit besseren Werten überschreiben solltest.
+H) AUTO-FIX: Wenn du PUT /content/design oder section.styleOverrides mit heading/body/muted sendest,
+   schreibt der Server die internen Dark-Aliases automatisch mit. Das verhindert doppelte CMS-Felder
+   und hält alte Templates kompatibel. Nutze trotzdem GET /api/v1/content/validate, um Kontrastprobleme
+   vor dem Publish zu finden.
 
 ═══════════════════════════════════════════
 i18n — MEHRSPRACHIGKEIT:
@@ -349,9 +357,8 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
       * badgeBg, badgeText, badgeBorder
       * dividerColor
       * eyebrow, statValue, quote, ratingStar, check  (granulare Slot-Farben)
-      * onDarkHeading, onDarkBody, onDarkMuted  (für Texte auf dunklen Backgrounds, z.B. Hero-Overlays)
     - Diese Werte gelten als Defaults für ALLE Sections. Für einzelne Sections kannst du sie überschreiben (siehe 12.).
-    - Wichtig: Achte auf WCAG-Kontrast. Bei dunkler sectionBg unbedingt onDarkHeading/Body/Muted setzen, sonst bleiben die Default-Weißtöne aktiv.
+    - Wichtig: Achte auf WCAG-Kontrast. Bei dunkler sectionBg unbedingt heading/body/muted hell setzen; interne Dark-Aliases werden automatisch daraus geschrieben.
 
 12. PER-SECTION FARB-OVERRIDES — section.styleOverrides:
     - Jede Section kann individuelle CSS-Variablen überschreiben — nutze styleOverrides als zusätzliches Property auf einer section.
@@ -361,8 +368,7 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
       --token-heading, --token-subheading, --token-body, --token-muted, --token-icon,
       --token-eyebrow, --token-stat-value, --token-quote, --token-rating-star, --token-check,
       --token-badge-bg, --token-badge-text, --token-badge-border,
-      --token-btn-bg, --token-btn-text, --token-divider,
-      --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted
+      --token-btn-bg, --token-btn-text, --token-divider
     - Beispiel:
       {
         "type": "ctaBand",
@@ -486,7 +492,9 @@ Folgende Sections speichern echte Nutzerdaten in der Datenbank:
 - bookingStrip (Hotel): KEIN Formular, nur CTA-Link zu externer Buchungsplattform (submitCta.href)
 - propertySearch (Realestate): KEIN Suchformular, zeigt Kategorie-Karten die zu Collections verlinken
 Workflow: 1) POST /collections → { key, label }  2) POST /collections/:key/items für jeden Eintrag  3) Auf Übersichtsseiten servicesGrid mit href="/c/:key/:slug" nutzen`,
-  });
+  };
+  if (req.nextUrl.searchParams.get('legacy') !== '1') delete response.legacyInstructions;
+  return NextResponse.json(response);
 }
 
 function getStyleSystemInstructions() {
@@ -522,16 +530,18 @@ function getStyleSystemInstructions() {
       '--token-quote', '--token-rating-star', '--token-check',
       '--token-badge-bg', '--token-badge-text', '--token-badge-border',
       '--token-btn-bg', '--token-btn-text', '--token-divider',
-      '--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted',
       '--token-image-overlay', '--token-card-radius', '--token-button-radius',
     ],
     commonCssVariables: Object.fromEntries(
-      Object.entries(FIELD_DEFS).map(([slot, def]) => [slot, {
+      PUBLIC_COLOR_FIELD_KEYS.map((slot) => {
+        const def = FIELD_DEFS[slot];
+        return [slot, {
         cssVar: def.cssVar,
         label: def.label,
         description: def.description,
         group: def.group,
-      }])
+        }];
+      })
     ),
   };
 }
@@ -688,7 +698,7 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
     ],
     colorRules: [
       'Global design colors should establish readable defaults for all light sections: sectionBg, cardBg, heading, body, muted, btnBg, btnText, badgeBg, badgeText.',
-      'For every image hero or dark/overlay section, set overlayColor/overlayOpacity and section.styleOverrides for --token-heading, --token-body, --token-muted, --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted.',
+      'For every image hero or dark/overlay section, set overlayColor/overlayOpacity and section.styleOverrides for --token-heading, --token-body and --token-muted. Do not send onDark* fields; internal dark aliases are written automatically.',
       'If overriding --token-btn-bg, always set --token-btn-text in the same styleOverrides.',
       'If overriding --token-badge-bg, always set --token-badge-text.',
       'If cards sit on a dark section, set --token-card-bg, --token-card-border and readable text tokens. Do NOT use rgba(255,255,255,0.05-0.2) with white heading/body tokens; use a solid dark card bg (for example #0A2A33) with white text, or a solid light card bg with dark text.',

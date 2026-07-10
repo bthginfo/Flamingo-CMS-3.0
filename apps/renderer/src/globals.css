@@ -708,6 +708,173 @@ html {
 
 /* Advanced brand color overrides are applied via inline styles in components */
 
+/* Premium section primitives -------------------------------------------------
+   These classes are intentionally structural rather than theme-specific. They
+   let the large template catalogue share one rhythm and interaction language
+   while every visible role remains controlled by the canonical token system. */
+@layer components {
+  .cms-section-header {
+    max-width: 48rem;
+    margin-bottom: clamp(2rem, 4vw, 3.25rem);
+  }
+
+  .cms-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--token-eyebrow);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .cms-eyebrow-mark {
+    width: 1.75rem;
+    height: 1px;
+    flex: none;
+    background: var(--token-accent);
+  }
+
+  .cms-section-title {
+    max-width: 18ch;
+    margin-top: 0.8rem;
+    color: var(--token-heading);
+    font-size: clamp(2rem, 5vw, 3.75rem);
+    font-weight: var(--token-heading-weight);
+    letter-spacing: var(--token-heading-tracking);
+    line-height: 1.04;
+  }
+
+  .cms-section-copy {
+    max-width: 65ch;
+    margin-top: 1.15rem;
+    color: var(--token-body);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.75;
+    text-wrap: pretty;
+  }
+
+  .cms-button {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border: 1px solid transparent;
+    border-radius: var(--token-button-radius);
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9375rem;
+    font-weight: 650;
+    line-height: 1.25;
+    box-shadow: 0 8px 24px var(--token-shadow);
+    transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+  }
+
+  .cms-button--primary {
+    background: var(--token-btn-bg);
+    color: var(--token-btn-text);
+  }
+
+  .cms-button--secondary {
+    border-color: var(--token-btn-secondary-border);
+    background: var(--token-btn-secondary-bg);
+    color: var(--token-btn-secondary-text);
+    box-shadow: none;
+  }
+
+  .cms-button-icon {
+    transition: transform 220ms ease;
+  }
+
+  .cms-card {
+    border: 1px solid var(--token-card-border);
+    border-radius: var(--token-card-radius);
+    background: var(--token-card-bg);
+    box-shadow: var(--token-card-shadow);
+    transition: border-color 280ms ease, box-shadow 280ms ease, transform 280ms ease;
+  }
+
+  .cms-media-frame img {
+    transition: transform 700ms cubic-bezier(.2, .65, .25, 1), filter 400ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cms-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px var(--token-shadow);
+      filter: brightness(1.035);
+    }
+
+    .cms-button:hover .cms-button-icon {
+      transform: translateX(3px);
+    }
+
+    .cms-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--token-divider);
+      box-shadow: 0 18px 48px var(--token-shadow);
+    }
+
+    .cms-card:hover .cms-media-frame img {
+      transform: scale(1.045);
+    }
+  }
+
+  .cms-button:active {
+    transform: translateY(0);
+  }
+}
+
+/* Trustworthy shared form treatment. Radio buttons and checkboxes keep their
+   native affordance; text controls receive the same tactile surface everywhere. */
+[data-section-id][data-style] :where(
+  input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
+  select,
+  textarea
+) {
+  border-color: var(--token-input-border);
+  background-color: var(--token-input-bg);
+  color: var(--token-input-text);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--token-card-bg) 75%, transparent);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+[data-section-id][data-style] :where(input, textarea)::placeholder {
+  color: color-mix(in srgb, var(--token-label) 72%, transparent);
+  opacity: 1;
+}
+
+[data-section-id][data-style] :where(
+  input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
+  select,
+  textarea
+):focus {
+  border-color: var(--token-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--token-accent) 16%, transparent);
+  outline: none;
+}
+
+[data-section-id][data-style] :where(button, input, select, textarea):disabled {
+  cursor: not-allowed;
+}
+
+@keyframes cms-section-enter {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-reveal[data-revealed="true"]:not([data-reveal-disabled="true"]) {
+  animation: cms-section-enter 620ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+@media (max-width: 639px) {
+  .cms-button {
+    width: 100%;
+  }
+}
+
 /* Hide scrollbar but keep scrollable */
 .scrollbar-hidden {
   scrollbar-width: none;

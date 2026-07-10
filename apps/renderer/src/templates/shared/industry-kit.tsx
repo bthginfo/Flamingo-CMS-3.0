@@ -38,27 +38,45 @@ export function baseHeader(data: Record<string, unknown>, fallbackHeadline: stri
 
 export function SectionHeader({ headline, subline, badgeText }: HeaderData) {
   return (
-    <div className="mb-10 max-w-3xl">
-      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</p>}
-      <h2 className="mt-3 text-3xl font-[700] text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
-      {subline && <div className="mt-4 text-[color:var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-    </div>
+    <header className="cms-section-header">
+      {badgeText && (
+        <p className="cms-eyebrow text-[color:var(--token-badge-text)]" data-edit-path="badgeText">
+          <span aria-hidden="true" className="cms-eyebrow-mark" />
+          {badgeText}
+        </p>
+      )}
+      <h2 className="cms-section-title text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+      {subline && <div className="cms-section-copy text-[color:var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+    </header>
   );
 }
 
-export function CtaButton({ cta }: { cta: ButtonValue }) {
+export function CtaButton({ cta, tone = 'primary' }: { cta: ButtonValue; tone?: 'primary' | 'secondary' }) {
   if (!cta.label) return null;
-  return <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>;
+  return (
+    <a
+      data-edit-link="cta"
+      href={cta.href || '#'}
+      className={`cms-button cms-button--${tone} ${tone === 'primary' ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]' : 'border-[var(--token-card-border)] bg-[var(--token-card-bg)] text-[color:var(--token-card-heading)]'}`}
+    >
+      <span data-edit-path="label">{cta.label}</span>
+      <ArrowRight aria-hidden="true" size={16} className="cms-button-icon" />
+    </a>
+  );
 }
 
 export function ImageCard({ image, title, text, meta, cta }: { image?: string; title?: string; text?: string; meta?: string; cta?: ButtonValue }) {
   return (
-    <article className="group overflow-hidden rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl">
-      {image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={image} alt={title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
-      <div className="p-5">
-        {meta && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]">{meta}</p>}
-        <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{title || ''}</h3>
-        {text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
+    <article className="cms-card group flex h-full flex-col overflow-hidden border-[var(--token-card-border)] bg-[var(--token-card-bg)]" data-card="">
+      {image && (
+        <div className="cms-media-frame relative aspect-[4/3] overflow-hidden">
+          <Image data-edit-image="image" src={image} alt={title || ''} fill className="object-cover" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+        </div>
+      )}
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        {meta && <p className="text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-badge-text)]">{meta}</p>}
+        <h3 className="mt-2 text-xl font-bold leading-snug text-[color:var(--token-card-heading)]" data-edit-path="title">{title || ''}</h3>
+        {text && <div className="mt-3 flex-1 whitespace-pre-line text-sm leading-6 text-[color:var(--token-card-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         {cta?.label && <div className="mt-5"><CtaButton cta={cta} /></div>}
       </div>
     </article>
@@ -73,15 +91,15 @@ export function IconRows({ items, iconFallback = 'sparkles', style = 'rows' }: {
     return (
       <div className="grid gap-4">
         {list.map((item, index) => (
-          <div key={`${item.title}-${index}`} className="flex items-start gap-5 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_76%,var(--token-section-bg,#fff))] p-5" data-edit-collection="items" data-edit-index={index}>
-            <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] text-[color:var(--token-icon)]">
+          <article key={`${item.title}-${index}`} className="cms-card group flex items-start gap-5 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 sm:p-6" data-edit-collection="items" data-edit-index={index} data-card="">
+            <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--token-card-border)] bg-[var(--token-badge-bg)] text-[color:var(--token-icon)] transition-transform duration-300 motion-safe:group-hover:-rotate-3 motion-safe:group-hover:scale-105">
               <DynamicIcon editPath="icon" name={item.icon || iconFallback} size={18} />
             </span>
             <div className="min-w-0">
-              <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-              {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
+              <h3 className="font-semibold leading-snug text-[color:var(--token-card-heading)]" data-edit-path="title">{item.title || ''}</h3>
+              {item.text && <div className="mt-1.5 text-sm leading-6 text-[color:var(--token-card-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </div>
-          </div>
+          </article>
         ))}
       </div>
     );
@@ -89,11 +107,13 @@ export function IconRows({ items, iconFallback = 'sparkles', style = 'rows' }: {
   return (
     <div className="grid gap-4">
       {list.map((item, index) => (
-        <div key={`${item.title}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border)] pt-4" data-edit-collection="items" data-edit-index={index}>
-          <DynamicIcon editPath="icon" name={item.icon || iconFallback} size={20} className="text-[color:var(--token-icon)]" />
-          <div>
-            <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-            {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
+        <div key={`${item.title}-${index}`} className="group flex gap-4 border-t border-[var(--token-card-border)] py-4 first:border-t-0 first:pt-0" data-edit-collection="items" data-edit-index={index}>
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--token-badge-bg)] text-[color:var(--token-icon)]">
+            <DynamicIcon editPath="icon" name={item.icon || iconFallback} size={18} />
+          </span>
+          <div className="min-w-0">
+            <h3 className="font-semibold text-[color:var(--token-card-heading)]" data-edit-path="title">{item.title || ''}</h3>
+            {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-card-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </div>
         </div>
       ))}

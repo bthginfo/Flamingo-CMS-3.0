@@ -53,7 +53,9 @@ export async function GET(request: NextRequest) {
 
   const industry = request.nextUrl.searchParams.get('industry');
   const requestedNext = request.nextUrl.searchParams.get('next');
-  const publicDemo = request.nextUrl.searchParams.get('public') === '1' || request.nextUrl.searchParams.get('embed') === '1';
+  // This endpoint is public by design, therefore every token it issues is a
+  // capability-limited demo session. Never mint a normal admin token here.
+  const publicDemo = true;
 
   let tenantId = DEFAULT_DEMO_TENANT_ID;
 
@@ -97,7 +99,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const token = await createSessionToken(tenantId, '1h');
+  const token = await createSessionToken(tenantId, '1h', 'demo');
   const safeNext = requestedNext?.startsWith('/admin') && !requestedNext.startsWith('/admin/login')
     ? requestedNext
     : '/admin';
@@ -124,9 +126,6 @@ export async function GET(request: NextRequest) {
       secure: true,
       maxAge: 60 * 60,
     });
-  } else {
-    response.cookies.set('flamingo_public_demo', '', { path: '/admin', maxAge: 0 });
-    response.cookies.set('flamingo_demo', '', { path: '/admin', maxAge: 0 });
   }
 
   return response;

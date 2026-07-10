@@ -2,7 +2,14 @@ import { getSectionTypesForIndustry } from '../app/admin/pages/[id]/section-type
 import { SECTION_EDITOR_FIELD_DEFAULTS } from './section-editor-field-defaults';
 import { SECTION_PREVIEW_DATA } from './section-preview-data';
 import { getSectionSchemas } from './section-data-schemas';
-import { COLOR_FIELD_BY_CSS_VAR, COLOR_FIELD_KEYS, FIELD_DEFS, sortColorFields, type ColorFieldKey } from './section-color-fields';
+import {
+  FIELD_DEFS,
+  PUBLIC_COLOR_FIELD_KEYS,
+  canonicalColorFieldForCssVar,
+  getCssVarsForColorField,
+  sortColorFields,
+  type ColorFieldKey,
+} from './section-color-fields';
 import { getFieldsForSection, resolveColorContractForSection } from './section-color-resolver';
 
 export type SectionFieldType =
@@ -186,7 +193,7 @@ function getContractColorFields(type: string) {
 }
 
 export const SECTION_COLOR_SLOT_DEFINITIONS: Record<SectionColorSlot, { cssVar: string; label: string; description: string; contrastWith?: SectionColorSlot[] }> = Object.fromEntries(
-  COLOR_FIELD_KEYS.map((field) => [
+  PUBLIC_COLOR_FIELD_KEYS.map((field) => [
     field,
     {
       cssVar: FIELD_DEFS[field].cssVar,
@@ -197,15 +204,15 @@ export const SECTION_COLOR_SLOT_DEFINITIONS: Record<SectionColorSlot, { cssVar: 
 ) as Record<SectionColorSlot, { cssVar: string; label: string; description: string; contrastWith?: SectionColorSlot[] }>;
 
 export const SECTION_COLOR_SLOT_ALIASES: Record<SectionColorSlot, string[]> = Object.fromEntries(
-  COLOR_FIELD_KEYS.map((field) => [field, [FIELD_DEFS[field].cssVar]]),
+  PUBLIC_COLOR_FIELD_KEYS.map((field) => [field, getCssVarsForColorField(field)]),
 ) as Record<SectionColorSlot, string[]>;
 
 export const SECTION_COLOR_FIELD_TO_SLOT: Record<string, SectionColorSlot> = Object.fromEntries(
-  COLOR_FIELD_KEYS.map((field) => [field, field]),
+  PUBLIC_COLOR_FIELD_KEYS.map((field) => [field, field]),
 ) as Record<string, SectionColorSlot>;
 
 export function getSectionColorSlotForCssVar(cssVar: string): SectionColorSlot | null {
-  return COLOR_FIELD_BY_CSS_VAR[cssVar] || null;
+  return canonicalColorFieldForCssVar(cssVar) || null;
 }
 
 export function getSectionColorSlotForField(field: string): SectionColorSlot | null {

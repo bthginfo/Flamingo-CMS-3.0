@@ -80,7 +80,7 @@ function CtaClassic({ headline, subline, badgeText, cta, ctaSecondary, colors }:
               </a>
             )}
             {ctaSecondary?.label && (
-              <a data-edit-link="ctaSecondary" href={ctaSecondary.href} className="group inline-flex items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#fff)_35%,transparent)] px-8 py-4 font-semibold transition-all hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--token-on-dark-heading,#fff)_10%,transparent)]" style={{ color: CTA_CARD_HEADING }}>
+              <a data-edit-link="ctaSecondary" href={ctaSecondary.href} className="group inline-flex items-center gap-2.5 rounded-full border border-[color:var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-secondary-text)] transition-all hover:-translate-y-0.5 hover:brightness-110">
                 <span data-edit-path="label">{ctaSecondary.label}</span>{ctaSecondary.icon && <DynamicIcon editPath="ctaSecondary.icon" name={ctaSecondary.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
               </a>
             )}

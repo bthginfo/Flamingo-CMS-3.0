@@ -1,4 +1,5 @@
-const token = process.env.FLM_FITNESS_TOKEN || 'flm_pat_66f860ff81cc991f4b5442e8a428d84a8bb6b26ad0c9e0447ac9e2d8038701a8';
+const token = process.env.FLM_FITNESS_TOKEN;
+if (!token) throw new Error('FLM_FITNESS_TOKEN is required');
 const baseUrl = 'https://flamingo-renderer.vercel.app';
 
 async function api(method, path, body) {

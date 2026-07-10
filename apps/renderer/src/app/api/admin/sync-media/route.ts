@@ -7,15 +7,16 @@ import { eq, and } from 'drizzle-orm';
 const BLOB_URL_REGEX = /https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\/[^\s"')]+/g;
 
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get('secret') || '';
-  const validSecrets = [process.env.PREVIEW_SECRET, process.env.NEXT_PUBLIC_PREVIEW_SECRET].filter(Boolean) as string[];
-  const isValid = validSecrets.some(expected => {
-    if (!expected) return false;
-    const bufA = Buffer.from(secret);
-    const bufB = Buffer.from(expected);
-    if (bufA.length !== bufB.length) return false;
-    return timingSafeEqual(bufA, bufB);
-  });
+  const expected = process.env.PREVIEW_SECRET;
+  const authorization = req.headers.get('authorization') || '';
+  const secret = authorization.startsWith('Bearer ')
+    ? authorization.slice('Bearer '.length)
+    : (req.headers.get('x-preview-secret') || '');
+  const providedBuffer = Buffer.from(secret);
+  const expectedBuffer = Buffer.from(expected || '');
+  const isValid = Boolean(expected)
+    && providedBuffer.length === expectedBuffer.length
+    && timingSafeEqual(providedBuffer, expectedBuffer);
   if (!isValid) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

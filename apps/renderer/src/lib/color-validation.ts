@@ -12,8 +12,8 @@
  * fails at this. This module gives the API a way to:
  *   - reject obviously malformed colors at write time
  *   - flag low-contrast pairs with actionable suggestions
- *   - auto-derive on-dark text tokens when sectionBg is dark and they're
- *     missing (so the AI can't accidentally produce white-on-white sections)
+ *   - auto-derive canonical text tokens when sectionBg is dark and they're
+ *     missing (so the AI can't accidentally produce dark-on-dark sections)
  */
 
 export type ColorIssueSeverity = 'error' | 'warning' | 'info';
@@ -222,6 +222,9 @@ const DESIGN_COLOR_FIELDS = [
   'dividerColor',
   'eyebrow', 'statValue', 'quote', 'quoteMark', 'ratingStar', 'check',
   'imageOverlay',
+] as const;
+
+const LEGACY_INTERNAL_DESIGN_COLOR_FIELDS = [
   'onDarkHeading', 'onDarkBody', 'onDarkMuted',
 ] as const;
 
@@ -235,7 +238,7 @@ function pickDesignValue(design: Record<string, unknown>, keys: string[]): strin
 
 export function validateDesignPayload(design: Record<string, unknown>): ColorIssue[] {
   const issues: ColorIssue[] = [];
-  for (const f of DESIGN_COLOR_FIELDS) {
+  for (const f of [...DESIGN_COLOR_FIELDS, ...LEGACY_INTERNAL_DESIGN_COLOR_FIELDS]) {
     const v = design[f];
     if (v !== undefined && v !== null && v !== '') {
       const err = validateColorField(`design.${f}`, v);
@@ -245,9 +248,9 @@ export function validateDesignPayload(design: Record<string, unknown>): ColorIss
   // Cross-field contrast
   const sectionBg = pickDesignValue(design, ['sectionBg']);
   const cardBg    = pickDesignValue(design, ['cardBg']);
-  const heading   = pickDesignValue(design, ['headingColor', 'heading']);
-  const body      = pickDesignValue(design, ['bodyColor', 'body']);
-  const muted     = pickDesignValue(design, ['mutedColor', 'muted']);
+  const heading   = pickDesignValue(design, ['headingColor', 'heading', 'textPrimary', 'onDarkHeading']);
+  const body      = pickDesignValue(design, ['bodyColor', 'body', 'textSecondary', 'onDarkBody']);
+  const muted     = pickDesignValue(design, ['mutedColor', 'muted', 'textMuted', 'onDarkMuted']);
   const btnBg     = typeof design.btnBg     === 'string' ? design.btnBg     : undefined;
   const btnText   = typeof design.btnText   === 'string' ? design.btnText   : undefined;
   const badgeBg   = typeof design.badgeBg   === 'string' ? design.badgeBg   : undefined;
@@ -267,18 +270,19 @@ export function validateDesignPayload(design: Record<string, unknown>): ColorIss
     if (issue) issues.push(issue);
   }
 
-  // Critical structural check: dark sectionBg without onDark text tokens
+  // Critical structural check: dark sectionBg without canonical text colors.
+  // Legacy onDark* values are accepted only as backwards-compatible input.
   if (sectionBg && isDarkColor(sectionBg)) {
     const missing: string[] = [];
-    if (!design.onDarkHeading) missing.push('onDarkHeading');
-    if (!design.onDarkBody)    missing.push('onDarkBody');
-    if (!design.onDarkMuted)   missing.push('onDarkMuted');
+    if (!pickDesignValue(design, ['headingColor', 'heading', 'textPrimary', 'onDarkHeading'])) missing.push('headingColor');
+    if (!pickDesignValue(design, ['bodyColor', 'body', 'textSecondary', 'onDarkBody'])) missing.push('bodyColor');
+    if (!pickDesignValue(design, ['mutedColor', 'muted', 'textMuted', 'onDarkMuted'])) missing.push('mutedColor');
     if (missing.length) {
       issues.push({
         severity: 'warning',
-        code: 'DARK_BG_MISSING_ONDARK',
-        message: `design.sectionBg=${sectionBg} is dark — onDark text tokens missing: ${missing.join(', ')}`,
-        hint: 'Set onDarkHeading (#ffffff or near-white), onDarkBody (#e5e5e5 or rgba(255,255,255,0.85)), onDarkMuted (rgba(255,255,255,0.6)) so text on dark sections stays readable.',
+        code: 'DARK_BG_MISSING_TEXT',
+        message: `design.sectionBg=${sectionBg} is dark — canonical text colors missing: ${missing.join(', ')}`,
+        hint: 'Set headingColor, bodyColor and mutedColor to readable light values. Do not send onDark* fields in new payloads.',
         location: 'design',
       });
     }
@@ -340,15 +344,15 @@ export function validateSectionStyleOverrides(
     if (issue) issues.push(issue);
   }
 
-  // Dark section bg without onDark tokens
+  // Dark section bg without canonical text tokens.
   if (sectionBg && isDarkColor(sectionBg)) {
-    const hasAnyText = heading || body || pickFirst(overrides, ['--token-on-dark-heading']);
+    const hasAnyText = heading || body;
     if (!hasAnyText) {
       issues.push({
         severity: 'warning',
         code: 'DARK_BG_NO_TEXT_OVERRIDE',
         message: `sections[${sectionIdx}] (${sectionType}): section background ${sectionBg} is dark but no text color override set`,
-        hint: 'Add --token-on-dark-heading and --token-on-dark-body (or --token-heading + --token-body in light values) to prevent unreadable dark-on-dark text.',
+        hint: 'Add --token-heading and --token-body in readable light values to prevent unreadable dark-on-dark text.',
         location: `sections[${sectionIdx}].styleOverrides`,
       });
     }
@@ -365,11 +369,11 @@ function pickFirst(obj: Record<string, unknown>, keys: string[]): string | undef
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Auto-fix: derive missing onDark tokens on dark backgrounds
+// Auto-fix: derive missing canonical text tokens on dark backgrounds
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * If `design.sectionBg` is dark and the on-dark tokens are missing, fill them
+ * If `design.sectionBg` is dark and canonical text colors are missing, fill them
  * with sensible defaults so AI-generated sites can't produce white-on-white.
  * Returns the (possibly modified) design payload + a list of changes applied.
  */
@@ -381,9 +385,21 @@ export function autoFixDesignOnDark(design: Record<string, unknown>): {
   const out = { ...design };
   const sectionBg = pickDesignValue(out, ['sectionBg']);
   if (sectionBg && isDarkColor(sectionBg)) {
-    if (!out.onDarkHeading) { out.onDarkHeading = '#ffffff';                    applied.push('onDarkHeading=#ffffff'); }
-    if (!out.onDarkBody)    { out.onDarkBody    = 'rgba(255,255,255,0.85)';     applied.push('onDarkBody=rgba(255,255,255,0.85)'); }
-    if (!out.onDarkMuted)   { out.onDarkMuted   = 'rgba(255,255,255,0.6)';      applied.push('onDarkMuted=rgba(255,255,255,0.6)'); }
+    if (!pickDesignValue(out, ['headingColor', 'heading', 'textPrimary'])) {
+      out.headingColor = '#ffffff';
+      applied.push('headingColor=#ffffff');
+    }
+    if (!pickDesignValue(out, ['bodyColor', 'body', 'textSecondary'])) {
+      out.bodyColor = 'rgba(255,255,255,0.85)';
+      applied.push('bodyColor=rgba(255,255,255,0.85)');
+    }
+    if (!pickDesignValue(out, ['mutedColor', 'muted', 'textMuted'])) {
+      out.mutedColor = 'rgba(255,255,255,0.6)';
+      applied.push('mutedColor=rgba(255,255,255,0.6)');
+    }
+    if (!out.onDarkHeading) out.onDarkHeading = pickDesignValue(out, ['headingColor', 'heading', 'textPrimary']);
+    if (!out.onDarkBody) out.onDarkBody = pickDesignValue(out, ['bodyColor', 'body', 'textSecondary']);
+    if (!out.onDarkMuted) out.onDarkMuted = pickDesignValue(out, ['mutedColor', 'muted', 'textMuted']);
   }
   return { design: out, applied };
 }

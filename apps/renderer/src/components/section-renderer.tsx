@@ -292,6 +292,26 @@ function normalizeSectionStyle(style?: React.CSSProperties): React.CSSProperties
   return normalized as React.CSSProperties;
 }
 
+/**
+ * Media sections expose only the canonical heading/body/muted controls in the
+ * CMS. Mirror section-local overrides to the inverse implementation aliases so
+ * older templates that still read --token-on-dark-* render the same value.
+ * Global page text is intentionally never mirrored here.
+ */
+function withMediaTextAliases(style?: React.CSSProperties): React.CSSProperties | undefined {
+  if (!style) return style;
+  const next: Record<string, unknown> = { ...style };
+  const source = style as Record<string, unknown>;
+  const mirror = (canonical: string, internal: string) => {
+    const value = source[canonical];
+    if (typeof value === 'string' && value.trim() && !next[internal]) next[internal] = value;
+  };
+  mirror('--token-heading', '--token-on-dark-heading');
+  mirror('--token-body', '--token-on-dark-body');
+  mirror('--token-muted', '--token-on-dark-muted');
+  return next as React.CSSProperties;
+}
+
 function sanitizeRenderValue(value: unknown): unknown {
   if (typeof value === 'string') {
     return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
@@ -443,7 +463,11 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const overrideStyle = section.styleOverrides
     ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
     : undefined;
-  const sectionStyle = withBookingStyleAliases(section.type, normalizeSectionStyle(overrideStyle));
+  const normalizedStyle = normalizeSectionStyle(overrideStyle);
+  const sectionStyle = withBookingStyleAliases(
+    section.type,
+    hasMediaOverlay ? withMediaTextAliases(normalizedStyle) : normalizedStyle,
+  );
 
   // Global bridge: strict 1:1 CSS var → data prop mapping.
   // NO cross-token fallbacks. Each token maps to exactly ONE data property.

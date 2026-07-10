@@ -23,7 +23,7 @@ export function BrandShowroomSection({ data }: Props) {
       {image ? (
         <img data-edit-image="image" src={image} alt={headline} className="absolute inset-0 w-full h-full object-cover" />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-icon)] to-[var(--token-subheading)]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-accent)] to-[var(--token-section-bg-alt)]" />
       )}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, rgba(0,0,0,${overlayOpacity}) 0%, rgba(0,0,0,${overlayOpacity * 0.3}) 50%, transparent 100%)` }} />
 

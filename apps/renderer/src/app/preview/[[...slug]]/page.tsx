@@ -12,9 +12,11 @@ export const dynamic = 'force-dynamic';
 export default async function PreviewPage({ params, searchParams }: { params: Promise<{ slug?: string[] }>; searchParams: Promise<{ token?: string }> }) {
   const { slug } = await params;
   const { token } = await searchParams;
-  const secret = process.env.PREVIEW_SECRET || process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview';
+  const secret = process.env.PREVIEW_SECRET;
 
-  if (token !== secret) notFound();
+  // Preview content is unpublished content. Fail closed when no private,
+  // server-only secret is configured; NEXT_PUBLIC_* is never an auth secret.
+  if (!secret || token !== secret) notFound();
 
   const tenantId = await resolveTenant();
   if (!tenantId) notFound();

@@ -16,25 +16,34 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 
 // ─── JWT session token ──────────────────────────────────────────────
 function getSecret() {
-  const s = process.env.ADMIN_JWT_SECRET || process.env.PREVIEW_SECRET;
+  const s = process.env.ADMIN_JWT_SECRET;
   if (!s) {
     throw new Error('[Flamingo Auth] ADMIN_JWT_SECRET is not set. Refusing to start without a secure secret. Set ADMIN_JWT_SECRET in your environment.');
   }
   return new TextEncoder().encode(s);
 }
 
-export async function createSessionToken(tenantId: string, ttl: string | number = '7d'): Promise<string> {
-  return new SignJWT({ tenantId })
+export type SessionRole = 'admin' | 'demo';
+export type SessionClaims = { tenantId: string; role: SessionRole };
+
+export async function createSessionToken(
+  tenantId: string,
+  ttl: string | number = '7d',
+  role: SessionRole = 'admin',
+): Promise<string> {
+  return new SignJWT({ tenantId, role })
     .setProtectedHeader({ alg: JWT_ALG })
     .setIssuedAt()
     .setExpirationTime(ttl)
     .sign(getSecret());
 }
 
-export async function verifySessionToken(token: string): Promise<{ tenantId: string } | null> {
+export async function verifySessionToken(token: string): Promise<SessionClaims | null> {
   try {
     const { payload } = await jwtVerify(token, getSecret());
-    return { tenantId: payload.tenantId as string };
+    if (typeof payload.tenantId !== 'string' || !payload.tenantId) return null;
+    if (payload.role !== 'admin' && payload.role !== 'demo') return null;
+    return { tenantId: payload.tenantId, role: payload.role };
   } catch {
     return null;
   }

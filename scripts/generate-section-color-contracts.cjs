@@ -44,12 +44,30 @@ function loadFieldRegistry() {
   while ((em = entryRe.exec(body)) !== null) {
     cssVarToField.set(em[2], em[1]);
   }
+
+  // Public contracts must never expose internal compatibility aliases. Parse
+  // the canonical mapping from the registry itself so codegen stays aligned
+  // when aliases are added or renamed.
+  const aliasesMatch = src.match(/const INTERNAL_COLOR_FIELD_ALIASES:[^=]*=\s*{([\s\S]*?)\n};/);
+  if (!aliasesMatch) throw new Error('Could not parse INTERNAL_COLOR_FIELD_ALIASES');
+  const canonicalAliases = new Map();
+  const aliasRe = /^\s*([a-zA-Z][\w]*)\s*:\s*'([a-zA-Z][\w]*)'/gm;
+  let aliasMatch;
+  while ((aliasMatch = aliasRe.exec(aliasesMatch[1])) !== null) {
+    canonicalAliases.set(aliasMatch[1], aliasMatch[2]);
+  }
+  for (const [cssVar, field] of cssVarToField.entries()) {
+    cssVarToField.set(cssVar, canonicalAliases.get(field) || field);
+  }
   const orderMatch = src.match(/export const FIELD_RENDER_ORDER:[^=]*=\s*\[([\s\S]*?)\];/);
   if (!orderMatch) throw new Error('Could not parse FIELD_RENDER_ORDER');
   const fieldOrder = [];
   const orderRe = /'([a-zA-Z][\w]*)'/g;
   let om;
-  while ((om = orderRe.exec(orderMatch[1])) !== null) fieldOrder.push(om[1]);
+  while ((om = orderRe.exec(orderMatch[1])) !== null) {
+    const field = canonicalAliases.get(om[1]) || om[1];
+    if (!fieldOrder.includes(field)) fieldOrder.push(field);
+  }
 
   return { cssVarToField, fieldOrder };
 }

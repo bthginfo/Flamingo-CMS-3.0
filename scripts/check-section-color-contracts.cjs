@@ -24,6 +24,8 @@ const GENERATED = path.join(ROOT, 'apps/renderer/src/lib/section-color-contracts
 const GENERATOR = path.join(ROOT, 'scripts/generate-section-color-contracts.cjs');
 const VOCAB_AUDIT = path.join(ROOT, 'scripts/audit-token-vocabulary.cjs');
 const REGISTRY_CHECK = path.join(ROOT, 'scripts/check-section-color-field-registry.cjs');
+const CROSSTALK_AUDIT = path.join(ROOT, 'scripts/audit-token-crosstalk.cjs');
+const DOM_AUDIT = path.join(ROOT, 'scripts/audit-section-color-dom.ts');
 
 // First gate: the canonical field registry must be internally consistent.
 try {
@@ -48,6 +50,37 @@ try {
   process.exit(1);
 }
 
+// Third gate: semantic token usage. The generator can only see that a token is
+// present; this check blocks text tokens being wired into paint-surface slots
+// such as backgrounds, borders, shadows, and gradient stops.
+try {
+  execSync('node ' + JSON.stringify(CROSSTALK_AUDIT), {
+    stdio: ['ignore', 'inherit', 'inherit'],
+  });
+} catch {
+  console.error('');
+  console.error('Token crosstalk check failed — see output above.');
+  process.exit(1);
+}
+
+// Optional browser-level semantic guard. Static checks prove that token names
+// exist and are not obviously wired into wrong CSS properties. This DOM audit
+// proves actual field ownership by rendering section previews, mutating one
+// field at a time, and reading computed styles on data-color-slot targets.
+// It is opt-in because it requires Playwright and a browser runtime.
+if (process.env.SECTION_COLOR_DOM_AUDIT === '1') {
+  try {
+    execSync('pnpm exec tsx ' + JSON.stringify(DOM_AUDIT) + ' --start-server --strict', {
+      stdio: ['ignore', 'inherit', 'inherit'],
+      cwd: ROOT,
+    });
+  } catch {
+    console.error('');
+    console.error('Section color DOM audit failed â€” see output above.');
+    process.exit(1);
+  }
+}
+
 if (!fs.existsSync(GENERATED)) {
   console.error('ERROR: ' + path.relative(ROOT, GENERATED) + ' is missing.');
   console.error('Run: node scripts/generate-section-color-contracts.cjs');
@@ -59,6 +92,19 @@ if (!fs.existsSync(GENERATOR)) {
 }
 
 const before = fs.readFileSync(GENERATED, 'utf8');
+
+const INTERNAL_PUBLIC_FIELD_RE = /['"]onDark(?:Heading|Body|Muted)['"]/;
+function assertNoInternalPublicFields(source, label) {
+  if (!INTERNAL_PUBLIC_FIELD_RE.test(source)) return;
+  console.error('');
+  console.error('INTERNAL FIELD LEAK DETECTED in ' + label + '.');
+  console.error('Generated public section color contracts must not expose onDark* aliases.');
+  console.error('Use headingColor/bodyColor/mutedColor as public fields; onDark* is internal compatibility only.');
+  process.exit(1);
+}
+
+assertNoInternalPublicFields(before, path.relative(ROOT, GENERATED));
+
 // Run the generator, capture the new output, then restore the file so the
 // check is non-destructive.
 try {
@@ -69,6 +115,7 @@ try {
   process.exit(1);
 }
 const after = fs.readFileSync(GENERATED, 'utf8');
+assertNoInternalPublicFields(after, 'fresh generator output');
 
 if (before === after) {
   console.log('section-color-contracts-generated.ts is in sync.');

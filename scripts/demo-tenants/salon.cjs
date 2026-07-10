@@ -14,7 +14,7 @@ const { darkTokens } = require('./_lib/theme.cjs');
  * Tonalität: persönlich, klar, beratend, stilvoll.
  */
 
-const PAT = 'flm_pat_de5a3d8ac1447d879e680d74218b8266a0e47144191913d0a6ee20d08c7988c5';
+const PAT = process.env.PAT_DEMO_SALON || '';
 
 const C = {
   aubergine: '#3A1830',

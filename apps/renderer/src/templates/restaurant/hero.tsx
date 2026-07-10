@@ -122,7 +122,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             )}
             {secondaryCta.label && (
               <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-8 py-4 text-[color:var(--token-on-dark-heading)] font-medium hover:border-[color:color-mix(in_srgb,var(--token-card-border)_62%,transparent)] transition-all text-sm w-full sm:w-auto">
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-8 py-4 text-[color:var(--token-btn-secondary-text)] font-medium transition-all hover:brightness-110 text-sm w-full sm:w-auto">
                 <span data-edit-path="label">{secondaryCta.label}</span>
                 {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={14} />}
               </a>

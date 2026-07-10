@@ -144,6 +144,14 @@ export async function hasBookingConflict(input: {
   return overlaps.length >= capacity;
 }
 
+/** PostgreSQL exclusion violation from booking_requests_no_confirmed_overlap. */
+export function isBookingOverlapError(error: unknown): boolean {
+  const candidate = error as { code?: string; constraint?: string; message?: string } | null;
+  return candidate?.code === '23P01'
+    || candidate?.constraint === 'booking_requests_no_confirmed_overlap'
+    || /booking_requests_no_confirmed_overlap|conflicting key value violates exclusion constraint/i.test(candidate?.message || '');
+}
+
 export async function getBookingCalendarBlocks(input: {
   tenantId: string;
   serviceId?: string | null;

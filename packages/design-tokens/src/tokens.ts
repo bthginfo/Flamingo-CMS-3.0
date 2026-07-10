@@ -60,7 +60,6 @@ export const DESIGN_TOKENS = {
 
   // ─── Accents / actions ────────────────────────────────────────────────────────
   accent:          { cssVar: '--token-accent',          kind: 'color', default: '#dc2626',          description: 'Primary accent color (links, focused states, hero highlights)' },
-  accentRgb:       { cssVar: '--token-accent-rgb',      kind: 'color', default: '220 38 38',        description: 'Accent color as space-separated RGB triplet for rgb(... / alpha) usage' },
   glowColor:       { cssVar: '--token-glow-color',      kind: 'color', default: 'rgba(220,38,38,0.35)', description: 'Ambient glow / spotlight color for premium sections' },
   icon:            { cssVar: '--token-icon',            kind: 'color', default: '#dc2626',          description: 'Default icon stroke / fill color' },
   check:           { cssVar: '--token-check',           kind: 'color', default: '#16a34a',          description: 'Success checkmark / "included" indicator color' },

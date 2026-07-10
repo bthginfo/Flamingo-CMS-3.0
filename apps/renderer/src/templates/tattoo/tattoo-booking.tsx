@@ -111,7 +111,7 @@ export function TattooBookingSection({ data }: Props) {
             </div>
           </label>
 
-          {error && <p className="rounded-lg border border-red-500/60 px-4 py-3 text-sm text-red-500">{error}</p>}
+          {error && <p className="rounded-lg border border-[color:var(--token-danger)] bg-[var(--token-danger-bg)] px-4 py-3 text-sm text-[color:var(--token-danger)]">{error}</p>}
           <button type="submit" disabled={sending} className="w-full py-4 rounded-lg bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider text-sm shadow-lg transition hover:brightness-110 disabled:opacity-60">
             {sending ? 'Wird gesendet…' : 'Anfrage absenden'}
           </button>

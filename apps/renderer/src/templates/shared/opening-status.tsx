@@ -65,7 +65,7 @@ export function OpeningStatusSection({ data }: Props) {
           <div className={`mb-5 inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-sm font-bold ${isOpen ? 'bg-[color-mix(in_srgb,var(--token-success)_14%,transparent)] text-[color:var(--token-success)]' : 'bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]'}`}>
             <span className={`relative flex h-2.5 w-2.5 ${isOpen ? '' : 'opacity-60'}`}>
               {isOpen && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--token-success)] opacity-60" />}
-              <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${isOpen ? 'bg-[var(--token-success)]' : 'bg-[var(--token-badge-text)]'}`} />
+            <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${isOpen ? 'bg-[var(--token-success)]' : 'bg-[var(--token-danger)]'}`} />
             </span>
             {isOpen ? openLabel : closedLabel}
           </div>

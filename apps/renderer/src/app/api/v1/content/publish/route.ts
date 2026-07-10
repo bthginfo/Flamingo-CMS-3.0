@@ -3,7 +3,7 @@ import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collections, collectionItems, globalSettings } from '@flamingo/db';
 import { publishedSnapshots, publishHistory } from '@flamingo/db';
-import { eq, asc, and, inArray, desc } from 'drizzle-orm';
+import { eq, asc, and, inArray, desc, sql } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { createHash } from 'crypto';
 import { getDraftSnapshot } from '@/lib/snapshot';
@@ -53,25 +53,30 @@ export async function POST(req: NextRequest) {
 
       const nextVersion = (latest?.version ?? 0) + 1;
 
-      // Deactivate any currently-active snapshot(s) FIRST to satisfy the
-      // one-active-per-tenant unique index before inserting the new active row.
-      await db.update(publishedSnapshots)
-        .set({ isActive: false })
-        .where(and(
-          eq(publishedSnapshots.tenantId, auth.tenantId),
-          eq(publishedSnapshots.isActive, true),
-        ));
-
       const [created] = await db.insert(publishedSnapshots).values({
         tenantId: auth.tenantId,
         version: nextVersion,
         snapshot: snapshot as unknown as Record<string, unknown>,
         checksum,
         createdBy: `pat:${auth.tokenId}`,
-        isActive: true,
+        isActive: false,
       }).returning({ id: publishedSnapshots.id });
 
       if (!created?.id) throw new Error('Published snapshot could not be created');
+
+      await db.execute(sql`
+        WITH deactivated AS (
+          UPDATE published_snapshots
+          SET is_active = false
+          WHERE tenant_id = ${auth.tenantId} AND is_active = true AND id <> ${created.id}
+          RETURNING id
+        )
+        UPDATE published_snapshots
+        SET is_active = true
+        WHERE id = ${created.id}
+          AND tenant_id = ${auth.tenantId}
+          AND (SELECT count(*) FROM deactivated) >= 0
+      `);
 
       await db.insert(publishHistory).values({
         tenantId: auth.tenantId,

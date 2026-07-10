@@ -17,14 +17,36 @@ function jsonResponse(data: unknown, init?: { status?: number }): NextResponse {
 
 function handleError(req: NextRequest, err: unknown) {
   const message = err instanceof Error ? err.message : String(err);
-  console.error(`[API Error] ${req.method} ${req.nextUrl.pathname}:`, message);
+  const requestId = globalThis.crypto.randomUUID();
+  console.error(`[API Error] ${requestId} ${req.method} ${req.nextUrl.pathname}:`, message);
   if (message.includes('Unexpected token') || message.includes('JSON')) {
-    return jsonResponse({ error: 'Invalid JSON body' }, { status: 400 });
+    return jsonResponse({
+      success: false,
+      code: 'INVALID_JSON',
+      error: 'Invalid JSON body',
+      hint: 'Send exactly one valid JSON object with Content-Type: application/json.',
+      retryable: false,
+      requestId,
+    }, { status: 400 });
   }
   if (message.includes('unique') || message.includes('duplicate')) {
-    return jsonResponse({ error: 'Duplicate entry' }, { status: 409 });
+    return jsonResponse({
+      success: false,
+      code: 'DUPLICATE_ENTRY',
+      error: 'Duplicate entry',
+      hint: 'Fetch the existing resource and update it, or use page upsert=true.',
+      retryable: false,
+      requestId,
+    }, { status: 409 });
   }
-  return jsonResponse({ error: message }, { status: 500 });
+  return jsonResponse({
+    success: false,
+    code: 'INTERNAL_ERROR',
+    error: 'The request could not be completed.',
+    hint: 'Retry once. If it fails again, report requestId and the endpoint.',
+    retryable: true,
+    requestId,
+  }, { status: 500 });
 }
 
 /**
@@ -36,7 +58,13 @@ export function withApiHandler(
   return async (req: NextRequest) => {
     try {
       const auth = await validatePat(req.headers.get('authorization'));
-      if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      if (!auth) return jsonResponse({
+        success: false,
+        code: 'UNAUTHORIZED',
+        error: 'Unauthorized',
+        hint: 'Send Authorization: Bearer <PAT>.',
+        retryable: false,
+      }, { status: 401 });
       return await handler(req, auth);
     } catch (err: unknown) {
       return handleError(req, err);
@@ -53,7 +81,13 @@ export function withApiHandlerParams<T extends Record<string, string>>(
   return async (req: NextRequest, context: { params: Promise<T> }) => {
     try {
       const auth = await validatePat(req.headers.get('authorization'));
-      if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      if (!auth) return jsonResponse({
+        success: false,
+        code: 'UNAUTHORIZED',
+        error: 'Unauthorized',
+        hint: 'Send Authorization: Bearer <PAT>.',
+        retryable: false,
+      }, { status: 401 });
       const resolvedParams = await context.params;
       return await handler(req, auth, resolvedParams);
     } catch (err: unknown) {

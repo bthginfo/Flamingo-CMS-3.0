@@ -18,6 +18,7 @@
     "audit:section-surface": "tsx scripts/audit-section-surface.ts",
     "audit:section-contracts": "tsx scripts/audit-section-contracts.ts",
     "audit:section-colors": "tsx scripts/audit-section-color-contracts.ts",
+    "audit:section-color-dom": "tsx scripts/audit-section-color-dom.ts",
     "generate:section-colors": "node scripts/generate-section-color-contracts.cjs",
     "check:section-color-contracts": "node scripts/check-section-color-contracts.cjs",
     "check:section-color-mirror": "node scripts/check-section-color-render-mirror.cjs",
@@ -32,6 +33,7 @@
     "db:push": "pnpm --filter @flamingo/db push"
   },
   "devDependencies": {
+    "playwright": "^1.61.0",
     "tsx": "^4.21.0",
     "turbo": "^2.9.16"
   },

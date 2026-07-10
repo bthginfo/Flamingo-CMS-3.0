@@ -131,7 +131,7 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
   ];
 
   // Forward optional env vars if available
-  const optionalVars = ['ADMIN_JWT_SECRET', 'MASTER_ADMIN_PASSWORD', 'NEXT_PUBLIC_PREVIEW_SECRET'];
+  const optionalVars = ['ADMIN_JWT_SECRET', 'MASTER_ADMIN_PASSWORD', 'PREVIEW_SECRET'];
   for (const key of optionalVars) {
     const val = process.env[key];
     if (val) envVars.push({ key, value: val, target: ['production', 'preview'], type: 'encrypted' });

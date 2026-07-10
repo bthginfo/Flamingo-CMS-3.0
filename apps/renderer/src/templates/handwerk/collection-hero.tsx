@@ -98,7 +98,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#fff)_35%,transparent)] px-7 py-3.5 font-semibold text-[color:var(--token-on-dark-heading)] backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--token-on-dark-heading,#fff)_10%,transparent)]">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-7 py-3.5 font-semibold text-[color:var(--token-btn-secondary-text)] backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:brightness-110">
                 <span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}

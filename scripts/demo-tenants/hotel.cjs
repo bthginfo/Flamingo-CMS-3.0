@@ -13,7 +13,7 @@ const { darkTokens } = require('./_lib/theme.cjs');
  * Tonalität: gastgeberhaft, ruhig, konkret, ortsverliebt.
  */
 
-const PAT = 'flm_pat_1521c5d84ea52527aa60b2f9bd2c2ccbca0b6c30c6f20e7555d98dc3c7a15eb4';
+const PAT = process.env.PAT_DEMO_HOTEL || '';
 
 const C = {
   forest: '#223C34',

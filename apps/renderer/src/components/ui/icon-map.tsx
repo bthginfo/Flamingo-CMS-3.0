@@ -1,5 +1,6 @@
 import { icons, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
+import type { SVGProps } from 'react';
 import { cn } from '@/lib/utils';
 
 /** Legacy icon names that were renamed in newer lucide-react versions */
@@ -88,19 +89,20 @@ export function DynamicIcon({
   size = 24,
   className,
   editPath,
+  ...svgProps
 }: {
   name: string;
   size?: number;
   className?: string;
   editPath?: string;
-}) {
+} & Omit<SVGProps<SVGSVGElement>, 'ref' | 'name'>) {
   const Icon = resolveIcon(name);
   const editAttr = editPath ? ({ 'data-edit-icon': editPath } as Record<string, string>) : null;
   if (!Icon) {
     const FallbackIcon = (icons as Record<string, LucideIcon>).Sparkles;
-    return <FallbackIcon size={size} className={className} {...(editAttr ?? {})} />;
+    return <FallbackIcon size={size} className={className} {...svgProps} {...(editAttr ?? {})} />;
   }
-  return <Icon size={size} className={className} {...(editAttr ?? {})} />;
+  return <Icon size={size} className={className} {...svgProps} {...(editAttr ?? {})} />;
 }
 
 /**

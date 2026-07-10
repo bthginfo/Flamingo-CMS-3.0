@@ -1,41 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
 import crypto from 'crypto';
 import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection } from '@/lib/api-utils';
 
 export const POST = withApiHandler(async (req, auth) => {
   const body = await req.json();
-  const { slug, title, sections } = body;
-  if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
+  const { slug, sections } = body;
+  const title = typeof body.title === 'string' ? body.title.trim() : '';
+  if (!title) return NextResponse.json({ success: false, code: 'TITLE_REQUIRED', error: 'title is required and must be a non-empty string' }, { status: 400 });
 
   const db = getDb();
-  const pageId = crypto.randomUUID();
   const normalizedSlug = slug ? normalizeSlug(slug) : normalizeSlug(title);
+  if (!normalizedSlug) return NextResponse.json({ success: false, code: 'SLUG_INVALID', error: 'slug must contain at least one URL-safe character' }, { status: 400 });
+  const hasSections = Object.prototype.hasOwnProperty.call(body, 'sections');
+  if (hasSections) {
+    const sectionErr = validateSections(sections, auth.tenant.industry);
+    if (sectionErr) {
+      return NextResponse.json({
+        success: false,
+        code: 'INVALID_SECTIONS',
+        error: sectionErr,
+        hint: 'Use only section types and fields documented by GET /api/v1/instructions.',
+      }, { status: 400 });
+    }
+  }
 
   // A duplicate slug otherwise surfaces as an opaque 500 from the unique index.
   // Return a clear 409 so an AI agent knows to update the existing page (PUT
   // /pages/:id) or choose a different slug instead of blindly retrying.
   const [clash] = await db.select({ id: pages.id }).from(pages)
     .where(and(eq(pages.tenantId, auth.tenantId), eq(pages.slug, normalizedSlug))).limit(1);
-  if (clash) {
+  if (clash && body.upsert !== true) {
     return NextResponse.json({
+      success: false,
+      code: 'PAGE_SLUG_EXISTS',
       error: `A page with slug "${normalizedSlug}" already exists. Update it with PUT /api/v1/content/pages/${clash.id}, or choose a different slug.`,
       existingPageId: clash.id,
+      hint: 'Resend the same POST request with upsert: true to replace this page idempotently.',
     }, { status: 409 });
   }
+
+  const pageId = clash?.id || crypto.randomUUID();
 
   // Validate + normalize sections BEFORE inserting the page row. The neon-http
   // driver has no interactive transactions, so a validation 400 AFTER the insert
   // would orphan the page row and a naive retry would then collide on the unique
   // slug with a 500 — a long-standing pain point for AI agents writing content.
   let sectionValues: Record<string, unknown>[] = [];
-  if (Array.isArray(sections) && sections.length > 0) {
-    const sectionErr = validateSections(sections, auth.tenant.industry);
-    if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
+  if (hasSections && sections.length > 0) {
     sectionValues = sections.map((s: any, i: number) => ({
-      id: s.id || crypto.randomUUID(),
+      id: clash ? crypto.randomUUID() : (s.id || crypto.randomUUID()),
       tenantId: auth.tenantId,
       pageId,
       type: s.type,
@@ -49,6 +65,39 @@ export const POST = withApiHandler(async (req, auth) => {
       styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
       sortOrder: i,
     }));
+  }
+
+  if (clash) {
+    const previousSections = hasSections
+      ? await db.select({ id: pageSections.id }).from(pageSections)
+        .where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, auth.tenantId)))
+      : [];
+    const previousIds = previousSections.map(section => section.id);
+
+    if (sectionValues.length > 0) await db.insert(pageSections).values(sectionValues as never);
+    try {
+      await db.update(pages).set({ title, slug: normalizedSlug }).where(and(
+        eq(pages.id, pageId),
+        eq(pages.tenantId, auth.tenantId),
+      ));
+      if (previousIds.length > 0) {
+        await db.delete(pageSections).where(and(
+          eq(pageSections.tenantId, auth.tenantId),
+          inArray(pageSections.id, previousIds),
+        ));
+      }
+    } catch (error) {
+      const newIds = sectionValues.map(section => section.id as string);
+      if (newIds.length > 0) {
+        await db.delete(pageSections).where(and(
+          eq(pageSections.tenantId, auth.tenantId),
+          inArray(pageSections.id, newIds),
+        )).catch(() => {});
+      }
+      throw error;
+    }
+
+    return NextResponse.json({ success: true, operation: 'updated', id: pageId, slug: normalizedSlug });
   }
 
   await db.insert(pages).values({
@@ -70,7 +119,7 @@ export const POST = withApiHandler(async (req, auth) => {
     }
   }
 
-  return NextResponse.json({ success: true, id: pageId, slug: normalizedSlug });
+  return NextResponse.json({ success: true, operation: 'created', id: pageId, slug: normalizedSlug }, { status: 201 });
 });
 
 export const GET = withApiHandler(async (_req, auth) => {

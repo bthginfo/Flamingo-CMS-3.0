@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -29,8 +29,8 @@ export function CardSpotlight({
       onMouseEnter={() => { setIsFocused(true); setOpacity(1); }}
       onMouseLeave={() => { setIsFocused(false); setOpacity(0); }}
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 transition-shadow duration-500',
-        isFocused && 'shadow-xl border-gray-300',
+        'relative overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[var(--token-card-shadow)] transition-[border-color,box-shadow,transform] duration-500 sm:p-8',
+        isFocused && 'shadow-[0_18px_48px_var(--token-shadow)] motion-safe:-translate-y-0.5',
         className,
       )}
     >
@@ -38,7 +38,7 @@ export function CardSpotlight({
         className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-500"
         style={{
           opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(var(--brand-primary-rgb, 26 82 118) / 0.06), transparent 40%)`,
+          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, var(--token-glow-color), transparent 42%)`,
         }}
       />
       <div className="relative z-10">{children}</div>

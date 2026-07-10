@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
-import { eq, and, asc } from 'drizzle-orm';
+import { eq, and, asc, inArray } from 'drizzle-orm';
 import crypto from 'crypto';
 import { withApiHandlerParams, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection } from '@/lib/api-utils';
 
@@ -26,6 +26,11 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
   const body = await req.json();
   const db = getDb();
 
+  const [existingPage] = await db.select({ id: pages.id }).from(pages)
+    .where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)))
+    .limit(1);
+  if (!existingPage) return NextResponse.json({ error: 'Page not found' }, { status: 404 });
+
   const updates: Record<string, unknown> = {};
   if (body.title) updates.title = body.title;
   if (body.slug != null) updates.slug = normalizeSlug(body.slug);
@@ -37,11 +42,16 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
   if (Array.isArray(body.sections)) {
     const sectionErr = validateSections(body.sections, auth.tenant.industry);
     if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
-    await db.delete(pageSections).where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId)));
+
+    const oldSections = await db.select({ id: pageSections.id }).from(pageSections)
+      .where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId)));
+    const newSectionIds: string[] = [];
     if (body.sections.length > 0) {
-      await db.insert(pageSections).values(
-        body.sections.map((s: any, i: number) => ({
-          id: s.id || crypto.randomUUID(),
+      const replacements = body.sections.map((s: any, i: number) => {
+        const sectionId = crypto.randomUUID();
+        newSectionIds.push(sectionId);
+        return {
+          id: sectionId,
           tenantId: auth.tenantId,
           pageId: id,
           type: s.type,
@@ -54,8 +64,22 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
           anchorId: s.anchorId || null,
           styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
           sortOrder: i,
-        }))
-      );
+        };
+      });
+      // Insert the complete replacement set first. A validation/DB failure now
+      // leaves the previous page intact instead of deleting all its sections.
+      await db.insert(pageSections).values(replacements);
+    }
+
+    if (oldSections.length > 0) {
+      try {
+        await db.delete(pageSections).where(inArray(pageSections.id, oldSections.map(section => section.id)));
+      } catch (error) {
+        if (newSectionIds.length > 0) {
+          await db.delete(pageSections).where(inArray(pageSections.id, newSectionIds)).catch(() => {});
+        }
+        throw error;
+      }
     }
   }
 

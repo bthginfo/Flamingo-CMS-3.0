@@ -1,4 +1,5 @@
-const token = process.env.FLM_LOCATION_TOKEN || 'flm_pat_60ddb56f918ce946bdd3d635a426e2027814c8117b5955ccb93032d23f5f7f22';
+const token = process.env.FLM_LOCATION_TOKEN;
+if (!token) throw new Error('FLM_LOCATION_TOKEN is required');
 const baseUrl = 'https://flamingo-renderer.vercel.app';
 
 async function api(method, path, body) {

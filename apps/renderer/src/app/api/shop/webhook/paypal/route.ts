@@ -24,6 +24,9 @@ export async function GET(req: NextRequest) {
   const [order] = await db.select().from(orders)
     .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
   if (!order) return NextResponse.redirect(new URL('/checkout', req.url));
+  if (order.paymentMethod !== 'paypal' || !order.paymentId || order.paymentId !== token) {
+    return NextResponse.redirect(new URL('/checkout?error=payment_mismatch', req.nextUrl.origin));
+  }
 
   // Idempotency: the buyer can reload this return URL. Without this guard we
   // would re-capture, re-write status/history and re-send the confirmation
@@ -53,7 +56,9 @@ export async function GET(req: NextRequest) {
       },
       body: 'grant_type=client_credentials',
     });
+    if (!authRes.ok) throw new Error(`PayPal authentication failed (${authRes.status})`);
     const { access_token } = await authRes.json();
+    if (!access_token) throw new Error('PayPal authentication returned no access token');
 
     // Capture payment
     const captureRes = await fetch(`${baseUrl}/v2/checkout/orders/${token}/capture`, {
@@ -65,17 +70,40 @@ export async function GET(req: NextRequest) {
     });
     const captureData = await captureRes.json();
 
-    if (captureData.status !== 'COMPLETED') {
+    if (!captureRes.ok || captureData.status !== 'COMPLETED') {
       return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.nextUrl.origin));
     }
 
+    const purchaseUnit = captureData.purchase_units?.[0];
+    const capturedAmount = purchaseUnit?.payments?.captures?.[0]?.amount || purchaseUnit?.amount;
+    const expectedValue = (order.totalCents / 100).toFixed(2);
+    if (
+      purchaseUnit?.reference_id !== order.id ||
+      capturedAmount?.currency_code !== settings.currency ||
+      capturedAmount?.value !== expectedValue
+    ) {
+      console.error('[PayPal] Captured payment did not match order', {
+        orderId: order.id,
+        paypalOrderId: token,
+        referenceId: purchaseUnit?.reference_id,
+        amount: capturedAmount?.value,
+        currency: capturedAmount?.currency_code,
+      });
+      return NextResponse.redirect(new URL('/checkout?error=payment_mismatch', req.nextUrl.origin));
+    }
+
     // Update order to paid
-    await db.update(orders).set({
+    const [updated] = await db.update(orders).set({
         status: 'paid',
         paymentStatus: 'paid',
-        paymentId: captureData.id,
         updatedAt: new Date(),
-      }).where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
+      }).where(and(
+        eq(orders.id, orderId),
+        eq(orders.tenantId, tenantId),
+        eq(orders.paymentId, token),
+        eq(orders.status, 'awaiting_payment'),
+      )).returning({ id: orders.id });
+    if (!updated) return NextResponse.redirect(new URL('/bestellung-abgeschlossen', req.nextUrl.origin));
 
       await db.insert(orderStatusHistory).values({
         orderId,

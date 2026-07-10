@@ -1,17 +1,17 @@
 'use server';
 
-import { getSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
 import { getDraftSnapshot } from '@/lib/snapshot';
 import { pages, publishedSnapshots, publishHistory } from '@flamingo/db';
-import { eq, and, desc, lt } from 'drizzle-orm';
+import { eq, and, desc, lt, sql } from 'drizzle-orm';
 import { revalidateTag, revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { createHash } from 'crypto';
 
 type PublishResult = { success?: true; error?: string; version?: number; unchanged?: true };
-type QueryRunner = Pick<ReturnType<typeof getDb>, 'select' | 'update' | 'insert'>;
+type QueryRunner = Pick<ReturnType<typeof getDb>, 'select' | 'update' | 'insert' | 'execute'>;
 
 function normalizeSnapshotForJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value, (_key, input) => {
@@ -22,7 +22,7 @@ function normalizeSnapshotForJson<T>(value: T): T {
 }
 
 async function requireSession() {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) redirect('/admin/login');
   return session;
 }
@@ -79,10 +79,6 @@ export async function publishAction(): Promise<PublishResult> {
         .orderBy(desc(publishedSnapshots.version))
         .limit(1);
 
-      await tx.update(publishedSnapshots)
-        .set({ isActive: false })
-        .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)));
-
       const nextVersion = (latest?.version ?? 0) + 1;
       const [created] = await tx.insert(publishedSnapshots).values({
         tenantId,
@@ -90,10 +86,29 @@ export async function publishAction(): Promise<PublishResult> {
         snapshot: snapshot as unknown as Record<string, unknown>,
         checksum,
         createdBy: 'admin',
-        isActive: true,
+        // Create first without touching the currently active snapshot. If this
+        // insert fails, public rendering remains on the previous version.
+        isActive: false,
       }).returning({ id: publishedSnapshots.id });
 
       if (!created?.id) throw new Error('Published Snapshot konnte nicht erstellt werden.');
+
+      // The switch is one PostgreSQL statement, hence atomic even with the
+      // neon-http driver. A failure rolls the whole statement back and leaves
+      // the previous snapshot active instead of exposing the draft fallback.
+      await tx.execute(sql`
+        WITH deactivated AS (
+          UPDATE published_snapshots
+          SET is_active = false
+          WHERE tenant_id = ${tenantId} AND is_active = true AND id <> ${created.id}
+          RETURNING id
+        )
+        UPDATE published_snapshots
+        SET is_active = true
+        WHERE id = ${created.id}
+          AND tenant_id = ${tenantId}
+          AND (SELECT count(*) FROM deactivated) >= 0
+      `);
 
       await tx.insert(publishHistory).values({
         tenantId,
@@ -173,12 +188,19 @@ export async function rollbackPublishAction(): Promise<PublishResult> {
 
     if (!previous) return { error: 'Kein vorheriger Snapshot vorhanden.' };
 
-    await tx.update(publishedSnapshots)
-      .set({ isActive: false })
-      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)));
-    await tx.update(publishedSnapshots)
-      .set({ isActive: true })
-      .where(eq(publishedSnapshots.id, previous.id));
+    await tx.execute(sql`
+      WITH deactivated AS (
+        UPDATE published_snapshots
+        SET is_active = false
+        WHERE tenant_id = ${tenantId} AND is_active = true AND id <> ${previous.id}
+        RETURNING id
+      )
+      UPDATE published_snapshots
+      SET is_active = true
+      WHERE id = ${previous.id}
+        AND tenant_id = ${tenantId}
+        AND (SELECT count(*) FROM deactivated) >= 0
+    `);
 
     await tx.insert(publishHistory).values({
       tenantId,

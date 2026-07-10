@@ -62,7 +62,7 @@ export function GalleryProSection({ data }: Props) {
             <motion.figure key={img.src} layout initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.94 }} transition={{ duration: 0.3 }} className="group relative cursor-zoom-in break-inside-avoid overflow-hidden rounded-xl" onClick={() => setLightbox(i)} data-edit-collection="images" data-edit-index={i}>
               <img data-edit-image="src" src={img.src} alt={img.alt || ''} loading="lazy" className="w-full transition-transform duration-500 group-hover:scale-105" />
               {(img.caption || img.category) && (
-                <figcaption className="absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/75 to-transparent p-3 pt-8 text-sm text-[color:var(--token-on-dark-heading)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <figcaption className="absolute inset-x-0 bottom-0 translate-y-2 bg-[linear-gradient(to_top,var(--token-image-overlay),transparent)] p-3 pt-8 text-sm text-[color:var(--token-on-dark-heading)] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                   {img.caption && <span className="block font-medium" data-edit-path="caption">{img.caption}</span>}
                   {img.category && <span className="text-xs text-[color:var(--token-on-dark-muted)]">{img.category}</span>}
                 </figcaption>
@@ -74,18 +74,18 @@ export function GalleryProSection({ data }: Props) {
 
       <AnimatePresence>
         {lightbox !== null && filtered[lightbox] && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4" onClick={() => setLightbox(null)} role="dialog" aria-modal="true">
-            <button aria-label="Schließen" className="absolute right-6 top-6 z-10 text-white/80 transition hover:text-white" onClick={() => setLightbox(null)}><X size={30} /></button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--token-image-overlay)] p-4 backdrop-blur-xl" onClick={() => setLightbox(null)} role="dialog" aria-modal="true">
+            <button aria-label="Schließen" className="absolute right-6 top-6 z-10 text-[color:var(--token-on-dark-muted)] transition hover:text-[color:var(--token-on-dark-heading)]" onClick={() => setLightbox(null)}><X size={30} /></button>
             {filtered.length > 1 && (
               <>
-                <button aria-label="Vorheriges Bild" className="absolute left-3 top-1/2 z-10 -translate-y-1/2 p-2 text-white/70 transition hover:text-white" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={34} /></button>
-                <button aria-label="Nächstes Bild" className="absolute right-3 top-1/2 z-10 -translate-y-1/2 p-2 text-white/70 transition hover:text-white" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={34} /></button>
+                <button aria-label="Vorheriges Bild" className="absolute left-3 top-1/2 z-10 -translate-y-1/2 p-2 text-[color:var(--token-on-dark-muted)] transition hover:text-[color:var(--token-on-dark-heading)]" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={34} /></button>
+                <button aria-label="Nächstes Bild" className="absolute right-3 top-1/2 z-10 -translate-y-1/2 p-2 text-[color:var(--token-on-dark-muted)] transition hover:text-[color:var(--token-on-dark-heading)]" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={34} /></button>
               </>
             )}
             <motion.img key={lightbox} initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.92, opacity: 0 }} transition={{ duration: 0.2 }} src={filtered[lightbox].src} alt={filtered[lightbox].alt || ''} className="max-h-[85vh] max-w-full rounded-lg object-contain" onClick={(e) => e.stopPropagation()} />
             <div className="absolute inset-x-0 bottom-6 text-center">
-              {filtered[lightbox].caption && <p className="mb-1.5 text-sm text-white">{filtered[lightbox].caption}</p>}
-              <span className="text-xs text-white/50">{lightbox + 1} / {filtered.length}</span>
+              {filtered[lightbox].caption && <p className="mb-1.5 text-sm text-[color:var(--token-on-dark-heading)]">{filtered[lightbox].caption}</p>}
+              <span className="text-xs text-[color:var(--token-on-dark-muted)]">{lightbox + 1} / {filtered.length}</span>
             </div>
           </motion.div>
         )}

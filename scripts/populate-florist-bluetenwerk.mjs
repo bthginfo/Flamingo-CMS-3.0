@@ -1,4 +1,5 @@
-const token = process.env.FLM_FLORIST_TOKEN || 'flm_pat_935438f29f41f72caeb3b16e252769bd67e91a599c369b06a4e8b1514432d923';
+const token = process.env.FLM_FLORIST_TOKEN;
+if (!token) throw new Error('FLM_FLORIST_TOKEN is required');
 const baseUrl = 'https://flamingo-renderer.vercel.app';
 
 async function api(method, path, body) {

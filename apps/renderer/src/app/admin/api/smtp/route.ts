@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 import { globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 
 async function requireTenant() {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) throw new Error('Unauthorized');
   return session.tenantId;
 }

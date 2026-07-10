@@ -11,15 +11,14 @@ export function ShineButton({
   return (
     <button
       className={cn(
-        'relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl px-8 py-4 font-semibold text-white transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0',
-        'bg-gradient-to-r from-brand-primary to-brand-secondary',
+        'relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-[var(--token-button-radius)] border border-transparent bg-[var(--token-btn-bg)] px-7 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-[0_8px_24px_var(--token-shadow)] transition-[transform,box-shadow,filter] duration-300 hover:shadow-[0_12px_32px_var(--token-shadow)] motion-safe:hover:-translate-y-0.5 active:translate-y-0 disabled:pointer-events-none disabled:opacity-50',
         className,
       )}
       {...props}
     >
       <span className="relative z-10 flex items-center gap-2">{children}</span>
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.2),transparent)] bg-[length:200%_100%]" />
+        <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,color-mix(in_srgb,var(--token-btn-text)_18%,transparent),transparent)] bg-[length:200%_100%] motion-reduce:animate-none" />
       </div>
     </button>
   );
@@ -39,8 +38,7 @@ export function GlowButton({
     <Tag
       href={href}
       className={cn(
-        'relative inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 font-display font-semibold text-lg transition-all duration-300',
-        'bg-brand-accent text-gray-900 hover:brightness-110 shadow-lg hover:shadow-brand-accent/25',
+        'relative inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--token-button-radius)] border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-7 py-3 font-display text-base font-semibold text-[color:var(--token-btn-secondary-text)] shadow-[0_8px_24px_var(--token-shadow)] transition-[transform,box-shadow,filter] duration-300 hover:brightness-[1.03] hover:shadow-[0_12px_32px_var(--token-shadow)] motion-safe:hover:-translate-y-0.5 active:translate-y-0',
         className,
       )}
     >

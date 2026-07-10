@@ -105,7 +105,6 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--token-on-dark-muted']  = 'rgba(255,255,255,0.62)';
   // Accent family.
   vars['--token-accent']        = accent;
-  vars['--token-accent-rgb']    = accent.startsWith('#') ? hexToRgb(accent) : '220 38 38';
   vars['--token-eyebrow']       = accent;
   vars['--token-icon']          = brand.iconColor ?? normalizedPrimary;
   vars['--token-stat-value']    = accent;

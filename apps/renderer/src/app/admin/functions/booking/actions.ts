@@ -6,8 +6,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { and, asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
-import { BOOKING_ADDON_KEY, getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability } from '@/lib/booking-core';
+import { getWritableSession } from '@/lib/session';
+import { BOOKING_ADDON_KEY, getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isBookingOverlapError, isWithinBookingAvailability } from '@/lib/booking-core';
 import { getBookingNotificationEmail, getDefaultBookingEmailTemplate, sendBookingEmail, type BookingEmailTrigger } from '@/lib/booking-email';
 import { bookingAvailabilityRules, bookingBlackouts, bookingCalendarBlocks, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, tenantAddons } from '@flamingo/db';
 import { formatBookingDate, normalizeTimezone, zonedDateTimeToUtc } from '@/lib/booking-time';
@@ -25,7 +25,7 @@ const BOOKING_EMAIL_TRIGGERS = [
 ] as const;
 
 async function requireTenant() {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) redirect('/admin/login');
   return session.tenantId;
 }
@@ -568,7 +568,12 @@ export async function updateBookingAssignmentAction(formData: FormData) {
     const conflict = await hasBookingConflict({ tenantId, excludeBookingId: booking.id, resourceId, timeModel: booking.timeModel, startsAt: booking.startsAt, endsAt: booking.endsAt, timezone: settings.timezone });
     if (conflict) redirectWithFeedback(formData, 'Diese Ressource ist in diesem Zeitraum bereits belegt.', 'error');
   }
-  await db.update(bookingRequests).set({ resourceId, updatedAt: new Date() }).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId)));
+  try {
+    await db.update(bookingRequests).set({ resourceId, updatedAt: new Date() }).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId)));
+  } catch (error) {
+    if (isBookingOverlapError(error)) redirectWithFeedback(formData, 'Diese Ressource ist in diesem Zeitraum bereits ausgelastet.', 'error');
+    throw error;
+  }
   await db.insert(bookingStatusHistory).values({
     tenantId,
     bookingId: booking.id,
@@ -641,12 +646,17 @@ export async function updateBookingStatusAction(formData: FormData) {
 
   const cancellationToken = nextStatus === 'confirmed' ? crypto.randomBytes(24).toString('hex') : null;
   const cancellationTokenHash = cancellationToken ? crypto.createHash('sha256').update(cancellationToken).digest('hex') : booking.cancellationTokenHash;
-  await db.update(bookingRequests).set({
-    status: nextStatus,
-    cancellationReason: nextStatus === 'cancelled_by_admin' ? note : booking.cancellationReason,
-    cancellationTokenHash,
-    updatedAt: new Date(),
-  }).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId)));
+  try {
+    await db.update(bookingRequests).set({
+      status: nextStatus,
+      cancellationReason: nextStatus === 'cancelled_by_admin' ? note : booking.cancellationReason,
+      cancellationTokenHash,
+      updatedAt: new Date(),
+    }).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId)));
+  } catch (error) {
+    if (isBookingOverlapError(error)) redirectWithFeedback(formData, 'Dieser Zeitraum ist inzwischen ausgelastet.', 'error');
+    throw error;
+  }
 
   await db.insert(bookingStatusHistory).values({
     tenantId,

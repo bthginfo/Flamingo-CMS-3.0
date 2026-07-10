@@ -58,7 +58,7 @@ export function WeddingHeroSection({ data }: Props) {
           {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, rgba(20,14,12,${(overlayScrim * 0.9).toFixed(2)}) 0%, rgba(20,14,12,${(overlayScrim * 0.55).toFixed(2)}) 45%, rgba(20,14,12,${(overlayScrim * 0.85).toFixed(2)}) 100%)` }} />}
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[color-mix(in_srgb,var(--token-icon)_5%,transparent)] via-white to-[color-mix(in_srgb,var(--token-subheading)_5%,transparent)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[color-mix(in_srgb,var(--token-accent)_6%,var(--token-section-bg))] via-[var(--token-section-bg)] to-[var(--token-section-bg-alt)]" />
       )}
       <div className="relative z-10 px-4 py-10 md:px-6 md:py-20 text-center">
         <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`${sublineClass} rt-content`} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />

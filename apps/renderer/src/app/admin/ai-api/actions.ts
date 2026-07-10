@@ -4,11 +4,17 @@ import { createHash, randomBytes } from 'crypto';
 import { getDb } from '@/lib/db';
 import { tenantApiTokens } from '@flamingo/db';
 import { eq, and, desc } from 'drizzle-orm';
-import { requireTenant } from '../settings-actions';
 import { revalidatePath } from 'next/cache';
+import { getWritableSession } from '@/lib/session';
+
+async function requireWritableTenant() {
+  const session = await getWritableSession();
+  if (!session) throw new Error('Demo-Sitzungen dürfen keine API-Tokens verwalten.');
+  return session.tenantId;
+}
 
 export async function getApiToken() {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [token] = await db.select({
     id: tenantApiTokens.id,
@@ -26,7 +32,7 @@ export async function getApiToken() {
 }
 
 export async function createApiToken(lifetimeDays: number | null): Promise<{ token: string }> {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
 
   // Revoke any existing active tokens
@@ -52,7 +58,7 @@ export async function createApiToken(lifetimeDays: number | null): Promise<{ tok
 }
 
 export async function revokeApiToken() {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   await db.update(tenantApiTokens)
     .set({ revoked: true })

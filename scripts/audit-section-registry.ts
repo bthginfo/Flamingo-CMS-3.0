@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { getFieldsForSection } from '../apps/renderer/src/lib/section-color-resolver';
 import { getSectionSchemas } from '../apps/renderer/src/lib/section-data-schemas';
+import { SECTION_EDITOR_FIELD_DEFAULTS } from '../apps/renderer/src/lib/section-editor-field-defaults';
 
 type RegistryEntry = {
   type: string;
@@ -30,6 +31,9 @@ const INTERNAL_RENDERER_ALIASES = new Set([
   'eventCalendar',
   'faqGallery',
   'story',
+  'contactForm',
+  'contactLocation',
+  'textBlock',
 ]);
 
 function read(relativePath: string): string {
@@ -118,6 +122,7 @@ const INDUSTRIES = [
   'florist',
   'fitness',
   'location',
+  'verein',
 ];
 
 function getApiSchemaTypes(): string[] {
@@ -148,7 +153,7 @@ function buildAudit(): RegistryEntry[] {
       adminSelectable: adminTypes.includes(type),
       rendererRegistered: rendererTypes.includes(type),
       apiSchema: apiSchemaTypes.includes(type),
-      dataEditor: dataEditorTypes.includes(type),
+      dataEditor: dataEditorTypes.includes(type) || apiSchemaTypes.includes(type) || type in SECTION_EDITOR_FIELD_DEFAULTS,
       colorMapping: getFieldsForSection(type).length > 0,
       notes: [],
     };
@@ -156,7 +161,7 @@ function buildAudit(): RegistryEntry[] {
     if (entry.adminSelectable && !entry.rendererRegistered) entry.notes.push('Selectable in admin but not registered in renderer');
     if (entry.rendererRegistered && !entry.adminSelectable && !INTERNAL_RENDERER_ALIASES.has(type)) entry.notes.push('Renderer exists but section is not selectable in admin');
     if (entry.adminSelectable && !entry.apiSchema) entry.notes.push('Admin section has no API schema');
-    if (entry.adminSelectable && !entry.dataEditor) entry.notes.push('Falls back to generic JSON editor');
+    if (entry.adminSelectable && !entry.dataEditor) entry.notes.push('No structured or curated data editor contract');
     // Color mappings are now exact per template. Sections without FE color variables intentionally expose no per-section color controls.
 
     return entry;

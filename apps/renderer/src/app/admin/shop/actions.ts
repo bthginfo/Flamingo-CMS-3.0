@@ -1,13 +1,13 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices, formSubmissions, tenants, promotions } from '@flamingo/db';
 import { eq, and, desc, sql, not } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 async function requireTenant() {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) throw new Error('Unauthorized');
   return session.tenantId;
 }

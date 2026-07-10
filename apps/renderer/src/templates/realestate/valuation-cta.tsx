@@ -28,14 +28,14 @@ export function ValuationCtaSection({ data }: Props) {
           <img data-edit-image="bgImage" src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
           {/* Heading/subline render on-dark WHITE — needs a DARK scrim, not the
               light --token-section-bg-alt veil that washed them out over photos. */}
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-900/70 to-slate-800/70" />
+          <div className="absolute inset-0 bg-[var(--token-image-overlay)]" />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-section-bg)] via-[var(--token-section-bg-alt)] to-[var(--token-section-bg)]" />
       )}
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--token-badge-bg)] rounded-full blur-3xl opacity-40" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--token-badge-bg)] rounded-full blur-3xl opacity-30" />
 
       <div className="max-w-5xl mx-auto px-6 relative z-10">
         <motion.div
@@ -47,15 +47,15 @@ export function ValuationCtaSection({ data }: Props) {
             <Home size={16} />
             Immobilienbewertung
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>
-          <p className="text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] mt-5 max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>
+          <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold ${bgImage ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="headline">{headline}</h2>
+          <p className={`text-lg mt-5 max-w-2xl mx-auto ${bgImage ? 'text-[color:var(--token-on-dark-body)]' : 'text-[color:var(--token-body)]'}`} data-edit-path="subline">{plain(subline)}</p>
 
           {stats.length > 0 && (
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
                   <p className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{(() => { const m = String(stat.value).match(/^([\d.,]+)(.*)$/); return m ? <><NumberTicker value={m[1]} />{m[2]}</> : stat.value; })()}</p>
-                  <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] mt-1" data-edit-path="label">{stat.label}</p>
+                  <p className={`text-xs mt-1 ${bgImage ? 'text-[color:var(--token-on-dark-muted)]' : 'text-[color:var(--token-muted)]'}`} data-edit-path="label">{stat.label}</p>
                 </div>
               ))}
             </div>

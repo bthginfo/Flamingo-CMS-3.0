@@ -8,18 +8,27 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Termin oder Anfrage senden',
     subline: 'Ein flexibles Booking-Modul für Anfrage oder direkte Buchung.',
     submitLabel: '',
+    intakeQuestions: [
+      { id: 'occasion', label: 'Anlass', type: 'text', required: false },
+    ],
   },
   bookingSlotPicker: {
     badge: 'Tages-Slots',
     headline: 'Datum wählen und freie Uhrzeiten sehen',
     subline: 'Perfekt für Restaurants, Cafés, Salons, Kurse oder Probetrainings mit konkreten Uhrzeiten.',
     submitLabel: 'Slot anfragen',
+    intakeQuestions: [
+      { id: 'occasion', label: 'Anlass', type: 'text', required: false },
+    ],
   },
   bookingDateRange: {
     badge: 'Zeitraum',
     headline: 'Aufenthalt, Raum oder Location anfragen',
     subline: 'Für Hotel, Apartment, Eventraum, Location oder mehrtägige Leistungen mit Start- und Enddatum.',
     submitLabel: 'Zeitraum anfragen',
+    intakeQuestions: [
+      { id: 'occasion', label: 'Anlass', type: 'text', required: false },
+    ],
   },
   availabilityCalendar: {
     badge: 'Verfügbarkeit',
@@ -632,16 +641,27 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     bgImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80',
     overlayOpacity: 0.6,
     badgeText: 'Seit 2010',
-    primaryCta: { label: 'Jetzt anfragen', href: '#' },
-    secondaryCta: { label: 'Mehr erfahren', href: '#' },
+    primaryCta: { label: 'Jetzt anfragen', href: '#', icon: 'arrowRight' },
+    secondaryCta: { label: 'Mehr erfahren', href: '#', icon: 'play' },
+    trustItems: ['Meisterbetrieb', 'schnelle Antwort', 'klare Angebote'],
   },
   testimonials: {
     headline: 'Was unsere Kunden sagen',
+    subline: 'Echte Stimmen aus Projekten, die sauber begleitet wurden.',
     badgeText: 'Kundenstimmen',
+    ratingValue: '4,9',
+    ratingCount: '128 Bewertungen',
+    sourceLabel: 'Google',
+    ctaPrimary: { label: 'Termin anfragen', href: '#kontakt', icon: 'arrowRight' },
     items: [
-      { quote: 'Absolut professionelle Arbeit! Schnell, sauber und fair. Jederzeit wieder.', name: 'Maria S.', context: 'Stammkundin seit 2022', rating: 5 },
-      { quote: 'Von der Beratung bis zur Umsetzung alles top. Kann ich nur weiterempfehlen.', name: 'Thomas K.', context: 'Neukunde', rating: 5 },
-      { quote: 'Endlich ein Anbieter, der hält was er verspricht. Sehr zufrieden!', name: 'Julia M.', context: 'Empfehlung von Freunden', rating: 5 },
+      { quote: 'Absolut professionelle Arbeit! Schnell, sauber und fair. Jederzeit wieder.', text: 'Absolut professionelle Arbeit! Schnell, sauber und fair. Jederzeit wieder.', name: 'Maria S.', context: 'Stammkundin seit 2022', sourceLabel: 'Google', role: 'Eigentümerin', rating: 5, stars: 5 },
+      { quote: 'Von der Beratung bis zur Umsetzung alles top. Kann ich nur weiterempfehlen.', text: 'Von der Beratung bis zur Umsetzung alles top. Kann ich nur weiterempfehlen.', name: 'Thomas K.', context: 'Neukunde', sourceLabel: 'Empfehlung', role: 'Geschäftskunde', rating: 5, stars: 5 },
+      { quote: 'Endlich ein Anbieter, der hält was er verspricht. Sehr zufrieden!', text: 'Endlich ein Anbieter, der hält was er verspricht. Sehr zufrieden!', name: 'Julia M.', context: 'Empfehlung von Freunden', sourceLabel: 'Direktkunde', role: 'Privatkundin', rating: 5, stars: 5 },
+    ],
+    testimonials: [
+      { quote: 'Absolut professionelle Arbeit! Schnell, sauber und fair. Jederzeit wieder.', text: 'Absolut professionelle Arbeit! Schnell, sauber und fair. Jederzeit wieder.', name: 'Maria S.', context: 'Stammkundin seit 2022', source: 'Google', role: 'Eigentümerin', rating: 5, stars: 5 },
+      { quote: 'Von der Beratung bis zur Umsetzung alles top. Kann ich nur weiterempfehlen.', text: 'Von der Beratung bis zur Umsetzung alles top. Kann ich nur weiterempfehlen.', name: 'Thomas K.', context: 'Neukunde', source: 'Empfehlung', role: 'Geschäftskunde', rating: 5, stars: 5 },
+      { quote: 'Endlich ein Anbieter, der hält was er verspricht. Sehr zufrieden!', text: 'Endlich ein Anbieter, der hält was er verspricht. Sehr zufrieden!', name: 'Julia M.', context: 'Empfehlung von Freunden', source: 'Direktkunde', role: 'Privatkundin', rating: 5, stars: 5 },
     ],
   },
   faq: {
@@ -668,11 +688,20 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   servicesGrid: {
     headline: 'Unsere Leistungen',
     subline: 'Alles aus einer Hand — professionell und zuverlässig.',
+    ctaLabel: 'Beratung anfragen',
+    ctaHref: '#kontakt',
+    ctaIcon: 'arrowRight',
+    manualCards: [
+      { title: 'Beratung', text: 'Individuelle Beratung für Ihr Projekt.', icon: 'messageCircle', mediaType: 'icon' },
+      { title: 'Planung', text: 'Detaillierte Projektplanung und Kostenvoranschlag.', icon: 'clipboard', mediaType: 'icon' },
+      { title: 'Umsetzung', text: 'Fachgerechte Ausführung mit Qualitätsgarantie.', icon: 'wrench', mediaType: 'icon' },
+      { title: 'Service', text: 'Wartung und Support auch nach Projektabschluss.', icon: 'headphones', mediaType: 'icon' },
+    ],
     services: [
-      { title: 'Beratung', description: 'Individuelle Beratung für Ihr Projekt.', icon: 'messageCircle' },
-      { title: 'Planung', description: 'Detaillierte Projektplanung und Kostenvoranschlag.', icon: 'clipboard' },
-      { title: 'Umsetzung', description: 'Fachgerechte Ausführung mit Qualitätsgarantie.', icon: 'wrench' },
-      { title: 'Service', description: 'Wartung und Support auch nach Projektabschluss.', icon: 'headphones' },
+      { title: 'Beratung', text: 'Individuelle Beratung für Ihr Projekt.', icon: 'messageCircle', mediaType: 'icon' },
+      { title: 'Planung', text: 'Detaillierte Projektplanung und Kostenvoranschlag.', icon: 'clipboard', mediaType: 'icon' },
+      { title: 'Umsetzung', text: 'Fachgerechte Ausführung mit Qualitätsgarantie.', icon: 'wrench', mediaType: 'icon' },
+      { title: 'Service', text: 'Wartung und Support auch nach Projektabschluss.', icon: 'headphones', mediaType: 'icon' },
     ],
   },
   processSteps: {
@@ -709,6 +738,12 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     text: '<p>Seit über 10 Jahren stehen wir für Qualität und Zuverlässigkeit. Unser erfahrenes Team arbeitet mit modernsten Methoden und legt größten Wert auf Kundenzufriedenheit.</p><p>Wir freuen uns, Sie kennenzulernen!</p>',
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
     imageAlt: 'Unser Team bei der Arbeit',
+    items: [
+      { title: 'Planbar', text: 'Klare Abläufe und transparente Schritte.' },
+      { title: 'Nahbar', text: 'Direkte Ansprechpartner statt Hotline.' },
+    ],
+    primaryCta: { label: 'Kontakt aufnehmen', href: '#kontakt', icon: 'arrowRight' },
+    secondaryCta: { label: 'Mehr erfahren', href: '#details', icon: 'info' },
   },
   galleryGrid: {
     headline: 'Unsere Arbeiten',
@@ -724,8 +759,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ctaLabel: 'Alle Projekte',
     ctaHref: '#',
     projects: [
-      { title: 'Projekt Alpha', category: 'Neubau', description: 'Komplette Sanierung eines Altbaus.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80' },
-      { title: 'Projekt Beta', category: 'Renovierung', description: 'Moderne Bürogestaltung.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80' },
+      { title: 'Projekt Alpha', category: 'Neubau', description: 'Komplette Sanierung eines Altbaus.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80', href: '#alpha', icon: 'arrowRight', stats: [{ value: '12 Wo.', label: 'Bauzeit' }, { value: '240 m²', label: 'Fläche' }] },
+      { title: 'Projekt Beta', category: 'Renovierung', description: 'Moderne Bürogestaltung.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80', href: '#beta', icon: 'arrowRight', stats: [{ value: '8', label: 'Räume' }, { value: '2026', label: 'Jahr' }] },
     ],
   },
   map: {
@@ -1270,8 +1305,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   },
   accommodationGrid: {
     items: [
-      { name: 'Hotel Alpenblick', type: 'Hotel', stars: 4, priceFrom: '89 €', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&q=80' },
-      { name: 'Pension Waldruhe', type: 'Pension', stars: 3, priceFrom: '59 €', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80' },
+      { name: 'Hotel Alpenblick', type: 'Hotel', stars: 4, priceFrom: '89 €', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&q=80', cta: { label: 'Details ansehen', href: '/unterkuenfte/hotel-alpenblick' } },
+      { name: 'Pension Waldruhe', type: 'Pension', stars: 3, priceFrom: '59 €', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&q=80', cta: { label: 'Details ansehen', href: '/unterkuenfte/pension-waldruhe' } },
     ],
   },
   visitorInfo: {

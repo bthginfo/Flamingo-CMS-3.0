@@ -62,7 +62,7 @@ export function GlowHeroSection({ data }: Props) {
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
       <div
         className="pointer-events-none absolute inset-0 transition duration-150"
-        style={{ background: `radial-gradient(circle at ${pos.x}% ${pos.y}%, ${glowColor}, transparent 30%)` }}
+        style={{ background: `radial-gradient(circle at ${pos.x}% ${pos.y}%, var(--token-glow-color), transparent 30%)` }}
       />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35" />
 

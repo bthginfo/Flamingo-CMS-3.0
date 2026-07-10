@@ -128,7 +128,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }}
           className={`mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[color:var(--token-on-dark-muted)] ${trustStripColor ? 'rounded-2xl px-4 py-3' : ''}`} style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}>
           {ratingText && <span className="inline-flex items-center gap-2"><Star size={14} className="text-[color:var(--token-rating-star)]" />{ratingText}</span>}
-          {availabilityHint && <span className="rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-3 py-1 text-[color:var(--token-on-dark-heading)]">{availabilityHint}</span>}
+          {availabilityHint && <span className="rounded-full border border-[color:var(--token-badge-border)] bg-[var(--token-badge-bg)] px-3 py-1 text-[color:var(--token-badge-text)]">{availabilityHint}</span>}
           {trustItems.map((item) => (
             <span key={item} className="flex items-center gap-2"><CheckCircle size={14} className="text-[color:var(--token-check)]" />{item}</span>
           ))}

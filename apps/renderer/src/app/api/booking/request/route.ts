@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { resolveTenant } from '@/lib/snapshot';
-import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability, parseBookingDateRange, type BookingTimeModel } from '@/lib/booking-core';
+import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isBookingOverlapError, isWithinBookingAvailability, parseBookingDateRange, type BookingTimeModel } from '@/lib/booking-core';
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { formatBookingDate, normalizeTimezone } from '@/lib/booking-time';
 import { bookingCustomers, bookingRequests, bookingResources, bookingServices } from '@flamingo/db';
@@ -143,11 +143,21 @@ export async function POST(req: NextRequest) {
       message,
       cancellationTokenHash,
     };
-    const [booking] = await db.insert(bookingRequests).values(bookingValues).returning().catch(async (error) => {
-      if (!isMissingBookingRulesColumn(error)) throw error;
-      const { bufferBeforeMinutes: _before, bufferAfterMinutes: _after, intakeAnswers: _answers, ...legacyValues } = bookingValues;
-      return db.insert(bookingRequests).values(legacyValues).returning();
-    });
+    let booking: typeof bookingRequests.$inferSelect;
+    try {
+      [booking] = await db.insert(bookingRequests).values(bookingValues).returning().catch(async (error) => {
+        if (!isMissingBookingRulesColumn(error)) throw error;
+        const { bufferBeforeMinutes: _before, bufferAfterMinutes: _after, intakeAnswers: _answers, ...legacyValues } = bookingValues;
+        return db.insert(bookingRequests).values(legacyValues).returning();
+      });
+    } catch (error) {
+      await db.delete(bookingCustomers).where(and(
+        eq(bookingCustomers.id, customer.id),
+        eq(bookingCustomers.tenantId, tenantId),
+      )).catch(() => {});
+      if (isBookingOverlapError(error)) throw new Error('BOOKING_CONFLICT');
+      throw error;
+    }
 
     const bookingSummary = [
       service?.name ? `Leistung: ${service.name}` : null,

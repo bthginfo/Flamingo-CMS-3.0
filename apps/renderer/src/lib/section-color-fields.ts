@@ -88,9 +88,66 @@ export const FIELD_RENDER_ORDER: ColorFieldKey[] = [
   'headingTracking',
 ];
 
+const INTERNAL_COLOR_FIELD_ALIASES: Partial<Record<ColorFieldKey, ColorFieldKey>> = {
+  onDarkHeading: 'headingColor',
+  onDarkBody: 'bodyColor',
+  onDarkMuted: 'mutedColor',
+};
+
+const FIELD_WRITE_ALIASES: Partial<Record<ColorFieldKey, string[]>> = {
+  sectionBg: ['--style-section-bg'],
+  sectionBgAlt: ['--style-section-bg-alt'],
+  cardBg: ['--style-card-bg'],
+  headingColor: [
+    '--style-heading-color',
+    '--style-text-primary',
+    '--token-on-dark-heading',
+  ],
+  subheadingColor: ['--style-subheading-color'],
+  bodyColor: [
+    '--style-body-color',
+    '--style-text-secondary',
+    '--token-on-dark-body',
+  ],
+  mutedColor: [
+    '--style-text-muted',
+    '--token-on-dark-muted',
+  ],
+  iconColor: ['--style-icon-color'],
+  accentColor: ['--style-accent-color', '--style-accent'],
+  btnBg: ['--style-button-bg', '--brand-btn-bg'],
+  btnText: ['--style-button-text', '--brand-btn-text'],
+  btnSecondaryBg: ['--brand-btn-secondary-bg'],
+  btnSecondaryText: ['--brand-btn-secondary-text'],
+  btnSecondaryBorder: ['--brand-btn-secondary-border'],
+  badgeBg: ['--style-badge-bg'],
+  badgeText: ['--style-badge-text'],
+  badgeBorder: ['--style-badge-border'],
+  borderColor: ['--style-border-color', '--style-border'],
+  dividerColor: ['--style-divider-color'],
+  cardRadius: ['--style-card-radius'],
+  buttonRadius: ['--style-button-radius'],
+  cardShadow: ['--style-card-shadow'],
+  headingWeight: ['--style-heading-weight'],
+  headingTracking: ['--style-heading-tracking'],
+};
+
+export const INTERNAL_COLOR_FIELD_KEYS = new Set<ColorFieldKey>(
+  Object.keys(INTERNAL_COLOR_FIELD_ALIASES) as ColorFieldKey[],
+);
+
+export function canonicalColorField(field: ColorFieldKey): ColorFieldKey {
+  return INTERNAL_COLOR_FIELD_ALIASES[field] || field;
+}
+
+export function isPublicColorField(field: ColorFieldKey): boolean {
+  return canonicalColorField(field) === field && !INTERNAL_COLOR_FIELD_KEYS.has(field);
+}
+
 export function sortColorFields(fields: ColorFieldKey[]): ColorFieldKey[] {
   const rank = new Map(FIELD_RENDER_ORDER.map((field, index) => [field, index]));
-  return [...fields].sort((left, right) => (rank.get(left) ?? 999) - (rank.get(right) ?? 999));
+  return Array.from(new Set(fields.map(canonicalColorField).filter(isPublicColorField)))
+    .sort((left, right) => (rank.get(left) ?? 999) - (rank.get(right) ?? 999));
 }
 
 export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string; type?: FieldType; group?: FieldGroup }> = {
@@ -109,9 +166,9 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   quoteMark:        { cssVar: '--token-quote',            label: 'Anführungszeichen',      description: 'Anführungszeichen-Glyph in Testimonial-Karten', group: 'special' },
   ratingStar:       { cssVar: '--token-rating-star',      label: 'Rating-Sterne',          description: 'Sterne in Reviews / Bewertungen', group: 'special' },
   check:            { cssVar: '--token-check',            label: 'Checkmarks',             description: 'Häkchen in Feature-/Vergleichs-Listen', group: 'special' },
-  onDarkHeading:    { cssVar: '--token-on-dark-heading',  label: 'Headline (auf Dunkel)',  description: 'Hauptüberschrift auf dunklem Hintergrund', group: 'core' },
-  onDarkBody:       { cssVar: '--token-on-dark-body',     label: 'Fließtext (auf Dunkel)', description: 'Fließtext auf dunklem Hintergrund', group: 'core' },
-  onDarkMuted:      { cssVar: '--token-on-dark-muted',    label: 'Dezent (auf Dunkel)',    description: 'Dezenter Text auf dunklem Hintergrund', group: 'core' },
+  onDarkHeading:    { cssVar: '--token-on-dark-heading',  label: 'Interner Headline-Alias',  description: 'Interner Legacy-Alias. Öffentlich über Headline-Farbe gesteuert.', group: 'advanced' },
+  onDarkBody:       { cssVar: '--token-on-dark-body',     label: 'Interner Fließtext-Alias', description: 'Interner Legacy-Alias. Öffentlich über Fließtext-Farbe gesteuert.', group: 'advanced' },
+  onDarkMuted:      { cssVar: '--token-on-dark-muted',    label: 'Interner Dezenttext-Alias', description: 'Interner Legacy-Alias. Öffentlich über Dezenter Text gesteuert.', group: 'advanced' },
   imageOverlay:     { cssVar: '--token-image-overlay',    label: 'Bild-Overlay',           description: 'Abdunklung / Farbfläche über Hintergrund-Bildern', group: 'special' },
   btnBg:            { cssVar: '--token-btn-bg',           label: 'Button Hintergrund',     description: 'CTA-Button Hintergrund', group: 'core' },
   btnText:          { cssVar: '--token-btn-text',         label: 'Button Text',            description: 'CTA-Button Textfarbe', group: 'core' },
@@ -151,8 +208,22 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 };
 
 export const COLOR_FIELD_KEYS = Object.keys(FIELD_DEFS) as ColorFieldKey[];
+export const PUBLIC_COLOR_FIELD_KEYS = COLOR_FIELD_KEYS.filter(isPublicColorField);
 export const COLOR_FIELD_CSS_VARS = new Set(COLOR_FIELD_KEYS.map((key) => FIELD_DEFS[key].cssVar));
+export const PUBLIC_COLOR_FIELD_CSS_VARS = new Set(PUBLIC_COLOR_FIELD_KEYS.map((key) => FIELD_DEFS[key].cssVar));
 export const COLOR_FIELD_BY_CSS_VAR = Object.fromEntries(
   COLOR_FIELD_KEYS.map((key) => [FIELD_DEFS[key].cssVar, key]),
 ) as Record<string, ColorFieldKey>;
+
+export function canonicalColorFieldForCssVar(cssVar: string): ColorFieldKey | null {
+  const field = COLOR_FIELD_BY_CSS_VAR[cssVar];
+  return field ? canonicalColorField(field) : null;
+}
+
+export function getCssVarsForColorField(field: ColorFieldKey): string[] {
+  const canonical = canonicalColorField(field);
+  const primary = FIELD_DEFS[canonical]?.cssVar;
+  if (!primary) return [];
+  return [primary, ...(FIELD_WRITE_ALIASES[canonical] || [])];
+}
 

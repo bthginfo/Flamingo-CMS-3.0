@@ -13,7 +13,7 @@ const { darkTokens } = require('./_lib/theme.cjs');
  * Tonalitaet: ortskundig, ruhig, konkret, hilfreich statt werblich.
  */
 
-const PAT = 'flm_pat_331b42a823e26b34b0ec72193fb3d5aff040cc4159028f35381719ac7f96b96b';
+const PAT = process.env.PAT_DEMO_TOURISM || '';
 
 const C = {
   lake: '#245D6A',

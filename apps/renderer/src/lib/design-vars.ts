@@ -4,21 +4,54 @@
  */
 import { getContrastColor } from './contrast';
 
-/** Maps design JSON keys to CSS custom property names */
-const DESIGN_TO_CSS_VAR: Record<string, string> = {
-  textPrimary: '--style-text-primary',
-  textSecondary: '--style-text-secondary',
-  textMuted: '--style-text-muted',
-  sectionBg: '--style-section-bg',
-  sectionBgAlt: '--style-section-bg-alt',
-  cardBg: '--style-card-bg',
-  bgSubtle: '--style-bg-subtle',
-  badgeBg: '--style-badge-bg',
-  badgeText: '--style-badge-text',
-  brand: '--style-brand',
-  borderStrong: '--style-border-strong',
-  borderLight: '--style-border-light',
-  dividerColor: '--style-divider-color',
+/** Maps global design JSON keys to CSS custom property names. */
+const DESIGN_TO_CSS_VARS: Record<string, string[]> = {
+  textPrimary: ['--style-text-primary', '--token-heading'],
+  headingColor: ['--style-text-primary', '--token-heading'],
+  heading: ['--style-text-primary', '--token-heading'],
+
+  textSecondary: ['--style-text-secondary', '--token-body'],
+  bodyColor: ['--style-text-secondary', '--token-body'],
+  body: ['--style-text-secondary', '--token-body'],
+
+  textMuted: ['--style-text-muted', '--token-muted'],
+  mutedColor: ['--style-text-muted', '--token-muted'],
+  muted: ['--style-text-muted', '--token-muted'],
+
+  sectionBg: ['--style-section-bg', '--token-section-bg'],
+  sectionBgAlt: ['--style-section-bg-alt', '--token-section-bg-alt'],
+  cardBg: ['--style-card-bg', '--token-card-bg'],
+  bgSubtle: ['--style-bg-subtle'],
+
+  accentColor: ['--style-accent', '--token-accent'],
+  accent: ['--style-accent', '--token-accent'],
+  brand: ['--style-brand', '--token-accent'],
+  iconColor: ['--token-icon'],
+  icon: ['--token-icon'],
+
+  btnBg: ['--token-btn-bg', '--style-button-bg'],
+  btnText: ['--token-btn-text', '--style-button-text'],
+  btnSecondaryBg: ['--token-btn-secondary-bg'],
+  btnSecondaryText: ['--token-btn-secondary-text'],
+  btnSecondaryBorder: ['--token-btn-secondary-border'],
+
+  badgeBg: ['--style-badge-bg', '--token-badge-bg'],
+  badgeText: ['--style-badge-text', '--token-badge-text'],
+  badgeBorder: ['--token-badge-border'],
+
+  borderColor: ['--token-card-border'],
+  borderStrong: ['--style-border-strong', '--token-card-border'],
+  borderLight: ['--style-border-light'],
+  dividerColor: ['--style-divider-color', '--token-divider'],
+
+  imageOverlay: ['--token-image-overlay'],
+  glowColor: ['--token-glow-color'],
+
+  // Backwards-compatible storage aliases. New CMS/API payloads should use
+  // headingColor/bodyColor/mutedColor; these only keep older tenants readable.
+  onDarkHeading: ['--token-on-dark-heading'],
+  onDarkBody: ['--token-on-dark-body'],
+  onDarkMuted: ['--token-on-dark-muted'],
 };
 
 /**
@@ -36,16 +69,16 @@ export function getDesignCssVars(design: Record<string, string>): Record<string,
   const vars: Record<string, string> = {};
 
   // 1. Map design keys to CSS variables
-  for (const [key, cssVar] of Object.entries(DESIGN_TO_CSS_VAR)) {
-    if (design[key]) vars[cssVar] = design[key];
+  for (const [key, cssVars] of Object.entries(DESIGN_TO_CSS_VARS)) {
+    if (!design[key]) continue;
+    for (const cssVar of cssVars) {
+      vars[cssVar] = design[key];
+    }
   }
 
-  // Mirror key semantic vars into token vars so token-first templates resolve
-  // directly even when design payload still uses legacy keys.
-  if (vars['--style-text-primary']) vars['--token-heading'] = vars['--style-text-primary'];
-  if (vars['--style-text-secondary']) vars['--token-body'] = vars['--style-text-secondary'];
-  if (vars['--style-text-muted']) vars['--token-muted'] = vars['--style-text-muted'];
-  if (vars['--style-accent']) vars['--token-accent'] = vars['--style-accent'];
+  // Do not mirror page-level text into the inverse/on-dark slots. Those slots
+  // deliberately keep the contrast-safe defaults from brand-colors.ts. Only
+  // explicit legacy onDark* input above may override them globally.
 
   // 2. Auto-compute text colors for custom backgrounds
   for (const [bgKey, { textVar, overrideKey }] of Object.entries(BG_TO_TEXT_VAR)) {
@@ -57,14 +90,14 @@ export function getDesignCssVars(design: Record<string, string>): Record<string,
     vars[textVar] = textOverride || getContrastColor(bgColor);
   }
 
-  // 3. If sectionBg is set but textPrimary is NOT manually set, auto-derive primary text
-  if (design.sectionBg && !design.textPrimary) {
+  // 3. If sectionBg is set but heading text is NOT manually set, auto-derive primary text
+  if (design.sectionBg && !design.textPrimary && !design.headingColor && !design.heading) {
     vars['--style-text-primary'] = vars['--style-text-on-section'] || getContrastColor(design.sectionBg);
     vars['--token-heading'] = vars['--style-text-primary'];
   }
 
-  // 4. If sectionBgAlt is set but textSecondary is NOT set, derive secondary text from alt bg
-  if (design.sectionBgAlt && !design.textSecondary) {
+  // 4. If sectionBgAlt is set but body text is NOT set, derive secondary text from alt bg
+  if (design.sectionBgAlt && !design.textSecondary && !design.bodyColor && !design.body) {
     const autoText = vars['--style-text-on-section-alt'] || getContrastColor(design.sectionBgAlt);
     // Secondary text is slightly muted version
     vars['--style-text-secondary'] = autoText === '#1a1a1a' ? '#4a5568' : '#cbd5e1';

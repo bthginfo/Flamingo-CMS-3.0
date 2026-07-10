@@ -185,10 +185,10 @@ export function TeamRosterSection({ data }: Props) {
         <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {players.map((p, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i % 5) * 0.05 }} className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 hover:shadow-xl" data-edit-collection="players" data-edit-index={i}>
-              <div className="relative aspect-[3/4] overflow-hidden bg-[color:color-mix(in_srgb,var(--token-heading)_8%,var(--token-section-bg-alt))]">
+              <div className="relative aspect-[3/4] overflow-hidden bg-[var(--token-section-bg-alt)]">
                 {p.image
                   ? <img data-edit-image="image" src={p.image} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  : <div className="flex h-full w-full items-center justify-center"><span className="text-6xl font-black text-[color:color-mix(in_srgb,var(--token-heading)_16%,transparent)]">{p.number || (p.name ? p.name[0] : '?')}</span></div>}
+                  : <div className="flex h-full w-full items-center justify-center"><span className="text-6xl font-black text-[color:var(--token-muted)] opacity-30">{p.number || (p.name ? p.name[0] : '?')}</span></div>}
                 {p.number && <span className="absolute right-2 top-2 rounded-md bg-[var(--token-btn-bg)] px-2 py-0.5 text-lg font-black tabular-nums text-[color:var(--token-btn-text)] shadow">{p.number}</span>}
               </div>
               <div className="p-3 text-center">

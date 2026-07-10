@@ -60,10 +60,10 @@ export function IndustryStorySection({ data, defaults }: { data: Record<string, 
         </div>
       )}
       {milestones.length > 0 && (
-        <div className="mt-16 relative border-l-2 border-[var(--token-eyebrow)]/30 pl-8">
+      <div className="mt-16 relative border-l-2 border-[var(--token-divider)] pl-8">
           {milestones.map((m, i) => (
             <motion.div key={`${m.year}-${i}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="relative mb-8 last:mb-0" data-edit-collection="milestones" data-edit-index={i}>
-              <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-eyebrow)] bg-[var(--token-card-bg)]" />
+        <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-divider)] bg-[var(--token-card-bg)]" />
               {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]">{m.year}</p>}
               <h3 className="mt-1 font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}

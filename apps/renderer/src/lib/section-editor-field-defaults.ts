@@ -11,24 +11,14 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "imageEffectIntensity": 0,
     "overlay": "",
     "overlayColor": "",
-    "trustItems": [],
     "trustStripColor": "",
     "videoUrl": ""
   },
   "servicesGrid": {
-    "badgeText": "",
-    "ctaHref": "",
-    "ctaIcon": "",
-    "ctaLabel": "",
-    "manualCards": []
+    "badgeText": ""
   },
   "processSteps": {
     "badgeText": "",
-    "subline": ""
-  },
-  "testimonials": {
-    "ratingCount": 0,
-    "ratingValue": 0,
     "subline": ""
   },
   "faq": {
@@ -129,17 +119,8 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "bgImage": "",
     "imageSrc": "",
     "imageUrl": "",
-    "items": [],
     "layout": "",
-    "media": "",
-    "primaryCta": {
-      "label": "",
-      "href": ""
-    },
-    "secondaryCta": {
-      "label": "",
-      "href": ""
-    }
+    "media": ""
   },
   "collectionHero": {
     "backgroundImage": "",

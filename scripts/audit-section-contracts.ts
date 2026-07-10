@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { getAllSectionContracts } from '../apps/renderer/src/lib/section-contracts';
+import { getSectionSchemas } from '../apps/renderer/src/lib/section-data-schemas';
+import { SECTION_EDITOR_FIELD_DEFAULTS } from '../apps/renderer/src/lib/section-editor-field-defaults';
 
 const ROOT = process.cwd();
 const INTERNAL_RENDERER_ALIASES = new Set([
@@ -19,6 +21,9 @@ const INTERNAL_RENDERER_ALIASES = new Set([
   'eventCalendar',
   'faqGallery',
   'story',
+  'contactForm',
+  'contactLocation',
+  'textBlock',
 ]);
 
 function read(relativePath: string) {
@@ -67,27 +72,21 @@ function extractTemplates(source: string) {
   return unique(keys);
 }
 
-function extractApiSchemas(source: string) {
-  const start = source.indexOf('const schemas: Record<string, object> = {');
-  const end = source.indexOf('if (industry ===', start);
-  if (start === -1) return [];
-  const baseSchemas = source.slice(start, end > start ? end : undefined);
-  const baseKeys = Array.from(baseSchemas.matchAll(/^\s{4}([a-zA-Z][a-zA-Z0-9_]*)\s*:/gm), match => match[1]);
-  const assignedKeys = Array.from(source.matchAll(/Object\.assign\(schemas,\s*\{([\s\S]*?)\n\s{4}\}\);/g))
-    .flatMap(match => Array.from(match[1].matchAll(/^\s{6}([a-zA-Z][a-zA-Z0-9_]*)\s*:/gm), keyMatch => keyMatch[1]));
-  return unique([...baseKeys, ...assignedKeys]);
-}
+const CONTRACT_INDUSTRIES = [
+  'tradesman', 'restaurant', 'salon', 'hotel', 'tourism', 'medical',
+  'wedding', 'photography', 'consulting', 'realestate', 'cafe', 'tattoo',
+  'ecommerce', 'retail', 'florist', 'fitness', 'location', 'verein',
+];
 
 function main() {
   const sectionTypesSource = read('apps/renderer/src/app/admin/pages/[id]/section-types.ts');
   const templatesSource = read('apps/renderer/src/templates/index.ts');
   const dataEditorSource = read('apps/renderer/src/app/admin/pages/[id]/section-data-editor.tsx');
-  const instructionsSource = read('apps/renderer/src/app/api/v1/instructions/route.ts');
 
   const adminTypes = extractQuotedTypes(sectionTypesSource);
   const rendererTypes = extractTemplates(templatesSource);
   const dataEditorTypes = extractObjectKeysAfter(dataEditorSource, 'const EDITORS');
-  const apiSchemaTypes = extractApiSchemas(instructionsSource);
+  const apiSchemaTypes = unique(CONTRACT_INDUSTRIES.flatMap(industry => Object.keys(getSectionSchemas(industry))));
 
   const contracts = getAllSectionContracts().map(contract => {
     const issues: string[] = [];
@@ -95,7 +94,10 @@ function main() {
     if (!isInternalAlias && !adminTypes.includes(contract.type)) issues.push('Contract section is not selectable in admin');
     if (!rendererTypes.includes(contract.type)) issues.push('Contract section is not registered in renderer');
     if (!isInternalAlias && !apiSchemaTypes.includes(contract.type)) issues.push('Contract section is missing from AI/API schema');
-    if (!isInternalAlias && !dataEditorTypes.includes(contract.type)) issues.push('Contract section has no curated data editor');
+    const hasStructuredEditor = dataEditorTypes.includes(contract.type)
+      || apiSchemaTypes.includes(contract.type)
+      || contract.type in SECTION_EDITOR_FIELD_DEFAULTS;
+    if (!isInternalAlias && !hasStructuredEditor) issues.push('Contract section has no structured or curated data editor');
     if (contract.colorFields.length === 0) issues.push('Contract has no color fields from the central color registry');
 
     return {
