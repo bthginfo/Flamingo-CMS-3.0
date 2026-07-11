@@ -1,13 +1,27 @@
 import ReactDOM from 'react-dom';
-import { prefixInternalHref } from '@/lib/link-prefix';
+import { prefixInternalHref, prefixInternalLinks } from '@/lib/link-prefix';
 import { notFound } from 'next/navigation';
-import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@/lib/snapshot';
-import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
+import {
+  getActiveSnapshot,
+  resolveDemoTenantBySlugResult,
+  resolveDemoTenantResult,
+} from '@/lib/snapshot';
+import type {
+  DemoTenantResolution,
+  SnapshotSection,
+  SnapshotCollection,
+  SnapshotCollectionItem,
+} from '@/lib/snapshot';
 import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage } from '@/lib/tenant-data';
 import type { Metadata } from 'next';
 import { DemoPageShell } from '../../demo-page-shell';
-import { getDemoSite } from '../../pages';
-import { getDemoSiteData, type IndustryKey } from '../../demo-data';
+import { getDeprecatedStaticDemoFixture } from '../../pages';
+import { getDeprecatedStaticDemoSiteData, type IndustryKey } from '../../demo-data';
+import { composeSeoTitle } from '@/lib/seo-title';
+import {
+  DEMO_UNAVAILABLE_METADATA,
+  getDemoStaticFallbackPolicy,
+} from '@/lib/demo-static-fallback-policy';
 
 // Default Next.js `deviceSizes` (next.config has no override). Must stay in
 // sync with next/image so the browser picks our preloaded variant instead of
@@ -70,6 +84,53 @@ const INDUSTRY_MAP: Record<string, string> = {
   eishockey: 'verein',
 };
 
+const DEMO_TENANT_SLUG_MAP: Record<string, string> = {
+  showcase: 'demo-showcase',
+  shop: 'demo-shop',
+};
+
+class DemoTenantLookupUnavailableError extends Error {
+  constructor() {
+    super('Demo tenant lookup is temporarily unavailable.');
+    this.name = 'DemoTenantLookupUnavailableError';
+  }
+}
+
+function logDemoRouteResolution(
+  level: 'warn' | 'error',
+  payload: {
+    event: 'demo_tenant_not_found' | 'demo_tenant_lookup_failed' | 'demo_metadata_lookup_failed';
+    industry: string;
+    targetSlug: string;
+    stage?: string;
+    errorType?: string;
+    staticFallback?: string;
+  },
+): void {
+  const entry = JSON.stringify({
+    ...payload,
+    industry: payload.industry.slice(0, 64),
+    targetSlug: payload.targetSlug.slice(0, 160),
+  });
+  console[level](entry);
+}
+
+function getResolutionErrorType(
+  resolution: Extract<DemoTenantResolution, { status: 'error' }>,
+): string {
+  return resolution.error instanceof Error ? resolution.error.name : 'UnknownError';
+}
+
+async function resolveDemoTenantForRoute(
+  industry: string,
+  dbIndustry: string,
+): Promise<DemoTenantResolution> {
+  const tenantSlug = DEMO_TENANT_SLUG_MAP[industry];
+  return tenantSlug
+    ? resolveDemoTenantBySlugResult(tenantSlug)
+    : resolveDemoTenantResult(dbIndustry, industry);
+}
+
 function isHeroSection(type?: string | null): boolean {
   if (!type) return false;
   return type === 'hero' || type.endsWith('Hero') || type.startsWith('hero');
@@ -77,13 +138,7 @@ function isHeroSection(type?: string | null): boolean {
 
 /** Recursively prefix internal hrefs in section data with the demo path */
 function prefixSectionHrefs(data: Record<string, unknown>, prefix: string): Record<string, unknown> {
-  const json = JSON.stringify(data);
-  // Match "href":"/" patterns that are internal links (not /demo/, not external)
-  const rewritten = json.replace(/"href"\s*:\s*"(\/(?!demo\/)[^"]*?)"/g, (_match, path) => {
-    // Skip anchors, tel:, mailto: etc. that somehow start with /
-    return `"href":"${prefix}${path}"`;
-  });
-  return JSON.parse(rewritten);
+  return prefixInternalLinks(data, prefix);
 }
 
 function prefixSections(sections: SnapshotSection[], prefix: string): SnapshotSection[] {
@@ -308,27 +363,62 @@ function injectCollections(sections: SnapshotSection[], collections: SnapshotCol
 // "Flamingo CMS" title — visitors saw no tenant branding in the tab and
 // shares had no description. Mirror the tenant route's SEO resolution.
 export async function generateMetadata({ params }: { params: Promise<{ industry: string; slug?: string[] }> }): Promise<Metadata> {
+  let industry = 'unknown';
+  let targetSlug = '';
   try {
-    const { industry, slug } = await params;
-    const dbIndustry = INDUSTRY_MAP[industry];
-    if (!dbIndustry) return {};
-    const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase', shop: 'demo-shop' };
-    const tenantId = SLUG_MAP[industry]
-      ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
-      : await resolveDemoTenant(dbIndustry, industry);
-    if (!tenantId) return {};
-    const [snapshot, seoGlobal] = await Promise.all([
+    const routeParams = await params;
+    industry = routeParams.industry;
+    targetSlug = routeParams.slug?.join('/') || '';
+    const dbIndustry = INDUSTRY_MAP[industry] || industry;
+
+    const resolution = await resolveDemoTenantForRoute(industry, dbIndustry);
+    if (resolution.status === 'error') {
+      logDemoRouteResolution('error', {
+        event: 'demo_tenant_lookup_failed',
+        industry,
+        targetSlug,
+        stage: resolution.stage,
+        errorType: getResolutionErrorType(resolution),
+      });
+      return DEMO_UNAVAILABLE_METADATA;
+    }
+
+    if (resolution.status === 'not-found') {
+      const fallbackPolicy = getDemoStaticFallbackPolicy(process.env);
+      if (!fallbackPolicy.enabled) return DEMO_UNAVAILABLE_METADATA;
+
+      const staticSite = getDeprecatedStaticDemoFixture(industry);
+      const staticPage = staticSite?.pages.find((page) => (
+        page.slug === targetSlug
+        || (targetSlug === '' && (page.slug === '' || page.slug === 'home' || page.slug === 'startseite'))
+      ));
+      if (!staticPage) return DEMO_UNAVAILABLE_METADATA;
+      const siteData = getDeprecatedStaticDemoSiteData(industry as IndustryKey);
+      return {
+        title: `[DEV-Fixture] ${staticPage.title} | ${siteData.brand.companyName}`,
+        description: siteData.brand.tagline || undefined,
+        robots: { index: false, follow: false },
+      };
+    }
+
+    const tenantId = resolution.tenantId;
+    const [snapshot, seoGlobal, { brand }] = await Promise.all([
       getActiveSnapshot(tenantId),
       getTenantSeoGlobal(tenantId),
+      getTenantBrand(tenantId),
     ]);
-    const targetSlug = slug?.join('/') || '';
     const page = snapshot?.pages.find(p =>
       p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
     );
-    if (!page) return seoGlobal?.defaultTitle ? { title: seoGlobal.defaultTitle, description: seoGlobal.defaultDescription || undefined } : {};
+    if (!page) return DEMO_UNAVAILABLE_METADATA;
     const seoPage = await getTenantSeoPage(tenantId, page.id);
     const pageTitle = seoPage?.metaTitle || page.title;
-    const title = seoGlobal?.titleTemplate ? seoGlobal.titleTemplate.replace('%s', pageTitle) : pageTitle;
+    const title = composeSeoTitle({
+      contentTitle: pageTitle,
+      defaultTitle: seoGlobal?.defaultTitle,
+      titleTemplate: seoGlobal?.titleTemplate,
+      brandName: brand.companyName,
+    });
     const description = seoPage?.metaDescription || seoGlobal?.defaultDescription || undefined;
     const ogImage = seoPage?.ogImage || seoGlobal?.defaultOgImage || undefined;
     return {
@@ -336,38 +426,59 @@ export async function generateMetadata({ params }: { params: Promise<{ industry:
       description,
       openGraph: { title, description, ...(ogImage ? { images: [ogImage] } : {}) },
     };
-  } catch {
-    return {};
+  } catch (error) {
+    logDemoRouteResolution('error', {
+      event: 'demo_metadata_lookup_failed',
+      industry,
+      targetSlug,
+      errorType: error instanceof Error ? error.name : 'UnknownError',
+    });
+    return DEMO_UNAVAILABLE_METADATA;
   }
 }
 
 export default async function DemoPage({ params }: { params: Promise<{ industry: string; slug?: string[] }> }) {
   const { industry, slug } = await params;
 
-  const dbIndustry = INDUSTRY_MAP[industry];
-  if (!dbIndustry) return notFound();
+  // Known entries are legacy aliases. New demos are addressable immediately
+  // through an active `demo-{key}` tenant without a code change.
+  const dbIndustry = INDUSTRY_MAP[industry] || industry;
 
-  // Resolve demo tenant from DB
-  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase', shop: 'demo-shop' };
-  let tenantId: string | null = null;
-  try {
-    tenantId = SLUG_MAP[industry]
-      ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
-      : await resolveDemoTenant(dbIndustry, industry);
-  } catch {
-    // DB enum may not include this industry yet — fall through to static
+  const targetSlug = slug?.join('/') || '';
+  const resolution = await resolveDemoTenantForRoute(industry, dbIndustry);
+
+  if (resolution.status === 'error') {
+    logDemoRouteResolution('error', {
+      event: 'demo_tenant_lookup_failed',
+      industry,
+      targetSlug,
+      stage: resolution.stage,
+      errorType: getResolutionErrorType(resolution),
+    });
+    // A DB outage is an operational failure, not a missing page. Do not mask it
+    // with stale fixtures or a misleading 404.
+    throw new DemoTenantLookupUnavailableError();
   }
 
-  // Fallback to static demo pages if no DB tenant exists
-  if (!tenantId) {
-    const staticSite = getDemoSite(industry);
+  if (resolution.status === 'not-found') {
+    const fallbackPolicy = getDemoStaticFallbackPolicy(process.env);
+    if (!fallbackPolicy.enabled) {
+      logDemoRouteResolution('warn', {
+        event: 'demo_tenant_not_found',
+        industry,
+        targetSlug,
+        staticFallback: fallbackPolicy.reason,
+      });
+      return notFound();
+    }
+
+    const staticSite = getDeprecatedStaticDemoFixture(industry);
     if (!staticSite) return notFound();
-    const targetSlug = slug?.join('/') || '';
     const page = staticSite.pages.find(p =>
       p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
     );
     if (!page) return notFound();
-    const siteData = getDemoSiteData(industry as IndustryKey);
+    const siteData = getDeprecatedStaticDemoSiteData(industry as IndustryKey);
     const demoPrefix = `/demo/${industry}`;
     const visibleSections = page.sections.filter(s => s.visible) as SnapshotSection[];
     const normalizedSections = industry === 'shop'
@@ -394,6 +505,8 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
     );
   }
 
+  const tenantId = resolution.tenantId;
+
   const [snapshot, tenantStyle, navData, footerData, brandData] = await Promise.all([
     getActiveSnapshot(tenantId),
     getTenantStyle(tenantId),
@@ -404,7 +517,6 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   if (!snapshot || !tenantStyle || !navData || !brandData) return notFound();
 
-  const targetSlug = slug?.join('/') || '';
   const page = snapshot.pages.find(p =>
     p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
   );
@@ -425,6 +537,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
           brand: brandData.brand,
           contact: brandData.contact,
           socialLinks: brandData.socialLinks,
+          formFields: brandData.formFields,
           footer: footerData ? {
             columns: (footerData.columns || []).map(col => ({
               ...col,
@@ -453,6 +566,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
           brand: brandData.brand,
           contact: brandData.contact,
           socialLinks: brandData.socialLinks,
+          formFields: brandData.formFields,
           footer: footerData ? {
             columns: (footerData.columns || []).map(col => ({
               ...col,
@@ -489,6 +603,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
         brand: brandData.brand,
         contact: brandData.contact,
         socialLinks: brandData.socialLinks,
+        formFields: brandData.formFields,
         footer: footerData ? {
           columns: (footerData.columns || []).map(col => ({
             ...col,

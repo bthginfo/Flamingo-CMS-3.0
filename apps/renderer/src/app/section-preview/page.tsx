@@ -4,6 +4,7 @@ import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 import { getStyleCssVars } from '@/lib/styles';
 import { SectionRenderer } from '@/components/section-renderer';
+import { DEFAULT_CONTACT_FORM_FIELDS } from '@/lib/contact-form';
 import {
   PUBLIC_COLOR_FIELD_CSS_VARS,
   PUBLIC_COLOR_FIELD_KEYS,
@@ -59,7 +60,8 @@ function decodeAuditStyleOverrides(raw?: string): Record<string, string> | null 
 export default async function SectionPreviewPage({ searchParams }: { searchParams: Promise<{ type?: string; industry?: string; style?: string; styleOverrides?: string }> }) {
   const params = await searchParams;
   const { type, industry = 'tradesman' } = params;
-  const style = 'classic';
+  const requestedStyle = params.style?.trim() || 'classic';
+  const style = /^[a-z0-9_-]{1,32}$/i.test(requestedStyle) ? requestedStyle : 'classic';
   if (!type) return notFound();
 
   const templates = getIndustryTemplates(industry);
@@ -99,7 +101,7 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
     <div data-style={style} className="min-h-screen bg-[var(--token-page-bg)]" style={styleCssVars as React.CSSProperties}>
       <main>
         {type === 'uspStrip' && <div className="h-24" />}
-        <SectionRenderer section={previewSection} styleVariant={style} industry={industry} />
+        <SectionRenderer section={previewSection} styleVariant={style} industry={industry} globalFormFields={DEFAULT_CONTACT_FORM_FIELDS} />
       </main>
     </div>
   );

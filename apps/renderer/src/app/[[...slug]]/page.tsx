@@ -56,6 +56,8 @@ import { SiteFooter } from '@/components/site-footer';
 import { WhatsAppFab } from '@/components/whatsapp-fab';
 import { generateCollectionItemMetadata, renderCollectionItemPage } from '@/app/c/[collection]/[slug]/collection-item-page';
 import { serializeJsonForHtml } from '@/lib/safe-json';
+import { composeSeoTitle } from '@/lib/seo-title';
+import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
 
 // Known locale codes for i18n routing (first slug segment)
 const LOCALE_PATTERN = /^[a-z]{2}$/;
@@ -169,9 +171,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   ]);
 
   const pageTitle = seoPage?.metaTitle || page.title;
-  const title = seoGlobal?.titleTemplate
-    ? seoGlobal.titleTemplate.replace('%s', pageTitle)
-    : pageTitle;
+  const title = composeSeoTitle({
+    contentTitle: pageTitle,
+    defaultTitle: seoGlobal?.defaultTitle,
+    titleTemplate: seoGlobal?.titleTemplate,
+    brandName: brand.companyName,
+  });
   const description = seoPage?.metaDescription || seoGlobal?.defaultDescription || undefined;
   const ogImage = seoPage?.ogImage || seoGlobal?.defaultOgImage || undefined;
   const canonical = seoPage?.canonical || (seoGlobal?.canonicalBase ? `${seoGlobal.canonicalBase}/${page.slug}` : undefined);
@@ -260,7 +265,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   if (!result) notFound();
 
   const { tenantId, snapshot, page, locale, i18n, linkPrefix } = result;
-  const [navData, footerData, { brand, contact, openingHours, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
+  const [navData, footerData, { brand, contact, openingHours, socialLinks, design, formFields }, tenantStyle, seoGlobal] = await Promise.all([
     getTenantNav(tenantId, locale),
     getTenantFooter(tenantId, locale),
     getTenantBrand(tenantId),
@@ -281,9 +286,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
 
   // Custom font loading
   const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = customFonts.length > 0
-    ? `https://fonts.googleapis.com/css2?${customFonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;800`).join('&')}&display=swap`
-    : null;
+  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
   const fontCssVars: Record<string, string> = {};
   // Custom uploaded fonts take priority
   const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
@@ -469,7 +472,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} topBar={navData.topBar} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} linkPrefix={linkPrefix} />
       <main>
         {visibleSections.map((section) => (
-          <SectionRenderer key={section.id} section={(section.type.startsWith('shop') || sectionsNeedingTenantId.has(section.type)) ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} defaultLocale={i18n?.defaultLocale} linkPrefix={linkPrefix} />
+          <SectionRenderer key={section.id} section={(section.type.startsWith('shop') || sectionsNeedingTenantId.has(section.type)) ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} defaultLocale={i18n?.defaultLocale} linkPrefix={linkPrefix} globalFormFields={formFields} />
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} shopEnabled={shopEnabled} />

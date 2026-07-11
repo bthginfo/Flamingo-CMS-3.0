@@ -30,7 +30,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
               {item.category && <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Leaf size={12} /><span data-edit-path="category">{item.category}</span></div>}
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--token-accent)]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </motion.article>
         ))}

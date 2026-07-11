@@ -4,7 +4,7 @@ import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
-import { updatePageAction, addSectionAction, cloneSectionFromPageAction, deleteSectionAction, getSectionCopySourcesAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
+import { updatePageAction, addSectionAction, cloneSectionFromPageAction, deleteSectionAction, getSectionCopySourcesAction, updateSectionAction, updateSectionMetaAction, updateSectionTypeAndDataAction, reorderSectionsAction } from '../actions';
 import { publishAction } from '../../actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
 import { toast } from 'sonner';
@@ -20,6 +20,7 @@ import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
+import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
 
@@ -46,6 +47,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const preview = usePreview();
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
+  const pendingTypeChanges = useRef<Set<string>>(new Set());
   const [hasDirty, setHasDirty] = useState(false);
   const seoRef = useRef<PageSeoPanelHandle>(null);
   // Live preview sync
@@ -342,6 +344,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
   function handleReorder(newOrder: Section[]) {
     setSections(newOrder);
+    setHasDirty(true);
+    setSaved(false);
     startTransition(async () => {
       await reorderSectionsAction(page.id, newOrder.map(s => s.id));
       toast.success('Reihenfolge gespeichert');
@@ -363,8 +367,12 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
           }
           return next;
         });
+        setHasDirty(true);
+        setSaved(false);
+        toast.success('Sektion hinzugefügt');
+      } else {
+        toast.error('Sektion konnte nicht hinzugefügt werden');
       }
-      toast.success('Sektion hinzugefügt');
     });
   }
 
@@ -389,6 +397,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         return;
       }
       setSections(prev => [...prev, section as Section]);
+      setHasDirty(true);
+      setSaved(false);
       toast.success('Sektion kopiert');
       if (preview.isOpen) {
         const liveSections = buildLiveSections([...sectionsRef.current, section as Section], pendingChanges.current);
@@ -400,6 +410,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   function handleDeleteSection(sectionId: string) {
     if (!confirm('Sektion wirklich löschen?')) return;
     setSections(prev => prev.filter(s => s.id !== sectionId));
+    pendingChanges.current.delete(sectionId);
+    pendingTypeChanges.current.delete(sectionId);
+    setHasDirty(true);
+    setSaved(false);
     startTransition(async () => {
       await deleteSectionAction(sectionId, page.id);
       toast.success('Sektion gelöscht');
@@ -408,12 +422,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
   function handleToggleVisible(sectionId: string) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, visible: !s.visible } : s));
-    const section = sections.find(s => s.id === sectionId);
-    if (section) {
-      startTransition(async () => {
-        await updateSectionMetaAction(sectionId, { visible: !section.visible }, page.id);
-      });
-    }
+    setHasDirty(true);
+    setSaved(false);
   }
 
   const handleSectionChange = useCallback((sectionId: string, data: Record<string, unknown>) => {
@@ -439,91 +449,119 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   handleSectionChangeRef.current = handleSectionChange;
   handleSaveColorOverridesRef.current = handleSaveColorOverrides;
 
-  async function handleSaveAll() {
+  async function persistAll(announce: boolean): Promise<boolean> {
+    if (pending) {
+      toast.error('Bitte warte, bis die laufende Änderung abgeschlossen ist.');
+      return false;
+    }
     setSaving(true);
     try {
+      await flushColorSaves();
       // Save page title/slug/visible
       await updatePageAction(page.id, { title: page.title, slug: page.slug, visible: page.visible });
-      // Save all dirty sections
-      const entries = Array.from(pendingChanges.current.entries());
+      const currentSections = sectionsRef.current;
+      const typeChanges = new Set(pendingTypeChanges.current);
+      const entries = new Map(pendingChanges.current);
       const results = await Promise.all([
-        ...entries.map(([sectionId, data]) => updateSectionAction(sectionId, data, page.id)),
-        ...sections
-          .filter(section => section.styleOverrides !== undefined)
-          .map(section => updateSectionMetaAction(section.id, { styleOverrides: section.styleOverrides ?? null }, page.id)),
+        ...currentSections.map(section => {
+          const data = entries.get(section.id) ?? section.data;
+          const meta = {
+            visible: section.visible,
+            titleInternal: section.titleInternal,
+            variant: section.variant,
+            container: section.container,
+            spacingTop: section.spacingTop,
+            spacingBottom: section.spacingBottom,
+            anchorId: section.anchorId,
+            styleOverrides: section.styleOverrides ?? null,
+          };
+          if (typeChanges.has(section.id)) {
+            return updateSectionTypeAndDataAction(section.id, page.id, {
+              type: section.type,
+              data,
+              ...meta,
+            });
+          }
+          return Promise.all([
+            ...(entries.has(section.id) ? [updateSectionAction(section.id, data, page.id)] : []),
+            updateSectionMetaAction(section.id, meta, page.id),
+          ]).then(sectionResults => sectionResults.find(result => result?.error) || { success: true });
+        }),
+        reorderSectionsAction(page.id, currentSections.map(section => section.id)),
         seoRef.current?.save(),
       ]);
-      const errors = results.filter(r => r && 'error' in r);
+      const errors = results.filter(result => result && typeof result === 'object' && 'error' in result && result.error);
       if (errors.length > 0) {
         toast.error(`${errors.length} Sektion(en) konnten nicht gespeichert werden`);
-      } else {
-        // Update local sections state with pending data
-        setSections(s => s.map(sec => {
-          const newData = pendingChanges.current.get(sec.id);
-          return newData ? { ...sec, data: newData } : sec;
-        }));
-        pendingChanges.current.clear();
-        try { localStorage.removeItem(`flamingo-draft-${page.id}`); } catch { /* best-effort */ }
-        setHasDirty(false);
-        setSaved(true);
-        preview.refresh();
-        toast.success('Gespeichert');
+        return false;
       }
-    } catch (e) {
+
+      setSections(current => current.map(section => {
+        const newData = pendingChanges.current.get(section.id);
+        return newData ? { ...section, data: newData } : section;
+      }));
+      pendingChanges.current.clear();
+      pendingTypeChanges.current.clear();
+      try { localStorage.removeItem(`flamingo-draft-${page.id}`); } catch { /* best-effort */ }
+      setHasDirty(false);
+      setSaved(true);
+      preview.refresh();
+      if (announce) toast.success('Gespeichert');
+      return true;
+    } catch {
       toast.error('Speichern fehlgeschlagen');
+      return false;
     } finally {
       setSaving(false);
     }
   }
 
-  function handleSaveSectionMeta(sectionId: string, meta: Record<string, unknown>) {
-    startTransition(async () => {
-      await updateSectionMetaAction(sectionId, meta, page.id);
-      toast.success('Einstellungen gespeichert', { id: 'meta-save' });
-    });
+  async function handleSaveAll() {
+    await persistAll(true);
+  }
+
+  function handleSaveSectionMeta(sectionId: string, meta: Partial<Section>) {
+    setSections(current => current.map(section => section.id === sectionId ? { ...section, ...meta } : section));
+    setHasDirty(true);
+    setSaved(false);
+    toast.success('Einstellungen übernommen · noch speichern', { id: 'meta-save' });
   }
 
   function handleChangeSectionType(sectionId: string, nextType: string) {
-    const previousSections = sectionsRef.current;
-    const currentSection = previousSections.find((section) => section.id === sectionId);
+    const currentSections = sectionsRef.current;
+    const currentSection = currentSections.find((section) => section.id === sectionId);
     if (!currentSection || currentSection.type === nextType) return;
 
-    const previousPending = pendingChanges.current.get(sectionId);
-    const nextSection = remapEditableSectionType({ ...currentSection, data: previousPending ?? currentSection.data }, nextType);
-    const nextSections = previousSections.map((section) => section.id === sectionId ? nextSection : section);
+    const nextSection = remapEditableSectionType({
+      ...currentSection,
+      data: pendingChanges.current.get(sectionId) ?? currentSection.data,
+    }, nextType);
+    const nextSections = currentSections.map(section => section.id === sectionId ? nextSection : section);
 
-    pendingChanges.current.delete(sectionId);
+    pendingChanges.current.set(sectionId, nextSection.data);
+    pendingTypeChanges.current.add(sectionId);
     setSections(nextSections);
+    setHasDirty(true);
+    setSaved(false);
     if (preview.isOpen) {
       const liveSections = buildLiveSections(nextSections, pendingChanges.current);
       preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
     }
-
-    startTransition(async () => {
-      try {
-        const [metaResult, dataResult] = await Promise.all([
-          updateSectionMetaAction(sectionId, { type: nextType }, page.id),
-          updateSectionAction(sectionId, nextSection.data, page.id),
-        ]);
-
-        if ((metaResult && 'error' in metaResult) || (dataResult && 'error' in dataResult)) {
-          throw new Error('Sektionstyp konnte nicht gespeichert werden');
-        }
-
-        toast.success('Sektionstyp geändert');
-      } catch {
-        if (previousPending) pendingChanges.current.set(sectionId, previousPending);
-        setSections(previousSections);
-        if (preview.isOpen) {
-          const liveSections = buildLiveSections(previousSections, pendingChanges.current);
-          preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
-        }
-        toast.error('Sektionstyp konnte nicht geändert werden');
-      }
-    });
+    toast.success('Sektionstyp geändert · noch speichern');
   }
 
   const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
+  const colorSavePromisesRef = useRef<Map<string, Promise<unknown>>>(new Map());
+
+  async function flushColorSaves() {
+    for (const timeout of Object.values(colorDebounceRef.current)) clearTimeout(timeout);
+    colorDebounceRef.current = {};
+    await Promise.all(colorSavePromisesRef.current.values());
+  }
+
+  useEffect(() => () => {
+    for (const timeout of Object.values(colorDebounceRef.current)) clearTimeout(timeout);
+  }, []);
 
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
     setSections(prev => {
@@ -538,13 +576,21 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       }
       return next;
     });
+    setHasDirty(true);
+    setSaved(false);
     // Debounce server save + toast per section
     if (colorDebounceRef.current[sectionId]) clearTimeout(colorDebounceRef.current[sectionId]);
     colorDebounceRef.current[sectionId] = setTimeout(() => {
       delete colorDebounceRef.current[sectionId];
-      startTransition(async () => {
-        await updateSectionMetaAction(sectionId, { styleOverrides: overrides }, page.id);
-        toast.success('Farben gespeichert', { id: `color-save-${sectionId}` });
+      const savePromise = updateSectionMetaAction(sectionId, { styleOverrides: overrides }, page.id);
+      colorSavePromisesRef.current.set(sectionId, savePromise);
+      void savePromise.then(result => {
+        if (result.error) toast.error(result.error, { id: `color-save-${sectionId}` });
+        else toast.success('Farben zwischengespeichert', { id: `color-save-${sectionId}` });
+      }).catch(() => {
+        toast.error('Farben konnten nicht gespeichert werden', { id: `color-save-${sectionId}` });
+      }).finally(() => {
+        if (colorSavePromisesRef.current.get(sectionId) === savePromise) colorSavePromisesRef.current.delete(sectionId);
       });
     }, 1500);
   }
@@ -554,13 +600,17 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   async function handlePublish() {
     setPublishing(true);
     try {
+      const savedSuccessfully = await persistAll(false);
+      if (!savedSuccessfully) return;
       const result = await publishAction();
-      if ('error' in result) {
-        toast.error(result.error);
+      if (result.error) {
+        toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
       } else {
-        toast.success('Änderungen veröffentlicht');
-        setSaved(false);
+        toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Änderungen veröffentlicht');
+        setSaved(true);
       }
+    } catch {
+      toast.error('Veröffentlichen fehlgeschlagen');
     } finally {
       setPublishing(false);
     }
@@ -641,6 +691,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open(); }}
         onSave={handleSaveAll}
         onPublish={handlePublish}
+        saveDisabled={pending || publishing}
+        publishDisabled={pending}
       />
     </div>
     </PageSectionsProvider>

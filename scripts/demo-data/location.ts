@@ -10,7 +10,7 @@ export const LOCATION_CONFIG = {
     secondaryColor: '#451a03',
     accentColor: '#f59e0b',
   },
-  contact: { phone: '+49 89 8899 4411', email: 'events@lichtwerk-loft.de', address: 'Am Speicher 12, 85049 Ingolstadt' },
+  contact: { phone: '+49 841 8899 4411', email: 'events@lichtwerk-loft.de', address: 'Am Speicher 12, 85049 Ingolstadt' },
   socialLinks: { instagram: 'https://instagram.com/lichtwerkloft' },
   openingHours: [
     { day: 'Mo - Fr', hours: '09:00 - 18:00' },

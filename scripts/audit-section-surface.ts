@@ -303,6 +303,8 @@ const CONTRACT_INDUSTRIES = [
   'florist',
   'fitness',
   'location',
+  'bar',
+  'verein',
 ] as const;
 
 function getAuditedColorContract(type: string, file: string | null, explicitIndustry?: string | null) {

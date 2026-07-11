@@ -1,18 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
-
-type FormField = {
-  name: string;
-  label: string;
-  type: 'text' | 'email' | 'tel' | 'textarea' | 'select';
-  placeholder?: string;
-  required?: boolean;
-  options?: string[];
-  halfWidth?: boolean;
-};
+import {
+  DEFAULT_CONTACT_FORM_FIELDS,
+  normalizeContactFormFields,
+  validateContactFormFields,
+  type ContactFormFieldDefinition as FormField,
+} from '@/lib/contact-form';
 
 type AutoResponse = {
   enabled: boolean;
@@ -21,28 +17,27 @@ type AutoResponse = {
   notificationEmail?: string;
 };
 
-const DEFAULT_FIELDS: FormField[] = [
-  { name: 'name', label: 'Name', type: 'text', placeholder: 'Ihr Name', required: true, halfWidth: true },
-  { name: 'email', label: 'E-Mail', type: 'email', placeholder: 'E-Mail Adresse', required: true, halfWidth: true },
-  { name: 'phone', label: 'Telefon', type: 'tel', placeholder: 'Telefon (optional)', required: false },
-  { name: 'message', label: 'Nachricht', type: 'textarea', placeholder: 'Wie können wir Ihnen helfen?', required: true },
-];
-
 export default function ContactFormSettingsPage() {
-  const [fields, setFields] = useState<FormField[]>(DEFAULT_FIELDS);
+  const [fields, setFields] = useState<FormField[]>(DEFAULT_CONTACT_FORM_FIELDS);
   const [autoResponse, setAutoResponse] = useState<AutoResponse>({ enabled: false, subject: '', body: '' });
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     fetch('/admin/api/contact-form').then(r => r.json()).then(data => {
-      if (data.formFields?.length) setFields(data.formFields);
+      setFields(normalizeContactFormFields(data.formFields));
       if (data.autoResponse) setAutoResponse(data.autoResponse);
       setLoaded(true);
     }).catch(() => setLoaded(true));
   }, []);
 
+  const fieldValidation = useMemo(() => validateContactFormFields(fields), [fields]);
+
   async function handleSave() {
+    if (!fieldValidation.success) {
+      toast.error(fieldValidation.errors[0]);
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch('/admin/api/contact-form', {
@@ -50,23 +45,36 @@ export default function ContactFormSettingsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ formFields: fields, autoResponse }),
       });
+      const data = await res.json().catch(() => null) as { error?: string } | null;
       if (res.ok) toast.success('Formular-Einstellungen gespeichert.');
-      else toast.error('Fehler beim Speichern.');
+      else toast.error(data?.error || 'Fehler beim Speichern.');
+    } catch {
+      toast.error('Verbindung fehlgeschlagen. Bitte erneut versuchen.');
     } finally {
       setSaving(false);
     }
   }
 
   function addField() {
-    const name = `field_${Date.now()}`;
+    let suffix = fields.length + 1;
+    while (fields.some(field => field.name === `field_${suffix}`)) suffix += 1;
+    const name = `field_${suffix}`;
     setFields([...fields, { name, label: 'Neues Feld', type: 'text', placeholder: '', required: false }]);
   }
 
   function removeField(index: number) {
+    if (fields[index]?.name === 'name' || fields[index]?.name === 'email') return;
     setFields(fields.filter((_, i) => i !== index));
   }
 
   function updateField(index: number, updates: Partial<FormField>) {
+    if (typeof updates.name === 'string') {
+      const duplicate = fields.some((field, fieldIndex) => fieldIndex !== index && field.name.toLocaleLowerCase('en-US') === updates.name!.toLocaleLowerCase('en-US'));
+      if (duplicate) {
+        toast.error('Jeder technische Feldname muss eindeutig sein.');
+        return;
+      }
+    }
     setFields(fields.map((f, i) => i === index ? { ...f, ...updates } : f));
   }
 
@@ -88,8 +96,16 @@ export default function ContactFormSettingsPage() {
       {/* Form Fields Editor */}
       <div className="admin-card p-6 mb-6">
         <h2 className="font-semibold text-lg mb-4">Formularfelder</h2>
+        <p className="mb-5 text-sm text-zinc-500">Diese Felder gelten automatisch für alle Kontaktsektionen ohne eigene Feldkonfiguration. Name und E-Mail bleiben als sichere Pflichtfelder fest definiert.</p>
+        {!fieldValidation.success && (
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+            {fieldValidation.errors[0]}
+          </div>
+        )}
         <div className="space-y-3">
-          {fields.map((field, i) => (
+          {fields.map((field, i) => {
+            const isIdentityField = field.name === 'name' || field.name === 'email';
+            return (
             <div key={`${field.name}-${i}`} className="flex items-start gap-3 p-4 border border-zinc-200 rounded-xl bg-zinc-50">
               <div className="flex flex-col gap-1 pt-2">
                 <button type="button" onClick={() => moveField(i, i - 1)} className="text-zinc-400 hover:text-zinc-700 text-xs">▲</button>
@@ -103,11 +119,11 @@ export default function ContactFormSettingsPage() {
                 </div>
                 <div>
                   <label className="admin-label">Feldname</label>
-                  <input className="admin-input" value={field.name} onChange={e => updateField(i, { name: e.target.value.replace(/[^a-zA-Z0-9_]/g, '') })} />
+                  <input className="admin-input disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:text-zinc-500" value={field.name} disabled={isIdentityField} onChange={e => updateField(i, { name: e.target.value.replace(/[^a-zA-Z0-9_]/g, '') })} />
                 </div>
                 <div>
                   <label className="admin-label">Typ</label>
-                  <select className="admin-input" value={field.type} onChange={e => updateField(i, { type: e.target.value as FormField['type'] })}>
+                  <select className="admin-input disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:text-zinc-500" value={field.type} disabled={isIdentityField} onChange={e => updateField(i, { type: e.target.value as FormField['type'] })}>
                     <option value="text">Text</option>
                     <option value="email">E-Mail</option>
                     <option value="tel">Telefon</option>
@@ -127,7 +143,7 @@ export default function ContactFormSettingsPage() {
                 )}
                 <div className="flex items-center gap-4 sm:col-span-2 lg:col-span-4">
                   <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" checked={field.required || false} onChange={e => updateField(i, { required: e.target.checked })} className="rounded" />
+                    <input type="checkbox" checked={field.required || false} disabled={isIdentityField} onChange={e => updateField(i, { required: e.target.checked })} className="rounded" />
                     Pflichtfeld
                   </label>
                   <label className="flex items-center gap-2 text-sm">
@@ -136,11 +152,11 @@ export default function ContactFormSettingsPage() {
                   </label>
                 </div>
               </div>
-              <button type="button" onClick={() => removeField(i)} className="text-red-400 hover:text-red-600 p-2">
+              <button type="button" onClick={() => removeField(i)} disabled={isIdentityField} aria-label={isIdentityField ? `${field.label} ist ein festes Pflichtfeld` : `${field.label} entfernen`} className="text-red-400 hover:text-red-600 p-2 disabled:cursor-not-allowed disabled:text-zinc-300">
                 <Trash2 size={16} />
               </button>
             </div>
-          ))}
+          )})}
         </div>
         <button type="button" onClick={addField} className="mt-4 flex items-center gap-2 text-sm text-brand-primary hover:underline">
           <Plus size={16} /> Feld hinzufügen
@@ -180,7 +196,7 @@ export default function ContactFormSettingsPage() {
         )}
       </div>
 
-      <button onClick={handleSave} disabled={saving} className="admin-btn-primary">
+      <button onClick={handleSave} disabled={saving || !fieldValidation.success} className="admin-btn-primary">
         {saving ? 'Speichern…' : 'Einstellungen speichern'}
       </button>
     </div>

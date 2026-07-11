@@ -20,7 +20,12 @@ import type { DemoSite } from './types';
 
 export type { DemoSite, DemoPage } from './types';
 
-const SITES: Record<string, DemoSite> = {
+/**
+ * @deprecated Hand-authored demo data is retained solely for explicit local
+ * development (`DEMO_STATIC_FALLBACK=1`). Production routes must use tenant
+ * snapshots so these fixtures cannot silently drift from the live personas.
+ */
+const DEPRECATED_STATIC_DEMO_FIXTURES: Record<string, DemoSite> = {
   handwerk: handwerkSite,
   hotel: hotelSite,
   restaurant: restaurantSite,
@@ -41,10 +46,13 @@ const SITES: Record<string, DemoSite> = {
   eishockey: eishockeySite,
 };
 
-export function getDemoSite(industryKey: string): DemoSite | undefined {
-  return SITES[industryKey];
+export function getDeprecatedStaticDemoFixture(industryKey: string): DemoSite | undefined {
+  return DEPRECATED_STATIC_DEMO_FIXTURES[industryKey];
 }
 
+/** @deprecated Use DB-backed demo snapshots in production. */
+export const getDemoSite = getDeprecatedStaticDemoFixture;
+
 export function getAllIndustryKeys(): string[] {
-  return Object.keys(SITES);
+  return Object.keys(DEPRECATED_STATIC_DEMO_FIXTURES);
 }

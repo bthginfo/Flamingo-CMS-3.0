@@ -44,12 +44,16 @@ test('prefixInternalLinks rewrites href/ctaHref keys recursively', () => {
   const input = {
     href: '/a',
     ctaHref: '/b',
+    link: '/details',
+    to: '/kontakt',
     nested: { buttonHref: '/c', label: 'x' },
     items: [{ href: '/d' }, { href: 'https://ext.de' }],
   };
   const out = prefixInternalLinks(input, P) as typeof input;
   assert.equal(out.href, '/mein-tenant/a');
   assert.equal(out.ctaHref, '/mein-tenant/b');
+  assert.equal(out.link, '/mein-tenant/details');
+  assert.equal(out.to, '/mein-tenant/kontakt');
   assert.equal(out.nested.buttonHref, '/mein-tenant/c');
   assert.equal(out.nested.label, 'x');
   assert.equal(out.items[0].href, '/mein-tenant/d');

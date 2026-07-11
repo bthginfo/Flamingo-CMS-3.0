@@ -48,7 +48,7 @@ export const DESIGN_TOKENS = {
   cardBg:          { cssVar: '--token-card-bg',         kind: 'color', default: '#ffffff',          description: 'Card / tile background color' },
   cardBorder:      { cssVar: '--token-card-border',     kind: 'color', default: 'rgba(15,23,42,0.08)', description: 'Card / tile border color' },
   divider:         { cssVar: '--token-divider',         kind: 'color', default: 'rgba(15,23,42,0.12)', description: 'Horizontal rule / section divider color' },
-  imageOverlay:    { cssVar: '--token-image-overlay',   kind: 'color', default: 'rgba(0,0,0,0.42)', description: 'Overlay color for image-backed heroes, cards and media sections' },
+  imageOverlay:    { cssVar: '--token-image-overlay',   kind: 'color', default: 'rgba(2,6,23,0.55)', description: 'Overlay color for image-backed heroes, cards and media sections' },
 
   // ─── Card typography ──────────────────────────────────────────────────────────
   cardHeading:     { cssVar: '--token-card-heading',    kind: 'color', default: '#0f172a',          description: 'Card heading / title text color' },
@@ -56,7 +56,7 @@ export const DESIGN_TOKENS = {
   cardMuted:       { cssVar: '--token-card-muted',      kind: 'color', default: '#64748b',          description: 'Card muted / secondary text color' },
   cardIcon:        { cssVar: '--token-card-icon',       kind: 'color', default: '#dc2626',          description: 'Card icon accent color' },
   cardBadgeBg:     { cssVar: '--token-card-badge-bg',   kind: 'color', default: 'rgba(220,38,38,0.10)', description: 'Card badge / pill background color' },
-  cardBadgeText:   { cssVar: '--token-card-badge-text', kind: 'color', default: '#dc2626',          description: 'Card badge / pill text color' },
+  cardBadgeText:   { cssVar: '--token-card-badge-text', kind: 'color', default: '#b91c1c',          description: 'Card badge / pill text color' },
 
   // ─── Accents / actions ────────────────────────────────────────────────────────
   accent:          { cssVar: '--token-accent',          kind: 'color', default: '#dc2626',          description: 'Primary accent color (links, focused states, hero highlights)' },
@@ -66,9 +66,9 @@ export const DESIGN_TOKENS = {
   ratingStar:      { cssVar: '--token-rating-star',     kind: 'color', default: '#eab308',          description: 'Filled rating star color' },
 
   // ─── Links ────────────────────────────────────────────────────────────────────
-  link:            { cssVar: '--token-link',            kind: 'color', default: '#dc2626',          description: 'Inline link color' },
+  link:            { cssVar: '--token-link',            kind: 'color', default: '#b91c1c',          description: 'Inline link color' },
   linkHover:       { cssVar: '--token-link-hover',      kind: 'color', default: '#991b1b',          description: 'Inline link hover color' },
-  label:           { cssVar: '--token-label',           kind: 'color', default: '#374151',          description: 'Form label text color' },
+  label:           { cssVar: '--token-label',           kind: 'color', default: '#334155',          description: 'Form label text color' },
 
   // ─── Form inputs ──────────────────────────────────────────────────────────────
   inputBg:         { cssVar: '--token-input-bg',        kind: 'color', default: '#ffffff',          description: 'Form input background color' },
@@ -77,7 +77,7 @@ export const DESIGN_TOKENS = {
 
   // ─── Badges (eyebrow pills, status chips) ─────────────────────────────────────
   badgeBg:         { cssVar: '--token-badge-bg',        kind: 'color', default: 'rgba(220,38,38,0.10)', description: 'Pill / badge background color' },
-  badgeText:       { cssVar: '--token-badge-text',      kind: 'color', default: '#dc2626',          description: 'Pill / badge text color' },
+  badgeText:       { cssVar: '--token-badge-text',      kind: 'color', default: '#b91c1c',          description: 'Pill / badge text color' },
   badgeBorder:     { cssVar: '--token-badge-border',    kind: 'color', default: 'rgba(220,38,38,0.20)', description: 'Pill / badge border color' },
 
   // ─── Buttons ──────────────────────────────────────────────────────────────────
@@ -92,12 +92,12 @@ export const DESIGN_TOKENS = {
 
   // ─── Pricing ──────────────────────────────────────────────────────────────────
   price:           { cssVar: '--token-price',           kind: 'color', default: '#0f172a',          description: 'Current product price color' },
-  priceStrikethrough: { cssVar: '--token-price-strikethrough', kind: 'color', default: '#94a3b8',   description: 'Struck-through original price color' },
+  priceStrikethrough: { cssVar: '--token-price-strikethrough', kind: 'color', default: '#64748b',   description: 'Struck-through original price color' },
 
   // ─── Status / feedback ────────────────────────────────────────────────────────
-  success:         { cssVar: '--token-success',         kind: 'color', default: '#16a34a',          description: 'Success state text / icon color' },
+  success:         { cssVar: '--token-success',         kind: 'color', default: '#15803d',          description: 'Success state text / icon color' },
   successBg:       { cssVar: '--token-success-bg',      kind: 'color', default: '#dcfce7',          description: 'Success state background color' },
-  danger:          { cssVar: '--token-danger',          kind: 'color', default: '#dc2626',          description: 'Danger / error state text / icon color' },
+  danger:          { cssVar: '--token-danger',          kind: 'color', default: '#b91c1c',          description: 'Danger / error state text / icon color' },
   dangerBg:        { cssVar: '--token-danger-bg',       kind: 'color', default: '#fef2f2',          description: 'Danger / error state background color' },
 
   // ─── Shadows / overlays ───────────────────────────────────────────────────────

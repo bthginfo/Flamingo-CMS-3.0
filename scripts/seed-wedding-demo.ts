@@ -1,3 +1,4 @@
+import { requireDatabaseUrl } from './_database-url';
 /**
  * Seed wedding demo tenant "Anna & Maximilian" with pages and sections.
  * Usage: npx tsx scripts/seed-wedding-demo.ts
@@ -8,7 +9,7 @@ import * as schema from '../packages/db/src/schema';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 
-const DATABASE_URL = 'postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require';
+const DATABASE_URL = requireDatabaseUrl();
 const sql = neon(DATABASE_URL);
 const db = drizzle(sql, { schema });
 

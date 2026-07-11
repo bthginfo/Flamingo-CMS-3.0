@@ -7,6 +7,7 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import { baseHeader, SectionHeader, asButton, asList } from './shared';
 import type { SectionProps } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { ConsentGate } from '@/components/consent-gate';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -53,7 +54,13 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
       </motion.div>
       <div className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
+        {!image && mapEmbedUrl && (
+          <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl">
+            <ConsentGate provider="Google Maps" className="h-full w-full">
+              <iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen />
+            </ConsentGate>
+          </div>
+        )}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>

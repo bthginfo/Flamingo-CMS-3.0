@@ -92,7 +92,7 @@ export function PortfolioSection({ data }: Props) {
                   </div>
                 )}
                 {project.href && (
-                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-icon)] transition group-hover:translate-x-1" data-color-slot="iconColor">
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-link)] transition group-hover:translate-x-1 group-hover:text-[color:var(--token-link-hover)]" data-color-slot="linkColor">
                     Projekt ansehen {project.icon && <DynamicIcon editPath="icon" name={project.icon} size={14} />}
                   </span>
                 )}

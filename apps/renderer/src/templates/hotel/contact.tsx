@@ -6,6 +6,7 @@ import { Star } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { ConsentGate } from '@/components/consent-gate';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -55,13 +56,19 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{contactCta.label}</a>}
+          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-md" data-edit-path="label">{contactCta.label}</a>}
           {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
         </div>
       </div>
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {!image && mapEmbedUrl && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen /></div>}
+        {!image && mapEmbedUrl && (
+          <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl">
+            <ConsentGate provider="Google Maps" className="h-full w-full">
+              <iframe src={mapEmbedUrl} className="h-full w-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Standort" allowFullScreen />
+            </ConsentGate>
+          </div>
+        )}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </motion.div>
     </div>

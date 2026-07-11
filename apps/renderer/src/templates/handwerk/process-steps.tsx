@@ -43,7 +43,7 @@ function ProcessClassic({ headline, subline, badgeText, steps }: PProps) {
               <motion.div key={i} initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.15 }} className="flex gap-8 md:gap-12 items-start group" data-edit-collection="steps" data-edit-index={i}>
                 <div className="shrink-0 relative z-10">
                   <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-lg transition-all group-hover:scale-110 group-hover:shadow-glow">
-                    {step.icon ? <DynamicIcon editPath="icon" name={step.icon} size={24} className="text-[color:var(--token-icon)]" /> : <span className="text-lg font-bold text-[color:var(--token-accent)]">{i + 1}</span>}
+                    {step.icon ? <DynamicIcon editPath="icon" name={step.icon} size={24} className="text-[color:var(--token-icon)]" /> : <span className="text-lg font-bold text-[color:var(--token-stat-value)]">{i + 1}</span>}
                   </div>
                 </div>
                 <div className="pt-3">

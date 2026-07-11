@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MapPin, Clock } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
+import { ConsentGate } from '@/components/consent-gate';
 
 type HoursItem = { day: string; hours: string };
 
@@ -28,7 +29,7 @@ export function LocationVibeSection({ data }: Props) {
           <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
             <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
             {description && <p className="text-[color:var(--token-muted)] mt-4 leading-relaxed" data-edit-path="description">{plain(description)}</p>}
-            {vibeText && <p className="text-[var(--token-accent)] font-medium mt-3 italic">{plain(vibeText)}</p>}
+            {vibeText && <p className="mt-3 font-medium italic text-[var(--token-eyebrow)]">{plain(vibeText)}</p>}
 
             {address && (
               <div className="flex items-start gap-3 mt-8">
@@ -62,14 +63,16 @@ export function LocationVibeSection({ data }: Props) {
               className="rounded-xl overflow-hidden shadow-md aspect-[4/3]"
             >
               {mapEmbed ? (
-                <iframe
-                  src={mapEmbed}
-                  className="w-full h-full border-0"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Google Maps"
-                />
+                <ConsentGate provider="Google Maps" className="h-full w-full">
+                  <iframe
+                    src={mapEmbed}
+                    className="h-full w-full border-0"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Google Maps"
+                  />
+                </ConsentGate>
               ) : (
                 <img data-edit-image="mapImage" src={mapImage} alt="Standort" className="w-full h-full object-cover" />
               )}

@@ -55,13 +55,13 @@ export function ProductShowcaseSection({ data }: Props) {
                   </div>
                 )}
                 {item.badge && (
-                  <span className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full bg-[var(--token-icon)] text-[color:var(--token-badge-text)] shadow-md" data-edit-path="badge">
+                  <span className="absolute left-3 top-3 rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-badge-bg)] px-3 py-1 text-xs font-semibold text-[color:var(--token-card-badge-text)] shadow-md" data-edit-path="badge">
                     {item.badge}
                   </span>
                 )}
               </div>
               <div className="p-5">
-                <h3 className="font-display font-semibold text-lg text-[color:var(--token-card-body,var(--token-body))] group-hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="title">{item.title}</h3>
+                <h3 className="font-display font-semibold text-lg text-[color:var(--token-card-body,var(--token-body))] group-hover:text-[color:var(--token-link-hover)] transition-colors" data-edit-path="title">{item.title}</h3>
                 {item.description && <p className="mt-1.5 text-sm text-[color:var(--token-card-body,var(--token-body))] line-clamp-2" data-edit-path="description">{plain(item.description)}</p>}
                 {item.price && <p className="mt-3 text-lg font-bold text-[color:var(--token-price)]" data-edit-path="price">{item.price}</p>}
               </div>

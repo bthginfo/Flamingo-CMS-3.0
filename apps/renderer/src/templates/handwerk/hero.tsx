@@ -106,7 +106,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full flex-1 flex items-center py-10 md:py-12">
         <div className="w-full md:-mt-10 lg:-mt-14">
         <div className="max-w-4xl space-y-6">
-          <TextGenerateEffect words={headline} className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-[color:var(--token-on-dark-heading)] !leading-[1.02] break-words" duration={0.6} />
+          <TextGenerateEffect as="h1" words={headline} className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-[color:var(--token-on-dark-heading)] !leading-[1.02] break-words" duration={0.6} />
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
               className="inline-flex items-center gap-2.5 rounded-full border px-5 py-2.5 text-sm shadow-sm backdrop-blur-md mt-6"

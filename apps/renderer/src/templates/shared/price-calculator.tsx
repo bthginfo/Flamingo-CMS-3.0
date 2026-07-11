@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { ArrowRight, Minus, Plus } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
+import { buildLeadContextHref, persistLeadContext, type LeadContext } from '@/lib/lead-context';
 
 type Choice = { label: string; price?: number };
 type Option = {
@@ -55,6 +56,25 @@ export function PriceCalculatorSection({ data }: Props) {
   }, [options, basePrice, baseLabel, selects, toggles, quantities]);
 
   const total = rows.reduce((sum, r) => sum + r.amount, 0);
+  const leadContext = useMemo<LeadContext>(() => {
+    const selections: string[] = [];
+    if (basePrice > 0) selections.push(`${baseLabel}: ${fmt(basePrice, currency)}`);
+    options.forEach((option, index) => {
+      const type = option.type || (option.choices?.length ? 'select' : 'toggle');
+      if (type === 'select' && option.choices?.length) {
+        const choice = option.choices[selects[index] ?? 0];
+        if (choice) selections.push(`${option.label}: ${choice.label}`);
+      } else if (type === 'toggle' && toggles[index]) {
+        selections.push(option.label);
+      } else if (type === 'quantity') {
+        const quantity = quantities[index] ?? (option.min ?? 0);
+        if (quantity > 0) selections.push(`${option.label}: ${quantity}`);
+      }
+    });
+    selections.push(`Gesamtschätzung: ${fmt(total, currency)}`);
+    return { source: 'priceCalculator', summary: selections.join('\n') };
+  }, [baseLabel, basePrice, currency, options, quantities, selects, toggles, total]);
+  const leadHref = buildLeadContextHref(cta.href || '#kontakt', leadContext);
   if (!options.length && basePrice <= 0) return null;
 
   return (
@@ -134,7 +154,7 @@ export function PriceCalculatorSection({ data }: Props) {
           </div>
           {priceNote && <p className="mt-3 text-xs leading-5 text-[color:var(--token-card-muted,var(--token-muted))]" data-edit-path="priceNote">{priceNote}</p>}
           {cta.label && (
-            <a data-edit-link="cta" href={cta.href || '#'} className="mt-5 flex items-center justify-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3.5 font-bold text-[color:var(--token-btn-text)] transition hover:brightness-110">
+            <a data-edit-link="cta" href={leadHref} onClick={() => persistLeadContext(leadContext)} className="mt-5 flex items-center justify-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3.5 font-bold text-[color:var(--token-btn-text)] transition hover:brightness-110">
               <span data-edit-path="label">{cta.label}</span>
               <ArrowRight size={17} />
             </a>

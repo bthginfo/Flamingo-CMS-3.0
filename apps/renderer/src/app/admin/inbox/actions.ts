@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { formSubmissions } from '@flamingo/db';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, ne } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 async function requireTenant() {
@@ -15,7 +15,10 @@ async function requireTenant() {
 export async function getSubmissions() {
   const tenantId = await requireTenant();
   const db = getDb();
-  return db.select().from(formSubmissions).where(eq(formSubmissions.tenantId, tenantId)).orderBy(desc(formSubmissions.createdAt)).limit(100);
+  return db.select().from(formSubmissions).where(and(
+    eq(formSubmissions.tenantId, tenantId),
+    ne(formSubmissions.status, 'archived'),
+  )).orderBy(desc(formSubmissions.createdAt)).limit(100);
 }
 
 export async function updateSubmissionStatus(id: string, status: 'new' | 'read' | 'archived') {

@@ -44,7 +44,7 @@ export function OfferCampaignStripSection({ data }: Props) {
             )}
           </div>
           <div className="p-6 md:p-10">
-            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[color:var(--token-accent)]" data-edit-path="badge">{badge}</div>}
+            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[color:var(--token-card-heading)]" data-edit-path="badge">{badge}</div>}
             {headline && <h2 className="text-3xl font-black leading-tight text-[color:var(--token-heading)] md:text-5xl" data-edit-path="headline">{headline}</h2>}
             {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
             <div className="mt-6 grid gap-2 sm:grid-cols-2">

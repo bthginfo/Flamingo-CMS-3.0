@@ -5,11 +5,20 @@ dist
 .turbo
 *.log
 reports/
-.env
-.env.local
-.env*.local
+.env*
+!.env.example
+!**/.env.example
+!.env.sample
+!**/.env.sample
+!.env.template
+!**/.env.template
 .vercel
 *.tsbuildinfo
+apps/renderer/storybook-static/
+playwright-report/
+test-results/
+.lighthouseci/
+/tmp/
 
 # recolor dry-run intermediates (regenerable)
 scripts/demo-tenants/_snapshots/_recolored/

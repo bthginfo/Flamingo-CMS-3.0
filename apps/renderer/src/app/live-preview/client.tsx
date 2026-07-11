@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { EditOverlays } from './edit-overlays';
 import type { SnapshotSection, SnapshotCollection } from '@/lib/snapshot';
+import type { ContactFormFieldDefinition } from '@/lib/contact-form';
 
 interface InitialData {
   industry?: string;
@@ -18,6 +19,7 @@ interface InitialData {
   contact?: Record<string, unknown>;
   footer?: Record<string, unknown>;
   socialLinks?: Record<string, string>;
+  formFields?: ContactFormFieldDefinition[];
   fontsUrl?: string | null;
   sections?: SnapshotSection[];
   collections?: SnapshotCollection[];
@@ -35,6 +37,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [contact, setContact] = useState(initialData.contact || {});
   const [footer, setFooter] = useState(initialData.footer || null);
   const [socialLinks, setSocialLinks] = useState(initialData.socialLinks || {});
+  const [formFields, setFormFields] = useState(initialData.formFields || []);
   const [collections, setCollections] = useState<SnapshotCollection[]>(initialData.collections || []);
   const [fontsUrl, setFontsUrl] = useState(initialData.fontsUrl || null);
   const [locale, setLocale] = useState<string | undefined>(undefined);
@@ -61,6 +64,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.contact) setContact(p.contact);
       if (p.footer) setFooter(p.footer);
       if (p.socialLinks) setSocialLinks(p.socialLinks);
+      if (p.formFields) setFormFields(p.formFields);
       if (p.collections) setCollections(p.collections);
       if (p.fontsUrl !== undefined) setFontsUrl(p.fontsUrl);
       if (p.locale !== undefined) setLocale(p.locale);
@@ -269,7 +273,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
                   {section.type}
                 </div>
               )}
-              <SectionRenderer section={section} collections={collections} styleVariant={styleVariant} industry={industry} locale={locale} />
+              <SectionRenderer section={section} collections={collections} styleVariant={styleVariant} industry={industry} locale={locale} globalFormFields={formFields} />
             </div>
           ))}
         </main>

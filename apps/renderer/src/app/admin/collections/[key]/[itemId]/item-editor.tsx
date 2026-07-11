@@ -21,6 +21,7 @@ import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
+import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
 
@@ -78,6 +79,16 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   }, [sendPreviewData]);
 
   function markDirty() { setHasDirty(true); setSaved(false); }
+
+  useEffect(() => {
+    if (!hasDirty) return;
+    const handler = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [hasDirty]);
 
   function handleReorder(nextSections: Section[]) {
     setSections(nextSections);
@@ -182,6 +193,13 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
 
   const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
 
+  function clearColorDebounces() {
+    for (const timeout of Object.values(colorDebounceRef.current)) clearTimeout(timeout);
+    colorDebounceRef.current = {};
+  }
+
+  useEffect(() => () => clearColorDebounces(), []);
+
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s));
     markDirty();
@@ -192,22 +210,27 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     }, 1500);
   }
 
-  async function handleSaveAll() {
+  async function persistAll(announce: boolean): Promise<boolean> {
     setSaving(true);
     try {
-      const finalSections = sections.map(sec => {
+      clearColorDebounces();
+      const finalSections = sectionsRef.current.map(sec => {
         const newData = pendingChanges.current.get(sec.id);
         return newData ? { ...sec, data: newData } : sec;
       });
 
       const itemData = { ...item.data, sections: editableSectionsToCollectionItemSections(finalSections) };
-      await updateItemAction(item.id, {
+      const result = await updateItemAction(item.id, {
         title: item.title,
         slug: item.slug,
         published: item.published,
         priority: item.priority,
         data: itemData,
       });
+      if (result?.error) {
+        toast.error(result.error);
+        return false;
+      }
       await seoRef.current?.save();
 
       setSections(finalSections);
@@ -215,22 +238,34 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       pendingChanges.current.clear();
       setHasDirty(false);
       setSaved(true);
-      toast.success('Gespeichert');
+      if (announce) toast.success('Gespeichert');
+      return true;
     } catch {
       toast.error('Speichern fehlgeschlagen');
+      return false;
     } finally {
       setSaving(false);
     }
   }
 
+  async function handleSaveAll() {
+    await persistAll(true);
+  }
+
   async function handlePublish() {
     setPublishing(true);
     try {
-      await publishAction();
-      toast.success('Veröffentlicht!');
-      setSaved(false);
+      const savedSuccessfully = await persistAll(false);
+      if (!savedSuccessfully) return;
+      const result = await publishAction();
+      if (result.error) {
+        toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
+        return;
+      }
+      toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Veröffentlicht!');
+      setSaved(true);
     } catch {
-      toast.error('Fehler');
+      toast.error('Veröffentlichen fehlgeschlagen');
     } finally {
       setPublishing(false);
     }

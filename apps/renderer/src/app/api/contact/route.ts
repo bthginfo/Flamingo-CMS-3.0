@@ -6,9 +6,14 @@ import { resolveTenant } from '@/lib/snapshot';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import nodemailer from 'nodemailer';
 import { getEffectiveSmtp } from '@/lib/smtp';
+import {
+  isHoneypotFilled,
+  mergeContactFormFields,
+  validateContactFormFields,
+  validateContactSubmission,
+} from '@/lib/contact-form';
 
-const MAX_FIELD_LENGTH = 5000;
-const MAX_FIELDS = 20;
+const MAX_REQUEST_BYTES = 100_000;
 
 /**
  * HTML-escape a string so user-supplied form values can't break out of the
@@ -26,11 +31,37 @@ function escapeHtml(value: unknown): string {
 
 export async function POST(req: NextRequest) {
   try {
-    // Anti-spam: 5 submissions / 10 min per IP+tenant
     const tenantId = await resolveTenant();
     if (!tenantId) {
       return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
     }
+
+    const contentLength = Number(req.headers.get('content-length') || 0);
+    if (Number.isFinite(contentLength) && contentLength > MAX_REQUEST_BYTES) {
+      return NextResponse.json({ error: 'Die Anfrage ist zu groß.' }, { status: 413 });
+    }
+
+    const rawBody = await req.text();
+    if (new TextEncoder().encode(rawBody).byteLength > MAX_REQUEST_BYTES) {
+      return NextResponse.json({ error: 'Die Anfrage ist zu groß.' }, { status: 413 });
+    }
+    let body: unknown;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
+    }
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
+    }
+
+    // Honeypot bots receive a neutral success response so they cannot tune
+    // their payload against the anti-spam rule. No DB row or email is created.
+    if (isHoneypotFilled(body)) {
+      return NextResponse.json({ success: true });
+    }
+
+    // Anti-spam: 5 real submission attempts / 10 min per IP+tenant.
     const ip = getClientIp(req);
     const rl = rateLimit(`contact:${tenantId}:${ip}`, 5, 10 * 60 * 1000);
     if (!rl.ok) {
@@ -40,60 +71,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    if (!body || typeof body !== 'object') {
-      return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
-    }
-
-    const { _page, ...fields } = body as Record<string, unknown>;
-
-    // Extract standard fields for DB storage (backwards-compatible)
-    const name = typeof fields.name === 'string' ? fields.name.trim().slice(0, 200) : null;
-    const email = typeof fields.email === 'string' ? fields.email.trim().slice(0, 320) : null;
-    const phone = typeof fields.phone === 'string' ? fields.phone.trim().slice(0, 50) : null;
-    const message = typeof fields.message === 'string' ? fields.message.trim().slice(0, MAX_FIELD_LENGTH) : null;
-
-    // Require at least name and email
-    if (!name || !email) {
-      return NextResponse.json({ error: 'Name und E-Mail sind Pflichtfelder.' }, { status: 400 });
-    }
-
-    // Basic email validation
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: 'Ungültige E-Mail-Adresse.' }, { status: 400 });
-    }
-
-    // Sanitize all fields for notification email
-    const sanitizedFields: Record<string, string> = {};
-    let fieldCount = 0;
-    for (const [key, val] of Object.entries(fields)) {
-      if (fieldCount >= MAX_FIELDS) break;
-      if (typeof val === 'string' && val.trim()) {
-        sanitizedFields[key] = val.trim().slice(0, MAX_FIELD_LENGTH);
-        fieldCount++;
-      }
-    }
-
     const db = getDb();
+    const [settings] = await db
+      .select({ formFields: globalSettings.formFields, autoResponse: globalSettings.autoResponse })
+      .from(globalSettings)
+      .where(eq(globalSettings.tenantId, tenantId))
+      .limit(1);
+
+    const record = body as Record<string, unknown>;
+    let fieldContract: unknown = settings?.formFields;
+    if (record._formFields !== undefined) {
+      const submittedContract = validateContactFormFields(record._formFields);
+      if (!submittedContract.success) {
+        return NextResponse.json({ error: submittedContract.errors[0] || 'Ungültige Formularfelder.' }, { status: 400 });
+      }
+      fieldContract = mergeContactFormFields(settings?.formFields, submittedContract.fields);
+    }
+
+    const submission = validateContactSubmission(body, fieldContract);
+    if (!submission.success) {
+      return NextResponse.json({ error: submission.error }, { status: 400 });
+    }
+
+    const name = submission.values.name;
+    const email = submission.values.email;
+    const phone = submission.values.phone || null;
+    const message = submission.values.message || '';
 
     // Save to DB
     await db.insert(formSubmissions).values({
       tenantId,
-      name: name!,
-      email: email!,
+      name,
+      email,
       phone,
-      message: message || '',
-      page: typeof _page === 'string' ? _page.slice(0, 200) : null,
+      message,
+      page: submission.page,
+      payload: submission.payload,
     });
 
     // Load SMTP + auto-response settings
     try {
-      const [settings] = await db
-        .select({ autoResponse: globalSettings.autoResponse })
-        .from(globalSettings)
-        .where(eq(globalSettings.tenantId, tenantId))
-        .limit(1);
-
       const autoResponse = settings?.autoResponse as { enabled: boolean; subject: string; body: string; notificationEmail?: string } | null;
       const effectiveSmtp = await getEffectiveSmtp(tenantId);
 
@@ -108,8 +125,11 @@ export async function POST(req: NextRequest) {
         // Build HTML field rows for notification — every interpolation is
         // HTML-escaped to prevent injected markup from form submissions
         // executing in the admin's email client.
-        const fieldRows = Object.entries(sanitizedFields)
-          .map(([key, val]) => `<tr><td style="padding:8px 12px;font-weight:600;color:#374151;border-bottom:1px solid #f3f4f6;white-space:nowrap">${escapeHtml(key)}</td><td style="padding:8px 12px;color:#1f2937;border-bottom:1px solid #f3f4f6">${escapeHtml(val).replace(/\n/g, '<br>')}</td></tr>`)
+        const fieldRows = submission.payload.fields
+          .map(field => `<tr><td style="padding:8px 12px;font-weight:600;color:#374151;border-bottom:1px solid #f3f4f6;white-space:nowrap">${escapeHtml(field.label)}</td><td style="padding:8px 12px;color:#1f2937;border-bottom:1px solid #f3f4f6">${escapeHtml(field.value).replace(/\n/g, '<br>')}</td></tr>`)
+          .concat(submission.payload.context?.summary
+            ? [`<tr><td style="padding:8px 12px;font-weight:600;color:#374151;border-bottom:1px solid #f3f4f6;white-space:nowrap">Auswahl</td><td style="padding:8px 12px;color:#1f2937;border-bottom:1px solid #f3f4f6">${escapeHtml(submission.payload.context.summary).replace(/\n/g, '<br>')}</td></tr>`]
+            : [])
           .join('');
 
         const notificationHtml = `
@@ -122,7 +142,7 @@ export async function POST(req: NextRequest) {
     <div style="padding:24px 32px">
       <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Sie haben eine neue Nachricht über Ihre Website erhalten:</p>
       <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;background:#f9fafb">${fieldRows}</table>
-      ${_page ? `<p style="margin:16px 0 0;color:#9ca3af;font-size:12px">Gesendet von: ${escapeHtml(_page)}</p>` : ''}
+      ${submission.page ? `<p style="margin:16px 0 0;color:#9ca3af;font-size:12px">Gesendet von: ${escapeHtml(submission.page)}</p>` : ''}
     </div>
     <div style="padding:16px 32px;background:#f9fafb;border-top:1px solid #e5e7eb">
       <p style="margin:0;color:#9ca3af;font-size:11px">Diese E-Mail wurde automatisch von Ihrem Kontaktformular generiert.</p>
@@ -142,10 +162,10 @@ export async function POST(req: NextRequest) {
         });
 
         if (autoResponse?.enabled && autoResponse.subject && autoResponse.body) {
-          // Replace {name} with the escaped name so an attacker can't smuggle
-          // HTML/JS via their submitted name. Body itself is admin-authored,
-          // so we treat it as trusted template content (kept as-is).
-          const responseBody = autoResponse.body.replace(/\{name\}/g, escapeHtml(name || ''));
+          // The settings UI is a plain-text editor. Escape the complete body
+          // and only then substitute the escaped name, keeping email markup
+          // predictable even when a tenant pastes HTML by accident.
+          const responseBody = escapeHtml(autoResponse.body).replace(/\{name\}/g, () => escapeHtml(name || ''));
           const autoResponseHtml = `
 <!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
 <div style="max-width:600px;margin:0 auto;padding:32px 16px">

@@ -190,7 +190,8 @@ globalThis.fetch = async (url, opts = {}) => {
     }
   }
 
-  const send = (b) => rawRequest(opts.method || 'GET', urlStr, headers, b === undefined ? undefined : JSON.stringify(b));
+  const method = String(opts.method || 'GET').toUpperCase();
+  const send = (b) => rawRequest(method, urlStr, headers, b === undefined ? undefined : JSON.stringify(b));
   let res = await send(body);
 
   // Safety net: if a page still 400s on a non-contract key, strip it and retry
@@ -204,7 +205,12 @@ globalThis.fetch = async (url, opts = {}) => {
     const sec = body.sections[+m[1]];
     if (sec && sec.styleOverrides && m[2] in sec.styleOverrides) {
       delete sec.styleOverrides[m[2]];
-      if (isPage && body.slug != null) await deletePagesBySlug(u.host, token, body.slug);
+      // POST can leave a partially-created row because the page API has no
+      // transaction. PUT edits an existing row and must never delete it before
+      // retrying, otherwise the same ID immediately becomes a 404.
+      if (isPage && method === 'POST' && body.slug != null) {
+        await deletePagesBySlug(u.host, token, body.slug);
+      }
       res = await send(body);
     } else break;
   }
@@ -233,7 +239,7 @@ globalThis.fetch = async (url, opts = {}) => {
 };
 
 (async () => {
-  console.log(`[legacy] importing ${path.basename(targetPath)} (pat ${pat ? pat.slice(0, 12) + '…' : 'MISSING'})`);
+  console.log(`[legacy] importing ${path.basename(targetPath)} (credentials ${pat ? 'configured' : 'MISSING'})`);
   try {
     // The target calls main() at top level without awaiting it, so import
     // resolves before the populate finishes — the script's own "Done. Published."

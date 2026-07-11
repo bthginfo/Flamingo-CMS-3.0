@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { ConsentGate } from '@/components/consent-gate';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -41,13 +42,17 @@ function ContactClassic({ headline, subline, badgeText, introText, image, mapEmb
         {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">{infoCards.map((card, i) => <div key={`${card.label || 'item'}-${i}`} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" /><div><p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{primaryCta.label}</a>}
+          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-md" data-edit-path="label">{primaryCta.label}</a>}
           {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-btn-secondary-text)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
       <div className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
+        {mapEmbedUrl && (
+          <ConsentGate provider="Google Maps" className="mb-5 h-56 w-full overflow-hidden rounded-xl">
+            <iframe src={mapEmbedUrl} title="Standort" className="h-full w-full border-0" loading="lazy" />
+          </ConsentGate>
+        )}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>

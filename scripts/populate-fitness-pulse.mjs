@@ -14,7 +14,10 @@ async function api(method, path, body) {
 }
 
 const id = () => crypto.randomUUID();
-const section = (type, data, styleOverrides = {}) => ({ id: id(), type, data, styleOverrides });
+const section = (type, dataWithAnchor, styleOverrides = {}) => {
+  const { anchorId, ...data } = dataWithAnchor;
+  return { id: id(), type, ...(anchorId ? { anchorId } : {}), data, styleOverrides };
+};
 
 const img = {
   hero: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=2200&q=85',
@@ -26,8 +29,8 @@ const img = {
   cardio: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1800&q=85',
   functional: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=1800&q=85',
   sauna: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1800&q=85',
-  trainer1: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&q=85',
-  trainer2: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&q=85',
+  trainer1: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=1200&q=85',
+  trainer2: 'https://images.unsplash.com/photo-1542206395-9feb3edaa68d?w=1200&q=85',
   trainer3: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=1200&q=85',
   trainer4: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=85',
   before: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1400&q=85',
@@ -38,7 +41,7 @@ const img = {
 const colors = {
   ink: '#0F0A1A',
   soft: '#3D2B5A',
-  muted: '#7A6B91',
+  muted: '#695A80',
   bg: '#0A0612',
   cream: '#F7F4FB',
   card: '#FFFFFF',
@@ -48,12 +51,13 @@ const colors = {
   cyan: '#22D3EE',
   onDark: '#F7F4FB',
   onDarkSoft: '#C4B6D6',
+  darkCard: '#1D1925',
 };
 
-const light = { sectionBg: colors.cream, cardBg: colors.card, cardBorder: colors.border, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.violet, accentColor: colors.violet, btnBg: colors.violetDeep, btnText: colors.onDark, badgeBg: '#F3E8FF', badgeText: colors.violetDeep, borderColor: colors.border };
-const alt = { ...light, sectionBg: '#F3E8FF' };
-const dark = { sectionBg: colors.bg, cardBg: 'rgba(247,244,251,0.08)', cardBorder: 'rgba(247,244,251,0.20)', heading: colors.onDark, body: colors.onDarkSoft, muted: '#9D8FB0', icon: colors.cyan, accentColor: colors.cyan, btnBg: colors.cyan, btnText: colors.bg, badgeBg: 'rgba(34,211,238,0.18)', badgeText: colors.cyan, borderColor: 'rgba(247,244,251,0.18)', onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#9D8FB0' };
-const heroStyle = { heroHeading: colors.onDark, heroBody: colors.onDarkSoft, badgeBg: 'rgba(34,211,238,0.20)', badgeText: colors.cyan, btnBg: colors.cyan, btnText: colors.bg, onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#9D8FB0' };
+const light = { sectionBg: colors.cream, cardBg: colors.card, cardBorder: colors.border, cardHeadingColor: colors.ink, cardBodyColor: colors.soft, cardMutedColor: colors.muted, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.violet, accentColor: colors.violet, btnBg: colors.violetDeep, btnText: colors.onDark, badgeBg: '#F3E8FF', badgeText: colors.violetDeep, borderColor: colors.border };
+const alt = { ...light, sectionBg: '#F3E8FF', cardHeadingColor: colors.ink, cardBodyColor: colors.soft, cardMutedColor: colors.muted };
+const dark = { sectionBg: colors.bg, cardBg: colors.darkCard, cardBorder: 'rgba(247,244,251,0.20)', cardHeadingColor: colors.onDark, cardBodyColor: colors.onDarkSoft, cardMutedColor: '#9D8FB0', heading: colors.onDark, body: colors.onDarkSoft, muted: '#9D8FB0', icon: colors.cyan, accentColor: colors.cyan, btnBg: colors.cyan, btnText: colors.bg, badgeBg: 'rgba(34,211,238,0.18)', badgeText: colors.cyan, borderColor: 'rgba(247,244,251,0.18)', onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#9D8FB0' };
+const heroStyle = { ...dark, heroHeading: colors.onDark, heroBody: colors.onDarkSoft, badgeBg: 'rgba(34,211,238,0.20)', badgeText: colors.cyan, btnBg: colors.cyan, btnText: colors.bg };
 
 const phone = '+49 89 7711 2233';
 const email = 'hello@pulse-studio.de';
@@ -140,6 +144,7 @@ function trainerProfiles() {
 
 function membershipPlans() {
   return section('membershipPlans', {
+    anchorId: 'tarife',
     badge: 'Mitgliedschaften',
     headline: 'Faire Pakete ohne Stolperfallen.',
     subline: 'Monatlich kündbar, keine Aufnahmegebühr, keine Mindestlaufzeit-Tricks.',
@@ -213,7 +218,7 @@ function ctaBanner(headline, subline, primaryLabel = 'Probetraining buchen') {
 
 const pages = [
   { slug: '', title: 'Startseite', sections: [
-    hero('Training, das wirklich zum Alltag passt.', 'Pulse Studio ist ein modernes Fitnessstudio in München für Kraft, Kurse und Personal Coaching mit Plan.', img.hero),
+    hero('Training, das wirklich zum Alltag passt.', 'Pulse Studio ist ein modernes Fitnessstudio in München für Kraft, Kurse und Personal Coaching mit Plan.', img.hero, { primaryCta: { label: 'Studio ausprobieren', href: '/kontakt' } }),
     section('uspStrip', { items: [
       { icon: 'Clock', title: '24/7-Zugang', text: 'für Mitglieder' },
       { icon: 'Users', title: 'Kleine Kurse', text: 'maximal 12 Plätze' },
@@ -239,7 +244,7 @@ const pages = [
       { title: '4. Loslegen', text: 'Mitgliedskarte, App-Zugang, fertig.' },
     ] }, light),
     section('collectionList', { headline: 'Alle Programme', subline: 'Hier findest du Details zu jedem Programm.', collectionKey: 'programme', ctaLabel: 'Details ansehen' }, alt),
-    ctaBanner('Bereit für das erste Workout?', 'Wir machen es dir leicht — Probetraining ohne Verpflichtung.'),
+    ctaBanner('Bereit für das erste Workout?', 'Wir machen es dir leicht — Probetraining ohne Verpflichtung.', 'Erstes Workout planen'),
   ] },
   { slug: 'kursplan', title: 'Kursplan', sections: [
     section('cinematicHero', { eyebrow: 'Kursplan', headline: 'Über 40 Kurse pro Woche.', subline: 'Vom frühen HIIT bis zum späten Yoga — sechs Tage die Woche.', image: img.hiit, overlay: 'rgba(10,6,18,0.62)', align: 'left', primaryCta: { label: 'Kurs reservieren', href: '/kontakt' }, facts: [ { value: '40+', label: 'Kurse pro Woche' }, { value: '6', label: 'Tage geöffnet' }, { value: '4', label: 'Coaches' } ] }),
@@ -282,22 +287,37 @@ const pages = [
       { q: 'Kann ich pausieren?', a: 'Ja, bis zu 3 Monate pro Jahr — z. B. bei Urlaub oder Verletzung.' },
       { q: 'Kann ich Tarife wechseln?', a: 'Ja, monatlich. Up- oder Downgrade ohne Gebühr.' },
     ] }, alt),
-    ctaBanner('Noch unsicher welcher Tarif?', 'Wir empfehlen den passenden Tarif nach dem Probetraining.', 'Probetraining buchen'),
+    ctaBanner('Noch unsicher welcher Tarif?', 'Wir empfehlen den passenden Tarif nach dem Probetraining.', 'Tarif im Training testen'),
   ] },
   { slug: 'kontakt', title: 'Kontakt', sections: [
     section('editorialHero', { eyebrow: 'Kontakt', headline: 'Schreib uns — wir antworten persönlich.', text: '<p>Per Formular, WhatsApp oder Telefon. Kein Chatbot, kein Verkaufsdruck.</p>', imagePrimary: img.studio, primaryCta: { label: 'Nachricht senden', href: '#form' } }),
-    section('contact', { badgeText: 'Kontaktformular', headline: 'Probetraining oder Anfrage.', subline: 'Wir melden uns innerhalb eines Werktags.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Wunsch oder Frage', submitLabel: 'Anfrage senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
+    section('contact', { anchorId: 'form', badgeText: 'Kontaktformular', headline: 'Probetraining oder Anfrage.', subline: 'Wir melden uns innerhalb eines Werktags.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Wunsch oder Frage', submitLabel: 'Anfrage senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
     section('map', { headline: 'Mitten im Westend', mapEmbedUrl: mapsEmbed }, alt),
     section('openingHours', { headline: 'Öffnungszeiten', days: [{ label: 'Mo - Fr', hours: '06:30-22:00' }, { label: 'Sa - So', hours: '08:00-18:00' }, { label: '24/7', hours: 'für Studio- & Coach-Mitglieder' }] }, light),
   ] },
   { slug: 'news', title: 'Studio Magazin', sections: [
-    hero('Trainings-Tipps und Studio-News.', 'Beiträge zu Krafttraining, Mobility, Ernährung und Coaching.', img.weights, { eyebrow: 'Magazin' }),
+    hero('Trainings-Tipps und Studio-News.', 'Beiträge zu Krafttraining, Mobility, Ernährung und Coaching.', img.weights, { eyebrow: 'Magazin', primaryCta: { label: 'Studio kennenlernen', href: '/kontakt' } }),
     section('newsGrid', { headline: 'Aktuelle Beiträge', subline: 'Aus dem Pulse-Magazin.', collectionKey: 'news' }, light),
-    ctaBanner('Bereit selbst zu starten?', 'Probetraining gratis und unverbindlich.'),
+    ctaBanner('Bereit selbst zu starten?', 'Probetraining gratis und unverbindlich.', 'Gratis-Session sichern'),
   ] },
   { slug: 'impressum', title: 'Impressum', sections: [section('legalContent', { headline: 'Impressum', blocks: [{ title: 'Angaben gemäß § 5 TMG', content: 'Pulse Studio GmbH, Westendstraße 41, 80339 München' }, { title: 'Kontakt', content: `${phone} · ${email}` }, { title: 'Geschäftsführung', content: 'Tobias Berger, Mara Schreiner' }, { title: 'Hinweis', content: 'Dies ist ein Demo-Tenant von Flamingo Media.' }] }, light)] },
   { slug: 'datenschutz', title: 'Datenschutz', sections: [section('legalContent', { headline: 'Datenschutzerklärung', blocks: [{ title: 'Verantwortlicher', content: 'Pulse Studio GmbH, Westendstraße 41, 80339 München' }, { title: 'Kontaktformular', content: 'Formulardaten dienen nur der Bearbeitung der Anfrage.' }, { title: 'Hosting', content: 'Diese Demo läuft technisch auf Flamingo Media.' }, { title: 'Rechte', content: 'Du kannst Auskunft, Berichtigung oder Löschung verlangen.' }] }, light)] },
 ];
+
+const PAGE_SEO = {
+  '': { metaTitle: 'Fitnessstudio und Personal Coaching in München', metaDescription: 'Pulse Studio im Münchner Westend verbindet Krafttraining, Kurse und Personal Coaching mit klaren Plänen und kleinen Gruppen.' },
+  programme: { metaTitle: 'Trainingsprogramme im Pulse Studio München', metaDescription: 'Functional Strength, HIIT, Yoga und Personal Training im Pulse Studio – mit Dauer, Level und klarem Trainingsziel.' },
+  kursplan: { metaTitle: 'Kursplan des Pulse Studio München', metaDescription: 'Aktueller Wochenplan für Kraft, HIIT, Yoga und Mobility im Pulse Studio München-Westend.' },
+  coaching: { metaTitle: 'Personal Training und Coaching in München', metaDescription: 'Individuelles Personal Training mit Standortcheck, Trainingsplan und regelmäßiger Anpassung im Pulse Studio München.' },
+  trainer: { metaTitle: 'Trainer und Coaches im Pulse Studio', metaDescription: 'Lernen Sie die Coaches für Kraft, HIIT, Yoga, Mobility und Ernährung im Pulse Studio München kennen.' },
+  mitgliedschaften: { metaTitle: 'Mitgliedschaften und Preise im Pulse Studio', metaDescription: 'Flexible Mitgliedschaften ohne Aufnahmegebühr: Tarife, Leistungen und Bedingungen des Pulse Studio München im Vergleich.' },
+  kontakt: { metaTitle: 'Probetraining im Pulse Studio anfragen', metaDescription: 'Kontakt, Öffnungszeiten und Anfrage für ein Probetraining im Pulse Studio München-Westend.' },
+  news: { metaTitle: 'Pulse Studio Magazin für Training und Regeneration', metaDescription: 'Trainingswissen und Studio-Notizen zu Kraft, Mobility, Regeneration und nachhaltigem Coaching.' },
+  impressum: { metaTitle: 'Impressum | Pulse Studio', metaDescription: 'Impressum und Anbieterinformationen der Pulse Studio GmbH in München.' },
+  datenschutz: { metaTitle: 'Datenschutz | Pulse Studio', metaDescription: 'Datenschutzhinweise des Pulse Studio zu Probetraining, Kontaktanfragen und technischer Bereitstellung.' },
+};
+
+for (const page of pages) page.seo = PAGE_SEO[page.slug];
 
 function detailHero(item, badgeText) {
   return section('collectionHero', { headline: item.title, subline: item.excerpt, badgeText, backgroundImage: item.image, bgImage: item.image, overlayColor: '#0A0612', overlayOpacity: 0.6, imageEffect: 'kenBurns', imageEffectIntensity: 'subtle' }, heroStyle);
@@ -318,13 +338,13 @@ function prefixDemoLinks(value) {
 function programSections(item) {
   return prefixDemoLinks([
     detailHero(item, 'Programm'),
-    section('textImage', { headline: item.title, subline: item.excerpt, text: `<p>${item.excerpt}</p><p>Dauer: ${item.durationLabel}. Inkl. in allen Mitgliedschaften außer Personal Training.</p>`, image: item.image, primaryCta: { label: 'Probetraining buchen', href: '/kontakt' } }, light),
+    section('textImage', { headline: item.title, subline: item.excerpt, text: `<p>${item.excerpt}</p><p>Dauer: ${item.durationLabel}. Inkl. in allen Mitgliedschaften außer Personal Training.</p>`, image: item.image, primaryCta: { label: `${item.title} ausprobieren`, href: '/kontakt' } }, light),
     section('uspStrip', { items: [
       { icon: 'Users', title: 'Kleine Gruppen', text: 'max. 12 Plätze' },
       { icon: 'Award', title: 'Ausgebildet', text: 'Sportwissenschaft' },
       { icon: 'Heart', title: 'Alle Level', text: 'wir holen dich ab' },
     ] }, alt),
-    section('immersiveCtaBanner', { badge: 'Programm starten', headline: `Probetraining für ${item.title}.`, subline: 'Komm vorbei, probiere es aus — ohne Verpflichtung.', image: item.image, overlay: 'rgba(10,6,18,0.6)', primaryCta: { label: 'Probetraining buchen', href: '/kontakt' } }, dark),
+    section('immersiveCtaBanner', { badge: 'Programm starten', headline: `Probetraining für ${item.title}.`, subline: 'Komm vorbei, probiere es aus — ohne Verpflichtung.', image: item.image, overlay: 'rgba(10,6,18,0.6)', primaryCta: { label: `${item.title} testen`, href: '/kontakt' } }, dark),
   ]);
 }
 
@@ -335,8 +355,12 @@ function newsSections(item) {
 async function upsertPage(page, existingPages) {
   const existing = existingPages.find((p) => p.slug === page.slug);
   const payload = { slug: page.slug, title: page.title, sections: page.sections, visible: true, status: 'published' };
-  if (existing) return api('PUT', `/api/v1/content/pages/${existing.id}`, payload);
-  return api('POST', '/api/v1/content/pages', payload);
+  const result = existing
+    ? await api('PUT', `/api/v1/content/pages/${existing.id}`, payload)
+    : await api('POST', '/api/v1/content/pages', payload);
+  const pageId = existing?.id || result?.id || result?.pageId || result?.page?.id;
+  if (page.seo && pageId) await api('PUT', `/api/v1/content/seo/${pageId}`, page.seo);
+  return result;
 }
 
 async function ensureCollection(key, label, existingCollections) {
@@ -365,6 +389,13 @@ async function main() {
   await api('PUT', '/api/v1/content/brand', { companyName: 'Pulse Studio', tagline: 'Training, Kurse & Personal Coaching', primaryColor: colors.violet, secondaryColor: colors.violetDeep, accentColor: colors.cyan, logoDisplay: 'name', headingFont: 'Outfit', bodyFont: 'Inter', topBarColor: colors.bg, footerColor: colors.bg });
   await api('PUT', '/api/v1/content/design', { textPrimary: colors.ink, textSecondary: colors.soft, sectionBg: colors.cream, sectionBgAlt: '#F3E8FF', cardBg: colors.card, cardBorder: colors.border, badgeBg: '#F3E8FF', badgeText: colors.violetDeep, brand: colors.violet, accent: colors.cyan, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.violet, btnBg: colors.violetDeep, btnText: colors.onDark, eyebrow: colors.cyan, statValue: colors.violet, quote: colors.ink, ratingStar: colors.cyan, check: colors.violet, onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#9D8FB0' });
   await api('PUT', '/api/v1/content/contact', { phone, email, address, whatsappEnabled: true, whatsapp: '+498977112233', whatsappColor: colors.violet });
+  await api('PUT', '/api/v1/content/seo', {
+    titleTemplate: '%s | Pulse Studio München',
+    defaultTitle: 'Pulse Studio – Fitness & Coaching in München',
+    defaultDescription: 'Krafttraining, Kurse und Personal Coaching im Pulse Studio München-Westend – mit klaren Plänen, kleinen Gruppen und Probetraining.',
+    defaultOgImage: img.hero,
+    locale: 'de_DE',
+  });
   await api('PUT', '/api/v1/content/navigation', { items: navItems, cta: { label: 'Probetraining buchen', href: '/kontakt' } });
   await api('PUT', '/api/v1/content/footer', { columns: [
     { title: 'Training', items: [{ text: 'Programme', href: '/programme' }, { text: 'Kursplan', href: '/kursplan' }, { text: 'Coaching', href: '/coaching' }] },

@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
   );
   if (!page) notFound();
 
-  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
+  const [navData, footerData, { brand, contact, socialLinks, design, formFields }, tenantStyle] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
@@ -65,9 +66,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
   if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
   if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
   const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = customFonts.length > 0
-    ? `https://fonts.googleapis.com/css2?${customFonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;800`).join('&')}&display=swap`
-    : null;
+  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
@@ -82,7 +81,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
         <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} topBar={navData.topBar} />
         <main>
           {visibleSections.map((section) => (
-            <SectionRenderer key={section.id} section={section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
+            <SectionRenderer key={section.id} section={section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} globalFormFields={formFields} />
           ))}
         </main>
         <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />

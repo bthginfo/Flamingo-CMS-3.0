@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Copy, Trash2 } from 'lucide-react';
 import { useTransition } from 'react';
+import { toast } from 'sonner';
 
 type Item = {
   id: string;
@@ -84,7 +85,7 @@ export function CollectionItemsList({
                           if (result?.id) {
                             window.location.href = `/admin/collections/${collectionKey}/${result.id}`;
                           } else if (result?.error) {
-                            alert(result.error);
+                            toast.error(result.error);
                           }
                         });
                       }}
@@ -136,7 +137,7 @@ export function CollectionItemsList({
                         if (result?.id) {
                           window.location.href = `/admin/collections/${collectionKey}/${result.id}`;
                         } else if (result?.error) {
-                          alert(result.error);
+                          toast.error(result.error);
                         }
                       });
                     }}

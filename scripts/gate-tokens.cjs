@@ -2,7 +2,7 @@
  * DESIGN-TOKEN DRIFT REPORT (Phase 1 — read-only, non-failing)
  * ──────────────────────────────────────────────────────────────────────────
  *
- * Runs four gates over every template file and prints a single summary
+ * Runs five gates over every template file and prints a single summary
  * report. NO files are modified, NO exit code is set on warnings —
  * By default this is report-only. With --strict it exits with code 1 when
  * any gate fails and is safe to use in CI.
@@ -27,6 +27,10 @@
  *     and a non-empty description. Catches copy-paste mistakes in the
  *     token registry itself.
  *
+ *   Gate E — ROOT-FALLBACKS
+ *     Every canonical token must exist in the first globals.css :root block,
+ *     so preview and pre-tenant surfaces never render unresolved CSS vars.
+ *
  * Usage:
  *   node scripts/gate-tokens.cjs            # human-readable report
  *   node scripts/gate-tokens.cjs --json     # machine-readable
@@ -39,6 +43,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const TEMPLATES_DIR = path.join(ROOT, 'apps/renderer/src/templates');
 const TOKENS_FILE = path.join(ROOT, 'packages/design-tokens/src/tokens.ts');
+const GLOBALS_FILE = path.join(ROOT, 'apps/renderer/src/globals.css');
 
 const JSON_MODE = process.argv.includes('--json');
 const STRICT = process.argv.includes('--strict');
@@ -76,6 +81,14 @@ function walk(d) {
 const tokens = loadDesignTokens();
 const tokenCssVars = new Set(Object.values(tokens).map((t) => t.cssVar));
 const files = walk(TEMPLATES_DIR);
+
+// The first :root block is the no-tenant / preview fallback layer.
+const globalsSource = fs.readFileSync(GLOBALS_FILE, 'utf8');
+const rootMatch = globalsSource.match(/:root\s*\{([\s\S]*?)\}/);
+const rootTokenDefaults = new Set(
+  [...(rootMatch?.[1] || '').matchAll(/(--token-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
+);
+const missingRootDefaults = [...tokenCssVars].filter((cssVar) => !rootTokenDefaults.has(cssVar));
 
 // Collect all var(--…) references with file:line context for B / C gates.
 const refs = []; // { file, line, name }
@@ -165,6 +178,12 @@ const report = {
     malformed: malformedTokens,
     duplicates: duplicateCssVars.map(([cssVar, keys]) => ({ cssVar, keys })),
   },
+  gateE: {
+    name: 'ROOT-FALLBACKS — every canonical token resolves without tenant data',
+    pass: Boolean(rootMatch) && missingRootDefaults.length === 0,
+    rootBlockFound: Boolean(rootMatch),
+    missing: missingRootDefaults,
+  },
 };
 
 function groupRefs(list) {
@@ -226,12 +245,17 @@ if (JSON_MODE) {
   }
   if (report.gateD.pass) line('     registry is internally consistent');
   line('');
+  line(`  ${report.gateE.pass ? '✅' : '⚠️ '} Gate E: ${report.gateE.name}`);
+  if (!report.gateE.rootBlockFound) line('     first :root block was not found in globals.css');
+  for (const cssVar of report.gateE.missing) line(`       · ${cssVar}`);
+  if (report.gateE.pass) line('     all canonical tokens have root fallbacks');
+  line('');
   line('─────────────────────────────────────────────────────────────────');
-  const passed = [report.gateA.pass, report.gateB.pass, report.gateC.pass, report.gateD.pass].filter(Boolean).length;
-  line(`  Summary: ${passed}/4 gates pass`);
+  const passed = [report.gateA.pass, report.gateB.pass, report.gateC.pass, report.gateD.pass, report.gateE.pass].filter(Boolean).length;
+  line(`  Summary: ${passed}/5 gates pass`);
   line('─────────────────────────────────────────────────────────────────');
 }
 
-if (STRICT && !(report.gateA.pass && report.gateB.pass && report.gateC.pass && report.gateD.pass)) {
+if (STRICT && !(report.gateA.pass && report.gateB.pass && report.gateC.pass && report.gateD.pass && report.gateE.pass)) {
   process.exit(1);
 }

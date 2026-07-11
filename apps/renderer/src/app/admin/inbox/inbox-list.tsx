@@ -11,6 +11,11 @@ type Submission = {
   phone: string | null;
   message: string;
   page: string | null;
+  payload: {
+    version: 1;
+    fields: Array<{ name: string; label: string; type: string; value: string }>;
+    context?: { source?: string; summary?: string };
+  };
   status: 'new' | 'read' | 'archived';
   createdAt: Date;
 };
@@ -19,6 +24,7 @@ export function InboxList({ submissions: initial }: { submissions: Submission[] 
   const [selected, setSelected] = useState<string | null>(null);
   const [items, setItems] = useState(initial);
   const active = items.find(s => s.id === selected);
+  const customFields = active?.payload?.fields?.filter(field => !['name', 'email', 'phone', 'message'].includes(field.name)) || [];
 
   async function markRead(id: string) {
     await updateSubmissionStatus(id, 'read');
@@ -69,12 +75,28 @@ export function InboxList({ submissions: initial }: { submissions: Submission[] 
                 <Archive size={14} /> Archivieren
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div><span className="text-zinc-400">E-Mail:</span> {active.email}</div>
-              <div><span className="text-zinc-400">Telefon:</span> {active.phone || '–'}</div>
+            <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+              <div><span className="text-zinc-400">E-Mail:</span> <a className="font-medium text-brand-primary hover:underline" href={`mailto:${active.email}`}>{active.email}</a></div>
+              <div><span className="text-zinc-400">Telefon:</span> {active.phone ? <a className="font-medium text-brand-primary hover:underline" href={`tel:${active.phone}`}>{active.phone}</a> : '–'}</div>
               {active.page && <div className="col-span-2"><span className="text-zinc-400">Seite:</span> {active.page}</div>}
             </div>
-            <div className="bg-zinc-50 rounded-xl p-4 text-sm whitespace-pre-wrap">{active.message}</div>
+            {active.payload?.context?.summary && (
+              <div className="rounded-xl border border-brand-primary/15 bg-brand-primary/5 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-brand-primary">Übernommene Auswahl</p>
+                <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-700">{active.payload.context.summary}</p>
+              </div>
+            )}
+            {customFields.length > 0 && (
+              <dl className="grid grid-cols-1 gap-3 rounded-xl border border-zinc-200 p-4 sm:grid-cols-2">
+                {customFields.map((field, index) => (
+                  <div key={`${field.name}-${index}`} className={field.type === 'textarea' ? 'sm:col-span-2' : ''}>
+                    <dt className="text-xs font-medium text-zinc-400">{field.label}</dt>
+                    <dd className="mt-1 whitespace-pre-wrap text-sm text-zinc-800">{field.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {active.message && <div className="bg-zinc-50 rounded-xl p-4 text-sm whitespace-pre-wrap">{active.message}</div>}
             <div className="text-xs text-zinc-400">Eingegangen am {new Date(active.createdAt).toLocaleString('de-DE')}</div>
           </div>
         ) : (

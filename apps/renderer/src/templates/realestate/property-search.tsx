@@ -51,12 +51,14 @@ export function PropertySearchSection({ data }: Props) {
                 className={`group relative flex flex-col items-center gap-3 rounded-2xl border p-6 text-center transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/5 ${i === activeCategory ? 'border-[color:color-mix(in_srgb,var(--token-accent)_34%,var(--token-card-border))] bg-[color:color-mix(in_srgb,var(--token-accent)_8%,var(--token-card-bg,#fff))]' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'}`}
                 onMouseEnter={() => setActiveCategory(i)}
               >
-                <div className="rounded-full bg-[color:color-mix(in_srgb,var(--token-accent)_12%,transparent)] p-3 text-[color:var(--token-icon)] transition-colors group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-btn-text)]">
-                  <Icon size={24} />
-                </div>
-                <span className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{cat.label}</span>
-                {cat.count && <span className="text-xs text-[color:var(--token-muted)]">{cat.count}</span>}
-                <ArrowRight size={16} className="absolute top-4 right-4 text-[color:var(--token-body)] group-hover:text-[color:var(--token-icon)] transition-colors" />
+                <span className="contents" data-card="">
+                  <span className="rounded-full bg-[color:color-mix(in_srgb,var(--token-accent)_12%,transparent)] p-3 text-[color:var(--token-card-icon)] transition-colors group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-btn-text)]">
+                    <Icon size={24} />
+                  </span>
+                  <span className="font-semibold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{cat.label}</span>
+                  {cat.count && <span className="text-xs text-[color:var(--token-card-muted,var(--token-muted))]">{cat.count}</span>}
+                  <ArrowRight size={16} className="absolute right-4 top-4 text-[color:var(--token-card-muted,var(--token-muted))] transition-colors group-hover:text-[color:var(--token-card-icon)]" />
+                </span>
               </a>
             );
           })}

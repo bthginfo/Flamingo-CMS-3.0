@@ -1,6 +1,8 @@
 export type EditableSection = {
   id: string;
   type: string;
+  definitionKey: string | null;
+  schemaVersion: number | null;
   variant: string | null;
   titleInternal: string | null;
   visible: boolean;
@@ -21,6 +23,8 @@ export type EditableSectionInput = Partial<EditableSection> & {
 };
 
 export const DEFAULT_EDITABLE_SECTION_META = {
+  definitionKey: null,
+  schemaVersion: null,
   variant: null,
   titleInternal: null,
   visible: true,
@@ -42,6 +46,8 @@ export function normalizeEditableSection(section: EditableSectionInput): Editabl
   return {
     id: section.id || '',
     type: section.type,
+    definitionKey: section.definitionKey ?? DEFAULT_EDITABLE_SECTION_META.definitionKey,
+    schemaVersion: section.schemaVersion ?? DEFAULT_EDITABLE_SECTION_META.schemaVersion,
     variant: section.variant ?? DEFAULT_EDITABLE_SECTION_META.variant,
     titleInternal: section.titleInternal ?? DEFAULT_EDITABLE_SECTION_META.titleInternal,
     visible: section.visible !== false,

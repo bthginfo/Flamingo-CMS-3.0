@@ -5,6 +5,8 @@ import { normalizeEditableSection, sortEditableSections, type EditableSection } 
 export type PageSectionRowLike = {
   id: string;
   type: string;
+  definitionKey?: string | null;
+  schemaVersion?: number | null;
   variant: string | null;
   titleInternal?: string | null;
   visible: boolean;
@@ -21,6 +23,8 @@ export type PageSectionRowLike = {
 export type CollectionItemSectionLike = {
   id?: string;
   type?: string;
+  definitionKey?: string | null;
+  schemaVersion?: number | null;
   variant?: string | null;
   titleInternal?: string | null;
   visible?: boolean;
@@ -51,6 +55,8 @@ export function collectionItemSectionToEditableSection(
   return normalizeEditableSection({
     id: section.id || createId(),
     type: section.type,
+    definitionKey: section.definitionKey ?? null,
+    schemaVersion: section.schemaVersion ?? null,
     variant: section.variant ?? null,
     titleInternal: section.titleInternal ?? null,
     visible: section.visible !== false,
@@ -81,6 +87,8 @@ export function editableSectionsToCollectionItemSections(sections: EditableSecti
     const serialized: CollectionItemSectionLike = {
       id: section.id,
       type: section.type,
+      definitionKey: section.definitionKey,
+      schemaVersion: section.schemaVersion,
       variant: section.variant,
       visible: section.visible,
       container: section.container,
@@ -100,6 +108,8 @@ export function editableSectionsToCollectionItemSections(sections: EditableSecti
 
 export function editableSectionMetaPatch(section: EditableSection): Omit<EditableSection, 'id' | 'type' | 'data' | 'sortOrder'> {
   return {
+    definitionKey: section.definitionKey,
+    schemaVersion: section.schemaVersion,
     variant: section.variant,
     titleInternal: section.titleInternal,
     visible: section.visible,
@@ -214,6 +224,8 @@ export function remapEditableSectionType(section: EditableSection, targetType: s
   return {
     ...section,
     type: targetType,
+    definitionKey: null,
+    schemaVersion: null,
     data: remapSectionDataForType(section.data, targetType),
   };
 }

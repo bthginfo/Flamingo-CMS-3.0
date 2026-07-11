@@ -22,7 +22,7 @@ const INDUSTRIES = [
   { key: 'shop', label: 'Weinhandel (Shop)' },
   { key: 'retail', label: 'Möbelhaus (Retail)' },
   { key: 'eishockey', label: 'Verein & Sport' },
-  { key: 'showcase', label: 'Sektionen-Demo' },
+  { key: 'showcase', label: 'Section Showroom' },
 ] as const;
 
 interface DemoFabProps {
@@ -31,95 +31,120 @@ interface DemoFabProps {
 
 export function DemoFab({ currentIndustry }: DemoFabProps) {
   const [open, setOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(true);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (window.innerWidth >= 768) setOpen(true);
-  }, []);
+    if (!open) return;
+    closeRef.current?.focus();
 
-  useEffect(() => {
-    function handleClick(event: MouseEvent) {
-      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+    function handlePointerDown(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     }
-    if (open) document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false);
+    }
+
+    document.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      window.removeEventListener('keydown', handleKeyDown);
+      triggerRef.current?.focus();
+    };
   }, [open]);
 
   return (
-    <div ref={panelRef} className="fixed bottom-6 right-6 z-[9999]">
+    <div
+      ref={containerRef}
+      className="fixed z-[9999]"
+      style={{
+        bottom: 'max(1rem, env(safe-area-inset-bottom))',
+        right: 'max(1rem, env(safe-area-inset-right))',
+      }}
+    >
       {open && (
-        <div className="mb-3 w-72 rounded-2xl bg-gray-900 text-white shadow-2xl ring-1 ring-white/10 overflow-hidden animate-in slide-in-from-bottom-2 fade-in duration-200">
-          <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-md bg-gradient-to-br from-pink-500 to-orange-400 text-white text-[10px] font-bold flex items-center justify-center">F</span>
-              <span className="text-sm font-semibold">Flamingo Demo</span>
+        <div
+          id="demo-switcher"
+          role="dialog"
+          aria-label="Flamingo Demo wechseln"
+          className="mb-3 max-h-[min(72vh,42rem)] w-[min(23rem,calc(100vw-2rem))] overflow-y-auto border border-white/10 bg-zinc-950 text-stone-50 shadow-2xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-200"
+        >
+          <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-white/10 bg-zinc-950 px-4 py-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="grid h-9 w-9 shrink-0 place-items-center bg-[var(--token-accent)] text-xs font-black text-[color:var(--token-btn-text)]" aria-hidden="true">F</span>
+              <div className="min-w-0">
+                <p className="text-sm font-bold">Flamingo Demos</p>
+                <p className="truncate text-xs text-white/55">Branchenkontext wechseln</p>
+              </div>
             </div>
-            <button onClick={() => setOpen(false)} className="p-1 rounded-lg hover:bg-white/10 transition">
-              <X size={16} className="text-white/50" />
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={() => setOpen(false)}
+              className="grid h-11 w-11 shrink-0 place-items-center border border-white/10 text-white/70 transition hover:border-white/30 hover:text-white"
+              aria-label="Demo-Auswahl schließen"
+            >
+              <X aria-hidden="true" size={18} />
             </button>
           </div>
 
-          <div className="px-5 pb-3">
-            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">Branche</p>
-            <div className="grid grid-cols-2 gap-1.5">
-              {INDUSTRIES.map((industry) => (
+          <nav aria-label="Demo-Tenants" className="grid grid-cols-2 gap-px bg-white/10 p-px">
+            {INDUSTRIES.map(industry => {
+              const active = industry.key === currentIndustry;
+              return (
                 <a
                   key={industry.key}
                   href={`/demo/${industry.key}`}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    industry.key === currentIndustry
-                      ? 'bg-white/15 text-white'
-                      : 'text-white/50 hover:text-white hover:bg-white/5'
-                  }`}
+                  aria-current={active ? 'page' : undefined}
+                  className={`flex min-h-11 items-center px-3 py-2.5 text-xs font-semibold leading-4 transition-colors ${industry.key === 'showcase' ? 'col-span-2' : ''} ${active ? 'bg-stone-50 text-zinc-950' : 'bg-zinc-950 text-white/65 hover:bg-zinc-900 hover:text-white'}`}
                 >
                   {industry.label}
                 </a>
-              ))}
-            </div>
-          </div>
+              );
+            })}
+          </nav>
 
-          <div className="border-t border-white/10 px-5 py-3 space-y-1.5">
+          <div className="grid gap-px border-t border-white/10 bg-white/10">
             <a
               href={`/admin/demo-login?industry=${encodeURIComponent(currentIndustry)}&next=${encodeURIComponent('/admin')}&public=1`}
-              className="flex items-center gap-2 text-xs text-white/60 hover:text-white transition py-1"
+              className="flex min-h-11 items-center gap-3 bg-zinc-950 px-4 py-2.5 text-xs font-semibold text-white/65 transition hover:bg-zinc-900 hover:text-white"
             >
-              <Settings size={14} />
+              <Settings aria-hidden="true" size={16} />
               Admin-Demo öffnen
             </a>
             <a
               href="https://www.flamingomedia.online"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs text-white/60 hover:text-white transition py-1"
+              className="flex min-h-11 items-center gap-3 bg-zinc-950 px-4 py-2.5 text-xs font-semibold text-white/65 transition hover:bg-zinc-900 hover:text-white"
             >
-              <ExternalLink size={14} />
-              Zurück zu Flamingo
+              <ExternalLink aria-hidden="true" size={16} />
+              Zu Flamingo Media
             </a>
           </div>
 
-          <div className="border-t border-white/10 px-5 py-3">
-            <p className="text-[10px] leading-relaxed text-white/35">
-              Dies ist eine Demo. Farben, Schriften, Inhalte und Layouts können im Admin individuell angepasst werden.
-            </p>
-          </div>
+          <p className="border-t border-white/10 px-4 py-3 text-[11px] leading-5 text-white/45">
+            Jede Demo nutzt dieselbe CMS-Basis mit eigenem Inhalt, Design-Rezept und Funktionsumfang.
+          </p>
         </div>
       )}
 
-      {!open && showTooltip && (
-        <div className="absolute bottom-16 right-0 md:hidden bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg animate-in fade-in slide-in-from-bottom-1">
-          Branche wechseln
-          <div className="absolute -bottom-1 right-5 w-2 h-2 bg-gray-900 rotate-45" />
-        </div>
-      )}
       <button
-        onClick={() => { setOpen((value) => !value); setShowTooltip(false); }}
-        className="h-14 w-14 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 text-white shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/30 hover:scale-105 transition-all flex items-center justify-center"
-        aria-label="Demo-Optionen"
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen(value => !value)}
+        className="ml-auto grid h-12 w-12 place-items-center border border-white/15 bg-zinc-950 text-stone-50 shadow-xl transition hover:-translate-y-0.5 hover:bg-zinc-900"
+        aria-label={open ? 'Demo-Auswahl schließen' : 'Demo-Auswahl öffnen'}
+        aria-expanded={open}
+        aria-controls="demo-switcher"
+        aria-haspopup="dialog"
       >
-        <Palette size={22} />
+        <Palette aria-hidden="true" size={20} />
       </button>
     </div>
   );

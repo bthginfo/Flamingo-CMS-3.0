@@ -38,7 +38,7 @@ export function FoodMenuSection({ data }: Props) {
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <Image data-edit-image="image" src={item.image} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 33vw" />
                   {item.badge && (
-                    <span className="absolute top-3 left-3 bg-[var(--token-accent)] text-[color:var(--token-badge-text)] text-[10px] font-bold px-2.5 py-1 rounded-full" data-edit-path="badge">{item.badge}</span>
+                    <span className="absolute left-3 top-3 rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-badge-bg)] px-2.5 py-1 text-[10px] font-bold text-[color:var(--token-card-badge-text)]" data-edit-path="badge">{item.badge}</span>
                   )}
                 </div>
               )}

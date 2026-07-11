@@ -48,11 +48,11 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
               <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{menu.title || ''}</h3><span className="text-sm text-[color:var(--token-price)]" data-edit-path="priceLabel">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs text-[color:var(--token-muted)]">{menu.timeLabel}</p>}
-              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-semibold text-[color:var(--token-icon)]" data-edit-path="label">{menu.cta.label}</a>}
+              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]" data-edit-path="label">{menu.cta.label}</a>}
             </motion.article>
           ))}
         </div>
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-4">
         {image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-md"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}

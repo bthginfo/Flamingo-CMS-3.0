@@ -86,7 +86,7 @@ export function PortfolioGallerySection({ data }: Props) {
 
         {cta?.label && (
           <div className="text-center mt-12">
-            <a data-edit-link="cta" href={cta.href} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg">
+            <a data-edit-link="cta" href={cta.href} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg">
               <span data-edit-path="label">{cta.label}</span>
               {cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} />}
             </a>

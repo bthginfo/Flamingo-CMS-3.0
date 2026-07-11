@@ -27,7 +27,7 @@ function Classic({ header, introText, items, ctaPrimary }: Props) {
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
           <article key={`${item.title || 'item'}-${index}`} className="rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_76%,var(--token-section-bg-alt,#f8fafc))] p-5 shadow-sm" data-edit-collection="items" data-edit-index={index}>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-icon)]"><AlertCircle size={18} /></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]"><AlertCircle size={18} /></div>
             <h3 className="mt-4 font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-4 inline-flex rounded-full bg-[var(--token-btn-bg)] px-4 py-2 text-sm font-semibold text-[color:var(--token-btn-text)]">{item.phoneLabel}</a>}

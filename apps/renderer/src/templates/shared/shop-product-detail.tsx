@@ -198,7 +198,7 @@ export function ShopProductDetailSection({ data }: Props) {
           </div>
 
           {!product.isDigital && currentStock > 0 && currentStock <= 5 && (
-            <p className="text-xs text-[var(--token-accent)] mt-2 font-medium">⚡ Nur noch {currentStock} auf Lager!</p>
+            <p className="mt-2 text-xs font-medium text-[var(--token-danger)]">⚡ Nur noch {currentStock} auf Lager!</p>
           )}
 
           {/* Trust badges */}

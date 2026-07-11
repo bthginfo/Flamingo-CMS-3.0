@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { FileText, Trash2, Eye, EyeOff, Pencil, ChevronRight, ShoppingBag, AlertTriangle, Copy } from 'lucide-react';
 import { useTransition, useState } from 'react';
+import { toast } from 'sonner';
 
 type Page = {
   id: string;
@@ -152,7 +153,7 @@ export function PagesList({ pages, deleteAction, duplicateAction, hasShop, shopP
                         if (result?.id) {
                           window.location.href = `/admin/pages/${result.id}`;
                         } else if (result?.error) {
-                          alert(result.error);
+                          toast.error(result.error);
                         }
                       });
                     }}

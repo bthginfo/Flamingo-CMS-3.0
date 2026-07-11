@@ -39,7 +39,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                   </div>
                   <div className={`${isLeft ? 'md:text-right md:pr-12' : 'md:col-start-2 md:pl-12'}`}>
                     <div className={`flex items-center gap-3 mb-2 ${isLeft ? 'md:justify-end' : ''}`}>
-                      <span className="text-xs font-bold text-[color:var(--token-icon)] uppercase tracking-wider">Schritt {i + 1}</span>
+                      <span className="text-xs font-bold text-[color:var(--token-heading)] uppercase tracking-wider">Schritt {i + 1}</span>
                     </div>
                     <h3 className="text-lg md:text-xl font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{step.title}</h3>
                     <div className="text-[color:var(--token-muted)] mt-1 md:mt-2 text-sm md:text-base rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />

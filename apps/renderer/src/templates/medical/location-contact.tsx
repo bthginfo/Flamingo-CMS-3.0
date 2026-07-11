@@ -6,6 +6,7 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import { baseHeader, CtaButton, SectionHeader, asButton, asList } from './shared';
 import type { SectionProps } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { ConsentGate } from '@/components/consent-gate';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -36,7 +37,7 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label || 'item'}-${index}`} className="flex items-center gap-4 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_78%,var(--token-section-bg-alt,#f8fafc))] px-4 py-3 shadow-sm" data-edit-collection="infoCards" data-edit-index={index}>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={18} /></div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={18} /></div>
               <div className="min-w-0 flex-1"><p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="break-words font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
@@ -45,7 +46,11 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
       </div>
       <div className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
+        {mapEmbedUrl && (
+          <ConsentGate provider="Google Maps" className="mb-5 h-56 w-full overflow-hidden rounded-xl">
+            <iframe src={mapEmbedUrl} title="Standort" className="h-full w-full border-0" loading="lazy" />
+          </ConsentGate>
+        )}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </motion.div>

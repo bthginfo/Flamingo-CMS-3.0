@@ -20,6 +20,11 @@ const IMG = {
   p4: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80',
   p5: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&q=80',
   p6: 'https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?auto=format&fit=crop&w=500&q=80',
+  p7: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=500&q=80',
+  p8: 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?auto=format&fit=crop&w=500&q=80',
+  coach: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=500&q=80',
+  assistantCoach: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?auto=format&fit=crop&w=500&q=80',
+  doctor: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80',
 };
 
 const SCHEDULE = {
@@ -27,11 +32,11 @@ const SCHEDULE = {
   headline: 'Spielplan',
   subline: 'Alle Termine der Hauptrunde — Heimspiele in der Saturn-Arena.',
   matches: [
-    { dateLabel: 'Sa 12.10.', competition: 'Oberliga', homeTeam: 'Donau Panther', awayTeam: 'EV Landshut', venue: 'Saturn-Arena', homeGame: true, ticketHref: '#' },
+    { dateLabel: 'Sa 12.10.', competition: 'Oberliga', homeTeam: 'Donau Panther', awayTeam: 'EV Landshut', venue: 'Saturn-Arena', homeGame: true, ticketHref: '/demo/eishockey/kontakt' },
     { dateLabel: 'Fr 18.10.', competition: 'Oberliga', homeTeam: 'Deggendorfer SC', awayTeam: 'Donau Panther', venue: 'Deggendorf', homeGame: false },
     { dateLabel: 'So 20.10.', competition: 'Oberliga', homeTeam: 'Donau Panther', awayTeam: 'Höchstadt Alligators', venue: 'Saturn-Arena', result: '4:2', homeGame: true },
     { dateLabel: 'Fr 25.10.', competition: 'Pokal', homeTeam: 'Selber Wölfe', awayTeam: 'Donau Panther', venue: 'Selb', homeGame: false },
-    { dateLabel: 'So 27.10.', competition: 'Oberliga', homeTeam: 'Donau Panther', awayTeam: 'Memmingen Indians', venue: 'Saturn-Arena', homeGame: true, ticketHref: '#' },
+    { dateLabel: 'So 27.10.', competition: 'Oberliga', homeTeam: 'Donau Panther', awayTeam: 'Memmingen Indians', venue: 'Saturn-Arena', homeGame: true, ticketHref: '/demo/eishockey/kontakt' },
     { dateLabel: 'Fr 01.11.', competition: 'Oberliga', homeTeam: 'Passau Black Hawks', awayTeam: 'Donau Panther', venue: 'Passau', homeGame: false },
   ],
 };
@@ -61,8 +66,8 @@ const ROSTER = {
     { number: '19', name: 'Lukas Fischer', position: 'Center', nationality: 'DE', image: IMG.p4 },
     { number: '23', name: 'Ryan O’Connor', position: 'Flügel', nationality: 'CA', image: IMG.p5 },
     { number: '27', name: 'Niklas Huber', position: 'Flügel', nationality: 'DE', image: IMG.p6 },
-    { number: '44', name: 'Tomas Král', position: 'Verteidigung', nationality: 'SK', image: IMG.p2 },
-    { number: '91', name: 'David Wagner', position: 'Center', nationality: 'DE', image: IMG.p4 },
+    { number: '44', name: 'Tomas Král', position: 'Verteidigung', nationality: 'SK', image: IMG.p7 },
+    { number: '91', name: 'David Wagner', position: 'Center', nationality: 'DE', image: IMG.p8 },
   ],
 };
 
@@ -117,7 +122,7 @@ export const eishockeySite: DemoSite = {
         {
           ...B, id: 'eh-zig', type: 'zigzagShowcase',
           data: { rows: [
-            { eyebrow: 'Profiteam', headline: 'Oberliga-Eishockey in Ingolstadt.', text: '<p>Schnelles, ehrliches Eishockey — jede Woche in der Saturn-Arena. Unsere erste Mannschaft spielt in der Oberliga Süd und lebt von der Unterstützung der Fans.</p>', image: IMG.action, imageAlt: 'Spielszene', links: [{ label: 'Kader ansehen', href: '/demo/eishockey/kader' }] },
+            { eyebrow: 'Profiteam', headline: 'Oberliga-Eishockey in Ingolstadt.', text: '<p>Schnelles, ehrliches Eishockey — jede Woche in der Saturn-Arena. Unsere erste Mannschaft spielt in der Oberliga Süd und lebt von der Unterstützung der Fans.</p>', image: IMG.action, imageAlt: 'Zweikampf der Donau Panther an der Bande', links: [{ label: 'Kader ansehen', href: '/demo/eishockey/kader' }] },
             { eyebrow: 'Nachwuchs', headline: 'Vom Bambini bis zur U20.', text: '<p>Über 300 Kinder und Jugendliche trainieren bei den Panthern. Vom ersten Schritt auf dem Eis bis zum Sprung in die Junioren-Ligen begleiten wir jeden Weg.</p>', image: IMG.youth, imageAlt: 'Nachwuchstraining', links: [{ label: 'Zum Verein', href: '/demo/eishockey/verein' }] },
           ] },
         },
@@ -148,9 +153,9 @@ export const eishockeySite: DemoSite = {
         {
           ...B, id: 'eh-kader-staff', type: 'team',
           data: { badgeText: 'Betreuerstab', headline: 'Hinter der Bande', members: [
-            { name: 'Andreas Klein', role: 'Cheftrainer', image: IMG.p1 },
-            { name: 'Stefan Bauer', role: 'Co-Trainer & Athletik', image: IMG.p4 },
-            { name: 'Dr. Petra Sommer', role: 'Teamärztin', image: IMG.p6 },
+            { name: 'Andreas Klein', role: 'Cheftrainer', image: IMG.coach },
+            { name: 'Stefan Bauer', role: 'Co-Trainer & Athletik', image: IMG.assistantCoach },
+            { name: 'Dr. Petra Sommer', role: 'Teamärztin', image: IMG.doctor },
           ] },
         },
         ctaBand('Werde Teil der Panther-Familie.', 'Ob als Fan, Mitglied oder Sponsor — bei uns ist jeder willkommen.'),
@@ -220,6 +225,34 @@ export const eishockeySite: DemoSite = {
           data: { badgeText: 'Geschäftsstelle', headline: 'So erreichst du uns', subline: 'Telefonisch unter +49 841 555 010 oder über das Formular.', email: 'info@donau-panther.de', phone: '+49 841 555 010', address: 'Saturn-Arena, Jahnstraße 10, 85049 Ingolstadt', formEnabled: true, submitLabel: 'Nachricht senden' },
         },
         { ...B, id: 'eh-k-map', type: 'map', data: { headline: 'Anfahrt zur Arena', address: 'Saturn-Arena, Jahnstraße 10, 85049 Ingolstadt', embedUrl: 'https://www.google.com/maps?q=Saturn-Arena%20Ingolstadt&output=embed' } },
+      ],
+    },
+    {
+      slug: 'impressum',
+      title: 'Impressum',
+      sections: [
+        {
+          ...B, id: 'eh-impressum', type: 'legalContent',
+          data: { headline: 'Impressum', blocks: [
+            { title: 'Demo-Anbieter', text: '<p>EHC Donau Panther e. V.<br>Saturn-Arena, Jahnstraße 10<br>85049 Ingolstadt</p>' },
+            { title: 'Kontakt', text: '<p>Telefon: +49 841 555 010<br>E-Mail: info@donau-panther.de</p>' },
+            { title: 'Hinweis', text: '<p>Dieser Verein ist fiktiv. Inhalte und Kontaktdaten dienen ausschließlich der Demonstration des CMS.</p>' },
+          ] },
+        },
+      ],
+    },
+    {
+      slug: 'datenschutz',
+      title: 'Datenschutz',
+      sections: [
+        {
+          ...B, id: 'eh-datenschutz', type: 'legalContent',
+          data: { headline: 'Datenschutzhinweise', blocks: [
+            { title: 'Demo-Website', text: '<p>Diese Seite zeigt eine fiktive Vereinswebsite. Formulare dürfen in der Demo keine echten personenbezogenen Daten enthalten.</p>' },
+            { title: 'Kontaktformular', text: '<p>In einem Kundenprojekt werden Zweck, Speicherdauer und Rechtsgrundlage passend zur tatsächlichen Verarbeitung dokumentiert.</p>' },
+            { title: 'Externe Inhalte', text: '<p>Eingebettete Karten oder Medien werden erst nach der dafür erforderlichen Einwilligung geladen.</p>' },
+          ] },
+        },
       ],
     },
   ],

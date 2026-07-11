@@ -10,10 +10,13 @@
     "lint": "turbo lint",
     "test": "pnpm --filter @flamingo/renderer test",
     "audit:crosstalk": "node scripts/audit-token-crosstalk.cjs",
+    "audit:credentials": "node scripts/check-credential-literals.cjs",
     "check:hardcoded-colors": "node scripts/check-hardcoded-colors-regression.cjs",
     "typecheck": "turbo typecheck",
     "audit:tenant": "tsx scripts/audit-tenant-content.ts",
     "audit:tenant:diff": "tsx scripts/compare-tenant-audits.ts",
+    "audit:demos": "node scripts/demo-tenants/audit-sources.cjs",
+    "audit:demos:contrast": "tsx scripts/audit-live-demo-contrast.ts",
     "audit:sections": "tsx scripts/audit-section-registry.ts",
     "audit:section-surface": "tsx scripts/audit-section-surface.ts",
     "audit:section-contracts": "tsx scripts/audit-section-contracts.ts",
@@ -27,20 +30,29 @@
     "check:section-colors": "node scripts/check-section-color-contracts.cjs && node scripts/check-section-color-render-mirror.cjs && node scripts/audit-color-role-coverage.cjs --strict && node scripts/check-section-color-crosstalk.cjs",
     "check:tokens": "node scripts/gate-tokens.cjs --strict",
     "check:env-contract": "tsx scripts/check-env-contract.ts",
+    "storybook": "pnpm --filter @flamingo/renderer storybook",
+    "build-storybook": "pnpm --filter @flamingo/renderer build-storybook",
+    "qa:live-demos": "playwright test tests/live-demos.spec.ts",
+    "qa:lighthouse": "lhci autorun",
     "sync:section-surface": "tsx scripts/sync-section-surface.ts",
     "check:section-surface": "tsx scripts/sync-section-surface.ts --check",
     "db:generate": "pnpm --filter @flamingo/db generate",
-    "db:push": "pnpm --filter @flamingo/db push"
+    "db:push": "pnpm --filter @flamingo/db push",
+    "db:backfill-sections": "pnpm --filter @flamingo/db backfill:section-definitions"
   },
   "devDependencies": {
-    "playwright": "^1.61.0",
+    "@axe-core/playwright": "^4.12.1",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.61.1",
+    "playwright": "^1.61.1",
     "tsx": "^4.21.0",
     "turbo": "^2.9.16"
   },
   "pnpm": {
     "overrides": {
       "esbuild": "^0.25.12",
-      "postcss": "^8.5.10"
+      "postcss": "^8.5.10",
+      "undici": "^6.27.0"
     }
   },
   "packageManager": "pnpm@9.15.0"

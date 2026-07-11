@@ -11,13 +11,20 @@ nach `publish` live und triggert keinen Vercel-Build.
 ## Schnellstart
 
 ```bash
-# 1) (einmalig) Hol dir die offizielle Playbook-Doku für genau diesen Tenant
-node scripts/demo-tenants/fetch-instructions.cjs handwerk
-#    → schreibt _cache/instructions-handwerk.json + .txt
+# 1) Alle 18 Population-Quellen read-only prüfen (keine API-/DB-Schreibzugriffe)
+pnpm audit:demos
 
-# 2) Tenant befüllen (wipe + brand + nav + pages + collections + publish + validate)
-node scripts/demo-tenants/handwerk.cjs
+# 2) Deklarative CJS-Exports und Auswahl prüfen
+node scripts/demo-tenants/run-all.cjs --dry-run
+
+# 3) Genau einen Tenant mit einem expliziten Env-Token befüllen
+PAT_HANDWERK=... node scripts/demo-tenants/run-all.cjs handwerk
 ```
+
+`run-all.cjs --list` zeigt die sichere Allow-List und das erwartete Env-Feld.
+`shop` ist ein Alias für `ecommerce`, `tourismus` ein Alias für `tourism`.
+Die älteren MJS-Quellen für `consulting`, `florist`, `fitness` und `location`
+werden einzeln über `run-legacy.cjs` gestartet. Der Source-Audit deckt sie mit ab.
 
 ## Was wo liegt
 
@@ -25,6 +32,8 @@ node scripts/demo-tenants/handwerk.cjs
 | ------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `_lib/api.cjs`                        | Minimaler HTTPS-Client, ein Wrapper pro Endpoint. Keine externen Abhängigkeiten.                   |
 | `_lib/runner.cjs`                     | `run(tenantSpec)` — wipt vorhandenen Content, schreibt brand/contact/design/nav/footer/pages/etc., publiziert und validiert. |
+| `run-all.cjs`                         | Sichere explizite Allow-List für die 14 deklarativen CJS-Tenants; unterstützt Auswahl, `--list` und schreibfreies `--dry-run`. |
+| `audit-sources.cjs`                   | Read-only Audit aller 18 Population-Quellen plus Renderer-URL-Mapping: Identität, SEO, interne Links, Anker, Legal-Pages, sichtbare Umlaute und Personenbilder. Statische TypeScript-Fallback-Pages sind ein separater Sync-Schritt. |
 | `fetch-instructions.cjs <tenant>`     | Speichert die per-Tenant API-Anweisung (`GET /instructions`) lokal. Enthält Textanweisung, strukturiertes AI-Playbook, Style-System und Section-Style-Contracts. **Vor jedem neuen Tenant zuerst aufrufen.** |
 | `handwerk.cjs`                        | Vollständige Referenz-Implementierung. Template für alle weiteren Tenants.                         |
 | `STATUS.md`                           | Welcher Tenant ist fertig, was steht noch offen.                                                   |
@@ -59,15 +68,16 @@ node scripts/demo-tenants/fetch-instructions.cjs restaurant
 cp scripts/demo-tenants/handwerk.cjs scripts/demo-tenants/restaurant.cjs
 
 # 3) restaurant.cjs umarbeiten:
-#    - PAT austauschen (aus fetch-instructions.cjs übernehmen)
+#    - kein PAT in die Datei schreiben; PAT_RESTAURANT als Env-Variable nutzen
 #    - Identität neu erfinden (Name, Stadt, Geschichte, Brand-Palette, Fonts)
 #    - availableSectionTypes / instructions.txt lesen und sektions-spezifisch wählen
 #      (z.B. Restaurant: reservation, menuShowcase, eventCalendar statt servicesGrid)
 #    - Inhalte komplett neu schreiben
 #    - Collections branchen-typisch (Restaurant: speisekarte, events, team)
 
-# 4) Laufen lassen
-node scripts/demo-tenants/restaurant.cjs
+# 4) Quelle prüfen und gezielt laufen lassen
+node scripts/demo-tenants/run-all.cjs --dry-run restaurant
+PAT_RESTAURANT=... node scripts/demo-tenants/run-all.cjs restaurant
 
 # 5) Auf der Live-Site prüfen, ggf. anpassen, erneut laufen lassen
 #    (wipe=true entfernt vorherigen Run sauber)
@@ -86,6 +96,10 @@ node scripts/demo-tenants/restaurant.cjs
 
 ## Sicherheit
 
-- Die PATs in `fetch-instructions.cjs` sind **Demo-Tenant-Tokens**.
-  Sie wirken nur auf isolierte Demo-Daten der jeweiligen Renderer-Subdomain.
-- Trotzdem nicht öffentlich teilen. Repo ist privat.
+- PATs ausschließlich per `PAT_<TENANT>` oder `DEMO_PAT_<TENANT>` übergeben.
+- `run-all.cjs` ignoriert lokale Modul-Credentials und gibt weder Token noch
+  Tokenfragmente aus.
+- Keine PATs in Source, Shell-History, Logs, Screenshots oder Tickets kopieren.
+- Historische Helper mit eingebetteten Demo-Credentials sind Migrationsschuld:
+  nicht weiterverwenden oder erweitern; Werte aus dem aktuellen Stand entfernen
+  und rotieren, bevor das Repository breiter geteilt wird.

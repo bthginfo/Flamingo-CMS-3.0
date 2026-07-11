@@ -1,6 +1,7 @@
+import { requireDatabaseUrl } from './_database-url';
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon('postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require');
+const sql = neon(requireDatabaseUrl());
 
 /**
  * The previous fix replaced broken images with generic alternatives.

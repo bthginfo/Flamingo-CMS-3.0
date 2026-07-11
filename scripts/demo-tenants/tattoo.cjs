@@ -20,7 +20,7 @@ const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 const { darkTokens: sharedDark } = require('./_lib/theme.cjs');
 
-const PAT = '91e6ae60a80cd9385a65671bbef0c12971446d416a403a76f38139ce26eabc70';
+const PAT = process.env.PAT_TATTOO || process.env.DEMO_PAT_TATTOO || '';
 
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=82`;
@@ -100,13 +100,17 @@ const heroTokens = {
   '--token-badge-border': 'rgba(247,241,232,0.42)',
 };
 
-const section = (type, data, styleOverrides = lightTokens, variant = 'classic') => ({
-  id: uuid(),
-  type,
-  variant,
-  data,
-  styleOverrides,
-});
+const section = (type, dataWithAnchor, styleOverrides = lightTokens, variant = 'classic') => {
+  const { anchorId, ...data } = dataWithAnchor;
+  return {
+    id: uuid(),
+    type,
+    variant,
+    ...(anchorId ? { anchorId } : {}),
+    data,
+    styleOverrides,
+  };
+};
 
 function collectionHero(title, excerpt, imageId) {
   return section('collectionHero', {
@@ -278,8 +282,11 @@ const tenant = {
   },
 
   seoGlobal: {
-    siteTitle: 'INK DISTRICT Berlin',
-    metaDescription: 'Tattoo-Studio in Berlin-Kreuzberg für Fine Line, Blackwork, Botanical Tattoos und ehrliche Beratung.',
+    titleTemplate: '%s',
+    defaultTitle: 'Tattoo-Studio Berlin-Kreuzberg | INK DISTRICT',
+    defaultDescription: 'Tattoo-Studio in Berlin-Kreuzberg für Fine Line, Blackwork, Botanical Tattoos und ehrliche Beratung.',
+    defaultOgImage: img('1565058379802-bbe93b2f703a', 1200),
+    locale: 'de_DE',
     keywords: 'Tattoo Berlin, Tattoo Studio Kreuzberg, Fine Line Tattoo Berlin, Blackwork Berlin, Tattoo Beratung',
   },
 
@@ -334,7 +341,7 @@ const tenant = {
           subline: 'INK DISTRICT plant Fine Line, Blackwork und Botanical Motifs mit ruhiger Beratung, sauberer Platzierung und klarer Nachsorge.',
           image: img('1565058379802-bbe93b2f703a'),
           glowColor: 'rgba(216,167,93,0.42)',
-          primaryCta: { label: 'Motiv anfragen', href: '/kontakt' },
+          primaryCta: { label: 'Motividee einschätzen lassen', href: '/kontakt' },
           secondaryCta: { label: 'Portfolio ansehen', href: '/portfolio' },
           facts: [{ value: '3', label: 'Artists' }, { value: '45 Min.', label: 'Beratung' }, { value: 'Kreuzberg', label: 'Studio' }],
         }, heroTokens),
@@ -385,7 +392,7 @@ const tenant = {
       title: 'Leistungen',
       seo: { metaTitle: 'Tattoo-Stile & Beratung | INK DISTRICT', metaDescription: 'Fine Line, Blackwork, Botanical Tattoos und Cover-up Beratung bei INK DISTRICT Berlin.' },
       sections: [
-        section('editorialHero', { eyebrow: 'Leistungen', headline: 'Stile, Beratung und saubere Entscheidungen.', text: '<p>Unsere Leistungen sind keine Paketliste. Sie helfen, die richtige Richtung für Ihr Motiv zu finden.</p>', imagePrimary: img('1611501275019-9b5cda994e8d'), primaryCta: { label: 'Motiv anfragen', href: '/kontakt' }, secondaryCta: { label: 'Artists ansehen', href: '/artists' } }),
+        section('editorialHero', { eyebrow: 'Leistungen', headline: 'Stile, Beratung und saubere Entscheidungen.', text: '<p>Unsere Leistungen sind keine Paketliste. Sie helfen, die richtige Richtung für Ihr Motiv zu finden.</p>', imagePrimary: img('1611501275019-9b5cda994e8d'), primaryCta: { label: 'Stil & Umfang klären', href: '/kontakt' }, secondaryCta: { label: 'Artists ansehen', href: '/artists' } }),
         section('servicesGrid', { headline: 'Was wir anbieten', subline: 'Jede Karte führt zu einer Detailseite mit mehr Kontext.', manualCards: services.map((s, index) => ({ title: s.title, text: s.excerpt, icon: ['PenTool', 'CircleDot', 'Leaf', 'RefreshCw'][index], mediaType: 'icon', href: `/c/leistungen/${s.slug}` })) }),
         section('comparisonTable', { badge: 'Orientierung', headline: 'Welcher Stil passt wozu?', text: 'Eine erste Orientierung. Die endgültige Entscheidung treffen wir anhand von Motiv und Körperstelle.', columns: [{ label: 'Fine Line' }, { label: 'Blackwork' }, { label: 'Botanical' }], highlightCol: 0, rows: [
           { feature: 'Wirkung', values: ['fein', 'grafisch', 'organisch'] },
@@ -407,15 +414,15 @@ const tenant = {
       title: 'Artists',
       seo: { metaTitle: 'Artists | INK DISTRICT Berlin', metaDescription: 'Das Team von INK DISTRICT: Fine Line, Blackwork und Botanical Tattoos in Berlin-Kreuzberg.' },
       sections: [
-        section('cinematicHero', { eyebrow: 'Artists', headline: 'Drei Artists, drei Handschriften.', subline: 'Wir matchen Motiv und Artist bewusst, statt jede Anfrage irgendwo einzusortieren.', image: img('1542727365-19732a80dcfd'), overlay: 'rgba(10,10,12,0.6)', align: 'left', primaryCta: { label: 'Motiv anfragen', href: '/kontakt' }, facts: [ { value: '3', label: 'Artists' }, { value: '12+', label: 'Jahre Erfahrung' }, { value: '100%', label: 'Custom-Arbeiten' } ] }),
+        section('cinematicHero', { eyebrow: 'Artists', headline: 'Drei Artists, drei Handschriften.', subline: 'Wir matchen Motiv und Artist bewusst, statt jede Anfrage irgendwo einzusortieren.', image: img('1542727365-19732a80dcfd'), overlay: 'rgba(10,10,12,0.6)', align: 'left', primaryCta: { label: 'Artist-Match finden', href: '/kontakt' }, facts: [ { value: '3', label: 'Artists' }, { value: '12+', label: 'Jahre Erfahrung' }, { value: '100%', label: 'Custom-Arbeiten' } ] }),
         section('artistGrid', { headline: 'Wer bei uns sticht', subline: 'Jede Person hat einen klaren Schwerpunkt.', artists: [
-          { name: 'Lea Novak', image: img('1494790108377-be9c29b29330', 900), styles: ['Fine Line', 'Botanical'], bio: 'Lea arbeitet ruhig, fein und mit viel Blick für Körperlinien.', instagram: '@lea.inkdistrict', href: '/kontakt' },
-          { name: 'Miro Sander', image: img('1500648767791-00dcc994a43e', 900), styles: ['Blackwork', 'Graphic'], bio: 'Miro denkt in Flächen, Kanten und Negativraum.', instagram: '@miro.blackwork', href: '/kontakt' },
+          { name: 'Lea Novak', image: img('1534528741775-53994a69daeb', 900), styles: ['Fine Line', 'Botanical'], bio: 'Lea arbeitet ruhig, fein und mit viel Blick für Körperlinien.', instagram: '@lea.inkdistrict', href: '/kontakt' },
+          { name: 'Miro Sander', image: img('1568602471122-7832951cc4c5', 900), styles: ['Blackwork', 'Graphic'], bio: 'Miro denkt in Flächen, Kanten und Negativraum.', instagram: '@miro.blackwork', href: '/kontakt' },
           { name: 'Noor Ali', image: img('1531123897727-8f129e1688ce', 900), styles: ['Micro Symbols', 'Script'], bio: 'Noor reduziert Motive, ohne sie beliebig zu machen.', instagram: '@noor.lines', href: '/kontakt' },
         ] }, lightTokens),
         section('team', { headline: 'Studio statt Durchlauf.', subline: 'Wir arbeiten bewusst mit wenigen Artists und klaren Schwerpunkten.', membersHeadline: 'Team', members: [
-          { name: 'Lea Novak', role: 'Fine Line & Botanical', image: img('1494790108377-be9c29b29330', 900), bio: 'Feine Linien, ruhige Motive, präzise Platzierung.' },
-          { name: 'Miro Sander', role: 'Blackwork', image: img('1500648767791-00dcc994a43e', 900), bio: 'Grafische Formen, Flächen und Cover-up Einschätzung.' },
+          { name: 'Lea Novak', role: 'Fine Line & Botanical', image: img('1534528741775-53994a69daeb', 900), bio: 'Feine Linien, ruhige Motive, präzise Platzierung.' },
+          { name: 'Miro Sander', role: 'Blackwork', image: img('1568602471122-7832951cc4c5', 900), bio: 'Grafische Formen, Flächen und Cover-up Einschätzung.' },
           { name: 'Noor Ali', role: 'Micro & Script', image: img('1531123897727-8f129e1688ce', 900), bio: 'Reduzierte Zeichen, Schrift und kleine Erinnerungen.' },
         ], valuesHeadline: 'Wie wir arbeiten', values: [
           { icon: 'ShieldCheck', title: 'Hygiene sichtbar', text: 'Abläufe werden erklärt, nicht versteckt.' },
@@ -490,8 +497,8 @@ const tenant = {
           { year: '2026', title: 'Nur noch kuratierte Anfragen', text: 'Weniger Durchlauf, bessere Vorbereitung, ruhigere Termine.' },
         ] }, lightTokens),
         section('team', { headline: 'Menschen hinter den Nadeln.', subline: 'Drei Artists, ein gemeinsamer Anspruch.', membersHeadline: 'Team', members: [
-          { name: 'Lea Novak', role: 'Fine Line & Botanical', image: img('1494790108377-be9c29b29330', 900), bio: 'Gründerin, ruhig im Gespräch und sehr genau in Linien.' },
-          { name: 'Miro Sander', role: 'Blackwork', image: img('1500648767791-00dcc994a43e', 900), bio: 'Denkt Motive in Fläche, Kante und Kontrast.' },
+          { name: 'Lea Novak', role: 'Fine Line & Botanical', image: img('1534528741775-53994a69daeb', 900), bio: 'Gründerin, ruhig im Gespräch und sehr genau in Linien.' },
+          { name: 'Miro Sander', role: 'Blackwork', image: img('1568602471122-7832951cc4c5', 900), bio: 'Denkt Motive in Fläche, Kante und Kontrast.' },
           { name: 'Noor Ali', role: 'Micro & Script', image: img('1531123897727-8f129e1688ce', 900), bio: 'Reduziert Motive, ohne sie technisch zu schwächen.' },
         ], stats: [{ value: '2016', label: 'gegründet' }, { value: '3', label: 'Artists' }, { value: '4,9/5', label: 'Bewertung' }] }, smokeTokens),
         section('principlesGrid', { badge: 'Werte', headline: 'Woran wir uns messen.', subline: 'Nicht an möglichst vielen Motiven pro Tag.', principles: [
@@ -500,7 +507,7 @@ const tenant = {
           { eyebrow: '03', title: 'Sauberkeit ist sichtbar', text: 'Hygiene ist kein Backstage-Thema, sondern Teil der Beratung.' },
           { eyebrow: '04', title: 'Heilung zählt mit', text: 'Das Tattoo ist erst gut, wenn es sauber verheilt.' },
         ], cta: { label: 'Anfrage senden', href: '/kontakt' } }, lightTokens),
-        section('immersiveCtaBanner', { badge: 'Studio kennenlernen', headline: 'Passt unsere Haltung zu Ihrem Motiv?', subline: 'Dann schreiben Sie uns. Wenn nicht, sagen wir es ebenfalls ehrlich.', image: img('1542727365-19732a80dcfd'), overlay: 'rgba(10,10,12,0.64)', primaryCta: { label: 'Motiv anfragen', href: '/kontakt' } }),
+        section('immersiveCtaBanner', { badge: 'Studio kennenlernen', headline: 'Passt unsere Haltung zu Ihrem Motiv?', subline: 'Dann schreiben Sie uns. Wenn nicht, sagen wir es ebenfalls ehrlich.', image: img('1542727365-19732a80dcfd'), overlay: 'rgba(10,10,12,0.64)', primaryCta: { label: 'Beratung vormerken', href: '/kontakt' } }),
       ],
     },
     {
@@ -533,9 +540,9 @@ const tenant = {
             { label: 'Custom-Design', description: 'Individueller Entwurf statt Flash-Vorlage, inkl. einer Korrekturschleife.', type: 'toggle', price: 90 },
             { label: 'Farbe', description: 'Farbige Umsetzung statt Blackwork/Fine Line.', type: 'toggle', price: 60 },
           ],
-          cta: { label: 'Motiv anfragen', href: '#kontakt' },
+          cta: { label: 'Budget & Motiv einordnen', href: '#kontakt' },
         }, lightTokens),
-        section('contact', { badgeText: 'Studio', headline: 'Berlin-Kreuzberg, ruhig gelegen.', introText: 'Termine nur nach Vereinbarung. Kurze Beratungen planen wir so, dass wirklich Zeit für Motiv und Fragen bleibt.', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: [
+        section('contact', { anchorId: 'kontakt', badgeText: 'Studio', headline: 'Berlin-Kreuzberg, ruhig gelegen.', introText: 'Termine nur nach Vereinbarung. Kurze Beratungen planen wir so, dass wirklich Zeit für Motiv und Fragen bleibt.', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: [
           { icon: 'MapPin', label: 'Adresse', value: 'Reichenberger Straße 48, 10999 Berlin' },
           { icon: 'Phone', label: 'Telefon', value: '+49 30 2332 1840' },
           { icon: 'Mail', label: 'E-Mail', value: 'studio@ink-district.berlin' },

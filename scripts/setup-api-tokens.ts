@@ -1,10 +1,11 @@
+import { requireDatabaseUrl } from './_database-url';
 /**
  * Create the tenant_api_tokens table.
  * Usage: npx tsx scripts/setup-api-tokens.ts
  */
 import { neon } from '@neondatabase/serverless';
 
-const DATABASE_URL = 'postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require';
+const DATABASE_URL = requireDatabaseUrl();
 const sql = neon(DATABASE_URL);
 
 async function main() {

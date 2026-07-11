@@ -17,6 +17,9 @@ type SectionColorContractSource = 'industry' | 'generic' | 'any' | 'none';
 // different template than the one painted.)
 const INDUSTRY_CONTRACT_ALIASES: Record<string, string> = {
   handwerk: 'tradesman',
+  shop: 'ecommerce',
+  bar: 'restaurant',
+  eishockey: 'verein',
 };
 
 function normalizeIndustryForContract(industry?: string) {

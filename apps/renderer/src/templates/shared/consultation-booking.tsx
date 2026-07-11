@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
+import { buildLeadContextHref, persistLeadContext, type LeadContext } from '@/lib/lead-context';
 
 type Service = {
   icon?: string;
@@ -23,6 +24,11 @@ export function ConsultationBookingSection({ data }: Props) {
   const inView = useInView(ref, { once: true, margin: '-50px' });
   const [selected, setSelected] = useState(0);
   const selectedService = services[selected];
+  const leadContext: LeadContext = {
+    source: 'consultationBooking',
+    summary: selectedService?.title ? `Beratung: ${selectedService.title}` : 'Individuelle Beratung',
+  };
+  const leadHref = buildLeadContextHref(cta?.href || '#kontakt', leadContext);
 
   return (
     <div ref={ref}>
@@ -50,7 +56,7 @@ export function ConsultationBookingSection({ data }: Props) {
               }`}
              data-edit-collection="services" data-edit-index={i}>
               {service.icon && (
-                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon)] text-[color:var(--token-btn-text)]' : 'bg-[color-mix(in_srgb,var(--token-icon)_10%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]'} transition-colors`}>
+                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]' : 'bg-[color-mix(in_srgb,var(--token-icon)_10%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]'} transition-colors`}>
                   <DynamicIcon editPath="icon" name={service.icon} size={20} />
                 </div>
               )}
@@ -87,7 +93,7 @@ export function ConsultationBookingSection({ data }: Props) {
                 )}
               </p>
               {cta?.label && (
-                <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon)] text-[color:var(--token-btn-text)] font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
+                <a data-edit-link="cta" href={leadHref} onClick={() => persistLeadContext(leadContext)} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
                   {cta.label}
                 </a>
               )}

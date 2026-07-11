@@ -1,9 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { sanitizeHtml } from '@/lib/sanitize-html';
-import { isValidColorString } from '@/lib/color-validation';
-import { COLOR_FIELD_BY_CSS_VAR, COLOR_FIELD_CSS_VARS, FIELD_DEFS } from '@/lib/section-color-fields';
-import { getFieldsForSection } from '@/lib/section-color-resolver';
+import { isSectionDefinitionKey, parseSectionDefinitionKey } from '@/lib/section-definition-registry';
+import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
+import { validateStyleOverridesForApi } from '@/lib/section-style-overrides';
+
+export {
+  normalizeStyleOverrides,
+  normalizeStyleOverridesForSection,
+  normalizeStyleOverridesForSectionWithIssues,
+  normalizeStyleOverridesWithIssues,
+  validateStyleOverridesForApi,
+} from '@/lib/section-style-overrides';
+export type {
+  StyleOverrideNormalizationIssue,
+  StyleOverrideNormalizationResult,
+} from '@/lib/section-style-overrides';
 
 type AuthResult = Awaited<ReturnType<typeof validatePat>>;
 
@@ -112,7 +124,25 @@ const DISALLOWED_API_SECTION_TYPES = new Set([
   'script',
 ]);
 
-export function validateSections(sections: unknown, industry?: string): string | null {
+const KNOWN_API_SECTION_TYPES = new Set(
+  getSectionTypesForIndustry('__all__').map((definition) => definition.type),
+);
+const SECTION_ADDON_REQUIREMENTS = new Map(
+  getSectionTypesForIndustry('__all__')
+    .filter((definition) => definition.requiresAddon)
+    .map((definition) => [definition.type, definition.requiresAddon] as const),
+);
+const KNOWN_SECTION_DEFINITION_OWNERS = new Set([
+  'shared', 'tradesman', 'verein', 'photography', 'consulting', 'wedding',
+  'medical', 'salon', 'tourism', 'hotel', 'restaurant', 'bar', 'realestate',
+  'cafe', 'tattoo', 'ecommerce', 'retail', 'florist', 'fitness', 'location',
+]);
+
+export function validateSections(
+  sections: unknown,
+  industry?: string,
+  addons: { hasShop?: boolean; hasBooking?: boolean } = {},
+): string | null {
   if (!Array.isArray(sections)) return 'sections must be an array';
   for (let i = 0; i < sections.length; i++) {
     const s = sections[i];
@@ -120,6 +150,23 @@ export function validateSections(sections: unknown, industry?: string): string |
     if (!s.type || typeof s.type !== 'string') return `sections[${i}].type is required and must be a string`;
     if (DISALLOWED_API_SECTION_TYPES.has(s.type.toLowerCase())) {
       return `sections[${i}].type "${s.type}" is not allowed through the public content API`;
+    }
+    if (!KNOWN_API_SECTION_TYPES.has(s.type)) {
+      const suggestion = closestMatch(s.type, [...KNOWN_API_SECTION_TYPES]);
+      return `sections[${i}].type "${s.type}" is unknown and would not render.${suggestion ? ` Did you mean "${suggestion}"?` : ''} Use a type from GET /api/v1/instructions availableSectionTypes.`;
+    }
+    const requiredAddon = SECTION_ADDON_REQUIREMENTS.get(s.type);
+    if (
+      (requiredAddon === 'shop' && !addons.hasShop)
+      || (requiredAddon === 'booking' && !addons.hasBooking)
+    ) {
+      return `sections[${i}].type "${s.type}" requires the active ${requiredAddon} addon. Choose an unlocked type from GET /api/v1/instructions availableSectionTypes.`;
+    }
+    const identityErr = validateSectionIdentity(s, `sections[${i}]`);
+    if (identityErr) return identityErr;
+    const definitionIdentity = typeof s.definitionKey === 'string' ? parseSectionDefinitionKey(s.definitionKey) : null;
+    if (definitionIdentity && !KNOWN_SECTION_DEFINITION_OWNERS.has(definitionIdentity.owner)) {
+      return `sections[${i}].definitionKey "${s.definitionKey}" is not registered. Omit definitionKey to use the tenant default, or copy an exact key from GET /api/v1/instructions.`;
     }
     if (s.data !== undefined && (typeof s.data !== 'object' || s.data === null || Array.isArray(s.data))) {
       return `sections[${i}].data must be an object`;
@@ -136,6 +183,29 @@ export function validateSections(sections: unknown, industry?: string): string |
     const data = s.data || {};
     const err = validateSectionData(s.type, data, i);
     if (err) return err;
+  }
+  return null;
+}
+
+export function validateSectionIdentity(
+  section: { type?: unknown; definitionKey?: unknown; schemaVersion?: unknown },
+  path = 'section',
+): string | null {
+  if (section.definitionKey !== undefined && section.definitionKey !== null) {
+    if (!isSectionDefinitionKey(section.definitionKey)) {
+      return `${path}.definitionKey must use the format "type.owner.v1"`;
+    }
+    const parsed = parseSectionDefinitionKey(section.definitionKey);
+    if (typeof section.type === 'string' && parsed?.type !== section.type) {
+      return `${path}.definitionKey type "${parsed?.type}" does not match ${path}.type "${section.type}"`;
+    }
+  }
+  if (
+    section.schemaVersion !== undefined
+    && section.schemaVersion !== null
+    && (!Number.isSafeInteger(section.schemaVersion) || (section.schemaVersion as number) < 1)
+  ) {
+    return `${path}.schemaVersion must be a positive integer`;
   }
   return null;
 }
@@ -195,166 +265,6 @@ export function normalizeSectionData(type: string, data: Record<string, unknown>
     if (!d.source) d.source = 'manual';
   }
   return d;
-}
-
-const STYLE_OVERRIDE_KEY_TO_VARS: Record<string, string[]> = Object.fromEntries(
-  Object.entries(FIELD_DEFS).map(([key, def]) => [key, [def.cssVar]]),
-);
-
-const ALLOWED_RAW_STYLE_OVERRIDE_VARS = COLOR_FIELD_CSS_VARS;
-
-const SAFE_DIMENSION_RE = /^-?\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw)?$/i;
-const SAFE_BORDER_RE = /^\d+(?:\.\d+)?px\s+(?:solid|dashed|dotted)\s+(.+)$/i;
-// `transparent` and `currentColor` are safe, common CSS colour keywords — an AI
-// agent (or a human) naturally writes them, so accept them instead of 400ing.
-const SAFE_CSS_KEYWORD_RE = /^(?:none|normal|inherit|initial|unset|transparent|currentcolor)$/i;
-const SAFE_VAR_RE = /^var\(--[a-z0-9-]+\)$/i;
-
-function isSafeStyleOverrideValue(value: string): boolean {
-  const v = value.trim();
-  if (!v || v.length > 180) return false;
-  if (/[;{}<>]/.test(v)) return false;
-  if (/(?:url\s*\(|@import|expression\s*\(|javascript:|data:)/i.test(v)) return false;
-  if (isValidColorString(v)) return true;
-  if (SAFE_DIMENSION_RE.test(v)) return true;
-  if (SAFE_CSS_KEYWORD_RE.test(v)) return true;
-  if (SAFE_VAR_RE.test(v)) return true;
-  const border = SAFE_BORDER_RE.exec(v);
-  if (border) return isValidColorString(border[1].trim()) || SAFE_VAR_RE.test(border[1].trim());
-  return false;
-}
-
-function styleOverrideKeyToField(key: string): string | undefined {
-  return key.startsWith('--')
-    ? COLOR_FIELD_BY_CSS_VAR[key]
-    : FIELD_DEFS[key as keyof typeof FIELD_DEFS]
-      ? key
-      : undefined;
-}
-
-function allowedStyleOverrideKeysForSection(sectionType: string, industry?: string): Set<string> {
-  const allowed = new Set<string>();
-  for (const field of getFieldsForSection(sectionType, industry)) {
-    allowed.add(field);
-    allowed.add(FIELD_DEFS[field].cssVar);
-  }
-  return allowed;
-}
-
-export interface StyleOverrideNormalizationIssue {
-  location: string;
-  key: string;
-  value: unknown;
-  reason: 'unknown_key' | 'invalid_type' | 'unsafe_value';
-  message: string;
-}
-
-export interface StyleOverrideNormalizationResult {
-  styleOverrides: Record<string, string> | null;
-  issues: StyleOverrideNormalizationIssue[];
-}
-
-export function normalizeStyleOverridesWithIssues(
-  styleOverrides: unknown,
-  location = 'styleOverrides',
-): StyleOverrideNormalizationResult {
-  const issues: StyleOverrideNormalizationIssue[] = [];
-  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) {
-    return { styleOverrides: null, issues };
-  }
-
-  const normalized: Record<string, string> = {};
-
-  for (const [key, value] of Object.entries(styleOverrides)) {
-    const targetKeys = key.startsWith('--')
-      ? (ALLOWED_RAW_STYLE_OVERRIDE_VARS.has(key) ? [key] : undefined)
-      : STYLE_OVERRIDE_KEY_TO_VARS[key];
-
-    if (!targetKeys?.length) {
-      issues.push({
-        location: `${location}.${key}`,
-        key,
-        value,
-        reason: 'unknown_key',
-        message: `${location}.${key} is not a supported style override key`,
-      });
-      continue;
-    }
-
-    if (value == null || value === '') continue;
-
-    if (typeof value !== 'string') {
-      issues.push({
-        location: `${location}.${key}`,
-        key,
-        value,
-        reason: 'invalid_type',
-        message: `${location}.${key} must be a string`,
-      });
-      continue;
-    }
-
-    const trimmed = value.trim();
-    if (!trimmed) continue;
-
-    if (!isSafeStyleOverrideValue(trimmed)) {
-      issues.push({
-        location: `${location}.${key}`,
-        key,
-        value,
-        reason: 'unsafe_value',
-        message: `${location}.${key} has an invalid or unsafe CSS value (${JSON.stringify(value)})`,
-      });
-      continue;
-    }
-
-    for (const targetKey of targetKeys) normalized[targetKey] = trimmed;
-  }
-
-  return { styleOverrides: Object.keys(normalized).length ? normalized : null, issues };
-}
-
-export function normalizeStyleOverrides(styleOverrides: unknown): Record<string, string> | null {
-  return normalizeStyleOverridesWithIssues(styleOverrides).styleOverrides;
-}
-
-export function normalizeStyleOverridesForSection(
-  sectionType: string,
-  styleOverrides: unknown,
-  industry?: string,
-): Record<string, string> | null {
-  const normalized = normalizeStyleOverridesWithIssues(styleOverrides).styleOverrides;
-  if (!normalized) return null;
-  const allowedCssVars = new Set(getFieldsForSection(sectionType, industry).map((field) => FIELD_DEFS[field].cssVar));
-  const filtered = Object.fromEntries(Object.entries(normalized).filter(([key]) => allowedCssVars.has(key)));
-  return Object.keys(filtered).length ? filtered : null;
-}
-
-export function validateStyleOverridesForApi(
-  styleOverrides: unknown,
-  location = 'styleOverrides',
-  sectionType?: string,
-  industry?: string,
-): string | null {
-  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
-  const { issues } = normalizeStyleOverridesWithIssues(styleOverrides, location);
-  if (issues.length) {
-    const first = issues[0];
-    return `${first.message}. Allowed keys are documented in /api/v1/instructions sectionStyleContracts. Use hex, rgb(), rgba(), var(--token) or safe border/dimension values only.`;
-  }
-  if (sectionType) {
-    const allowedKeys = allowedStyleOverrideKeysForSection(sectionType, industry);
-    for (const [key, value] of Object.entries(styleOverrides)) {
-      if (value == null || value === '') continue;
-      const field = styleOverrideKeyToField(key);
-      if (!field || !allowedKeys.has(key)) {
-        const allowed = getFieldsForSection(sectionType, industry);
-        const suggestion = closestMatch(key, [...allowedKeys, ...allowed]);
-        return `${location}.${key} is not used by section type "${sectionType}". Allowed color fields for this section: ${allowed.join(', ')}.${suggestion ? ` Did you mean "${suggestion}"?` : ''}`;
-      }
-    }
-  }
-  return null;
 }
 
 /** Nearest allowed key by edit distance — powers "Did you mean …?" hints. */

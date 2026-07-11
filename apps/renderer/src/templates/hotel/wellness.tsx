@@ -67,7 +67,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
             <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm text-[color:var(--token-price)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
             {treatment.durationLabel && <p className="mt-2 text-xs text-[color:var(--token-muted)]">{treatment.durationLabel}</p>}
-            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon)]" data-edit-path="label">{treatment.cta.label}</a>}
+            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]" data-edit-path="label">{treatment.cta.label}</a>}
           </motion.article>
         ))}
         </div>

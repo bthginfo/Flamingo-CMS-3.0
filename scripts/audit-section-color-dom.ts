@@ -61,6 +61,8 @@ const INDUSTRIES = [
   'florist',
   'fitness',
   'location',
+  'bar',
+  'verein',
 ];
 
 const INDUSTRY_SUFFIXES = [
@@ -94,6 +96,8 @@ const FIELD_BASE_BG = '#f8fafc';
 const FIELD_BASE_CARD = '#ffffff';
 const FIELD_BASE_BORDER = '#d1d5db';
 const FIELD_BASE_ACCENT = '#2563eb';
+const DEFAULT_CONCURRENCY = 4;
+const MAX_CONCURRENCY = 16;
 
 const FIELD_SLOT_ALIASES: Partial<Record<ColorFieldKey, string[]>> = {
   sectionBg: ['section.bg', 'sectionBg', 'section-bg', 'bg', 'background'],
@@ -169,6 +173,7 @@ function parseArgs() {
     type: getValue('--type'),
     max: Number(getValue('--max') || 0) || null,
     skip: Number(getValue('--skip') || 0) || 0,
+    concurrency: Number(getValue('--concurrency') || DEFAULT_CONCURRENCY),
     report: getValue('--report') || process.env.SECTION_COLOR_DOM_REPORT || 'tmp/section-color-dom-audit.json',
     help: args.has('--help') || args.has('-h'),
   };
@@ -193,6 +198,7 @@ Options:
   --type <section>     Audit one section type only
   --skip <n>           Skip first n section types, for batching
   --max <n>            Limit number of audited section types
+  --concurrency <n>    Parallel browser pages, default ${DEFAULT_CONCURRENCY}, max ${MAX_CONCURRENCY}
   --report <path>      JSON report path, default tmp/section-color-dom-audit.json
   --strict             Treat missing DOM annotations as failures
 `);
@@ -560,11 +566,84 @@ async function auditField(
   return findings;
 }
 
+type AuditTarget = ReturnType<typeof auditTargets>[number];
+
+type AuditJob = {
+  target: AuditTarget;
+  typeIndex: number;
+  fields: ColorFieldKey[];
+};
+
+async function auditTarget(page: any, baseUrl: string, job: AuditJob): Promise<Finding[]> {
+  const { target, fields } = job;
+  const { sectionType } = target;
+  const findings: Finding[] = [];
+
+  const industry = target.industry || await findRenderableIndustry(page, baseUrl, sectionType);
+  if (!industry) {
+    findings.push({
+      severity: 'warning',
+      sectionType,
+      industry: null,
+      message: 'No renderable section-preview found for this section type.',
+    });
+    return findings;
+  }
+
+  const probeResponse = await page.goto(sectionPreviewUrl(baseUrl, sectionType, industry), {
+    waitUntil: 'domcontentloaded',
+    timeout: 30_000,
+  }).catch(() => null);
+  const probeHasRoot = probeResponse?.ok()
+    ? await page.locator(`[data-section-id="preview-${sectionType}"]`).count()
+    : 0;
+  if (!probeResponse?.ok() || !probeHasRoot) {
+    findings.push({
+      severity: 'warning',
+      sectionType,
+      industry,
+      message: 'No renderable section-preview found for this section type and industry.',
+    });
+    return findings;
+  }
+
+  const baselineOverrides = buildBaselineStyleOverrides(fields);
+  await page.goto(sectionPreviewUrl(baseUrl, sectionType, industry, baselineOverrides), {
+    waitUntil: 'domcontentloaded',
+    timeout: 30_000,
+  });
+  await disableMotionForAudit(page);
+  await waitForSectionRoot(page, sectionType);
+  await waitForStableColorTargets(page, sectionType);
+  const baseline: FieldAuditBaseline = {
+    targets: await readTargets(page, sectionType),
+    overrides: baselineOverrides,
+  };
+
+  if (!baseline.targets.length) {
+    findings.push({
+      severity: 'warning',
+      sectionType,
+      industry,
+      message: 'Section renders but has no data-color-slot annotations. DOM field ownership cannot be proven.',
+    });
+  }
+
+  for (const field of fields) {
+    findings.push(...await auditField(page, sectionType, industry, field, baseline));
+  }
+
+  return findings;
+}
+
 async function main() {
   const args = parseArgs();
   if (args.help) {
     printHelp();
     return;
+  }
+  if (!Number.isInteger(args.concurrency) || args.concurrency < 1 || args.concurrency > MAX_CONCURRENCY) {
+    throw new Error(`--concurrency must be an integer between 1 and ${MAX_CONCURRENCY}.`);
   }
 
   const baseUrl = args.baseUrl.replace(/\/$/, '');
@@ -580,81 +659,51 @@ async function main() {
   try {
     if (!args.startServer) await waitForServer(baseUrl);
 
-    const { chromium } = await loadPlaywright();
-    const browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-
     const targets = auditTargets()
       .filter((target) => !args.type || target.sectionType === args.type || target.generatedKey === args.type)
       .slice(args.skip)
       .slice(0, args.max || undefined);
 
-    for (const [typeIndex, target] of targets.entries()) {
-      const sectionType = target.sectionType;
+    const jobs = targets.flatMap((target, typeIndex): AuditJob[] => {
       const generatedFields = (target.generatedKey && SECTION_COLOR_CONTRACTS_GENERATED[target.generatedKey]) || [];
-      const rawFields = (generatedFields.length ? generatedFields : SECTION_COLOR_CONTRACTS_GENERIC[sectionType] || []) as ColorFieldKey[];
+      const rawFields = (generatedFields.length ? generatedFields : SECTION_COLOR_CONTRACTS_GENERIC[target.sectionType] || []) as ColorFieldKey[];
       const fields = [...new Set(rawFields)].filter(fieldIsColor);
-      if (!fields.length) continue;
-      console.log(`audit ${typeIndex + 1}/${targets.length}: ${sectionType}${target.industry ? `/${target.industry}` : ''} (${fields.length} color fields)`);
-      auditedTargets += 1;
-      auditedFields += fields.length;
+      return fields.length ? [{ target, typeIndex, fields }] : [];
+    });
 
-      const industry = target.industry || await findRenderableIndustry(page, baseUrl, sectionType);
-      if (!industry) {
-        findings.push({
-          severity: 'warning',
-          sectionType,
-          industry: null,
-          message: 'No renderable section-preview found for this section type.',
-        });
-        continue;
-      }
-
-      const probeResponse = await page.goto(sectionPreviewUrl(baseUrl, sectionType, industry), {
-        waitUntil: 'domcontentloaded',
-        timeout: 30_000,
-      }).catch(() => null);
-      const probeHasRoot = probeResponse?.ok()
-        ? await page.locator(`[data-section-id="preview-${sectionType}"]`).count()
-        : 0;
-      if (!probeResponse?.ok() || !probeHasRoot) {
-        findings.push({
-          severity: 'warning',
-          sectionType,
-          industry,
-          message: 'No renderable section-preview found for this section type and industry.',
-        });
-        continue;
-      }
-
-      const baselineOverrides = buildBaselineStyleOverrides(fields);
-      await page.goto(sectionPreviewUrl(baseUrl, sectionType, industry, baselineOverrides), {
-        waitUntil: 'domcontentloaded',
-        timeout: 30_000,
-      });
-      await disableMotionForAudit(page);
-      await waitForSectionRoot(page, sectionType);
-      await waitForStableColorTargets(page, sectionType);
-      const baseline: FieldAuditBaseline = {
-        targets: await readTargets(page, sectionType),
-        overrides: baselineOverrides,
-      };
-
-      if (!baseline.targets.length) {
-        findings.push({
-          severity: 'warning',
-          sectionType,
-          industry,
-          message: 'Section renders but has no data-color-slot annotations. DOM field ownership cannot be proven.',
-        });
-      }
-
-      for (const field of fields) {
-        findings.push(...await auditField(page, sectionType, industry, field, baseline));
-      }
+    auditedTargets = jobs.length;
+    auditedFields = jobs.reduce((sum, job) => sum + job.fields.length, 0);
+    for (const job of jobs) {
+      const { target, typeIndex, fields } = job;
+      console.log(`audit ${typeIndex + 1}/${targets.length}: ${target.sectionType}${target.industry ? `/${target.industry}` : ''} (${fields.length} color fields)`);
     }
 
-    await browser.close();
+    const { chromium } = await loadPlaywright();
+    const browser = await chromium.launch({ headless: true });
+    try {
+      const results: Finding[][] = Array.from({ length: jobs.length }, () => []);
+      let nextJobIndex = 0;
+      const workerCount = Math.min(args.concurrency, jobs.length);
+      const workers = Array.from({ length: workerCount }, async () => {
+        let page: any = null;
+        try {
+          page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+          while (nextJobIndex < jobs.length) {
+            const jobIndex = nextJobIndex;
+            nextJobIndex += 1;
+            results[jobIndex] = await auditTarget(page, baseUrl, jobs[jobIndex]);
+          }
+        } finally {
+          if (page) await page.close().catch(() => undefined);
+        }
+      });
+      const workerResults = await Promise.allSettled(workers);
+      const failedWorker = workerResults.find((result): result is PromiseRejectedResult => result.status === 'rejected');
+      if (failedWorker) throw failedWorker.reason;
+      findings.push(...results.flat());
+    } finally {
+      await browser.close().catch(() => undefined);
+    }
   } finally {
     if (server) {
       server.kill();

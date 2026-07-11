@@ -38,7 +38,42 @@ describe('AI agent guidance', () => {
   it('keeps the short prompt focused on deterministic contracts', () => {
     const prompt = buildAiAgentPrompt('Beispiel GmbH', 'tradesman');
     assert.match(prompt, /agentContract\.stateMachine/);
+    assert.match(prompt, /POST \/api\/v1\/content\/validate/);
     assert.match(prompt, /upsert=true/);
     assert.match(prompt, /readyToPublish=true/);
+  });
+
+  it('gives weak models a profile, plan and targeted repair contract', () => {
+    assert.deepEqual(contract.weakModelWorkflow.steps.map(step => step.state), [
+      'PROFILE', 'PLAN', 'WRITE', 'REPAIR', 'PUBLISH',
+    ]);
+    assert.equal(contract.weakModelWorkflow.siteProfileIntake.schemaVersion, '1.0');
+    assert.equal(contract.weakModelWorkflow.pagePlanContract.shape.slug, 'lowercase kebab-case, no leading slash');
+    assert.equal(contract.weakModelWorkflow.fieldBudgets.metaTitle.max, 70);
+    assert.match(contract.weakModelWorkflow.examples.headline.bad, /Willkommen/);
+    assert.deepEqual(contract.weakModelWorkflow.validationContract.preflight.body.mode, 'plan');
+  });
+
+  it('uses the vertical sitemap policy instead of universal service/about pages', () => {
+    const club = buildAiAgentContract({
+      tenantName: 'EHC Beispiel',
+      industry: 'verein',
+      allowedSections: [
+        { type: 'hero' }, { type: 'contact' }, { type: 'legalContent' },
+        { type: 'nextMatchHero' }, { type: 'matchSchedule' }, { type: 'leagueTable' },
+        { type: 'editorialHero' }, { type: 'statsCounter' }, { type: 'timeline' },
+        { type: 'faq' }, { type: 'ctaBand' }, { type: 'ctaSplit' },
+      ],
+      existingPages: [],
+      sectionSchemas: {},
+      hasShop: false,
+      hasBooking: false,
+    });
+    const slugs = club.recommendedPages.map(page => page.slug);
+    assert.ok(slugs.includes('spielplan'));
+    assert.ok(slugs.includes('verein'));
+    assert.ok(slugs.includes('impressum'));
+    assert.ok(!slugs.includes('leistungen'));
+    assert.ok(!slugs.includes('ueber-uns'));
   });
 });

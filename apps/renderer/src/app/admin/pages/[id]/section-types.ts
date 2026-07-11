@@ -30,6 +30,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionList', label: 'Collection-Liste', description: 'Einträge einer Collection als Übersicht anzeigen', category: 'Medien' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular', category: 'Kontakt' },
   { type: 'map', label: 'Karte', description: 'Google Maps Einbettung', category: 'Kontakt' },
+  { type: 'contactLocation', label: 'Standort & Anreise', description: 'Adresse, Anreise, Karte, Umgebung und Routen-CTA', category: 'Kontakt' },
   { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Mehrere Standorte als Karten mit optionaler Karte, Adresse, Kontakt und Öffnungszeiten', category: 'Kontakt' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder', category: 'Team & Personen' },
   { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid', category: 'Leistungen' },
@@ -80,6 +81,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'editorialFeatureRail', label: 'Editorial Feature Rail', description: 'Horizontale Premium-Story für Cases, Leistungen und Markenwelten', category: 'Premium' },
   { type: 'serviceTabs', label: 'Leistungs-Tabs', description: 'Interaktive Tabs mit Bild, Feature-Liste und CTA pro Leistung', category: 'Premium' },
   { type: 'priceCalculator', label: 'Preis-Kalkulator', description: 'Interaktiver Kostenrechner mit Optionen, Live-Summe und Angebots-CTA', category: 'Premium' },
+  { type: 'smartInquiry', label: 'Smart Inquiry', description: 'Progressive 3-Schritt-Anfrage mit Live-Brief und qualifizierten Kontaktdaten', category: 'Premium' },
   { type: 'jobListings', label: 'Stellenangebote', description: 'Karriere-Sektion mit Job-Karten, Benefits und Bewerbungs-CTA', category: 'Team & Personen' },
   { type: 'ctaSplit', label: 'CTA Split', description: 'Zweispaltiger Premium-CTA mit Bild, Checkliste und zwei Buttons', category: 'Premium' },
   { type: 'openingStatus', label: 'Öffnungsstatus', description: 'Live "Jetzt geöffnet"-Anzeige mit Wochenplan, Adresse und Telefon', category: 'Kontakt' },
@@ -463,6 +465,7 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tourism: TOURISM_SECTION_TYPES,
   hotel: HOTEL_SECTION_TYPES,
   restaurant: RESTAURANT_SECTION_TYPES,
+  bar: RESTAURANT_SECTION_TYPES,
   realestate: REALESTATE_SECTION_TYPES,
   cafe: CAFE_SECTION_TYPES,
   tattoo: TATTOO_SECTION_TYPES,
@@ -484,6 +487,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
   tourism: 'Tourismus',
   hotel: 'Hotel',
   restaurant: 'Restaurant',
+  bar: 'Bar',
   realestate: 'Immobilien',
   cafe: 'Café & Bar',
   tattoo: 'Tattoo Studio',
@@ -495,7 +499,8 @@ const INDUSTRY_LABELS: Record<string, string> = {
 };
 
 export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean; hasBooking?: boolean }): SectionTypeDefinition[] {
-  const specific = ALL_INDUSTRY_SECTIONS[industry] ?? TRADESMAN_SECTION_TYPES;
+  const specific = (ALL_INDUSTRY_SECTIONS[industry] ?? TRADESMAN_SECTION_TYPES)
+    .map(section => withAddonLock(section, options));
 
   // Merge: industry-specific first, then shared (skip duplicates)
   const types = new Set(specific.map(s => s.type));
@@ -507,7 +512,7 @@ export function getSectionTypesForIndustry(industry: string, options?: { hasShop
     if (key === industry) continue;
     for (const s of sections) {
       if (!types.has(s.type) && !shared.some(sh => sh.type === s.type) && !foreign.some(f => f.type === s.type)) {
-        foreign.push({ ...s, category: `Andere: ${INDUSTRY_LABELS[key] || key}` });
+        foreign.push(withAddonLock({ ...s, category: `Andere: ${INDUSTRY_LABELS[key] || key}` }, options));
       }
     }
   }

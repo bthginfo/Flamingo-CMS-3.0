@@ -4,6 +4,7 @@ import { pages, pageSections } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import crypto from 'crypto';
 import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection } from '@/lib/api-utils';
+import { resolveSectionWriteIdentities } from '@/lib/section-write-identity';
 
 export const POST = withApiHandler(async (req, auth) => {
   const body = await req.json();
@@ -16,7 +17,10 @@ export const POST = withApiHandler(async (req, auth) => {
   if (!normalizedSlug) return NextResponse.json({ success: false, code: 'SLUG_INVALID', error: 'slug must contain at least one URL-safe character' }, { status: 400 });
   const hasSections = Object.prototype.hasOwnProperty.call(body, 'sections');
   if (hasSections) {
-    const sectionErr = validateSections(sections, auth.tenant.industry);
+    const sectionErr = validateSections(sections, auth.tenant.industry, {
+      hasShop: auth.addons.includes('shop'),
+      hasBooking: auth.addons.includes('booking'),
+    });
     if (sectionErr) {
       return NextResponse.json({
         success: false,
@@ -25,6 +29,17 @@ export const POST = withApiHandler(async (req, auth) => {
         hint: 'Use only section types and fields documented by GET /api/v1/instructions.',
       }, { status: 400 });
     }
+  }
+  const identityResolution = hasSections
+    ? resolveSectionWriteIdentities(sections, auth.tenant.industry)
+    : { ok: true as const, identities: [] };
+  if (!identityResolution.ok) {
+    return NextResponse.json({
+      success: false,
+      code: 'INVALID_SECTION_IDENTITY',
+      error: identityResolution.error,
+      hint: 'Omit definitionKey/schemaVersion to let the server derive them, or copy the exact values from GET /api/v1/instructions.',
+    }, { status: 400 });
   }
 
   // A duplicate slug otherwise surfaces as an opaque 500 from the unique index.
@@ -55,6 +70,8 @@ export const POST = withApiHandler(async (req, auth) => {
       tenantId: auth.tenantId,
       pageId,
       type: s.type,
+      definitionKey: identityResolution.identities[i].definitionKey,
+      schemaVersion: identityResolution.identities[i].schemaVersion,
       data: normalizeSectionData(s.type, s.data || {}),
       variant: s.variant || null,
       visible: s.visible !== false,

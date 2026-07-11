@@ -44,7 +44,7 @@ export function ZigzagShowcaseSection({ data }: Props) {
               {(row.links?.length ?? 0) > 0 && (
                 <div className="mt-6 flex flex-col gap-2.5">
                   {row.links!.slice(0, 2).map((link, li) => link.label && (
-                    <a key={li} href={link.href || '#'} className="group inline-flex w-fit items-center gap-2 font-semibold text-[color:var(--token-icon)] transition-colors hover:text-[color:var(--token-heading)]">
+                    <a key={li} href={link.href || '#'} className="group inline-flex w-fit items-center gap-2 font-semibold text-[color:var(--token-link)] transition-colors hover:text-[color:var(--token-link-hover)]">
                       <span data-edit-path="label">{link.label}</span>
                       <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
                     </a>

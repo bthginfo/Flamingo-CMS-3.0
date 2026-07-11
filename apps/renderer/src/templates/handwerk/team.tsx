@@ -61,7 +61,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 md:mb-24">
           {stats.map((s, i) => (
             <div key={i} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 text-center" data-edit-collection="stats" data-edit-index={i}>
-              <div className="font-display mb-1 text-3xl font-bold text-[color:var(--token-accent)] lg:text-4xl" data-edit-path="value">{s.value}</div>
+              <div className="font-display mb-1 text-3xl font-bold text-[color:var(--token-stat-value)] lg:text-4xl" data-edit-path="value">{s.value}</div>
               <div className="text-sm text-[color:var(--token-body)]" data-edit-path="label">{s.label}</div>
             </div>
           ))}
@@ -91,7 +91,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
                   {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[color-mix(in_srgb,var(--token-accent)_5%,transparent)]"><DynamicIcon name="users" size={48} className="text-[color-mix(in_srgb,var(--token-accent)_30%,transparent)]" /></div>}
                 </div>
                 <h4 className="text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-                <p className="mb-2 text-sm font-medium text-[color:var(--token-accent)]" data-edit-path="role">{m.role}</p>
+                <p className="mb-2 text-sm font-medium text-[color:var(--token-card-muted)]" data-edit-path="role">{m.role}</p>
                 {m.bio && <div className="rt-content mx-auto max-w-xs text-sm text-[color:var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               </div>
             ))}

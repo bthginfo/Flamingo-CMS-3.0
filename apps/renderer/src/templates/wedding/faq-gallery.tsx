@@ -2,9 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
-import { plain } from '@/lib/strip-html';
+import { FaqAccordion } from '@/templates/shared/faq-accordion';
+import { PremiumSectionHeader } from '@/templates/shared/section-primitives';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -14,57 +13,10 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
   const items = (data.items as Array<{ question: string; answer: string }>) || [];
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10 md:mb-16">
-          <span className="section-badge" data-edit-path="badge">{badge}</span>
-          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-        </div>
-        <div className="space-y-3">
-          {items.map((item, i) => (
-            <FaqItem key={i} question={item.question} answer={plain(item.answer)} index={i} variant="classic"  data-edit-collection="items" data-edit-index={i}/>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FaqItem({ question, answer, index, variant }: { question: string; answer: string; index: number; variant: string }) {
-  const [open, setOpen] = useState(false);
-
-  if (variant === 'modern') {
-    return (
-      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="border-t border-[color:var(--token-card-border)]">
-        <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between py-5 text-left">
-          <span className="font-light text-[color:var(--token-heading)]" data-edit-path="question">{question}</span>
-          <ChevronDown className={`w-4 h-4 text-[color:var(--token-body)] transition-transform ${open ? 'rotate-180' : ''}`} />
-        </button>
-        {open && <div className="pb-5 text-[color:var(--token-muted)] text-sm leading-relaxed" data-edit-path="answer">{plain(answer)}</div>}
-      </motion.div>
-    );
-  }
-
-  if (variant === 'bold') {
-    return (
-      <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border)]">
-        <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 text-left">
-          <span className="font-bold text-[color:var(--token-heading)]" data-edit-path="question">{question}</span>
-          <ChevronDown className={`w-5 h-5 text-[color:var(--token-eyebrow)] transition-transform ${open ? 'rotate-180' : ''}`} />
-        </button>
-        {open && <div className="px-5 pb-5 text-[color:var(--token-muted)] text-sm leading-relaxed" data-edit-path="answer">{plain(answer)}</div>}
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="bg-[var(--token-card-bg)] rounded-xl border border-[color:var(--token-card-border)] overflow-hidden">
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 text-left">
-        <span className="font-medium text-[color:var(--token-heading)]" data-edit-path="question">{question}</span>
-        <ChevronDown className={`w-5 h-5 text-[color:var(--token-body)] transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-      {open && <div className="px-5 pb-5 text-[color:var(--token-muted)] text-sm leading-relaxed" data-edit-path="answer">{plain(answer)}</div>}
-    </motion.div>
+    <div className="mx-auto max-w-3xl">
+      <PremiumSectionHeader eyebrow={badge} headline={headline} eyebrowPath="badge" align="center" />
+      <FaqAccordion items={items} variant="cards" />
+    </div>
   );
 }
 

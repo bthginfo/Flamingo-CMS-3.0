@@ -77,7 +77,7 @@ export function CinematicHeroSection({ data }: Props) {
       )}
 
       <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center px-6 pb-14 pt-28 md:pb-16 md:pt-32 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
-        {eyebrow && <div className="mb-5 inline-flex rounded-full border border-[var(--token-badge-border)] bg-[var(--token-badge-bg)] px-4 py-2 text-xs font-semibold uppercase text-[color:var(--token-eyebrow)] backdrop-blur" data-edit-path="eyebrow">{eyebrow}</div>}
+        {eyebrow && <div className="section-badge mb-5 backdrop-blur" data-color-role="badge" data-edit-path="eyebrow">{eyebrow}</div>}
         {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] md:text-7xl lg:text-8xl" style={{ color: heroText }} data-edit-path="headline"><WordReveal text={headline} /></h1>}
         {subline && <p className={`mt-6 max-w-2xl text-base leading-8 md:text-xl ${align === 'center' ? 'mx-auto' : ''}`} style={{ color: heroBody }} data-edit-path="subline">{plain(subline)}</p>}
 

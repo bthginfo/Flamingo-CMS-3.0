@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqueIndex, index, pgEnum, numeric } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqueIndex, index, pgEnum, numeric, check } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 // ─── Enums ────────────────────────────────────────────────────────────
@@ -6,6 +6,8 @@ export const industryEnum = pgEnum('industry', [
   'tradesman', 'restaurant', 'salon', 'hotel', 'tourism',
   'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce', 'retail', 'florist', 'location', 'verein',
 ]);
+
+export type Industry = (typeof industryEnum.enumValues)[number];
 
 export const tenantStatusEnum = pgEnum('tenant_status', ['active', 'suspended', 'provisioning']);
 export const deploymentModeEnum = pgEnum('deployment_mode', ['shared', 'lead_shared', 'standalone']);
@@ -96,7 +98,7 @@ export const globalSettings = pgTable('global_settings', {
   design: jsonb('design').$type<Record<string, unknown>>().default({}),
   banners: jsonb('banners').$type<Record<string, unknown>[]>().default([]),
   smtp: jsonb('smtp').$type<{ host: string; port: number; user: string; pass: string; from: string } | null>().default(null),
-  autoResponse: jsonb('auto_response').$type<{ enabled: boolean; subject: string; body: string } | null>().default(null),
+  autoResponse: jsonb('auto_response').$type<{ enabled: boolean; subject: string; body: string; notificationEmail?: string } | null>().default(null),
   formFields: jsonb('form_fields').$type<{ name: string; label: string; type: string; placeholder?: string; required?: boolean; options?: string[]; halfWidth?: boolean }[] | null>().default(null),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -152,6 +154,10 @@ export const pageSections = pgTable('page_sections', {
   tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
   pageId: uuid('page_id').notNull().references(() => pages.id, { onDelete: 'cascade' }),
   type: varchar('type', { length: 100 }).notNull(),
+  // Stable renderer identity. Nullable during the compatibility migration:
+  // legacy rows continue to resolve through (tenant.industry, type).
+  definitionKey: varchar('definition_key', { length: 191 }),
+  schemaVersion: integer('schema_version'),
   variant: varchar('variant', { length: 50 }),
   titleInternal: varchar('title_internal', { length: 255 }),
   visible: boolean('visible').notNull().default(true),
@@ -168,6 +174,8 @@ export const pageSections = pgTable('page_sections', {
 }, (t) => [
   index('page_sections_page_idx').on(t.pageId),
   index('page_sections_tenant_idx').on(t.tenantId),
+  index('page_sections_definition_key_idx').on(t.definitionKey),
+  check('page_sections_schema_version_positive', sql`${t.schemaVersion} IS NULL OR ${t.schemaVersion} > 0`),
 ]);
 
 // ─── 9. draft_states ─────────────────────────────────────────────────
@@ -393,6 +401,11 @@ export const formSubmissions = pgTable('form_submissions', {
   phone: varchar('phone', { length: 50 }),
   message: text('message').notNull(),
   page: varchar('page', { length: 200 }),
+  payload: jsonb('payload').$type<{
+    version: 1;
+    fields: Array<{ name: string; label: string; type: string; value: string }>;
+    context?: { source?: string; summary?: string };
+  }>().notNull().default({ version: 1, fields: [] }),
   status: submissionStatusEnum('status').notNull().default('new'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [

@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 const SCAN_DIRS = ['apps', 'packages'];
-const IGNORE = new Set(['node_modules', '.next', 'dist', '.turbo']);
+const IGNORE = new Set(['node_modules', '.next', 'dist', '.turbo', 'storybook-static']);
 
 function walk(dir: string): string[] {
   const out: string[] = [];

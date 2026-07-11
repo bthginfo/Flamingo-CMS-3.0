@@ -38,8 +38,7 @@ export function scanSectionTokens(root: Element): Set<string> {
   if (clone.querySelector('.section-badge')) {
     found.add('--token-badge-bg');
     found.add('--token-badge-text');
-    // globals.css paints the badge border from --style-badge-border, which the
-    // renderer normalizes from --token-badge-border.
+    // globals.css paints every badge role from the canonical token family.
     found.add('--token-badge-border');
   }
   if (clone.querySelector('a[class*="bg-"], button[class*="bg-"]')) {

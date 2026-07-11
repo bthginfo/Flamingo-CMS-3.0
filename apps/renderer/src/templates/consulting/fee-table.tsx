@@ -37,10 +37,10 @@ export function FeeTableSection({ data }: Props) {
            data-edit-collection="fees" data-edit-index={i}>
             {fee.highlighted && <BorderBeam />}
             {fee.highlighted && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>
             )}
             {fee.icon && (
-              <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-[var(--token-badge-bg)] flex items-center justify-center text-[color:var(--token-icon)]">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-[var(--token-badge-bg)] flex items-center justify-center text-[color:var(--token-badge-text)]">
                 <DynamicIcon editPath="icon" name={fee.icon} size={24} />
               </div>
             )}

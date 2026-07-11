@@ -2,6 +2,7 @@
 
 import { ArrowRight, Clock, Mail, MapPin, Navigation, Phone } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
+import { ConsentGate } from '@/components/consent-gate';
 
 type LocationItem = {
   name?: string;
@@ -61,20 +62,22 @@ export function AdditionalLocationsSection({ data }: Props) {
               >
                 {location.mapEmbedUrl && (
                   <div className="relative h-56 overflow-hidden bg-[var(--token-section-bg-alt,theme(colors.slate.200))]">
-                    <iframe
-                      title={location.name || `Standort ${index + 1}`}
-                      src={location.mapEmbedUrl}
-                      className="h-full w-full border-0 grayscale transition duration-500 group-hover:grayscale-0"
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
+                    <ConsentGate provider="Google Maps" className="h-full w-full">
+                      <iframe
+                        title={location.name || `Standort ${index + 1}`}
+                        src={location.mapEmbedUrl}
+                        className="h-full w-full border-0 grayscale transition duration-500 group-hover:grayscale-0"
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    </ConsentGate>
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
                 )}
 
                 <div className="p-6">
                   <div className="mb-5 flex items-start gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--token-card-badge-bg)] text-[color:var(--token-icon)]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--token-card-badge-bg)] text-[color:var(--token-card-badge-text)]">
                       <MapPin size={22} />
                     </div>
                     <div>
@@ -92,13 +95,13 @@ export function AdditionalLocationsSection({ data }: Props) {
                       </div>
                     )}
                     {location.phone && (
-                      <a href={`tel:${location.phone}`} className="flex gap-3 text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
+                      <a href={`tel:${location.phone}`} className="flex gap-3 text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-link-hover)]">
                         <Phone size={17} className="mt-0.5 shrink-0 text-[color:var(--token-icon)]" />
                         <span data-edit-path="phone">{location.phone}</span>
                       </a>
                     )}
                     {email && (
-                      <a href={`mailto:${email}`} className="flex gap-3 break-all text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
+                      <a href={`mailto:${email}`} className="flex gap-3 break-all text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-link-hover)]">
                         <Mail size={17} className="mt-0.5 shrink-0 text-[color:var(--token-icon)]" />
                         <span data-edit-path="email">{email}</span>
                       </a>

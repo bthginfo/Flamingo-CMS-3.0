@@ -115,7 +115,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
             <label className="block text-sm font-medium text-[color:var(--token-muted)] mb-1">Nachricht (optional)</label>
             <textarea name="comment" rows={2} className="w-full px-4 py-3 border border-[color:var(--token-card-border)] rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-[var(--token-card-border)] outline-none resize-none" placeholder="Eure Nachricht an uns..." />
           </div>
-          <button type="submit" disabled={status === 'loading'} className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] rounded-lg font-medium hover:bg-[var(--token-section-bg-alt)] transition-colors disabled:opacity-50">
+          <button type="submit" disabled={status === 'loading'} className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-lg font-medium hover:bg-[var(--token-section-bg-alt)] transition-colors disabled:opacity-50">
             <Send className="w-4 h-4" /> {status === 'loading' ? 'Wird gesendet…' : 'Zusagen'}
           </button>
         </form>

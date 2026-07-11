@@ -420,7 +420,7 @@ const DEMO_TENANTS: DemoTenantConfig[] = [
     industry: 'location',
     activeStyle: 'classic',
     brand: { companyName: 'Lichtwerk Loft', tagline: 'Eventlocation, Hochzeiten & Coworking', primaryColor: '#b45309' },
-    contact: { phone: '+49 89 8899 4411', email: 'events@lichtwerk-loft.de', address: 'Am Speicher 12, 85049 Ingolstadt' },
+    contact: { phone: '+49 841 8899 4411', email: 'events@lichtwerk-loft.de', address: 'Am Speicher 12, 85049 Ingolstadt' },
     socialLinks: { instagram: '#' },
     navItems: [
       { label: 'Räume', href: '/raeume' },

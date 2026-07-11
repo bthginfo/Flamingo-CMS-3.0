@@ -9,7 +9,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 // Semantic tones: a coloured accent bar + matching icon so the banner reads as
 // info/success/warning at a glance instead of a generic text block.
 const TONES: Record<string, { icon: string; color: string }> = {
-  info:    { icon: 'Info',          color: 'var(--token-accent)' },
+  info:    { icon: 'Info',          color: 'var(--token-icon)' },
   success: { icon: 'CircleCheck',   color: 'var(--token-success)' },
   warning: { icon: 'TriangleAlert', color: 'var(--token-danger)' },
   danger:  { icon: 'CircleAlert',   color: 'var(--token-danger)' },

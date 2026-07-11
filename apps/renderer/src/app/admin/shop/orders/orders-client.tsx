@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Package, Truck, CheckCircle, XCircle, Clock, CreditCard, ArrowRight, Search, ChevronDown, ChevronUp, FileText, Ban } from 'lucide-react';
 import { updateOrderStatus, updateOrderTracking, cancelOrder } from '../actions';
+import { toast } from 'sonner';
 
 type Order = {
   id: string;
@@ -67,6 +68,9 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
     try {
       await updateOrderStatus(orderId, newStatus);
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      toast.success('Bestellstatus aktualisiert');
+    } catch {
+      toast.error('Bestellstatus konnte nicht aktualisiert werden');
     } finally {
       setUpdating(null);
     }
@@ -77,6 +81,9 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
     try {
       await updateOrderTracking(orderId, trackingNumber, trackingUrl);
       setOrders(orders.map(o => o.id === orderId ? { ...o, trackingNumber, trackingUrl } : o));
+      toast.success('Sendungsverfolgung gespeichert');
+    } catch {
+      toast.error('Sendungsverfolgung konnte nicht gespeichert werden');
     } finally {
       setUpdating(null);
     }
@@ -239,8 +246,9 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
                               try {
                                 await cancelOrder(order.id);
                                 setOrders(orders.map(o => o.id === order.id ? { ...o, status: 'cancelled' } : o));
-                              } catch (e: any) {
-                                alert(e.message || 'Fehler beim Stornieren');
+                                toast.success('Bestellung storniert');
+                              } catch (error: unknown) {
+                                toast.error(error instanceof Error ? error.message : 'Fehler beim Stornieren');
                               }
                               setUpdating(null);
                             }}

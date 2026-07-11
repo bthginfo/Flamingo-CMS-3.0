@@ -22,7 +22,7 @@ const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 const { darkTokens: sharedDark } = require('./_lib/theme.cjs');
 
-const PAT = 'c29a426d1a1c833d67b0a3086479cc42db14f8e3ac0b30b323422e99cca58016';
+const PAT = process.env.PAT_RETAIL || process.env.DEMO_PAT_RETAIL || '';
 
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=82`;
@@ -939,9 +939,9 @@ const pages = [
         subline: 'Beratung, Einkauf, Showroom und Montage arbeiten eng zusammen.',
         membersHeadline: 'Ihre Ansprechpartner',
         members: [
-          { name: 'Katharina Lenz', role: 'Wohnberatung & Einkauf', image: img('1494790108377-be9c29b29330', 900), bio: 'Sortiert Räume schnell und stellt die richtigen Materialfragen.' },
-          { name: 'Jonas Reitmeier', role: 'Showroom & Lieferung', image: img('1500648767791-00dcc994a43e', 900), bio: 'Denkt Möbel vom Aufbau her und kennt jedes Treppenhausproblem.' },
-          { name: 'Mira Hofmann', role: 'Textil & Licht', image: img('1544005313-94ddf0286df2', 900), bio: 'Verbindet Stoffe, Teppiche und Leuchten zu ruhigen Stimmungen.' },
+          { name: 'Katharina Lenz', role: 'Wohnberatung & Einkauf', image: img('1573140247632-f8fd74997d5c', 900), bio: 'Sortiert Räume schnell und stellt die richtigen Materialfragen.' },
+          { name: 'Jonas Reitmeier', role: 'Showroom & Lieferung', image: img('1521119989659-a83eee488004', 900), bio: 'Denkt Möbel vom Aufbau her und kennt jedes Treppenhausproblem.' },
+          { name: 'Mira Hofmann', role: 'Textil & Licht', image: img('1554151228-14d9def656e4', 900), bio: 'Verbindet Stoffe, Teppiche und Leuchten zu ruhigen Stimmungen.' },
         ],
         storyHeadline: 'Unser Maßstab',
         storyText: 'Ein Raum ist dann gut, wenn man ihn nicht ständig erklären muss. Er fühlt sich richtig an, funktioniert im Alltag und bleibt lange schön.',

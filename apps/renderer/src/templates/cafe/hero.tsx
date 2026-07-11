@@ -56,7 +56,7 @@ export function CafeHeroSection({ data }: Props) {
             </span>
           )}
           {openingHint && (
-            <span className="block text-[var(--token-accent)] text-sm font-medium mb-4 tracking-wide">{openingHint}</span>
+            <span className="mb-4 block text-sm font-medium tracking-wide text-[var(--token-on-dark-body)]">{openingHint}</span>
           )}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight" data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && (
@@ -66,12 +66,12 @@ export function CafeHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap gap-4 mt-8">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-accent)] hover:brightness-110 text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all hover:-translate-y-0.5" data-edit-path="label">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-btn-bg)] hover:brightness-110 text-[color:var(--token-btn-text)] font-semibold rounded-full transition-all hover:-translate-y-0.5" data-edit-path="label">
                 {primaryCta.label}{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-btn-secondary-text)] font-semibold rounded-full border border-[color:var(--token-btn-secondary-border)] backdrop-blur-sm transition-all" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-7 py-3.5 font-semibold text-[color:var(--token-btn-secondary-text)] backdrop-blur-sm transition-all hover:brightness-110" data-edit-path="label">
                 {secondaryCta.label}{secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
               </a>
             )}

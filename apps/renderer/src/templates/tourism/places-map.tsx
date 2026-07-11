@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { MapPin, ArrowRight } from 'lucide-react';
 import { baseHeader, SectionHeader, asButton, asList } from './shared';
 import type { SectionProps } from './types';
+import { ConsentGate } from '@/components/consent-gate';
 
 type Place = { title?: string; text?: string; category?: string; distanceLabel?: string; address?: string; image?: string; cta?: { label?: string; href?: string } };
 
@@ -24,7 +25,11 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 function MapEmbed({ mapEmbedUrl, mapFallbackText, className }: { mapEmbedUrl: string; mapFallbackText: string; className: string }) {
   return (
     <div className={className}>
-      {mapEmbedUrl ? <iframe src={mapEmbedUrl} className="h-full min-h-[420px] w-full" loading="lazy" /> : <div className="flex h-full min-h-[420px] items-center justify-center p-8 text-center text-[color:var(--token-body)]">{mapFallbackText}</div>}
+      {mapEmbedUrl ? (
+        <ConsentGate provider="Google Maps" className="h-full min-h-[420px] w-full">
+          <iframe src={mapEmbedUrl} title="Karte der Sehenswürdigkeiten" className="h-full min-h-[420px] w-full border-0" loading="lazy" />
+        </ConsentGate>
+      ) : <div className="flex h-full min-h-[420px] items-center justify-center p-8 text-center text-[color:var(--token-body)]">{mapFallbackText}</div>}
     </div>
   );
 }
@@ -43,7 +48,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
                 <h3 className="mt-1 font-bold text-[color:var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[color:var(--token-muted)]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
                 {place.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: place.text }} />}
-                {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
+                {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
               </div>
             </motion.article>
           ))}

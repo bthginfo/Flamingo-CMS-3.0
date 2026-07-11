@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { ConsentGate } from '@/components/consent-gate';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -27,20 +28,22 @@ export function MapSection({ data }: Props) {
         <p className="mb-8 text-center text-[color:var(--token-muted)]">
           <span data-edit-path="address">{address}</span>
           {' · '}
-          <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`} target="_blank" rel="noreferrer" className="font-medium text-[color:var(--token-accent)] hover:underline">Route planen</a>
+          <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`} target="_blank" rel="noreferrer" className="font-medium text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)] hover:underline">Route planen</a>
         </p>
       )}
       <div className="overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-2 shadow-xl">
         <div className="rounded-2xl overflow-hidden">
           {embedUrl ? (
-            <iframe
-              src={embedUrl}
-              className={`w-full ${height} border-0`}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Standort"
-            />
+            <ConsentGate provider="Google Maps" className={`w-full ${height}`}>
+              <iframe
+                src={embedUrl}
+                className="h-full w-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Standort"
+              />
+            </ConsentGate>
           ) : (
             <div className={`flex w-full ${height} items-center justify-center bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)]`}>
               <div className="text-center">

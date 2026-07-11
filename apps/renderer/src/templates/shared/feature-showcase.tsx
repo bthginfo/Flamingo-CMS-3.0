@@ -95,7 +95,7 @@ export function FeatureShowcaseSection({ data }: Props) {
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
             {features.map((feat, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.3, delay: 0.3 + i * 0.06 }} className="flex items-center gap-2.5" data-edit-collection="features" data-edit-index={i}>
-                <div className="w-5 h-5 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] flex items-center justify-center flex-shrink-0 text-[color:var(--token-accent)]">
+                <div className="w-5 h-5 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] flex items-center justify-center flex-shrink-0 text-[color:var(--token-check)]">
                   {feat.icon
                     ? <DynamicIcon name={feat.icon} size={12} />
                     : <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>}
@@ -108,7 +108,7 @@ export function FeatureShowcaseSection({ data }: Props) {
 
         {ctaLabel && (
           <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: 0.5 }} className="mt-8">
-                <a href={ctaHref || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-accent)] text-[color:var(--token-btn-text)] font-medium rounded-lg hover:opacity-90 transition-opacity">
+                <a href={ctaHref || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-medium rounded-lg hover:brightness-110 transition-all">
               <span data-edit-path="ctaLabel">{ctaLabel}</span>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
             </a>

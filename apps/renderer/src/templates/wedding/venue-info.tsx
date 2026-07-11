@@ -81,7 +81,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
               {address && <div className="flex items-start gap-3"><MapPin className="w-5 h-5 text-[color:var(--token-icon)] mt-0.5 shrink-0" /><p className="text-[color:var(--token-muted)]" data-edit-path="address">{address}</p></div>}
               {contact && <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-[color:var(--token-icon)] mt-0.5 shrink-0" /><p className="text-[color:var(--token-muted)]">{contact}</p></div>}
             </div>
-            {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] rounded-full text-sm font-medium hover:bg-[var(--token-section-bg-alt)] transition-colors"><MapPin className="w-4 h-4" /> Route planen</a>}
+            {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-full text-sm font-medium hover:bg-[var(--token-section-bg-alt)] transition-colors"><MapPin className="w-4 h-4" /> Route planen</a>}
           </div>
         </div>
       </div>

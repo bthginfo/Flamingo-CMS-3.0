@@ -118,7 +118,7 @@ function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { invert
   return (
     <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>
       {footnote && <p className="text-sm">{footnote}</p>}
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading)] bg-[var(--token-badge-bg)] px-5 py-3 rounded-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[var(--token-badge-bg)] px-5 py-3 font-semibold text-[color:var(--token-badge-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

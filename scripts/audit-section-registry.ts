@@ -122,6 +122,7 @@ const INDUSTRIES = [
   'florist',
   'fitness',
   'location',
+  'bar',
   'verein',
 ];
 

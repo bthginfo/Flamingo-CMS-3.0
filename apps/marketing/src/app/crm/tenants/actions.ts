@@ -2,7 +2,7 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, pages, pageSections } from '@flamingo/db';
+import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, pages, pageSections, type Industry } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, addDomainToProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject } from '@/lib/vercel';
@@ -20,7 +20,7 @@ export async function createTenantAction(input: ProvisionInput) {
   }
 }
 
-export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: 'shared' | 'lead_shared'; industry?: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar' | 'photography' | 'realestate' | 'tattoo' | 'ecommerce' | 'retail' | 'florist' | 'location' }) {
+export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: 'shared' | 'lead_shared'; industry?: Industry }) {
   const db = getDb();
   await db.update(tenants)
     .set({ ...data, updatedAt: new Date() })

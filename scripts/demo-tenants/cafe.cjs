@@ -20,7 +20,7 @@ const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 const { darkTokens } = require('./_lib/theme.cjs');
 
-const PAT = 'eb8a830226779565248605c2fd832aeffd338a50fdc85475393fd2117aafcb93';
+const PAT = process.env.PAT_CAFE || process.env.DEMO_PAT_CAFE || '';
 
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=82`;
@@ -107,13 +107,17 @@ const greenTokens = {
   '--token-badge-border': '#BED5B8',
 };
 
-const section = (type, data, styleOverrides = lightTokens, variant = 'classic') => ({
-  id: uuid(),
-  type,
-  variant,
-  data,
-  styleOverrides,
-});
+const section = (type, dataWithAnchor, styleOverrides = lightTokens, variant = 'classic') => {
+  const { anchorId, ...data } = dataWithAnchor;
+  return {
+    id: uuid(),
+    type,
+    variant,
+    ...(anchorId ? { anchorId } : {}),
+    data,
+    styleOverrides,
+  };
+};
 
 function buildNewsItem({ slug, title, excerpt, imageId, body }) {
   return {
@@ -230,8 +234,11 @@ const tenant = {
   },
 
   seoGlobal: {
-    siteTitle: 'SPIRAL Coffee & Plants Innsbruck',
-    metaDescription: 'Specialty Coffee, Brunch, Pflanzen und kleine Events in Innsbruck-Wilten. Ein Café für echte Pausen statt endloser Screens.',
+    titleTemplate: '%s',
+    defaultTitle: 'SPIRAL Coffee & Plants | Café in Innsbruck-Wilten',
+    defaultDescription: 'Specialty Coffee, Brunch, Pflanzen und kleine Events in Innsbruck-Wilten. Ein Café für echte Pausen statt endloser Screens.',
+    defaultOgImage: img('1495474472287-4d71bcdd2085', 1200),
+    locale: 'de_AT',
     keywords: 'Café Innsbruck, Specialty Coffee Innsbruck, Brunch Innsbruck, Café Wilten, Kaffee Innsbruck',
   },
 
@@ -459,7 +466,7 @@ const tenant = {
           { title: 'Kaffee', items: [{ name: 'Espresso', description: 'Hausröstung', price: '2,90 €' }, { name: 'Cappuccino', description: 'Bio-Milch oder Hafer', price: '4,20 €' }, { name: 'Flat White', description: 'doppio, cremig', price: '4,40 €' }, { name: 'Batch Brew', description: 'wechselnde Bohne', price: '3,80 €' }] },
           { title: 'Kalt & ohne Kaffee', items: [{ name: 'Iced Matcha', description: 'Hafer, Vanille optional', price: '5,20 €' }, { name: 'Hauslimo', description: 'Zitrone, Minze, wenig Zucker', price: '4,60 €' }, { name: 'Kombucha', description: 'nach Verfügbarkeit', price: '4,90 €' }] },
         ] }, greenTokens),
-        section('foodMenu', { headline: 'Brunch & Kuchen', subline: 'Täglich klein, am Wochenende etwas ausführlicher.', items: [
+        section('foodMenu', { anchorId: 'brunch', headline: 'Brunch & Kuchen', subline: 'Täglich klein, am Wochenende etwas ausführlicher.', items: [
           { name: 'Green Shakshuka', description: 'Spinat, Kräuter, Ei, Sauerteig', price: '12,80 €', image: img('1484723091739-30a097e8f929', 1200), badge: 'Wochenende' },
           { name: 'Pilz-Toast', description: 'Sauerteig, Zitrone, Haselnuss', price: '10,90 €', image: img('1525351484163-7529414344d8', 1200), badge: 'Herzhaft' },
           { name: 'Granola Bowl', description: 'Joghurt, Kompott, Nuss, Honig', price: '8,60 €', image: img('1494390248081-4e521a5940db', 1200), badge: 'Früh' },
@@ -481,7 +488,7 @@ const tenant = {
       seo: { metaTitle: 'Events im Café | SPIRAL Coffee & Plants', metaDescription: 'Kleine Café-Events in Innsbruck: Tastings, Plant Swaps und ruhige Abende im SPIRAL.' },
       sections: [
         section('cinematicHero', { eyebrow: 'Events', headline: 'Abende, die nicht laut sein müssen.', subline: 'Nach Ladenschluss wird SPIRAL zum kleinen Raum für Kaffee, Pflanzen, Musik und Gespräche.', image: img('1517248135467-4c7edcad34c4'), overlay: 'rgba(27,16,11,0.6)', align: 'left', primaryCta: { label: 'Termine ansehen', href: '#termine' }, secondaryCta: { label: 'Eigenes Format', href: '/kontakt' } }),
-        section('cafeEventCalendar', { headline: 'Nächste Termine', subline: 'Wir halten die Liste kurz und aktuell.', events: [
+        section('cafeEventCalendar', { anchorId: 'termine', headline: 'Nächste Termine', subline: 'Wir halten die Liste kurz und aktuell.', events: [
           { title: 'Filter Tasting', date: '2026-06-18', time: '18:30', category: 'Kaffee', description: 'Drei Bohnen, drei Methoden, viele Fragen.', image: img('1497935586351-b67a49e012bf', 1200) },
           { title: 'Plant Swap', date: '2026-07-04', time: '17:00', category: 'Community', description: 'Ableger tauschen, Kaffee trinken, Tipps mitnehmen.', image: img('1485955900006-10f4d324d411', 1200) },
           { title: 'Listening Hour', date: '2026-07-23', time: '19:00', category: 'Musik', description: 'Eine Stunde Platte, keine Playlist, kleine Karte.', image: img('1516280440614-37939bbacd81', 1200) },
@@ -540,7 +547,7 @@ const tenant = {
       seo: { metaTitle: 'Journal | SPIRAL Coffee & Plants', metaDescription: 'News, Karten-Updates und kleine Einblicke aus dem SPIRAL Coffee & Plants.' },
       sections: [
         section('hero', { headline: 'Notizen aus der Bar.', subline: 'Karten-Updates, Kaffee-Gedanken und kleine Geschichten aus dem Café-Alltag.', badgeText: 'Journal', badgeIcon: 'Newspaper', bgMode: 'image', bgImage: img('1495474472287-4d71bcdd2085'), overlayColor: '#1B100B', overlayOpacity: 0.58, primaryCta: { label: 'Beiträge lesen', href: '#beitraege', icon: 'ArrowDown' }, trustItems: ['Karte', 'Kaffee', 'Events'], trustStripColor: 'rgba(35,21,15,0.62)' }, heroTokens),
-        section('collectionList', { headline: 'Aktuelle Beiträge', subline: 'Was sich bei uns bewegt.', collectionKey: 'news', columns: 3, showImage: true, showDate: true, showExcerpt: true, showSortControls: false }),
+        section('collectionList', { anchorId: 'beitraege', headline: 'Aktuelle Beiträge', subline: 'Was sich bei uns bewegt.', collectionKey: 'news', columns: 3, showImage: true, showDate: true, showExcerpt: true, showSortControls: false }),
         section('featureShowcase', { badge: 'Warum Journal?', headline: 'Weil gute Orte erklärt werden dürfen.', subline: 'Wir schreiben über kleine Entscheidungen, die Gäste oft spüren, aber nicht immer sehen.', text: '<p>Welche Bohne kommt in den Filter? Warum ist die Karte klein? Weshalb bleiben manche Tische laptopfrei? Hier sammeln wir genau solche Notizen.</p>', image: img('1516321497487-e288fb19713f'), features: ['Karten-Updates', 'Event-Rückblicke', 'Kaffee-Wissen', 'Alltag aus Wilten'], ctaLabel: 'Kontakt aufnehmen', ctaHref: '/kontakt' }, lightTokens),
         section('ctaBand', { badgeText: 'Eine Idee?', headline: 'Ein Thema für unser Journal?', subline: 'Frag uns an der Bar oder schreib eine kurze Nachricht.', ctaPrimary: { label: 'Nachricht senden', href: '/kontakt', icon: 'Send' } }, greenTokens),
       ],
@@ -574,6 +581,7 @@ const tenant = {
     {
       slug: 'impressum',
       title: 'Impressum',
+      seo: { metaTitle: 'Impressum | SPIRAL Coffee & Plants', metaDescription: 'Impressum und Anbieterinformationen von SPIRAL Coffee & Plants in Innsbruck-Wilten.' },
       sections: [
         section('textBlock', { headline: 'Impressum', text: '<p>SPIRAL Coffee & Plants GmbH<br>Andreas-Hofer-Straße 7<br>6020 Innsbruck<br>Österreich</p><p>Geschäftsführung: Mara Leitner<br>E-Mail: hello@spiral-coffee.at<br>Telefon: +43 512 908144</p><p>UID: ATU12345678<br>Firmenbuchnummer: FN 123456a<br>Firmenbuchgericht: Landesgericht Innsbruck</p><p>Mitglied der Wirtschaftskammer Tirol, Fachgruppe Gastronomie.</p>' }),
       ],
@@ -581,6 +589,7 @@ const tenant = {
     {
       slug: 'datenschutz',
       title: 'Datenschutz',
+      seo: { metaTitle: 'Datenschutz | SPIRAL Coffee & Plants', metaDescription: 'Datenschutzhinweise von SPIRAL Coffee & Plants zu Kontakt-, Reservierungs- und Eventanfragen.' },
       sections: [
         section('textBlock', { headline: 'Datenschutz', text: '<p>Wir verarbeiten personenbezogene Daten nur, wenn sie für Kontaktanfragen, Reservierungswünsche, Eventanfragen oder gesetzliche Pflichten notwendig sind.</p><p>Wenn Du uns über das Formular kontaktierst, speichern wir Deine Angaben zur Bearbeitung der Anfrage. Eine Weitergabe an Dritte erfolgt nicht ohne rechtliche Grundlage.</p><p>Du kannst Auskunft, Berichtigung oder Löschung Deiner Daten verlangen. Schreib dafür an hello@spiral-coffee.at.</p>' }),
       ],

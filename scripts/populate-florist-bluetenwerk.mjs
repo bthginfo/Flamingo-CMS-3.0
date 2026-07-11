@@ -14,7 +14,10 @@ async function api(method, path, body) {
 }
 
 const id = () => crypto.randomUUID();
-const section = (type, data, styleOverrides = {}) => ({ id: id(), type, data, styleOverrides });
+const section = (type, dataWithAnchor, styleOverrides = {}) => {
+  const { anchorId, ...data } = dataWithAnchor;
+  return { id: id(), type, ...(anchorId ? { anchorId } : {}), data, styleOverrides };
+};
 
 const img = {
   hero: 'https://images.unsplash.com/photo-1487070183336-b863922373d4?w=2200&q=85',
@@ -29,9 +32,9 @@ const img = {
   event: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=85',
   table: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1800&q=85',
   bride: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1600&q=85',
-  team1: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=1200&q=85',
-  team2: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&q=85',
-  team3: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=1200&q=85',
+  team1: 'https://images.unsplash.com/photo-1491349174775-aaafddd81942?w=1200&q=85',
+  team2: 'https://images.unsplash.com/photo-1558898479-33c0057a5d12?w=1200&q=85',
+  team3: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=1200&q=85',
   rose: 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=1400&q=85',
   peony: 'https://images.unsplash.com/photo-1525772764200-be829a350797?w=1400&q=85',
   ranunculus: 'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?w=1400&q=85',
@@ -41,7 +44,7 @@ const img = {
 const colors = {
   ink: '#241420',
   soft: '#5C3B4D',
-  muted: '#8B6E81',
+  muted: '#745568',
   cream: '#FBF6F2',
   blush: '#F2DCE3',
   card: '#FFFCF8',
@@ -51,12 +54,13 @@ const colors = {
   pink: '#F9A8D4',
   onDark: '#FFF1EE',
   onDarkSoft: '#F0CFD6',
+  darkCard: '#87344F',
 };
 
-const light = { sectionBg: colors.cream, cardBg: colors.card, cardBorder: colors.border, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.rose, accentColor: colors.rose, btnBg: colors.burgundy, btnText: colors.onDark, badgeBg: colors.blush, badgeText: colors.burgundy, badgeBorder: colors.border, borderColor: colors.border };
-const alt = { ...light, sectionBg: colors.blush, cardBg: colors.cream };
-const dark = { sectionBg: colors.burgundy, cardBg: 'rgba(255,241,238,0.10)', cardBorder: 'rgba(255,241,238,0.24)', heading: colors.onDark, body: colors.onDarkSoft, muted: '#E5BDC4', icon: colors.pink, accentColor: colors.pink, btnBg: colors.pink, btnText: colors.burgundy, badgeBg: 'rgba(255,241,238,0.14)', badgeText: colors.onDark, borderColor: 'rgba(255,241,238,0.22)', onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#E5BDC4' };
-const heroStyle = { heroHeading: colors.onDark, heroBody: colors.onDarkSoft, badgeBg: 'rgba(255,241,238,0.16)', badgeText: colors.onDark, badgeBorder: 'rgba(255,241,238,0.32)', btnBg: colors.pink, btnText: colors.burgundy, onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#E5BDC4' };
+const light = { sectionBg: colors.cream, cardBg: colors.card, cardBorder: colors.border, cardHeadingColor: colors.ink, cardBodyColor: colors.soft, cardMutedColor: colors.muted, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.rose, accentColor: colors.rose, btnBg: colors.burgundy, btnText: colors.onDark, badgeBg: colors.blush, badgeText: colors.burgundy, badgeBorder: colors.border, borderColor: colors.border };
+const alt = { ...light, sectionBg: colors.blush, cardBg: colors.cream, cardHeadingColor: colors.ink, cardBodyColor: colors.soft, cardMutedColor: colors.muted };
+const dark = { sectionBg: colors.burgundy, cardBg: colors.darkCard, cardBorder: 'rgba(255,241,238,0.24)', cardHeadingColor: colors.onDark, cardBodyColor: colors.onDarkSoft, cardMutedColor: '#E5BDC4', heading: colors.onDark, body: colors.onDarkSoft, muted: '#E5BDC4', icon: colors.pink, accentColor: colors.pink, btnBg: colors.pink, btnText: colors.burgundy, badgeBg: 'rgba(255,241,238,0.14)', badgeText: colors.onDark, borderColor: 'rgba(255,241,238,0.22)', onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#E5BDC4' };
+const heroStyle = { ...dark, heroHeading: colors.onDark, heroBody: colors.onDarkSoft, badgeBg: 'rgba(255,241,238,0.16)', badgeText: colors.onDark, badgeBorder: 'rgba(255,241,238,0.32)', btnBg: colors.pink, btnText: colors.burgundy };
 
 const phone = '+49 89 4455 2211';
 const email = 'hello@bluetenwerk-atelier.de';
@@ -150,6 +154,7 @@ function weddingShowroom() {
 
 function workshopBooking() {
   return section('workshopBooking', {
+    anchorId: 'termine',
     headline: 'Workshops, die wirklich Spaß machen.',
     subline: 'Kleine Gruppen, gutes Material, ehrliche Einführung. Du gehst mit einem fertigen Werk und neuen Skills nach Hause.',
     image: img.workshop,
@@ -178,6 +183,7 @@ function seasonalCampaign() {
 
 function materialGallery() {
   return section('floristMaterials', {
+    anchorId: 'material',
     headline: 'Mit welchen Blumen wir am liebsten arbeiten.',
     subline: 'Eine kleine Sammlung unserer Lieblinge — was bei uns gerade in der Vase steht.',
     categories: ['Sorten', 'Saison', 'Hochzeit', 'Grün'],
@@ -246,7 +252,7 @@ function membershipPlans() {
   }, light);
 }
 
-function ctaBanner(headline, subline, primaryLabel = 'Anfrage senden') {
+function ctaBanner(headline, subline, primaryLabel = 'Floristik anfragen') {
   return section('immersiveCtaBanner', {
     badge: 'Beratung anfragen',
     headline, subline,
@@ -272,15 +278,15 @@ const pages = [
     weddingShowroom(),
     seasonalCampaign(),
     section('newsPreview', { headline: 'Atelierjournal', subline: 'Notizen zu Saison, Pflege und Floristik.', linkLabel: 'Alle Beiträge lesen', linkIcon: 'ArrowRight', collectionKey: 'news' }, alt),
-    ctaBanner('Soll dein Anlass blühen?', 'Schreib uns Anlass, Datum und Stil — wir antworten persönlich mit einem konkreten Vorschlag.'),
+    ctaBanner('Soll dein Anlass blühen?', 'Schreib uns Anlass, Datum und Stil — wir antworten persönlich mit einem konkreten Vorschlag.', 'Anlass gestalten lassen'),
   ] },
   { slug: 'straeusse', title: 'Sträuße', sections: [
     section('editorialHero', { eyebrow: 'Sortiment', headline: 'Sträuße — locker, saisonal, gut gebunden.', text: '<p>Vier Kategorien, viele Varianten. Wir binden gerne nach deinen Farben und deinem Anlass.</p>', imagePrimary: img.atelier, primaryCta: { label: 'Strauß anfragen', href: '/kontakt' }, secondaryCta: { label: 'Material ansehen', href: '#material' } }),
     bouquetShowcase(),
     materialGallery(),
     deliveryTimeline(),
-    section('collectionList', { headline: 'Alle Sträuße', subline: 'Stöbere durch unsere Sortimentskarten.', collectionKey: 'straeusse', ctaLabel: 'Anfrage senden' }, alt),
-    ctaBanner('Du hast einen Farbwunsch?', 'Nenn uns die Töne, den Anlass und das Budget — wir gestalten passend.'),
+    section('collectionList', { headline: 'Alle Sträuße', subline: 'Stöbere durch unsere Sortimentskarten.', collectionKey: 'straeusse', ctaLabel: 'Straußdetails öffnen' }, alt),
+    ctaBanner('Du hast einen Farbwunsch?', 'Nenn uns die Töne, den Anlass und das Budget — wir gestalten passend.', 'Farbwunsch besprechen'),
   ] },
   { slug: 'hochzeiten', title: 'Hochzeiten', sections: [
     section('cinematicHero', { eyebrow: 'Hochzeit', headline: 'Hochzeitsfloristik aus einer Hand.', subline: 'Von der ersten Beratung bis zum letzten Tischlauf — wir begleiten euch durch jede florale Entscheidung.', image: img.bride, overlay: 'rgba(36,20,32,0.55)', align: 'left', primaryCta: { label: 'Hochzeitsanfrage', href: '/kontakt' }, facts: [ { value: '60+', label: 'Hochzeiten begleitet' }, { value: '1', label: 'Ansprechpartnerin' }, { value: '100%', label: 'Saisonmaterial' } ] }),
@@ -326,18 +332,33 @@ const pages = [
   ] },
   { slug: 'kontakt', title: 'Kontakt', sections: [
     section('editorialHero', { eyebrow: 'Kontakt', headline: 'Schreib uns, was blühen soll.', text: '<p>Anlass, Datum, Stil — je konkreter du wirst, desto besser können wir planen.</p>', imagePrimary: img.atelier, primaryCta: { label: 'Anfrage starten', href: '#form' }, secondaryCta: { label: 'WhatsApp', href: 'https://wa.me/498944552211' } }),
-    section('contact', { badgeText: 'Kontaktformular', headline: 'Beratung anfragen.', subline: 'Wir antworten meist innerhalb eines Werktags.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Anlass, Datum, Stil, Budget', submitLabel: 'Anfrage senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
+    section('contact', { anchorId: 'form', badgeText: 'Kontaktformular', headline: 'Beratung anfragen.', subline: 'Wir antworten meist innerhalb eines Werktags.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Anlass, Datum, Stil, Budget', submitLabel: 'Floristik-Anfrage absenden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
     section('map', { headline: 'Atelier am Gärtnerplatz', subline: 'Sichtbar, klein, immer mit Werkstattgeruch.', mapEmbedUrl: mapsEmbed }, alt),
     section('openingHours', { headline: 'Öffnungszeiten', days: [{ label: 'Dienstag bis Freitag', hours: '10:00-18:30' }, { label: 'Samstag', hours: '9:00-15:00' }, { label: 'Sonntag/Montag', hours: 'geschlossen' }], bookingNote: 'Hochzeiten und Workshops nach Termin.' }, light),
   ] },
   { slug: 'news', title: 'Atelierjournal', sections: [
     hero('Notizen aus dem Atelier.', 'Über Saison, Pflege, Hochzeitsplanung und das, was uns beim Binden gerade beschäftigt.', img.atelier, { eyebrow: 'Journal', primaryCta: { label: 'Alle Beiträge', href: '#beitraege' }, secondaryCta: { label: 'Beratung', href: '/kontakt' } }),
-    section('newsGrid', { headline: 'Aktuelle Beiträge', subline: 'Floristik zum Mitlesen.', collectionKey: 'news' }, light),
-    ctaBanner('Lust auf ein eigenes Floristik-Erlebnis?', 'Wir freuen uns auf deine Anfrage.'),
+    section('newsGrid', { anchorId: 'beitraege', headline: 'Aktuelle Beiträge', subline: 'Floristik zum Mitlesen.', collectionKey: 'news' }, light),
+    ctaBanner('Lust auf ein eigenes Floristik-Erlebnis?', 'Wir freuen uns auf deine Anfrage.', 'Idee mit uns teilen'),
   ] },
   { slug: 'impressum', title: 'Impressum', sections: [section('legalContent', { headline: 'Impressum', blocks: [{ title: 'Angaben gemäß § 5 TMG', content: 'Blütenwerk Atelier GmbH, Gärtnerplatz 8, 80469 München' }, { title: 'Kontakt', content: `${phone} · ${email}` }, { title: 'Geschäftsführung', content: 'Vivian Brandt' }, { title: 'Hinweis', content: 'Dies ist ein Demo-Tenant von Flamingo Media.' }] }, light)] },
   { slug: 'datenschutz', title: 'Datenschutz', sections: [section('legalContent', { headline: 'Datenschutzerklärung', blocks: [{ title: 'Verantwortlicher', content: 'Blütenwerk Atelier GmbH, Gärtnerplatz 8, 80469 München' }, { title: 'Kontaktformular', content: 'Formulardaten dienen nur der Bearbeitung deiner Anfrage.' }, { title: 'Hosting', content: 'Diese Demo läuft technisch auf Flamingo Media.' }, { title: 'Rechte', content: 'Du kannst Auskunft, Berichtigung oder Löschung verlangen.' }] }, light)] },
 ];
+
+const PAGE_SEO = {
+  '': { metaTitle: 'Floristik und saisonale Blumen in München', metaDescription: 'Blütenwerk Atelier bindet saisonale Sträuße, plant Hochzeitsfloristik und veranstaltet kleine Workshops am Gärtnerplatz in München.' },
+  straeusse: { metaTitle: 'Saisonale Sträuße aus München', metaDescription: 'Saisonale Sträuße für Geburtstag, Hochzeit, Dankeschön oder Zuhause – persönlich im Blütenwerk Atelier in München gebunden.' },
+  hochzeiten: { metaTitle: 'Hochzeitsfloristik in München', metaDescription: 'Brautstrauß, Trauungsbogen und Tischfloristik aus einer Hand: Hochzeitskonzepte vom Blütenwerk Atelier in München.' },
+  workshops: { metaTitle: 'Floristik-Workshops im Blütenwerk Atelier', metaDescription: 'Kleine Floristik-Workshops in München mit gutem Material, persönlicher Anleitung und aktuellen Terminen.' },
+  saison: { metaTitle: 'Saisonblumen und Blumen-Abo in München', metaDescription: 'Entdecken Sie aktuelle Saisonblumen, florale Specials und Blumen-Abos für Zuhause oder Büro im Blütenwerk Atelier.' },
+  'ueber-uns': { metaTitle: 'Über das Blütenwerk Atelier München', metaDescription: 'Team, Haltung und saisonale Arbeitsweise des Blütenwerk Atelier am Gärtnerplatz in München.' },
+  kontakt: { metaTitle: 'Floristik-Beratung in München anfragen', metaDescription: 'Kontakt, Öffnungszeiten und Anfrageformular des Blütenwerk Atelier für Sträuße, Hochzeiten und Workshops.' },
+  news: { metaTitle: 'Atelierjournal für Saison und Floristik', metaDescription: 'Notizen aus dem Blütenwerk Atelier zu Saisonblumen, Pflege, Hochzeitsplanung und Workshops.' },
+  impressum: { metaTitle: 'Impressum | Blütenwerk Atelier', metaDescription: 'Impressum und Anbieterinformationen der Blütenwerk Atelier GmbH in München.' },
+  datenschutz: { metaTitle: 'Datenschutz | Blütenwerk Atelier', metaDescription: 'Datenschutzhinweise des Blütenwerk Atelier zu Kontakt- und Beratungsanfragen.' },
+};
+
+for (const page of pages) page.seo = PAGE_SEO[page.slug];
 
 function detailHero(item, badgeText) {
   return section('collectionHero', { headline: item.title, subline: item.excerpt, badgeText, backgroundImage: item.image, bgImage: item.image, overlayColor: '#241420', overlayOpacity: 0.55, imageEffect: 'kenBurns', imageEffectIntensity: 'subtle' }, heroStyle);
@@ -387,8 +408,12 @@ function newsSections(item) {
 async function upsertPage(page, existingPages) {
   const existing = existingPages.find((p) => p.slug === page.slug);
   const payload = { slug: page.slug, title: page.title, sections: page.sections, visible: true, status: 'published' };
-  if (existing) return api('PUT', `/api/v1/content/pages/${existing.id}`, payload);
-  return api('POST', '/api/v1/content/pages', payload);
+  const result = existing
+    ? await api('PUT', `/api/v1/content/pages/${existing.id}`, payload)
+    : await api('POST', '/api/v1/content/pages', payload);
+  const pageId = existing?.id || result?.id || result?.pageId || result?.page?.id;
+  if (page.seo && pageId) await api('PUT', `/api/v1/content/seo/${pageId}`, page.seo);
+  return result;
 }
 
 async function ensureCollection(key, label, existingCollections) {
@@ -417,6 +442,13 @@ async function main() {
   await api('PUT', '/api/v1/content/brand', { companyName: 'Blütenwerk Atelier', tagline: 'Floristik, Hochzeiten & saisonale Blumenwelten', primaryColor: colors.burgundy, secondaryColor: colors.rose, accentColor: colors.pink, logoDisplay: 'name', headingFont: 'Playfair Display', bodyFont: 'Inter', topBarColor: colors.burgundy, footerColor: colors.burgundy });
   await api('PUT', '/api/v1/content/design', { textPrimary: colors.ink, textSecondary: colors.soft, sectionBg: colors.cream, sectionBgAlt: colors.blush, cardBg: colors.card, cardBorder: colors.border, badgeBg: colors.blush, badgeText: colors.burgundy, brand: colors.burgundy, accent: colors.rose, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.rose, btnBg: colors.burgundy, btnText: colors.onDark, eyebrow: colors.rose, statValue: colors.burgundy, quote: colors.ink, ratingStar: colors.pink, check: colors.rose, onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#E5BDC4' });
   await api('PUT', '/api/v1/content/contact', { phone, email, address, whatsappEnabled: true, whatsapp: '+498944552211', whatsappColor: colors.rose });
+  await api('PUT', '/api/v1/content/seo', {
+    titleTemplate: '%s | Blütenwerk Atelier München',
+    defaultTitle: 'Blütenwerk Atelier – Floristik in München',
+    defaultDescription: 'Saisonale Sträuße, Hochzeitsfloristik und Workshops am Gärtnerplatz in München – persönlich geplant und im Atelier gebunden.',
+    defaultOgImage: img.hero,
+    locale: 'de_DE',
+  });
   await api('PUT', '/api/v1/content/navigation', { items: navItems, cta: { label: 'Beratung anfragen', href: '/kontakt' } });
   await api('PUT', '/api/v1/content/footer', { columns: [
     { title: 'Floristik', items: [{ text: 'Sträuße', href: '/straeusse' }, { text: 'Hochzeiten', href: '/hochzeiten' }, { text: 'Workshops', href: '/workshops' }, { text: 'Saison', href: '/saison' }] },

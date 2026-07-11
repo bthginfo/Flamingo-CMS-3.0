@@ -14,7 +14,10 @@ async function api(method, path, body) {
 }
 
 const id = () => crypto.randomUUID();
-const section = (type, data, styleOverrides = {}) => ({ id: id(), type, data, styleOverrides });
+const section = (type, dataWithAnchor, styleOverrides = {}) => {
+  const { anchorId, ...data } = dataWithAnchor;
+  return { id: id(), type, ...(anchorId ? { anchorId } : {}), data, styleOverrides };
+};
 
 const img = {
   hero: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=2200&q=85',
@@ -31,7 +34,7 @@ const img = {
   setupTable: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1800&q=85',
   detail: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1400&q=85',
   team1: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1200&q=85',
-  team2: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=85',
+  team2: 'https://images.unsplash.com/photo-1576558656222-ba66febe3dec?w=1200&q=85',
   team3: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=1200&q=85',
   mood1: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1400&q=85',
   mood2: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=1400&q=85',
@@ -42,7 +45,7 @@ const img = {
 const colors = {
   ink: '#1A130A',
   soft: '#5A4630',
-  muted: '#8A7558',
+  muted: '#725E42',
   cream: '#FBF7F0',
   warm: '#F0E2CB',
   card: '#FFFCF6',
@@ -52,12 +55,13 @@ const colors = {
   gold: '#F59E0B',
   onDark: '#FBF7F0',
   onDarkSoft: '#E5D5B8',
+  darkCard: '#57301B',
 };
 
-const light = { sectionBg: colors.cream, cardBg: colors.card, cardBorder: colors.border, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.amber, accentColor: colors.amber, btnBg: colors.amberDeep, btnText: colors.onDark, badgeBg: colors.warm, badgeText: colors.amberDeep, borderColor: colors.border };
-const alt = { ...light, sectionBg: colors.warm, cardBg: colors.cream };
-const dark = { sectionBg: colors.amberDeep, cardBg: 'rgba(251,247,240,0.10)', cardBorder: 'rgba(251,247,240,0.24)', heading: colors.onDark, body: colors.onDarkSoft, muted: '#C9B89A', icon: colors.gold, accentColor: colors.gold, btnBg: colors.gold, btnText: colors.amberDeep, badgeBg: 'rgba(245,158,11,0.20)', badgeText: colors.gold, borderColor: 'rgba(251,247,240,0.22)', onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#C9B89A' };
-const heroStyle = { heroHeading: colors.onDark, heroBody: colors.onDarkSoft, badgeBg: 'rgba(245,158,11,0.22)', badgeText: colors.gold, btnBg: colors.gold, btnText: colors.amberDeep, onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#C9B89A' };
+const light = { sectionBg: colors.cream, cardBg: colors.card, cardBorder: colors.border, cardHeadingColor: colors.ink, cardBodyColor: colors.soft, cardMutedColor: colors.muted, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.amber, accentColor: colors.amber, btnBg: colors.amberDeep, btnText: colors.onDark, badgeBg: colors.warm, badgeText: colors.amberDeep, borderColor: colors.border };
+const alt = { ...light, sectionBg: colors.warm, cardBg: colors.cream, cardHeadingColor: colors.ink, cardBodyColor: colors.soft, cardMutedColor: colors.muted };
+const dark = { sectionBg: colors.amberDeep, cardBg: colors.darkCard, cardBorder: 'rgba(251,247,240,0.24)', cardHeadingColor: colors.onDark, cardBodyColor: colors.onDarkSoft, cardMutedColor: '#C9B89A', heading: colors.onDark, body: colors.onDarkSoft, muted: '#C9B89A', icon: colors.gold, accentColor: colors.gold, btnBg: colors.gold, btnText: colors.amberDeep, badgeBg: 'rgba(245,158,11,0.20)', badgeText: colors.gold, borderColor: 'rgba(251,247,240,0.22)', onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#C9B89A' };
+const heroStyle = { ...dark, heroHeading: colors.onDark, heroBody: colors.onDarkSoft, badgeBg: 'rgba(245,158,11,0.22)', badgeText: colors.gold, btnBg: colors.gold, btnText: colors.amberDeep };
 
 const phone = '+49 841 8899 4411';
 const email = 'events@lichtwerk-loft.de';
@@ -132,10 +136,11 @@ function eventTypes() {
   }, alt);
 }
 
-function locationPackages() {
+function locationPackages(headline) {
   return section('locationPackages', {
+    anchorId: 'pakete',
     badge: 'Pakete',
-    headline: 'Drei Pakete — kombinierbar.',
+    headline,
     subline: 'Für die meisten Anlässe passt eines unserer Pakete. Sonst kombinieren wir gemeinsam.',
     plans: [
       { name: 'Basic', price: 'ab 1.890 €', features: ['Loft Hauptraum', '8 Std. Mietzeit', 'Grundausstattung', 'Reinigung'], missing: ['Catering', 'Technik-Upgrade', 'Verlängerung'], ctaLabel: 'Basic anfragen', ctaHref: '/kontakt' },
@@ -200,7 +205,7 @@ function availabilityCta() {
     image: img.loft,
     overlay: 'rgba(26,19,10,0.62)',
     metrics: [{ value: '24 h', label: 'Antwortzeit' }, { value: '200+', label: 'Events pro Jahr' }, { value: '4,9/5', label: 'Bewertungen' }],
-    primaryCta: { label: 'Anfrage senden', href: '/kontakt', icon: 'Calendar' },
+    primaryCta: { label: 'Wunschtermin prüfen', href: '/kontakt', icon: 'Calendar' },
     secondaryCta: { label: 'Besichtigung vereinbaren', href: '/kontakt', icon: 'MapPin' },
   }, dark);
 }
@@ -218,7 +223,7 @@ function hostTeam() {
   }, light);
 }
 
-function ctaBanner(headline, subline, primaryLabel = 'Anfrage senden') {
+function ctaBanner(headline, subline, primaryLabel = 'Eventtermin anfragen') {
   return section('immersiveCtaBanner', {
     badge: 'Wunschtermin sichern',
     headline, subline,
@@ -242,7 +247,7 @@ const pages = [
     spaceShowcase(),
     eventTypes(),
     amenitiesGrid(),
-    locationPackages(),
+    locationPackages('Pakete für Feiern, Business und besondere Tage.'),
     section('testimonials', { headline: 'Was Veranstalter sagen.', items: [
       { quote: 'Sehr gute Vorab-Planung, Eventtag war komplett stressfrei.', author: 'Anna & Jan', meta: 'Hochzeit · 140 Gäste', rating: 5 },
       { quote: 'Perfekte Größe für unsere Strategietagung. Technik tadellos.', author: 'Markus L.', meta: 'Firmenkunde', rating: 5 },
@@ -268,7 +273,7 @@ const pages = [
       { title: '3. Besichtigung', text: 'Vor-Ort-Termin mit Setup-Empfehlungen.' },
       { title: '4. Eventtag', text: 'Wir sind vor Ort, kümmern uns um alles Technische.' },
     ] }, light),
-    locationPackages(),
+    locationPackages('Event-Pakete für planbare Budgets.'),
     section('faq', { headline: 'Häufige Fragen', items: [
       { q: 'Müssen wir euer Catering nehmen?', a: 'Nein. Wir empfehlen Partner, aber du kannst dein eigenes Catering mitbringen.' },
       { q: 'Wie lange können wir bleiben?', a: 'Standardmiete ist 8-12 Std. Verlängerung bis 02:00 möglich.' },
@@ -277,9 +282,9 @@ const pages = [
     ] }, alt),
   ] },
   { slug: 'hochzeiten', title: 'Hochzeiten', sections: [
-    section('cinematicHero', { eyebrow: 'Hochzeit', headline: 'Eure Hochzeit im Lichtwerk Loft.', subline: 'Trauung im Garten, Empfang auf der Terrasse, Dinner & Tanz im Loft — alles an einem Ort.', image: img.wedding, overlay: 'rgba(24,18,12,0.55)', align: 'left', primaryCta: { label: 'Anfrage senden', href: '/kontakt' }, facts: [ { value: '120', label: 'Gäste im Loft' }, { value: '3', label: 'Bereiche kombinierbar' }, { value: '1', label: 'fester Ansprechpartner' } ] }),
+    section('cinematicHero', { eyebrow: 'Hochzeit', headline: 'Eure Hochzeit im Lichtwerk Loft.', subline: 'Trauung im Garten, Empfang auf der Terrasse, Dinner & Tanz im Loft — alles an einem Ort.', image: img.wedding, overlay: 'rgba(24,18,12,0.55)', align: 'left', primaryCta: { label: 'Hochzeitstermin prüfen', href: '/kontakt' }, facts: [ { value: '120', label: 'Gäste im Loft' }, { value: '3', label: 'Bereiche kombinierbar' }, { value: '1', label: 'fester Ansprechpartner' } ] }),
     section('textImage', { badgeText: 'Komplettlösung', headline: 'Eine Location, alle Momente.', subline: 'Standesamt, Trauung, Empfang, Dinner und Party.', text: '<p>Wir bieten alles, was du für deine Hochzeit brauchst, an einem Ort. Standesamtliche und freie Trauungen in Garten oder Bibliothek, Empfang auf der Dachterrasse, Dinner & Tanz im Loft.</p><p>Du musst nicht zwischen Locations wechseln. Deine Gäste auch nicht. Das macht den Tag deutlich entspannter.</p>', image: img.wedding, primaryCta: { label: 'Wedding-Paket ansehen', href: '#pakete' } }, light),
-    locationPackages(),
+    locationPackages('Hochzeitspakete vom Empfang bis zur Party.'),
     galleryMoodboard(),
     section('testimonials', { headline: 'Was Brautpaare sagen.', items: [
       { quote: 'Die Tag-vor-Probe war Gold wert. Eventtag war komplett ruhig.', author: 'Anna & Felix', meta: 'Mai 2025', rating: 5 },
@@ -290,7 +295,7 @@ const pages = [
   ] },
   { slug: 'coworking', title: 'Coworking', sections: [
     section('editorialHero', { eyebrow: 'Coworking', headline: 'Coworking & Team-Tage.', text: '<p>Tagsüber Coworking-Plätze, abends Eventlocation — beides am selben Speicher.</p>', imagePrimary: img.coworking, primaryCta: { label: 'Tagesticket sichern', href: '/kontakt' }, secondaryCta: { label: 'Team-Tag planen', href: '#team' } }),
-    section('servicesGrid', { headline: 'Was du bekommst', manualCards: [
+    section('servicesGrid', { anchorId: 'team', headline: 'Was du bekommst', manualCards: [
       { icon: 'Briefcase', title: '16 Plätze', text: 'Schreibtische mit Bürostuhl, höhenverstellbar.' },
       { icon: 'Wifi', title: 'Glasfaser', text: 'Eigenes Netz, redundante Anbindung.' },
       { icon: 'Phone', title: 'Telefonkabinen', text: '3 schalldichte Kabinen für Calls.' },
@@ -318,18 +323,34 @@ const pages = [
   ] },
   { slug: 'kontakt', title: 'Kontakt', sections: [
     section('editorialHero', { eyebrow: 'Kontakt', headline: 'Schreib uns — wir antworten persönlich.', text: '<p>Per Formular, WhatsApp oder Telefon. Innerhalb 24 Std. mit konkretem Vorschlag.</p>', imagePrimary: img.ballroom, primaryCta: { label: 'Formular nutzen', href: '#form' }, secondaryCta: { label: 'Anrufen', href: `tel:${phone.replace(/\s/g, '')}` } }),
-    section('contact', { badgeText: 'Anfrage', headline: 'Verfügbarkeit prüfen.', subline: 'Datum, Anlass und ungefähre Gästezahl — mehr brauchen wir für den ersten Vorschlag nicht.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Datum, Anlass, Gästezahl', submitLabel: 'Anfrage senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
+    section('contact', { anchorId: 'form', badgeText: 'Anfrage', headline: 'Verfügbarkeit prüfen.', subline: 'Datum, Anlass und ungefähre Gästezahl — mehr brauchen wir für den ersten Vorschlag nicht.', namePlaceholder: 'Name', emailPlaceholder: 'E-Mail', phonePlaceholder: 'Telefon (optional)', messagePlaceholder: 'Datum, Anlass, Gästezahl', submitLabel: 'Verfügbarkeit anfragen', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Adresse', value: address }] }, light),
     section('locationAccess', { headline: 'Anfahrt & Umgebung', subline: 'Direkt am Donauufer, 5 Min. von der A9.', mapEmbedUrl: mapsEmbed, infoCards: [{ icon: 'Car', label: 'Auto', value: '40 Stellplätze direkt am Haus' }, { icon: 'Train', label: 'Bahn', value: 'Hbf Ingolstadt + 12 Min. Taxi' }, { icon: 'Plane', label: 'Flughafen', value: 'München Airport · 70 km' }] }, alt),
     section('openingHours', { headline: 'Bürozeiten', days: [{ label: 'Mo - Fr', hours: '09:00-18:00', note: 'für Anfragen & Beratung' }, { label: 'Events', hours: 'nach Vereinbarung' }] }, light),
   ] },
   { slug: 'news', title: 'Lichtwerk Magazin', sections: [
     hero('Notizen aus dem Speicher.', 'Beobachtungen, Lektionen und Geschichten aus unseren Events.', img.loft, { eyebrow: 'Magazin', primaryCta: { label: 'Alle Beiträge', href: '#beitraege' }, secondaryCta: { label: 'Kontakt', href: '/kontakt' } }),
-    section('newsGrid', { headline: 'Aktuelle Beiträge', subline: 'Aus 200+ Events pro Jahr.', collectionKey: 'news' }, light),
-    ctaBanner('Plant ihr ein eigenes Event?', 'Wir freuen uns auf eure Anfrage.'),
+    section('newsGrid', { anchorId: 'beitraege', headline: 'Aktuelle Beiträge', subline: 'Aus 200+ Events pro Jahr.', collectionKey: 'news' }, light),
+    ctaBanner('Plant ihr ein eigenes Event?', 'Wir freuen uns auf eure Anfrage.', 'Eventidee besprechen'),
   ] },
   { slug: 'impressum', title: 'Impressum', sections: [section('legalContent', { headline: 'Impressum', blocks: [{ title: 'Angaben gemäß § 5 TMG', content: 'Lichtwerk Loft GmbH, Am Speicher 12, 85049 Ingolstadt' }, { title: 'Kontakt', content: `${phone} · ${email}` }, { title: 'Geschäftsführung', content: 'Clara Holzmann, Daniel Wagner' }, { title: 'Hinweis', content: 'Dies ist ein Demo-Tenant von Flamingo Media.' }] }, light)] },
   { slug: 'datenschutz', title: 'Datenschutz', sections: [section('legalContent', { headline: 'Datenschutzerklärung', blocks: [{ title: 'Verantwortlicher', content: 'Lichtwerk Loft GmbH, Am Speicher 12, 85049 Ingolstadt' }, { title: 'Kontaktformular', content: 'Formulardaten dienen ausschließlich der Bearbeitung deiner Anfrage.' }, { title: 'Hosting', content: 'Diese Demo läuft technisch auf Flamingo Media.' }, { title: 'Rechte', content: 'Du kannst Auskunft, Berichtigung oder Löschung verlangen.' }] }, light)] },
 ];
+
+const PAGE_SEO = {
+  '': { metaTitle: 'Eventlocation für Hochzeiten und Tagungen in Ingolstadt', metaDescription: 'Lichtwerk Loft ist eine wandelbare Eventlocation in Ingolstadt für Hochzeiten, Firmenevents, Tagungen und private Feiern.' },
+  raeume: { metaTitle: 'Räume und Kapazitäten im Lichtwerk Loft', metaDescription: 'Loft, Bibliothek, Dachterrasse, Workshop-Studio und Innenhof mit Kapazitäten und Ausstattung für Events in Ingolstadt.' },
+  events: { metaTitle: 'Firmenevents und private Feiern in Ingolstadt', metaDescription: 'Eventformate, Pakete, Technik und Planung für Firmenfeiern, Tagungen und private Anlässe im Lichtwerk Loft.' },
+  hochzeiten: { metaTitle: 'Hochzeitslocation in Ingolstadt', metaDescription: 'Trauung, Empfang, Dinner und Party an einem Ort: Hochzeiten im Lichtwerk Loft mit Garten, Terrasse und festem Ansprechpartner.' },
+  coworking: { metaTitle: 'Coworking und Team-Tage in Ingolstadt', metaDescription: 'Flexible Coworking-Plätze, Teamraum und komplette Team-Tage mit Technik und optionalem Catering im Lichtwerk Loft.' },
+  galerie: { metaTitle: 'Galerie des Lichtwerk Loft', metaDescription: 'Kuratierte Eindrücke von Hochzeiten, Dinnern, Workshops und Firmenevents im Lichtwerk Loft in Ingolstadt.' },
+  'ueber-uns': { metaTitle: 'Über das Lichtwerk Loft Ingolstadt', metaDescription: 'Geschichte, Team und Haltung der Eventlocation Lichtwerk Loft im ehemaligen Speicher 12 in Ingolstadt.' },
+  kontakt: { metaTitle: 'Verfügbarkeit im Lichtwerk Loft anfragen', metaDescription: 'Kontakt, Anfahrt und Anfrageformular für Besichtigungen und Veranstaltungen im Lichtwerk Loft Ingolstadt.' },
+  news: { metaTitle: 'Lichtwerk Magazin für bessere Events', metaDescription: 'Erfahrungen, Planungstipps und Geschichten aus Hochzeiten, Tagungen und mehr als 200 Veranstaltungen im Lichtwerk Loft.' },
+  impressum: { metaTitle: 'Impressum | Lichtwerk Loft', metaDescription: 'Impressum und Anbieterinformationen der Lichtwerk Loft GmbH in Ingolstadt.' },
+  datenschutz: { metaTitle: 'Datenschutz | Lichtwerk Loft', metaDescription: 'Datenschutzhinweise des Lichtwerk Loft zu Eventanfragen und technischer Bereitstellung.' },
+};
+
+for (const page of pages) page.seo = PAGE_SEO[page.slug];
 
 function detailHero(item, badgeText) {
   return section('collectionHero', { headline: item.title, subline: item.excerpt, badgeText, backgroundImage: item.image, bgImage: item.image, overlayColor: '#1A130A', overlayOpacity: 0.6, imageEffect: 'kenBurns', imageEffectIntensity: 'subtle' }, heroStyle);
@@ -367,8 +388,12 @@ function newsSections(item) {
 async function upsertPage(page, existingPages) {
   const existing = existingPages.find((p) => p.slug === page.slug);
   const payload = { slug: page.slug, title: page.title, sections: page.sections, visible: true, status: 'published' };
-  if (existing) return api('PUT', `/api/v1/content/pages/${existing.id}`, payload);
-  return api('POST', '/api/v1/content/pages', payload);
+  const result = existing
+    ? await api('PUT', `/api/v1/content/pages/${existing.id}`, payload)
+    : await api('POST', '/api/v1/content/pages', payload);
+  const pageId = existing?.id || result?.id || result?.pageId || result?.page?.id;
+  if (page.seo && pageId) await api('PUT', `/api/v1/content/seo/${pageId}`, page.seo);
+  return result;
 }
 
 async function ensureCollection(key, label, existingCollections) {
@@ -397,6 +422,13 @@ async function main() {
   await api('PUT', '/api/v1/content/brand', { companyName: 'Lichtwerk Loft', tagline: 'Eventlocation, Hochzeiten & Coworking', primaryColor: colors.amber, secondaryColor: colors.amberDeep, accentColor: colors.gold, logoDisplay: 'name', headingFont: 'Playfair Display', bodyFont: 'Inter', topBarColor: colors.amberDeep, footerColor: colors.amberDeep });
   await api('PUT', '/api/v1/content/design', { textPrimary: colors.ink, textSecondary: colors.soft, sectionBg: colors.cream, sectionBgAlt: colors.warm, cardBg: colors.card, cardBorder: colors.border, badgeBg: colors.warm, badgeText: colors.amberDeep, brand: colors.amberDeep, accent: colors.amber, heading: colors.ink, body: colors.soft, muted: colors.muted, icon: colors.amber, btnBg: colors.amberDeep, btnText: colors.onDark, eyebrow: colors.amber, statValue: colors.amberDeep, quote: colors.ink, ratingStar: colors.gold, check: colors.amber, onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#C9B89A' });
   await api('PUT', '/api/v1/content/contact', { phone, email, address, whatsappEnabled: false });
+  await api('PUT', '/api/v1/content/seo', {
+    titleTemplate: '%s | Lichtwerk Loft Ingolstadt',
+    defaultTitle: 'Lichtwerk Loft – Eventlocation in Ingolstadt',
+    defaultDescription: 'Eventlocation in Ingolstadt für Hochzeiten, Tagungen, Coworking und private Feiern – mit flexiblen Räumen und persönlicher Planung.',
+    defaultOgImage: img.hero,
+    locale: 'de_DE',
+  });
   await api('PUT', '/api/v1/content/navigation', { items: navItems, cta: { label: 'Verfügbarkeit prüfen', href: '/kontakt' } });
   await api('PUT', '/api/v1/content/footer', { columns: [
     { title: 'Location', items: [{ text: 'Räume', href: '/raeume' }, { text: 'Events', href: '/events' }, { text: 'Hochzeiten', href: '/hochzeiten' }, { text: 'Coworking', href: '/coworking' }] },

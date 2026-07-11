@@ -13,7 +13,7 @@ const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 const { darkTokens } = require('./_lib/theme.cjs');
 
-const PAT = 'a8a4079b1415c23ee6e7ec484438a8a780452b6a6a86fc0acf3025c8d24c3904';
+const PAT = process.env.PAT_WEDDING || process.env.DEMO_PAT_WEDDING || '';
 
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=82`;
@@ -139,14 +139,14 @@ function collectionHero(headline, subline, image, category = 'Mara & Elias') {
   };
 }
 
-function cta(headline = 'Sagt uns bitte, ob Ihr dabei seid.', subline = 'Die Rückmeldung hilft uns bei Sitzplan, Menü und allem, was den Tag entspannt macht.') {
+function cta(headline = 'Sagt uns bitte, ob Ihr dabei seid.', subline = 'Die Rückmeldung hilft uns bei Sitzplan, Menü und allem, was den Tag entspannt macht.', primaryLabel = 'Rückmeldung senden') {
   return {
     type: 'ctaBand',
     data: {
       badgeText: 'Rückmeldung',
       headline,
       subline,
-      ctaPrimary: { label: 'Zur RSVP', href: '/rsvp', icon: 'Send' },
+      ctaPrimary: { label: primaryLabel, href: '/rsvp', icon: 'Send' },
     },
     styleOverrides: softRose,
   };
@@ -161,14 +161,14 @@ function edHero(eyebrow, headline, text, image, opts = {}) {
       text: `<p>${text}</p>`,
       imagePrimary: image,
       ...(opts.imageSecondary ? { imageSecondary: opts.imageSecondary } : {}),
-      primaryCta: opts.primaryCta || { label: 'Zur RSVP', href: '/rsvp' },
+      primaryCta: opts.primaryCta || { label: 'Rückmeldung öffnen', href: '/rsvp' },
       ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
       ...(opts.hint ? { hint: opts.hint } : {}),
     },
   };
 }
 
-function cineHero(eyebrow, headline, subline, image, facts) {
+function cineHero(eyebrow, headline, subline, image, facts, primaryLabel = 'Teilnahme rückmelden') {
   return {
     type: 'cinematicHero',
     data: {
@@ -178,13 +178,13 @@ function cineHero(eyebrow, headline, subline, image, facts) {
       image,
       overlay: 'rgba(42,23,20,0.56)',
       align: 'left',
-      primaryCta: { label: 'Zur RSVP', href: '/rsvp' },
+      primaryCta: { label: primaryLabel, href: '/rsvp' },
       ...(facts ? { facts } : {}),
     },
   };
 }
 
-function imCta(headline, subline, image) {
+function imCta(headline, subline, image, primaryLabel = 'Antwort ergänzen') {
   return {
     type: 'immersiveCtaBanner',
     data: {
@@ -193,17 +193,17 @@ function imCta(headline, subline, image) {
       subline,
       image,
       overlay: 'rgba(42,23,20,0.6)',
-      primaryCta: { label: 'Jetzt zusagen', href: '/rsvp' },
+      primaryCta: { label: primaryLabel, href: '/rsvp' },
       secondaryCta: { label: 'Fragen? Schreibt uns', href: '/kontakt' },
     },
   };
 }
 
-function faqSection() {
+function faqSection(headline = 'Fragen rund um unser Fest') {
   return {
     type: 'faq',
     data: {
-      headline: 'Häufige Fragen unserer Gäste',
+      headline,
       items: [
         { question: 'Kann ich eine Begleitung mitbringen?', answer: 'Bitte schaut in Eure Einladung. Wenn dort eine Begleitung genannt ist, plant sie gerne mit ein. Wenn etwas unklar ist, schreibt uns kurz.' },
         { question: 'Gibt es vegetarisches oder veganes Essen?', answer: 'Ja. In der RSVP könnt Ihr vegetarisch, vegan, Allergien und Unverträglichkeiten angeben. Wir geben das gesammelt an die Küche weiter.' },
@@ -235,12 +235,12 @@ function updateItem({ slug, title, excerpt, image, body }) {
             image,
             imageAlt: title,
             layout: 'image-right',
-            primaryCta: { label: 'Zur RSVP', href: '/rsvp', icon: 'Send' },
+            primaryCta: { label: `${title}: RSVP öffnen`, href: '/rsvp', icon: 'Send' },
           },
           styleOverrides: lightSection,
         },
-        faqSection(),
-        { id: uuid(), ...cta('Noch eine Frage?', 'Wenn etwas für Euch offen ist, schreibt uns. Wir halten die Seite aktuell.') },
+        faqSection(`Fragen zu „${title}“`),
+        { id: uuid(), ...cta('Noch eine Frage?', 'Wenn etwas für Euch offen ist, schreibt uns. Wir halten die Seite aktuell.', 'Nachricht zum Update senden') },
       ],
     },
   };
@@ -430,7 +430,7 @@ const pages = [
         },
         styleOverrides: softRose,
       },
-      { id: uuid(), ...cta() },
+      { id: uuid(), ...cta('Sagt uns bitte, ob Ihr dabei seid.', 'Die Rückmeldung hilft uns bei Sitzplan, Menü und allem, was den Tag entspannt macht.', 'Rückmeldung senden') },
     ],
   },
   {
@@ -450,7 +450,7 @@ const pages = [
           badgeText: 'Orientierung',
           headline: 'Was Ihr wo findet.',
           subline: 'Kurze Wege durch die Website, so wie später auch durch die Location.',
-          ctaLabel: 'Zur RSVP',
+          ctaLabel: 'Gästeangaben eintragen',
           ctaHref: '/rsvp',
           manualCards: [
             { title: 'Hochzeitstag', text: 'Zeiten, Stationen, Menü und Shuttle am Abend.', icon: 'CalendarHeart', href: '/hochzeitstag' },
@@ -494,8 +494,8 @@ const pages = [
         },
         styleOverrides: sageSection,
       },
-      faqSection(),
-      { id: uuid(), ...imCta('Alles gefunden?', 'Wenn nicht, schreibt uns kurz. Wir ergänzen lieber eine Info, als dass Ihr suchen müsst.', flowersImage) },
+      faqSection('Fragen zur Vorbereitung'),
+      { id: uuid(), ...imCta('Alles gefunden?', 'Wenn nicht, schreibt uns kurz. Wir ergänzen lieber eine Info, als dass Ihr suchen müsst.', flowersImage, 'Rückmeldung vervollständigen') },
     ],
   },
   {
@@ -507,7 +507,7 @@ const pages = [
       ogImage: ringsImage,
     },
     sections: [
-      { id: uuid(), ...edHero('Über uns', 'Warum dieser Tag zu uns passen soll.', 'Wir mögen klare Worte, gutes Essen und Menschen, die bleiben, wenn es nicht perfekt läuft.', ringsImage, { secondaryCta: { label: 'Unsere Geschichte', href: '/geschichte' } }) },
+      { id: uuid(), ...edHero('Über uns', 'Warum dieser Tag zu uns passen soll.', 'Wir mögen klare Worte, gutes Essen und Menschen, die bleiben, wenn es nicht perfekt läuft.', ringsImage, { primaryCta: { label: 'Unsere Zusage senden', href: '/rsvp' }, secondaryCta: { label: 'Unsere Geschichte', href: '/unsere-geschichte' } }) },
       {
         id: uuid(),
         type: 'textImage',
@@ -534,10 +534,10 @@ const pages = [
           headline: 'Diese Menschen helfen am Tag selbst.',
           subline: 'Sie wissen, wo was liegt und wen man fragt, wenn wir gerade nicht erreichbar sind.',
           members: [
-            { name: 'Lena', role: 'Trauzeugin', relationship: 'Maras Schwester', text: 'Sitzplan, Kinder, Essen und ruhige Ansagen.', image: img('1494790108377-be9c29b29330', 900) },
-            { name: 'Jonas', role: 'Trauzeuge', relationship: 'Elias bester Freund', text: 'Shuttle, Technik und alles mit Kabeln.', image: img('1500648767791-00dcc994a43e', 900) },
-            { name: 'Nora', role: 'Gästekoordination', relationship: 'Freundin', text: 'Hilft bei Fragen zwischen Trauung und Dinner.', image: img('1544005313-94ddf0286df2', 900) },
-            { name: 'Paul', role: 'Musik & Heimweg', relationship: 'Cousin', text: 'Findet Playlists, Taxinummern und verlorene Jacken.', image: img('1506794778202-cad84cf45f1d', 900) },
+            { name: 'Lena', role: 'Trauzeugin', relationship: 'Maras Schwester', text: 'Sitzplan, Kinder, Essen und ruhige Ansagen.', image: img('1524250502761-1ac6f2e30d43', 900) },
+            { name: 'Jonas', role: 'Trauzeuge', relationship: 'Elias bester Freund', text: 'Shuttle, Technik und alles mit Kabeln.', image: img('1583864697784-a0efc8379f70', 900) },
+            { name: 'Nora', role: 'Gästekoordination', relationship: 'Freundin', text: 'Hilft bei Fragen zwischen Trauung und Dinner.', image: img('1529626455594-4ff0802cfb7e', 900) },
+            { name: 'Paul', role: 'Musik & Heimweg', relationship: 'Cousin', text: 'Findet Playlists, Taxinummern und verlorene Jacken.', image: img('1599566150163-29194dcaad36', 900) },
           ],
         },
         styleOverrides: softRose,
@@ -557,8 +557,8 @@ const pages = [
         },
         styleOverrides: sageSection,
       },
-      faqSection(),
-      { id: uuid(), ...cta('Ihr seid der Grund für diese Seite.', 'Danke, dass Ihr mit uns feiert oder an uns denkt.') },
+      faqSection('Fragen zu uns und unserem Fest'),
+      { id: uuid(), ...cta('Ihr seid der Grund für diese Seite.', 'Danke, dass Ihr mit uns feiert oder an uns denkt.', 'Beim Fest dabei sein') },
     ],
   },
   {
@@ -570,7 +570,7 @@ const pages = [
       ogImage: gardenImage,
     },
     sections: [
-      { id: uuid(), ...cineHero('12. September 2026', 'Unser Hochzeitstag', 'Ein Ablauf mit klaren Zeiten, aber ohne steifes Programm.', gardenImage, [ { value: '15:00', label: 'Freie Trauung' }, { value: '18:30', label: 'Dinner' }, { value: '21:30', label: 'Party' } ]) },
+      { id: uuid(), ...cineHero('12. September 2026', 'Unser Hochzeitstag', 'Ein Ablauf mit klaren Zeiten, aber ohne steifes Programm.', gardenImage, [ { value: '15:00', label: 'Freie Trauung' }, { value: '18:30', label: 'Dinner' }, { value: '21:30', label: 'Party' } ], 'Teilnahme bestätigen') },
       {
         id: uuid(),
         type: 'eventSchedule',
@@ -618,8 +618,8 @@ const pages = [
         },
         styleOverrides: lightSection,
       },
-      faqSection(),
-      { id: uuid(), ...imCta('Fehlt Euch eine Info zum Tag?', 'Schreibt uns lieber einmal zu früh als am Samstag mit Stress.', gardenImage) },
+      faqSection('Fragen zum Hochzeitstag'),
+      { id: uuid(), ...imCta('Fehlt Euch eine Info zum Tag?', 'Schreibt uns lieber einmal zu früh als am Samstag mit Stress.', gardenImage, 'Info prüfen & antworten') },
     ],
   },
   {
@@ -631,7 +631,7 @@ const pages = [
       ogImage: venueImage,
     },
     sections: [
-      { id: uuid(), ...cineHero('Location', 'Ein Ort für alles.', 'Trauung, Dinner und Party bleiben am Gut Sonnenhof. Das macht den Tag ruhiger.', venueImage) },
+      { id: uuid(), ...cineHero('Location', 'Ein Ort für alles.', 'Trauung, Dinner und Party bleiben am Gut Sonnenhof. Das macht den Tag ruhiger.', venueImage, undefined, 'Location & RSVP verbinden') },
       {
         id: uuid(),
         type: 'venueInfo',
@@ -690,7 +690,7 @@ const pages = [
         },
         styleOverrides: lightSection,
       },
-      { id: uuid(), ...cta('Ihr wollt wissen, wo Ihr hinmüsst?', 'Auf der Anreise-Seite findet Ihr Auto, Bahn, Hotels und Shuttle gesammelt.') },
+      { id: uuid(), ...cta('Ihr wollt wissen, wo Ihr hinmüsst?', 'Auf der Anreise-Seite findet Ihr Auto, Bahn, Hotels und Shuttle gesammelt.', 'Teilnahme eintragen') },
     ],
   },
   {
@@ -706,6 +706,7 @@ const pages = [
       {
         id: uuid(),
         type: 'travelInfo',
+        anchorId: 'hotels',
         data: {
           headline: 'So kommt Ihr entspannt zum Sonnenhof.',
           subline: 'Bitte plant am Nachmittag etwas Puffer ein. Am See kann der Verkehr überraschend kreativ werden.',
@@ -756,8 +757,8 @@ const pages = [
         },
         styleOverrides: lightSection,
       },
-      faqSection(),
-      { id: uuid(), ...imCta('Braucht Ihr Hilfe bei der Anreise?', 'Schreibt uns kurz, wenn Ihr unsicher seid. Wir verbinden Euch auch gern mit anderen Gästen.', travelImage) },
+      faqSection('Fragen zu Anreise, Shuttle und Hotels'),
+      { id: uuid(), ...imCta('Braucht Ihr Hilfe bei der Anreise?', 'Schreibt uns kurz, wenn Ihr unsicher seid. Wir verbinden Euch auch gern mit anderen Gästen.', travelImage, 'Hotel & Teilnahme abstimmen') },
     ],
   },
   {
@@ -773,6 +774,7 @@ const pages = [
       {
         id: uuid(),
         type: 'rsvp',
+        anchorId: 'rsvp',
         data: {
           headline: 'Rückmeldung bis 30. Juni',
           subline: 'Tragt bitte auch Begleitung, Kinder, Ernährung und Allergien ein. So können wir Sitzplan und Menü sauber vorbereiten.',
@@ -814,8 +816,8 @@ const pages = [
         },
         styleOverrides: sageSection,
       },
-      faqSection(),
-      { id: uuid(), ...cta('Noch nicht sicher?', 'Wenn Ihr erst später verbindlich antworten könnt, schreibt uns bitte kurz.') },
+      faqSection('Fragen zur Rückmeldung'),
+      { id: uuid(), ...cta('Noch nicht sicher?', 'Wenn Ihr erst später verbindlich antworten könnt, schreibt uns bitte kurz.', 'Rückmeldung aktualisieren') },
     ],
   },
   {
@@ -827,7 +829,7 @@ const pages = [
       ogImage: flowersImage,
     },
     sections: [
-      { id: uuid(), ...edHero('Dresscode', 'Sommerlich festlich, aber bitte tragbar.', 'Wir wünschen uns warme Farben, Bewegung und Outfits, in denen Ihr Euch wohlfühlt.', flowersImage) },
+      { id: uuid(), ...edHero('Dresscode', 'Sommerlich festlich, aber bitte tragbar.', 'Wir wünschen uns warme Farben, Bewegung und Outfits, in denen Ihr Euch wohlfühlt.', flowersImage, { primaryCta: { label: 'Outfit & Teilnahme klären', href: '/rsvp' } }) },
       {
         id: uuid(),
         type: 'dresscode',
@@ -872,8 +874,8 @@ const pages = [
         },
         styleOverrides: lightSection,
       },
-      faqSection(),
-      { id: uuid(), ...cta('Unsicher beim Outfit?', 'Schickt uns ein Foto oder fragt einfach. Wir sind da entspannt.') },
+      faqSection('Fragen zum Dresscode'),
+      { id: uuid(), ...cta('Unsicher beim Outfit?', 'Schickt uns ein Foto oder fragt einfach. Wir sind da entspannt.', 'Dresscode-Frage & RSVP') },
     ],
   },
   {
@@ -911,7 +913,7 @@ const pages = [
           subline: 'Nach dem Fest wollen wir ein paar Tage raus: Meer, gutes Essen, lange Spaziergänge und keine To-do-Liste.',
           image: img('1507525428034-b723cf961d3e'),
           features: ['kein Geschenketisch', 'kein Muss', 'freie Beiträge', 'Danke von Herzen'],
-          ctaLabel: 'Zur RSVP',
+          ctaLabel: 'Teilnahme rückmelden',
           ctaHref: '/rsvp',
           reversed: true,
         },
@@ -932,8 +934,8 @@ const pages = [
         },
         styleOverrides: sageSection,
       },
-      faqSection(),
-      { id: uuid(), ...imCta('Ihr bringt Euch selbst mit.', 'Alles Weitere ist schön, aber nicht nötig.', ringsImage) },
+      faqSection('Fragen zu Geschenken'),
+      { id: uuid(), ...imCta('Ihr bringt Euch selbst mit.', 'Alles Weitere ist schön, aber nicht nötig.', ringsImage, 'Dabei sein bestätigen') },
     ],
   },
   {
@@ -945,7 +947,7 @@ const pages = [
       ogImage: ringsImage,
     },
     sections: [
-      { id: uuid(), ...edHero('Unsere Geschichte', 'Unsere Geschichte ist eher leise gewachsen.', 'Kein großer Knall, sondern viele kleine Entscheidungen füreinander.', ringsImage) },
+      { id: uuid(), ...edHero('Unsere Geschichte', 'Unsere Geschichte ist eher leise gewachsen.', 'Kein großer Knall, sondern viele kleine Entscheidungen füreinander.', ringsImage, { primaryCta: { label: 'Eure Antwort senden', href: '/rsvp' } }) },
       {
         id: uuid(),
         type: 'coupleStory',
@@ -985,10 +987,10 @@ const pages = [
           headline: 'Menschen, die uns durch den Tag tragen.',
           subline: 'Wenn Ihr nicht wisst, wen Ihr fragen sollt: diese vier wissen fast alles.',
           members: [
-            { name: 'Lena', role: 'Trauzeugin', relationship: 'Maras Schwester', text: 'Kennt jeden Plan, auch die, die noch nicht öffentlich sind.', image: img('1494790108377-be9c29b29330', 900) },
-            { name: 'Jonas', role: 'Trauzeuge', relationship: 'Elias bester Freund', text: 'Zuständig für Ruhe, Technik und späte Taxifragen.', image: img('1500648767791-00dcc994a43e', 900) },
-            { name: 'Nora', role: 'Gästekoordination', relationship: 'Freundin aus München', text: 'Hilft bei Kindern, Sitzplan und spontanen Fragen.', image: img('1544005313-94ddf0286df2', 900) },
-            { name: 'Paul', role: 'Shuttle & Musik', relationship: 'Cousin', text: 'Findet Kabel, Fahrer und wahrscheinlich auch verlorene Jacken.', image: img('1506794778202-cad84cf45f1d', 900) },
+            { name: 'Lena', role: 'Trauzeugin', relationship: 'Maras Schwester', text: 'Kennt jeden Plan, auch die, die noch nicht öffentlich sind.', image: img('1524250502761-1ac6f2e30d43', 900) },
+            { name: 'Jonas', role: 'Trauzeuge', relationship: 'Elias bester Freund', text: 'Zuständig für Ruhe, Technik und späte Taxifragen.', image: img('1583864697784-a0efc8379f70', 900) },
+            { name: 'Nora', role: 'Gästekoordination', relationship: 'Freundin aus München', text: 'Hilft bei Kindern, Sitzplan und spontanen Fragen.', image: img('1529626455594-4ff0802cfb7e', 900) },
+            { name: 'Paul', role: 'Shuttle & Musik', relationship: 'Cousin', text: 'Findet Kabel, Fahrer und wahrscheinlich auch verlorene Jacken.', image: img('1599566150163-29194dcaad36', 900) },
           ],
         },
         styleOverrides: lightSection,
@@ -1009,7 +1011,7 @@ const pages = [
         },
         styleOverrides: sageSection,
       },
-      { id: uuid(), ...imCta('Jetzt seid Ihr Teil davon.', 'Danke, dass Ihr diesen Tag mit uns teilt.', ringsImage) },
+      { id: uuid(), ...imCta('Jetzt seid Ihr Teil davon.', 'Danke, dass Ihr diesen Tag mit uns teilt.', ringsImage, 'Teilnahme teilen') },
     ],
   },
   {
@@ -1021,7 +1023,7 @@ const pages = [
       ogImage: heroImage,
     },
     sections: [
-      { id: uuid(), ...cineHero('Galerie', 'Momente, die den Tag tragen.', 'Ein paar Bilder für Stimmung, Farben und Vorfreude.', heroImage) },
+      { id: uuid(), ...cineHero('Galerie', 'Momente, die den Tag tragen.', 'Ein paar Bilder für Stimmung, Farben und Vorfreude.', heroImage, undefined, 'Zum Fest rückmelden') },
       {
         id: uuid(),
         type: 'gallery',
@@ -1067,8 +1069,8 @@ const pages = [
         },
         styleOverrides: lightSection,
       },
-      faqSection(),
-      { id: uuid(), ...imCta('Ihr habt ein Foto von uns?', 'Bringt es gern mit oder schickt es vorher. Wir sammeln ein kleines Gästebuch.', heroImage) },
+      faqSection('Fragen zu Fotos und Momenten'),
+      { id: uuid(), ...imCta('Ihr habt ein Foto von uns?', 'Bringt es gern mit oder schickt es vorher. Wir sammeln ein kleines Gästebuch.', heroImage, 'Rückmeldung ergänzen') },
     ],
   },
   {
@@ -1097,7 +1099,7 @@ const pages = [
         },
         styleOverrides: lightSection,
       },
-      faqSection(),
+      faqSection('Fragen zu unseren Updates'),
       {
         id: uuid(),
         type: 'contact',
@@ -1135,6 +1137,7 @@ const pages = [
       {
         id: uuid(),
         type: 'contact',
+        anchorId: 'kontakt',
         data: {
           badgeText: 'Kontakt',
           headline: 'Eine Nachricht reicht.',
@@ -1170,8 +1173,8 @@ const pages = [
         },
         styleOverrides: sageSection,
       },
-      faqSection(),
-      { id: uuid(), ...cta('Noch nicht zurückgemeldet?', 'Dann ist die RSVP der wichtigste nächste Schritt.') },
+      faqSection('Fragen zu Kontakt und Zuständigkeiten'),
+      { id: uuid(), ...cta('Noch nicht zurückgemeldet?', 'Dann ist die RSVP der wichtigste nächste Schritt.', 'Rückmeldung nachholen') },
     ],
   },
   {
@@ -1195,7 +1198,7 @@ const pages = [
           ],
         },
       },
-      { id: uuid(), ...cta('Zurück zur Startseite', 'Alle wichtigen Gästeinfos findet Ihr auf der Startseite.',) },
+      { id: uuid(), ...cta('Zurück zur Startseite', 'Alle wichtigen Gästeinfos findet Ihr auf der Startseite.', 'Gästeübersicht & RSVP') },
     ],
   },
   {
@@ -1219,7 +1222,7 @@ const pages = [
           ],
         },
       },
-      { id: uuid(), ...cta('Fragen zum Datenschutz?', 'Schreibt uns direkt, wenn Ihr wissen möchtet, welche Angaben wir von Euch gespeichert haben.') },
+      { id: uuid(), ...cta('Fragen zum Datenschutz?', 'Schreibt uns direkt, wenn Ihr wissen möchtet, welche Angaben wir von Euch gespeichert haben.', 'RSVP-Daten prüfen') },
     ],
   },
 ];

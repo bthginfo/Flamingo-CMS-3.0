@@ -43,7 +43,7 @@ function Classic({ header, events, fallbackText }: Props) {
               <EventMeta event={event} />
               <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{event.title || ''}</h3>
               {event.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: event.text }} />}
-              {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-accent)]"><span data-edit-path="label">{event.cta.label}</span><ArrowRight size={14} /></a>}
+              {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]"><span data-edit-path="label">{event.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </motion.article>
         ))}

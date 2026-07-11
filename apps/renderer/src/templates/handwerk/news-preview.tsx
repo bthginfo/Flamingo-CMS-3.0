@@ -49,7 +49,7 @@ export function NewsPreviewSection({ data }: Props) {
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[color:var(--token-accent)] hover:underline sm:flex">
+        <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[color:var(--token-heading)] hover:underline sm:flex">
           {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
         </Link>
       </motion.div>
@@ -74,14 +74,14 @@ export function NewsPreviewSection({ data }: Props) {
                   {new Date(item.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
-              <h3 className="line-clamp-2 text-lg font-semibold text-[color:var(--token-body)] transition-colors group-hover:text-[color:var(--token-accent)]" data-edit-path="title">{item.title}</h3>
+              <h3 className="line-clamp-2 text-lg font-semibold text-[color:var(--token-body)] transition-colors group-hover:text-[color:var(--token-link-hover)]" data-edit-path="title">{item.title}</h3>
               {showExcerpt && item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[color:var(--token-body)]">{item.excerpt}</p>}
             </Link>
           </motion.article>
         ))}
       </div>
 
-      <Link href={linkHref} className="mt-6 flex items-center justify-center gap-1.5 text-sm font-medium text-[color:var(--token-accent)] sm:hidden">
+      <Link href={linkHref} className="mt-6 flex items-center justify-center gap-1.5 text-sm font-semibold text-[color:var(--token-heading)] underline decoration-[color:var(--token-divider)] underline-offset-4 sm:hidden">
         {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
       </Link>
     </div>

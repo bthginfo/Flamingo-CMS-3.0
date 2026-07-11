@@ -51,7 +51,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
               {asList<string>(room.features).length > 0 && <p className="mt-4 text-xs text-[color:var(--token-muted)]">{asList<string>(room.features).join(' / ')}</p>}
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted)]">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
-                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-semibold text-[color:var(--token-eyebrow)]"><span data-edit-path="label">{room.detailCta.label}</span><ArrowRight size={15} /></a>}
+                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]"><span data-edit-path="label">{room.detailCta.label}</span><ArrowRight size={15} /></a>}
                 {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-semibold text-[color:var(--token-muted)]" data-edit-path="label">{room.bookingCta.label}</a>}
               </div>
             </div>

@@ -68,7 +68,7 @@ export function GlowHeroSection({ data }: Props) {
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 py-16 md:py-24">
         <div className="max-w-5xl">
-          {eyebrow && <div className="mb-5 text-xs font-bold uppercase tracking-[0.24em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{eyebrow}</div>}
+          {eyebrow && <div className="section-badge mb-5 backdrop-blur" data-color-role="badge" data-edit-path="eyebrow">{eyebrow}</div>}
           <h1 className="text-5xl font-black leading-none text-[color:var(--token-heading)] md:text-7xl lg:text-8xl" data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-subheading)] md:text-xl" data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
@@ -79,9 +79,9 @@ export function GlowHeroSection({ data }: Props) {
         {facts.length > 0 && (
           <div className="mt-14 grid gap-3 md:grid-cols-3">
             {facts.map((fact, index) => (
-              <div key={index} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 backdrop-blur" data-edit-collection="facts" data-edit-index={index}>
-                {fact.value && <div className="text-3xl font-black text-[color:var(--token-stat-value)]" data-edit-path="value">{fact.value}</div>}
-                {fact.label && <div className="mt-1 text-sm text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="label">{fact.label}</div>}
+              <div key={index} data-color-context="dark" className="rounded-2xl border border-[color:var(--token-badge-border)] bg-[var(--token-image-overlay)] p-5 backdrop-blur" data-edit-collection="facts" data-edit-index={index}>
+                {fact.value && <div className="text-3xl font-black text-[color:var(--token-on-dark-heading)]" data-edit-path="value">{fact.value}</div>}
+                {fact.label && <div className="mt-1 text-sm text-[color:var(--token-on-dark-body)]" data-edit-path="label">{fact.label}</div>}
               </div>
             ))}
           </div>

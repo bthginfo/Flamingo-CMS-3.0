@@ -1,9 +1,18 @@
+import React from 'react';
 import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
-import { getIndustryTemplates } from '@/templates';
+import { resolveSectionDefinition } from '@/templates';
 import { SectionErrorBoundary } from './section-error-boundary';
 import { prefixInternalLinks } from '@/lib/link-prefix';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { SectionReveal } from './section-reveal';
+import {
+  escapeCssAttributeValue,
+  escapeStyleElementText,
+  normalizeStyleOverridesForSection,
+} from '@/lib/section-style-overrides';
+import { mergeContactFormFields, type ContactFormFieldDefinition } from '@/lib/contact-form';
+import { resolveAccessibleRoleForeground } from '@/lib/brand-colors';
+import { parseCssColor } from '@/lib/color-engine';
 
 /** Extract the best image from a collection item. Supports strings, media objects, arrays, and embedded hero sections. */
 function getImageUrl(value: unknown): string | undefined {
@@ -71,12 +80,20 @@ function extractItemImage(item: SnapshotCollectionItem): string | undefined {
   return undefined;
 }
 
-const SPACING: Record<string, string> = {
-  none: 'py-0',
-  s: 'py-6',
-  m: 'py-12',
-  l: 'py-20',
-  xl: 'py-28',
+const SPACING_TOP: Record<string, string> = {
+  none: 'pt-0',
+  s: 'pt-6',
+  m: 'pt-12',
+  l: 'pt-20',
+  xl: 'pt-28',
+};
+
+const SPACING_BOTTOM: Record<string, string> = {
+  none: 'pb-0',
+  s: 'pb-6',
+  m: 'pb-12',
+  l: 'pb-20',
+  xl: 'pb-28',
 };
 
 const CONTAINER: Record<string, string> = {
@@ -87,6 +104,7 @@ const CONTAINER: Record<string, string> = {
 };
 
 const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+const CONTACT_FORM_SECTION_TYPES = new Set(['contact', 'contactForm', 'locationContact', 'tourismContact', 'smartInquiry']);
 const MEDIA_OVERLAY_SECTION_TYPES = new Set([
   'hero',
   'collectionHero',
@@ -108,8 +126,19 @@ const SKIP_REVEAL_SECTION_TYPES = new Set([
   'popup',
 ]);
 
+function getSectionFamily(type: string): 'hero' | 'form' | 'data' | 'cta' | 'proof' | 'grid' | 'content' {
+  const normalized = type.toLowerCase();
+  if (/(hero|masthead)/.test(normalized)) return 'hero';
+  if (/(form|contact|booking|rsvp|newsletter)/.test(normalized)) return 'form';
+  if (/(table|comparison|schedule|calendar|pricing)/.test(normalized)) return 'data';
+  if (/(cta|banner|campaign|offer)/.test(normalized)) return 'cta';
+  if (/(proof|testimonial|review|logo|trust|stat)/.test(normalized)) return 'proof';
+  if (/(grid|gallery|cards|showcase|services|team|products|features)/.test(normalized)) return 'grid';
+  return 'content';
+}
+
 function escapeCssAttr(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return escapeCssAttributeValue(value);
 }
 
 function parseOverlayColor(input: string): { r: number; g: number; b: number; a: number } {
@@ -289,6 +318,28 @@ function normalizeSectionStyle(style?: React.CSSProperties): React.CSSProperties
     }
   }
 
+  // Legacy snapshots can predate the publish-time contrast validator. Repair
+  // only complete, concrete foreground/background pairs at render time; CSS
+  // variable references remain untouched because their effective surface is
+  // resolved by the brand layer.
+  const repairPair = (foregroundKey: string, backgroundKey: string, minimumContrast = 4.5) => {
+    const foreground = normalized[foregroundKey];
+    const background = normalized[backgroundKey];
+    if (typeof foreground !== 'string' || typeof background !== 'string') return;
+    const parsedBackground = parseCssColor(background);
+    if (!parseCssColor(foreground) || !parsedBackground || parsedBackground.a < 0.999) return;
+    const repaired = resolveAccessibleRoleForeground([background], foreground, minimumContrast);
+    normalized[foregroundKey] = repaired;
+    for (const alias of SECTION_STYLE_TOKEN_ALIASES[foregroundKey] || []) normalized[alias] = repaired;
+  };
+  repairPair('--token-btn-text', '--token-btn-bg');
+  repairPair('--token-btn-secondary-text', '--token-btn-secondary-bg');
+  repairPair('--token-badge-text', '--token-badge-bg');
+  repairPair('--token-card-badge-text', '--token-card-badge-bg');
+  repairPair('--token-input-text', '--token-input-bg');
+  repairPair('--token-success', '--token-success-bg');
+  repairPair('--token-danger', '--token-danger-bg');
+
   return normalized as React.CSSProperties;
 }
 
@@ -323,7 +374,7 @@ function sanitizeRenderValue(value: unknown): unknown {
   return value;
 }
 
-export function SectionRenderer({ section, collections, styleVariant: _styleVariant, industry = 'tradesman', locale, defaultLocale, linkPrefix = '' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string; defaultLocale?: string; linkPrefix?: string }) {
+export function SectionRenderer({ section, collections, styleVariant: _styleVariant, industry = 'tradesman', locale, defaultLocale, linkPrefix = '', globalFormFields }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string; defaultLocale?: string; linkPrefix?: string; globalFormFields?: ContactFormFieldDefinition[] }) {
   const effectiveStyleVariant = 'classic';
   // i18n locale resolution: if section.data contains locale keys, resolve to the active locale
   if (locale && section.data && typeof section.data[locale] === 'object' && section.data[locale] !== null) {
@@ -339,8 +390,33 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     section = { ...section, data: fallback };
   }
 
-  const Component = getIndustryTemplates(industry)[section.type];
-  section = { ...section, data: sanitizeRenderValue(prefixInternalLinks(section.data, linkPrefix)) as Record<string, unknown> };
+  const resolvedDefinition = resolveSectionDefinition({
+    type: section.type,
+    industry,
+    definitionKey: section.definitionKey,
+    schemaVersion: section.schemaVersion,
+  });
+  const Component = resolvedDefinition?.component;
+  section = {
+    ...section,
+    data: sanitizeRenderValue(prefixInternalLinks(section.data, linkPrefix)) as Record<string, unknown>,
+    // Published snapshots and legacy rows are untrusted input too. Reapply the
+    // section contract at the final rendering boundary before CSS interpolation.
+    styleOverrides: normalizeStyleOverridesForSection(section.type, section.styleOverrides, industry),
+  };
+
+  // Tenant fields are the authoritative contract. A section may add fields,
+  // but it cannot hide or weaken globally required fields in the rendered UI.
+  if (CONTACT_FORM_SECTION_TYPES.has(section.type) && globalFormFields?.length) {
+    const formFieldKey = section.type === 'smartInquiry' ? 'fields' : 'formFields';
+    section = {
+      ...section,
+      data: {
+        ...section.data,
+        [formFieldKey]: mergeContactFormFields(globalFormFields, section.data[formFieldKey]),
+      },
+    };
+  }
 
   // Inject collection items into newsPreview/newsGrid sections
   if (section.type === 'newsPreview' || section.type === 'newsGrid') {
@@ -418,7 +494,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     // Generic
     'servicePackages',
     // Premium shared
-    'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero',
+    'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero', 'editorialHero',
     'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
     'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup',
   ]);
@@ -438,7 +514,11 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   // On media sections only the section's OWN overrides may override the light
   // default; page-level tokens must not bleed through.
   const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay);
-  const ownOverrides = (section.styleOverrides ?? {}) as Record<string, unknown>;
+  const overrideStyle = section.styleOverrides
+    ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
+    : undefined;
+  const normalizedStyle = normalizeSectionStyle(overrideStyle);
+  const ownOverrides = (normalizedStyle ?? {}) as Record<string, unknown>;
   const own = (...keys: string[]) => {
     for (const k of keys) { const v = ownOverrides[k]; if (typeof v === 'string' && v) return v; }
     return null;
@@ -458,12 +538,20 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const cardHeadingColorVar = `var(--token-card-heading, var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, ${hasMediaOverlay ? '#ffffff' : 'inherit'}))))`;
   const cardBodyColorVar = `var(--token-card-body, var(--token-body, var(--token-on-dark-body, var(--style-body-color, ${hasMediaOverlay ? 'rgba(255,255,255,0.86)' : 'inherit'}))))`;
   const cardMutedColorVar = `var(--token-card-muted, var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, ${hasMediaOverlay ? 'rgba(255,255,255,0.72)' : 'inherit'}))))`;
+  const badgeBgVar = hasMediaOverlay
+    ? (own('--token-badge-bg') ?? 'rgba(2,6,23,0.72)')
+    : 'var(--token-badge-bg)';
+  const badgeTextVar = hasMediaOverlay
+    ? (own('--token-badge-text') ?? '#ffffff')
+    : 'var(--token-badge-text)';
+  const badgeBorderVar = hasMediaOverlay
+    ? (own('--token-badge-border') ?? 'rgba(255,255,255,0.28)')
+    : 'var(--token-badge-border)';
+  const darkContextHeadingVar = own('--token-on-dark-heading', '--token-heading') ?? '#ffffff';
+  const darkContextBodyVar = own('--token-on-dark-body', '--token-body') ?? 'rgba(255,255,255,0.86)';
+  const darkContextMutedVar = own('--token-on-dark-muted', '--token-muted') ?? 'rgba(255,255,255,0.72)';
 
-  // Per-section color overrides (from CMS) applied as inline CSS vars
-  const overrideStyle = section.styleOverrides
-    ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
-    : undefined;
-  const normalizedStyle = normalizeSectionStyle(overrideStyle);
+  // Per-section color overrides (from CMS) applied as inline CSS vars.
   const sectionStyle = withBookingStyleAliases(
     section.type,
     hasMediaOverlay ? withMediaTextAliases(normalizedStyle) : normalizedStyle,
@@ -523,24 +611,38 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   // and the CMS editors' DOM scans could not see the universal token slots on
   // fresh sections — which hid the heading/body/muted controls exactly when
   // the user needed them to set a first colour.
+  const escapedSectionId = escapeCssAttr(section.id);
   const sectionColorCss = `
-[data-section-id="${section.id}"][data-style] { --_card-h:${cardHeadingColorVar}; --_card-b:${cardBodyColorVar}; --_card-m:${cardMutedColorVar}; }
-[data-section-id="${section.id}"][data-style] [data-edit-collection],[data-section-id="${section.id}"][data-style] [data-card] { --token-heading:var(--_card-h); --token-on-dark-heading:var(--_card-h); --token-body:var(--_card-b); --token-on-dark-body:var(--_card-b); --token-card-body:var(--_card-b); --token-muted:var(--_card-m); --token-on-dark-muted:var(--_card-m); --token-card-muted:var(--_card-m); }
-[data-section-id="${section.id}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
-[data-section-id="${section.id}"][data-style] :is(p,li):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
-[data-section-id="${section.id}"][data-style] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${mutedColorVar} !important; }
-[data-section-id="${section.id}"][data-style] [data-edit-collection] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardHeadingColorVar} !important; }
-[data-section-id="${section.id}"][data-style] [data-edit-collection] :is(p,li):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(p,li):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardBodyColorVar} !important; }
-[data-section-id="${section.id}"][data-style] [data-edit-collection] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardMutedColorVar} !important; }
-[data-section-id="${section.id}"][data-style] .section-badge { color: var(--token-badge-text, var(--style-badge-text, var(--style-accent-color, inherit))) !important; background-color: var(--token-badge-bg, var(--style-badge-bg, transparent)) !important; }
+[data-section-id="${escapedSectionId}"][data-style] { --_card-h:${cardHeadingColorVar}; --_card-b:${cardBodyColorVar}; --_card-m:${cardMutedColorVar}; --_on-dark-h:${darkContextHeadingVar}; --_on-dark-b:${darkContextBodyVar}; --_on-dark-m:${darkContextMutedVar}; }
+[data-section-id="${escapedSectionId}"][data-style] [data-edit-collection],[data-section-id="${escapedSectionId}"][data-style] [data-card] { --token-heading:var(--_card-h); --token-on-dark-heading:var(--_card-h); --token-body:var(--_card-b); --token-on-dark-body:var(--_card-b); --token-card-body:var(--_card-b); --token-muted:var(--_card-m); --token-on-dark-muted:var(--_card-m); --token-card-muted:var(--_card-m); }
+[data-section-id="${escapedSectionId}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
+[data-section-id="${escapedSectionId}"][data-style] :is(p,li):not(.section-badge):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
+[data-section-id="${escapedSectionId}"][data-style] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${mutedColorVar} !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-edit-collection] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${escapedSectionId}"][data-style] [data-card] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardHeadingColorVar} !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-edit-collection] :is(p,li):not(.section-badge):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${escapedSectionId}"][data-style] [data-card] :is(p,li):not(.section-badge):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardBodyColorVar} !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-edit-collection] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${escapedSectionId}"][data-style] [data-card] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardMutedColorVar} !important; }
+[data-section-id="${escapedSectionId}"][data-style] .section-badge { color: ${badgeTextVar} !important; background-color: ${badgeBgVar} !important; border-color: ${badgeBorderVar} !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"],[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] [data-edit-collection],[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] [data-card] { --token-heading:var(--_on-dark-h); --token-on-dark-heading:var(--_on-dark-h); --token-body:var(--_on-dark-b); --token-on-dark-body:var(--_on-dark-b); --token-muted:var(--_on-dark-m); --token-on-dark-muted:var(--_on-dark-m); }
+[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(h1,h2,h3,h4,h5,h6):not([class*="text-black"]) { color: var(--_on-dark-h) !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(p,li):not(.section-badge):not([class*="text-black"]) { color: var(--_on-dark-b) !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-black"]) { color: var(--_on-dark-m) !important; }
 `;
   const sectionOverlayCss = buildImageOverlayCss(section);
-  const sectionOverrideCss = `${sectionColorCss}${sectionOverlayCss ? `\n${sectionOverlayCss}` : ''}`.trim();
+  const sectionOverrideCss = escapeStyleElementText(
+    `${sectionColorCss}${sectionOverlayCss ? `\n${sectionOverlayCss}` : ''}`.trim(),
+  );
+  const sectionFamily = getSectionFamily(section.type);
+  const sectionClassName = `cms-section cms-section--${sectionFamily}`;
+  const sectionMetadata = {
+    'data-section-type': section.type,
+    'data-section-family': sectionFamily,
+    'data-section-state': 'ready',
+  } as const;
 
   if (isFullBleed) {
     return (
-      <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" data-style="" style={sectionStyle}>
-        {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
+      <SectionReveal {...sectionMetadata} disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} data-definition-key={resolvedDefinition?.key} data-schema-version={section.schemaVersion ?? resolvedDefinition?.schemaVersion} className={`${sectionClassName} bg-[var(--style-section-bg,transparent)]`} data-style="" style={sectionStyle}>
+        {sectionOverrideCss && <style>{sectionOverrideCss}</style>}
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>
@@ -548,14 +650,14 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     );
   }
 
-  const spacingClass = SPACING[section.spacingTop] ?? SPACING.m;
-  const spacingBottomClass = SPACING[section.spacingBottom] ?? SPACING.m;
+  const spacingClass = SPACING_TOP[section.spacingTop] ?? SPACING_TOP.m;
+  const spacingBottomClass = SPACING_BOTTOM[section.spacingBottom] ?? SPACING_BOTTOM.m;
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} data-style="" style={sectionStyle}>
-      {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
-      <div className={containerClass}>
+    <SectionReveal {...sectionMetadata} disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} data-definition-key={resolvedDefinition?.key} data-schema-version={section.schemaVersion ?? resolvedDefinition?.schemaVersion} className={`${sectionClassName} ${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} data-style="" style={sectionStyle}>
+      {sectionOverrideCss && <style>{sectionOverrideCss}</style>}
+      <div className={`cms-section-shell ${containerClass}`}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>

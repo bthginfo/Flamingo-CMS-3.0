@@ -66,7 +66,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               </div>
             )}
             {ctaHref && (
-              <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] rounded-lg text-sm font-medium hover:bg-[var(--token-section-bg-alt)] transition-colors" data-edit-path="ctaLabel">
+              <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-lg text-sm font-medium hover:bg-[var(--token-section-bg-alt)] transition-colors" data-edit-path="ctaLabel">
                 {ctaLabel || 'Kontakt aufnehmen'}
               </a>
             )}

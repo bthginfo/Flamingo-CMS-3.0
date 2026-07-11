@@ -1,9 +1,8 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
 import { HoverEffect } from '@/components/ui/hover-effect';
-import { DynamicIcon, MediaDisplay } from '@/components/ui/icon-map';
+import { DynamicIcon } from '@/components/ui/icon-map';
+import { ActionGroup, PremiumSectionHeader } from '@/templates/shared/section-primitives';
 
 import Link from 'next/link';
 import { plain } from '@/lib/strip-html';
@@ -27,9 +26,6 @@ type SProps = { headline: string; subline: string; badgeText: string; cards: Car
 
 /* ─── CLASSIC: Rounded cards, soft shadows, icon on top, 3-column, hover lift ─── */
 function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHref, ctaIcon }: SProps) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
   const hoverItems = cards.map(c => ({
     title: c.title,
     description: c.text || '',
@@ -40,21 +36,16 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
   }));
 
   return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
-        {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
-        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      </motion.div>
-      <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}>
-        <HoverEffect items={hoverItems} />
-      </motion.div>
+    <div>
+      <PremiumSectionHeader eyebrow={badgeText} headline={headline} subline={subline} align="center" richSubline={false} />
+      <HoverEffect items={hoverItems} />
       {ctaLabel && ctaHref && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="text-center mt-12">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-semibold rounded-full hover:brightness-95 transition-all shadow-md hover:shadow-lg">
-            {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
+        <ActionGroup align="center" className="mt-12">
+          <Link href={ctaHref} className="cms-button cms-button--primary">
+            <span data-edit-path="ctaLabel">{ctaLabel}</span>
+            {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
-        </motion.div>
+        </ActionGroup>
       )}
     </div>
   );

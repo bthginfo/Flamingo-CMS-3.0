@@ -24,6 +24,7 @@ const INDUSTRIES = [
   { value: 'ecommerce', label: 'E-Commerce' },
   { value: 'florist', label: 'Floristik' },
   { value: 'retail', label: 'Einzelhandel & Weitere' },
+  { value: 'verein', label: 'Verein & Sport' },
 ] as const;
 
 export function IndustrySelect({ tenantId, currentIndustry }: { tenantId: string; currentIndustry: string }) {

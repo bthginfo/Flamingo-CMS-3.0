@@ -144,8 +144,13 @@ export async function getItemAction(itemId: string) {
 export async function updateItemAction(itemId: string, data: { title?: string; slug?: string; published?: boolean; priority?: number; data?: Record<string, unknown> }) {
   const session = await requireSession();
   const db = getDb();
-  await db.update(collectionItems).set({ ...data, updatedAt: new Date() }).where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)));
+  const result = await db.update(collectionItems)
+    .set({ ...data, updatedAt: new Date() })
+    .where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)))
+    .returning({ id: collectionItems.id });
+  if (result.length === 0) return { error: 'Eintrag nicht gefunden oder keine Berechtigung' };
   revalidatePath('/admin/collections');
+  return { success: true };
 }
 
 export async function deleteItemAction(itemId: string) {

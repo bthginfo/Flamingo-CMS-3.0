@@ -101,7 +101,7 @@ function heroData({ headline, subline, bgImage, badgeText = 'Hair Studio Münche
     bgPosition: 'center 42%',
     overlayColor: '#2C1627',
     overlayOpacity: 0.52,
-    primaryCta: { label: 'Termin anfragen', href: '/kontakt', icon: 'CalendarDays' },
+    primaryCta: { label: 'Wunschlook einordnen', href: '/kontakt', icon: 'CalendarDays' },
     secondaryCta: { label: 'Behandlungen ansehen', href: '/leistungen', icon: 'Scissors' },
     trustItems: ['München-Gärtnerplatz', 'Farbe mit Plan', 'Schnitt für den Alltag', 'WhatsApp-Anfrage möglich'],
     trustStripColor: 'rgba(58,24,48,0.54)',
@@ -190,7 +190,7 @@ const teamMembers = [
   {
     name: 'Isabelle König',
     role: 'Inhaberin · Schnitt & Farbberatung',
-    image: img('1494790108377-be9c29b29330'),
+    image: img('1589571894960-20bbe2828d0a'),
     bio: 'Isabelle denkt Haare zuerst über Alltag, nicht über Trends. Ihre Stärke ist ruhige Beratung mit einem sehr genauen Blick für Proportionen.',
     specialties: ['Signature Cuts', 'natürliche Farbverläufe', 'Beratung für feines Haar'],
     bookingCta: { label: 'Termin bei Isabelle anfragen', href: '/kontakt' },
@@ -206,7 +206,7 @@ const teamMembers = [
   {
     name: 'Leonie Weber',
     role: 'Styling · Bridal · Pflege',
-    image: img('1544005313-94ddf0286df2'),
+    image: img('1614283233556-f35b0c801ef1'),
     bio: 'Leonie begleitet Hochzeiten und Events mit ruhiger Hand, sicherer Planung und Looks, die auf Fotos nicht steif wirken.',
     specialties: ['Bridal Styling', 'Wellen', 'Pflegeberatung'],
     bookingCta: { label: 'Styling anfragen', href: '/kontakt' },
@@ -259,7 +259,7 @@ function serviceItem(s) {
       image: s.image,
       sections: [
         { id: uuid(), type: 'collectionHero', data: collectionHeroData({ category: 'Behandlung', headline: s.title, subline: s.excerpt, bgImage: s.image }), styleOverrides: darkSectionTokens() },
-        { id: uuid(), type: 'textImage', data: { badge: 'Beratung zuerst', headline: `Was bei ${s.title} wichtig ist.`, text: p(s.detail), image: s.image, imageAlt: s.title, layout: 'image-right', items: s.includes.map((title) => ({ icon: 'Check', title, text: 'Wird im Termin konkret auf Ihr Haar und Ihren Alltag abgestimmt.' })), primaryCta: { label: 'Termin anfragen', href: '/kontakt', icon: 'CalendarDays' } }, styleOverrides: lightTokens },
+        { id: uuid(), type: 'textImage', data: { badge: 'Beratung zuerst', headline: `Was bei ${s.title} wichtig ist.`, text: p(s.detail), image: s.image, imageAlt: s.title, layout: 'image-right', items: s.includes.map((title) => ({ icon: 'Check', title, text: 'Wird im Termin konkret auf Ihr Haar und Ihren Alltag abgestimmt.' })), primaryCta: { label: `${s.title} besprechen`, href: '/kontakt', icon: 'CalendarDays' } }, styleOverrides: lightTokens },
         { id: uuid(), type: 'priceList', data: { headline: 'Orientierung für den Termin', subline: 'Der finale Umfang hängt von Haarlänge, Ausgangslage und Ziel ab.', categories: [{ title: s.title, items: [{ name: s.title, description: s.excerpt, durationLabel: s.duration, priceLabel: s.price }, { name: 'Beratung', description: 'Saubere Einschätzung vor größeren Veränderungen.', durationLabel: '15-30 Min.', priceLabel: 'inklusive bei Termin' }] }], footnote: 'Bei Korrekturen nennen wir den Preis erst nach Sichtung der Ausgangslage.' }, styleOverrides: blushTokens },
         { id: uuid(), type: 'processSteps', data: { badgeText: 'Ablauf', headline: 'Ruhig geplant, sauber umgesetzt.', steps: [
           { icon: 'MessageCircle', title: 'Ziel verstehen', text: 'Wir klären Wunsch, Aufwand, Pflege und Styling-Zeit.' },
@@ -267,7 +267,7 @@ function serviceItem(s) {
           { icon: 'Scissors', title: 'Umsetzen', text: 'Der Termin bleibt konzentriert und transparent.' },
           { icon: 'Sparkles', title: 'Alltag sichern', text: 'Sie gehen mit klarer Pflege- und Stylingempfehlung.' },
         ] }, styleOverrides: lightTokens },
-        { id: uuid(), type: 'ctaBand', data: { badgeText: 'Nächster Schritt', headline: 'Passt das zu Ihrem Haar?', subline: 'Schreiben Sie uns kurz, was Sie sich wünschen. Wir sagen ehrlich, welcher Termin sinnvoll ist.', ctaPrimary: { label: 'Termin anfragen', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens(C.plum) },
+        { id: uuid(), type: 'ctaBand', data: { badgeText: 'Nächster Schritt', headline: 'Passt das zu Ihrem Haar?', subline: 'Schreiben Sie uns kurz, was Sie sich wünschen. Wir sagen ehrlich, welcher Termin sinnvoll ist.', ctaPrimary: { label: `Beratung zu ${s.title}`, href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens(C.plum) },
       ],
     },
   };
@@ -335,7 +335,7 @@ const pages = [
         { quote: 'Mein Brautstyling hat den ganzen Tag gehalten und sah trotzdem leicht aus.', name: 'Miriam K.', context: 'Bridal Styling', rating: 5 },
       ] }, styleOverrides: lightTokens },
       { type: 'faq', data: { headline: 'Fragen vor dem ersten Termin.', items: faqs }, styleOverrides: blushTokens },
-      { type: 'ctaBand', data: { badgeText: 'Termin', headline: 'Erzählen Sie uns kurz von Ihrem Haar.', subline: 'Dann sagen wir ehrlich, welcher Termin sinnvoll ist und wie viel Zeit wir einplanen sollten.', ctaPrimary: { label: 'Termin anfragen', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens() },
+      { type: 'ctaBand', data: { badgeText: 'Termin', headline: 'Erzählen Sie uns kurz von Ihrem Haar.', subline: 'Dann sagen wir ehrlich, welcher Termin sinnvoll ist und wie viel Zeit wir einplanen sollten.', ctaPrimary: { label: 'Terminweg starten', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens() },
     ],
   },
   {
@@ -343,9 +343,9 @@ const pages = [
     title: 'Leistungen',
     seo: pageSeo('Leistungen für Schnitt, Farbe und Styling', 'Schnitt, Farbe, Colour Correction und Bridal Styling im Atelier Isabelle München. Ruhige Beratung und klare Terminplanung.'),
     sections: [
-      { type: 'editorialHero', data: { eyebrow: 'Leistungen', headline: 'Haare brauchen keinen Druck, sondern Richtung.', text: '<p>Unsere Leistungen sind bewusst kuratiert: Schnitt, Farbe, Korrektur und Styling mit sauberer Beratung.</p>', imagePrimary: img('1519415510236-718bdfcd89c8'), primaryCta: { label: 'Termin anfragen', href: '/kontakt' }, secondaryCta: { label: 'Preise ansehen', href: '#preise' } } },
+      { type: 'editorialHero', data: { eyebrow: 'Leistungen', headline: 'Haare brauchen keinen Druck, sondern Richtung.', text: '<p>Unsere Leistungen sind bewusst kuratiert: Schnitt, Farbe, Korrektur und Styling mit sauberer Beratung.</p>', imagePrimary: img('1519415510236-718bdfcd89c8'), primaryCta: { label: 'Beratung & Leistung wählen', href: '/kontakt' }, secondaryCta: { label: 'Preise ansehen', href: '#preise' } } },
       { type: 'servicesGrid', data: { badgeText: 'Übersicht', headline: 'Wählen Sie den passenden Einstieg.', subline: 'Jede Detailseite erklärt, was sinnvoll ist, wie der Termin abläuft und wann wir vorher Rückfragen stellen.', manualCards: serviceCards }, styleOverrides: lightTokens },
-      { type: 'serviceMenu', data: { headline: 'Leistungen nach Bedarf.', subline: 'Nicht jede Anfrage braucht denselben Termin. Wir sortieren vorab.', ctaPrimary: { label: 'Termin anfragen', href: '/kontakt' }, categories: [
+      { type: 'serviceMenu', anchorId: 'preise', data: { headline: 'Leistungen nach Bedarf.', subline: 'Nicht jede Anfrage braucht denselben Termin. Wir sortieren vorab.', ctaPrimary: { label: 'Passenden Termin finden', href: '/kontakt' }, categories: [
         { title: 'Schnitt', text: 'Form, Kontur, Bewegung.', image: img('1522337360788-8b13dee7a37e'), category: 'Cut', services: ['Signature Cut', 'Curly Check', 'Pony & Kontur', 'Pflegeberatung'] },
         { title: 'Farbe', text: 'Ton, Glanz, Verlauf.', image: img('1562322140-8baeececf3df'), category: 'Colour', services: ['Glossing', 'Natural Colour', 'Balayage', 'Correction'] },
         { title: 'Styling', text: 'Event, Hochzeit, Business.', image: img('1524504388940-b1c1722653e1'), category: 'Styling', services: ['Waves', 'Updo', 'Bridal', 'Touch-up'] },
@@ -391,7 +391,7 @@ const pages = [
         { year: '2022', title: 'Drei Spezialistinnen', text: 'Das Team wächst gezielt, nicht beliebig.' },
         { year: 'Heute', title: 'Ruhige Termine', text: 'Weniger Slots, bessere Vorbereitung, klarere Ergebnisse.' },
       ] }, styleOverrides: blushTokens },
-      { type: 'teamSpotlight', data: { badge: 'Team', headline: 'Menschen, die zuhören können.', subline: 'Jede im Team hat einen eigenen Fokus — beim Überfahren der Karten zeigen sich Haltung und Schwerpunkte.', members: teamMembers.map((m) => ({ name: m.name, role: m.role, image: m.image, quote: m.bio, focus: m.specialties })) }, styleOverrides: lightTokens },
+      { type: 'teamSpotlight', anchorId: 'team', data: { badge: 'Team', headline: 'Menschen, die zuhören können.', subline: 'Jede im Team hat einen eigenen Fokus — beim Überfahren der Karten zeigen sich Haltung und Schwerpunkte.', members: teamMembers.map((m) => ({ name: m.name, role: m.role, image: m.image, quote: m.bio, focus: m.specialties })) }, styleOverrides: lightTokens },
       { type: 'expertiseGrid', data: { headline: 'Woran wir arbeiten.', subline: 'Unsere Qualität steckt in vielen kleinen Entscheidungen.', items: [
         { icon: 'Palette', title: 'Farblehre', text: 'Hautunterton, Ausgangsfarbe und Pflegeaufwand werden gemeinsam betrachtet.' },
         { icon: 'Scissors', title: 'Schnitttechnik', text: 'Form wird so gesetzt, dass sie herauswachsen darf.' },
@@ -404,7 +404,7 @@ const pages = [
         { icon: 'Star', value: '4,9/5', label: 'Bewertung' },
         { icon: 'Clock', value: 'Puffer', label: 'zwischen Terminen' },
       ] }, styleOverrides: lightTokens },
-      { type: 'immersiveCtaBanner', data: { badge: 'Erster Kontakt', headline: 'Sagen Sie uns, was Ihr Haar können soll.', subline: 'Wir melden uns mit einer ehrlichen Einschätzung zum passenden Termin.', image: img('1519415510236-718bdfcd89c8'), overlay: 'rgba(43,26,42,0.6)', primaryCta: { label: 'Termin anfragen', href: '/kontakt' } } },
+      { type: 'immersiveCtaBanner', data: { badge: 'Erster Kontakt', headline: 'Sagen Sie uns, was Ihr Haar können soll.', subline: 'Wir melden uns mit einer ehrlichen Einschätzung zum passenden Termin.', image: img('1519415510236-718bdfcd89c8'), overlay: 'rgba(43,26,42,0.6)', primaryCta: { label: 'Kennenlernen anfragen', href: '/kontakt' } } },
     ],
   },
   {
@@ -414,7 +414,7 @@ const pages = [
     sections: [
       { type: 'cinematicHero', data: { eyebrow: 'Kontakt', headline: 'Schreiben Sie uns kurz, worum es geht.', subline: 'Mit ein paar Angaben können wir besser einschätzen, welcher Termin wirklich passt.', image: img('1519415510236-718bdfcd89c8'), overlay: 'rgba(43,26,42,0.56)', align: 'left', primaryCta: { label: 'Jetzt anrufen', href: 'tel:+498924881740' } } },
       { type: 'bookingCta', data: { headline: 'So kommen wir am schnellsten zum passenden Termin.', subline: 'Wir melden uns persönlich zurück und schlagen die passende Terminlänge vor.', introText: 'Für Farbe oder Korrektur helfen aktuelle Haarbilder und ein Wunschbild.', onlineCta: { label: 'Formular nutzen', href: '#kontaktformular' }, phoneCta: { label: 'Anrufen', href: 'tel:+498924881740' }, whatsappCta: { label: 'WhatsApp schreiben', href: 'https://wa.me/498924881740' }, notes: ['Farbtermine bitte mit Foto anfragen', 'Samstage frühzeitig planen', 'Korrekturen nur nach Einschätzung'] }, styleOverrides: blushTokens },
-      { type: 'locationContact', data: { headline: 'Atelier Isabelle am Gärtnerplatz.', subline: 'Zentral, ruhig im ersten Obergeschoss und gut erreichbar mit U-Bahn und Tram.', image: img('1519415510236-718bdfcd89c8'), mapEmbedUrl: 'https://www.google.com/maps?q=M%C3%BCllerstra%C3%9Fe%2042%2C%2080469%20M%C3%BCnchen&output=embed', formEnabled: true, infoCards: [
+      { type: 'locationContact', anchorId: 'kontaktformular', data: { headline: 'Atelier Isabelle am Gärtnerplatz.', subline: 'Zentral, ruhig im ersten Obergeschoss und gut erreichbar mit U-Bahn und Tram.', image: img('1519415510236-718bdfcd89c8'), mapEmbedUrl: 'https://www.google.com/maps?q=M%C3%BCllerstra%C3%9Fe%2042%2C%2080469%20M%C3%BCnchen&output=embed', formEnabled: true, infoCards: [
         { icon: 'Phone', label: 'Telefon', value: '+49 89 2488 1740' },
         { icon: 'Mail', label: 'E-Mail', value: 'hello@atelier-isabelle.de' },
         { icon: 'MapPin', label: 'Adresse', value: 'Müllerstraße 42, 80469 München' },
@@ -438,7 +438,7 @@ const pages = [
     seo: pageSeo('Journal für Haare, Farbe und Pflege', 'Notizen aus dem Atelier Isabelle: Farberhaltung, Schnittpflege, Styling und ruhige Entscheidungen rund ums Haar.'),
     sections: [
       { type: 'collectionHero', data: collectionHeroData({ category: 'Journal', headline: 'Notizen für Haare, die länger gut bleiben.', subline: 'Kleine Texte über Farbe, Pflege, Styling und Entscheidungen im Salon.', bgImage: img('1562322140-8baeececf3df') }), styleOverrides: darkSectionTokens() },
-      { type: 'featureShowcase', data: { badge: 'Warum wir schreiben', headline: 'Gute Haare enden nicht am Salonausgang.', subline: 'Viele Ergebnisse bleiben besser, wenn Pflege, Styling und Erwartung klar sind.', image: img('1522337360788-8b13dee7a37e'), features: ['kurze Pflegehinweise', 'ehrliche Einschätzungen', 'keine Produktpredigten', 'konkrete Alltagstipps'], ctaLabel: 'Termin anfragen', ctaHref: '/kontakt' }, styleOverrides: lightTokens },
+      { type: 'featureShowcase', data: { badge: 'Warum wir schreiben', headline: 'Gute Haare enden nicht am Salonausgang.', subline: 'Viele Ergebnisse bleiben besser, wenn Pflege, Styling und Erwartung klar sind.', image: img('1522337360788-8b13dee7a37e'), features: ['kurze Pflegehinweise', 'ehrliche Einschätzungen', 'keine Produktpredigten', 'konkrete Alltagstipps'], ctaLabel: 'Haarfrage stellen', ctaHref: '/kontakt' }, styleOverrides: lightTokens },
       { type: 'collectionList', data: { headline: 'Aktuelle Beiträge', subline: 'Direkt aus dem Studioalltag.', collectionKey: 'news', columns: 3, showImage: true, showDate: true, showExcerpt: true, showSortControls: false }, styleOverrides: blushTokens },
       { type: 'ctaBand', data: { badgeText: 'Frage offen?', headline: 'Lieber konkret fragen als lange suchen.', subline: 'Wenn ein Thema Ihr Haar betrifft, schreiben Sie uns direkt.', ctaPrimary: { label: 'Frage stellen', href: '/kontakt', icon: 'Send' } }, styleOverrides: darkSectionTokens(C.plum) },
     ],

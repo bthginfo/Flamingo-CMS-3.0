@@ -31,7 +31,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
   return (
     <div>
       <div className="mb-10 max-w-3xl text-center mx-auto">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm text-[color:var(--token-muted)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
@@ -48,7 +48,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-8 text-center"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a></div>}
+      {ctaPrimary.label && <div className="mt-8 text-center"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a></div>}
     </div>
   );
 }

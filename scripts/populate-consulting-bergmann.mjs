@@ -59,7 +59,10 @@ function styleVars(overrides = {}) {
   return vars;
 }
 
-const section = (type, data, styleOverrides = {}) => ({ id: uid(), type, data, styleOverrides: styleVars(styleOverrides) });
+const section = (type, dataWithAnchor, styleOverrides = {}) => {
+  const { anchorId, ...data } = dataWithAnchor;
+  return { id: uid(), type, ...(anchorId ? { anchorId } : {}), data, styleOverrides: styleVars(styleOverrides) };
+};
 
 const img = {
   hero: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=2200&q=85',
@@ -73,7 +76,7 @@ const img = {
   finance: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1800&q=85',
   teamA: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=1200&q=85',
   teamB: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=85',
-  teamC: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=1200&q=85',
+  teamC: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?w=1200&q=85',
   city: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1800&q=85',
 };
 
@@ -187,7 +190,7 @@ function hero(headline, subline, bgImage, overrides = {}) {
     bgImage,
     overlayOpacity: overrides.overlayOpacity ?? 0.64,
     imageEffect: overrides.imageEffect || 'kenBurns',
-    primaryCta: overrides.primaryCta || { label: 'Erstgespräch anfragen', href: '/kontakt' },
+    primaryCta: overrides.primaryCta || { label: 'Beratungsfeld einordnen', href: '/kontakt' },
     secondaryCta: overrides.secondaryCta || { label: 'Leistungen ansehen', href: '/leistungen' },
     trustItems: overrides.trustItems || ['Mittelstand', 'Umsetzung statt Folien', 'klare Prioritäten', 'diskrete Begleitung'],
   }, heroStyle);
@@ -203,7 +206,7 @@ function cinematic(headline, subline, bgImage) {
     overlayColor: '#11191F',
     overlayOpacity: 0.58,
     align: 'left',
-    primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' },
+    primaryCta: { label: 'Lagebild besprechen', href: '/kontakt' },
     secondaryCta: { label: 'Cases ansehen', href: '/referenzen' },
     stats: [
       { value: '18+', label: 'Jahre Beratung' },
@@ -228,7 +231,7 @@ function collectionHero(headline, subline, image, category = 'Beratung') {
   }, heroStyle);
 }
 
-function cta(headline, subline) {
+function cta(headline, subline, primaryLabel) {
   return section('immersiveCtaBanner', {
     badge: 'Nächster Schritt',
     headline,
@@ -237,7 +240,7 @@ function cta(headline, subline) {
     image: img.boardroom,
     overlayColor: '#11191F',
     overlayOpacity: 0.66,
-    primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' },
+    primaryCta: { label: primaryLabel, href: '/kontakt' },
     secondaryCta: { label: 'Leistungen ansehen', href: '/leistungen' },
   }, dark);
 }
@@ -330,7 +333,7 @@ const pages = [
       ] }, dark),
       section('testimonials', { badgeText: 'Stimmen', headline: 'Ruhig im Ton, klar in der Wirkung.', subline: 'Was Mandanten besonders oft nennen: klare Priorisierung, ehrliche Einschätzung und echte Begleitung.', items: testimonials }, light),
       section('newsPreview', { badge: 'Insights', headline: 'Gedanken zu Wachstum, Prozessen und Führung.', subline: 'Keine Buzzwords, sondern praktische Einordnung für Unternehmen, die besser entscheiden wollen.', collectionKey: 'news', limit: 3, cta: { label: 'Alle Insights lesen', href: '/news' } }, alt),
-      cta('Sollen wir Ihr wichtigstes Thema sortieren?', 'Ein erstes Gespräch reicht oft, um zu erkennen, ob Strategie, Prozess oder Führung gerade der eigentliche Hebel ist.'),
+      cta('Sollen wir Ihr wichtigstes Thema sortieren?', 'Ein erstes Gespräch reicht oft, um zu erkennen, ob Strategie, Prozess oder Führung gerade der eigentliche Hebel ist.', 'Wichtigstes Thema einordnen'),
     ],
   },
   {
@@ -350,25 +353,25 @@ const pages = [
         { title: 'Umsetzungsbegleitung', price: 'individuell', description: 'Begleitung über mehrere Wochen oder Monate mit klarer Zielsetzung.', icon: 'MoveRight' },
       ], footnote: 'Alle Preise verstehen sich als Orientierungswerte. Umfang, Reisezeiten und interne Vorbereitung klären wir vor Angebotserstellung.' }, light),
       faqSection('Fragen zu Leistungen und Zusammenarbeit'),
-      section('immersiveCtaBanner', { badge: 'Erstgespräch', headline: 'Nicht sicher, welches Format passt?', subline: 'Schicken Sie uns kurz die Ausgangslage. Wir empfehlen ehrlich, was sinnvoll ist.', image: img.strategy, overlay: 'rgba(16,24,34,0.62)', primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' } }),
+      section('immersiveCtaBanner', { badge: 'Erstgespräch', headline: 'Nicht sicher, welches Format passt?', subline: 'Schicken Sie uns kurz die Ausgangslage. Wir empfehlen ehrlich, was sinnvoll ist.', image: img.strategy, overlay: 'rgba(16,24,34,0.62)', primaryCta: { label: 'Passendes Format klären', href: '/kontakt' } }),
     ],
   },
   {
     slug: 'referenzen',
     title: 'Cases',
     sections: [
-      section('cinematicHero', { eyebrow: 'Cases', headline: 'Cases, die nicht nach Beratungsfolien klingen.', subline: 'Vier Situationen aus Mittelstand, Agentur, Nachfolge und Handel. Unterschiedliche Ausgangslagen, gleiche Logik: Klarheit vor Aktionismus.', image: img.workshop, overlay: 'rgba(16,24,34,0.6)', align: 'left', primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' }, facts: [ { value: '4', label: 'Branchen' }, { value: '25+', label: 'Mandate' }, { value: '1', label: 'klare Logik' } ] }),
+      section('cinematicHero', { eyebrow: 'Cases', headline: 'Cases, die nicht nach Beratungsfolien klingen.', subline: 'Vier Situationen aus Mittelstand, Agentur, Nachfolge und Handel. Unterschiedliche Ausgangslagen, gleiche Logik: Klarheit vor Aktionismus.', image: img.workshop, overlay: 'rgba(16,24,34,0.6)', align: 'left', primaryCta: { label: 'Eigenes Thema spiegeln', href: '/kontakt' }, facts: [ { value: '4', label: 'Branchen' }, { value: '25+', label: 'Mandate' }, { value: '1', label: 'klare Logik' } ] }),
       section('collectionList', { badge: 'Cases', headline: 'Ausgewählte Mandate', subline: 'Was wir zeigen können, bleibt anonymisiert. Die Muster dahinter sind trotzdem konkret.', collectionKey: 'referenzen', layout: 'cards' }, light),
       section('beforeAfterStoryPro', { badge: 'Beispiel', headline: 'Vom operativen Dauerstress zu klaren Übergaben.', beforeTitle: 'Vorher', beforeText: 'Führungskräfte waren in jede Eskalation involviert. Entscheidungen hingen an wenigen Personen.', afterTitle: 'Nachher', afterText: 'Rollen, Übergaben und Eskalationslogik sind geklärt. Führung entscheidet weniger, aber besser.', metrics: [{ value: '30%', label: 'weniger Abstimmungsaufwand' }, { value: '6 Wochen', label: 'bis zum ersten Rollout' }], cta: { label: 'Ähnliches Thema besprechen', href: '/kontakt' } }, alt),
       section('testimonials', { badgeText: 'Mandanten', headline: 'Veränderung muss im Betrieb ankommen.', items: testimonials }, light),
-      cta('Sie erkennen Ihr Thema wieder?', 'Dann sprechen wir über Ausgangslage, Ziel und den kleinsten sinnvollen nächsten Schritt.'),
+      cta('Sie erkennen Ihr Thema wieder?', 'Dann sprechen wir über Ausgangslage, Ziel und den kleinsten sinnvollen nächsten Schritt.', 'Eigene Ausgangslage besprechen'),
     ],
   },
   {
     slug: 'ueber-uns',
     title: 'Über uns',
     sections: [
-      section('editorialHero', { eyebrow: 'Über uns', headline: 'Beratung ohne Theater, aber mit Haltung.', text: '<p>Wir arbeiten strukturiert, direkt und nah genug an der Umsetzung, damit Empfehlungen nicht im System hängen bleiben.</p>', imagePrimary: img.boardroom, primaryCta: { label: 'Erstgespräch anfragen', href: '/kontakt' }, hint: 'diskret · mittelstandserfahren · umsetzungsnah' }),
+      section('editorialHero', { eyebrow: 'Über uns', headline: 'Beratung ohne Theater, aber mit Haltung.', text: '<p>Wir arbeiten strukturiert, direkt und nah genug an der Umsetzung, damit Empfehlungen nicht im System hängen bleiben.</p>', imagePrimary: img.boardroom, primaryCta: { label: 'Kennenlernen vereinbaren', href: '/kontakt' }, hint: 'diskret · mittelstandserfahren · umsetzungsnah' }),
       section('textImage', { badge: 'Haltung', headline: 'Wir verkaufen keine Transformationsromantik.', text: '<p>Unternehmen brauchen nicht immer mehr Ideen. Oft brauchen sie weniger Nebel: klare Entscheidungen, echte Prioritäten und eine Umsetzung, die zu den Menschen und Kapazitäten passt.</p><p>Deshalb arbeiten wir mit Geschäftsführungen, Führungsteams und Schlüsselpersonen. Nicht neben dem Unternehmen, sondern dort, wo Entscheidungen wirklich entstehen.</p>', image: img.workshop, imagePosition: 'right', cta: { label: 'Leistungen ansehen', href: '/leistungen' } }, light),
       section('team', { badgeText: 'Team', headline: 'Senior genug für schwierige Gespräche.', subline: 'Kleine Teams, klare Verantwortliche und keine wechselnde Junior-Besetzung im Hintergrund.', members: teamMembers }, alt),
       section('principlesGrid', { badge: 'Prinzipien', headline: 'Worauf wir bestehen.', subline: 'Gute Beratung muss Komplexität reduzieren, nicht beeindrucken.', principles: [
@@ -395,7 +398,7 @@ const pages = [
     title: 'Kontakt',
     sections: [
       section('editorialHero', { eyebrow: 'Kontakt', headline: 'Sagen Sie uns, wo es gerade hakt.', text: '<p>Ein gutes Erstgespräch braucht keine perfekte Vorbereitung. Ausgangslage, Ziel und ein paar Zahlen reichen für den Start.</p>', imagePrimary: img.city, primaryCta: { label: 'Nachricht senden', href: '#form' }, hint: 'Antwort meist binnen 24 h · vertraulich' }),
-      section('contact', { badgeText: 'Kontakt', headline: 'Kurze Anfrage, klare Rückmeldung.', subline: 'Beschreiben Sie knapp, worum es geht. Wir melden uns mit Rückfragen und einer ehrlichen Einschätzung.', introText: '<p>Am hilfreichsten sind Branche, Unternehmensgröße, aktueller Engpass und was sich in den nächsten 90 Tagen verändern soll.</p>', phone, email, address, formEnabled: true, submitLabel: 'Erstgespräch anfragen', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Büro', value: address }, { icon: 'Clock', label: 'Rückmeldung', value: 'meist innerhalb von 24 Stunden' }], formFields: [{ name: 'name', label: 'Name', type: 'text', required: true, halfWidth: true }, { name: 'email', label: 'E-Mail', type: 'email', required: true, halfWidth: true }, { name: 'company', label: 'Unternehmen', type: 'text', halfWidth: true }, { name: 'topic', label: 'Thema', type: 'select', options: ['Strategie & Wachstum', 'Prozesse', 'Führung & Organisation', 'Nachfolge', 'Digitalisierung', 'Sparring'] }, { name: 'message', label: 'Ausgangslage', type: 'textarea', required: true }] }, light),
+      section('contact', { anchorId: 'form', badgeText: 'Kontakt', headline: 'Kurze Anfrage, klare Rückmeldung.', subline: 'Beschreiben Sie knapp, worum es geht. Wir melden uns mit Rückfragen und einer ehrlichen Einschätzung.', introText: '<p>Am hilfreichsten sind Branche, Unternehmensgröße, aktueller Engpass und was sich in den nächsten 90 Tagen verändern soll.</p>', phone, email, address, formEnabled: true, submitLabel: 'Lagebild senden', infoCards: [{ icon: 'Phone', label: 'Telefon', value: phone }, { icon: 'Mail', label: 'E-Mail', value: email }, { icon: 'MapPin', label: 'Büro', value: address }, { icon: 'Clock', label: 'Rückmeldung', value: 'meist innerhalb von 24 Stunden' }], formFields: [{ name: 'name', label: 'Name', type: 'text', required: true, halfWidth: true }, { name: 'email', label: 'E-Mail', type: 'email', required: true, halfWidth: true }, { name: 'company', label: 'Unternehmen', type: 'text', halfWidth: true }, { name: 'topic', label: 'Thema', type: 'select', options: ['Strategie & Wachstum', 'Prozesse', 'Führung & Organisation', 'Nachfolge', 'Digitalisierung', 'Sparring'] }, { name: 'message', label: 'Ausgangslage', type: 'textarea', required: true }] }, light),
       section('map', { badge: 'Standort', headline: 'München als Basis, Mandate im DACH-Raum.', subline: 'Viele Mandate starten remote und werden durch gezielte Vor-Ort-Termine ergänzt.', address, mapEmbedUrl: 'https://www.google.com/maps?q=Brienner%20Stra%C3%9Fe%2045%2C%2080333%20M%C3%BCnchen&output=embed' }, alt),
       faqSection('Fragen vor dem Erstgespräch'),
     ],
@@ -412,6 +415,19 @@ const pages = [
   },
 ];
 
+const PAGE_SEO = {
+  '': { metaTitle: 'Unternehmensberatung für den Mittelstand in München', metaDescription: 'Bergmann & Partner begleitet mittelständische Unternehmen bei Strategie, Prozessen, Führung, Digitalisierung und Nachfolge.' },
+  leistungen: { metaTitle: 'Beratungsleistungen für Strategie, Prozesse und Führung', metaDescription: 'Beratungsfelder für den Mittelstand: Strategie, Prozessoptimierung, Organisation, Nachfolge, Digitalisierung und Sparring.' },
+  referenzen: { metaTitle: 'Beratungs-Cases aus dem Mittelstand', metaDescription: 'Anonymisierte Beratungs-Cases aus Mittelstand, Agentur, Familienunternehmen und Handel mit Ausgangslage, Vorgehen und Wirkung.' },
+  'ueber-uns': { metaTitle: 'Über Bergmann & Partner Beratung', metaDescription: 'Arbeitsweise, Haltung und Team der Bergmann & Partner Beratung in München.' },
+  news: { metaTitle: 'Insights für bessere Unternehmensentscheidungen', metaDescription: 'Beiträge zu Wachstum, Prozessen, Führung, Nachfolge und Unternehmenssteuerung für mittelständische Unternehmen.' },
+  kontakt: { metaTitle: 'Erstgespräch mit Bergmann & Partner anfragen', metaDescription: 'Erstgespräch mit Bergmann & Partner Beratung für Strategie, Prozesse, Führung oder Nachfolge strukturiert anfragen.' },
+  impressum: { metaTitle: 'Impressum', metaDescription: 'Impressum und Anbieterinformationen der Bergmann & Partner Beratung GmbH in München.' },
+  datenschutz: { metaTitle: 'Datenschutz', metaDescription: 'Datenschutzhinweise der Bergmann & Partner Beratung zu Kontaktanfragen und technischer Bereitstellung.' },
+};
+
+for (const page of pages) page.seo = PAGE_SEO[page.slug];
+
 function serviceItemSections(item) {
   return prefixDemoLinks([
     collectionHero(item.title, item.excerpt, item.image, item.category),
@@ -419,7 +435,7 @@ function serviceItemSections(item) {
     section('processSteps', { badgeText: 'Vorgehen', headline: 'So wird aus Analyse Umsetzung.', steps: processSteps }, alt),
     section('caseResults', { headline: 'Woran wir Wirkung messen.', subline: 'Die Kennzahlen unterscheiden sich je Mandat. Entscheidend ist, dass Wirkung im Alltag sichtbar wird.', stats: [{ value: 90, suffix: ' Tage', label: 'erster Umsetzungszyklus', icon: 'Clock' }, { value: 3, label: 'klare Prioritäten', icon: 'ListChecks' }, { value: 1, label: 'verantwortliches Führungsteam', icon: 'Users' }] }, dark),
     faqSection('Fragen zu diesem Beratungsfeld'),
-    cta('Sollen wir dieses Thema einordnen?', 'Schreiben Sie kurz, was gerade unklar ist.'),
+    cta('Sollen wir dieses Thema einordnen?', 'Schreiben Sie kurz, was gerade unklar ist.', `${item.category} einordnen`),
   ]);
 }
 
@@ -429,7 +445,7 @@ function caseItemSections(item) {
     section('freeText', { content: `<p>${item.excerpt}</p><p>Das Mandat startete mit einem klaren Lagebild: Welche Entscheidungen hängen fest, wo entstehen Übergaben, und welche Routinen produzieren unnötige Abstimmung?</p><p>Nach der Analyse wurden Rollen, Entscheidungswege und ein 90-Tage-Plan definiert. Entscheidend war nicht die perfekte Zielstruktur, sondern eine erste belastbare Bewegung.</p>` }, light),
     section('beforeAfterStoryPro', { badge: item.category, headline: 'Vorher und nachher.', beforeTitle: 'Vorher', beforeText: 'Viele Themen waren bekannt, aber nicht priorisiert. Entscheidungen wurden vertagt oder informell gelöst.', afterTitle: 'Nachher', afterText: 'Die wichtigsten Engpässe sind benannt, Verantwortlichkeiten geklärt und die ersten Routinen laufen.', metrics: [{ value: '90 Tage', label: 'Umsetzungsfenster' }, { value: '3', label: 'Prioritäten' }] }, alt),
     section('testimonials', { badgeText: 'Stimme', headline: 'Was im Mandat geholfen hat.', items: testimonials.slice(0, 2) }, light),
-    cta('Ähnliche Ausgangslage?', 'Dann sprechen wir über Ihr Lagebild.'),
+    cta('Ähnliche Ausgangslage?', 'Dann sprechen wir über Ihr Lagebild.', `${item.category} besprechen`),
   ]);
 }
 
@@ -438,15 +454,19 @@ function newsItemSections(item) {
     collectionHero(item.title, item.excerpt, item.image, 'Insight'),
     section('freeText', { content: item.content }, light),
     section('publications', { badgeText: 'Weitere Insights', headline: 'Weiterlesen', articles: newsItems.filter((n) => n.slug !== item.slug).slice(0, 3).map((n) => ({ title: n.title, excerpt: n.excerpt, date: '4. Juni 2026', category: 'Insight', href: `/c/news/${n.slug}`, image: n.image })) }, alt),
-    cta('Möchten Sie das auf Ihr Unternehmen übertragen?', 'Ein Erstgespräch macht schnell sichtbar, welcher Hebel wirklich zählt.'),
+    cta('Möchten Sie das auf Ihr Unternehmen übertragen?', 'Ein Erstgespräch macht schnell sichtbar, welcher Hebel wirklich zählt.', 'Eigenen Hebel prüfen'),
   ]);
 }
 
 async function upsertPage(page, existingPages) {
   const existing = existingPages.find((p) => p.slug === page.slug);
   const payload = { slug: page.slug, title: page.title, sections: prefixDemoLinks(page.sections), visible: true, status: 'published' };
-  if (existing) return api('PUT', `/api/v1/content/pages/${existing.id}`, payload);
-  return api('POST', '/api/v1/content/pages', payload);
+  const result = existing
+    ? await api('PUT', `/api/v1/content/pages/${existing.id}`, payload)
+    : await api('POST', '/api/v1/content/pages', payload);
+  const pageId = existing?.id || result?.id || result?.pageId || result?.page?.id;
+  if (page.seo && pageId) await api('PUT', `/api/v1/content/seo/${pageId}`, page.seo);
+  return result;
 }
 
 async function ensureCollection(key, label, collections) {
@@ -544,7 +564,7 @@ async function main() {
       { title: 'Kontakt', items: [{ text: email }, { text: phone }, { text: address }] },
     ],
     legalLinks: [{ label: 'Impressum', href: '/impressum' }, { label: 'Datenschutz', href: '/datenschutz' }],
-    cta: { label: 'Erstgespräch anfragen', href: '/kontakt' },
+    cta: { label: 'Gespräch vereinbaren', href: '/kontakt' },
   });
   await api('PUT', '/api/v1/content/opening-hours', { hours: [{ type: 'regular', day: 'Montag-Freitag', hours: '09:00-18:00' }, { type: 'regular', day: 'Erstgespräche', hours: 'nach Vereinbarung' }, { type: 'regular', day: 'Mandate', hours: 'remote und vor Ort' }] });
   await api('PUT', '/api/v1/content/form-fields', { fields: [{ name: 'name', label: 'Name', type: 'text', required: true, halfWidth: true }, { name: 'email', label: 'E-Mail', type: 'email', required: true, halfWidth: true }, { name: 'company', label: 'Unternehmen', type: 'text', halfWidth: true }, { name: 'topic', label: 'Thema', type: 'select', options: ['Strategie', 'Prozesse', 'Führung', 'Nachfolge', 'Digitalisierung', 'Sparring'], halfWidth: true }, { name: 'message', label: 'Ausgangslage', type: 'textarea', required: true }] });
@@ -555,20 +575,6 @@ async function main() {
   await replaceCollectionItems('leistungen', 'Leistungen', services, serviceItemSections, existingCollections);
   await replaceCollectionItems('referenzen', 'Cases', cases, caseItemSections, existingCollections);
   await replaceCollectionItems('news', 'Insights', newsItems, newsItemSections, existingCollections);
-
-  const pagesAfter = await api('GET', '/api/v1/content/pages');
-  const meta = {
-    '': ['Bergmann & Partner Beratung', 'Unternehmensberatung in München für Strategie, Prozesse, Führung, Digitalisierung und Nachfolge im Mittelstand.'],
-    leistungen: ['Leistungen', 'Beratungsfelder für Mittelstand: Strategie, Prozessoptimierung, Organisation, Nachfolge, Digitalisierung und Sparring.'],
-    referenzen: ['Cases', 'Anonymisierte Beratungs-Cases aus Mittelstand, Agentur, Familienunternehmen und Handel.'],
-    'ueber-uns': ['Über Bergmann & Partner', 'Arbeitsweise, Haltung und Team der Bergmann & Partner Beratung in München.'],
-    news: ['Insights', 'Beiträge zu Wachstum, Prozessen, Führung, Nachfolge und Unternehmenssteuerung.'],
-    kontakt: ['Kontakt', 'Erstgespräch mit Bergmann & Partner Beratung für Strategie, Prozesse und Führung anfragen.'],
-  };
-  for (const page of pagesAfter.pages || []) {
-    if (!meta[page.slug]) continue;
-    await api('PUT', `/api/v1/content/seo/${page.id}`, { metaTitle: `${meta[page.slug][0]} · Bergmann & Partner Beratung`, metaDescription: meta[page.slug][1], ogImage: img.hero, noindex: false });
-  }
 
   const publishResult = await api('POST', '/api/v1/content/publish', {});
   console.log(JSON.stringify({ ok: true, publishResult }, null, 2));

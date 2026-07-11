@@ -23,7 +23,7 @@ export function SocialProofBarSection({ data }: Props) {
   const bg = bgStyle === 'dark'
     ? 'bg-[var(--token-section-bg)] text-[color:var(--token-heading)]'
     : bgStyle === 'primary'
-      ? 'bg-[var(--token-accent)] text-[color:var(--token-badge-text)]'
+      ? 'border border-[var(--token-badge-border)] bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]'
       : 'bg-[var(--token-card-bg)] text-[color:var(--token-body)]';
 
   return (

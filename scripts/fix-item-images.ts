@@ -1,5 +1,6 @@
+import { requireDatabaseUrl } from './_database-url';
 import { neon } from '@neondatabase/serverless';
-const sql = neon('postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require');
+const sql = neon(requireDatabaseUrl());
 
 const IMAGE_REPLACEMENTS: Record<string, string> = {
   '/images/demo/bad-altstadt.webp': 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200&q=80',

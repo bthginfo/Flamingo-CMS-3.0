@@ -36,7 +36,7 @@ const SOFT_ROLES = new Set(['input', 'label']);
 //   cssClass: a class the renderer already wires to the role's tokens
 const ROLES = {
   badge: {
-    tokens: ['--token-badge-bg', '--token-badge-text', '--token-badge-border'],
+    tokens: ['--token-badge-bg', '--token-badge-text', '--token-badge-border', '--token-card-badge-bg', '--token-card-badge-text'],
     // 'tag'/'pill' excluded: filter/category UI, not content badges.
     paths: ['badgeText', 'badge', 'badgeLabel'],
     cssClass: 'section-badge',
@@ -89,10 +89,12 @@ function walk(dir) {
 }
 
 // Does the template RENDER this role?
-function rendersRole(src, role) {
+function rendersRole(src, roleName, role) {
   for (const p of role.paths || []) {
-    if (new RegExp(`data-edit-path=["']${p}["']`).test(src)) return p;
-    if (new RegExp(`data-edit-rich=["']${p}["']`).test(src)) return p;
+    const pathPattern = new RegExp(`data-edit-(?:path|rich)=["']${p}["']`);
+    const matchingTags = Array.from(src.matchAll(/<[A-Za-z][^<>]{0,1800}>/gs), (match) => match[0])
+      .filter((tag) => pathPattern.test(tag));
+    if (matchingTags.some((tag) => !(roleName === 'eyebrow' && /data-color-role=["']badge["']/.test(tag)))) return p;
   }
   for (const t of role.tags || []) {
     if (new RegExp(`<${t}\\b`).test(src)) return `<${t}>`;
@@ -116,7 +118,7 @@ for (const file of files) {
   const src = fs.readFileSync(file, 'utf8');
   for (const [roleName, role] of Object.entries(ROLES)) {
     if (roleFilter && roleName !== roleFilter) continue;
-    const signal = rendersRole(src, role);
+    const signal = rendersRole(src, roleName, role);
     if (!signal) continue;
     counts[roleName] = counts[roleName] || { rendered: 0, bound: 0, gap: 0 };
     counts[roleName].rendered++;

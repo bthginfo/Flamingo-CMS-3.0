@@ -63,7 +63,7 @@ export function NextMatchHeroSection({ data }: Props) {
             <span className="text-sm font-bold text-[color:var(--token-heading)] md:text-lg" data-edit-path="homeTeam">{homeTeam}</span>
           </div>
           <div className="text-center">
-            <span className="block text-2xl font-black text-[color:var(--token-accent)] md:text-4xl">:</span>
+            <span className="block text-2xl font-black text-[color:var(--token-heading)] md:text-4xl">:</span>
             <span className="mt-1 block text-[11px] font-bold uppercase tracking-widest text-[color:var(--token-muted)]">vs</span>
             {dateLabel && <span className="mt-2 block text-xs font-medium text-[color:var(--token-muted)] md:text-sm" data-edit-path="dateLabel">{dateLabel}</span>}
           </div>
@@ -77,7 +77,7 @@ export function NextMatchHeroSection({ data }: Props) {
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-bold text-[color:var(--token-btn-text)] shadow-lg transition hover:-translate-y-0.5"><Ticket size={17} /><span data-edit-path="label">{primaryCta.label}</span></a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-btn-secondary-border)] px-7 py-3.5 font-semibold text-[color:var(--token-heading)] transition hover:bg-[var(--token-badge-bg)]"><span data-edit-path="label">{secondaryCta.label}</span><ArrowRight size={16} /></a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-7 py-3.5 font-semibold text-[color:var(--token-btn-secondary-text)] transition hover:brightness-105"><span data-edit-path="label">{secondaryCta.label}</span><ArrowRight size={16} /></a>}
         </div>
       </div>
     </section>
@@ -109,12 +109,12 @@ export function MatchScheduleSection({ data }: Props) {
               </div>
               <div className="flex min-w-0 items-center justify-center gap-2 sm:gap-3">
                 <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-[color:var(--token-heading)]" data-edit-path="homeTeam">{m.homeTeam || ''}</span>
-                <span className="shrink-0 rounded-md bg-[var(--token-section-bg-alt)] px-2.5 py-1 text-sm font-black tabular-nums text-[color:var(--token-accent)]">{m.result || '–:–'}</span>
+                <span className="shrink-0 rounded-md bg-[var(--token-section-bg-alt)] px-2.5 py-1 text-sm font-black tabular-nums text-[color:var(--token-heading)]">{m.result || '–:–'}</span>
                 <span className="min-w-0 flex-1 truncate text-sm font-bold text-[color:var(--token-heading)]" data-edit-path="awayTeam">{m.awayTeam || ''}</span>
               </div>
               <div className="flex flex-col items-end gap-1">
-                {m.homeGame !== undefined && <span className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${m.homeGame ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_15%,transparent)] text-[color:var(--token-accent)]' : 'text-[color:var(--token-muted)]'}`}>{m.homeGame ? 'Heim' : 'Ausw.'}</span>}
-                {m.ticketHref && <a href={m.ticketHref} className="inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--token-icon)] hover:underline"><Ticket size={12} />Tickets</a>}
+                {m.homeGame !== undefined && <span className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${m.homeGame ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_15%,transparent)] text-[color:var(--token-heading)]' : 'text-[color:var(--token-muted)]'}`}>{m.homeGame ? 'Heim' : 'Ausw.'}</span>}
+                {m.ticketHref && <a href={m.ticketHref} className="inline-flex items-center gap-1 text-xs font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)] hover:underline"><Ticket size={12} />Tickets</a>}
               </div>
             </div>
           ))}
@@ -141,7 +141,7 @@ export function LeagueTableSection({ data }: Props) {
           <h2 className="mt-2 text-3xl font-extrabold uppercase text-[color:var(--token-heading)] md:text-4xl" data-edit-path="headline">{headline}</h2>
           {subline && <p className="mt-3 text-[color:var(--token-body)]" data-edit-path="subline">{subline}</p>}
         </div>
-        <div className="overflow-x-auto rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm">
+        <div className="overflow-x-auto rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm" role="region" aria-label={headline || 'Ligatabelle'} tabIndex={0}>
           <table className="w-full min-w-[420px] text-sm">
             <thead>
               <tr className="border-b border-[var(--token-card-border)] text-[color:var(--token-muted)]">
@@ -153,8 +153,8 @@ export function LeagueTableSection({ data }: Props) {
             <tbody>
               {rows.map((r, i) => (
                 <tr key={i} className={`border-b border-[var(--token-card-border)] last:border-b-0 ${r.highlight ? 'bg-[var(--token-accent)]/10' : ''}`} data-edit-collection="rows" data-edit-index={i}>
-                  <td className={`px-4 py-3 font-bold ${r.highlight ? 'text-[color:var(--token-accent)]' : 'text-[color:var(--token-heading)]'}`}>{r.rank || i + 1}</td>
-                  <td className={`px-4 py-3 font-semibold ${r.highlight ? 'text-[color:var(--token-accent)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="team">{r.team || ''}</td>
+                  <td className="px-4 py-3 font-bold text-[color:var(--token-heading)]">{r.rank || i + 1}</td>
+                  <td className="px-4 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="team">{r.team || ''}</td>
                   {cols.map(([key, label]) => <td key={label} className={`px-3 py-3 text-center ${key === 'points' ? 'font-bold text-[color:var(--token-heading)]' : 'text-[color:var(--token-body)]'}`}>{str(r[key])}</td>)}
                 </tr>
               ))}

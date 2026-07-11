@@ -7,31 +7,14 @@ import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { usePreview } from '@/components/admin/preview-context';
 import { getBrandCssVars } from '@/lib/brand-colors';
+import { buildGoogleFontsProxyUrl, GOOGLE_FONT_FAMILIES } from '@/lib/font-proxy';
 import { ImageUploadField } from '@/components/image-upload-field';
 
 type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; logoUrl?: string; faviconUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
-  { value: 'Outfit', label: 'Outfit' },
-  { value: 'Inter', label: 'Inter' },
-  { value: 'Poppins', label: 'Poppins' },
-  { value: 'Montserrat', label: 'Montserrat' },
-  { value: 'Playfair Display', label: 'Playfair Display' },
-  { value: 'Lora', label: 'Lora' },
-  { value: 'Raleway', label: 'Raleway' },
-  { value: 'Open Sans', label: 'Open Sans' },
-  { value: 'Roboto', label: 'Roboto' },
-  { value: 'Roboto Slab', label: 'Roboto Slab' },
-  { value: 'Source Sans 3', label: 'Source Sans 3' },
-  { value: 'Nunito', label: 'Nunito' },
-  { value: 'DM Sans', label: 'DM Sans' },
-  { value: 'DM Serif Display', label: 'DM Serif Display' },
-  { value: 'Space Grotesk', label: 'Space Grotesk' },
-  { value: 'Plus Jakarta Sans', label: 'Plus Jakarta Sans' },
-  { value: 'Bricolage Grotesque', label: 'Bricolage Grotesque' },
-  { value: 'Cormorant Garamond', label: 'Cormorant Garamond' },
-  { value: 'Josefin Sans', label: 'Josefin Sans' },
+  ...GOOGLE_FONT_FAMILIES.map((font) => ({ value: font, label: font })),
 ];
 
 export function BrandForm({ initial }: { initial: BrandData }) {
@@ -108,7 +91,8 @@ export function BrandForm({ initial }: { initial: BrandData }) {
   useEffect(() => {
     const fonts = [form.headingFont, form.bodyFont].filter(Boolean);
     if (fonts.length === 0) return;
-    const families = fonts.map(f => f.replace(/ /g, '+')).join('&family=');
+    const proxyUrl = buildGoogleFontsProxyUrl(fonts);
+    if (!proxyUrl) return;
     const id = 'brand-font-preview';
     let link = document.getElementById(id) as HTMLLinkElement | null;
     if (!link) {
@@ -117,7 +101,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
       link.rel = 'stylesheet';
       document.head.appendChild(link);
     }
-    link.href = `https://fonts.googleapis.com/css2?family=${families}&display=swap`;
+    link.href = proxyUrl;
   }, [form.headingFont, form.bodyFont]);
 
   const handleSubmit = async (e: React.FormEvent) => {

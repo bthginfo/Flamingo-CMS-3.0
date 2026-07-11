@@ -2,7 +2,7 @@
  * Tenant provisioning: creates all necessary DB records for a new tenant.
  */
 import { getDb } from './db';
-import { tenants, tenantDomains, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots } from '@flamingo/db';
+import { tenants, tenantDomains, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
 import { hashPassword } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
@@ -11,7 +11,7 @@ import { addDomainToRenderer, createStandaloneProject, addDomainToProject, trigg
 export type ProvisionInput = {
   name: string;
   slug: string;
-  industry: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar' | 'photography' | 'realestate' | 'tattoo' | 'ecommerce' | 'retail' | 'florist' | 'location';
+  industry: Industry;
   domain?: string;
   password: string;
   companyName: string;
@@ -34,6 +34,15 @@ export type ProvisionResult = {
   rendererUrl: string;
   warning?: string;
 };
+
+function provisioningSectionIdentity(industry: Industry, type: string) {
+  const canonicalIndustry = industry === 'bar' ? 'restaurant' : industry;
+  const sharedContactIndustries = new Set<Industry>(['wedding', 'medical', 'salon', 'tourism', 'tattoo']);
+  const owner = type === 'contact' && sharedContactIndustries.has(industry)
+    ? 'shared'
+    : canonicalIndustry;
+  return { definitionKey: `${type}.${owner}.v1`, schemaVersion: 1 };
+}
 
 type DefaultPage = {
   title: string;
@@ -143,6 +152,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       tenantId,
       pageId: page.id,
       type: section.type,
+      ...provisioningSectionIdentity(input.industry, section.type),
       sortOrder: section.sortOrder ?? index,
       visible: true,
       data: section.data,

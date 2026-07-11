@@ -37,7 +37,7 @@ function TreatmentClassic({ headline, subline, badgeText, treatments }: Props) {
               {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted)]">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted)]">{asList<string>(item.careTips).join(' / ')}</p>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{item.cta.label}</a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-2 text-sm font-semibold text-[color:var(--token-btn-text)] shadow-md" data-edit-path="label">{item.cta.label}</a>}
             </div>
           </motion.article>
         ))}

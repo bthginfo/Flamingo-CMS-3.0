@@ -1,3 +1,4 @@
+import { requireDatabaseUrl } from './_database-url';
 /**
  * Migrate all collection items to use the sections-based page builder.
  * Converts existing flat data (image, description, content, features) into proper sections.
@@ -5,7 +6,7 @@
  */
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon('postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require');
+const sql = neon(requireDatabaseUrl());
 
 function uid() { return crypto.randomUUID(); }
 

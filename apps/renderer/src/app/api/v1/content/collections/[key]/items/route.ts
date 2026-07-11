@@ -5,6 +5,7 @@ import { collections, collectionItems } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
 import { normalizeSectionData, normalizeStyleOverridesForSection, validateSections } from '@/lib/api-utils';
+import { resolveSectionWriteIdentities } from '@/lib/section-write-identity';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ key: string }> }) {
   try {
@@ -26,11 +27,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
     // Ensure all sections have IDs for DnD support
     const itemData = data || {};
     if (Array.isArray(itemData.sections)) {
-      const sectionErr = validateSections(itemData.sections, auth.tenant.industry);
+      const sectionErr = validateSections(itemData.sections, auth.tenant.industry, {
+        hasShop: auth.addons.includes('shop'),
+        hasBooking: auth.addons.includes('booking'),
+      });
       if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
-      itemData.sections = itemData.sections.map((s: Record<string, unknown>) => ({
+      const identityResolution = resolveSectionWriteIdentities(itemData.sections, auth.tenant.industry);
+      if (!identityResolution.ok) return NextResponse.json({ error: identityResolution.error }, { status: 400 });
+      itemData.sections = itemData.sections.map((s: Record<string, unknown>, index: number) => ({
         ...s,
         id: s.id || crypto.randomUUID(),
+        definitionKey: identityResolution.identities[index].definitionKey,
+        schemaVersion: identityResolution.identities[index].schemaVersion,
         data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
         styleOverrides: normalizeStyleOverridesForSection(String(s.type || ''), s.styleOverrides, auth.tenant.industry),
       }));

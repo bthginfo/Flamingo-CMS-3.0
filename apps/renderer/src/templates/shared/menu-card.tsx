@@ -60,7 +60,7 @@ export function MenuCardSection({ data }: Props) {
         )}
         {(subline || isPreview) && (
           <p
-            className="mt-3 text-base md:text-lg text-[color:var(--token-muted,#64748b)]"
+            className="mt-3 text-base md:text-lg text-[color:var(--token-heading,#0f172a)]"
             data-edit-path="subline"
           >
             {subline || (isPreview ? 'Frische Zutaten, saisonale Gerichte' : '')}

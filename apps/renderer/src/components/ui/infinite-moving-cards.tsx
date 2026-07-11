@@ -83,7 +83,7 @@ export function InfiniteMovingCards({
               &ldquo;{item.quote}&rdquo;
             </blockquote>
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--token-accent,var(--style-accent-color,var(--brand-primary)))] text-sm font-bold text-[var(--token-btn-text,var(--brand-btn-text,#ffffff))]" data-color-slot="accentColor btnText">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--token-card-badge-bg)] text-sm font-bold text-[var(--token-card-badge-text)]" data-color-slot="cardBadgeBg cardBadgeText">
                 {avatarInitial}
               </div>
               <div>

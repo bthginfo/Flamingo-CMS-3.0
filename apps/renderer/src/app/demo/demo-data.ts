@@ -1,4 +1,5 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
+import type { ContactFormFieldDefinition } from '@/lib/contact-form';
 
 export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'fitness' | 'location' | 'eishockey' | 'showcase';
 
@@ -9,9 +10,14 @@ export interface DemoSiteData {
   contact: ContactData;
   socialLinks: SocialLinks;
   footer: FooterData;
+  formFields?: ContactFormFieldDefinition[];
 }
 
-const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
+/**
+ * @deprecated Navigation and brand data for opt-in local static fixtures.
+ * Live/public demos must resolve this data from their tenant records.
+ */
+const DEPRECATED_STATIC_DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
   handwerk: {
     brand: { companyName: 'Müller & Söhne', tagline: 'Meisterbetrieb für Sanitär, Heizung & Bäder', primaryColor: '#1d4ed8' },
     contact: { phone: '+49 221 987 654', email: 'info@mueller-soehne.de', address: 'Handwerkerstraße 12, 50667 Köln' },
@@ -290,7 +296,7 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
   },
   florist: {
     brand: { companyName: 'Blütenwerk Atelier', tagline: 'Floristik, Hochzeiten & saisonale Blumenwelten', primaryColor: '#be185d' },
-    contact: { phone: '+49 841 123 456', email: 'hallo@bluetenwerk-atelier.de', address: 'Theresienstraße 12, 85049 Ingolstadt' },
+    contact: { phone: '+49 89 4455 2211', email: 'hello@bluetenwerk-atelier.de', address: 'Gärtnerplatz 8, 80469 München' },
     socialLinks: { instagram: '#', facebook: '#' },
     navItems: [
       { label: 'Sträuße', href: '/demo/florist/straeusse' },
@@ -308,8 +314,8 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
     },
   },
   fitness: {
-    brand: { companyName: 'Studio Kraftwerk', tagline: 'Training, Coaching & Kurse', primaryColor: '#9333ea' },
-    contact: { phone: '+49 89 555 123', email: 'hallo@studio-kraftwerk.de', address: 'Sendlinger Straße 18, 80331 München' },
+    brand: { companyName: 'Pulse Studio', tagline: 'Training, Kurse & Personal Coaching', primaryColor: '#9333ea' },
+    contact: { phone: '+49 89 7711 2233', email: 'hello@pulse-studio.de', address: 'Westendstraße 41, 80339 München' },
     socialLinks: { instagram: '#', facebook: '#' },
     navItems: [
       { label: 'Kurse', href: '/demo/fitness/kurse' },
@@ -328,7 +334,7 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
   },
   location: {
     brand: { companyName: 'Lichtwerk Loft', tagline: 'Eventlocation, Hochzeiten & Coworking', primaryColor: '#b45309' },
-    contact: { phone: '+49 841 456 789', email: 'hello@lichtwerk-loft.de', address: 'Donaustraße 18, 85049 Ingolstadt' },
+    contact: { phone: '+49 841 8899 4411', email: 'events@lichtwerk-loft.de', address: 'Am Speicher 12, 85049 Ingolstadt' },
     socialLinks: { instagram: '#', linkedin: '#' },
     navItems: [
       { label: 'Räume', href: '/demo/location/raeume' },
@@ -349,7 +355,7 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
   eishockey: {
     brand: { companyName: 'EHC Donau Panther', tagline: 'Eishockey aus Leidenschaft — seit 1978', primaryColor: '#dc2626' },
     contact: { phone: '+49 841 555 010', email: 'info@donau-panther.de', address: 'Saturn-Arena, Jahnstraße 10, 85049 Ingolstadt' },
-    socialLinks: { instagram: '#', facebook: '#' },
+    socialLinks: {},
     navItems: [
       { label: 'Spielplan', href: '/demo/eishockey/spielplan' },
       { label: 'Kader', href: '/demo/eishockey/kader' },
@@ -363,7 +369,7 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
         { title: 'Team', items: [{ text: 'Spielplan', href: '/demo/eishockey/spielplan' }, { text: 'Kader', href: '/demo/eishockey/kader' }, { text: 'Tabelle', href: '/demo/eishockey/spielplan' }] },
         { title: 'Verein', items: [{ text: 'Über uns', href: '/demo/eishockey/verein' }, { text: 'Sponsoren', href: '/demo/eishockey/sponsoren' }, { text: 'Kontakt', href: '/demo/eishockey/kontakt' }] },
       ],
-      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+      legalLinks: [{ label: 'Impressum', href: '/demo/eishockey/impressum' }, { label: 'Datenschutz', href: '/demo/eishockey/datenschutz' }],
     },
   },
   showcase: {
@@ -379,6 +385,9 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
   },
 };
 
-export function getDemoSiteData(industry: IndustryKey): DemoSiteData {
-  return DEMO_DATA[industry];
+export function getDeprecatedStaticDemoSiteData(industry: IndustryKey): DemoSiteData {
+  return DEPRECATED_STATIC_DEMO_DATA[industry];
 }
+
+/** @deprecated Use tenant data for production demo routes. */
+export const getDemoSiteData = getDeprecatedStaticDemoSiteData;

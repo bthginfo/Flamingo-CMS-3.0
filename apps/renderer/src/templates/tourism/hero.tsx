@@ -72,9 +72,9 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
         <path fill="currentColor" d="M0,120 L0,80 Q180,20 360,60 Q540,100 720,40 Q900,0 1080,50 Q1260,90 1440,30 L1440,120Z" />
       </svg>
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col items-center justify-center px-6 py-12 md:py-20 text-center">
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-4 flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_28%,transparent)] bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur-md">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="section-badge mb-4 flex items-center gap-2 backdrop-blur-md">
           <Compass className="text-[color:var(--token-on-dark-heading)]" size={20} />
-          {badgeText && <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeIcon && <DynamicIcon name={badgeIcon} size={13} />}{badgeText}</p>}
+          {badgeText && <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest" data-edit-path="badgeText">{badgeIcon && <DynamicIcon name={badgeIcon} size={13} />}{badgeText}</span>}
           <Mountain className="text-[color:var(--token-on-dark-heading)]" size={20} />
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[color:var(--token-on-dark-heading)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.62)' }} data-edit-path="headline"><WordReveal text={headline} /></motion.h1>

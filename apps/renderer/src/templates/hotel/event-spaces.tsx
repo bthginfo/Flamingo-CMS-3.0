@@ -48,7 +48,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
               <p className="mt-3 text-xs text-[color:var(--token-muted)]">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted)]">{asList<string>(space.seatingOptions).join(' / ')}</p>}
               {asList<string>(space.features).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted)]">{asList<string>(space.features).join(' / ')}</p>}
-              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon)]" data-edit-path="label">{space.inquiryCta.label}</a>}
+              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]" data-edit-path="label">{space.inquiryCta.label}</a>}
             </div>
           </motion.article>
         ))}
@@ -63,7 +63,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
           </motion.div>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

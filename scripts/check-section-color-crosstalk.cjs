@@ -20,6 +20,7 @@ const fs = require('fs');
 const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const TEMPLATES = path.join(ROOT, 'apps/renderer/src/templates');
+const COMPONENTS = path.join(ROOT, 'apps/renderer/src/components');
 
 const SAFE = [
   'badge-bg', 'badge-text', 'badge-border', 'eyebrow', 'icon', 'accent',
@@ -56,6 +57,39 @@ for (const file of walk(TEMPLATES)) {
   }
 }
 
+// PAIR GUARD. Foreground/background roles are contracts, not a colour buffet:
+// a badge background must travel with badge text, a button background with
+// button text, etc. Mixing accent/icon fills with an unrelated foreground was
+// the source of several tenant-only WCAG regressions. Limit this to concrete
+// background declarations; gradients and decorative fills without text remain
+// valid uses of --token-accent/--token-icon.
+const PAIR_RULES = [
+  { name: 'button', markers: ['bg-[var(--token-btn-bg)]', "background: 'var(--token-btn-bg)'", "backgroundColor: 'var(--token-btn-bg)'"], foreground: '--token-btn-text' },
+  { name: 'secondary button', markers: ['bg-[var(--token-btn-secondary-bg)]', "background: 'var(--token-btn-secondary-bg)'", "backgroundColor: 'var(--token-btn-secondary-bg)'"], foreground: '--token-btn-secondary-text' },
+  { name: 'badge', markers: ['bg-[var(--token-badge-bg)]', "background: 'var(--token-badge-bg)'", "backgroundColor: 'var(--token-badge-bg)'"], foreground: '--token-badge-text' },
+  { name: 'card badge', markers: ['bg-[var(--token-card-badge-bg)]', "background: 'var(--token-card-badge-bg)'", "backgroundColor: 'var(--token-card-badge-bg)'"], foreground: '--token-card-badge-text' },
+  { name: 'danger notice', markers: ['bg-[var(--token-danger-bg)]', "background: 'var(--token-danger-bg)'"], foreground: '--token-danger' },
+  { name: 'success notice', markers: ['bg-[var(--token-success-bg)]', "background: 'var(--token-success-bg)'"], foreground: '--token-success' },
+  { name: 'raw accent background', markers: ['bg-[var(--token-accent)]', "background: 'var(--token-accent)'", "backgroundColor: 'var(--token-accent)'"], foreground: null },
+  { name: 'raw icon background', markers: ['bg-[var(--token-icon)]', "background: 'var(--token-icon)'", "backgroundColor: 'var(--token-icon)'"], foreground: null },
+];
+const EXPLICIT_FOREGROUND_RE = /(?:text-\[[^\]]*var\(--token-|(?:^|[,{\s])color\s*:\s*['"]var\(--token-)/;
+const openingTagRe = /<[A-Za-z][^<>]{0,1800}>/gs;
+for (const file of [...walk(TEMPLATES), ...walk(COMPONENTS)]) {
+  const src = fs.readFileSync(file, 'utf8');
+  for (const match of src.matchAll(openingTagRe)) {
+    const tag = match[0];
+    if (!EXPLICIT_FOREGROUND_RE.test(tag)) continue;
+    for (const rule of PAIR_RULES) {
+      if (!rule.markers.some((marker) => tag.includes(marker))) continue;
+      if (rule.foreground && tag.includes(rule.foreground)) continue;
+      const line = src.slice(0, match.index).split('\n').length;
+      const expectation = rule.foreground ? `must pair with ${rule.foreground}` : 'must use a semantic background/text pair';
+      violations.push(`${path.relative(ROOT, file)}:${line}  ${rule.name} ${expectation}`);
+    }
+  }
+}
+
 if (violations.length) {
   console.error(`crosstalk gate FAILED: ${violations.length} theme-independent role token(s) used with a fallback.\n`);
   for (const v of violations.slice(0, 40)) console.error('  ' + v);
@@ -64,4 +98,4 @@ if (violations.length) {
   console.error('These slots have independent page-level defaults in brand-colors.ts.');
   process.exit(1);
 }
-console.log(`crosstalk gate OK: ${SAFE.length} role tokens are read without borrowed fallbacks.`);
+console.log(`crosstalk gate OK: ${SAFE.length} role tokens have no borrowed fallbacks; ${PAIR_RULES.length} foreground/background pair rules pass.`);

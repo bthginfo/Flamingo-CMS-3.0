@@ -1,10 +1,11 @@
+import { requireDatabaseUrl } from './_database-url';
 /**
  * Add Unternehmen, Mietservice, and Jobs pages to Schuldes GmbH.
  * Run: npx tsx scripts/populate-schuldes-subpages.ts
  */
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon('postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require');
+const sql = neon(requireDatabaseUrl());
 const TENANT_ID = '51e6afea-86f7-4363-b341-95620d462a43';
 
 const IMG = {

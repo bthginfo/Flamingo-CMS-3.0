@@ -49,7 +49,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
             </div>
             <div className="p-5 text-center">
               <h4 className="font-semibold text-lg text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-              <p className="text-sm text-[var(--token-accent)] font-medium mt-0.5" data-edit-path="role">{m.role}</p>
+              <p className="mt-0.5 text-sm font-medium text-[var(--token-card-muted)]" data-edit-path="role">{m.role}</p>
             </div>
           </motion.div>
         ))}

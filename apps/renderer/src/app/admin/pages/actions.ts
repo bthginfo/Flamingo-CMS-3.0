@@ -11,6 +11,8 @@ import { redirect } from 'next/navigation';
 import { BOOKING_SECTION_TYPES } from '@/lib/booking-core';
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
+import { normalizeStyleOverridesForSection } from '@/lib/section-style-overrides';
+import { resolveSectionWriteIdentity } from '@/lib/section-write-identity';
 
 async function requireSession() {
   const session = await getSession();
@@ -71,14 +73,22 @@ export async function ensureDefaultPages() {
     .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop')))
     .limit(1);
   if (shopAddon?.active) {
+    const [tenant] = await db.select({ industry: tenants.industry }).from(tenants)
+      .where(and(eq(tenants.id, session.tenantId), eq(tenants.status, 'active')))
+      .limit(1);
+    if (!tenant) return;
     for (const def of SHOP_PAGE_DEFS) {
       if (!slugs.has(def.slug)) {
         const [page] = await db.insert(pages).values({
           tenantId: session.tenantId, title: def.title, slug: def.slug, type: 'system', status: 'published', visible: true, sortOrder: def.sortOrder,
         }).returning({ id: pages.id });
         for (const section of def.sections) {
+          const identity = resolveSectionWriteIdentity({ type: section.type, industry: tenant.industry });
+          if (!identity.ok) throw new Error(identity.error);
           await db.insert(pageSections).values({
-            tenantId: session.tenantId, pageId: page.id, type: section.type, data: section.data, sortOrder: 0, locked: true, titleInternal: `[Shop] ${def.title}`,
+            tenantId: session.tenantId, pageId: page.id, type: section.type,
+            definitionKey: identity.identity.definitionKey, schemaVersion: identity.identity.schemaVersion,
+            data: section.data, sortOrder: 0, locked: true, titleInternal: `[Shop] ${def.title}`,
           });
         }
       }
@@ -121,7 +131,7 @@ export async function duplicatePageAction(pageId: string) {
     .limit(1);
   if (!sourcePage) return { error: 'Seite nicht gefunden' };
 
-  const [existingPages, sourceSections, lastPage] = await Promise.all([
+  const [existingPages, sourceSections, lastPage, tenantRows] = await Promise.all([
     db.select({ slug: pages.slug }).from(pages).where(eq(pages.tenantId, session.tenantId)),
     db
       .select()
@@ -134,7 +144,21 @@ export async function duplicatePageAction(pageId: string) {
       .where(eq(pages.tenantId, session.tenantId))
       .orderBy(desc(pages.sortOrder))
       .limit(1),
+    db.select({ industry: tenants.industry }).from(tenants)
+      .where(and(eq(tenants.id, session.tenantId), eq(tenants.status, 'active')))
+      .limit(1),
   ]);
+
+  const tenantIndustry = tenantRows[0]?.industry;
+  if (!tenantIndustry) return { error: 'Tenant nicht gefunden' };
+  const sourceIdentities = sourceSections.map(section => resolveSectionWriteIdentity({
+    type: section.type,
+    industry: tenantIndustry,
+    definitionKey: section.definitionKey,
+    schemaVersion: section.schemaVersion,
+  }));
+  const invalidIdentity = sourceIdentities.find(identity => !identity.ok);
+  if (invalidIdentity && !invalidIdentity.ok) return { error: invalidIdentity.error };
 
   const slug = uniqueSlug(`${sourcePage.slug || sourcePage.title}-kopie`, new Set(existingPages.map((page) => page.slug)));
   const [copy] = await db
@@ -153,11 +177,13 @@ export async function duplicatePageAction(pageId: string) {
 
   if (sourceSections.length > 0) {
     await db.insert(pageSections).values(
-      sourceSections.map((section) => ({
+      sourceSections.map((section, index) => ({
         id: randomUUID(),
         tenantId: session.tenantId,
         pageId: copy.id,
         type: section.type,
+        definitionKey: sourceIdentities[index].ok ? sourceIdentities[index].identity.definitionKey : null,
+        schemaVersion: sourceIdentities[index].ok ? sourceIdentities[index].identity.schemaVersion : null,
         variant: section.variant,
         titleInternal: section.titleInternal,
         visible: section.visible,
@@ -220,12 +246,27 @@ export async function getPageWithSectionsAction(pageId: string) {
 export async function addSectionAction(pageId: string, type: string) {
   const session = await requireSession();
   const db = getDb();
-  if (BOOKING_SECTION_TYPES.has(type)) {
-    const [bookingAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
-      .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'booking')))
+  const requiredAddon = BOOKING_SECTION_TYPES.has(type)
+    ? 'booking'
+    : type.startsWith('shop')
+      ? 'shop'
+      : null;
+  if (requiredAddon) {
+    const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+      .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, requiredAddon)))
       .limit(1);
-    if (!bookingAddon?.active) return null;
+    if (!addon?.active) return null;
   }
+  const [tenant] = await db.select({ industry: tenants.industry }).from(tenants)
+    .where(and(eq(tenants.id, session.tenantId), eq(tenants.status, 'active')))
+    .limit(1);
+  if (!tenant) return null;
+  const [targetPage] = await db.select({ id: pages.id }).from(pages)
+    .where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)))
+    .limit(1);
+  if (!targetPage) return null;
+  const identity = resolveSectionWriteIdentity({ type, industry: tenant.industry });
+  if (!identity.ok) return null;
   // Get max sort order
   const existing = await db.select({ sortOrder: pageSections.sortOrder }).from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(desc(pageSections.sortOrder)).limit(1);
   const nextOrder = (existing[0]?.sortOrder ?? -1) + 1;
@@ -242,6 +283,8 @@ export async function addSectionAction(pageId: string, type: string) {
     tenantId: session.tenantId,
     pageId,
     type,
+    definitionKey: identity.identity.definitionKey,
+    schemaVersion: identity.identity.schemaVersion,
     data: seedData,
     sortOrder: nextOrder,
   }).returning();
@@ -259,17 +302,164 @@ export async function updateSectionAction(sectionId: string, data: Record<string
   } catch (e) {
     return { error: 'Ungültige Section-Daten' };
   }
-  const result = await db.update(pageSections).set({ data: cleanData, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
+  const result = await db.update(pageSections).set({ data: cleanData, updatedAt: new Date() }).where(and(
+    eq(pageSections.id, sectionId),
+    eq(pageSections.pageId, pageId),
+    eq(pageSections.tenantId, session.tenantId),
+  )).returning({ id: pageSections.id });
   if (result.length === 0) {
     return { error: 'Section nicht gefunden oder keine Berechtigung' };
   }
   return { success: true };
 }
 
-export async function updateSectionMetaAction(sectionId: string, meta: { type?: string; visible?: boolean; titleInternal?: string; variant?: string; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string; styleOverrides?: Record<string, unknown> | null }, pageId?: string) {
+type SectionTypeAndDataUpdate = {
+  type: string;
+  data: Record<string, unknown>;
+  styleOverrides?: Record<string, unknown> | null;
+  visible?: boolean;
+  titleInternal?: string | null;
+  variant?: string | null;
+  container?: string;
+  spacingTop?: string;
+  spacingBottom?: string;
+  anchorId?: string | null;
+};
+
+/**
+ * Change a section definition and its remapped payload in one UPDATE. Keeping
+ * these fields together prevents a renderer-visible half state where a new
+ * component type temporarily receives the previous component's data schema.
+ */
+export async function updateSectionTypeAndDataAction(sectionId: string, pageId: string, update: SectionTypeAndDataUpdate) {
   const session = await requireSession();
   const db = getDb();
-  const result = await db.update(pageSections).set({ ...meta, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
+  let cleanData: Record<string, unknown>;
+  try {
+    cleanData = validateSectionData(update.data);
+  } catch {
+    return { error: 'Ungültige Section-Daten' };
+  }
+
+  const [existing] = await db.select({
+    locked: pageSections.locked,
+    visible: pageSections.visible,
+    titleInternal: pageSections.titleInternal,
+    variant: pageSections.variant,
+    container: pageSections.container,
+    spacingTop: pageSections.spacingTop,
+    spacingBottom: pageSections.spacingBottom,
+    anchorId: pageSections.anchorId,
+    styleOverrides: pageSections.styleOverrides,
+    industry: tenants.industry,
+  })
+    .from(pageSections)
+    .innerJoin(tenants, eq(tenants.id, pageSections.tenantId))
+    .where(and(
+      eq(pageSections.id, sectionId),
+      eq(pageSections.pageId, pageId),
+      eq(pageSections.tenantId, session.tenantId),
+      eq(tenants.status, 'active'),
+    ))
+    .limit(1);
+  if (!existing) return { error: 'Section nicht gefunden oder keine Berechtigung' };
+  if (existing.locked) return { error: 'Gesperrte System-Sections können nicht gewechselt werden' };
+
+  const requiredAddon = BOOKING_SECTION_TYPES.has(update.type)
+    ? 'booking'
+    : update.type.startsWith('shop')
+      ? 'shop'
+      : null;
+  if (requiredAddon) {
+    const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+      .where(and(
+        eq(tenantAddons.tenantId, session.tenantId),
+        eq(tenantAddons.addonKey, requiredAddon),
+        eq(tenantAddons.active, true),
+      ))
+      .limit(1);
+    if (!addon?.active) return { error: `Die Section benötigt das aktive ${requiredAddon}-Addon` };
+  }
+
+  const identity = resolveSectionWriteIdentity({ type: update.type, industry: existing.industry });
+  if (!identity.ok) return { error: identity.error };
+
+  const result = await db.update(pageSections).set({
+    type: update.type,
+    definitionKey: identity.identity.definitionKey,
+    schemaVersion: identity.identity.schemaVersion,
+    data: cleanData,
+    styleOverrides: normalizeStyleOverridesForSection(
+      update.type,
+      update.styleOverrides !== undefined ? update.styleOverrides : existing.styleOverrides,
+      existing.industry,
+    ),
+    visible: update.visible ?? existing.visible,
+    titleInternal: update.titleInternal !== undefined ? update.titleInternal : existing.titleInternal,
+    variant: update.variant !== undefined ? update.variant : existing.variant,
+    container: update.container ?? existing.container,
+    spacingTop: update.spacingTop ?? existing.spacingTop,
+    spacingBottom: update.spacingBottom ?? existing.spacingBottom,
+    anchorId: update.anchorId !== undefined ? update.anchorId : existing.anchorId,
+    updatedAt: new Date(),
+  }).where(and(
+    eq(pageSections.id, sectionId),
+    eq(pageSections.pageId, pageId),
+    eq(pageSections.tenantId, session.tenantId),
+  )).returning({ id: pageSections.id });
+
+  if (result.length === 0) return { error: 'Section konnte nicht aktualisiert werden' };
+  return { success: true };
+}
+
+export async function updateSectionMetaAction(sectionId: string, meta: { type?: string; definitionKey?: string | null; schemaVersion?: number | null; visible?: boolean; titleInternal?: string | null; variant?: string | null; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string | null; styleOverrides?: Record<string, unknown> | null }, pageId?: string) {
+  const session = await requireSession();
+  const db = getDb();
+  const sectionScope = pageId
+    ? and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))
+    : and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId));
+  const [existing] = await db
+    .select({
+      type: pageSections.type,
+      definitionKey: pageSections.definitionKey,
+      schemaVersion: pageSections.schemaVersion,
+      styleOverrides: pageSections.styleOverrides,
+      industry: tenants.industry,
+    })
+    .from(pageSections)
+    .innerJoin(tenants, eq(tenants.id, pageSections.tenantId))
+    .where(sectionScope)
+    .limit(1);
+  if (!existing) {
+    return { error: 'Section nicht gefunden oder keine Berechtigung' };
+  }
+
+  const normalizedMeta = { ...meta };
+  const identity = resolveSectionWriteIdentity({
+    type: meta.type || existing.type,
+    industry: existing.industry,
+    definitionKey: meta.definitionKey !== undefined
+      ? meta.definitionKey
+      : meta.type
+        ? undefined
+        : existing.definitionKey,
+    schemaVersion: meta.schemaVersion !== undefined
+      ? meta.schemaVersion
+      : meta.type
+        ? undefined
+        : existing.schemaVersion,
+  });
+  if (!identity.ok) return { error: identity.error };
+  normalizedMeta.definitionKey = identity.identity.definitionKey;
+  normalizedMeta.schemaVersion = identity.identity.schemaVersion;
+  if (meta.styleOverrides !== undefined || meta.type) {
+    normalizedMeta.styleOverrides = normalizeStyleOverridesForSection(
+      meta.type || existing.type,
+      meta.styleOverrides !== undefined ? meta.styleOverrides : existing.styleOverrides,
+      existing.industry,
+    );
+  }
+  const result = await db.update(pageSections).set({ ...normalizedMeta, updatedAt: new Date() }).where(sectionScope).returning({ id: pageSections.id });
   if (result.length === 0) {
     return { error: 'Section nicht gefunden oder keine Berechtigung' };
   }
@@ -280,9 +470,9 @@ export async function deleteSectionAction(sectionId: string, pageId: string) {
   const session = await requireSession();
   const db = getDb();
   // Prevent deletion of locked sections (shop system sections)
-  const [section] = await db.select({ locked: pageSections.locked }).from(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).limit(1);
+  const [section] = await db.select({ locked: pageSections.locked }).from(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).limit(1);
   if (section?.locked) return;
-  await db.delete(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId)));
+  await db.delete(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId)));
   revalidatePath(`/admin/pages/${pageId}`);
 }
 
@@ -291,7 +481,7 @@ export async function reorderSectionsAction(pageId: string, sectionIds: string[]
   const db = getDb();
   await Promise.all(
     sectionIds.map((id, i) =>
-      db.update(pageSections).set({ sortOrder: i }).where(and(eq(pageSections.id, id), eq(pageSections.tenantId, session.tenantId)))
+      db.update(pageSections).set({ sortOrder: i }).where(and(eq(pageSections.id, id), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId)))
     )
   );
   revalidatePath(`/admin/pages/${pageId}`);
@@ -359,6 +549,18 @@ export async function cloneSectionFromPageAction(targetPageId: string, sourceSec
     .limit(1);
   if (!source || source.locked) return null;
 
+  const [tenant] = await db.select({ industry: tenants.industry }).from(tenants)
+    .where(and(eq(tenants.id, session.tenantId), eq(tenants.status, 'active')))
+    .limit(1);
+  if (!tenant) return null;
+  const identity = resolveSectionWriteIdentity({
+    type: source.type,
+    industry: tenant.industry,
+    definitionKey: source.definitionKey,
+    schemaVersion: source.schemaVersion,
+  });
+  if (!identity.ok) return null;
+
   const [existing] = await db
     .select({ sortOrder: pageSections.sortOrder })
     .from(pageSections)
@@ -371,6 +573,8 @@ export async function cloneSectionFromPageAction(targetPageId: string, sourceSec
     tenantId: session.tenantId,
     pageId: targetPageId,
     type: source.type,
+    definitionKey: identity.identity.definitionKey,
+    schemaVersion: identity.identity.schemaVersion,
     variant: source.variant,
     titleInternal: source.titleInternal,
     visible: source.visible,
@@ -419,6 +623,14 @@ export async function addShopPageAction(slug: string) {
     .limit(1);
   if (existing) return { error: 'Seite existiert bereits' };
 
+  const [tenant] = await db.select({ industry: tenants.industry }).from(tenants)
+    .where(and(eq(tenants.id, session.tenantId), eq(tenants.status, 'active')))
+    .limit(1);
+  if (!tenant) return { error: 'Tenant nicht gefunden' };
+  const sectionIdentities = def.sections.map(section => resolveSectionWriteIdentity({ type: section.type, industry: tenant.industry }));
+  const invalidIdentity = sectionIdentities.find(identity => !identity.ok);
+  if (invalidIdentity && !invalidIdentity.ok) return { error: invalidIdentity.error };
+
   const [page] = await db.insert(pages).values({
     tenantId: session.tenantId,
     title: def.title,
@@ -429,11 +641,16 @@ export async function addShopPageAction(slug: string) {
     sortOrder: def.sortOrder,
   }).returning({ id: pages.id });
 
-  for (const section of def.sections) {
+  for (let index = 0; index < def.sections.length; index++) {
+    const section = def.sections[index];
+    const identity = sectionIdentities[index];
+    if (!identity.ok) return { error: identity.error };
     await db.insert(pageSections).values({
       tenantId: session.tenantId,
       pageId: page.id,
       type: section.type,
+      definitionKey: identity.identity.definitionKey,
+      schemaVersion: identity.identity.schemaVersion,
       data: section.data,
       sortOrder: 0,
       locked: true,

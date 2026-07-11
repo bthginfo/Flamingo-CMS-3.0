@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { pages, tenantAddons } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { pages, globalSettings } from '@flamingo/db';
+import { eq } from 'drizzle-orm';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
+import { resolveSectionDefinition } from '@/templates';
 import { FIELD_DEFS, PUBLIC_COLOR_FIELD_KEYS, type ColorFieldKey } from '@/lib/section-color-fields';
 import { getFieldsForSection } from '@/lib/section-color-resolver';
 import {
@@ -20,22 +21,35 @@ export async function GET(req: NextRequest) {
 
   const db = getDb();
 
-  // Check shop addon status
-  const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
-    .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'shop')));
-  const hasShop = shopAddon?.active === true;
-  const [bookingAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
-    .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'booking')));
-  const hasBooking = bookingAddon?.active === true;
+  const hasShop = auth.addons.includes('shop');
+  const hasBooking = auth.addons.includes('booking');
 
   const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
+  const [settings] = await db.select({ brand: globalSettings.brand, contact: globalSettings.contact })
+    .from(globalSettings)
+    .where(eq(globalSettings.tenantId, auth.tenantId))
+    .limit(1);
+  const existingBrand = (settings?.brand || {}) as Record<string, unknown>;
+  const existingContact = (settings?.contact || {}) as Record<string, unknown>;
 
   const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry, { hasShop, hasBooking });
   // Exclude HTML-Block (freeHtml) from AI usage
-  const allowedSectionTypes = sectionTypes.filter((s: { type?: string; id?: string }) => {
-    const key = s.type || s.id || '';
-    return key !== 'freeHtml' && key !== 'htmlBlock' && key !== 'html';
-  });
+  const allowedSectionTypes = sectionTypes
+    .filter((s: { type?: string; id?: string; requiresAddon?: 'shop' | 'booking' }) => {
+      const key = s.type || s.id || '';
+      const addonAvailable = !s.requiresAddon
+        || (s.requiresAddon === 'shop' && hasShop)
+        || (s.requiresAddon === 'booking' && hasBooking);
+      return addonAvailable && key !== 'freeHtml' && key !== 'htmlBlock' && key !== 'html';
+    })
+    .map(section => {
+      const definition = resolveSectionDefinition({ type: section.type, industry: auth.tenant.industry });
+      return {
+        ...section,
+        definitionKey: definition?.key,
+        schemaVersion: definition?.schemaVersion,
+      };
+    });
   const sectionDataSchemas = getSectionSchemas(auth.tenant.industry);
 
   const response: Record<string, unknown> = {
@@ -62,6 +76,13 @@ export async function GET(req: NextRequest) {
       sectionSchemas: sectionDataSchemas,
       hasShop,
       hasBooking,
+      siteProfileSeed: {
+        businessName: typeof existingBrand.companyName === 'string' ? existingBrand.companyName : auth.tenant.name,
+        industry: auth.tenant.industry,
+        address: typeof existingContact.address === 'string' ? existingContact.address : undefined,
+        phone: typeof existingContact.phone === 'string' ? existingContact.phone : undefined,
+        email: typeof existingContact.email === 'string' ? existingContact.email : undefined,
+      },
     }),
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logoUrl, faviconUrl, etc.)' },
@@ -86,6 +107,7 @@ export async function GET(req: NextRequest) {
       patchPage: { method: 'PATCH', path: '/api/v1/content/pages/:id', description: 'Partially update a page. Send patchSections: [{id, data: {partial fields}}] to merge section data without full replace.' },
       publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings (incomplete content) AND colorWarnings (low contrast / malformed colors). Call /validate FIRST.' },
       validate: { method: 'GET', path: '/api/v1/content/validate', description: 'Pre-publish audit. Returns { readyToPublish, summary, contentIssues, colorIssues }. ALWAYS call before /publish, fix every error + critical warning, repeat until readyToPublish=true.' },
+      validatePlan: { method: 'POST', path: '/api/v1/content/validate', description: 'Preflight a siteProfile + page plan before any write. Returns stable issue codes, exact locations and deterministic repair instructions.' },
       debug: { method: 'GET', path: '/api/v1/content/debug', description: 'Get raw stored data for all pages, sections, collections and items (for debugging)' },
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
       style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant. Only { style: "classic" } is supported; old modern/bold values are ignored by the renderer.' },
@@ -130,6 +152,8 @@ export async function GET(req: NextRequest) {
     instructions: buildAiAgentPrompt(auth.tenant.name, auth.tenant.industry),
     legacyInstructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
 
+WICHTIG: agentContract.sitemapPolicy ist für die Seitenwahl verbindlich. Die unten beschriebenen Seiten "Leistungen" und "Über uns" sind ein Dienstleister-Beispiel, keine universelle Pflicht. Erstelle keine branchenfremden Seiten; nutze required und recommended aus der Sitemap-Policy.
+
 ═══════════════════════════════════════════
 PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 ═══════════════════════════════════════════
@@ -161,7 +185,7 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
    - NIEMALS leere items-Arrays! Jede Spalte braucht mindestens 2 Links.
    - i18n: Optionales "locale" Feld um Footer pro Sprache zu setzen: { locale: "en", columns: [...], legalLinks: [...], cta: {...} }
 
-5. SEITEN (POST /api/v1/content/pages) — Erstelle ALLE diese Seiten:
+5. SEITEN (POST /api/v1/content/pages) — DIENSTLEISTER-BEISPIEL; agentContract.sitemapPolicy hat Vorrang:
    a) Startseite (slug: "startseite") — MINDESTENS 6 Sections:
       - hero (mit headline, subline, bgImage, primaryCta, secondaryCta, trustItems)
       - uspStrip (mindestens 4 Items)
@@ -194,7 +218,7 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
    f) Datenschutz (slug: "datenschutz"):
       - legalContent (headline: "Datenschutzerklärung", blocks mit: Verantwortlicher, Hosting, Cookies, Kontaktformular, Analyse-Tools, Rechte der Betroffenen)
 
-6. COLLECTIONS — Erstelle MINDESTENS eine Collection für die Kernleistungen:
+6. COLLECTIONS — Nur wenn wiederholbare Inhalte fachlich sinnvoll sind; Key und Inhalt an sitemapPolicy/Branche anpassen. Dienstleister-Beispiel:
    - POST /api/v1/content/collections → { key: "leistungen", label: "Leistungen" }
    - Dann für JEDE Leistung ein Item erstellen (MINDESTENS 4 Items):
      POST /api/v1/content/collections/leistungen/items → { title: "...", slug: "...", data: { sections: [...] } }

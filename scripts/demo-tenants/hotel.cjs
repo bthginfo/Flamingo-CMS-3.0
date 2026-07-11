@@ -90,7 +90,7 @@ const softGreenTokens = {
   '--token-badge-bg': 'rgba(111,126,98,0.14)',
 };
 
-function heroData({ headline, subline, badgeText, bgImage, primaryLabel = 'Aufenthalt anfragen', secondaryLabel = 'Zimmer ansehen', primaryHref = '/kontakt', secondaryHref = '/leistungen' }) {
+function heroData({ headline, subline, badgeText, bgImage, primaryLabel = 'Direktanfrage starten', secondaryLabel = 'Zimmer ansehen', primaryHref = '/kontakt', secondaryHref = '/leistungen' }) {
   return {
     headline,
     subline,
@@ -473,6 +473,7 @@ const tenant = {
           headline: 'Ankommen, durchatmen, bleiben wollen.',
           subline: 'Ein kleines Resort am Waldrand für Menschen, die Bergluft, gutes Frühstück und echte Ruhe suchen.',
           bgImage: img('1500534314209-a25ddb2bd429'),
+          primaryLabel: 'Wunschaufenthalt planen',
         }), styleOverrides: darkSectionTokens() },
         { type: 'socialProofBar', data: { bgStyle: 'light', items: [
           { value: '4,8/5', label: 'Gästestimmen', icon: 'Star' },
@@ -550,7 +551,7 @@ const tenant = {
           ],
         }, styleOverrides: lightTokens },
         { type: 'faq', data: { headline: 'Kurz vor der Anfrage geklärt.', items: faqItems() }, styleOverrides: lightTokens },
-        sectionCta('Wollen Sie wissen, welches Zimmer passt?', 'Schicken Sie uns Zeitraum, Gäste und Wünsche. Wir antworten mit einer klaren Empfehlung.', 'Aufenthalt anfragen', '/kontakt'),
+        sectionCta('Wollen Sie wissen, welches Zimmer passt?', 'Schicken Sie uns Zeitraum, Gäste und Wünsche. Wir antworten mit einer klaren Empfehlung.', 'Zimmerempfehlung erhalten', '/kontakt'),
       ],
     },
     {
@@ -558,7 +559,7 @@ const tenant = {
       title: 'Zimmer & Angebote',
       seo: pageSeo('Zimmer, Suiten und Retreat-Angebote in Seefeld', 'Zimmer und Angebote im Alpenglow Resort & Spa: Waldzimmer, Panorama Suite, Spa Loft und Retreat-Formate in Seefeld.'),
       sections: [
-        cineHeroSec('Zimmer & Angebote', 'Ein Aufenthalt, der zum Tempo passt.', 'Zimmer, Suiten und kleine Formate für ruhige Tage am Waldrand.', img('1566073771259-6a8506099945'), [ { value: '18', label: 'Zimmer & Suiten' }, { value: '1.180 m', label: 'über dem Alltag' }, { value: '4', label: 'Saunen & Ruheräume' } ]),
+        cineHeroSec('Zimmer & Angebote', 'Ein Aufenthalt, der zum Tempo passt.', 'Zimmer, Suiten und kleine Formate für ruhige Tage am Waldrand.', img('1566073771259-6a8506099945'), [ { value: '18', label: 'Zimmer & Suiten' }, { value: '1.180 m', label: 'über dem Alltag' }, { value: '4', label: 'Saunen & Ruheräume' } ], 'Zimmer & Angebot finden'),
         { type: 'servicesGrid', data: { badgeText: 'Auswahl', headline: 'Vier Möglichkeiten, im Alpenglow anzukommen.', subline: 'Vom ruhigen Zimmer bis zum Offsite: jedes Angebot hat eine klare Rolle.', ctaLabel: 'Anfrage senden', ctaHref: '/kontakt', manualCards: offerCards() }, styleOverrides: lightTokens },
         { type: 'roomShowcase', data: { badgeText: 'Zimmer', headline: 'Nicht jedes Zimmer muss alles können.', subline: 'Wichtig ist, dass es zu Ihrem Aufenthalt passt.', rooms: rooms(), footerText: 'Alle Zimmer enthalten Frühstück, Spa-Zugang und persönliche Vorbereitung vor Anreise.' }, styleOverrides: lightTokens },
         { type: 'comparisonTable', data: {
@@ -588,14 +589,14 @@ const tenant = {
           headline: 'Drei Arten, hier anzukommen.',
           subline: 'Ob Auszeit, Genuss oder konzentriertes Arbeiten — jede Ebene des Hauses hat ihren eigenen Rhythmus.',
           tabs: [
-            { label: 'Wohnen', icon: 'bedDouble', title: 'Zimmer & Suiten', text: '<p>Ruhige Materialien, echte Dunkelheit und Betten, über die Gäste noch zuhause sprechen. Kein Zimmer gleicht dem anderen.</p>', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=82', features: ['Bergblick oder Gartenruhe', 'Späte Abreise nach Verfügbarkeit', 'Hunde in ausgewählten Zimmern'], cta: { label: 'Zimmer ansehen', href: '/zimmer' } },
-            { label: 'Spa', icon: 'waves', title: 'Wellness & Ruhe', text: '<p>Panoramapool, Saunen und Anwendungen mit Zeitpuffer — der Spa ist bewusst nicht auf Durchsatz geplant.</p>', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=82', features: ['Adults-only Ruhebereich', 'Anwendungen mit 15 Min. Nachruhe', 'Textilfreie & textile Zonen'], cta: { label: 'Spa entdecken', href: '/wellness' } },
+            { label: 'Wohnen', icon: 'bedDouble', title: 'Zimmer & Suiten', text: '<p>Ruhige Materialien, echte Dunkelheit und Betten, über die Gäste noch zuhause sprechen. Kein Zimmer gleicht dem anderen.</p>', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=82', features: ['Bergblick oder Gartenruhe', 'Späte Abreise nach Verfügbarkeit', 'Hunde in ausgewählten Zimmern'], cta: { label: 'Zimmer ansehen', href: '/leistungen' } },
+            { label: 'Spa', icon: 'waves', title: 'Wellness & Ruhe', text: '<p>Panoramapool, Saunen und Anwendungen mit Zeitpuffer — der Spa ist bewusst nicht auf Durchsatz geplant.</p>', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=82', features: ['Adults-only Ruhebereich', 'Anwendungen mit 15 Min. Nachruhe', 'Textilfreie & textile Zonen'], cta: { label: 'Spa entdecken', href: '/spa' } },
             { label: 'Kulinarik', icon: 'utensilsCrossed', title: 'Restaurant & Weinkeller', text: '<p>Regionale Küche mit klarer Handschrift, dazu ein Weinkeller, der Entdeckungen über Etiketten stellt.</p>', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=82', features: ['Halbpension mit Wahlfreiheit', 'Vegetarische Linie gleichwertig', 'Weinbegleitung glasweise'], cta: { label: 'Einblick Kulinarik', href: '/kulinarik' } },
           ],
         }, styleOverrides: lightTokens },
         { type: 'collectionList', data: { headline: 'Alle Zimmer und Angebote', collectionKey: 'leistungen', columns: 4, showImage: true, showExcerpt: true, showDate: false, showSortControls: false }, styleOverrides: lightTokens },
         { type: 'faq', data: { headline: 'Fragen zu Zimmern & Angeboten', items: faqItems() }, styleOverrides: lightTokens },
-        imCtaSec('Sie müssen noch nicht genau wissen, was passt.', 'Beschreiben Sie kurz Reisezeit, Gäste und Anlass. Wir empfehlen das passende Zimmer.', img('1566073771259-6a8506099945')),
+        imCtaSec('Sie müssen noch nicht genau wissen, was passt.', 'Beschreiben Sie kurz Reisezeit, Gäste und Anlass. Wir empfehlen das passende Zimmer.', img('1566073771259-6a8506099945'), 'Verfügbarkeit prüfen'),
       ],
     },
     {
@@ -603,7 +604,7 @@ const tenant = {
       title: 'Spa',
       seo: pageSeo('Spa und Wellness im Alpenglow Resort Seefeld', 'Ruhiger Spa-Bereich in Seefeld mit Sauna, Pool, Anwendungen und kleinen Auszeit-Paketen im Alpenglow Resort & Spa.'),
       sections: [
-        edHeroSec('Spa', 'Wärme, Wasser, Ruhe. Nicht mehr.', 'Ein Spa für Menschen, die keinen Wellness-Zirkus suchen.', img('1544161515-4ab6ce6db874'), { hint: 'Täglich 7–21 Uhr · ab 16 Jahren' }),
+        edHeroSec('Spa', 'Wärme, Wasser, Ruhe. Nicht mehr.', 'Ein Spa für Menschen, die keinen Wellness-Zirkus suchen.', img('1544161515-4ab6ce6db874'), { primaryCta: { label: 'Spa-Auszeit planen', href: '/kontakt' }, hint: 'Täglich 7–21 Uhr · ab 16 Jahren' }),
         { type: 'wellness', data: wellnessData(), styleOverrides: softGreenTokens },
         { type: 'featureShowcase', data: {
           headline: 'Ein Spa, der nicht fordert.',
@@ -639,8 +640,8 @@ const tenant = {
       title: 'Kulinarik',
       seo: pageSeo('Frühstück und Abendkarte im Hotel in Seefeld', 'Regionale Kulinarik im Alpenglow Resort: ruhiges Frühstück, kleine Abendkarte, Tee-Bar und Weine in Seefeld in Tirol.'),
       sections: [
-        edHeroSec('Kulinarik', 'Gutes Essen muss nicht laut auftreten.', 'Frühstück, kleine Abendkarte und Weine mit Sinn für den Tag.', img('1496412705862-e0088f16f791'), { secondaryCta: { label: 'Abendkarte ansehen', href: '#karte' } }),
-        { type: 'hotelDining', data: diningData(), styleOverrides: lightTokens },
+        edHeroSec('Kulinarik', 'Gutes Essen muss nicht laut auftreten.', 'Frühstück, kleine Abendkarte und Weine mit Sinn für den Tag.', img('1496412705862-e0088f16f791'), { primaryCta: { label: 'Genussaufenthalt planen', href: '/kontakt' }, secondaryCta: { label: 'Abendkarte ansehen', href: '#karte' } }),
+        { type: 'hotelDining', anchorId: 'karte', data: diningData(), styleOverrides: lightTokens },
         { type: 'portfolio', data: { badgeText: 'Küche', headline: 'Was morgens und abends auf den Tisch kommt.', subline: 'Keine endlose Karte, sondern gute Anker für den Tag.', projects: [
           { title: 'Bergfrühstück', category: 'morgens', description: 'Brot, Eier, Joghurt, Käse, Obst, Kaffee und ruhige Zeit.', image: img('1496412705862-e0088f16f791'), stats: [{ label: 'Zeit', value: '7:30-10:30' }] },
           { title: 'Abendkarte', category: 'abends', description: 'Klein gekocht: Suppe, Pasta, Risotto, Salat, Brotzeit.', image: img('1543353071-10c8ba85a904'), stats: [{ label: 'Tage', value: 'Mi-So' }] },
@@ -658,7 +659,7 @@ const tenant = {
           { question: 'Muss ich für das Abendessen reservieren?', answer: 'Empfohlen, weil unsere Abendkarte bewusst klein geplant ist.' },
           { question: 'Kann ich nur zum Essen kommen?', answer: 'Nach Verfügbarkeit ja, Hausgäste haben aber Vorrang.' },
         ] }, styleOverrides: lightTokens },
-        imCtaSec('Ein Abend im Haus?', 'Wenn Sie bei uns essen möchten, schreiben Sie es direkt in die Anfrage. Wir planen den Tisch mit.', img('1496412705862-e0088f16f791')),
+        imCtaSec('Ein Abend im Haus?', 'Wenn Sie bei uns essen möchten, schreiben Sie es direkt in die Anfrage. Wir planen den Tisch mit.', img('1496412705862-e0088f16f791'), 'Dinner zum Aufenthalt ergänzen'),
       ],
     },
     {
@@ -666,7 +667,7 @@ const tenant = {
       title: 'Retreats',
       seo: pageSeo('Retreats und kleine Offsites im Hotel in Seefeld', 'Kleine Retreats, Team-Offsites und private Formate im Alpenglow Resort & Spa in Seefeld mit Raum, Küche und Spa.'),
       sections: [
-        cineHeroSec('Retreats', 'Kleine Gruppen brauchen gute Ordnung.', 'Räume, Zimmer, Essen und Pausen aus einer Hand.', img('1497366754035-f200968a6e72')),
+        cineHeroSec('Retreats', 'Kleine Gruppen brauchen gute Ordnung.', 'Räume, Zimmer, Essen und Pausen aus einer Hand.', img('1497366754035-f200968a6e72'), undefined, 'Retreat besprechen'),
         { type: 'eventSpaces', data: eventsData(), styleOverrides: lightTokens },
         { type: 'processSteps', data: { badgeText: 'Ablauf', headline: 'So planen wir ein kleines Format.', steps: [
           { icon: 'Users', title: 'Gruppe verstehen', text: 'Personen, Ziele, Energielevel und gewünschte Ruhe klären.' },
@@ -700,7 +701,7 @@ const tenant = {
       title: 'Über uns',
       seo: pageSeo('Über Alpenglow Resort & Spa in Seefeld', 'Über das Alpenglow Resort & Spa: Gastgeber, Hausgeschichte, Werte und Team des Boutique-Hotels in Seefeld.'),
       sections: [
-        edHeroSec('Über uns', 'Wir mögen Häuser, die nicht schreien.', 'Ein paar Menschen, ein alter Ort, viele bewusste Entscheidungen.', img('1519681393784-d120267933ba')),
+        edHeroSec('Über uns', 'Wir mögen Häuser, die nicht schreien.', 'Ein paar Menschen, ein alter Ort, viele bewusste Entscheidungen.', img('1519681393784-d120267933ba'), { primaryCta: { label: 'Das Haus kennenlernen', href: '/kontakt' } }),
         { type: 'story', data: storyData(), styleOverrides: lightTokens },
         { type: 'textImage', data: { badge: 'Haltung', headline: 'Gastgeben heißt für uns: gut vorbereiten und dann Raum lassen.', text: `${p('Wir fragen lieber einmal mehr vor der Anreise, damit vor Ort weniger erklärt werden muss. Ob Zimmerlage, Frühstückszeit, Allergie, Spa-Wunsch oder Anreise: Ein guter Aufenthalt beginnt lange vor dem Check-in.')}${p('Unser Haus ist nicht auf maximale Auslastung optimiert, sondern auf Wiederkommen. Das merkt man an kleinen Dingen: genug Personal beim Frühstück, klare Wege, wenig Lärm und eine Rezeption, die erreichbar bleibt.')}`, image: img('1500534314209-a25ddb2bd429'), imageAlt: 'Alpenglow Resort am Waldrand', layout: 'image-left', items: [
           { icon: 'ShieldCheck', title: 'klar vorbereitet', text: 'Wünsche und Besonderheiten stehen vor Anreise im Team.' },
@@ -710,8 +711,8 @@ const tenant = {
         ], primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'ArrowRight' } }, styleOverrides: lightTokens },
         { type: 'team', data: { headline: 'Menschen, die das Haus kennen.', subline: 'Klein genug, dass Verantwortung sichtbar bleibt.', membersHeadline: 'Team', members: [
           { name: 'Mara Huter', role: 'Gastgeberin & Frühstück', image: img('1544005313-94ddf0286df2'), bio: 'Hört in Anfragen oft zwischen den Zeilen und weiß, welches Zimmer wirklich passt.' },
-          { name: 'Lukas Huter', role: 'Haus & Retreats', image: img('1500648767791-00dcc994a43e'), bio: 'Plant Abläufe, Räume und Offsites so, dass sie nicht überladen werden.' },
-          { name: 'Elena Gruber', role: 'Spa & Anwendungen', image: img('1508214751196-bcfd4ca60f91'), bio: 'Mag langsames Tempo, klare Termine und Anwendungen ohne Produktshow.' },
+          { name: 'Lukas Huter', role: 'Haus & Retreats', image: img('1557862921-37829c790f19'), bio: 'Plant Abläufe, Räume und Offsites so, dass sie nicht überladen werden.' },
+          { name: 'Elena Gruber', role: 'Spa & Anwendungen', image: img('1580894732444-8ecded7900cd'), bio: 'Mag langsames Tempo, klare Termine und Anwendungen ohne Produktshow.' },
         ], valuesHeadline: 'Was uns wichtig ist', values: storyData().values, stats: storyData().stats }, styleOverrides: lightTokens },
         { type: 'timeline', data: { badge: 'Geschichte', headline: 'Nicht alles neu. Aber alles bewusster.', subline: 'Unser Haus hat sich Schritt für Schritt verändert.', entries: storyData().milestones }, styleOverrides: softGreenTokens },
         { type: 'ctaSplit', data: {
@@ -721,7 +722,7 @@ const tenant = {
           image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=82',
           checklist: ['Antwort innerhalb von 24 Stunden', 'Beste-Preis-Garantie bei Direktbuchung', 'Persönliche Zimmerempfehlung', 'Flexible Stornierung bis 7 Tage'],
           primaryCta: { label: 'Unverbindlich anfragen', href: '/kontakt' },
-          secondaryCta: { label: 'Zimmer ansehen', href: '/zimmer' },
+          secondaryCta: { label: 'Zimmer ansehen', href: '/leistungen' },
           note: 'Direktbucher erhalten late Check-out nach Verfügbarkeit.',
         }, styleOverrides: lightTokens },
         { type: 'gallery', data: { headline: 'Ein paar Blicke ins Haus.', images: [
@@ -730,7 +731,7 @@ const tenant = {
           { src: img('1544161515-4ab6ce6db874'), alt: 'Spa-Bereich', caption: 'Spa' },
           { src: img('1496412705862-e0088f16f791'), alt: 'Frühstück', caption: 'Frühstück' },
         ] }, styleOverrides: lightTokens },
-        imCtaSec('Lernen Sie uns vor der Buchung kennen.', 'Eine kurze Nachricht reicht oft, damit wir ehrlich sagen können, ob unser Haus zu Ihrem Aufenthalt passt.', img('1519681393784-d120267933ba')),
+        imCtaSec('Lernen Sie uns vor der Buchung kennen.', 'Eine kurze Nachricht reicht oft, damit wir ehrlich sagen können, ob unser Haus zu Ihrem Aufenthalt passt.', img('1519681393784-d120267933ba'), 'Direkt mit uns sprechen'),
       ],
     },
     {
@@ -780,7 +781,7 @@ const tenant = {
           { question: 'Kann ich Fragen zu einem Beitrag stellen?', answer: 'Ja, am besten per E-Mail oder direkt in der Aufenthaltsanfrage.' },
           { question: 'Wie oft erscheinen Beiträge?', answer: 'Unregelmäßig, aber bewusst. Lieber wenige gute Notizen als Pflichtcontent.' },
         ] }, styleOverrides: lightTokens },
-        imCtaSec('Lieber selbst ankommen als lesen?', 'Dann schicken Sie uns Zeitraum und Wünsche. Wir melden uns mit einer Empfehlung.', img('1500534314209-a25ddb2bd429')),
+        imCtaSec('Lieber selbst ankommen als lesen?', 'Dann schicken Sie uns Zeitraum und Wünsche. Wir melden uns mit einer Empfehlung.', img('1500534314209-a25ddb2bd429'), 'Auszeit passend planen'),
       ],
     },
     {
@@ -838,14 +839,14 @@ function edHeroSec(eyebrow, headline, text, image, opts = {}) {
       text: `<p>${text}</p>`,
       imagePrimary: image,
       ...(opts.imageSecondary ? { imageSecondary: opts.imageSecondary } : {}),
-      primaryCta: opts.primaryCta || { label: 'Aufenthalt anfragen', href: '/kontakt' },
+      primaryCta: opts.primaryCta || { label: 'Aufenthalt persönlich planen', href: '/kontakt' },
       ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
       ...(opts.hint ? { hint: opts.hint } : {}),
     },
   };
 }
 
-function cineHeroSec(eyebrow, headline, subline, image, facts) {
+function cineHeroSec(eyebrow, headline, subline, image, facts, primaryLabel = 'Aufenthalt einordnen lassen') {
   return {
     type: 'cinematicHero',
     data: {
@@ -855,13 +856,13 @@ function cineHeroSec(eyebrow, headline, subline, image, facts) {
       image,
       overlay: 'rgba(15,32,28,0.56)',
       align: 'left',
-      primaryCta: { label: 'Aufenthalt anfragen', href: '/kontakt' },
+      primaryCta: { label: primaryLabel, href: '/kontakt' },
       ...(facts ? { facts } : {}),
     },
   };
 }
 
-function imCtaSec(headline, subline, image) {
+function imCtaSec(headline, subline, image, primaryLabel = 'Direktanfrage senden') {
   return {
     type: 'immersiveCtaBanner',
     data: {
@@ -870,7 +871,7 @@ function imCtaSec(headline, subline, image) {
       subline,
       image,
       overlay: 'rgba(15,32,28,0.62)',
-      primaryCta: { label: 'Aufenthalt anfragen', href: '/kontakt' },
+      primaryCta: { label: primaryLabel, href: '/kontakt' },
       secondaryCta: { label: 'Telefon: +43 5212 48190', href: 'tel:+43521248190' },
     },
   };
@@ -927,7 +928,7 @@ function buildNewsItem({ slug, title, excerpt, imageId }) {
           { icon: 'Leaf', title: 'Ort zählt', text: 'Seefeld, Wald und Berge prägen den Rhythmus stärker als Dekoration.', span: '2' },
           { icon: 'HeartHandshake', title: 'Gastgeben bleibt menschlich', text: 'Manche Dinge klärt ein Gespräch besser als jedes Formular.' },
         ] }, styleOverrides: softGreenTokens },
-        { id: uuid(), ...sectionCta('Fragen zum Aufenthalt?', 'Schreiben Sie uns kurz, was Sie suchen. Wir melden uns persönlich.', 'Aufenthalt anfragen', '/kontakt') },
+        { id: uuid(), ...sectionCta('Fragen zum Aufenthalt?', 'Schreiben Sie uns kurz, was Sie suchen. Wir melden uns persönlich.', 'Frage zum Journal senden', '/kontakt') },
       ],
     },
   };

@@ -32,7 +32,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
               {item.image && <div className="cms-media-frame relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="(min-width: 768px) 33vw, 100vw" /></div>}
               <div className="flex flex-1 flex-col p-5 sm:p-6">
                 {item.icon && !item.image && (
-                  <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--token-card-border)] bg-[var(--token-badge-bg)] text-[color:var(--token-icon)]">
+                  <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--token-card-border)] bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]">
                     <DynamicIcon name={item.icon} editPath="icon" size={20} aria-hidden="true" />
                   </span>
                 )}

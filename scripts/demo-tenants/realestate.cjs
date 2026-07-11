@@ -16,7 +16,7 @@ const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 const { darkTokens } = require('./_lib/theme.cjs');
 
-const PAT = '6ef04ab718a41192d1eac3b1c3b4d523a2561463927a77861f85a745e251c485';
+const PAT = process.env.PAT_REALESTATE || process.env.DEMO_PAT_REALESTATE || '';
 
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
@@ -186,9 +186,9 @@ const soldProperties = [
 ];
 
 const agents = [
-  { name: 'Clara Seidel', role: 'Inhaberin & Verkauf', image: img('1494790108377-be9c29b29330', 900), specialization: 'Altbau, Eigentümerberatung, Preisstrategie', phone: '+49 911 2388410', email: 'clara@stadtkante-immobilien.de', soldCount: '148 Verkäufe' },
-  { name: 'Jonas Merz', role: 'Bewertung & Marktanalyse', image: img('1500648767791-00dcc994a43e', 900), specialization: 'Kaufpreisprüfung, Mikrolagen, Renditeobjekte', phone: '+49 911 2388412', email: 'jonas@stadtkante-immobilien.de', soldCount: '12 Stadtteile' },
-  { name: 'Mira Hoffmann', role: 'Exposé & Besichtigungen', image: img('1544005313-94ddf0286df2', 900), specialization: 'Inszenierung, Fotoplanung, Käuferkommunikation', phone: '+49 911 2388414', email: 'mira@stadtkante-immobilien.de', soldCount: '420 Termine' },
+  { name: 'Clara Seidel', role: 'Inhaberin & Verkauf', image: img('1544725176-7c40e5a71c5e', 900), specialization: 'Altbau, Eigentümerberatung, Preisstrategie', phone: '+49 911 2388410', email: 'clara@stadtkante-immobilien.de', soldCount: '148 Verkäufe' },
+  { name: 'Jonas Merz', role: 'Bewertung & Marktanalyse', image: img('1544717297-fa95b6ee9643', 900), specialization: 'Kaufpreisprüfung, Mikrolagen, Renditeobjekte', phone: '+49 911 2388412', email: 'jonas@stadtkante-immobilien.de', soldCount: '12 Stadtteile' },
+  { name: 'Mira Hoffmann', role: 'Exposé & Besichtigungen', image: img('1534751516642-a1af1ef26a56', 900), specialization: 'Inszenierung, Fotoplanung, Käuferkommunikation', phone: '+49 911 2388414', email: 'mira@stadtkante-immobilien.de', soldCount: '420 Termine' },
 ];
 
 const faqs = [
@@ -719,7 +719,7 @@ const tenant = {
       seo: pageSeo('Kontakt Stadtkante Immobilien Nürnberg', 'Kontakt zu Stadtkante Immobilien in Nürnberg: Bewertung, Verkauf, Kaufberatung und Besichtigung anfragen.'),
       sections: [
         { type: 'editorialHero', data: { eyebrow: 'Kontakt', headline: 'Erzählen Sie uns kurz, worum es geht.', text: '<p>Adresse, Objektart oder Suchwunsch reichen für den Anfang. Wir melden uns persönlich.</p>', imagePrimary: img('1486406146926-c627a92ad1ab'), primaryCta: { label: 'Nachricht schreiben', href: '#kontakt' } } },
-        { type: 'contact', data: { headline: 'Direkt anfragen', subline: 'Wir antworten in der Regel innerhalb eines Werktags.', introText: 'Je konkreter Ihre Angaben sind, desto genauer können wir den nächsten Schritt empfehlen.', badgeText: 'Nürnberg', phone: '+49 911 2388410', email: 'hallo@stadtkante-immobilien.de', address: 'Pilotystraße 12, 90408 Nürnberg', hours: 'Mo-Fr 9:00-18:00, Termine nach Vereinbarung', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: contactCards }, styleOverrides: lightTokens },
+        { type: 'contact', anchorId: 'kontakt', data: { headline: 'Direkt anfragen', subline: 'Wir antworten in der Regel innerhalb eines Werktags.', introText: 'Je konkreter Ihre Angaben sind, desto genauer können wir den nächsten Schritt empfehlen.', badgeText: 'Nürnberg', phone: '+49 911 2388410', email: 'hallo@stadtkante-immobilien.de', address: 'Pilotystraße 12, 90408 Nürnberg', hours: 'Mo-Fr 9:00-18:00, Termine nach Vereinbarung', formEnabled: true, submitLabel: 'Anfrage senden', infoCards: contactCards }, styleOverrides: lightTokens },
         { type: 'locationHighlight', data: { headline: 'Büro in der Nordstadt.', subline: 'Ruhig erreichbar, nah an Stadtpark, Altstadt und den Lagen, in denen wir viel arbeiten.', description: p('Unser Büro liegt in der Pilotystraße. Beratungstermine finden nach Vereinbarung statt, damit Unterlagen und Fragen vorbereitet sind.'), image: img('1522708323590-d24dbb6b0267'), pois: [
           { label: 'Stadtpark', distance: '6 Min. zu Fuß', icon: 'nature' },
           { label: 'U-Bahn Kaulbachplatz', distance: '4 Min.', icon: 'train' },

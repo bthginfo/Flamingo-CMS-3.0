@@ -9,9 +9,35 @@ import { revalidateTag, revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { createHash } from 'crypto';
+import { NextRequest } from 'next/server';
+import { GET as runStoredContentAudit } from '@/app/api/v1/content/validate/route';
 
-type PublishResult = { success?: true; error?: string; version?: number; unchanged?: true };
+export type PublishRepairItem = {
+  severity?: string;
+  code?: string;
+  location?: string;
+  message?: string;
+  repair?: unknown;
+};
+
+export type PublishResult = {
+  success?: true;
+  error?: string;
+  code?: string;
+  version?: number;
+  unchanged?: true;
+  summary?: Record<string, number>;
+  repairQueue?: PublishRepairItem[];
+};
 type QueryRunner = Pick<ReturnType<typeof getDb>, 'select' | 'update' | 'insert' | 'execute'>;
+
+type StoredContentPreflight = {
+  readyToPublish?: boolean;
+  summary?: Record<string, number> & { colorWarnings?: number };
+  contentIssues?: PublishRepairItem[];
+  colorIssues?: PublishRepairItem[];
+  error?: string;
+};
 
 function normalizeSnapshotForJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value, (_key, input) => {
@@ -49,6 +75,26 @@ export async function publishAction(): Promise<PublishResult> {
 
     const db = getDb();
     const tenantId = session.tenantId;
+
+    // Publishing is a guarded state transition. Run the exact audit exposed
+    // by GET /api/v1/content/validate before changing page status or snapshot
+    // state. The GET handler recognizes the current writable admin session.
+    const preflightResponse = await runStoredContentAudit(
+      new NextRequest('http://internal/api/v1/content/validate'),
+    );
+    const preflight = await preflightResponse.json() as StoredContentPreflight;
+    const repairQueue = [
+      ...(preflight.contentIssues || []).filter(issue => issue.severity === 'error' || (issue.severity === 'warning' && issue.repair)),
+      ...(preflight.colorIssues || []).filter(issue => issue.severity === 'error' || issue.severity === 'warning'),
+    ];
+    if (!preflightResponse.ok || !preflight.readyToPublish || (preflight.summary?.colorWarnings || 0) > 0) {
+      return {
+        error: preflight.error || 'Die Inhalte sind noch nicht bereit zur Veröffentlichung.',
+        code: 'PUBLISH_PREFLIGHT_FAILED',
+        summary: preflight.summary,
+        repairQueue,
+      };
+    }
 
     const rawSnapshot = await getDraftSnapshot(tenantId);
     if (!rawSnapshot) return { error: 'Keine Inhalte zum Veröffentlichen gefunden.' };
@@ -152,7 +198,10 @@ export async function publishAction(): Promise<PublishResult> {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unbekannter Publish-Fehler';
     console.error('[publishAction] failed:', message);
-    return { error: `Veröffentlichen fehlgeschlagen: ${message}` };
+    return {
+      error: 'Veröffentlichen fehlgeschlagen. Bitte erneut versuchen oder den Support kontaktieren.',
+      code: 'PUBLISH_INTERNAL_ERROR',
+    };
   }
 }
 

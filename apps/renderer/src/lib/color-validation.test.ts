@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseColor, contrastRatio, isDarkColor, isValidColorString } from './color-validation';
+import { parseColor, contrastRatio, isDarkColor, isValidColorString, validateBrandPayload } from './color-validation';
 
 test('parseColor accepts hex/rgb/rgba and rejects junk', () => {
   assert.ok(parseColor('#000000'));
@@ -24,6 +24,11 @@ test('contrastRatio is symmetric', () => {
   assert.equal(a, b);
 });
 
+test('contrastRatio composites translucent backgrounds over the real canvas', () => {
+  const ratio = contrastRatio('#ffffff', 'rgba(0,0,0,0.1)', '#ffffff');
+  assert.ok(ratio !== null && ratio < 1.3, `expected near-white on white to fail, got ${ratio}`);
+});
+
 test('isDarkColor classifies extremes correctly', () => {
   assert.equal(isDarkColor('#000000'), true);
   assert.equal(isDarkColor('#0E3A53'), true);   // the brand dark used in demos
@@ -34,7 +39,28 @@ test('isDarkColor classifies extremes correctly', () => {
 test('isValidColorString guards types', () => {
   assert.equal(isValidColorString('#fff'), true);
   assert.equal(isValidColorString('rgba(0,0,0,0)'), true);
+  assert.equal(isValidColorString('transparent'), true);
+  assert.equal(isValidColorString('rgb(256,0,0)'), false);
+  assert.equal(isValidColorString('rgba(0,0,0,1.1)'), false);
+  assert.equal(isValidColorString('rgba(0,0,0,)'), false);
   assert.equal(isValidColorString('banana'), false);
   assert.equal(isValidColorString(42), false);
   assert.equal(isValidColorString(null), false);
+});
+
+test('brand validation covers every rendered color family', () => {
+  const issues = validateBrandPayload({
+    pageBg: '#gggggg',
+    footerLinkColor: 'rgb(300,0,0)',
+    navBgColor: 'rgba(0,0,0,2)',
+    badgeBorder: 'javascript:red',
+    btnOutlineText: '#12345',
+  });
+  assert.deepEqual(new Set(issues.map(issue => issue.location)), new Set([
+    'brand.pageBg',
+    'brand.footerLinkColor',
+    'brand.navBgColor',
+    'brand.badgeBorder',
+    'brand.btnOutlineText',
+  ]));
 });

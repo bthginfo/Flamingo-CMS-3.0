@@ -75,7 +75,7 @@ function extractTemplates(source: string) {
 const CONTRACT_INDUSTRIES = [
   'tradesman', 'restaurant', 'salon', 'hotel', 'tourism', 'medical',
   'wedding', 'photography', 'consulting', 'realestate', 'cafe', 'tattoo',
-  'ecommerce', 'retail', 'florist', 'fitness', 'location', 'verein',
+  'ecommerce', 'retail', 'florist', 'fitness', 'location', 'bar', 'verein',
 ];
 
 function main() {

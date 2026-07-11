@@ -13,6 +13,8 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { CollectionDetail } from '@/components/collection-detail';
 import { WhatsAppFab } from '@/components/whatsapp-fab';
+import { composeSeoTitle } from '@/lib/seo-title';
+import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
 
 async function resolveTenantSlugForCollectionItem(collection: string, slug: string): Promise<string | null> {
   const db = getDb();
@@ -61,9 +63,13 @@ export async function generateCollectionItemMetadata(params: Promise<{ collectio
   ]);
 
   const itemTitle = seoItemData?.metaTitle || item.title;
-  const title = seoGlobal?.titleTemplate
-    ? seoGlobal.titleTemplate.replace('%s', itemTitle)
-    : itemTitle;
+  const title = composeSeoTitle({
+    contentTitle: itemTitle,
+    defaultTitle: seoGlobal?.defaultTitle,
+    titleTemplate: seoGlobal?.titleTemplate,
+    brandName: brand.companyName,
+    preferDefaultForGeneric: false,
+  });
   const description = seoItemData?.metaDescription || seoGlobal?.defaultDescription || undefined;
   const ogImage = seoItemData?.ogImage || seoGlobal?.defaultOgImage || undefined;
 
@@ -106,7 +112,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
   }
   if (!tenantId) notFound();
 
-  const [snapshot, navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, i18n] = await Promise.all([
+  const [snapshot, navData, footerData, { brand, contact, socialLinks, design, formFields }, tenantStyle, i18n] = await Promise.all([
     getActiveSnapshot(tenantId),
     getTenantNav(tenantId, explicitLocale),
     getTenantFooter(tenantId, explicitLocale),
@@ -143,9 +149,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
   Object.assign(designOverrides, getDesignCssVars(design));
 
   const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = customFonts.length > 0
-    ? `https://fonts.googleapis.com/css2?${customFonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;800`).join('&')}&display=swap`
-    : null;
+  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
   const fontCssVars: Record<string, string> = {};
   const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
   const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
@@ -167,7 +171,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} topBar={navData.topBar} linkPrefix={linkPrefix} i18n={i18n.enabled ? { locales: i18n.locales, currentLocale: activeLocale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
       <main>
-        <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} />
+        <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} globalFormFields={formFields} />
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} shopEnabled={shopEnabled} />
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}

@@ -1,26 +1,29 @@
 # Demo Tenants — Status
 
-Letzter Stand: siehe Commit-Datum.
+Letzter Stand: siehe Commit-Datum. `pnpm audit:demos` prüft alle Quellen
+schreibfrei. `✅ SOURCE` bedeutet nicht automatisch, dass die geänderte Quelle
+bereits erneut in den Live-Tenant eingespielt wurde.
 
-| # | Tenant       | Branche                       | Status | Notizen                                          |
-|---|--------------|-------------------------------|--------|--------------------------------------------------|
-| 1 | handwerk     | SHK-Meisterbetrieb (Köln)     | ✅ DONE | Müller & Söhne — Referenz-Implementierung, 35+ Sections, Premium-Mix |
-| 2 | restaurant   | Restaurant                    | ✅ DONE | Trattoria Dal Maestro — 9 Pages, 10 Collection Items, Premium-Mix, Live-Routen geprüft |
-| 3 | hotel        | Hotel                         | ✅ DONE | Premium-Demo live geprüft                         |
-| 4 | salon        | Friseur / Beauty              | ✅ DONE | Atelier Isabelle — Classic, Premium-Mix, Live-Routen geprüft |
-| 5 | tourismus    | Tourismus / Destination       | ✅ DONE | Karwendel Kompass — Classic, Premium-Mix, Branchensections, Live-Routen geprüft |
-| 6 | medical      | Arztpraxis                    | ✅ DONE | Praxis am Stadtgarten — Classic, Premium-Mix, Ratgeber und Patientenwege, Live-Routen geprüft |
-| 7 | wedding      | Hochzeitslocation / -planung  | ✅ DONE | Mara & Elias — Classic, RSVP, Gästeinfos, Updates, Live-Routen geprüft |
-| 8 | photography  | Fotograf:in                   | ✅ DONE | Lisa Morgenthaler Fotografie — Classic, Portfolio-Collections, Premium-Mix, Live-Routen geprüft |
-| 9 | consulting   | Beratung                      | ✅ DONE | Bergmann & Partner Beratung — Classic, B2B-Tonalität, 8 Pages, 24 Collection Items, readyToPublish |
-|10 | realestate   | Immobilienmakler:in           | ✅ DONE | Stadtkante Immobilien — Classic, Bewertung/Verkauf/Kauf, Realestate-Sections, Live-Routen geprüft |
-|11 | cafe         | Café                          | ✅ DONE | SPIRAL Coffee & Plants — Classic, Karte/Events/Angebote/Journal, readyToPublish |
-|12 | tattoo       | Tattoo-Studio                 | ✅ DONE | INK DISTRICT — Classic, Artists/Portfolio/Pflege/Journal, readyToPublish |
-|13 | ecommerce    | Online-Shop                   | ✅ DONE | Vinothek Goldberg — Classic, Produkte/Kategorien/Checkout, readyToPublish |
-|14 | retail       | Stationärer Handel            | ✅ DONE | Möbelhaus Lichtblick — Classic, Showroom/Beratung/Sortiment, readyToPublish |
-|15 | florist      | Floristik                     | ⬜ TODO |                                                  |
-|16 | fitness      | Fitness-Studio                | ⬜ TODO | Mitgliederpakete                                 |
-|17 | location     | Eventlocation                 | ⬜ TODO | Verfügbarkeits-Kalender                          |
+| # | Renderer-Slug | Population-Quelle | Persona / Ort | Status |
+|---|---------------|-------------------|---------------|--------|
+| 1 | handwerk | `handwerk.cjs` | Brüggemann Bäder & Wärme · Düsseldorf | ✅ SOURCE |
+| 2 | hotel | `hotel.cjs` | Alpenglow Resort & Spa · Seefeld | ✅ SOURCE |
+| 3 | restaurant | `restaurant.cjs` | Salzkorn · Hamburg | ✅ SOURCE |
+| 4 | medical | `medical.cjs` | Praxis am Stadtgarten · Stuttgart | ✅ SOURCE |
+| 5 | salon | `salon.cjs` | Atelier Isabelle · München | ✅ SOURCE |
+| 6 | tourism | `tourismus.cjs` | Karwendel Kompass · Mittenwald | ✅ SOURCE |
+| 7 | wedding | `wedding.cjs` | Mara & Elias · Starnberg | ✅ SOURCE |
+| 8 | photography | `photography.cjs` | Lisa Morgenthaler Fotografie · Frankfurt | ✅ SOURCE |
+| 9 | consulting | `populate-consulting-bergmann.mjs` | Bergmann & Partner Beratung · München | ✅ SOURCE |
+|10 | realestate | `realestate.cjs` | Stadtkante Immobilien · Nürnberg | ✅ SOURCE |
+|11 | cafe | `cafe.cjs` | SPIRAL Coffee & Plants · Innsbruck | ✅ SOURCE |
+|12 | tattoo | `tattoo.cjs` | INK DISTRICT · Berlin | ✅ SOURCE |
+|13 | shop | `ecommerce.cjs` | Vinothek Goldberg · München | ✅ SOURCE |
+|14 | retail | `retail.cjs` | Möbelhaus Lichtblick · Regensburg | ✅ SOURCE |
+|15 | florist | `populate-florist-bluetenwerk.mjs` | Blütenwerk Atelier · München | ✅ SOURCE |
+|16 | fitness | `populate-fitness-pulse.mjs` | Pulse Studio · München | ✅ SOURCE |
+|17 | location | `populate-location-lichtwerk.mjs` | Lichtwerk Loft · Ingolstadt | ✅ SOURCE |
+|18 | eishockey | `eishockey.cjs` | EHC Donau Panther · Ingolstadt | ✅ SOURCE |
 
 ## Definition of Done pro Tenant
 
@@ -38,7 +41,9 @@ Letzter Stand: siehe Commit-Datum.
 - [ ] Mindestens 4 Items pro Karten-Array (services, processSteps, faq, etc.)
 - [ ] Bei `trustItems` im Hero: `trustStripColor` gesetzt (sonst weiß-auf-weiß-Bug)
 - [ ] WCAG-Kontrast geprüft (`--token-on-dark-*` bei dunklen Sektionen, `darkSectionTokens`-Helper benutzen)
-- [ ] `node scripts/demo-tenants/<tenant>.cjs` läuft fehlerfrei durch
+- [ ] `pnpm audit:demos` läuft mit 18 Quellen und 0 Issues durch
+- [ ] `node scripts/demo-tenants/run-all.cjs --dry-run <tenant>` läuft fehlerfrei
+- [ ] Population ausschließlich mit expliziter `PAT_<TENANT>`-Env-Variable
 - [ ] `validate` meldet `readyToPublish: true` (keine `colorIssues`/`contentIssues` mit severity error)
 - [ ] Live-Site visuell geprüft
 - [ ] STATUS.md auf ✅ DONE gesetzt

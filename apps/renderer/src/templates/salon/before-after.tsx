@@ -35,11 +35,11 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
               {item.afterImage && <div className="relative aspect-square"><Image data-edit-image="afterImage" src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             </div>
             <div className="p-5">
-              {item.category && <span className="inline-block rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-eyebrow)]" data-edit-path="category">{item.category}</span>}
+              {item.category && <span className="inline-block rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-badge-text)]" data-edit-path="category">{item.category}</span>}
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.caption && <p className="mt-2 text-xs text-[color:var(--token-muted)]" data-edit-path="caption">{item.caption}</p>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{item.cta.label}</a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-2 text-sm font-semibold text-[color:var(--token-btn-text)]" data-edit-path="label">{item.cta.label}</a>}
             </div>
           </motion.article>
         ))}

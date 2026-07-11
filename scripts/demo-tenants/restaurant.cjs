@@ -249,7 +249,7 @@ const tenant = {
             overlayColor: C.moss,
             overlayOpacity: 0.62,
             imageEffect: 'kenBurns',
-            primaryCta:   { label: 'Tisch anfragen', href: '/reservierung', icon: 'CalendarCheck' },
+            primaryCta:   { label: 'Tisch reservieren', href: '/reservierung', icon: 'CalendarCheck' },
             secondaryCta: { label: 'Speisekarte ansehen', href: '/leistungen', icon: 'ArrowRight' },
             trustItems: [
               'Saisonal & marktnah gekocht',
@@ -282,7 +282,7 @@ const tenant = {
             manualCards: offerCards(),
           },
         },
-        { type: 'menu', data: menuData('Ein Blick auf die Karte', 'Ein Auszug — die echte Karte bewegt sich mit der Saison.') },
+        { type: 'menu', data: menuData('Ein Blick auf die Karte', 'Ein Auszug — die echte Karte bewegt sich mit der Saison.', 'Karte & Tisch entdecken') },
         {
           type: 'signatureDishes',
           data: {
@@ -398,14 +398,14 @@ const tenant = {
               { quote: 'Kleine Karte, dafür jedes Gericht wirklich gut. Genau unser Restaurant.', name: 'Thomas K.', context: 'Abendessen', rating: 5, sourceLabel: 'Tripadvisor' },
               { quote: 'Der Weinabend war angenehm unangestrengt. Man lernt etwas, ohne belehrt zu werden.', name: 'Franziska B.', context: 'Loire-Abend', rating: 5, sourceLabel: 'Google' },
             ],
-            ctaPrimary: { label: 'Tisch anfragen', href: '/reservierung' },
+            ctaPrimary: { label: 'Wunschtermin prüfen', href: '/reservierung' },
           },
         },
         {
           type: 'faq',
           data: { headline: 'Kurz vor dem Abend gefragt', items: restaurantFaq() },
         },
-        sectionCta('Einen Tisch, der zu Ihrem Abend passt?', 'Schreiben Sie uns kurz Datum, Uhrzeit und Personenanzahl. Wir melden uns persönlich zurück.', 'Tisch anfragen', '/reservierung'),
+        sectionCta('Einen Tisch, der zu Ihrem Abend passt?', 'Schreiben Sie uns kurz Datum, Uhrzeit und Personenanzahl. Wir melden uns persönlich zurück.', 'Reservierung starten', '/reservierung'),
       ],
     },
 
@@ -417,9 +417,9 @@ const tenant = {
         metaDescription: 'Speisekarte und Angebote von Salzkorn in Hamburg: Abendkarte, Samstags-Lunch, Weinabende und private Feiern.',
       },
       sections: [
-        edHeroSec('Speisekarte', 'Speisekarte, aber ohne Überforderung', 'Kleine Karte, klare Herkunft, Gerichte mit genug Ruhe in der Vorbereitung.', '1514933651103-005eec06c04b', { secondaryCta: { label: 'Weinabende ansehen', href: '/events' } }),
-        { type: 'servicesGrid', data: { badgeText: 'Angebote', headline: 'Wählen Sie nicht aus Masse, sondern aus Haltung', subline: 'Unsere Formate sind bewusst übersichtlich — und genau deshalb gut planbar.', ctaLabel: 'Tisch anfragen', ctaHref: '/reservierung', manualCards: offerCards() } },
-        { type: 'menu', data: menuData('Auszug aus der aktuellen Karte', 'Die genaue Karte wechselt je nach Saison, Markt und Serviceplanung.') },
+        edHeroSec('Speisekarte', 'Speisekarte, aber ohne Überforderung', 'Kleine Karte, klare Herkunft, Gerichte mit genug Ruhe in der Vorbereitung.', '1514933651103-005eec06c04b', { primaryCta: { label: 'Angebot & Tisch wählen', href: '/reservierung' }, secondaryCta: { label: 'Weinabende ansehen', href: '/events' } }),
+        { type: 'servicesGrid', data: { badgeText: 'Angebote', headline: 'Wählen Sie nicht aus Masse, sondern aus Haltung', subline: 'Unsere Formate sind bewusst übersichtlich — und genau deshalb gut planbar.', ctaLabel: 'Passendes Format anfragen', ctaHref: '/reservierung', manualCards: offerCards() } },
+        { type: 'menu', data: menuData('Auszug aus der aktuellen Karte', 'Die genaue Karte wechselt je nach Saison, Markt und Serviceplanung.', 'Speisekarte & Platz planen') },
         { type: 'signatureDishes', data: { headline: 'Signatures aus Küche und Weinkeller', dishes: [
           { name: 'Sellerie vom Holz', description: 'Im Ganzen gegart, Haselnuss, Apfel, braune Butter.', image: img('1504674900247-0877df9cc836', 900), price: '17 €' },
           { name: 'Forelle, Buttermilch', description: 'Gebeizte Forelle, Buttermilch, Gurke, Dill.', image: img('1485921325833-c519f76c4927', 900), price: '16 €' },
@@ -433,7 +433,7 @@ const tenant = {
         ], highlightCol: 0 } },
         { type: 'collectionList', data: { headline: 'Alle Angebote im Detail', subline: 'Mehr Kontext zu Karte, Lunch, Weinabenden und Feiern.', collectionKey: 'leistungen', columns: 4, showImage: true, showExcerpt: true, showDate: false, showSortControls: false } },
         { type: 'faq', data: { headline: 'Fragen zur Karte', items: restaurantFaq() } },
-        imCtaSec('Lust auf einen Abend bei Salzkorn?', 'Reservieren Sie frühzeitig für Freitag und Samstag. Unter der Woche finden wir meistens schneller einen Tisch.', '1514933651103-005eec06c04b'),
+        imCtaSec('Lust auf einen Abend bei Salzkorn?', 'Reservieren Sie frühzeitig für Freitag und Samstag. Unter der Woche finden wir meistens schneller einen Tisch.', '1514933651103-005eec06c04b', 'Abend reservieren'),
       ],
     },
 
@@ -448,6 +448,7 @@ const tenant = {
         edHeroSec('Reservierung', 'Reservieren heißt bei uns: kurz schreiben, persönlich hören', 'Wir bestätigen nicht automatisch, sondern so, dass der Tisch wirklich passt.', '1517248135467-4c7edcad34c4', { primaryCta: { label: 'Jetzt reservieren', href: '#reservierung' }, hint: 'Freitag und Samstag früh reservieren — unter der Woche geht es meist spontan.' }),
         {
           type: 'reservation',
+          anchorId: 'reservierung',
           data: {
             badgeText: 'Tischanfrage',
             headline: 'Sagen Sie uns, wann Sie kommen möchten',
@@ -475,7 +476,7 @@ const tenant = {
           'Allergien und Unverträglichkeiten klären wir ehrlich vor der Ankunft.',
           'Freitag und Samstag sind spätere Slots oft entspannter.',
         ], ctaLabel: 'Anfrage senden', ctaHref: '/kontakt' } },
-        { type: 'events', data: eventsData('Nächste Abende mit besonderem Anlass') },
+        { type: 'events', data: eventsData('Nächste Abende mit besonderem Anlass', 'Sonntagstafel reservieren') },
         { type: 'faq', data: { headline: 'Reservierung: gut zu wissen', items: restaurantFaq() } },
         sectionCta('Lieber telefonisch klären?', 'Für größere Gruppen oder spontane Anfragen sind wir ab 15 Uhr telefonisch erreichbar.', 'Jetzt anrufen', 'tel:+494047112380'),
       ],
@@ -489,8 +490,8 @@ const tenant = {
         metaDescription: 'Events bei Salzkorn: Weinabende, Teig-Werkstatt, Sonntagstafel und private Feiern in Hamburg-Eppendorf.',
       },
       sections: [
-        cineHeroSec('Events', 'Kleine Abende, an die man sich erinnert', 'Wein, Küche, lange Tische und Formate, die nicht nach Veranstaltungshalle klingen.', '1510812431401-41d2bd2722f3', [ { value: '30', label: 'Plätze für private Feiern' }, { value: '5', label: 'Weine pro Weinabend' }, { value: '4', label: 'Gänge' } ]),
-        { type: 'events', data: eventsData('Aktuelle Termine und Formate') },
+        cineHeroSec('Events', 'Kleine Abende, an die man sich erinnert', 'Wein, Küche, lange Tische und Formate, die nicht nach Veranstaltungshalle klingen.', '1510812431401-41d2bd2722f3', [ { value: '30', label: 'Plätze für private Feiern' }, { value: '5', label: 'Weine pro Weinabend' }, { value: '4', label: 'Gänge' } ], 'Event-Platz sichern'),
+        { type: 'events', data: eventsData('Aktuelle Termine und Formate', 'Platz für die Sonntagstafel') },
         { type: 'portfolio', data: { badgeText: 'Momente', headline: 'So sehen Abende bei uns aus', subline: 'Ein Restaurant, drei Stimmungen: Weinabend, Werkstatt und private Tafel.', projects: [
           { title: 'Weinabend Loire', category: 'Weinabend', description: 'Vier Gänge, fünf Weine, ein langer Tisch.', image: img('1510812431401-41d2bd2722f3'), href: '/c/events/wein-loire', icon: 'Wine', stats: [{ label: 'Plätze', value: '22' }, { label: 'Gänge', value: '4' }] },
           { title: 'Teig-Werkstatt', category: 'Küche', description: 'Pasta und Brot selbst machen, danach essen.', image: img('1498579150354-977475b7ea0b'), href: '/c/events/pasta-werkstatt', icon: 'ChefHat', stats: [{ label: 'Dauer', value: '3 h' }, { label: 'Gruppe', value: '8–12' }] },
@@ -504,7 +505,7 @@ const tenant = {
           { title: 'Kein Mindestumsatz-Theater', text: 'Wir sagen offen, ab wann sich ein Format für beide Seiten trägt.', icon: 'Scale', span: '2' },
         ] } },
         { type: 'faq', data: { headline: 'Fragen zu Events', items: restaurantFaq() } },
-        imCtaSec('Einen besonderen Abend planen?', 'Schreiben Sie uns Anlass, Personenanzahl und Wunschtermin — wir machen einen Vorschlag.', '1510812431401-41d2bd2722f3'),
+        imCtaSec('Einen besonderen Abend planen?', 'Schreiben Sie uns Anlass, Personenanzahl und Wunschtermin — wir machen einen Vorschlag.', '1510812431401-41d2bd2722f3', 'Feier besprechen'),
       ],
     },
 
@@ -516,7 +517,7 @@ const tenant = {
         metaDescription: 'Salzkorn ist ein inhabergeführtes Restaurant in Hamburg-Eppendorf. Jonas Brandt in der Küche, Mira Halász im Gastraum — kleine Karte, klare Haltung.',
       },
       sections: [
-        edHeroSec('Über uns', 'Zwei Menschen, ein Gastraum, eine Haltung', 'Was 2016 als ruhige Gegenbewegung zur Sternegastronomie begann, ist heute ein vertrautes Restaurant am Lehmweg.', '1551218808-94e220e084d2', { imageSecondary: '1517248135467-4c7edcad34c4' }),
+        edHeroSec('Über uns', 'Zwei Menschen, ein Gastraum, eine Haltung', 'Was 2016 als ruhige Gegenbewegung zur Sternegastronomie begann, ist heute ein vertrautes Restaurant am Lehmweg.', '1551218808-94e220e084d2', { imageSecondary: '1517248135467-4c7edcad34c4', primaryCta: { label: 'Abend bei uns planen', href: '/reservierung' } }),
         {
           type: 'textImage',
           data: {
@@ -528,7 +529,7 @@ const tenant = {
             image: img('1498579150354-977475b7ea0b'),
             imageAlt: 'Offene Küche bei Salzkorn',
             layout: 'image-right',
-            primaryCta: { label: 'Tisch anfragen', href: '/reservierung', icon: 'CalendarCheck' },
+            primaryCta: { label: 'Küche & Tisch erleben', href: '/reservierung', icon: 'CalendarCheck' },
           },
         },
         {
@@ -565,10 +566,10 @@ const tenant = {
             headline: 'Die Menschen hinter Salzkorn',
             subline: 'Eine kleine Crew, die sich Abend für Abend abstimmt.',
             members: [
-              { name: 'Jonas Brandt', role: 'Küchenchef & Inhaber',   image: img('1500648767791-00dcc994a43e', 600), bio: 'Kam aus der Sternegastronomie, wollte es wieder entspannter. Kocht saisonal und ohne Schnörkel.' },
-              { name: 'Mira Halász',  role: 'Gastgeberin & Inhaberin', image: img('1494790108377-be9c29b29330', 600), bio: 'Führt den Gastraum, kennt die Stammgäste und sorgt dafür, dass Timing nie wie Stress wirkt.' },
-              { name: 'Pavel Roth',   role: 'Sous-Chef',               image: img('1507003211169-0a1dd7228f2d', 600), bio: 'Steht seit der ersten Stunde am Herd. Verantwortet Pasta, Brot und die tägliche Vorbereitung.' },
-              { name: 'Lena Kraus',   role: 'Sommelière',              image: img('1544005313-94ddf0286df2', 600), bio: 'Übersetzt Herkunft in Trinkgefühl. Kuratiert Weinkarte und die monatlichen Weinabende.' },
+              { name: 'Jonas Brandt', role: 'Küchenchef & Inhaber',   image: img('1566492031773-4f4e44671857', 600), bio: 'Kam aus der Sternegastronomie, wollte es wieder entspannter. Kocht saisonal und ohne Schnörkel.' },
+              { name: 'Mira Halász',  role: 'Gastgeberin & Inhaberin', image: img('1502685104226-ee32379fefbe', 600), bio: 'Führt den Gastraum, kennt die Stammgäste und sorgt dafür, dass Timing nie wie Stress wirkt.' },
+              { name: 'Pavel Roth',   role: 'Sous-Chef',               image: img('1507591064344-4c6ce005b128', 600), bio: 'Steht seit der ersten Stunde am Herd. Verantwortet Pasta, Brot und die tägliche Vorbereitung.' },
+              { name: 'Lena Kraus',   role: 'Sommelière',              image: img('1512316609839-ce289d3eba0a', 600), bio: 'Übersetzt Herkunft in Trinkgefühl. Kuratiert Weinkarte und die monatlichen Weinabende.' },
             ],
             valuesHeadline: 'Was uns wichtig ist',
             values: [
@@ -590,7 +591,7 @@ const tenant = {
           ],
           contactCta: { label: 'Kurz vorstellen', href: '/kontakt' },
         } },
-        sectionCta('Lust, bei uns Platz zu nehmen?', 'Reservieren Sie einen Tisch — oder schauen Sie sich erst die Karte an.', 'Tisch anfragen', '/reservierung'),
+        sectionCta('Lust, bei uns Platz zu nehmen?', 'Reservieren Sie einen Tisch — oder schauen Sie sich erst die Karte an.', 'Reservierung vormerken', '/reservierung'),
       ],
     },
 
@@ -618,6 +619,7 @@ const tenant = {
         edHeroSec('Kontakt', 'Direkt zu uns', 'Persönlich, nicht über drei Ecken. Schreiben Sie oder rufen Sie an.', '1552566626-52f8b828add9', { primaryCta: { label: 'Jetzt anrufen', href: 'tel:+494047112380' }, secondaryCta: { label: 'Nachricht schreiben', href: '#kontakt' } }),
         {
           type: 'contact',
+          anchorId: 'kontakt',
           data: {
             headline: 'Schreiben Sie uns',
             introText: 'Für Reservierungen nutzen Sie am besten die Tischanfrage. Für alles andere sind wir hier erreichbar.',
@@ -717,32 +719,32 @@ function edHeroSec(eyebrow, headline, text, imageId, opts = {}) {
     data: {
       eyebrow, headline, text: `<p>${text}</p>`, imagePrimary: img(imageId),
       ...(opts.imageSecondary ? { imageSecondary: img(opts.imageSecondary) } : {}),
-      primaryCta: opts.primaryCta || { label: 'Tisch anfragen', href: '/reservierung' },
+      primaryCta: opts.primaryCta || { label: 'Tisch persönlich planen', href: '/reservierung' },
       ...(opts.secondaryCta ? { secondaryCta: opts.secondaryCta } : {}),
       ...(opts.hint ? { hint: opts.hint } : {}),
     },
   };
 }
 
-function cineHeroSec(eyebrow, headline, subline, imageId, facts) {
+function cineHeroSec(eyebrow, headline, subline, imageId, facts, primaryLabel = 'Platz anfragen') {
   return {
     type: 'cinematicHero',
     data: {
       eyebrow, headline, subline, image: img(imageId),
       overlay: 'rgba(26,36,26,0.58)', align: 'left',
-      primaryCta: { label: 'Tisch anfragen', href: '/reservierung' },
+      primaryCta: { label: primaryLabel, href: '/reservierung' },
       ...(facts ? { facts } : {}),
     },
   };
 }
 
-function imCtaSec(headline, subline, imageId) {
+function imCtaSec(headline, subline, imageId, primaryLabel = 'Reservierung senden') {
   return {
     type: 'immersiveCtaBanner',
     data: {
       badge: 'Direkt anfragen', headline, subline, image: img(imageId),
       overlay: 'rgba(26,36,26,0.62)',
-      primaryCta: { label: 'Tisch anfragen', href: '/reservierung' },
+      primaryCta: { label: primaryLabel, href: '/reservierung' },
       secondaryCta: { label: 'Jetzt anrufen', href: 'tel:+494047112380' },
     },
   };
@@ -765,12 +767,12 @@ function offerCards() {
   ];
 }
 
-function menuData(headline, subline) {
+function menuData(headline, subline, ctaLabel = 'Zur Reservierung') {
   return {
     badgeText: 'Speisekarte', headline, subline,
     introText: 'Die Karte wechselt nach Saison. Diese Auswahl zeigt die Richtung.',
     footnote: 'Allergene nennen wir am Tisch transparent. Vegetarische Alternativen sind immer möglich.',
-    ctaPrimary: { label: 'Tisch anfragen', href: '/reservierung' },
+    ctaPrimary: { label: ctaLabel, href: '/reservierung' },
     categories: [
       {
         title: 'Zum Teilen',
@@ -804,7 +806,7 @@ function menuData(headline, subline) {
   };
 }
 
-function eventsData(headline) {
+function eventsData(headline, sundayCtaLabel = 'Sonntagstafel vormerken') {
   return {
     badgeText: 'Events', headline,
     subline: 'Ein paar Formate, bei denen Essen, Wein und Gespräch genug Platz bekommen.',
@@ -812,7 +814,7 @@ function eventsData(headline) {
     events: [
       { title: 'Weinabend Loire', description: 'Vier Gänge zu fünf Weinen von der Loire. Ein ruhiger Abend mit Lena und passenden Flaschen.', image: img('1510812431401-41d2bd2722f3'), dateLabel: 'erster Donnerstag im Monat', timeLabel: '19:00', priceLabel: '89 € p.P.', cta: { label: 'Anfragen', href: '/c/events/wein-loire' } },
       { title: 'Teig-Werkstatt', description: 'Pasta und Brot selbst machen, danach gemeinsam essen.', image: img('1498579150354-977475b7ea0b'), dateLabel: 'samstags auf Anfrage', timeLabel: '15:00', priceLabel: 'ab 72 € p.P.', cta: { label: 'Workshop ansehen', href: '/c/events/pasta-werkstatt' } },
-      { title: 'Sonntagstafel', description: 'Sonntagmittag mit langen Tischen, einem Gericht für alle und entspanntem Service.', image: img('1551218808-94e220e084d2'), dateLabel: 'sonntags', timeLabel: '12:00', priceLabel: 'à la carte', cta: { label: 'Tisch anfragen', href: '/c/events/sonntagstafel' } },
+      { title: 'Sonntagstafel', description: 'Sonntagmittag mit langen Tischen, einem Gericht für alle und entspanntem Service.', image: img('1551218808-94e220e084d2'), dateLabel: 'sonntags', timeLabel: '12:00', priceLabel: 'à la carte', cta: { label: sundayCtaLabel, href: '/c/events/sonntagstafel' } },
     ],
   };
 }
@@ -845,7 +847,7 @@ function buildOfferItem({ slug, title, excerpt, imageId, intro, facts }) {
           'Küche und Service wissen, was ansteht.',
           'Das Timing bleibt ruhig, ohne Gefühl von Durchschleusen.',
           'Es bleibt genug Raum für Gespräch, Wein und einen guten Schluss.',
-        ], ctaLabel: 'Tisch anfragen', ctaHref: '/reservierung' } },
+        ], ctaLabel: 'Tisch für dieses Angebot planen', ctaHref: '/reservierung' } },
         { id: uuid(), ...sectionCta(`${title} anfragen?`, 'Schreiben Sie uns Datum, Personenanzahl und Wünsche. Wir antworten persönlich.', 'Anfrage senden', '/reservierung') },
       ],
     },
@@ -891,7 +893,7 @@ function buildNewsItem({ slug, title, excerpt, imageId, body }) {
           'Genuss: warum manche Dinge einfacher bleiben dürfen.',
           'Gastgefühl: was am Tisch wirklich zählt.',
         ] } },
-        { id: uuid(), ...sectionCta('Fragen zum Thema?', 'Am besten bei einem Glas Wein. Oder kurz per Nachricht.', 'Tisch anfragen', '/reservierung') },
+        { id: uuid(), ...sectionCta('Fragen zum Thema?', 'Am besten bei einem Glas Wein. Oder kurz per Nachricht.', 'Gespräch am Tisch fortsetzen', '/reservierung') },
       ],
     },
   };

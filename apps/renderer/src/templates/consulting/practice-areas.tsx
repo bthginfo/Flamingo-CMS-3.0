@@ -35,14 +35,14 @@ export function PracticeAreasSection({ data }: Props) {
               className="group relative p-8 rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] hover:border-[color-mix(in_srgb,var(--token-card-border)_30%,transparent)] hover:shadow-lg transition-all duration-300"
             >
               {area.icon && (
-                <div className="w-12 h-12 mb-5 rounded-lg bg-[var(--token-badge-bg)] flex items-center justify-center text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
+                <div className="w-12 h-12 mb-5 rounded-lg bg-[var(--token-badge-bg)] flex items-center justify-center text-[color:var(--token-badge-text)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-btn-text)] transition-colors">
                   <DynamicIcon editPath="icon" name={area.icon} size={24} />
                 </div>
               )}
               <h3 className="text-lg font-semibold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{area.title}</h3>
               {area.text && <p className="text-[color:var(--token-muted)] text-sm leading-relaxed" data-edit-path="text">{plain(area.text)}</p>}
               {area.href && (
-                <span className="inline-flex items-center gap-1 text-[color:var(--token-icon)] text-sm mt-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="inline-flex items-center gap-1 text-[color:var(--token-link)] text-sm mt-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   Mehr erfahren <DynamicIcon name="arrow-right" size={14} />
                 </span>
               )}

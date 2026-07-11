@@ -1,10 +1,11 @@
+import { requireDatabaseUrl } from './_database-url';
 /**
  * Populate Schuldes GmbH tenant with real, SEO-optimized content.
  * Run with: npx tsx scripts/populate-schuldes.ts
  */
 import { neon } from '@neondatabase/serverless';
 
-const DB_URL = 'postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require';
+const DB_URL = requireDatabaseUrl();
 const sql = neon(DB_URL);
 
 const TENANT_ID = '51e6afea-86f7-4363-b341-95620d462a43';

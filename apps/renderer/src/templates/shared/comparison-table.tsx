@@ -1,12 +1,8 @@
-'use client';
-
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
 import { Check, X } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
+import { PremiumSectionHeader, ResponsiveDataFrame } from './section-primitives';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
-
 type Column = { label: string };
 type Row = { feature: string; values: string[] };
 
@@ -17,49 +13,72 @@ export function ComparisonTableSection({ data }: Props) {
   const columns = (data.columns as Column[]) || [];
   const rows = (data.rows as Row[]) || [];
   const highlightCol = (data.highlightCol as number) ?? -1;
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-
   if (!columns.length || !rows.length) return null;
 
   return (
-    <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-10">
-        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
-        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-        {text && <p className="section-subline max-w-3xl mx-auto" data-edit-path="text">{plain(text)}</p>}
-      </motion.div>
+    <div>
+      <PremiumSectionHeader
+        eyebrow={badge}
+        headline={headline}
+        subline={plain(text)}
+        eyebrowPath="badge"
+        sublinePath="text"
+        align="center"
+        richSubline={false}
+      />
 
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.15 }} className="overflow-hidden rounded-[28px] bg-[color:var(--token-card-bg,#fff)] shadow-xl shadow-black/5 ring-1 ring-[color:var(--token-card-border)]">
-        <div className="overflow-x-auto">
-        <table className="w-full min-w-[820px] border-collapse text-sm">
+      <ResponsiveDataFrame label={headline || 'Angebotsvergleich'}>
+        <table className="w-full min-w-[760px] border-collapse text-sm">
+          <caption className="sr-only">{headline || 'Angebotsvergleich'}</caption>
           <thead>
             <tr>
-              <th className="w-1/3 border-b border-r border-[color:var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_72%,var(--token-card-bg,#fff))] px-7 py-6 text-left text-xs font-black uppercase tracking-wider text-[color:var(--token-muted)] md:px-8">
+              <th scope="col" className="w-1/3 border-b border-r border-[color:var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt)_72%,var(--token-card-bg))] px-6 py-5 text-left text-xs font-black uppercase tracking-wider text-[color:var(--token-card-heading)] md:px-8">
                 Vergleich
               </th>
-              {columns.map((col, i) => (
-                <th key={i} className={`border-b border-r last:border-r-0 border-[color:var(--token-card-border)] px-7 py-6 text-center text-sm font-extrabold md:px-8 ${i === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_15%,var(--token-card-bg,#fff))] text-[color:var(--token-accent)]' : 'bg-[color:var(--token-card-bg)] text-[color:var(--token-card-heading,var(--token-heading))]'}`} data-edit-collection="columns" data-edit-index={i}>
-                  {col.label || `Option ${i + 1}`}
+              {columns.map((column, index) => (
+                <th
+                  key={`${column.label}-${index}`}
+                  scope="col"
+                  className={`border-b border-r border-[color:var(--token-card-border)] px-6 py-5 text-center text-sm font-extrabold last:border-r-0 md:px-8 ${index === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_15%,var(--token-card-bg))] text-[color:var(--token-card-heading)]' : 'bg-[color:var(--token-card-bg)] text-[color:var(--token-card-heading)]'}`}
+                  data-edit-collection="columns"
+                  data-edit-index={index}
+                  data-edit-path="label"
+                >
+                  {column.label || `Option ${index + 1}`}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, ri) => (
-              <tr key={ri} className="group transition-colors" data-edit-collection="rows" data-edit-index={ri}>
-                <td className="border-b border-r border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg)] px-7 py-6 font-bold leading-relaxed text-[color:var(--token-card-heading,var(--token-heading))] transition group-last:border-b-0 group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))] md:px-8">{row.feature || `Kriterium ${ri + 1}`}</td>
-                {row.values.map((val, ci) => (
-                  <td key={ci} className={`border-b border-r last:border-r-0 border-[color:var(--token-card-border)] px-7 py-6 text-center transition group-last:border-b-0 md:px-8 ${ci === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_9%,var(--token-card-bg,#fff))]' : 'bg-[color:var(--token-card-bg)] group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))]'}`} data-edit-collection="values" data-edit-index={ci}>
-                    {val === 'true' ? <Check size={18} className="mx-auto text-[color:var(--token-check)]" /> : val === 'false' ? <X size={18} className="mx-auto text-[color:var(--token-card-muted,var(--token-muted))]" /> : <span className="font-semibold leading-relaxed text-[color:var(--token-card-body,var(--token-body))]">{val || '-'}</span>}
-                  </td>
-                ))}
+            {rows.map((row, rowIndex) => (
+              <tr key={`${row.feature}-${rowIndex}`} className="group" data-edit-collection="rows" data-edit-index={rowIndex}>
+                <th scope="row" className="border-b border-r border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg)] px-6 py-5 text-left font-bold leading-relaxed text-[color:var(--token-card-heading)] transition-colors group-last:border-b-0 group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt)_58%,var(--token-card-bg))] md:px-8" data-edit-path="feature">
+                  {row.feature || `Kriterium ${rowIndex + 1}`}
+                </th>
+                {columns.map((_, columnIndex) => {
+                  const value = row.values?.[columnIndex] || '';
+                  return (
+                    <td
+                      key={columnIndex}
+                      className={`border-b border-r border-[color:var(--token-card-border)] px-6 py-5 text-center transition-colors last:border-r-0 group-last:border-b-0 md:px-8 ${columnIndex === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_9%,var(--token-card-bg))]' : 'bg-[color:var(--token-card-bg)] group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt)_58%,var(--token-card-bg))]'}`}
+                      data-edit-collection="values"
+                      data-edit-index={columnIndex}
+                    >
+                      {value === 'true' ? (
+                        <span className="inline-flex" aria-label="Enthalten"><Check aria-hidden="true" size={19} className="text-[color:var(--token-check)]" /></span>
+                      ) : value === 'false' ? (
+                        <span className="inline-flex" aria-label="Nicht enthalten"><X aria-hidden="true" size={19} className="text-[color:var(--token-card-muted)]" /></span>
+                      ) : (
+                        <span className="font-semibold leading-relaxed text-[color:var(--token-card-body)]">{value || '–'}</span>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
         </table>
-        </div>
-      </motion.div>
+      </ResponsiveDataFrame>
     </div>
   );
 }

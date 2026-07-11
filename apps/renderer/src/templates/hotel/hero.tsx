@@ -75,13 +75,13 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
           {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (
             <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0f1d2e]/90 via-[#0f1d2e]/70 to-[#1a3550]/60" style={{ background: 'var(--token-section-bg, transparent)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--token-image-overlay) 82%, #07111f) 0%, color-mix(in srgb, var(--token-image-overlay) 58%, transparent) 55%, color-mix(in srgb, var(--token-image-overlay) 36%, transparent) 100%)' }} />
           )}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1d2e] via-[#1a3550] to-[#0f1d2e]" style={{ background: 'var(--token-section-bg, transparent)' }} />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1d2e] via-[#1a3550] to-[#0f1d2e]" />
       )}
       {/* grain texture */}
       <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')]" />
@@ -96,8 +96,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 text-center">
         {badgeText && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-flex items-center gap-2.5 rounded-full border border-[color:var(--token-badge-border)] bg-[var(--token-badge-bg)] px-5 py-2.5 text-sm text-[color:var(--token-badge-text)] backdrop-blur-md mb-6">
-            <DynamicIcon name={badgeIcon} size={14} className="text-[color:var(--token-badge-text)]" />
+            className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-[color:var(--token-divider)] bg-[color:color-mix(in_srgb,#07111f_52%,transparent)] px-5 py-2.5 text-sm text-[color:var(--token-on-dark-heading)] backdrop-blur-md">
+            <DynamicIcon name={badgeIcon} size={14} className="text-[color:var(--token-rating-star)]" />
             <span className="font-medium" data-edit-path="badgeText">{badgeText}</span>
           </motion.div>
         )}
@@ -120,7 +120,17 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
             </a>
           )}
           {secondaryCta.label && (
-            <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-[color:var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-7 py-4 font-semibold text-[color:var(--token-btn-secondary-text)] transition-colors hover:border-[color:var(--token-btn-secondary-border)]" data-edit-path="label">
+            <a
+              data-edit-link="secondaryCta"
+              href={secondaryCta.href || '#'}
+              className="inline-flex items-center justify-center rounded-full border px-7 py-4 font-semibold shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--token-image-overlay) 72%, transparent)',
+                borderColor: 'var(--token-divider)',
+                color: 'var(--token-on-dark-heading)',
+              }}
+              data-edit-path="label"
+            >
               {secondaryCta.label}
             </a>
           )}

@@ -1,18 +1,11 @@
 ﻿import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
-import { pages, pageSections, collectionItems, tenants, mediaAssets, seoGlobal, seoPage } from '@flamingo/db';
-import { eq, count, and } from 'drizzle-orm';
-import { Camera, FileText, Home, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send, Zap } from 'lucide-react';
+import { pages, pageSections, collectionItems, tenants, mediaAssets, seoGlobal, seoPage, publishedSnapshots } from '@flamingo/db';
+import { eq, count, and, desc } from 'drizzle-orm';
+import { Camera, FileText, Home, Layers, FolderOpen, Rocket, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { publishAction } from './actions/publish';
-
-const RENDERER_URL = '';
-
-async function publishFromDashboard() {
-  'use server';
-  await publishAction();
-}
+import { DashboardActions } from './dashboard-actions';
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -23,29 +16,66 @@ export default async function DashboardPage() {
   const cookieStore = await cookies();
   const isPublicDemoMode = cookieStore.get('flamingo_public_demo')?.value === session.tenantId;
 
-  const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tid));
-  const [pageCount] = await db.select({ value: count() }).from(pages).where(eq(pages.tenantId, tid));
-  const [sectionCount] = await db.select({ value: count() }).from(pageSections).where(eq(pageSections.tenantId, tid));
-  const [itemCount] = await db.select({ value: count() }).from(collectionItems).where(eq(collectionItems.tenantId, tid));
-  const [publishedPages] = await db.select({ value: count() }).from(pages).where(and(eq(pages.tenantId, tid), eq(pages.status, 'published')));
-  const [mediaCount] = await db.select({ value: count() }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid));
-  const [seoRow] = await db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, tid));
+  const [
+    tenantRows,
+    pageCountRows,
+    sectionCountRows,
+    itemCountRows,
+    publishedPageRows,
+    mediaCountRows,
+    seoRows,
+    allPages,
+    seoPages,
+    allMedia,
+    activeSnapshotRows,
+    snapshotVersionRows,
+  ] = await Promise.all([
+    db.select().from(tenants).where(eq(tenants.id, tid)).limit(1),
+    db.select({ value: count() }).from(pages).where(eq(pages.tenantId, tid)),
+    db.select({ value: count() }).from(pageSections).where(eq(pageSections.tenantId, tid)),
+    db.select({ value: count() }).from(collectionItems).where(eq(collectionItems.tenantId, tid)),
+    db.select({ value: count() }).from(pages).where(and(eq(pages.tenantId, tid), eq(pages.status, 'published'))),
+    db.select({ value: count() }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid)),
+    db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, tid)).limit(1),
+    db.select({ id: pages.id, title: pages.title, slug: pages.slug }).from(pages).where(eq(pages.tenantId, tid)),
+    db.select({ pageId: seoPage.pageId }).from(seoPage).where(eq(seoPage.tenantId, tid)),
+    db.select({ id: mediaAssets.id, alt: mediaAssets.alt }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid)),
+    db.select({ version: publishedSnapshots.version, createdAt: publishedSnapshots.createdAt })
+      .from(publishedSnapshots)
+      .where(and(eq(publishedSnapshots.tenantId, tid), eq(publishedSnapshots.isActive, true)))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1),
+    db.select({ version: publishedSnapshots.version })
+      .from(publishedSnapshots)
+      .where(eq(publishedSnapshots.tenantId, tid))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(25),
+  ]);
+  const tenant = tenantRows[0];
+  const pageCount = pageCountRows[0];
+  const sectionCount = sectionCountRows[0];
+  const itemCount = itemCountRows[0];
+  const publishedPages = publishedPageRows[0];
+  const mediaCount = mediaCountRows[0];
+  const seoRow = seoRows[0];
+  const activeSnapshot = activeSnapshotRows[0];
+  const hasPreviousSnapshot = activeSnapshot
+    ? snapshotVersionRows.some(snapshot => snapshot.version < activeSnapshot.version)
+    : false;
 
   // Check SEO completeness
-  const allPages = await db.select({ id: pages.id, title: pages.title }).from(pages).where(eq(pages.tenantId, tid));
-  const seoPages = await db.select({ pageId: seoPage.pageId }).from(seoPage).where(eq(seoPage.tenantId, tid));
   const seoPageIds = new Set(seoPages.map(s => s.pageId));
   const pagesWithoutSeo = allPages.filter(p => !seoPageIds.has(p.id));
   const seoGlobalComplete = !!(seoRow?.defaultTitle && seoRow?.defaultDescription);
+  const homePage = allPages.find(page => ['', 'home', 'startseite'].includes(page.slug));
 
   // Check media without alt
-  const allMedia = await db.select({ id: mediaAssets.id, alt: mediaAssets.alt }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid));
   const mediaWithoutAlt = allMedia.filter(m => !m.alt);
 
   const stats = [
     { label: 'Seiten', value: pageCount?.value ?? 0, icon: FileText, href: '/admin/pages' },
     { label: 'Sections', value: sectionCount?.value ?? 0, icon: Layers, href: '/admin/pages' },
-    { label: 'Collection Items', value: itemCount?.value ?? 0, icon: FolderOpen, href: '/admin/collections' },
+    { label: 'Einträge', value: itemCount?.value ?? 0, icon: FolderOpen, href: '/admin/collections' },
     { label: 'Live-Seiten', value: publishedPages?.value ?? 0, icon: Rocket, href: '/admin/pages' },
   ];
 
@@ -58,33 +88,12 @@ export default async function DashboardPage() {
             {tenant?.name ?? 'Tenant'} · {tenant?.industry ?? '–'}
           </p>
         </div>
-        <div className="flex gap-2">
-          <a href={RENDERER_URL} target="_blank" rel="noopener noreferrer" className="admin-btn-secondary">
-            <Eye size={16} /> Preview
-          </a>
-          <form action={publishFromDashboard}>
-            <button className="admin-btn-primary" disabled={isPublicDemoMode} title={isPublicDemoMode ? 'Im öffentlichen Demo-Modus deaktiviert' : undefined}>
-              <Rocket size={16} /> Veröffentlichen
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div className="admin-card mb-8 overflow-hidden border-pink-100 bg-gradient-to-r from-pink-50 via-white to-orange-50 p-5">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink-500 text-white">
-              <Gift size={20} />
-            </div>
-            <div>
-              <h2 className="font-semibold text-zinc-950">Du bist zufrieden mit Flamingo Media?</h2>
-              <p className="mt-1 text-sm leading-6 text-zinc-600">Empfiehl uns weiter und erhalte 3 Monate Hosting kostenlos. Das kostenlose Hosting wird bei erfolgreicher Vermittlung eines neuen Projekts aktiviert.</p>
-            </div>
-          </div>
-          <a href="mailto:hello@flamingomedia.online?subject=Empfehlung%20f%C3%BCr%20Flamingo%20Media" className="admin-btn-primary shrink-0">
-            <Send size={16} /> Empfehlung senden
-          </a>
-        </div>
+        <DashboardActions
+          tenantId={tid}
+          publishDisabled={isPublicDemoMode}
+          activeVersion={activeSnapshot?.version}
+          canRollback={hasPreviousSnapshot && !isPublicDemoMode}
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -104,7 +113,7 @@ export default async function DashboardPage() {
           <h2 className="font-semibold text-zinc-900 mb-4">Schnellzugriff</h2>
           <div className="space-y-2">
             {[
-              { label: 'Startseite bearbeiten', href: '/admin/pages', icon: Home },
+              { label: 'Startseite bearbeiten', href: homePage ? `/admin/pages/${homePage.id}` : '/admin/pages', icon: Home },
               { label: 'Leistung hinzufügen', href: '/admin/collections', icon: Zap },
               { label: 'Referenz hinzufügen', href: '/admin/collections', icon: Camera },
               { label: 'SEO prüfen', href: '/admin/seo', icon: Search },
@@ -162,6 +171,23 @@ export default async function DashboardPage() {
               )}
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="admin-card mt-8 overflow-hidden border-pink-100 bg-gradient-to-r from-pink-50 via-white to-orange-50 p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink-500 text-white">
+              <Gift size={20} />
+            </div>
+            <div>
+              <h2 className="font-semibold text-zinc-950">Du bist zufrieden mit Flamingo Media?</h2>
+              <p className="mt-1 text-sm leading-6 text-zinc-600">Empfiehl uns weiter und erhalte 3 Monate Hosting kostenlos. Das kostenlose Hosting wird bei erfolgreicher Vermittlung eines neuen Projekts aktiviert.</p>
+            </div>
+          </div>
+          <a href="mailto:hello@flamingomedia.online?subject=Empfehlung%20f%C3%BCr%20Flamingo%20Media" className="admin-btn-primary shrink-0">
+            <Send size={16} /> Empfehlung senden
+          </a>
         </div>
       </div>
     </>

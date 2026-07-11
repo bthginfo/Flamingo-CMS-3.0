@@ -26,6 +26,12 @@ test('handwerk resolves through the tradesman alias', () => {
   );
 });
 
+test('vertical aliases use the same color contracts as their renderer family', () => {
+  assert.deepEqual(getFieldsForSection('hero', 'bar'), getFieldsForSection('hero', 'restaurant'));
+  assert.deepEqual(getFieldsForSection('hero', 'shop'), getFieldsForSection('hero', 'ecommerce'));
+  assert.deepEqual(getFieldsForSection('nextMatchHero', 'eishockey'), getFieldsForSection('nextMatchHero', 'verein'));
+});
+
 test('a real industry section resolves a rich contract, not just background', () => {
   const fields = getFieldsForSection('hero', 'hotel');
   assert.ok(fields.length > 1, 'hero@hotel should expose more than sectionBg');

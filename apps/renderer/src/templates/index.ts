@@ -1,4 +1,8 @@
 import type { SectionProps } from './restaurant';
+import {
+  createSectionDefinitionRegistry,
+  type ResolveSectionDefinitionInput,
+} from '../lib/section-definition-registry';
 import { HeroSection } from './handwerk/hero';
 import { UspStripSection } from './handwerk/usp-strip';
 import { ServicesGridSection } from './handwerk/services-grid';
@@ -59,6 +63,7 @@ import { PrinciplesGridSection } from './shared/principles-grid';
 import { GlowHeroSection } from './shared/glow-hero';
 import { ServiceTabsSection } from './shared/service-tabs';
 import { PriceCalculatorSection } from './shared/price-calculator';
+import { SmartInquirySection } from './shared/smart-inquiry';
 import { JobListingsSection } from './shared/job-listings';
 import { CtaSplitSection } from './shared/cta-split';
 import { OpeningStatusSection } from './shared/opening-status';
@@ -237,6 +242,40 @@ import {
 } from './tattoo';
 
 export type TemplateComponent = React.FC<SectionProps>;
+
+/**
+ * Explicitly preserves the former ALL_TEMPLATES last-write-wins behavior.
+ * Do not reorder existing entries without a versioned definition migration.
+ * Alias industries such as `bar` resolve to a canonical owner and stay out of
+ * this order so adding a preset cannot change cross-industry legacy rendering.
+ */
+export const LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER = [
+  'tradesman',
+  'restaurant',
+  'hotel',
+  'tourism',
+  'salon',
+  'medical',
+  'wedding',
+  'consulting',
+  'photography',
+  'realestate',
+  'cafe',
+  'tattoo',
+  'ecommerce',
+  'retail',
+  'florist',
+  'fitness',
+  'location',
+  'verein',
+] as const;
+
+export const SECTION_INDUSTRY_ALIASES: Readonly<Record<string, string>> = Object.freeze({
+  handwerk: 'tradesman',
+  shop: 'ecommerce',
+  bar: 'restaurant',
+  eishockey: 'verein',
+});
 
 export const TRADESMAN_TEMPLATES: Record<string, TemplateComponent> = {
   hero: HeroSection,
@@ -798,6 +837,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   principlesGrid: PrinciplesGridSection,
   serviceTabs: ServiceTabsSection,
   priceCalculator: PriceCalculatorSection,
+  smartInquiry: SmartInquirySection,
   jobListings: JobListingsSection,
   ctaSplit: CtaSplitSection,
   openingStatus: OpeningStatusSection,
@@ -842,13 +882,42 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   textBlock: RichTextSection,
 };
 
-// Merge ALL industry templates as ultimate fallback so foreign sections render
-const ALL_TEMPLATES: Record<string, TemplateComponent> = Object.values(INDUSTRY_TEMPLATES).reduce(
-  (acc, templates) => ({ ...acc, ...templates }),
-  {} as Record<string, TemplateComponent>
+// Merge all canonical industry templates as an ultimate fallback so foreign
+// legacy sections keep rendering. Precedence is explicit; it no longer depends
+// on object insertion order.
+const ALL_TEMPLATES: Record<string, TemplateComponent> = LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER.reduce(
+  (acc, industry) => ({ ...acc, ...INDUSTRY_TEMPLATES[industry] }),
+  {} as Record<string, TemplateComponent>,
 );
 
+const SECTION_DEFINITION_REGISTRY = createSectionDefinitionRegistry({
+  industryTemplates: INDUSTRY_TEMPLATES,
+  sharedTemplates: SHARED_TEMPLATES,
+  legacyFallbackIndustryOrder: LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER,
+  defaultIndustry: 'tradesman',
+  industryAliases: SECTION_INDUSTRY_ALIASES,
+});
+
+/** Resolve an explicit definition key, or preserve legacy industry/type behavior. */
+export function resolveSectionDefinition(input: ResolveSectionDefinitionInput) {
+  return SECTION_DEFINITION_REGISTRY.resolve(input);
+}
+
+/** Deterministic key for a legacy (industry, type) pair; null for unknown types. */
+export function resolveLegacySectionDefinitionKey(industry: string | null | undefined, type: string) {
+  return SECTION_DEFINITION_REGISTRY.resolveLegacyKey(industry, type);
+}
+
+export function getSectionDefinitionByKey(key: string) {
+  return SECTION_DEFINITION_REGISTRY.get(key);
+}
+
+export function listSectionDefinitions() {
+  return SECTION_DEFINITION_REGISTRY.list();
+}
+
 export function getIndustryTemplates(industry: string): Record<string, TemplateComponent> {
-  const specific = INDUSTRY_TEMPLATES[industry] ?? TRADESMAN_TEMPLATES;
+  const normalizedIndustry = SECTION_INDUSTRY_ALIASES[industry] ?? industry;
+  const specific = INDUSTRY_TEMPLATES[normalizedIndustry] ?? TRADESMAN_TEMPLATES;
   return { ...ALL_TEMPLATES, ...SHARED_TEMPLATES, ...specific };
 }

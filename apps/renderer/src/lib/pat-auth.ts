@@ -1,11 +1,12 @@
 import { createHash } from 'crypto';
 import { getDb } from '@/lib/db';
-import { tenantApiTokens, tenants } from '@flamingo/db';
+import { tenantAddons, tenantApiTokens, tenants } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 
 export type PatAuthResult = {
   tenantId: string;
   tokenId: string;
+  addons: string[];
   tenant: { name: string; industry: string; slug: string; activeStyle: string; i18nEnabled: boolean; i18nLocales: string; i18nDefaultLocale: string };
 };
 
@@ -37,10 +38,18 @@ export async function validatePat(authHeader: string | null): Promise<PatAuthRes
     })
     .from(tenantApiTokens)
     .innerJoin(tenants, eq(tenants.id, tenantApiTokens.tenantId))
-    .where(and(eq(tenantApiTokens.tokenHash, tokenHash), eq(tenantApiTokens.revoked, false)));
+    .where(and(
+      eq(tenantApiTokens.tokenHash, tokenHash),
+      eq(tenantApiTokens.revoked, false),
+      eq(tenants.status, 'active'),
+    ));
 
   if (!row) return null;
   if (row.expiresAt && new Date(row.expiresAt) < new Date()) return null;
+
+  const addonRows = await db.select({ key: tenantAddons.addonKey })
+    .from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, row.tenantId), eq(tenantAddons.active, true)));
 
   // Update last_used_at (fire and forget, log errors)
   db.update(tenantApiTokens)
@@ -51,6 +60,7 @@ export async function validatePat(authHeader: string | null): Promise<PatAuthRes
   return {
     tenantId: row.tenantId,
     tokenId: row.tokenId,
+    addons: addonRows.map(addon => addon.key),
     tenant: { name: row.tenantName, industry: row.industry, slug: row.slug, activeStyle: row.activeStyle, i18nEnabled: row.i18nEnabled, i18nLocales: row.i18nLocales, i18nDefaultLocale: row.i18nDefaultLocale },
   };
 }

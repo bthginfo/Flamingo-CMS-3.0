@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { ConsentGate } from '@/components/consent-gate';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -48,13 +49,16 @@ export function VideoEmbedSection({ data }: Props) {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="relative w-full max-w-4xl mx-auto aspect-video rounded-xl overflow-hidden shadow-lg"
         >
-          <iframe
-            src={embedUrl}
-            title={headline || 'Video'}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="absolute inset-0 w-full h-full"
-          />
+          <ConsentGate provider={embedUrl.includes('vimeo') ? 'Vimeo' : 'YouTube'} className="h-full w-full">
+            <iframe
+              src={embedUrl}
+              title={headline || 'Video'}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              loading="lazy"
+              className="absolute inset-0 h-full w-full border-0"
+            />
+          </ConsentGate>
         </motion.div>
       )}
 

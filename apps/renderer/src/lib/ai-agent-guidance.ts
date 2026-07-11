@@ -1,5 +1,16 @@
+import { CONTENT_FIELD_BUDGETS, CONTENT_GOOD_BAD_EXAMPLES } from './content-quality';
+import { getSitePagePolicy } from './site-page-policy';
+
 type SectionCatalogEntry = { type?: string; id?: string; label?: string };
 type ExistingPage = { id: string; slug: string; title: string };
+
+type SiteProfileSeed = {
+  businessName?: string;
+  industry?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+};
 
 const SECTION_EXAMPLES: Record<string, Record<string, unknown>> = {
   hero: {
@@ -66,6 +77,7 @@ export function buildAiAgentContract(input: {
   sectionSchemas: Record<string, object>;
   hasShop: boolean;
   hasBooking: boolean;
+  siteProfileSeed?: SiteProfileSeed;
 }) {
   const allowed = new Set(input.allowedSections.map(sectionType).filter((type): type is string => Boolean(type)));
   const page = (slug: string, title: string, candidates: string[]) => ({
@@ -79,12 +91,42 @@ export function buildAiAgentContract(input: {
   });
   const industryHero = `hero${input.industry.charAt(0).toUpperCase()}${input.industry.slice(1)}`;
   const hero = allowed.has('hero') ? 'hero' : industryHero;
-  const recommendedPages = [
-    page('startseite', 'Startseite', [hero, 'uspStrip', 'servicesGrid', 'processSteps', 'testimonials', 'faq', 'ctaBand']),
-    page('leistungen', 'Leistungen', ['collectionHero', 'servicesGrid', 'processSteps', 'faq', 'ctaBand']),
-    page('ueber-uns', 'Über uns', ['collectionHero', 'textImage', 'stats', 'team', 'ctaBand']),
-    page('kontakt', 'Kontakt', ['collectionHero', 'contact', 'map', 'faq']),
-  ].filter(candidate => candidate.sections.length > 0);
+  const sitemapPolicy = getSitePagePolicy({
+    industry: input.industry,
+    capabilities: [input.hasShop ? 'shop' : '', input.hasBooking ? 'booking' : ''].filter(Boolean),
+  });
+  const pageBlueprints: Record<string, string[]> = {
+    startseite: [hero, 'uspStrip', 'servicesGrid', 'processSteps', 'testimonials', 'faq', 'ctaBand'],
+    kontakt: ['collectionHero', 'contact', 'map', 'faq'],
+    impressum: ['legalContent'],
+    datenschutz: ['legalContent'],
+    leistungen: ['collectionHero', 'servicesGrid', 'processSteps', 'faq', 'ctaBand'],
+    'ueber-uns': ['collectionHero', 'textImage', 'stats', 'team', 'ctaBand'],
+    spielplan: ['nextMatchHero', 'matchSchedule', 'leagueTable', 'ctaBand'],
+    verein: ['editorialHero', 'statsCounter', 'timeline', 'team', 'faq', 'ctaSplit'],
+    shop: ['collectionHero', 'shopProductGrid'],
+    warenkorb: ['shopCart'],
+    speisekarte: ['collectionHero', 'menuCard', 'faq', 'ctaBand'],
+    reservierung: ['collectionHero', 'bookingSlotPicker', 'contact'],
+    zimmer: ['collectionHero', 'roomGrid', 'bookingDateRange', 'faq'],
+    rsvp: ['collectionHero', 'rsvp', 'faq'],
+    ablauf: ['collectionHero', 'eventSchedule', 'venueInfo'],
+    immobilien: ['collectionHero', 'propertyGrid', 'ctaBand'],
+    bewertung: ['collectionHero', 'valuationForm', 'contact'],
+    erlebnisse: ['collectionHero', 'experienceGrid', 'tourRoutes', 'ctaBand'],
+    routen: ['collectionHero', 'tourRoutes', 'visitorInfo', 'ctaBand'],
+    portfolio: ['collectionHero', 'portfolioGallery', 'galleryGrid', 'ctaBand'],
+    karte: ['collectionHero', 'menuCard', 'openingStatus'],
+    kuenstler: ['collectionHero', 'artistGrid', 'tattooBookingCta'],
+    galerie: ['collectionHero', 'galleryGrid', 'ctaBand'],
+    straeusse: ['collectionHero', 'bouquetShowcase', 'seasonalCampaign'],
+    programme: ['collectionHero', 'programGrid', 'trialSessionCta'],
+    kursplan: ['collectionHero', 'courseSchedule', 'trialSessionCta'],
+    raeume: ['collectionHero', 'spaceShowcase', 'floorPlanOverview', 'ctaBand'],
+  };
+  const recommendedPages = [...sitemapPolicy.required, ...sitemapPolicy.recommended]
+    .map(entry => page(entry.slug, entry.label, pageBlueprints[entry.slug] || ['collectionHero', 'richText', 'ctaBand']))
+    .filter(candidate => candidate.sections.length > 0);
 
   return {
     protocolVersion: '1.1',
@@ -100,7 +142,7 @@ export function buildAiAgentContract(input: {
     requestRules: {
       authorization: 'Authorization: Bearer <PAT>',
       contentType: 'application/json; charset=utf-8',
-      pageEnvelope: { slug: 'lowercase slug without leading slash', title: 'page title', upsert: true, sections: [{ type: 'from availableSectionTypes', data: {}, styleOverrides: {} }] },
+      pageEnvelope: { slug: 'lowercase slug without leading slash', title: 'page title', upsert: true, sections: [{ type: 'from availableSectionTypes', definitionKey: 'omit to let the server derive it, or copy availableSectionTypes[type].definitionKey exactly', schemaVersion: 'omit to derive, or copy availableSectionTypes[type].schemaVersion exactly', data: {}, styleOverrides: {} }] },
       safeDefaults: { visible: true, container: 'default', spacingTop: 'm', spacingBottom: 'm' },
       colors: 'Prefer global design tokens. Use only sectionStyleContracts[type].colorFields for local overrides.',
     },
@@ -121,6 +163,103 @@ export function buildAiAgentContract(input: {
       'Avoid duplicated paragraphs and repeated headlines across sections.',
       'Do not publish while validation reports any error or color warning.',
     ],
+    sitemapPolicy,
+    weakModelWorkflow: {
+      version: '1.0',
+      rule: 'Do not write tenant content until PROFILE and PLAN pass POST /api/v1/content/validate. Work one page at a time; repair only named issue locations.',
+      steps: [
+        {
+          state: 'PROFILE',
+          output: 'siteProfile',
+          action: 'Copy verified facts into the exact siteProfile schema. Never turn an unknown into a claim; list it in facts.unknowns.',
+          gate: 'POST /api/v1/content/validate with { mode: "profile", siteProfile, brand, contact, seoGlobal }. Continue only when valid=true.',
+        },
+        {
+          state: 'PLAN',
+          output: 'pages[] without API writes',
+          action: 'Plan each page purpose, primaryAction, SEO and section sequence. Every section has one job and data shaped by sectionDataSchemas.',
+          gate: 'POST /api/v1/content/validate with the complete plan. Continue only when valid=true.',
+        },
+        {
+          state: 'WRITE',
+          output: 'stored content',
+          action: 'Write foundation first, then one page per request with upsert=true. Use only values from the approved profile and plan.',
+          gate: 'After each page, inspect the API response before sending the next page.',
+        },
+        {
+          state: 'REPAIR',
+          output: 'targeted patches',
+          action: 'For each validation issue, edit only issue.location. Follow repair.instruction and confirm repair.acceptance.',
+          gate: 'Repeat GET /api/v1/content/validate until there are no errors and no unresolved identity/link/SEO warnings.',
+        },
+        {
+          state: 'PUBLISH',
+          output: 'published tenant',
+          action: 'Publish once, only after validation. Never use publish as a validation step.',
+          gate: 'readyToPublish=true and all main/internal routes are valid.',
+        },
+      ],
+      siteProfileIntake: {
+        schemaVersion: '1.0',
+        seed: {
+          businessName: input.siteProfileSeed?.businessName || input.tenantName,
+          industry: input.siteProfileSeed?.industry || input.industry,
+          address: input.siteProfileSeed?.address || null,
+          phone: input.siteProfileSeed?.phone || null,
+          email: input.siteProfileSeed?.email || null,
+        },
+        schema: {
+          schemaVersion: '1.0',
+          identity: {
+            businessName: 'verified public name',
+            legalName: 'verified legal name or omit',
+            locations: [{ city: 'required', region: 'optional', country: 'optional', address: 'verified or omit' }],
+            serviceAreas: ['verified areas only'],
+          },
+          audience: {
+            primary: 'one concrete audience',
+            needs: ['at least two specific needs'],
+            objections: ['at least one real objection'],
+          },
+          goals: {
+            primary: 'one primary site outcome',
+            conversions: ['specific measurable actions'],
+          },
+          offers: [{ name: 'offer', outcome: 'customer outcome', proof: 'verified proof or omit', ctaLabel: 'specific action', ctaHref: '/existing-route' }],
+          voice: { attributes: ['at least two'], avoid: ['phrases/tones to avoid'] },
+          facts: { approvedClaims: ['verified only'], prohibitedClaims: ['must never be stated'], unknowns: ['requires user/source verification'] },
+        },
+        rules: [
+          'Preserve exact spelling of business, people, street, city and region across every endpoint.',
+          'Never invent awards, ratings, years, prices, medical/legal claims or opening hours.',
+          'If location/identity sources disagree, stop content generation and return the conflict in facts.unknowns.',
+        ],
+      },
+      pagePlanContract: {
+        shape: {
+          slug: 'lowercase kebab-case, no leading slash',
+          title: 'human-readable title',
+          purpose: 'audience need + page job + desired next action',
+          primaryAction: 'one conversion action',
+          seo: { metaTitle: '20-70 chars; brand omitted if template adds it', metaDescription: '70-170 chars; unique' },
+          sections: [{ type: 'availableSectionTypes only', definitionKey: 'omit or copy the exact availableSectionTypes entry', schemaVersion: 'omit or copy the exact availableSectionTypes entry', purpose: 'one job', data: 'exact sectionDataSchemas[type] shape', styleOverrides: 'optional exact sectionStyleContracts[type] keys' }],
+        },
+        rules: [
+          'Use 7-10 sections on a homepage only when every section has a distinct job; use fewer on subpages.',
+          'No page may share the exact same opener-middle-closer sequence with another page.',
+          'Every CTA resolves to a planned page, collection item, anchor, phone, email or verified external URL.',
+          'Every page has unique SEO before any write starts.',
+        ],
+      },
+      fieldBudgets: CONTENT_FIELD_BUDGETS,
+      examples: CONTENT_GOOD_BAD_EXAMPLES,
+      validationContract: {
+        preflight: { method: 'POST', path: '/api/v1/content/validate', body: { mode: 'plan', siteProfile: '<siteProfile>', pages: '<planned pages>', brand: '<planned brand>', contact: '<planned contact>', seoGlobal: '<planned global SEO>', navigation: '<planned navigation>', footer: '<planned footer>' } },
+        storedContent: { method: 'GET', path: '/api/v1/content/validate' },
+        issueShape: { code: 'stable machine code', severity: 'error|warning', location: 'exact JSON path', message: 'what failed', repair: { operation: 'add|replace|remove|review', instruction: 'single repair action', acceptance: 'deterministic pass condition' } },
+        repairRule: 'Group issues by location. Apply the smallest valid patch. Never regenerate unrelated pages after a local failure.',
+      },
+    },
     recommendedPages,
     schemaLookup: 'sectionDataSchemas is authoritative. Examples demonstrate shape, not facts.',
     schemaCoverage: Object.keys(input.sectionSchemas).filter(type => allowed.has(type)).length,
@@ -128,5 +267,5 @@ export function buildAiAgentContract(input: {
 }
 
 export function buildAiAgentPrompt(tenantName: string, industry: string): string {
-  return `Create a complete ${industry} website for ${tenantName}. Follow agentContract.stateMachine in order. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Replace examples with verified German business content. Validate repeatedly and publish only with readyToPublish=true and no color warnings.`;
+  return `Create a complete ${industry} website for ${tenantName}. First fill agentContract.weakModelWorkflow.siteProfileIntake, then plan all pages with pagePlanContract and preflight them via POST /api/v1/content/validate. Follow agentContract.stateMachine in order. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Replace examples with verified German business content. Repair only named issue locations. Publish only with readyToPublish=true and no color warnings.`;
 }

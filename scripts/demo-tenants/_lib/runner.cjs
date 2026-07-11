@@ -5,7 +5,7 @@
  *
  *   {
  *     slug: 'handwerk',
- *     pat:  'flm_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+ *     pat:  process.env.DEMO_TENANT_PAT,
  *     wipe: true,                 // delete existing pages/items first (default true)
  *     brand:        { ... },      // PUT /content/brand
  *     contact:      { ... },      // PUT /content/contact

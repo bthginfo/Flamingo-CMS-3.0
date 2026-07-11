@@ -149,12 +149,14 @@ const CONTRACT_INDUSTRIES = [
   'consulting',
   'realestate',
   'cafe',
+  'bar',
   'tattoo',
   'ecommerce',
   'retail',
   'florist',
   'fitness',
   'location',
+  'verein',
 ] as const;
 
 const PREMIUM_TYPES = new Set([

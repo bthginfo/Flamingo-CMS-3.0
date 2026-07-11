@@ -15,7 +15,7 @@
 const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 
-const PAT = '83a79df5fa9e34d0a33268e5939881da066f38c5b350422ec44707eaf0864d2c';
+const PAT = process.env.PAT_PHOTOGRAPHY || process.env.DEMO_PAT_PHOTOGRAPHY || '';
 
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=82`;
@@ -97,10 +97,11 @@ const link = (slug) => `/c/leistungen/${slug}`;
 const photos = {
   hero: img('1492691527719-9d1e07e534b4'),
   wedding: img('1519741497674-611481863552'),
-  portrait: img('1494790108377-be9c29b29330'),
+  portrait: img('1614283233556-f35b0c801ef1'),
   business: img('1517245386807-bb43f82c33c4'),
   family: img('1508214751196-bcfd4ca60f91'),
-  about: img('1544005313-94ddf0286df2'),
+  about: img('1548142813-c348350df52b'),
+  mira: img('1581403341630-a6e0b9d2d257'),
   process: img('1520854221256-17451cc331bf'),
   camera: img('1516035069371-29a1b244cc32'),
   street: img('1519608487953-e999c86e7455'),
@@ -734,7 +735,7 @@ const tenant = {
           members: [
             { name: 'Lisa Morgenthaler', role: 'Fotografin & Bildauswahl', image: photos.about, text: 'Reportage, Portrait, Business und finale Kuratierung.' },
             { name: 'Jonas Weber', role: 'Second Shooter', image: photos.camera, text: 'Begleitet größere Hochzeiten und Events aus zweiter Perspektive.' },
-            { name: 'Mira Schott', role: 'Styling & Produktion', image: photos.portrait, text: 'Unterstützt bei Brand-Shootings, Timings und Set-Organisation.' },
+            { name: 'Mira Schott', role: 'Styling & Produktion', image: photos.mira, text: 'Unterstützt bei Brand-Shootings, Timings und Set-Organisation.' },
           ],
         }, paper),
         s('ctaBand', {

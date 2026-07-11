@@ -49,7 +49,7 @@ function StoryClassic(p: Props) {
               {p.founderRole && <p className="text-xs text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </blockquote>
           )}
-          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{p.ctaPrimary.label}</a>}
+          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-md" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </motion.div>
         <div className="grid gap-4">
           {p.imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image data-edit-image="imagePrimary" src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
@@ -81,7 +81,7 @@ function StoryClassic(p: Props) {
           {p.milestones.map((m, i) => (
             <motion.div key={`${m.year}-${i}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="relative mb-8 last:mb-0" data-edit-collection="milestones" data-edit-index={i}>
               <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-icon)] bg-[var(--token-card-bg)]" />
-              {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]">{m.year}</p>}
+              {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]">{m.year}</p>}
               <h3 className="mt-1 font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>

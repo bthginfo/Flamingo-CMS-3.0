@@ -45,10 +45,10 @@ export function CtaLinksSection({ data }: Props) {
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-[color:var(--token-heading)] group-hover:text-[color:var(--token-accent)] transition-colors" data-edit-path="label">{link.label}</div>
+                <div className="font-semibold text-[color:var(--token-heading)] group-hover:text-[color:var(--token-link-hover)] transition-colors" data-edit-path="label">{link.label}</div>
                 {link.description && <div className="text-sm text-[color:var(--token-body)] mt-0.5 truncate rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: link.description }} />}
               </div>
-              {link.icon && <DynamicIcon editPath="icon" name={link.icon} size={18} className="text-[color:var(--token-muted)] group-hover:text-[color:var(--token-accent)] group-hover:translate-x-1 transition-all shrink-0" />}
+              {link.icon && <DynamicIcon editPath="icon" name={link.icon} size={18} className="text-[color:var(--token-muted)] group-hover:text-[color:var(--token-link-hover)] group-hover:translate-x-1 transition-all shrink-0" />}
             </Link>
           </motion.div>
         ))}

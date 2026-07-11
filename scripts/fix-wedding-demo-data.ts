@@ -1,3 +1,4 @@
+import { requireDatabaseUrl } from './_database-url';
 /**
  * Fix wedding demo tenant data: insert global_settings, navigation, footer, and page_sections.
  * The original seed script incorrectly tried to put sections on the pages table.
@@ -6,7 +7,7 @@
 import { neon } from '@neondatabase/serverless';
 import crypto from 'crypto';
 
-const DATABASE_URL = 'postgresql://neondb_owner:npg_2Dvar0iXqMIc@ep-mute-recipe-ald7aiv3-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require';
+const DATABASE_URL = requireDatabaseUrl();
 const sql = neon(DATABASE_URL);
 
 const TENANT_ID = '39a03f3a-3eaf-4cf8-acec-2f74534f0392';

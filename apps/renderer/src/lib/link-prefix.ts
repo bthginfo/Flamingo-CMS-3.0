@@ -1,4 +1,4 @@
-const INTERNAL_HREF_KEYS = new Set(['href', 'ctaHref']);
+const INTERNAL_HREF_KEYS = new Set(['href', 'ctaHref', 'link', 'to']);
 
 export function prefixInternalHref(href: unknown, linkPrefix = ''): unknown {
   if (!linkPrefix || typeof href !== 'string') return href;

@@ -1,54 +1,29 @@
 ﻿'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Palette, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useCallback, useId, useMemo, useRef } from 'react';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ChevronDown,
+  Eye,
+  Palette,
+  RotateCcw,
+} from 'lucide-react';
 import { FIELD_DEFS, sortColorFields, type ColorFieldKey } from '@/lib/section-color-fields';
+import {
+  ALPHA_CAPABLE_FIELDS,
+  composeColorWithAlpha,
+  evaluateContrastPairs,
+  groupEditorFields,
+  parseColorWithAlpha,
+} from '@/lib/section-color-editor-utils';
 import { resolveColorContractForSection } from '@/lib/section-color-resolver';
 import { scanSectionTokens } from '@/lib/scan-section-tokens';
 export { FIELD_DEFS, sortColorFields };
+export { composeColorWithAlpha, parseColorWithAlpha } from '@/lib/section-color-editor-utils';
 export type { ColorFieldKey };
 
 type ColorOverrides = Record<string, string>;
-
-/* ─── Color helpers: rgba ⇆ hex parsing with alpha channel (Phase 4b) ─── */
-function clamp01(n: number): number { return Math.max(0, Math.min(1, n)); }
-function toHex2(n: number): string { return Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0'); }
-
-export function parseColorWithAlpha(value: string | undefined): { hex: string; alpha: number | undefined } {
-  if (!value) return { hex: '', alpha: undefined };
-  const v = value.trim();
-  // rgba(r,g,b,a) / rgb(r,g,b)
-  const rgba = v.match(/^rgba?\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*(?:,\s*(-?\d+(?:\.\d+)?)\s*)?\)$/i);
-  if (rgba) {
-    const r = Number(rgba[1]); const g = Number(rgba[2]); const b = Number(rgba[3]);
-    const a = rgba[4] !== undefined ? clamp01(Number(rgba[4])) : 1;
-    return { hex: `#${toHex2(r)}${toHex2(g)}${toHex2(b)}`, alpha: a };
-  }
-  // #rgb / #rgba / #rrggbb / #rrggbbaa
-  const hex = v.match(/^#([0-9a-f]{3,8})$/i);
-  if (hex) {
-    let h = hex[1];
-    if (h.length === 3) h = h.split('').map((c) => c + c).join('');
-    if (h.length === 4) h = h.split('').map((c) => c + c).join('');
-    const r = parseInt(h.slice(0, 2), 16);
-    const g = parseInt(h.slice(2, 4), 16);
-    const b = parseInt(h.slice(4, 6), 16);
-    const a = h.length >= 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1;
-    return { hex: `#${h.slice(0, 6).toLowerCase()}`, alpha: a };
-  }
-  return { hex: '', alpha: undefined };
-}
-
-export function composeColorWithAlpha(hex: string, alpha: number | undefined): string {
-  const a = alpha === undefined ? 1 : clamp01(alpha);
-  const clean = hex.startsWith('#') ? hex.slice(1) : hex;
-  if (clean.length !== 6) return hex;
-  if (a >= 0.999) return `#${clean.toLowerCase()}`;
-  const r = parseInt(clean.slice(0, 2), 16);
-  const g = parseInt(clean.slice(2, 4), 16);
-  const b = parseInt(clean.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`;
-}
 
 /* ─── All available color fields with categories ───
  *
@@ -149,137 +124,165 @@ export function migrateLegacyOverrides<T extends Record<string, unknown>>(raw: T
   return out as T;
 }
 
-export function SectionColorEditor({ value, onChange, sectionType, industry, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; industry?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
+type PreviewScanState = 'idle' | 'checking' | 'ready' | 'unavailable';
+
+const RESOLVED_COLOR_FALLBACKS: Record<string, string[]> = {
+  '--token-heading': ['--brand-heading', '--brand-dark', '--style-text-primary'],
+  '--token-subheading': ['--token-heading', '--brand-body-text', '--style-text-secondary', '--style-text-primary'],
+  '--token-body': ['--brand-body-text', '--style-text-secondary', '--style-text-primary'],
+  '--token-muted': ['--brand-muted-text', '--style-text-secondary'],
+  '--token-icon': ['--token-accent', '--brand-primary', '--style-accent-color', '--brand-accent'],
+  '--token-accent': ['--brand-accent', '--brand-primary', '--style-accent-color'],
+  '--token-card-border': ['--style-card-border'],
+  '--token-divider': ['--style-border-color', '--style-card-border'],
+  '--token-btn-bg': ['--brand-accent', '--brand-primary'],
+  '--token-btn-text': ['--brand-dark'],
+  '--token-badge-bg': ['--brand-primary'],
+  '--token-badge-text': ['--brand-primary'],
+  '--token-badge-border': ['--brand-primary'],
+  '--token-section-bg-alt': ['--style-section-bg'],
+};
+
+interface SectionColorEditorProps {
+  value: ColorOverrides | null;
+  onChange: (overrides: ColorOverrides | null) => void;
+  sectionType?: string;
+  industry?: string;
+  resolvedVars?: Record<string, string>;
+  iframeRef?: React.RefObject<HTMLIFrameElement | null>;
+  sectionId?: string;
+}
+
+export function SectionColorEditor({
+  value,
+  onChange,
+  sectionType,
+  industry,
+  resolvedVars,
+  iframeRef,
+  sectionId,
+}: SectionColorEditorProps) {
   const probeRef = useRef<HTMLDivElement>(null);
-  const overrides = migrateLegacyOverrides<ColorOverrides>(value);
-  const contractInfo = sectionType ? resolveColorContractForSection(sectionType, industry) : null;
-  const rawFields = contractInfo?.fields ?? (['sectionBg'] as ColorFieldKey[]);
-  // Only count overrides that are actually used by this section (filter out legacy/copied values)
-  const relevantCSSVars = new Set(rawFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean));
-  const activeCount = Object.entries(overrides).filter(([k, v]) => relevantCSSVars.has(k as string) && v).length;
+  const editorId = useId();
+  const overrides = useMemo(() => migrateLegacyOverrides<ColorOverrides>(value), [value]);
+  const contractInfo = useMemo(
+    () => (sectionType ? resolveColorContractForSection(sectionType, industry) : null),
+    [industry, sectionType],
+  );
+  const allFields = useMemo(
+    () => sortColorFields(contractInfo?.fields ?? (['sectionBg'] as ColorFieldKey[])),
+    [contractInfo],
+  );
+  const relevantCssVars = useMemo(
+    () => new Set(allFields.map((field) => FIELD_DEFS[field]?.cssVar).filter(Boolean)),
+    [allFields],
+  );
+  const activeCount = useMemo(
+    () => Object.entries(overrides).filter(([key, color]) => relevantCssVars.has(key) && color).length,
+    [overrides, relevantCssVars],
+  );
 
-  // Keep color editor collapsed by default; open only on user interaction.
   const [open, setOpen] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showUnused, setShowUnused] = useState(false);
+  const [showCoreOverflow, setShowCoreOverflow] = useState(false);
+  const [showSpecial, setShowSpecial] = useState(false);
+  const [showDesign, setShowDesign] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
-  // Tokens literally present in the rendered section DOM (inline styles AND
-  // Tailwind arbitrary-value classes both keep the literal "var(--token-X)"
-  // string in outerHTML). Empty when no preview iframe is reachable, in which
-  // case we cannot filter and fall back to showing every contract field.
-  const [usedTokens, setUsedTokens] = useState<Set<string>>(new Set());
-  const allFields = rawFields;
-  
-  // Split into color fields and design token fields
-  const colorFields = sortColorFields(allFields.filter(f => FIELD_DEFS[f]?.type !== 'size'));
-  const designFields = allFields.filter(f => FIELD_DEFS[f]?.type === 'size');
-  // No grouping — show all color fields flat in one grid.
+  const [usedTokens, setUsedTokens] = useState<Set<string> | null>(null);
+  const [scanState, setScanState] = useState<PreviewScanState>('idle');
+  const allVarKeys = useMemo(
+    () => allFields.map((field) => FIELD_DEFS[field]?.cssVar).filter(Boolean),
+    [allFields],
+  );
 
-  // Partition color fields by what the rendered DOM actually paints. When the
-  // preview iframe isn't reachable (usedTokens empty) we cannot tell, so we
-  // treat every field as active — never hide a control we can't prove is unused.
-  const canFilterByDom = usedTokens.size > 0;
-  const isFieldLive = (f: ColorFieldKey): boolean => {
-    if (!canFilterByDom) return true;
-    if (f === 'sectionBg') return true; // background is always meaningful
-    const v = FIELD_DEFS[f]?.cssVar;
-    if (!v) return false;
-    if (overrides[v]) return true; // the user already set it → keep visible
-    return usedTokens.has(v);
-  };
-  const liveColorFields = colorFields.filter(isFieldLive);
-  const inactiveColorFields = colorFields.filter(f => !isFieldLive(f));
-  const visibleColorFields = showUnused ? colorFields : liveColorFields;
+  useEffect(() => {
+    setComputedVars({});
+    setUsedTokens(null);
+    setScanState(open ? 'checking' : 'idle');
+    setShowCoreOverflow(false);
+    setShowInactive(false);
+  }, [industry, open, sectionId, sectionType]);
 
-  // All CSS vars we need to read (token-only after Phase 3 cleanup)
-  const allVarKeys = allFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean);
-
-  const readComputedStyles = useCallback(() => {
+  const readComputedStyles = useCallback((markUnavailable = false) => {
     const result: Record<string, string> = {};
+    let foundPreviewSection = false;
 
-    // Strategy 1: Read from preview iframe (100% accurate)
     if (iframeRef?.current && sectionId) {
       try {
-        const doc = iframeRef.current.contentDocument;
-        if (doc) {
-          const el = doc.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
-          if (el) {
-            // Which tokens does this section ACTUALLY paint? Mirrors the
-            // renderer: literal var(--token-*) reads in the markup plus the
-            // roles the renderer force-paints (heading/body/muted, card text
-            // inside card containers, badges, globally recoloured buttons).
-            setUsedTokens(scanSectionTokens(el));
-
-            const styles = getComputedStyle(el);
-            for (const v of allVarKeys) {
-              const val = styles.getPropertyValue(v).trim();
-              if (val) result[v] = val;
-            }
-            if (Object.keys(result).length > 0) { setComputedVars(result); return; }
+        const document = iframeRef.current.contentDocument;
+        const section = document?.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
+        if (section) {
+          foundPreviewSection = true;
+          setUsedTokens(scanSectionTokens(section));
+          setScanState('ready');
+          const styles = getComputedStyle(section);
+          for (const cssVar of allVarKeys) {
+            const computed = styles.getPropertyValue(cssVar).trim();
+            if (computed) result[cssVar] = computed;
           }
         }
-      } catch { /* iframe not accessible */ }
+      } catch {
+        // Cross-origin and not-yet-loaded previews fall back to resolvedVars.
+      }
     }
 
-    // Strategy 2: Read from local probe element (works without preview)
-    if (probeRef.current) {
+    if (!foundPreviewSection && probeRef.current) {
       const styles = getComputedStyle(probeRef.current);
-      for (const v of allVarKeys) {
-        const val = styles.getPropertyValue(v).trim();
-        if (val) result[v] = val;
+      for (const cssVar of allVarKeys) {
+        const computed = styles.getPropertyValue(cssVar).trim();
+        if (computed) result[cssVar] = computed;
       }
     }
 
     setComputedVars(result);
-  }, [iframeRef, sectionId, allVarKeys]);
+    if (!foundPreviewSection && markUnavailable) setScanState('unavailable');
+  }, [allVarKeys, iframeRef, sectionId]);
 
   useEffect(() => {
-    if (open) {
-      const t = setTimeout(readComputedStyles, 50);
-      return () => clearTimeout(t);
-    }
+    if (!open) return undefined;
+    setScanState('checking');
+    const timers = [
+      window.setTimeout(() => readComputedStyles(false), 60),
+      window.setTimeout(() => readComputedStyles(false), 300),
+      window.setTimeout(() => readComputedStyles(true), 900),
+    ];
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
   }, [open, readComputedStyles]);
 
-  // Comprehensive fallback chain for resolving display colors
-  const getResolvedColor = (cssVar: string): string | undefined => {
-    // 1. Computed from iframe/probe (100% accurate)
+  const getResolvedColor = useCallback((cssVar: string): string | undefined => {
     if (computedVars[cssVar]) return computedVars[cssVar];
-    // 2. From resolvedVars (style + brand combined)
     if (resolvedVars?.[cssVar]) return resolvedVars[cssVar];
-    // 3. Fallback chain for vars that derive from others
-    const fallbacks: Record<string, string[]> = {
-      '--token-heading': ['--brand-heading', '--brand-dark', '--style-text-primary'],
-      '--token-subheading': ['--token-heading', '--brand-body-text', '--style-text-secondary', '--style-text-primary'],
-      '--token-body': ['--brand-body-text', '--style-text-secondary', '--style-text-primary'],
-      '--token-muted': ['--brand-muted-text', '--style-text-secondary'],
-      '--token-icon': ['--token-accent', '--brand-primary', '--style-accent-color', '--brand-accent'],
-      '--token-accent': ['--brand-accent', '--brand-primary', '--style-accent-color'],
-      '--token-card-border': ['--style-card-border'],
-      '--token-divider': ['--style-border-color', '--style-card-border'],
-      '--token-btn-bg': ['--brand-accent', '--brand-primary'],
-      '--token-btn-text': ['--brand-dark'],
-      // --brand-btn-secondary-* intentionally no fallback: no shared template
-      // reads these from another var, so showing a borrowed swatch is misleading.
-      '--token-badge-bg': ['--brand-primary'],
-      '--token-badge-text': ['--brand-primary'],
-      '--token-badge-border': ['--brand-primary'],
-      '--token-section-bg-alt': ['--style-section-bg'],
-      // --style-card-bg intentionally no fallback to section-bg: they are
-      // independent in every shared template; suggesting otherwise was confusing.
-    };
-    const chain = fallbacks[cssVar];
-    if (chain) {
-      for (const fb of chain) {
-        const val = computedVars[fb] || resolvedVars?.[fb];
-        if (val) return val;
-      }
+    const fallbackChain = RESOLVED_COLOR_FALLBACKS[cssVar];
+    if (!fallbackChain) return undefined;
+    for (const fallback of fallbackChain) {
+      const value = computedVars[fallback] || resolvedVars?.[fallback];
+      if (value) return value;
     }
     return undefined;
-  };
+  }, [computedVars, resolvedVars]);
+
+  const fieldGroups = useMemo(
+    () => groupEditorFields(allFields, usedTokens, overrides),
+    [allFields, overrides, usedTokens],
+  );
+  const inactiveGroups = useMemo(() => ({
+    core: fieldGroups.inactive.filter((field) => FIELD_DEFS[field]?.type !== 'size' && FIELD_DEFS[field]?.group === 'core'),
+    special: fieldGroups.inactive.filter((field) => FIELD_DEFS[field]?.type !== 'size' && FIELD_DEFS[field]?.group !== 'core'),
+    design: fieldGroups.inactive.filter((field) => FIELD_DEFS[field]?.type === 'size'),
+  }), [fieldGroups.inactive]);
+
+  const contrastResults = useMemo(() => {
+    const fieldSet = new Set(allFields);
+    return evaluateContrastPairs(fieldSet, (field) => {
+      const cssVar = FIELD_DEFS[field]?.cssVar;
+      return cssVar ? overrides[cssVar] || getResolvedColor(cssVar) : undefined;
+    });
+  }, [allFields, getResolvedColor, overrides]);
+  const contrastWarnings = contrastResults.filter((result) => !result.passesAA);
 
   const handleChange = (key: string, color: string) => {
-    const next: Record<string, string> = { ...overrides, [key]: color };
-    Object.keys(next).forEach(k => { if (!next[k]) delete next[k]; });
+    const next: Record<string, string> = { ...overrides, [key]: color.trim() };
+    Object.keys(next).forEach((candidate) => { if (!next[candidate]) delete next[candidate]; });
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
@@ -289,133 +292,390 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
-  function renderColorField(fieldKey: ColorFieldKey) {
-    const def = FIELD_DEFS[fieldKey];
-    if (!def) return null;
-    const currentOverride = overrides[def.cssVar] || '';
-    const resolved = getResolvedColor(def.cssVar);
-    const displayColor = currentOverride || resolved || '';
-    const { hex, alpha } = parseColorWithAlpha(displayColor);
-    const overrideAlpha = parseColorWithAlpha(currentOverride).alpha;
+  function renderUsageBadge(fieldKey: ColorFieldKey) {
+    const cssVar = FIELD_DEFS[fieldKey]?.cssVar;
+    const isSet = Boolean(cssVar && overrides[cssVar]);
+    const isRendered = fieldKey === 'sectionBg' || Boolean(cssVar && usedTokens?.has(cssVar));
+    if (isRendered) {
+      return (
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700">
+          <Eye size={11} aria-hidden="true" />
+          {isSet ? 'Angepasst · live' : 'In Vorschau verwendet'}
+        </span>
+      );
+    }
+    if (isSet) {
+      return (
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
+          Angepasst · nicht erkannt
+        </span>
+      );
+    }
     return (
-      <label key={fieldKey} className="block">
-        <span className="text-gray-600 text-xs" title={def.description}>{def.label}</span>
-        <div className="flex items-center gap-2 mt-1">
-          <div className="relative">
-            <input
-              type="color"
-              className="w-8 h-8 rounded border border-gray-200 cursor-pointer p-0"
-              value={hex || '#000000'}
-              onChange={(e) => handleChange(def.cssVar, composeColorWithAlpha(e.target.value, overrideAlpha ?? alpha))}
-            />
-            {!currentOverride && resolved && (
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border border-white" style={{ background: resolved }} title={`Aktuell: ${resolved}`} />
-            )}
+      <span className="inline-flex shrink-0 items-center rounded-full bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-500">
+        Nicht in Vorschau erkannt
+      </span>
+    );
+  }
+
+  function renderColorField(fieldKey: ColorFieldKey) {
+    const definition = FIELD_DEFS[fieldKey];
+    if (!definition) return null;
+    const currentOverride = overrides[definition.cssVar] || '';
+    const resolved = getResolvedColor(definition.cssVar);
+    const displayColor = currentOverride || resolved || '';
+    const parsedDisplay = parseColorWithAlpha(displayColor);
+    const overrideAlpha = parseColorWithAlpha(currentOverride).alpha;
+    const effectiveAlpha = overrideAlpha ?? parsedDisplay.alpha ?? 1;
+    const supportsAlpha = ALPHA_CAPABLE_FIELDS.has(fieldKey);
+    const inputId = `${editorId}-${fieldKey}`;
+    const descriptionId = `${inputId}-description`;
+    const alphaId = `${inputId}-alpha`;
+
+    return (
+      <div key={fieldKey} className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm shadow-zinc-950/[0.02]">
+        <div className="flex min-w-0 items-start justify-between gap-2">
+          <div className="min-w-0">
+            <label htmlFor={inputId} className="block text-xs font-semibold text-zinc-800">
+              {definition.label}
+            </label>
+            <p id={descriptionId} className="mt-0.5 text-[11px] leading-4 text-zinc-500">
+              {definition.description}
+            </p>
           </div>
-          <div className="flex flex-1 flex-col gap-1">
-            <input
-              type="text"
-              className="admin-input w-full text-xs font-mono"
-              placeholder={resolved || '—'}
-              value={currentOverride}
-              onChange={(e) => handleChange(def.cssVar, e.target.value)}
-            />
-            <div className="flex items-center gap-2">
-              <input
-                type="range"
-                min={0}
-                max={100}
-                step={1}
-                value={Math.round(((overrideAlpha ?? alpha) ?? 1) * 100)}
-                onChange={(e) => {
-                  const a = Number(e.target.value) / 100;
-                  const base = hex || '#000000';
-                  handleChange(def.cssVar, composeColorWithAlpha(base, a));
-                }}
-                className="flex-1 h-1 accent-[var(--brand-primary,#0ea5e9)]"
-                title="Transparenz (Alpha)"
-              />
-              <span className="w-10 text-right text-[10px] font-mono text-zinc-500">{Math.round(((overrideAlpha ?? alpha) ?? 1) * 100)}%</span>
-            </div>
-          </div>
-          {currentOverride && (
-            <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => handleClear(def.cssVar)}>✕</button>
-          )}
+          {renderUsageBadge(fieldKey)}
         </div>
-      </label>
+
+        <div className="mt-3 grid grid-cols-[2.75rem_minmax(0,1fr)_2.5rem] items-center gap-2">
+          <input
+            type="color"
+            aria-label={`${definition.label}: Farbe wählen`}
+            className="h-11 w-11 cursor-pointer rounded-lg border border-zinc-200 bg-white p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            value={parsedDisplay.hex || '#000000'}
+            onChange={(event) => handleChange(
+              definition.cssVar,
+              composeColorWithAlpha(event.target.value, supportsAlpha ? effectiveAlpha : 1),
+            )}
+          />
+          <input
+            id={inputId}
+            type="text"
+            spellCheck={false}
+            autoComplete="off"
+            className="admin-input min-w-0 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            placeholder={resolved || 'Geerbter Wert'}
+            value={currentOverride}
+            aria-describedby={descriptionId}
+            onChange={(event) => handleChange(definition.cssVar, event.target.value)}
+          />
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-30"
+            disabled={!currentOverride}
+            aria-label={`${definition.label} auf geerbten Wert zurücksetzen`}
+            title="Auf geerbten Wert zurücksetzen"
+            onClick={() => handleClear(definition.cssVar)}
+          >
+            <RotateCcw size={15} aria-hidden="true" />
+          </button>
+        </div>
+
+        {supportsAlpha && (
+          <div className="mt-3 flex items-center gap-3 border-t border-zinc-100 pt-3">
+            <label htmlFor={alphaId} className="shrink-0 text-[11px] font-medium text-zinc-600">
+              Deckkraft
+            </label>
+            <input
+              id={alphaId}
+              type="range"
+              min={0}
+              max={100}
+              step={1}
+              value={Math.round(effectiveAlpha * 100)}
+              disabled={!parsedDisplay.hex}
+              aria-valuetext={`${Math.round(effectiveAlpha * 100)} Prozent`}
+              onChange={(event) => handleChange(
+                definition.cssVar,
+                composeColorWithAlpha(parsedDisplay.hex, Number(event.target.value) / 100),
+              )}
+              className="h-1.5 min-w-0 flex-1 cursor-pointer accent-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+            />
+            <output htmlFor={alphaId} className="w-10 text-right font-mono text-[11px] text-zinc-500">
+              {Math.round(effectiveAlpha * 100)}%
+            </output>
+          </div>
+        )}
+
+        <p className="mt-2 truncate text-[10px] text-zinc-400" title={currentOverride || resolved || undefined}>
+          {currentOverride ? 'Eigener Wert' : resolved ? `Geerbt: ${resolved}` : 'Kein auflösbarer Farbwert'}
+        </p>
+      </div>
     );
   }
 
   function renderDesignField(fieldKey: ColorFieldKey) {
-    const def = FIELD_DEFS[fieldKey];
-    if (!def) return null;
-    const currentOverride = overrides[def.cssVar] || '';
-    const resolved = computedVars[def.cssVar] || resolvedVars?.[def.cssVar] || '';
+    const definition = FIELD_DEFS[fieldKey];
+    if (!definition) return null;
+    const currentOverride = overrides[definition.cssVar] || '';
+    const resolved = computedVars[definition.cssVar] || resolvedVars?.[definition.cssVar] || '';
+    const inputId = `${editorId}-${fieldKey}`;
+    const descriptionId = `${inputId}-description`;
     return (
-      <label key={fieldKey} className="block">
-        <span className="text-gray-600 text-xs" title={def.description}>{def.label}</span>
-        <div className="flex items-center gap-2 mt-1">
-          <input
-            type="text"
-            className="admin-input flex-1 text-xs font-mono"
-            placeholder={resolved || '—'}
-            value={currentOverride}
-            onChange={(e) => handleChange(def.cssVar, e.target.value)}
-          />
-          {currentOverride && (
-            <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => handleClear(def.cssVar)}>✕</button>
-          )}
+      <div key={fieldKey} className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm shadow-zinc-950/[0.02]">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <label htmlFor={inputId} className="block text-xs font-semibold text-zinc-800">{definition.label}</label>
+            <p id={descriptionId} className="mt-0.5 text-[11px] leading-4 text-zinc-500">{definition.description}</p>
+          </div>
+          {renderUsageBadge(fieldKey)}
         </div>
-      </label>
+        <div className="mt-3 grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-2">
+          <input
+            id={inputId}
+            type="text"
+            spellCheck={false}
+            autoComplete="off"
+            className="admin-input min-w-0 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            placeholder={resolved || 'Geerbter Wert'}
+            value={currentOverride}
+            aria-describedby={descriptionId}
+            onChange={(event) => handleChange(definition.cssVar, event.target.value)}
+          />
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-30"
+            disabled={!currentOverride}
+            aria-label={`${definition.label} auf geerbten Wert zurücksetzen`}
+            title="Auf geerbten Wert zurücksetzen"
+            onClick={() => handleClear(definition.cssVar)}
+          >
+            <RotateCcw size={15} aria-hidden="true" />
+          </button>
+        </div>
+      </div>
     );
   }
 
+  const disclosureButtonClass = 'flex w-full items-center gap-2 rounded-lg px-1 py-2 text-left text-xs font-semibold text-zinc-700 transition-colors hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500';
+
   return (
-    <details className="mt-4 rounded-lg border border-blue-100 bg-blue-50/30 p-3" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
-      <summary className="text-xs font-semibold text-gray-700 cursor-pointer flex items-center gap-2 hover:text-gray-900 transition-colors">
-        <Palette size={14} className="text-blue-600" /> 
-        <span>Farben anpassen</span>
-        {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-200 text-blue-800 rounded-full text-[10px] font-bold">{activeCount} Farben</span>}
+    <details
+      className="mt-4 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/70 shadow-sm shadow-zinc-950/[0.03]"
+      open={open}
+      onToggle={(event) => setOpen((event.target as HTMLDetailsElement).open)}
+    >
+      <summary className="group flex min-h-12 cursor-pointer list-none items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden">
+        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200 bg-white text-blue-600 shadow-sm">
+          <Palette size={16} aria-hidden="true" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block">Section-Farben</span>
+          <span className="block text-[11px] font-normal text-zinc-500">Live-Rollen gezielt überschreiben</span>
+        </span>
+        {activeCount > 0 && (
+          <span className="rounded-full bg-blue-100 px-2 py-1 text-[10px] font-bold text-blue-700">
+            {activeCount} angepasst
+          </span>
+        )}
+        <ChevronDown size={16} aria-hidden="true" className="text-zinc-400 transition-transform group-open:rotate-180" />
       </summary>
-      {sectionType && contractInfo?.source === 'none' && (
-        <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-          Kein Farbvertrag fuer <strong>{sectionType}</strong> gefunden. Es ist nur Hintergrund aktiv, bis die Section-Contracts regeneriert wurden.
+
+      <div className="border-t border-zinc-200 bg-white px-4 py-4 sm:px-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <p className="max-w-2xl text-xs leading-5 text-zinc-600">
+            Direkt sichtbar sind nur Farben, die diese Vorschau rendert oder die bereits individuell gesetzt wurden.
+          </p>
+          <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${scanState === 'ready' ? 'bg-emerald-50 text-emerald-700' : scanState === 'unavailable' ? 'bg-amber-50 text-amber-700' : 'bg-zinc-100 text-zinc-600'}`}>
+            {scanState === 'ready' ? <CheckCircle2 size={12} aria-hidden="true" /> : scanState === 'unavailable' ? <AlertTriangle size={12} aria-hidden="true" /> : <Eye size={12} aria-hidden="true" />}
+            {scanState === 'ready' ? 'Mit Vorschau synchronisiert' : scanState === 'unavailable' ? 'Vorschau nicht lesbar' : 'Vorschau wird geprüft'}
+          </span>
         </div>
-      )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-3 border-t border-blue-100">
-        {visibleColorFields.map(renderColorField)}
-      </div>
-      {inactiveColorFields.length > 0 && (
-        <button
-          type="button"
-          className="mt-3 text-xs font-medium text-zinc-500 hover:text-zinc-800 underline"
-          onClick={() => setShowUnused(v => !v)}
-        >
-          {showUnused
-            ? 'Nur genutzte Felder zeigen'
-            : `Erweitert: ${inactiveColorFields.length} ungenutzte Slots anzeigen`}
-        </button>
-      )}
-      {designFields.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-zinc-100">
-          <button type="button" className="text-xs font-medium text-zinc-600 flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors" onClick={() => setShowAdvanced(!showAdvanced)}>
-            <ChevronDown size={12} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
-            Design-Tokens (Radius, Schatten)
-          </button>
-          {showAdvanced && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {designFields.map(renderDesignField)}
+
+        {sectionType && contractInfo?.source === 'none' && (
+          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800">
+            Kein Farbvertrag für <strong>{sectionType}</strong>. Bis zur Regenerierung ist nur der Sektionshintergrund verfügbar.
+          </div>
+        )}
+        {scanState === 'unavailable' && contractInfo?.source !== 'none' && (
+          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800">
+            Ohne lesbare Vorschau bleiben nur Hintergrund und bereits gesetzte Werte offen. Weitere Contract-Rollen findest du klar gekennzeichnet unter „Contract-Reserve“.
+          </div>
+        )}
+
+        <section className="mt-5" aria-labelledby={`${editorId}-core-title`}>
+          <div className="mb-3 flex items-end justify-between gap-3">
+            <div>
+              <h3 id={`${editorId}-core-title`} className="text-xs font-bold uppercase tracking-[0.12em] text-zinc-500">Kernfarben</h3>
+              <p className="mt-1 text-[11px] text-zinc-500">Die wichtigsten Flächen, Texte und Conversion-Rollen.</p>
             </div>
-          )}
-        </div>
-      )}
-      {activeCount > 0 && (
-        <button type="button" className="mt-3 text-xs font-medium text-red-500 hover:text-red-700" onClick={() => onChange(null)}>
-          ✕ Alle Farb-Overrides entfernen
-        </button>
-      )}
-      {/* Hidden probe element to read computed CSS vars without needing the preview iframe */}
-      {open && <div ref={probeRef} data-style="" style={resolvedVars as React.CSSProperties} className="hidden" aria-hidden="true" />}
+            <span className="text-[10px] font-medium text-zinc-400">{fieldGroups.core.length} live</span>
+          </div>
+          <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+            {fieldGroups.core.map(renderColorField)}
+          </div>
+        </section>
+
+        {fieldGroups.coreOverflow.length > 0 && (
+          <section className="mt-4 border-t border-zinc-100 pt-2">
+            <button
+              type="button"
+              className={disclosureButtonClass}
+              aria-expanded={showCoreOverflow}
+              aria-controls={`${editorId}-core-overflow`}
+              onClick={() => setShowCoreOverflow((current) => !current)}
+            >
+              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showCoreOverflow ? 'rotate-180' : ''}`} />
+              Weitere live Kernfarben
+              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.coreOverflow.length}</span>
+            </button>
+            {showCoreOverflow && (
+              <div id={`${editorId}-core-overflow`} className="mt-2 grid grid-cols-1 gap-3 xl:grid-cols-2">
+                {fieldGroups.coreOverflow.map(renderColorField)}
+              </div>
+            )}
+          </section>
+        )}
+
+        {fieldGroups.special.length > 0 && (
+          <section className="mt-3 border-t border-zinc-100 pt-2">
+            <button
+              type="button"
+              className={disclosureButtonClass}
+              aria-expanded={showSpecial}
+              aria-controls={`${editorId}-special`}
+              onClick={() => setShowSpecial((current) => !current)}
+            >
+              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showSpecial ? 'rotate-180' : ''}`} />
+              Spezialfarben
+              <span className="font-normal text-zinc-400">section-spezifische Akzente</span>
+              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.special.length}</span>
+            </button>
+            {showSpecial && (
+              <div id={`${editorId}-special`} className="mt-2 grid grid-cols-1 gap-3 xl:grid-cols-2">
+                {fieldGroups.special.map(renderColorField)}
+              </div>
+            )}
+          </section>
+        )}
+
+        {fieldGroups.design.length > 0 && (
+          <section className="mt-3 border-t border-zinc-100 pt-2">
+            <button
+              type="button"
+              className={disclosureButtonClass}
+              aria-expanded={showDesign}
+              aria-controls={`${editorId}-design`}
+              onClick={() => setShowDesign((current) => !current)}
+            >
+              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showDesign ? 'rotate-180' : ''}`} />
+              Design-Tokens
+              <span className="font-normal text-zinc-400">Radius, Schatten, Typografie</span>
+              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.design.length}</span>
+            </button>
+            {showDesign && (
+              <div id={`${editorId}-design`} className="mt-2 grid grid-cols-1 gap-3 xl:grid-cols-2">
+                {fieldGroups.design.map(renderDesignField)}
+              </div>
+            )}
+          </section>
+        )}
+
+        {contrastResults.length > 0 && (
+          <section className={`mt-5 rounded-xl border px-3.5 py-3 ${contrastWarnings.length > 0 ? 'border-amber-200 bg-amber-50/70' : 'border-emerald-200 bg-emerald-50/70'}`} aria-live="polite">
+            <div className="flex items-start gap-2.5">
+              {contrastWarnings.length > 0
+                ? <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-amber-700" />
+                : <CheckCircle2 size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-emerald-700" />}
+              <div className="min-w-0 flex-1">
+                <h3 className={`text-xs font-semibold ${contrastWarnings.length > 0 ? 'text-amber-900' : 'text-emerald-900'}`}>
+                  {contrastWarnings.length > 0 ? `${contrastWarnings.length} Kontrasthinweis${contrastWarnings.length === 1 ? '' : 'e'}` : 'WCAG-AA-Kontrast erfüllt'}
+                </h3>
+                {contrastWarnings.length > 0 ? (
+                  <>
+                    <ul className="mt-2 space-y-1.5">
+                      {contrastWarnings.map((warning) => (
+                        <li key={warning.id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-[11px] text-amber-900">
+                          <span>{warning.label}</span>
+                          <strong className="font-mono">{warning.ratio.toFixed(2).replace('.', ',')}:1 · AA nicht erfüllt</strong>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-2 text-[10px] leading-4 text-amber-700">Nur ein Hinweis: Farben werden nicht automatisch verändert.</p>
+                  </>
+                ) : (
+                  <p className="mt-1 text-[11px] leading-4 text-emerald-700">Alle {contrastResults.length} erkennbaren Text-/Flächenpaare erreichen mindestens 4,5:1.</p>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {fieldGroups.inactive.length > 0 && (
+          <section className="mt-4 border-t border-zinc-200 pt-2">
+            <button
+              type="button"
+              className={disclosureButtonClass}
+              aria-expanded={showInactive}
+              aria-controls={`${editorId}-inactive`}
+              onClick={() => setShowInactive((current) => !current)}
+            >
+              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showInactive ? 'rotate-180' : ''}`} />
+              Contract-Reserve
+              <span className="font-normal text-zinc-400">nicht in dieser Vorschau erkannt</span>
+              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.inactive.length}</span>
+            </button>
+            {showInactive && (
+              <div id={`${editorId}-inactive`} className="mt-3 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-3">
+                <p className="mb-4 text-[11px] leading-4 text-zinc-600">
+                  Diese Rollen gehören zum Section-Contract, wurden im aktuellen DOM aber nicht gefunden. Änderungen können ohne sichtbaren Effekt bleiben.
+                </p>
+                {inactiveGroups.core.length > 0 && (
+                  <div>
+                    <h4 className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">Kernrollen</h4>
+                    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">{inactiveGroups.core.map(renderColorField)}</div>
+                  </div>
+                )}
+                {inactiveGroups.special.length > 0 && (
+                  <div className={inactiveGroups.core.length > 0 ? 'mt-5' : ''}>
+                    <h4 className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">Spezialfarben</h4>
+                    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">{inactiveGroups.special.map(renderColorField)}</div>
+                  </div>
+                )}
+                {inactiveGroups.design.length > 0 && (
+                  <div className={inactiveGroups.core.length > 0 || inactiveGroups.special.length > 0 ? 'mt-5' : ''}>
+                    <h4 className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">Design-Tokens</h4>
+                    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">{inactiveGroups.design.map(renderDesignField)}</div>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
+        {activeCount > 0 && (
+          <div className="mt-5 flex flex-col gap-2 border-t border-zinc-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[11px] text-zinc-500">Setzt alle Section-Werte auf das aktive Designrezept zurück.</p>
+            <button
+              type="button"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-200 px-3 text-xs font-semibold text-red-700 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              onClick={() => onChange(null)}
+            >
+              <RotateCcw size={14} aria-hidden="true" />
+              Alle zurücksetzen
+            </button>
+          </div>
+        )}
+
+        {open && (
+          <div
+            ref={probeRef}
+            data-style=""
+            style={resolvedVars as React.CSSProperties}
+            className="hidden"
+            aria-hidden="true"
+          />
+        )}
+      </div>
     </details>
   );
 }

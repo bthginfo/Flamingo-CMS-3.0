@@ -39,16 +39,18 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle: _
   })();
 
   return (
-    <div data-style={style} style={{ ...styleCssVars, ...brandCssVars } as React.CSSProperties}>
-      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={resolvedDarkBg} cta={cta} homeHref={`/demo/${industryKey}`} showTopBar={false} forceDarkNav={resolvedDarkBg} />
-      <main>
-        {sections.map((section) => (
-          <SectionRenderer key={section.id} section={section} styleVariant={style} industry={industry} linkPrefix={linkPrefix} />
-        ))}
-        {children}
-      </main>
-      <SiteFooter footer={footer} brand={brand} contact={contact} socialLinks={socialLinks} />
+    <>
+      <div data-style={style} style={{ ...styleCssVars, ...brandCssVars } as React.CSSProperties}>
+        <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={resolvedDarkBg} cta={cta} homeHref={`/demo/${industryKey}`} showTopBar={false} forceDarkNav={resolvedDarkBg} />
+        <main>
+          {sections.map((section) => (
+            <SectionRenderer key={section.id} section={section} styleVariant={style} industry={industry} linkPrefix={linkPrefix} globalFormFields={siteData.formFields} />
+          ))}
+          {children}
+        </main>
+        <SiteFooter footer={footer} brand={brand} contact={contact} socialLinks={socialLinks} />
+      </div>
       {!embed && <DemoFab currentIndustry={industryKey} />}
-    </div>
+    </>
   );
 }

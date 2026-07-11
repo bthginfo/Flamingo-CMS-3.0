@@ -15,8 +15,12 @@ export type SnapshotPage = {
 export type SnapshotSection = {
   id: string;
   type: string;
+  definitionKey?: string | null;
+  schemaVersion?: number | null;
   variant: string | null;
   visible: boolean;
+  locked?: boolean;
+  sortOrder?: number;
   container: string;
   spacingTop: string;
   spacingBottom: string;
@@ -146,8 +150,12 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
       .map(s => ({
         id: s.id,
         type: s.type,
+        definitionKey: s.definitionKey,
+        schemaVersion: s.schemaVersion,
         variant: s.variant,
         visible: s.visible,
+        locked: s.locked,
+        sortOrder: s.sortOrder,
         container: s.container,
         spacingTop: s.spacingTop,
         spacingBottom: s.spacingBottom,
@@ -179,13 +187,57 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
   return { pages: snapshotPages, collections: snapshotCollections, generatedAt: new Date().toISOString() };
 }
 
-/** Resolve demo tenant by industry (isDemo=true). Excludes special slug-mapped tenants. */
-export async function resolveDemoTenant(industry: string, urlKey?: string): Promise<string | null> {
-  const db = getDb();
+export type DemoTenantResolution =
+  | { status: 'found'; tenantId: string }
+  | { status: 'not-found' }
+  | { status: 'error'; stage: 'industry' | 'slug'; error: unknown };
 
-  // Step 1: try industry+isDemo lookup. Wrapped because the industry string may not
-  // match the DB enum (e.g. new URL keys without a corresponding enum value), which
-  // would throw at the DB layer and skip the slug fallback below.
+function logDemoTenantResolutionError(
+  lookup: 'industry-and-slug' | 'slug',
+  result: Extract<DemoTenantResolution, { status: 'error' }>,
+): void {
+  console.warn(JSON.stringify({
+    event: 'demo_tenant_resolution_failed',
+    lookup,
+    stage: result.stage,
+    errorType: result.error instanceof Error ? result.error.name : 'UnknownError',
+  }));
+}
+
+/** Resolve a demo tenant without collapsing a DB failure into "not found". */
+export async function resolveDemoTenantResult(
+  industry: string,
+  urlKey?: string,
+): Promise<DemoTenantResolution> {
+  let db: ReturnType<typeof getDb>;
+  try {
+    db = getDb();
+  } catch (error) {
+    return { status: 'error', stage: 'industry', error };
+  }
+  // Step 1: the public demo key is the stable identity. This allows multiple
+  // demos to share one industry without the oldest tenant shadowing newer ones.
+  const slugKey = urlKey || industry;
+  try {
+    const [bySlug] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(and(
+        eq(tenants.slug, `demo-${slugKey}`),
+        eq(tenants.isDemo, true),
+        eq(tenants.status, 'active'),
+      ))
+      .limit(1);
+    if (bySlug) return { status: 'found', tenantId: bySlug.id };
+  } catch (err) {
+    return { status: 'error', stage: 'slug', error: err };
+  }
+
+  // Step 2: legacy industry fallback. Industry is a rendering/default hint,
+  // never the primary public identity. Unknown future demo keys simply 404.
+  if (!tenants.industry.enumValues.includes(industry as typeof tenants.industry.enumValues[number])) {
+    return { status: 'not-found' };
+  }
   try {
     const [tenant] = await db
       .select({ id: tenants.id })
@@ -198,36 +250,42 @@ export async function resolveDemoTenant(industry: string, urlKey?: string): Prom
       ))
       .orderBy(asc(tenants.createdAt))
       .limit(1);
-    if (tenant) return tenant.id;
+    return tenant ? { status: 'found', tenantId: tenant.id } : { status: 'not-found' };
   } catch (err) {
-    // Invalid enum or DB error — fall through to slug-based lookup.
-    console.warn('[resolveDemoTenant] industry lookup failed for', industry, err instanceof Error ? err.message : err);
+    return { status: 'error', stage: 'industry', error: err };
   }
+}
 
-  // Step 2: slug fallback `demo-{urlKey}` (or `demo-{industry}`), without isDemo requirement.
-  const slugKey = urlKey || industry;
+/** Resolve demo tenant by industry (isDemo=true). Excludes special slug-mapped tenants. */
+export async function resolveDemoTenant(industry: string, urlKey?: string): Promise<string | null> {
+  const result = await resolveDemoTenantResult(industry, urlKey);
+  if (result.status === 'error') {
+    logDemoTenantResolutionError('industry-and-slug', result);
+    return null;
+  }
+  return result.status === 'found' ? result.tenantId : null;
+}
+
+export async function resolveDemoTenantBySlugResult(slug: string): Promise<DemoTenantResolution> {
   try {
-    const [bySlug] = await db
+    const db = getDb();
+    const [tenant] = await db
       .select({ id: tenants.id })
       .from(tenants)
-      .where(and(
-        eq(tenants.slug, `demo-${slugKey}`),
-        eq(tenants.status, 'active'),
-      ))
+      .where(and(eq(tenants.slug, slug), eq(tenants.isDemo, true), eq(tenants.status, 'active')))
       .limit(1);
-    return bySlug?.id ?? null;
-  } catch (err) {
-    console.warn('[resolveDemoTenant] slug lookup failed for demo-', slugKey, err instanceof Error ? err.message : err);
-    return null;
+    return tenant ? { status: 'found', tenantId: tenant.id } : { status: 'not-found' };
+  } catch (error) {
+    return { status: 'error', stage: 'slug', error };
   }
 }
 
 export async function resolveDemoTenantBySlug(slug: string): Promise<string | null> {
-  const db = getDb();
-  const [tenant] = await db
-    .select({ id: tenants.id })
-    .from(tenants)
-    .where(and(eq(tenants.slug, slug), eq(tenants.isDemo, true), eq(tenants.status, 'active')))
-    .limit(1);
-  return tenant?.id ?? null;
+  const result = await resolveDemoTenantBySlugResult(slug);
+  if (result.status === 'error') {
+    logDemoTenantResolutionError('slug', result);
+    // Preserve the original resolver contract: slug lookup failures throw.
+    throw result.error;
+  }
+  return result.status === 'found' ? result.tenantId : null;
 }

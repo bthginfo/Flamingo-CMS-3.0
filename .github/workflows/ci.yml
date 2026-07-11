@@ -23,6 +23,8 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --prod
+      - run: pnpm audit:credentials
 
       # Guard the section-color contracts: fails if a template was edited
       # without regenerating apps/renderer/src/lib/section-color-contracts-generated.ts
@@ -39,6 +41,10 @@ jobs:
 
       # Unit tests (node:test via tsx — runs on the CI Node version, no build).
       - run: pnpm test
+
+      # Section Lab is the visual contract for every registered section. A
+      # static build catches broken stories, preview data and renderer imports.
+      - run: pnpm build-storybook
 
       - run: pnpm --filter @flamingo/admin build
         env:

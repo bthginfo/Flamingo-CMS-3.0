@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useConsent, type ConsentCategory } from '@/lib/consent';
+import { useConsent } from '@/lib/consent';
+import { isConsentUiSuppressed } from '@/lib/consent-routes';
 
 // Internal preview/iframe routes that render public sections in isolation — the
 // cookie banner is clutter there (the showcase shows it inside every preview
 // iframe). It still shows on the real public site and on the demos.
-const PREVIEW_ROUTES = ['/section-preview', '/preview', '/live-preview'];
 
 // UI strings per locale — the banner is a shared platform component, so it
 // follows the active locale (first path segment) rather than tenant content.
@@ -46,21 +46,30 @@ function localeFromPath(pathname: string | null): keyof typeof STRINGS {
 
 export function CookieBanner() {
   const pathname = usePathname();
-  const { needsDecision, consent, acceptAll, rejectAll, setConsent } = useConsent();
+  const { ready, needsDecision, consent, acceptAll, rejectAll, setConsent } = useConsent();
   const [showDetails, setShowDetails] = useState(false);
   const [draft, setDraft] = useState({ functional: consent.functional, analytics: consent.analytics, marketing: consent.marketing });
 
-  if (pathname && PREVIEW_ROUTES.some((r) => pathname.startsWith(r))) return null;
-  if (!needsDecision) return null;
+  if (isConsentUiSuppressed(pathname)) return null;
+  // Do not render clickable-looking controls before React has hydrated and
+  // loaded the persisted choice. This also removes the pre-hydration no-op race.
+  if (!ready || !needsDecision) return null;
 
   const t = STRINGS[localeFromPath(pathname)];
   const CATEGORIES = (['functional', 'analytics', 'marketing'] as const).map((key) => ({ key, label: t.cats[key][0], desc: t.cats[key][1] }));
 
   return (
-    <div role="dialog" aria-label={t.dialog} className="fixed inset-x-0 bottom-0 z-[100] p-4">
+    <div
+      role="dialog"
+      aria-live="polite"
+      aria-labelledby="cookie-consent-title"
+      aria-describedby="cookie-consent-description"
+      data-consent-banner
+      className="fixed inset-x-0 bottom-0 z-[100] p-4"
+    >
       <div className="mx-auto max-w-2xl rounded-2xl bg-white shadow-2xl border border-gray-100 p-6">
-        <h2 className="font-display text-lg font-bold">{t.title}</h2>
-        <p className="mt-2 text-sm text-gray-500 leading-relaxed">
+        <h2 id="cookie-consent-title" className="font-display text-lg font-bold">{t.title}</h2>
+        <p id="cookie-consent-description" className="mt-2 text-sm text-gray-500 leading-relaxed">
           {t.body}
         </p>
 
@@ -74,7 +83,11 @@ export function CookieBanner() {
               <div key={cat.key} className="flex items-center justify-between py-2">
                 <div><span className="text-sm font-medium">{cat.label}</span><p className="text-xs text-gray-400">{cat.desc}</p></div>
                 <button
+                  type="button"
                   onClick={() => setDraft(d => ({ ...d, [cat.key]: !d[cat.key] }))}
+                  role="switch"
+                  aria-checked={draft[cat.key]}
+                  aria-label={`${cat.label}: ${draft[cat.key] ? 'aktiv' : 'inaktiv'}`}
                   className={`w-10 h-5 rounded-full transition-colors ${draft[cat.key] ? 'bg-brand-primary' : 'bg-gray-200'}`}
                 >
                   <span className={`block w-4 h-4 rounded-full bg-white shadow transition-transform ${draft[cat.key] ? 'translate-x-5' : 'translate-x-0.5'}`} />
@@ -85,19 +98,19 @@ export function CookieBanner() {
         )}
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <button onClick={acceptAll} className="flex-1 rounded-full bg-brand-primary text-white text-sm font-medium py-2.5 px-4 hover:opacity-90 transition">
+          <button type="button" onClick={acceptAll} className="flex-1 rounded-full bg-brand-primary text-white text-sm font-medium py-2.5 px-4 hover:opacity-90 transition">
             {t.acceptAll}
           </button>
           {showDetails ? (
-            <button onClick={() => setConsent(draft)} className="flex-1 rounded-full bg-gray-100 text-sm font-medium py-2.5 px-4 hover:bg-gray-200 transition">
+            <button type="button" onClick={() => setConsent(draft)} className="flex-1 rounded-full bg-gray-100 text-sm font-medium py-2.5 px-4 hover:bg-gray-200 transition">
               {t.save}
             </button>
           ) : (
-            <button onClick={() => setShowDetails(true)} className="flex-1 rounded-full bg-gray-100 text-sm font-medium py-2.5 px-4 hover:bg-gray-200 transition">
+            <button type="button" onClick={() => setShowDetails(true)} className="flex-1 rounded-full bg-gray-100 text-sm font-medium py-2.5 px-4 hover:bg-gray-200 transition">
               {t.settings}
             </button>
           )}
-          <button onClick={rejectAll} className="flex-1 rounded-full border border-gray-200 text-sm font-medium py-2.5 px-4 hover:bg-gray-50 transition">
+          <button type="button" onClick={rejectAll} className="flex-1 rounded-full border border-gray-200 text-sm font-medium py-2.5 px-4 hover:bg-gray-50 transition">
             {t.rejectAll}
           </button>
         </div>

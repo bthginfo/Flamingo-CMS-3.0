@@ -2,10 +2,12 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { ArrowRight, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
 import { SectionHeader, baseHeader, asButton, asList, type ButtonValue } from './industry-kit';
+import { FaqAccordion } from './faq-accordion';
+import { ActionGroup, ActionLink } from './section-primitives';
 
 // Parameterized story/faq/testimonials shared by the medical and tourism
 // packs — the per-industry files are thin wrappers that only set the
@@ -85,15 +87,8 @@ export function IndustryFaqSection({ data, defaults }: { data: Record<string, un
   return (
     <div>
       <SectionHeader {...header} />
-      <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="divide-y divide-[var(--token-card-border)] rounded-xl bg-[var(--token-card-bg)] shadow-lg">
-        {items.map((item, index) => (
-          <details key={`${item.question}-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
-            <summary className="cursor-pointer font-semibold text-[color:var(--token-heading)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
-          </details>
-        ))}
-      </motion.div>
-      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+      <FaqAccordion items={items} variant="divided" />
+      {ctaPrimary.label && <ActionGroup className="mt-8"><ActionLink action={ctaPrimary} editKey="ctaPrimary" /></ActionGroup>}
     </div>
   );
 }

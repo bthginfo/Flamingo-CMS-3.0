@@ -7,6 +7,7 @@ import Image from 'next/image';
 import type { SnapshotCollectionItem, SnapshotCollection, SnapshotSection } from '@/lib/snapshot';
 import { SectionRenderer } from './section-renderer';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import type { ContactFormFieldDefinition } from '@/lib/contact-form';
 
 type Props = {
   item: SnapshotCollectionItem;
@@ -18,9 +19,10 @@ type Props = {
   industry?: string;
   locale?: string;
   defaultLocale?: string;
+  globalFormFields?: ContactFormFieldDefinition[];
 };
 
-export function CollectionDetail({ item, collection, collections, backHrefPrefix = '', linkPrefix = '', styleVariant, industry, locale, defaultLocale }: Props) {
+export function CollectionDetail({ item, collection, collections, backHrefPrefix = '', linkPrefix = '', styleVariant, industry, locale, defaultLocale, globalFormFields }: Props) {
   const data = item.data;
   // Resolve the item title from the localised `_titles` map when available so
   // the heading reflects the active locale instead of the default-locale value
@@ -42,7 +44,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         {/* Hero sections with overlapping back button */}
         <div className="relative">
           {heroSections.map((section) => (
-            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} />
+            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} globalFormFields={globalFormFields} />
           ))}
           {/* Back button - overlaps hero bottom edge on desktop only. */}
           <div className="absolute bottom-0 left-0 z-30 ml-10 hidden translate-y-1/2 md:block">
@@ -62,7 +64,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         </Link>
         {/* Remaining sections (CTA bands, etc.) */}
         {otherSections.map((section) => (
-          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} />
+          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} globalFormFields={globalFormFields} />
         ))}
       </div>
     );

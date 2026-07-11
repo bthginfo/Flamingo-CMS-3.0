@@ -534,8 +534,19 @@ INDUSTRY_STYLES.location = {
   styles: INDUSTRY_STYLES.hotel.styles,
 };
 
+INDUSTRY_STYLES.bar = {
+  label: 'Bar',
+  styles: INDUSTRY_STYLES.restaurant.styles,
+};
+
+INDUSTRY_STYLES.verein = {
+  label: 'Verein & Sport',
+  styles: INDUSTRY_STYLES.tradesman.styles,
+};
+
 export function getStyleConfig(industry: string, style: string): StyleConfig | null {
-  return INDUSTRY_STYLES[industry]?.styles['classic'] ?? INDUSTRY_STYLES[industry]?.styles[style] ?? null;
+  const styles = INDUSTRY_STYLES[industry]?.styles;
+  return styles?.[style] ?? styles?.classic ?? null;
 }
 
 export function getStyleCssVars(industry: string, style: string): Record<string, string> {

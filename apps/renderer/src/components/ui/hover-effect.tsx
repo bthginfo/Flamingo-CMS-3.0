@@ -135,7 +135,7 @@ function ContentCardBody({ item, showLink = false }: { item: HoverItem; showLink
         {item.description}
       </p>
       {showLink && (
-        <span className="mt-4 inline-flex items-center justify-center text-sm font-medium text-[var(--token-accent,var(--style-accent-color,var(--brand-primary)))]" data-color-slot="accentColor">
+        <span className="mt-4 inline-flex items-center justify-center text-sm font-medium text-[var(--token-card-heading,var(--token-heading,#111827))] after:ml-2 after:h-px after:w-5 after:bg-[var(--token-accent,var(--brand-primary))] after:content-['']" data-color-slot="headingColor accentColor">
           Mehr erfahren →
         </span>
       )}

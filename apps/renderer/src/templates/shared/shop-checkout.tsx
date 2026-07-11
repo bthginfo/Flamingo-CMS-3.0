@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId, useRef } from 'react';
 import { useCart } from '@/components/shop/cart-context';
 import { useRouter } from 'next/navigation';
 import { Check, Loader2, Tag, X } from 'lucide-react';
@@ -33,6 +33,7 @@ type CheckoutData = {
 const STEPS = ['Kontakt', 'Versand', 'Zahlung', 'Bestätigung'];
 
 export function ShopCheckoutSection({ data }: Props) {
+  const fieldPrefix = useId().replace(/:/g, '');
   const headline = (data.headline as string) || 'Kasse';
   const tenantId = (data.tenantId as string) || '';
   const router = useRouter();
@@ -42,16 +43,6 @@ export function ShopCheckoutSection({ data }: Props) {
   const showCompanyField = data.showCompanyField !== false;
   const thankYouPath = (data.thankYouPath as string) || '/bestellung-abgeschlossen';
 
-  // Demo mode: show notice instead of checkout
-  if (isDemo) {
-    return (
-      <section className="py-16 text-center">
-        <h2 className="text-2xl font-bold mb-4" data-edit-path="headline">{headline}</h2>
-        <p className="text-[color:var(--token-muted)] mb-2">Der Checkout ist in der Demo nicht verfügbar.</p>
-        <p className="text-sm text-[color:var(--token-body)]">In einem echten Shop können Kunden hier ihre Bestellung abschließen — mit Stripe, PayPal, SumUp oder Vorkasse.</p>
-      </section>
-    );
-  }
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<CheckoutData>({
@@ -62,9 +53,12 @@ export function ShopCheckoutSection({ data }: Props) {
   const [coupon, setCoupon] = useState<CouponResult | null>(null);
   const [couponInput, setCouponInput] = useState('');
   const [couponError, setCouponError] = useState('');
+  const [checkoutError, setCheckoutError] = useState('');
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   // Fetch shipping methods and payment methods when country changes
   useEffect(() => {
+    if (isDemo) return;
     const params = new URLSearchParams({ country: form.country });
     if (tenantId) params.set('tenantId', tenantId);
     fetch(`/api/shop/shipping?${params.toString()}`)
@@ -82,7 +76,7 @@ export function ShopCheckoutSection({ data }: Props) {
         }
       })
       .catch(() => setShippingMethods([]));
-  }, [form.country, tenantId]);
+  }, [form.country, tenantId, isDemo]);
 
   // Calculate shipping cost — same helper the checkout charge uses, so the
   // displayed total can never diverge from what the customer is charged.
@@ -90,6 +84,23 @@ export function ShopCheckoutSection({ data }: Props) {
   const shippingCents = computeShippingCents(selectedShipping, totalCents, coupon?.freeShipping);
   const discountCents = coupon?.discountCents || 0;
   const grandTotal = totalCents + shippingCents - discountCents;
+  const contactReady = Boolean(
+    form.name.trim()
+    && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
+    && (!requirePhone || form.phone.trim()),
+  );
+
+  // Demo mode: show notice instead of checkout. This stays below all hooks so
+  // switching preview data never changes React's hook order.
+  if (isDemo) {
+    return (
+      <section className="py-16 text-center">
+        <h2 className="text-2xl font-bold mb-4" data-edit-path="headline">{headline}</h2>
+        <p className="text-[color:var(--token-muted)] mb-2">Der Checkout ist in der Demo nicht verfügbar.</p>
+        <p className="text-sm text-[color:var(--token-body)]">In einem echten Shop können Kunden hier ihre Bestellung abschließen — mit Stripe, PayPal, SumUp oder Vorkasse.</p>
+      </section>
+    );
+  }
 
   async function applyCoupon() {
     setCouponError('');
@@ -123,16 +134,17 @@ export function ShopCheckoutSection({ data }: Props) {
   }
 
   async function handleSubmit() {
+    setCheckoutError('');
     setLoading(true);
     try {
-      const idempotencyKey = crypto.randomUUID();
+      idempotencyKeyRef.current ||= crypto.randomUUID();
       const res = await fetch('/api/shop/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
           tenantId,
-          idempotencyKey,
+          idempotencyKey: idempotencyKeyRef.current,
           shippingCents,
           discountCents,
           items: items.map(i => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
@@ -140,7 +152,7 @@ export function ShopCheckoutSection({ data }: Props) {
       });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Bestellung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        setCheckoutError(data.error || 'Bestellung fehlgeschlagen. Bitte versuchen Sie es erneut.');
         return;
       }
       if (data.success) {
@@ -165,6 +177,8 @@ export function ShopCheckoutSection({ data }: Props) {
         clearCart();
         router.push(thankYouPath);
       }
+    } catch {
+      setCheckoutError('Verbindungsfehler. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.');
     } finally {
       setLoading(false);
     }
@@ -186,7 +200,7 @@ export function ShopCheckoutSection({ data }: Props) {
       <div className="flex items-center gap-2 mb-8">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2" data-edit-collection="STEPS" data-edit-index={i}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-card-body,var(--token-body))]'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-card-body,var(--token-body))]'}`}>
               {i < step ? <Check className="text-[color:var(--token-check)]" size={14} /> : i + 1}
             </div>
             <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-[color:var(--token-card-body,var(--token-body))]'}`}>{s}</span>
@@ -197,28 +211,33 @@ export function ShopCheckoutSection({ data }: Props) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
+          {checkoutError && (
+            <div className="mb-5 rounded-xl border border-[color:color-mix(in_srgb,var(--token-danger)_35%,transparent)] bg-[color:color-mix(in_srgb,var(--token-danger)_8%,var(--token-card-bg))] px-4 py-3 text-sm text-[color:var(--token-danger)]" role="alert">
+              {checkoutError}
+            </div>
+          )}
           {/* Step 0: Contact */}
           {step === 0 && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Name *</label>
-                  <input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="Max Mustermann" />
+                  <label htmlFor={`${fieldPrefix}-name`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Name *</label>
+                  <input id={`${fieldPrefix}-name`} autoComplete="name" value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="Max Mustermann" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">E-Mail *</label>
-                  <input type="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="max@example.de" />
+                  <label htmlFor={`${fieldPrefix}-email`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">E-Mail *</label>
+                  <input id={`${fieldPrefix}-email`} type="email" autoComplete="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="max@example.de" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Telefon</label>
-                  <input value={form.phone} onChange={e => set('phone', e.target.value)} required={requirePhone} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="+49 ..." />
+                  <label htmlFor={`${fieldPrefix}-phone`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Telefon{requirePhone ? ' *' : ''}</label>
+                  <input id={`${fieldPrefix}-phone`} type="tel" autoComplete="tel" value={form.phone} onChange={e => set('phone', e.target.value)} required={requirePhone} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" placeholder="+49 ..." />
                 </div>
                 <div>
-                  {showCompanyField && <><label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Firma</label>
-                  <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" /></>}
+                  {showCompanyField && <><label htmlFor={`${fieldPrefix}-company`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Firma</label>
+                  <input id={`${fieldPrefix}-company`} autoComplete="organization" value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" /></>}
                 </div>
               </div>
-              <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
+              <button onClick={() => setStep(1)} disabled={!contactReady} className="px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
                 Weiter zu Versand
               </button>
             </div>
@@ -229,20 +248,20 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Straße & Hausnr. *</label>
-                  <input value={form.street} onChange={e => set('street', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
+                  <label htmlFor={`${fieldPrefix}-street`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Straße & Hausnr. *</label>
+                  <input id={`${fieldPrefix}-street`} autoComplete="street-address" value={form.street} onChange={e => set('street', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">PLZ *</label>
-                  <input value={form.zip} onChange={e => set('zip', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
+                  <label htmlFor={`${fieldPrefix}-zip`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">PLZ *</label>
+                  <input id={`${fieldPrefix}-zip`} autoComplete="postal-code" inputMode="numeric" value={form.zip} onChange={e => set('zip', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Stadt *</label>
-                  <input value={form.city} onChange={e => set('city', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
+                  <label htmlFor={`${fieldPrefix}-city`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Stadt *</label>
+                  <input id={`${fieldPrefix}-city`} autoComplete="address-level2" value={form.city} onChange={e => set('city', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Land</label>
-                  <select value={form.country} onChange={e => set('country', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm bg-[var(--token-input-bg)]">
+                  <label htmlFor={`${fieldPrefix}-country`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Land</label>
+                  <select id={`${fieldPrefix}-country`} autoComplete="country" value={form.country} onChange={e => set('country', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm bg-[var(--token-input-bg)]">
                     <option value="DE">Deutschland</option>
                     <option value="AT">Österreich</option>
                     <option value="CH">Schweiz</option>
@@ -273,7 +292,7 @@ export function ShopCheckoutSection({ data }: Props) {
               )}
               <div className="flex gap-3">
                 <button onClick={() => setStep(0)} className="px-6 py-3 border border-[color:var(--token-card-border)] rounded-xl text-sm">Zurück</button>
-                <button onClick={() => setStep(2)} disabled={!form.street || !form.zip || !form.city} className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
+                <button onClick={() => setStep(2)} disabled={!form.street || !form.zip || !form.city} className="px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
                   Weiter zu Zahlung
                 </button>
               </div>
@@ -299,12 +318,12 @@ export function ShopCheckoutSection({ data }: Props) {
                 ))}
               </div>
               <div>
-                <label className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Bemerkungen (optional)</label>
-                <textarea value={form.customerNotes} onChange={e => set('customerNotes', e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm resize-y" />
+                <label htmlFor={`${fieldPrefix}-notes`} className="block text-xs font-medium text-[color:var(--token-label)] mb-1">Bemerkungen (optional)</label>
+                <textarea id={`${fieldPrefix}-notes`} value={form.customerNotes} onChange={e => set('customerNotes', e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-input-border)] text-sm resize-y" />
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setStep(1)} className="px-6 py-3 border border-[color:var(--token-card-border)] rounded-xl text-sm">Zurück</button>
-                <button onClick={() => setStep(3)} className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition">
+                <button onClick={() => setStep(3)} className="px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-xl font-medium hover:opacity-90 transition">
                   Bestellung prüfen
                 </button>
               </div>
@@ -322,7 +341,7 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setStep(2)} className="px-6 py-3 border border-[color:var(--token-card-border)] rounded-xl text-sm">Zurück</button>
-                <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2">
+                <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2">
                   {loading ? <><Loader2 size={16} className="animate-spin" /> Bestellung wird aufgegeben…</> : 'Kostenpflichtig bestellen'}
                 </button>
               </div>
@@ -364,11 +383,12 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
             ) : (
               <div className="flex gap-2">
-                <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-[color:var(--token-input-border)] rounded-lg px-3 py-2" />
+                <label htmlFor={`${fieldPrefix}-coupon`} className="sr-only">Gutscheincode</label>
+                <input id={`${fieldPrefix}-coupon`} aria-describedby={couponError ? `${fieldPrefix}-coupon-error` : undefined} value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-[color:var(--token-input-border)] rounded-lg px-3 py-2" />
                 <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] rounded-lg hover:bg-[var(--token-section-bg,theme(colors.zinc.300))] font-medium">Einlösen</button>
               </div>
             )}
-            {couponError && <p className="text-xs text-[var(--token-danger)] mt-1">{couponError}</p>}
+            {couponError && <p id={`${fieldPrefix}-coupon-error`} className="text-xs text-[color:var(--token-danger)] mt-1" role="alert">{couponError}</p>}
           </div>
         </div>
       </div>

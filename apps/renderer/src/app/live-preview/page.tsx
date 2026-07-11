@@ -6,6 +6,7 @@ import { getDesignCssVars } from '@/lib/design-vars';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { LivePreviewClient } from './client';
+import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +26,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
       return <LivePreviewClient initialData={{}} />;
     }
 
-  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, snapshot] = await Promise.all([
+  const [navData, footerData, { brand, contact, socialLinks, design, formFields }, tenantStyle, snapshot] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
@@ -54,9 +55,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
   if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
   if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
   const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = customFonts.length > 0
-    ? `https://fonts.googleapis.com/css2?${customFonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;800`).join('&')}&display=swap`
-    : null;
+  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
 
   const cssVars = { ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides };
 
@@ -81,6 +80,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
         contact,
         footer: footerData || undefined,
         socialLinks,
+        formFields,
         fontsUrl: googleFontsUrl,
         sections: initialSections,
         collections: snapshot?.collections || [],

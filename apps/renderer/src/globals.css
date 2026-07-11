@@ -14,30 +14,59 @@
   --token-subheading: #1e293b;
   --token-body: #475569;
   --token-muted: #64748b;
+  --token-label: #334155;
+  --token-link: #b91c1c;
+  --token-link-hover: #991b1b;
   --token-eyebrow: #dc2626;
   --token-quote: #0f172a;
+  --token-heading-weight: 700;
+  --token-heading-tracking: -0.02em;
   /* Inverted (on-dark) typography */
   --token-on-dark-heading: #ffffff;
   --token-on-dark-body: rgba(255, 255, 255, 0.78);
   --token-on-dark-muted: rgba(255, 255, 255, 0.56);
   /* Surfaces / structure */
+  --token-page-bg: #ffffff;
   --token-section-bg: #ffffff;
   --token-section-bg-alt: #f8fafc;
   --token-card-bg: #ffffff;
   --token-card-border: rgba(15, 23, 42, 0.08);
+  --token-card-heading: #0f172a;
+  --token-card-body: #475569;
+  --token-card-muted: #64748b;
+  --token-card-icon: #dc2626;
+  --token-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   --token-divider: rgba(15, 23, 42, 0.12);
+  --token-shadow: rgba(0, 0, 0, 0.06);
+  --token-image-overlay: rgba(2, 6, 23, 0.55);
+  --token-glow-color: rgba(220, 38, 38, 0.35);
   /* Accents / actions */
   --token-accent: #dc2626;
   --token-icon: #dc2626;
   --token-check: #16a34a;
   --token-rating-star: #eab308;
+  --token-success: #15803d;
+  --token-success-bg: #dcfce7;
+  --token-danger: #b91c1c;
+  --token-danger-bg: #fef2f2;
+  --token-price: #0f172a;
+  --token-price-strikethrough: #64748b;
   /* Badges */
   --token-badge-bg: rgba(220, 38, 38, 0.10);
-  --token-badge-text: #dc2626;
+  --token-badge-text: #b91c1c;
   --token-badge-border: rgba(220, 38, 38, 0.20);
+  --token-card-badge-bg: rgba(220, 38, 38, 0.10);
+  --token-card-badge-text: #b91c1c;
   /* Buttons */
   --token-btn-bg: #0f172a;
   --token-btn-text: #ffffff;
+  --token-btn-secondary-bg: #f1f5f9;
+  --token-btn-secondary-text: #0f172a;
+  --token-btn-secondary-border: rgba(15, 23, 42, 0.20);
+  /* Forms */
+  --token-input-bg: #ffffff;
+  --token-input-border: rgba(15, 23, 42, 0.16);
+  --token-input-text: #0f172a;
   /* Stats */
   --token-stat-value: #dc2626;
   /* Radii */
@@ -97,11 +126,11 @@ html {
     color: var(--brand-nav-link, inherit);
   }
 
-  [data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-"]) {
+  [data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-"]):not([class*="cms-"]) {
     color: var(--brand-link, inherit);
   }
 
-  [data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-"]):hover {
+  [data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-"]):not([class*="cms-"]):hover {
     color: var(--brand-link-hover, var(--brand-link, inherit));
   }
 
@@ -157,7 +186,7 @@ html {
   }
 
   /* ─── Background overrides (cards, surfaces) ─── */
-  [data-style] div.bg-white,
+  [data-style] .bg-white:is(div),
   [data-style] section .bg-white:not(a):not(button):not(span) {
     background-color: var(--style-card-bg, white) !important;
   }
@@ -281,8 +310,8 @@ html {
   [data-style] button[class*="bg-orange-"],
   [data-style] a[class*="bg-sky-"],
   [data-style] button[class*="bg-sky-"] {
-    background-color: var(--brand-btn-bg, var(--brand-primary)) !important;
-    color: var(--brand-btn-text, white) !important;
+    background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-primary))) !important;
+    color: var(--token-btn-text, var(--brand-btn-text, white)) !important;
   }
 
   /* ─── Accent border buttons (outline style) — use brand primary ─── */
@@ -292,8 +321,8 @@ html {
   [data-style] a[class*="border-blue-"],
   [data-style] a[class*="border-red-"],
   [data-style] a[class*="border-amber-"] {
-    border-color: var(--brand-primary) !important;
-    color: var(--brand-primary) !important;
+    border-color: var(--token-btn-secondary-border) !important;
+    color: var(--token-btn-secondary-text) !important;
   }
 
   /* ─── Accent text color overrides ─── */
@@ -310,7 +339,7 @@ html {
   [data-style] .text-blue-600,
   [data-style] .text-indigo-700,
   [data-style] .text-indigo-600 {
-    color: var(--brand-primary) !important;
+    color: var(--token-link) !important;
   }
 
   /* ─── Accent BGs for badges/pills (not buttons) ─── */
@@ -323,9 +352,9 @@ html {
   [data-style] span[class*="bg-red-50"],
   [data-style] div[class*="bg-red-50"],
   [data-style] div[class*="bg-amber-50"] {
-    background-color: var(--style-badge-bg, rgba(26, 82, 118, 0.05)) !important;
-    border-color: var(--style-badge-border, rgba(26, 82, 118, 0.1)) !important;
-    color: var(--style-badge-text, var(--brand-primary)) !important;
+    background-color: var(--token-badge-bg) !important;
+    border-color: var(--token-badge-border) !important;
+    color: var(--token-badge-text) !important;
   }
 
   [data-style] .rounded-xl,
@@ -372,20 +401,20 @@ html {
 @layer components {
   .section-headline {
     @apply font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-center;
-    color: var(--style-heading-color, var(--style-text-primary, inherit));
+    color: var(--token-heading);
   }
 
   .section-subline {
     @apply text-lg sm:text-xl max-w-2xl mx-auto mt-5 text-center leading-relaxed;
-    color: var(--style-subheading-color, var(--style-text-secondary, #64748b));
+    color: var(--token-subheading);
   }
 
   .section-badge {
     @apply inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium mb-6;
     border-radius: var(--style-radius-full, 2rem);
-    background: var(--style-badge-bg, rgba(26, 82, 118, 0.05));
-    border: 1px solid var(--style-badge-border, rgba(26, 82, 118, 0.1));
-    color: var(--style-badge-text, var(--brand-primary));
+    background: var(--token-badge-bg);
+    border: 1px solid var(--token-badge-border);
+    color: var(--token-badge-text);
   }
 
   /* Per-section body text, icons, borders, dividers */
@@ -431,13 +460,13 @@ html {
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] text-base;
     border-radius: var(--style-button-radius, 0.75rem);
-    background: var(--brand-btn-bg, var(--brand-accent));
-    color: var(--brand-btn-text, #1a1a1a);
+    background: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-accent)));
+    color: var(--token-btn-text, var(--brand-btn-text, #1a1a1a));
   }
 
   /* Override inline Tailwind buttons (bg-brand-primary) to respect custom button colors */
-  [data-style] a.bg-brand-primary,
-  [data-style] button.bg-brand-primary,
+  [data-style] .bg-brand-primary:is(a),
+  [data-style] .bg-brand-primary:is(button),
   [data-style] a[class*="bg-brand-primary"],
   [data-style] button[class*="bg-brand-primary"] {
     background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-primary))) !important;
@@ -462,17 +491,17 @@ html {
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] text-base;
     border-radius: var(--style-button-radius, 0.75rem);
-    background: var(--brand-btn-secondary-bg, transparent);
-    color: var(--brand-btn-secondary-text, white);
-    border: 2px solid var(--brand-btn-secondary-border, rgba(255,255,255,0.2));
+    background: var(--token-btn-secondary-bg, var(--brand-btn-secondary-bg, transparent));
+    color: var(--token-btn-secondary-text, var(--brand-btn-secondary-text, white));
+    border: 2px solid var(--token-btn-secondary-border, var(--brand-btn-secondary-border, rgba(255,255,255,0.2)));
   }
 
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] text-base;
     border-radius: var(--style-button-radius, 0.75rem);
-    background: var(--brand-btn-outline-bg, transparent);
-    color: var(--brand-btn-outline-text, #374151);
-    border: 2px solid var(--brand-btn-outline-border, #e5e7eb);
+    background: var(--token-btn-secondary-bg, var(--brand-btn-outline-bg, transparent));
+    color: var(--token-btn-secondary-text, var(--brand-btn-outline-text, #374151));
+    border: 2px solid var(--token-btn-secondary-border, var(--brand-btn-outline-border, #e5e7eb));
   }
 
   .card-hover {
@@ -686,8 +715,9 @@ html {
 
 /* Badge overrides — only target the dedicated .section-badge class */
 [data-style] .section-badge {
-  background: var(--style-badge-bg, rgba(26,82,118,0.05));
-  border: 1px solid var(--style-badge-border, rgba(26,82,118,0.1));
+  background: var(--token-badge-bg);
+  border: 1px solid var(--token-badge-border);
+  color: var(--token-badge-text);
   border-radius: var(--style-radius-full, 2rem);
 }
 
@@ -713,9 +743,46 @@ html {
    let the large template catalogue share one rhythm and interaction language
    while every visible role remains controlled by the canonical token system. */
 @layer components {
+  .cms-section {
+    position: relative;
+    scroll-margin-top: 6rem;
+  }
+
+  .cms-section-shell {
+    width: 100%;
+  }
+
   .cms-section-header {
     max-width: 48rem;
     margin-bottom: clamp(2rem, 4vw, 3.25rem);
+  }
+
+  .cms-section-header--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .cms-section-header--center .cms-eyebrow {
+    justify-content: center;
+  }
+
+  .cms-section-header--center .cms-section-title,
+  .cms-section-header--center .cms-section-copy {
+    margin-inline: auto;
+  }
+
+  .cms-section-header--compact {
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .cms-section-header--compact .cms-section-title {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .cms-section-header--display .cms-section-title {
+    max-width: 16ch;
+    font-size: clamp(2.6rem, 7vw, 5.8rem);
+    line-height: 0.98;
   }
 
   .cms-eyebrow {
@@ -772,6 +839,17 @@ html {
     transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
   }
 
+  .cms-action-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .cms-action-group--center {
+    justify-content: center;
+  }
+
   .cms-button--primary {
     background: var(--token-btn-bg);
     color: var(--token-btn-text);
@@ -796,6 +874,17 @@ html {
     transition: border-color 280ms ease, box-shadow 280ms ease, transform 280ms ease;
   }
 
+  .cms-card--interactive:focus-within {
+    border-color: var(--token-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--token-accent) 14%, transparent), var(--token-card-shadow);
+  }
+
+  .cms-media-frame {
+    position: relative;
+    overflow: hidden;
+    background: var(--token-section-bg-alt);
+  }
+
   .cms-media-frame img {
     transition: transform 700ms cubic-bezier(.2, .65, .25, 1), filter 400ms ease;
   }
@@ -811,13 +900,13 @@ html {
       transform: translateX(3px);
     }
 
-    .cms-card:hover {
+    .cms-card--interactive:hover {
       transform: translateY(-4px);
       border-color: var(--token-divider);
       box-shadow: 0 18px 48px var(--token-shadow);
     }
 
-    .cms-card:hover .cms-media-frame img {
+    .cms-card--interactive:hover .cms-media-frame img {
       transform: scale(1.045);
     }
   }
@@ -825,6 +914,200 @@ html {
   .cms-button:active {
     transform: translateY(0);
   }
+
+  .cms-accordion {
+    width: 100%;
+  }
+
+  .cms-accordion--cards {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .cms-accordion--cards .cms-accordion-item {
+    overflow: hidden;
+    border: 1px solid var(--token-card-border);
+    border-radius: var(--token-card-radius);
+    background: var(--token-card-bg);
+    box-shadow: var(--token-card-shadow);
+    transition: border-color 220ms ease, box-shadow 220ms ease;
+  }
+
+  .cms-accordion--cards .cms-accordion-item[open] {
+    border-color: color-mix(in srgb, var(--token-accent) 45%, var(--token-card-border));
+    box-shadow: 0 14px 38px var(--token-shadow);
+  }
+
+  .cms-accordion--divided {
+    overflow: hidden;
+    border: 1px solid var(--token-card-border);
+    border-radius: var(--token-card-radius);
+    background: var(--token-card-bg);
+    box-shadow: var(--token-card-shadow);
+  }
+
+  .cms-accordion--divided .cms-accordion-item + .cms-accordion-item,
+  .cms-accordion--minimal .cms-accordion-item + .cms-accordion-item {
+    border-top: 1px solid var(--token-card-border);
+  }
+
+  .cms-accordion-header {
+    margin: 0;
+  }
+
+  .cms-accordion-trigger {
+    display: flex;
+    width: 100%;
+    min-height: 3.75rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    color: var(--token-card-heading);
+    font-size: clamp(0.98rem, 1.4vw, 1.075rem);
+    font-weight: 650;
+    line-height: 1.45;
+    text-align: left;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .cms-accordion-trigger::-webkit-details-marker {
+    display: none;
+  }
+
+  .cms-accordion--minimal .cms-accordion-trigger {
+    padding-inline: 0;
+  }
+
+  .cms-accordion-chevron {
+    flex: none;
+    color: var(--token-icon);
+    transition: transform 220ms ease;
+  }
+
+  .cms-accordion-item[open] .cms-accordion-chevron {
+    transform: rotate(180deg);
+  }
+
+  .cms-accordion-content {
+    overflow: hidden;
+    color: var(--token-card-body);
+  }
+
+  .cms-accordion-item[open] .cms-accordion-content {
+    animation: cms-accordion-down 240ms cubic-bezier(.2, .7, .25, 1);
+  }
+
+  .cms-accordion-answer {
+    padding: 0 1.25rem 1.25rem;
+    color: var(--token-card-body);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+
+  .cms-accordion--minimal .cms-accordion-answer {
+    padding-inline: 0;
+  }
+
+  .cms-form-field {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .cms-form-label {
+    color: var(--token-label);
+    font-size: 0.875rem;
+    font-weight: 650;
+    line-height: 1.4;
+  }
+
+  .cms-form-required,
+  .cms-form-field[data-invalid="true"] .cms-form-message {
+    color: var(--token-danger);
+  }
+
+  .cms-form-message {
+    color: var(--token-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .cms-contact-link {
+    display: flex;
+    min-height: 3rem;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid var(--token-card-border);
+    border-radius: var(--token-button-radius);
+    padding: 0.7rem 0.8rem;
+    color: var(--token-card-heading);
+    transition: border-color 180ms ease, background-color 180ms ease;
+  }
+
+  .cms-contact-link svg {
+    flex: none;
+    color: var(--token-icon);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cms-contact-link:hover {
+      border-color: color-mix(in srgb, var(--token-accent) 45%, var(--token-card-border));
+      background: var(--token-badge-bg);
+    }
+  }
+
+  .cms-data-frame {
+    overflow: hidden;
+    border: 1px solid var(--token-card-border);
+    border-radius: var(--token-card-radius);
+    background: var(--token-card-bg);
+    box-shadow: var(--token-card-shadow);
+  }
+
+  .cms-data-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .cms-data-hint { display: none; }
+
+  .cms-section-state {
+    display: flex;
+    min-height: 8rem;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.875rem;
+    border: 1px dashed var(--token-card-border);
+    border-radius: var(--token-card-radius);
+    background: color-mix(in srgb, var(--token-card-bg) 82%, transparent);
+    padding: 2rem;
+    color: var(--token-body);
+  }
+
+  .cms-section-state-icon {
+    flex: none;
+    color: var(--token-icon);
+  }
+
+  .cms-section-state-title {
+    color: var(--token-heading);
+    font-weight: 700;
+  }
+
+  .cms-section-state-copy {
+    margin-top: 0.25rem;
+    color: var(--token-muted);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+}
+
+@keyframes cms-accordion-down {
+  from { opacity: 0; transform: translateY(-0.35rem); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Trustworthy shared form treatment. Radio buttons and checkboxes keep their
@@ -860,18 +1143,26 @@ html {
   cursor: not-allowed;
 }
 
-@keyframes cms-section-enter {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.section-reveal[data-revealed="true"]:not([data-reveal-disabled="true"]) {
-  animation: cms-section-enter 620ms cubic-bezier(.2, .75, .25, 1) both;
-}
-
 @media (max-width: 639px) {
   .cms-button {
     width: 100%;
+  }
+
+  .cms-action-group {
+    align-items: stretch;
+  }
+
+}
+
+@media (max-width: 799px) {
+  .cms-data-hint {
+    display: block;
+    border-bottom: 1px solid var(--token-card-border);
+    padding: 0.65rem 1rem;
+    color: var(--token-muted);
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
   }
 }
 

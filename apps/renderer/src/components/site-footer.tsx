@@ -3,32 +3,33 @@ import Image from 'next/image';
 import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Music, Undo2 } from 'lucide-react';
 import type { FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 import { prefixInternalHref } from '@/lib/link-prefix';
+import { getBrandCssVars } from '@/lib/brand-colors';
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
   instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube, google: Globe, tiktok: Music,
 };
 
-/** Returns true if the hex color is "light" (luminance > 0.4) */
-function isLightColor(hex: string | undefined): boolean {
-  if (!hex || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex)) return false;
-  const h = hex.length === 4 ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}` : hex;
-  const r = parseInt(h.slice(1, 3), 16) / 255;
-  const g = parseInt(h.slice(3, 5), 16) / 255;
-  const b = parseInt(h.slice(5, 7), 16) / 255;
-  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return lum > 0.4;
+function legalLinkLabel(label: string | undefined, href: string | undefined): string {
+  const explicit = label?.trim();
+  if (explicit) return explicit;
+  const path = href?.toLocaleLowerCase('de-DE') || '';
+  if (path.includes('datenschutz')) return 'Datenschutz';
+  if (path.includes('impressum')) return 'Impressum';
+  if (path.includes('widerruf')) return 'Widerrufsrecht';
+  if (path.includes('agb')) return 'AGB';
+  return 'Rechtliche Hinweise';
 }
 
 export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '', shopEnabled = false }: { footer: FooterData | null; brand: BrandData; contact?: ContactData; socialLinks?: SocialLinks; linkPrefix?: string; shopEnabled?: boolean }) {
   if (!footer) return null;
 
   const socials = Object.entries(socialLinks || {}).filter(([, url]) => url);
-  const footerBg = (brand as Record<string, unknown>).footerColor as string | undefined;
-  const lightFooter = isLightColor(footerBg);
+  const footerVars = getBrandCssVars(brand);
+  const lightFooter = footerVars['--brand-footer-text'] === '#000000';
 
   return (
     <footer id="site-footer" className="relative overflow-hidden" style={{ backgroundColor: 'var(--brand-footer, var(--brand-dark))', color: 'var(--brand-footer-text, white)' }}>
-      <style dangerouslySetInnerHTML={{ __html: `#site-footer a { color: var(--brand-footer-link, rgb(156 163 175)) } #site-footer a:hover { opacity: 0.8 }` }} />
+      <style>{`#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none }`}</style>
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-brand-primary/[0.04] rounded-full blur-[100px]" />
@@ -41,33 +42,33 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
           {/* Brand block */}
           <div className="lg:col-span-4 space-y-5">
             {footer.cta?.label && footer.cta?.href && (
-              <Link href={prefixInternalHref(footer.cta.href, linkPrefix) as string} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-accent text-gray-900 font-medium text-sm hover:opacity-90 transition-opacity mb-3">
+              <Link data-footer-button href={prefixInternalHref(footer.cta.href, linkPrefix) as string} className="mb-3 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-2.5 text-sm font-medium text-[color:var(--token-btn-text)] transition-transform hover:-translate-y-0.5">
                 {footer.cta.label}
               </Link>
             )}
             {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
-              <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={180} height={50} className="h-10 w-auto object-contain brightness-0 invert" />
+              <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={180} height={50} className={`h-10 w-auto object-contain brightness-0 ${lightFooter ? '' : 'invert'}`} />
             )}
             {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
               <div className="font-display font-bold text-2xl">{brand.companyName}</div>
             )}
             {brand.tagline && (
-              <p className="text-sm leading-relaxed max-w-xs opacity-90">{brand.tagline}</p>
+              <p className="max-w-xs text-sm leading-relaxed">{brand.tagline}</p>
             )}
             {/* Contact info */}
             <div className="flex flex-col gap-2.5 pt-2">
               {contact?.address && (
-                <span className="text-sm opacity-90 flex items-center gap-2.5">
+                <span className="flex items-center gap-2.5 text-sm">
                   <MapPin size={14} className="text-brand-accent shrink-0" />{contact.address}
                 </span>
               )}
               {contact?.phone && (
-                <a href={`tel:${contact.phone}`} className="text-sm opacity-90 flex items-center gap-2.5 hover:opacity-100 transition-colors">
+                <a href={`tel:${contact.phone}`} className="flex items-center gap-2.5 text-sm transition-colors">
                   <Phone size={14} className="text-brand-accent shrink-0" />{contact.phone}
                 </a>
               )}
               {contact?.email && (
-                <a href={`mailto:${contact.email}`} className="text-sm opacity-90 flex items-center gap-2.5 hover:opacity-100 transition-colors">
+                <a href={`mailto:${contact.email}`} className="flex items-center gap-2.5 text-sm transition-colors">
                   <Mail size={14} className="text-brand-accent shrink-0" />{contact.email}
                 </a>
               )}
@@ -78,7 +79,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
                 {socials.map(([platform, url]) => {
                   const Icon = SOCIAL_ICONS[platform];
                   return Icon ? (
-                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer" aria-label={platform.charAt(0).toUpperCase() + platform.slice(1)} className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${lightFooter ? 'bg-black/[0.08] text-gray-700 hover:bg-brand-accent hover:text-white' : 'bg-white/[0.06] text-white/90 hover:bg-brand-accent hover:text-gray-900'}`}>
+                    <a data-footer-icon key={platform} href={url} target="_blank" rel="noopener noreferrer" aria-label={platform.charAt(0).toUpperCase() + platform.slice(1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--brand-footer-text)_8%,transparent)] text-[color:var(--brand-footer-link)] transition-all duration-300 hover:bg-[var(--token-btn-bg)]">
                       <Icon size={16} />
                     </a>
                   ) : null;
@@ -93,16 +94,16 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
               .filter((col) => !(contact && col.title?.toLowerCase() === 'kontakt'))
               .map((col, i) => (
               <div key={i}>
-                <h3 className="font-display font-semibold text-sm uppercase tracking-wider text-white mb-5">{col.title}</h3>
+                <h3 className="font-display mb-5 text-sm font-semibold uppercase tracking-wider text-[color:var(--brand-footer-text)]">{col.title}</h3>
                 <ul className="space-y-3">
                   {(col.items || []).map((item, j) => (
                     <li key={j}>
                       {item.href ? (
-                        <Link href={prefixInternalHref(item.href, linkPrefix) as string} className="text-sm opacity-90 hover:opacity-100 hover:translate-x-0.5 inline-block transition-all duration-200">
+                        <Link href={prefixInternalHref(item.href, linkPrefix) as string} className="inline-block text-sm transition-all duration-200 hover:translate-x-0.5">
                           {item.text}
                         </Link>
                       ) : (
-                        <span className="text-sm opacity-90">{item.text}</span>
+                        <span className="text-sm">{item.text}</span>
                       )}
                     </li>
                   ))}
@@ -134,7 +135,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
           <div className="flex items-center gap-6 flex-wrap justify-center">
             {footer.legalLinks.map((link, i) => (
               <Link key={i} href={prefixInternalHref(link.href, linkPrefix) as string} className="text-xs hover:underline transition-colors duration-200">
-                {link.label}
+                {legalLinkLabel(link.label, link.href)}
               </Link>
             ))}
             <span className="text-xs flex items-center gap-1">

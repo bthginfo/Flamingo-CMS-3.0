@@ -13,6 +13,7 @@ import {
   validateSectionStyleOverrides,
   type ColorIssue,
 } from '@/lib/color-validation';
+import { GET as runStoredContentAudit } from '../validate/route';
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,6 +21,32 @@ export async function POST(req: NextRequest) {
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const db = getDb();
+
+    // Publish is a guarded state transition. Run the exact same deterministic
+    // audit exposed by GET /content/validate before changing page status or the
+    // active snapshot, so clients cannot bypass preflight accidentally.
+    const preflightResponse = await runStoredContentAudit(req);
+    const preflight = await preflightResponse.json() as {
+      readyToPublish?: boolean;
+      summary?: { colorWarnings?: number; qualityWarnings?: number };
+      contentIssues?: Array<{ severity?: string; code?: string; location?: string; message?: string; repair?: unknown }>;
+      colorIssues?: Array<{ severity?: string; code?: string; location?: string; message?: string }>;
+    };
+    const blockers = [
+      ...(preflight.contentIssues || []).filter(issue => issue.severity === 'error' || (issue.severity === 'warning' && issue.repair)),
+      ...(preflight.colorIssues || []).filter(issue => issue.severity === 'error' || issue.severity === 'warning'),
+    ];
+    if (!preflightResponse.ok || !preflight.readyToPublish || (preflight.summary?.colorWarnings || 0) > 0) {
+      return NextResponse.json({
+        success: false,
+        code: 'PUBLISH_PREFLIGHT_FAILED',
+        error: 'Content is not ready to publish.',
+        hint: 'Apply every blocker, call GET /api/v1/content/validate again, and publish only when readyToPublish=true with no color warnings.',
+        retryable: false,
+        summary: preflight.summary,
+        repairQueue: blockers,
+      }, { status: 422 });
+    }
 
     const snapshot = await getDraftSnapshot(auth.tenantId);
     if (!snapshot) return NextResponse.json({ error: 'No content to publish' }, { status: 400 });

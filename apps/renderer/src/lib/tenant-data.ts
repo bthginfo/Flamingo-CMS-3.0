@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/db';
 import { navigation, footer, globalSettings, seoGlobal, seoPage, seoItem, tenants } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
+import { normalizeContactFormFields, type ContactFormFieldDefinition } from '@/lib/contact-form';
 
 export type NavItem = { label: string; href: string; type?: string };
 export type TopBarConfig = { enabled?: boolean; text?: string; linkLabel?: string; linkHref?: string; bgColor?: string; textColor?: string };
@@ -105,7 +106,7 @@ export async function getTenantFooter(tenantId: string, locale?: string): Promis
   return { columns: columns as FooterColumn[], legalLinks: legalLinks as { label: string; href: string }[], cta: cta as { label: string; href: string } | null };
 }
 
-export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; openingHours: OpeningHoursRow[]; socialLinks: SocialLinks; design: Record<string, string> }> {
+export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; openingHours: OpeningHoursRow[]; socialLinks: SocialLinks; design: Record<string, string>; formFields: ContactFormFieldDefinition[] }> {
   const db = getDb();
   const [s] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   const [tenant] = await db.select({ name: tenants.name }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
@@ -119,6 +120,7 @@ export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandDa
     openingHours: (s?.openingHours as OpeningHoursRow[]) || [],
     socialLinks: (s?.socialLinks as SocialLinks) || {},
     design: (s?.design as Record<string, string>) || {},
+    formFields: normalizeContactFormFields(s?.formFields),
   };
 }
 

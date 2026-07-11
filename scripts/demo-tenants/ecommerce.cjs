@@ -20,7 +20,7 @@ const crypto = require('crypto');
 const { run } = require('./_lib/runner.cjs');
 const { darkTokens: sharedDark } = require('./_lib/theme.cjs');
 
-const PAT = '57b5659857d5ca5ef9eb11f0f8190c68c35f7f4ae041286f84818aa3bc51c30f';
+const PAT = process.env.PAT_ECOMMERCE || process.env.DEMO_PAT_ECOMMERCE || '';
 
 const uuid = () => crypto.randomUUID();
 const img = (id, w = 1920) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=82`;
@@ -329,10 +329,12 @@ const tenant = {
   },
 
   seoGlobal: {
-    siteTitle: 'Vinothek Goldberg München',
-    siteDescription: 'Kuratierter Online-Shop für Wein, Probierpakete und Geschenkboxen aus München-Haidhausen. Persönliche Beratung, sichere Verpackung und schneller Versand.',
+    titleTemplate: '%s',
+    defaultTitle: 'Vinothek Goldberg München | Weinshop mit persönlicher Beratung',
+    defaultDescription: 'Kuratierter Online-Shop für Wein, Probierpakete und Geschenkboxen aus München-Haidhausen. Persönliche Beratung, sichere Verpackung und schneller Versand.',
     keywords: ['Wein online kaufen München', 'Vinothek München', 'Probierpakete Wein', 'Geschenkbox Wein', 'Naturwein München'],
-    ogImage: img('1510812431401-41d2bd2722f3'),
+    defaultOgImage: img('1510812431401-41d2bd2722f3', 1200),
+    locale: 'de_DE',
   },
 
   navigation: {
@@ -575,7 +577,7 @@ const tenant = {
         section('editorialHero', { eyebrow: 'Über uns', headline: 'Eine Vinothek, die online nicht anonym wird.', text: '<p>Goldberg steht für kleine Auswahl, klare Sprache und Flaschen, die wir selbst öffnen würden.</p>', imagePrimary: img('1528823872057-9c018a7a7553'), imageSecondary: img('1510812431401-41d2bd2722f3'), primaryCta: { label: 'Weine entdecken', href: '/shop' } }),
         section('textImage', { badgeText: 'Haidhausen', headline: 'Aus einer Ladenberatung wurde ein Shop mit Haltung.', text: '<p>Unsere Vinothek liegt in München-Haidhausen. Viele Bestellungen beginnen bis heute mit einer kurzen Frage im Laden: Was passt zu diesem Abend?</p><p>Genau diese Beratung übersetzen wir online. Produkttexte sind kurz, Empfehlungen konkret und das Sortiment bleibt bewusst kuratiert.</p>', image: img('1556761175-5973dc0f32e7', 1400), imageAlt: 'Team der Vinothek Goldberg' }),
         section('timeline', { badgeText: 'Geschichte', headline: 'Nicht groß geworden, sondern genauer.', steps: [{ title: '1998', text: 'Erste kleine Vinothek nahe Wiener Platz.' }, { title: '2012', text: 'Direkte Winzerkontakte in Italien, Frankreich und Österreich.' }, { title: '2020', text: 'Online-Bestellungen mit persönlicher Beratung.' }, { title: 'Heute', text: 'Shop, Geschenkboxen und Firmenpakete aus einem System.' }] }, creamTokens),
-        section('team', { headline: 'Menschen hinter der Auswahl', members: [{ name: 'Katrin Goldberg', role: 'Beratung & Geschenkboxen', bio: 'Fragt zuerst nach Anlass und erst danach nach Traube.', image: img('1494790108377-be9c29b29330', 900) }, { name: 'Thomas Goldberg', role: 'Einkauf & Winzerkontakte', bio: 'Sucht Weine, die Charakter haben und trotzdem trinkbar bleiben.', image: img('1500648767791-00dcc994a43e', 900) }, { name: 'Mira Hoffmann', role: 'Shop & Versand', bio: 'Sorgt dafür, dass Flaschen heil, schnell und gut beschrieben ankommen.', image: img('1438761681033-6461ffad8d80', 900) }] }),
+        section('team', { headline: 'Menschen hinter der Auswahl', members: [{ name: 'Katrin Goldberg', role: 'Beratung & Geschenkboxen', bio: 'Fragt zuerst nach Anlass und erst danach nach Traube.', image: img('1551836022-d5d88e9218df', 900) }, { name: 'Thomas Goldberg', role: 'Einkauf & Winzerkontakte', bio: 'Sucht Weine, die Charakter haben und trotzdem trinkbar bleiben.', image: img('1562788869-4ed32648eb72', 900) }, { name: 'Mira Hoffmann', role: 'Shop & Versand', bio: 'Sorgt dafür, dass Flaschen heil, schnell und gut beschrieben ankommen.', image: img('1573496799652-408c2ac9fe98', 900) }] }),
         section('principlesGrid', { badge: 'Haltung', headline: 'Was uns wichtig ist', subline: 'Gute Auswahl ist Arbeit vor dem Klick.', principles: [{ eyebrow: '01', title: 'Klein halten', text: 'Lieber 280 gute Flaschen als 2.800 austauschbare.' }, { eyebrow: '02', title: 'Ehrlich beschreiben', text: 'Kein Etikettenpoem, sondern Geschmack, Anlass und Essen.' }, { eyebrow: '03', title: 'Sicher versenden', text: 'Verpackung ist Teil des Produkts.' }, { eyebrow: '04', title: 'Beratung anbieten', text: 'Wenn der Shop nicht reicht, antworten Menschen.' }] }, creamTokens),
         section('immersiveCtaBanner', { badge: 'Shop besuchen', headline: 'Genug über uns. Es geht um Ihren Abend.', subline: 'Stöbern Sie durch die Kategorien oder fragen Sie direkt nach einer Empfehlung.', image: img('1528823872057-9c018a7a7553'), overlay: 'rgba(22,10,15,0.62)', primaryCta: { label: 'Weine entdecken', href: '/shop' } }),
       ],
@@ -719,6 +721,80 @@ const tenant = {
     }
   },
 };
+
+const PAGE_SEO = {
+  '': {
+    metaTitle: 'Vinothek Goldberg München - Wein online kaufen mit Beratung',
+    metaDescription: 'Kuratierter Weinshop aus München: Rotwein, Weißwein, Naturwein, Probierpakete und Geschenkboxen mit persönlicher Empfehlung.',
+  },
+  shop: {
+    metaTitle: 'Weinshop München - Vinothek Goldberg',
+    metaDescription: 'Rotwein, Weißwein, Rosé, Naturwein, Probierpakete und Geschenkboxen online kaufen.',
+  },
+  kategorien: {
+    metaTitle: 'Weinkategorien und Probierpakete | Vinothek Goldberg',
+    metaDescription: 'Weine nach Stil, Anlass und Geschmack entdecken: Rotwein, Weißwein, Naturwein, Probierpakete und Geschenkideen aus München.',
+  },
+  leistungen: {
+    metaTitle: 'Weinservice und Firmenpräsente | Vinothek Goldberg',
+    metaDescription: 'Geschenkservice, Firmenpräsente, Verkostungen und persönliche Auswahlhilfe der Vinothek Goldberg in München-Haidhausen.',
+  },
+  beratung: {
+    metaTitle: 'Persönliche Weinberatung in München | Vinothek Goldberg',
+    metaDescription: 'Weinberatung nach Geschmack, Menü und Budget: online, telefonisch oder persönlich in der Vinothek Goldberg in Haidhausen.',
+  },
+  'ueber-uns': {
+    metaTitle: 'Über die Vinothek Goldberg in München',
+    metaDescription: 'Lernen Sie Haltung, Auswahl und Menschen hinter der Vinothek Goldberg in München-Haidhausen kennen.',
+  },
+  versand: {
+    metaTitle: 'Weinversand, Lieferung und Abholung | Vinothek Goldberg',
+    metaDescription: 'Informationen zu Verpackung, Lieferzeit, Versandkosten und Abholung Ihrer Bestellung bei der Vinothek Goldberg in München.',
+  },
+  news: {
+    metaTitle: 'Weinjournal | Vinothek Goldberg',
+    metaDescription: 'Notizen und Empfehlungen zu Rebsorten, Speisenbegleitung, Winzerhandwerk und neuen Entdeckungen der Vinothek Goldberg.',
+  },
+  kontakt: {
+    metaTitle: 'Kontakt und Weinberatung | Vinothek Goldberg München',
+    metaDescription: 'Kontakt, Öffnungszeiten und persönliche Weinberatung der Vinothek Goldberg in der Preysingstraße in München-Haidhausen.',
+  },
+  warenkorb: {
+    metaTitle: 'Warenkorb | Vinothek Goldberg',
+    metaDescription: 'Prüfen Sie Ihre ausgewählten Weine, Probierpakete und Geschenkboxen vor dem sicheren Checkout.',
+    noindex: true,
+  },
+  checkout: {
+    metaTitle: 'Sicherer Checkout | Vinothek Goldberg',
+    metaDescription: 'Lieferadresse, Versandart und Zahlungsart für Ihre Bestellung bei der Vinothek Goldberg sicher vervollständigen.',
+    noindex: true,
+  },
+  danke: {
+    metaTitle: 'Bestellung bestätigt | Vinothek Goldberg',
+    metaDescription: 'Ihre Bestellung bei der Vinothek Goldberg wurde übermittelt. Hier finden Sie die nächsten Schritte zur Lieferung oder Abholung.',
+    noindex: true,
+  },
+  agb: {
+    metaTitle: 'Allgemeine Geschäftsbedingungen | Vinothek Goldberg',
+    metaDescription: 'Allgemeine Geschäftsbedingungen für Bestellungen und Leistungen der Vinothek Goldberg in München.',
+  },
+  widerruf: {
+    metaTitle: 'Widerrufsbelehrung | Vinothek Goldberg',
+    metaDescription: 'Informationen zu Widerrufsrecht, Fristen und Rücksendung für Bestellungen bei der Vinothek Goldberg.',
+  },
+  impressum: {
+    metaTitle: 'Impressum | Vinothek Goldberg',
+    metaDescription: 'Impressum und Anbieterinformationen der Vinothek Goldberg GmbH in München-Haidhausen.',
+  },
+  datenschutz: {
+    metaTitle: 'Datenschutz | Vinothek Goldberg',
+    metaDescription: 'Datenschutzhinweise der Vinothek Goldberg zu Bestellungen, Kontaktanfragen, Versand und Zahlungsdaten.',
+  },
+};
+
+for (const page of tenant.pages) {
+  page.seo = PAGE_SEO[page.slug];
+}
 
 module.exports = tenant;
 if (require.main === module) {

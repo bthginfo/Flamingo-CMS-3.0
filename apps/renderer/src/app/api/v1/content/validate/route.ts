@@ -1,6 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { pages, pageSections, collections, collectionItems, globalSettings } from '@flamingo/db';
+import {
+  pages,
+  pageSections,
+  collections,
+  collectionItems,
+  globalSettings,
+  navigation as navigationTable,
+  footer as footerTable,
+  seoGlobal as seoGlobalTable,
+  seoPage as seoPageTable,
+  tenantAddons,
+  tenants,
+} from '@flamingo/db';
 import { eq, and, inArray, asc } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 import {
@@ -9,6 +21,12 @@ import {
   validateSectionStyleOverrides,
   type ColorIssue,
 } from '@/lib/color-validation';
+import { validateContentQuality, type ContentQualityIssue, type ContentQualityInput } from '@/lib/content-quality';
+import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
+import { getSectionSchemas } from '@/lib/section-data-schemas';
+import { evaluateSitePagePolicy } from '@/lib/site-page-policy';
+import type { PatAuthResult } from '@/lib/pat-auth';
+import { getWritableSession } from '@/lib/session';
 
 /**
  * GET /api/v1/content/validate
@@ -22,15 +40,22 @@ import {
  * critical warning. This is the feedback loop that prevents shipping
  * unreadable / broken pages.
  */
-export const GET = withApiHandler(async (_req, auth) => {
+async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
   const db = getDb();
 
-  const contentIssues: Array<{ severity: 'error' | 'warning'; message: string; location?: string; hint?: string }> = [];
+  const contentIssues: Array<{
+    severity: 'error' | 'warning';
+    message: string;
+    location?: string;
+    hint?: string;
+    code?: string;
+    repair?: ContentQualityIssue['repair'];
+  }> = [];
   const colorIssues: ColorIssue[] = [];
 
   // ── Brand + design audit ──────────────────────────────────────────────
   const [settings] = await db
-    .select({ brand: globalSettings.brand, design: globalSettings.design })
+    .select({ brand: globalSettings.brand, contact: globalSettings.contact, design: globalSettings.design })
     .from(globalSettings)
     .where(eq(globalSettings.tenantId, auth.tenantId));
 
@@ -55,23 +80,43 @@ export const GET = withApiHandler(async (_req, auth) => {
     contentIssues.push({ severity: 'error', message: 'No pages created yet.', location: 'pages' });
   }
 
-  const requiredSlugs = ['startseite', 'leistungen', 'ueber-uns', 'kontakt', 'impressum', 'datenschutz'];
-  const existingSlugs = new Set(allPages.map((p) => p.slug));
-  for (const slug of requiredSlugs) {
-    if (!existingSlugs.has(slug)) {
-      contentIssues.push({
-        severity: 'warning',
-        message: `Required page "${slug}" missing.`,
-        location: `pages[${slug}]`,
-        hint: `POST /api/v1/content/pages with { slug: "${slug}", title: "...", sections: [...] }`,
-      });
-    }
+  const pagePolicy = evaluateSitePagePolicy(allPages.map(page => page.slug), {
+    industry: auth.tenant.industry,
+    capabilities: auth.addons,
+  });
+  for (const entry of pagePolicy.missingRequired) {
+    contentIssues.push({
+      code: 'site.required_page_missing',
+      severity: 'warning',
+      message: `Required core page "${entry.slug}" missing.`,
+      location: `pages[${entry.slug}]`,
+      hint: `Create "${entry.label}" with slug "${entry.slug}". ${entry.reason}`,
+    });
+  }
+  for (const entry of pagePolicy.missingRecommended) {
+    contentIssues.push({
+      code: 'site.recommended_page_missing',
+      severity: 'warning',
+      message: `Recommended ${auth.tenant.industry} page "${entry.slug}" missing.`,
+      location: `pages[${entry.slug}]`,
+      hint: `Consider "${entry.label}" using one of: ${entry.acceptedSlugs.join(', ')}. ${entry.reason}`,
+    });
   }
 
   const allSections = allPages.length > 0
     ? await db.select({ pageId: pageSections.pageId, type: pageSections.type, data: pageSections.data, styleOverrides: pageSections.styleOverrides })
       .from(pageSections).where(inArray(pageSections.pageId, allPages.map(p => p.id))).orderBy(asc(pageSections.sortOrder))
     : [];
+  const [seoGlobalRows, seoPageRows, navigationRows, footerRows] = await Promise.all([
+    db.select().from(seoGlobalTable).where(eq(seoGlobalTable.tenantId, auth.tenantId)).limit(1),
+    db.select({ pageId: seoPageTable.pageId, metaTitle: seoPageTable.metaTitle, metaDescription: seoPageTable.metaDescription, ogImage: seoPageTable.ogImage })
+      .from(seoPageTable).where(eq(seoPageTable.tenantId, auth.tenantId)),
+    db.select({ items: navigationTable.items, cta: navigationTable.cta })
+      .from(navigationTable).where(eq(navigationTable.tenantId, auth.tenantId)).limit(1),
+    db.select({ columns: footerTable.columns, legalLinks: footerTable.legalLinks, cta: footerTable.cta })
+      .from(footerTable).where(eq(footerTable.tenantId, auth.tenantId)).limit(1),
+  ]);
+  const seoByPage = new Map(seoPageRows.map(row => [row.pageId, row]));
   const sectionsByPage = new Map<string, typeof allSections>();
   for (const s of allSections) { const arr = sectionsByPage.get(s.pageId) || []; arr.push(s); sectionsByPage.set(s.pageId, arr); }
 
@@ -250,16 +295,186 @@ export const GET = withApiHandler(async (_req, auth) => {
     }
   }
 
+  // ── Deterministic content quality audit ─────────────────────────────
+  // This is intentionally additive: legacy clients still receive the same
+  // contentIssues array, while newer agents can use stable codes + repair
+  // instructions to patch one exact location instead of regenerating pages.
+  const qualityResult = validateContentQuality({
+    mode: 'stored',
+    brand: (settings?.brand || {}) as Record<string, unknown>,
+    contact: (settings?.contact || {}) as Record<string, unknown>,
+    seoGlobal: (seoGlobalRows[0] || {}) as Record<string, unknown>,
+    navigation: navigationRows[0] || {},
+    footer: footerRows[0] || {},
+    pages: allPages.map(page => ({
+      id: page.id,
+      slug: page.slug,
+      title: page.title,
+      seo: {
+        metaTitle: seoByPage.get(page.id)?.metaTitle || undefined,
+        metaDescription: seoByPage.get(page.id)?.metaDescription || undefined,
+        ogImage: seoByPage.get(page.id)?.ogImage || undefined,
+      },
+      sections: (sectionsByPage.get(page.id) || []).map(section => ({
+        type: section.type,
+        data: (section.data || {}) as Record<string, unknown>,
+        styleOverrides: (section.styleOverrides || undefined) as Record<string, unknown> | undefined,
+      })),
+    })),
+    collections: allCollections.map(col => ({
+      key: col.key,
+      items: (itemsByCollection.get(col.id) || []).map(item => ({
+        slug: item.slug,
+        title: item.title,
+        data: (item.data || {}) as Record<string, unknown>,
+      })),
+    })),
+    sectionSchemas: getSectionSchemas(auth.tenant.industry),
+  });
+  const existingIssueKeys = new Set(contentIssues.map(entry => `${entry.location || ''}:${entry.message}`));
+  for (const qualityIssue of qualityResult.issues) {
+    const key = `${qualityIssue.location}:${qualityIssue.message}`;
+    if (existingIssueKeys.has(key)) continue;
+    existingIssueKeys.add(key);
+    contentIssues.push(qualityIssue);
+  }
+
   const summary = {
     contentErrors:   contentIssues.filter((i) => i.severity === 'error').length,
     contentWarnings: contentIssues.filter((i) => i.severity === 'warning').length,
     colorErrors:     colorIssues.filter((i) => i.severity === 'error').length,
     colorWarnings:   colorIssues.filter((i) => i.severity === 'warning').length,
+    qualityWarnings: qualityResult.summary.warnings,
     pages:           allPages.length,
     collections:     allCollections.length,
     collectionItems: allItems.length,
   };
-  const readyToPublish = summary.contentErrors === 0 && summary.colorErrors === 0;
+  const readyToPublish = summary.contentErrors === 0
+    && summary.colorErrors === 0
+    && summary.qualityWarnings === 0;
 
-  return NextResponse.json({ readyToPublish, summary, contentIssues, colorIssues });
+  return NextResponse.json({
+    readyToPublish,
+    summary,
+    contentIssues,
+    colorIssues,
+    quality: {
+      summary: qualityResult.summary,
+      issueCodes: Array.from(new Set(qualityResult.issues.map(entry => entry.code))).sort(),
+    },
+  });
+}
+
+const runPatStoredContentAudit = withApiHandler(runStoredContentAudit);
+
+/**
+ * The stored-content audit is shared by PAT clients and the authenticated
+ * admin publish action. An Authorization header always wins, preventing a
+ * browser session from shadowing a PAT that belongs to another tenant.
+ */
+export async function GET(req: NextRequest) {
+  if (req.headers.has('authorization')) return runPatStoredContentAudit(req);
+
+  const session = await getWritableSession();
+  if (!session) return runPatStoredContentAudit(req);
+
+  const db = getDb();
+  const [tenantRows, addonRows] = await Promise.all([
+    db.select({
+      name: tenants.name,
+      industry: tenants.industry,
+      slug: tenants.slug,
+      activeStyle: tenants.activeStyle,
+      i18nEnabled: tenants.i18nEnabled,
+      i18nLocales: tenants.i18nLocales,
+      i18nDefaultLocale: tenants.i18nDefaultLocale,
+    }).from(tenants).where(and(eq(tenants.id, session.tenantId), eq(tenants.status, 'active'))).limit(1),
+    db.select({ key: tenantAddons.addonKey })
+      .from(tenantAddons)
+      .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.active, true))),
+  ]);
+  const tenant = tenantRows[0];
+  if (!tenant) {
+    return NextResponse.json({
+      success: false,
+      code: 'TENANT_NOT_FOUND',
+      error: 'The active tenant could not be found.',
+      retryable: false,
+    }, { status: 404 });
+  }
+
+  return runStoredContentAudit(req, {
+    tenantId: session.tenantId,
+    tokenId: 'admin-session',
+    addons: addonRows.map(addon => addon.key),
+    tenant,
+  });
+}
+
+/**
+ * POST /api/v1/content/validate
+ *
+ * Read-only preflight for weak models. It validates siteProfile + the complete
+ * page plan before any tenant row is written. Invalid plans still return 200:
+ * the response is a repair queue, not a transport failure to retry unchanged.
+ */
+export const POST = withApiHandler(async (req, auth) => {
+  const rawBody = await req.json();
+  if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
+    return NextResponse.json({
+      success: false,
+      code: 'INVALID_VALIDATION_BODY',
+      error: 'Request body must be a JSON object.',
+      hint: 'Send { mode: "profile"|"plan", siteProfile, pages?, collections? }.',
+      retryable: false,
+    }, { status: 400 });
+  }
+  const body = rawBody as Partial<ContentQualityInput> & { mode?: string };
+  if (body.mode !== 'profile' && body.mode !== 'plan') {
+    return NextResponse.json({
+      success: false,
+      code: 'INVALID_VALIDATION_MODE',
+      error: 'POST /content/validate supports mode="profile" or mode="plan".',
+      hint: 'Validate verified identity first with mode="profile", then send the complete siteProfile + pages with mode="plan".',
+      retryable: false,
+    }, { status: 400 });
+  }
+
+  const activeAddons = new Set(auth.addons);
+  const allowedSectionTypes = getSectionTypesForIndustry(auth.tenant.industry, {
+    hasShop: activeAddons.has('shop'),
+    hasBooking: activeAddons.has('booking'),
+  })
+    .filter(entry => !entry.requiresAddon
+      || (entry.requiresAddon === 'shop' && activeAddons.has('shop'))
+      || (entry.requiresAddon === 'booking' && activeAddons.has('booking')))
+    .map(entry => entry.type)
+    .filter((type): type is string => Boolean(type) && !['freeHtml', 'htmlBlock', 'html'].includes(type));
+
+  const result = validateContentQuality({
+    mode: body.mode,
+    siteProfile: body.siteProfile || null,
+    brand: body.brand || {},
+    contact: body.contact || {},
+    seoGlobal: body.seoGlobal || {},
+    navigation: body.navigation || {},
+    footer: body.footer || {},
+    pages: Array.isArray(body.pages) ? body.pages : [],
+    collections: Array.isArray(body.collections) ? body.collections : [],
+    allowedSectionTypes,
+    sectionSchemas: getSectionSchemas(auth.tenant.industry),
+  });
+
+  return NextResponse.json({
+    success: true,
+    mode: body.mode,
+    valid: result.valid,
+    readyToWrite: result.valid,
+    summary: result.summary,
+    issues: result.issues,
+    repairQueue: result.issues
+      .slice()
+      .sort((a, b) => Number(b.severity === 'error') - Number(a.severity === 'error'))
+      .map(entry => ({ code: entry.code, severity: entry.severity, location: entry.location, repair: entry.repair })),
+  });
 });

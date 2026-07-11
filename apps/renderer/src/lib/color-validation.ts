@@ -1,3 +1,12 @@
+import {
+  compositeColors,
+  getContrastRatio,
+  parseCssColor,
+  relativeColorLuminance,
+  type RgbaColor,
+} from './color-engine';
+import { COLOR_FIELD_BY_CSS_VAR, FIELD_DEFS } from './section-color-fields';
+
 /**
  * Color validation + WCAG contrast utilities for the AI-facing API.
  *
@@ -35,92 +44,47 @@ const HEX3 = /^#[0-9a-f]{3}$/i;
 const HEX6 = /^#[0-9a-f]{6}$/i;
 const HEX8 = /^#[0-9a-f]{8}$/i;
 const RGB  = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i;
-const RGBA = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([01]?(?:\.\d+)?)\s*\)$/i;
+const RGBA = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*\)$/i;
 
 /** True if the string is a syntactically valid CSS color the API accepts. */
 export function isValidColorString(value: unknown): value is string {
   if (typeof value !== 'string') return false;
   const v = value.trim();
   if (!v) return false;
-  return HEX3.test(v) || HEX6.test(v) || HEX8.test(v) || RGB.test(v) || RGBA.test(v);
+  const supportedSyntax = v.toLowerCase() === 'transparent'
+    || HEX3.test(v) || HEX6.test(v) || HEX8.test(v) || RGB.test(v) || RGBA.test(v);
+  return supportedSyntax && parseCssColor(v) !== null;
 }
 
-interface Rgba { r: number; g: number; b: number; a: number; }
+type Rgba = RgbaColor;
 
 /** Parse any supported color string into RGBA components (0–255, alpha 0–1). */
 export function parseColor(value: string): Rgba | null {
-  const v = value.trim();
-  if (HEX3.test(v)) {
-    const r = parseInt(v[1] + v[1], 16);
-    const g = parseInt(v[2] + v[2], 16);
-    const b = parseInt(v[3] + v[3], 16);
-    return { r, g, b, a: 1 };
-  }
-  if (HEX6.test(v)) {
-    return { r: parseInt(v.slice(1,3),16), g: parseInt(v.slice(3,5),16), b: parseInt(v.slice(5,7),16), a: 1 };
-  }
-  if (HEX8.test(v)) {
-    return {
-      r: parseInt(v.slice(1,3),16), g: parseInt(v.slice(3,5),16), b: parseInt(v.slice(5,7),16),
-      a: parseInt(v.slice(7,9),16) / 255,
-    };
-  }
-  const rgb = v.match(RGB);
-  if (rgb) return { r: +rgb[1], g: +rgb[2], b: +rgb[3], a: 1 };
-  const rgba = v.match(RGBA);
-  if (rgba) return { r: +rgba[1], g: +rgba[2], b: +rgba[3], a: +rgba[4] };
-  return null;
+  return isValidColorString(value) ? parseCssColor(value) : null;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // WCAG contrast (per WCAG 2.1)
 // ────────────────────────────────────────────────────────────────────────────
 
-function linearChannel(c: number): number {
-  const s = c / 255;
-  return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-}
-
 /** Relative luminance per WCAG 2.1 (0 = black, 1 = white). */
 export function relativeLuminance(color: Rgba): number {
-  return 0.2126 * linearChannel(color.r) + 0.7152 * linearChannel(color.g) + 0.0722 * linearChannel(color.b);
+  return relativeColorLuminance(color);
 }
 
 /**
- * Composite a foreground over an opaque background, returning the resulting
- * opaque color. Translucent colors are flattened against `bgFallback`.
+ * WCAG contrast ratio between fg and bg after both are composited over canvas.
  */
-function composite(over: Rgba, under: Rgba): Rgba {
-  if (over.a >= 0.999) return over;
-  const a = over.a;
-  return {
-    r: Math.round(over.r * a + under.r * (1 - a)),
-    g: Math.round(over.g * a + under.g * (1 - a)),
-    b: Math.round(over.b * a + under.b * (1 - a)),
-    a: 1,
-  };
-}
-
-/**
- * WCAG contrast ratio between fg and bg. Translucent fg is flattened over bg
- * first so the ratio reflects what the user actually sees.
- */
-export function contrastRatio(fg: string, bg: string): number | null {
-  const f = parseColor(fg); const b = parseColor(bg);
-  if (!f || !b) return null;
-  const flat = composite(f, b);
-  const Lf = relativeLuminance(flat);
-  const Lb = relativeLuminance(b);
-  const lighter = Math.max(Lf, Lb);
-  const darker = Math.min(Lf, Lb);
-  return (lighter + 0.05) / (darker + 0.05);
+export function contrastRatio(fg: string, bg: string, canvas = '#ffffff'): number | null {
+  if (!isValidColorString(fg) || !isValidColorString(bg) || !isValidColorString(canvas)) return null;
+  return getContrastRatio(fg, bg, canvas);
 }
 
 /** True if luminance < 0.5 → background is "dark" and needs on-dark text. */
 export function isDarkColor(value: string): boolean {
   const c = parseColor(value);
   if (!c) return false;
-  return relativeLuminance(composite(c, { r: 255, g: 255, b: 255, a: 1 })) < 0.5;
+  return relativeLuminance(compositeColors(c, { r: 255, g: 255, b: 255, a: 1 })) < 0.5;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -141,7 +105,7 @@ export function validateColorField(location: string, value: unknown): ColorIssue
       severity: 'error',
       code: 'INVALID_COLOR_FORMAT',
       message: `${location}: not a valid color — got ${JSON.stringify(value)}`,
-      hint: 'Use hex (#rrggbb or #rrggbbaa), rgb(r,g,b) or rgba(r,g,b,a). Examples: "#1a5276", "#ffffffcc", "rgba(0,0,0,0.6)".',
+      hint: 'Use transparent, hex (#rrggbb or #rrggbbaa), rgb(r,g,b) or rgba(r,g,b,a). RGB channels must be 0-255 and alpha 0-1.',
       location,
     };
   }
@@ -156,11 +120,11 @@ export function validateContrastPair(
   location: string,
   fg: string | undefined,
   bg: string | undefined,
-  opts: { large?: boolean; severity?: ColorIssueSeverity } = {},
+  opts: { large?: boolean; severity?: ColorIssueSeverity; canvas?: string } = {},
 ): ColorIssue | null {
   if (!fg || !bg || !isValidColorString(fg) || !isValidColorString(bg)) return null;
   const required = opts.large ? WCAG_AA_LARGE : WCAG_AA_NORMAL;
-  const ratio = contrastRatio(fg, bg);
+  const ratio = contrastRatio(fg, bg, opts.canvas || '#ffffff');
   if (ratio === null || ratio >= required) return null;
   return {
     severity: opts.severity ?? 'warning',
@@ -178,9 +142,15 @@ export function validateContrastPair(
 
 const BRAND_COLOR_FIELDS = [
   'primaryColor', 'secondaryColor', 'accentColor',
-  'topBarColor', 'footerColor',
-  'headingColor', 'bodyTextColor', 'mutedTextColor', 'linkColor',
-  'btnPrimaryBg', 'btnPrimaryText', 'btnSecondaryBg', 'btnSecondaryText',
+  'pageBg', 'sectionBg', 'sectionBgAlt', 'cardBg',
+  'topBarColor', 'footerColor', 'footerLinkColor', 'footerTextColor',
+  'navLinkColor', 'navBgColor', 'navBrandColor', 'navLogoColor',
+  'headingColor', 'bodyTextColor', 'mutedTextColor', 'linkColor', 'linkHoverColor',
+  'btnPrimaryBg', 'btnPrimaryText',
+  'btnSecondaryBg', 'btnSecondaryText', 'btnSecondaryBorder',
+  'btnOutlineBg', 'btnOutlineText', 'btnOutlineBorder',
+  'badgeBg', 'badgeText', 'badgeBorder',
+  'cardBorder', 'borderColor', 'dividerColor', 'iconColor',
 ] as const;
 
 export function validateBrandPayload(brand: Record<string, unknown>): ColorIssue[] {
@@ -192,15 +162,30 @@ export function validateBrandPayload(brand: Record<string, unknown>): ColorIssue
       if (err) issues.push(err);
     }
   }
-  // Cross-field contrast checks for known pairs
-  const pairs: Array<[string, string]> = [
-    ['btnPrimaryText', 'btnPrimaryBg'],
-    ['btnSecondaryText', 'btnSecondaryBg'],
+  // Cross-field contrast checks use the actual canvas for translucent surfaces.
+  const pageCanvas = typeof brand.pageBg === 'string' ? brand.pageBg : '#ffffff';
+  const sectionCanvas = typeof brand.sectionBg === 'string' ? brand.sectionBg : pageCanvas;
+  const pairs: Array<[string, string, string]> = [
+    ['headingColor', 'sectionBg', pageCanvas],
+    ['bodyTextColor', 'sectionBg', pageCanvas],
+    ['mutedTextColor', 'sectionBg', pageCanvas],
+    ['headingColor', 'cardBg', sectionCanvas],
+    ['bodyTextColor', 'cardBg', sectionCanvas],
+    ['linkColor', 'pageBg', '#ffffff'],
+    ['footerTextColor', 'footerColor', pageCanvas],
+    ['footerLinkColor', 'footerColor', pageCanvas],
+    ['navLinkColor', 'navBgColor', pageCanvas],
+    ['navBrandColor', 'navBgColor', pageCanvas],
+    ['navLogoColor', 'navBgColor', pageCanvas],
+    ['btnPrimaryText', 'btnPrimaryBg', sectionCanvas],
+    ['btnSecondaryText', 'btnSecondaryBg', sectionCanvas],
+    ['btnOutlineText', 'btnOutlineBg', sectionCanvas],
+    ['badgeText', 'badgeBg', sectionCanvas],
   ];
-  for (const [fgKey, bgKey] of pairs) {
+  for (const [fgKey, bgKey, canvas] of pairs) {
     const fg = brand[fgKey]; const bg = brand[bgKey];
     if (typeof fg === 'string' && typeof bg === 'string') {
-      const issue = validateContrastPair(`brand.${fgKey}↔brand.${bgKey}`, fg, bg);
+      const issue = validateContrastPair(`brand.${fgKey}↔brand.${bgKey}`, fg, bg, { canvas });
       if (issue) issues.push(issue);
     }
   }
@@ -256,14 +241,16 @@ export function validateDesignPayload(design: Record<string, unknown>): ColorIss
   const badgeBg   = typeof design.badgeBg   === 'string' ? design.badgeBg   : undefined;
   const badgeText = typeof design.badgeText === 'string' ? design.badgeText : undefined;
 
-  const pairs: Array<[string, string | undefined, string | undefined, { large?: boolean }]> = [
-    ['design.heading on design.sectionBg',   heading, sectionBg, { large: true  }],
-    ['design.body on design.sectionBg',      body,    sectionBg, { large: false }],
-    ['design.muted on design.sectionBg',     muted,   sectionBg, { large: false }],
-    ['design.heading on design.cardBg',      heading, cardBg,    { large: true  }],
-    ['design.body on design.cardBg',         body,    cardBg,    { large: false }],
-    ['design.btnText on design.btnBg',       btnText, btnBg,     { large: false }],
-    ['design.badgeText on design.badgeBg',   badgeText, badgeBg, { large: false }],
+  const sectionCanvas = '#ffffff';
+  const cardCanvas = sectionBg || sectionCanvas;
+  const pairs: Array<[string, string | undefined, string | undefined, { large?: boolean; canvas?: string }]> = [
+    ['design.heading on design.sectionBg',   heading, sectionBg, { large: true, canvas: sectionCanvas }],
+    ['design.body on design.sectionBg',      body,    sectionBg, { large: false, canvas: sectionCanvas }],
+    ['design.muted on design.sectionBg',     muted,   sectionBg, { large: false, canvas: sectionCanvas }],
+    ['design.heading on design.cardBg',      heading, cardBg,    { large: true, canvas: cardCanvas }],
+    ['design.body on design.cardBg',         body,    cardBg,    { large: false, canvas: cardCanvas }],
+    ['design.btnText on design.btnBg',       btnText, btnBg,     { large: false, canvas: cardCanvas }],
+    ['design.badgeText on design.badgeBg',   badgeText, badgeBg, { large: false, canvas: cardCanvas }],
   ];
   for (const [loc, fg, bg, opts] of pairs) {
     const issue = validateContrastPair(loc, fg, bg, opts);
@@ -312,6 +299,8 @@ export function validateSectionStyleOverrides(
   const issues: ColorIssue[] = [];
   for (const [key, value] of Object.entries(overrides)) {
     if (typeof value !== 'string') continue;
+    const field = COLOR_FIELD_BY_CSS_VAR[key];
+    if (field && FIELD_DEFS[field].type === 'size') continue;
     if (!isValidColorString(value)) {
       // Skip non-color tokens (sizes, radii, weights) — they don't go through here in practice
       if (key.includes('radius') || key.includes('weight') || key.includes('tracking') || key.includes('shadow')) continue;
@@ -329,15 +318,22 @@ export function validateSectionStyleOverrides(
   const cardBg    = pickFirst(overrides, ['--token-card-bg', '--style-card-bg']);
   const heading   = pickFirst(overrides, ['--token-heading', '--style-heading-color']);
   const body      = pickFirst(overrides, ['--token-body', '--style-body-color']);
+  const cardHeading = pickFirst(overrides, ['--token-card-heading']) || heading;
+  const cardBody = pickFirst(overrides, ['--token-card-body']) || body;
   const btnBg     = pickFirst(overrides, ['--token-btn-bg', '--style-button-bg', '--brand-btn-bg']);
   const btnText   = pickFirst(overrides, ['--token-btn-text', '--style-button-text', '--brand-btn-text']);
+  const badgeBg   = pickFirst(overrides, ['--token-badge-bg']);
+  const badgeText = pickFirst(overrides, ['--token-badge-text']);
 
-  const pairs: Array<[string, string | undefined, string | undefined, { large?: boolean }]> = [
-    [`sections[${sectionIdx}].heading on .sectionBg`, heading, sectionBg, { large: true }],
-    [`sections[${sectionIdx}].body on .sectionBg`,    body,    sectionBg, { large: false }],
-    [`sections[${sectionIdx}].heading on .cardBg`,    heading, cardBg,    { large: true }],
-    [`sections[${sectionIdx}].body on .cardBg`,       body,    cardBg,    { large: false }],
-    [`sections[${sectionIdx}].btnText on .btnBg`,     btnText, btnBg,     { large: false }],
+  const sectionCanvas = '#ffffff';
+  const cardCanvas = sectionBg || sectionCanvas;
+  const pairs: Array<[string, string | undefined, string | undefined, { large?: boolean; canvas?: string }]> = [
+    [`sections[${sectionIdx}].heading on .sectionBg`, heading, sectionBg, { large: true, canvas: sectionCanvas }],
+    [`sections[${sectionIdx}].body on .sectionBg`,    body,    sectionBg, { large: false, canvas: sectionCanvas }],
+    [`sections[${sectionIdx}].cardHeading on .cardBg`, cardHeading, cardBg, { large: true, canvas: cardCanvas }],
+    [`sections[${sectionIdx}].cardBody on .cardBg`, cardBody, cardBg, { large: false, canvas: cardCanvas }],
+    [`sections[${sectionIdx}].btnText on .btnBg`, btnText, btnBg, { large: false, canvas: cardCanvas }],
+    [`sections[${sectionIdx}].badgeText on .badgeBg`, badgeText, badgeBg, { large: false, canvas: cardCanvas }],
   ];
   for (const [loc, fg, bg, opts] of pairs) {
     const issue = validateContrastPair(loc, fg, bg, opts);
