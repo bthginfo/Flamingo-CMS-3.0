@@ -127,6 +127,13 @@
       "when": 1783814400000,
       "tag": "0017_marketing_security",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1783900800000,
+      "tag": "0018_public_flow_security",
+      "breakpoints": true
     }
   ]
 }
