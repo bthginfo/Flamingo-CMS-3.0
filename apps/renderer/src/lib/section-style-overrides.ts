@@ -78,9 +78,9 @@ export function isSafeStyleOverrideValue(field: ColorFieldKey, value: string): b
   }
 }
 
-function allowedStyleOverrideKeysForSection(sectionType: string, industry?: string): Set<string> {
+function allowedStyleOverrideKeysForSection(sectionType: string, industry?: string, definitionKey?: string | null): Set<string> {
   const allowed = new Set<string>();
-  const allowedFields = new Set(getFieldsForSection(sectionType, industry).map(canonicalColorField));
+  const allowedFields = new Set(getFieldsForSection(sectionType, industry, definitionKey).map(canonicalColorField));
   for (const [key, field] of Object.entries(STYLE_OVERRIDE_KEY_TO_FIELD)) {
     if (allowedFields.has(field)) allowed.add(key);
   }
@@ -112,6 +112,7 @@ function normalizeStyleOverridesInternal(
   location: string,
   sectionType?: string,
   industry?: string,
+  definitionKey?: string | null,
 ): StyleOverrideNormalizationResult {
   const issues: StyleOverrideNormalizationIssue[] = [];
   if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) {
@@ -119,7 +120,7 @@ function normalizeStyleOverridesInternal(
   }
 
   const allowedFields = sectionType
-    ? new Set(getFieldsForSection(sectionType, industry).map(canonicalColorField))
+    ? new Set(getFieldsForSection(sectionType, industry, definitionKey).map(canonicalColorField))
     : null;
   const normalized: Record<string, string> = {};
 
@@ -194,16 +195,18 @@ export function normalizeStyleOverridesForSectionWithIssues(
   styleOverrides: unknown,
   industry?: string,
   location = 'styleOverrides',
+  definitionKey?: string | null,
 ): StyleOverrideNormalizationResult {
-  return normalizeStyleOverridesInternal(styleOverrides, location, sectionType, industry);
+  return normalizeStyleOverridesInternal(styleOverrides, location, sectionType, industry, definitionKey);
 }
 
 export function normalizeStyleOverridesForSection(
   sectionType: string,
   styleOverrides: unknown,
   industry?: string,
+  definitionKey?: string | null,
 ): Record<string, string> | null {
-  return normalizeStyleOverridesForSectionWithIssues(sectionType, styleOverrides, industry).styleOverrides;
+  return normalizeStyleOverridesForSectionWithIssues(sectionType, styleOverrides, industry, 'styleOverrides', definitionKey).styleOverrides;
 }
 
 export function validateStyleOverridesForApi(
@@ -211,17 +214,18 @@ export function validateStyleOverridesForApi(
   location = 'styleOverrides',
   sectionType?: string,
   industry?: string,
+  definitionKey?: string | null,
 ): string | null {
   if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
   const { issues } = sectionType
-    ? normalizeStyleOverridesForSectionWithIssues(sectionType, styleOverrides, industry, location)
+    ? normalizeStyleOverridesForSectionWithIssues(sectionType, styleOverrides, industry, location, definitionKey)
     : normalizeStyleOverridesWithIssues(styleOverrides, location);
   if (!issues.length) return null;
 
   const first = issues[0];
   if (first.reason === 'section_key_not_allowed' && sectionType) {
-    const allowed = getFieldsForSection(sectionType, industry);
-    const allowedKeys = allowedStyleOverrideKeysForSection(sectionType, industry);
+    const allowed = getFieldsForSection(sectionType, industry, definitionKey);
+    const allowedKeys = allowedStyleOverrideKeysForSection(sectionType, industry, definitionKey);
     const suggestion = closestMatch(first.key, [...allowedKeys, ...allowed]);
     return `${first.message}. Allowed color fields for this section: ${allowed.join(', ')}.${suggestion ? ` Did you mean "${suggestion}"?` : ''}`;
   }

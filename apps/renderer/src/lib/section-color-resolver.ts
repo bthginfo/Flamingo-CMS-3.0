@@ -4,8 +4,9 @@ import {
   SECTION_COLOR_CONTRACTS_ANY,
 } from './section-color-contracts-generated';
 import { FIELD_DEFS, sortColorFields, type ColorFieldKey } from './section-color-fields';
+import { parseSectionDefinitionKey } from './section-definition-registry';
 
-type SectionColorContractSource = 'industry' | 'generic' | 'any' | 'none';
+type SectionColorContractSource = 'definition' | 'industry' | 'generic' | 'any' | 'none';
 
 // Industry-string aliases. MUST stay consistent with how the renderer's
 // getIndustryTemplates() resolves the same string, otherwise the editor and the
@@ -37,7 +38,14 @@ function industryContractKey(sectionType: string, industry?: string) {
 export function resolveColorContractForSection(
   sectionType: string,
   industry?: string,
+  definitionKey?: string | null,
 ): { fields: ColorFieldKey[]; source: SectionColorContractSource } {
+  const definition = definitionKey ? parseSectionDefinitionKey(definitionKey) : null;
+  const definitionFields = definition?.type === sectionType
+    ? definition.owner === 'shared'
+      ? SECTION_COLOR_CONTRACTS_GENERIC[sectionType]
+      : SECTION_COLOR_CONTRACTS_GENERATED[industryContractKey(sectionType, definition.owner) || '']
+    : undefined;
   const industryKey = industryContractKey(sectionType, industry);
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
@@ -51,7 +59,10 @@ export function resolveColorContractForSection(
 
   let source: SectionColorContractSource;
   let fields: ColorFieldKey[] | null;
-  if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
+  if (Array.isArray(definitionFields) && definitionFields.length > 0) {
+    source = 'definition';
+    fields = definitionFields;
+  } else if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
     source = 'industry';
     fields = industrySpecific;
   } else if (Array.isArray(generic) && generic.length > 0) {
@@ -78,6 +89,6 @@ export function resolveColorContractForSection(
   };
 }
 
-export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
-  return resolveColorContractForSection(sectionType, industry).fields;
+export function getFieldsForSection(sectionType: string, industry?: string, definitionKey?: string | null): ColorFieldKey[] {
+  return resolveColorContractForSection(sectionType, industry, definitionKey).fields;
 }

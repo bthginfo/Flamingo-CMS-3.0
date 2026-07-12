@@ -67,6 +67,16 @@ test('known legacy aliases remain renderable but are rewritten to canonical toke
   });
 });
 
+test('explicit renderer definitions keep their own color roles through normalization', () => {
+  const overrides = { '--token-image-overlay': 'rgba(15, 23, 42, 0.72)' };
+
+  assert.equal(normalizeStyleOverridesForSection('hero', overrides, 'salon'), null);
+  assert.deepEqual(
+    normalizeStyleOverridesForSection('hero', overrides, 'salon', 'hero.consulting.v1'),
+    overrides,
+  );
+});
+
 test('style-element and selector escaping cannot emit a style-tag breakout', () => {
   const selectorValue = escapeCssAttributeValue(`section"]${STYLE_BREAKOUT}`);
   const css = escapeStyleElementText(`[data-section-id="${selectorValue}"] { color: red; }${STYLE_BREAKOUT}`);

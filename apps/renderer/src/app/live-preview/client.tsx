@@ -299,9 +299,10 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
           id: s.id,
           type: s.type,
           industry,
+          definitionKey: s.definitionKey,
           styleOverrides: (s as { styleOverrides?: Record<string, string> }).styleOverrides || {},
           data: (s as { data?: Record<string, unknown> }).data || {},
-        } as unknown as { id: string; type: string; industry?: string; styleOverrides: Record<string, string> }))}
+        } as unknown as { id: string; type: string; industry?: string; definitionKey?: string | null; styleOverrides: Record<string, string> }))}
       />
     </div>
   );

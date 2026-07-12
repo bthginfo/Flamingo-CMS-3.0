@@ -1,42 +1,102 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { FIELD_DEFS, type ColorFieldKey } from './section-color-fields';
+import { FIELD_DEFS, PUBLIC_COLOR_FIELD_KEYS, type ColorFieldKey } from './section-color-fields';
 import {
   composeColorWithAlpha,
+  EDITOR_FIELD_GROUPS,
   evaluateContrastPairs,
+  getCtaStateCoverage,
+  getEditorFieldGroup,
   getContrastRatio,
   groupEditorFields,
   parseColorWithAlpha,
+  reconcileEditorColorRoles,
 } from './section-color-editor-utils';
 
-test('groupEditorFields shows only rendered or explicitly set roles by default', () => {
+test('groupEditorFields keeps every statically supported role without a preview', () => {
   const fields: ColorFieldKey[] = [
     'sectionBg',
     'headingColor',
     'bodyColor',
+    'btnBg',
+    'btnText',
     'accentColor',
     'glowColor',
+    'linkHoverColor',
     'cardRadius',
   ];
-  const groups = groupEditorFields(
-    fields,
-    new Set(['--token-heading', '--token-glow-color']),
-    { '--token-accent': '#ff0000' },
-  );
+  const groups = groupEditorFields(fields);
 
-  assert.deepEqual(groups.core, ['sectionBg', 'headingColor', 'accentColor']);
-  assert.deepEqual(groups.special, ['glowColor']);
-  assert.deepEqual(groups.design, []);
-  assert.deepEqual(groups.inactive, ['bodyColor', 'cardRadius']);
+  assert.deepEqual(groups.core, ['sectionBg', 'headingColor', 'bodyColor', 'accentColor']);
+  assert.deepEqual(groups.actions, ['btnBg', 'btnText']);
+  assert.deepEqual(groups.surfaces, ['glowColor']);
+  assert.deepEqual(groups.states, ['linkHoverColor']);
+  assert.deepEqual(groups.design, ['cardRadius']);
 });
 
-test('groupEditorFields caps the visible core group without losing live fields', () => {
-  const fields: ColorFieldKey[] = ['sectionBg', 'headingColor', 'bodyColor', 'accentColor'];
-  const used = new Set(fields.map((field) => FIELD_DEFS[field].cssVar));
-  const groups = groupEditorFields(fields, used, {}, 2);
+test('static and runtime role discovery merge without hiding unsupported preview states', () => {
+  const fields: ColorFieldKey[] = ['sectionBg', 'headingColor', 'btnBg', 'btnText'];
+  const roles = reconcileEditorColorRoles(
+    fields,
+    new Set(['--token-section-bg', '--token-heading']),
+    { '--token-btn-bg': '#0055ff' },
+  );
 
-  assert.deepEqual(groups.core, ['sectionBg', 'headingColor']);
-  assert.deepEqual(groups.coreOverflow, ['bodyColor', 'accentColor']);
+  assert.deepEqual(roles.map((role) => role.field), fields);
+  assert.equal(roles.find((role) => role.field === 'headingColor')?.visibleInPreview, true);
+  assert.equal(roles.find((role) => role.field === 'btnBg')?.visibleInPreview, false);
+  assert.equal(roles.find((role) => role.field === 'btnBg')?.overridden, true);
+  assert.equal(roles.find((role) => role.field === 'btnText')?.available, true);
+});
+
+test('every customer-facing editor group has explicit, unique metadata', () => {
+  const grouped = Object.values(EDITOR_FIELD_GROUPS).flat();
+  assert.equal(new Set(grouped).size, grouped.length, 'a field must not appear in multiple groups');
+  assert.deepEqual(
+    new Set(grouped),
+    new Set(PUBLIC_COLOR_FIELD_KEYS),
+    'every public renderer field must be assigned to a customer-facing group',
+  );
+  for (const field of PUBLIC_COLOR_FIELD_KEYS) {
+    assert.ok(FIELD_DEFS[field], `${field} must have a field definition`);
+    assert.ok(getEditorFieldGroup(field), `${field} must have a customer-facing editor group`);
+  }
+});
+
+test('CTA state coverage marks every state as editable or deliberately derived', () => {
+  const coverage = getCtaStateCoverage([
+    'btnBg',
+    'btnText',
+    'btnSecondaryBg',
+    'btnSecondaryText',
+    'btnSecondaryBorder',
+  ]);
+
+  assert.deepEqual(
+    coverage.map((item) => item.id),
+    [
+      'primary-surface',
+      'primary-content',
+      'primary-border',
+      'primary-hover',
+      'primary-focus',
+      'secondary-surface',
+      'secondary-content',
+      'secondary-border',
+      'secondary-hover',
+      'secondary-focus',
+    ],
+  );
+  assert.equal(coverage.find((item) => item.id === 'secondary-border')?.mode, 'editable');
+  assert.equal(coverage.find((item) => item.id === 'primary-hover')?.mode, 'derived');
+  assert.match(coverage.find((item) => item.id === 'primary-hover')?.description || '', /automatisch/i);
+  assert.match(coverage.find((item) => item.id === 'primary-focus')?.description || '', /Akzentfarbe/i);
+});
+
+test('missing secondary CTA tokens are documented as derived instead of disappearing', () => {
+  const coverage = getCtaStateCoverage(['btnBg', 'btnText', 'btnSecondaryText']);
+  assert.equal(coverage.find((item) => item.id === 'secondary-surface')?.mode, 'derived');
+  assert.equal(coverage.find((item) => item.id === 'secondary-border')?.mode, 'derived');
 });
 
 test('color parsing and composition preserve a deliberate alpha value', () => {

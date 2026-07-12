@@ -177,7 +177,13 @@ export function validateSections(
     ) {
       return `sections[${i}].styleOverrides must be an object`;
     }
-    const styleErr = validateStyleOverridesForApi(s.styleOverrides, `sections[${i}].styleOverrides`, s.type, industry);
+    const styleErr = validateStyleOverridesForApi(
+      s.styleOverrides,
+      `sections[${i}].styleOverrides`,
+      s.type,
+      industry,
+      typeof s.definitionKey === 'string' ? s.definitionKey : null,
+    );
     if (styleErr) return styleErr;
     // Section-specific validation
     const data = s.data || {};

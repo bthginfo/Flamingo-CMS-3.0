@@ -273,7 +273,8 @@ function build() {
   // --token-btn-bg is set on it ([data-style][style*="--token-btn-bg"] rule),
   // so the control is functional for every section that renders a button —
   // even when the template never literally reads var(--token-btn-*). The
-  // editors' DOM scan hides the control for sections without any button.
+  // Runtime DOM scans only confirm whether the current content paints it; the
+  // generated static contract remains visible without an open preview.
   const UNIVERSAL_FIELDS = ['headingColor', 'bodyColor', 'mutedColor', 'cardHeadingColor', 'cardBodyColor', 'cardMutedColor', 'btnBg', 'btnText']
     .filter((f) => fieldOrder.includes(f));
   const addUniversal = (set) => { for (const f of UNIVERSAL_FIELDS) set.add(f); };
@@ -317,8 +318,8 @@ function build() {
     // that does not define it. The contract resolver mirrors that fallback via
     // this union, so a borrowed section never collapses to background-only.
     // A union (not the single reduce-winner) keeps the contract a guaranteed
-    // SUPERSET of whatever variant renders; the runtime DOM scan hides any
-    // field the actually-rendered variant does not paint.
+    // SUPERSET of whatever variant renders; runtime DOM evidence only marks
+    // which fields the current content paints.
     if (!perAnySet[type]) perAnySet[type] = new Set();
     for (const f of fieldSet) perAnySet[type].add(f);
   }
@@ -394,7 +395,7 @@ function render(perIndustry, perType, perAny) {
   );
   emit(
     'SECTION_COLOR_CONTRACTS_ANY',
-    'Cross-industry UNION per type. Last-resort fallback that mirrors the renderer borrowing a component from ALL_TEMPLATES when a section is used in an industry that does not define it. Superset by design; the runtime DOM scan hides fields the rendered variant does not paint.',
+    'Cross-industry UNION per type. Last-resort fallback that mirrors the renderer borrowing a component from ALL_TEMPLATES when a section is used in an industry that does not define it. Superset by design; runtime DOM evidence marks which roles the current content paints.',
     perAny,
   );
   return lines.join('\n');

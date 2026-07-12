@@ -77,7 +77,12 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
           spacingTop: s.spacingTop || 'm',
           spacingBottom: s.spacingBottom || 'm',
           anchorId: s.anchorId || null,
-          styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
+          styleOverrides: normalizeStyleOverridesForSection(
+            s.type,
+            s.styleOverrides,
+            auth.tenant.industry,
+            identityResolution.identities[i].definitionKey,
+          ),
           sortOrder: i,
         };
       });
@@ -205,7 +210,13 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
       }
       const styleError = patch.styleOverrides === undefined
         ? null
-        : validateStyleOverridesForApi(patch.styleOverrides, `patchSections[${index}].styleOverrides`, existing.type, auth.tenant.industry);
+        : validateStyleOverridesForApi(
+          patch.styleOverrides,
+          `patchSections[${index}].styleOverrides`,
+          existing.type,
+          auth.tenant.industry,
+          identityResolution.identity.definitionKey,
+        );
       if (styleError) return NextResponse.json({ success: false, code: 'SECTION_STYLE_INVALID', error: styleError }, { status: 400 });
 
       const sectionUpdates: Record<string, unknown> = {};
@@ -223,7 +234,7 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
         sectionUpdates.styleOverrides = normalizeStyleOverridesForSection(existing.type, {
           ...((existing.styleOverrides as Record<string, string> | null) || {}),
           ...(patch.styleOverrides || {}),
-        }, auth.tenant.industry);
+        }, auth.tenant.industry, identityResolution.identity.definitionKey);
       }
       if (Object.keys(sectionUpdates).length === 0) {
         return NextResponse.json({ success: false, code: 'PATCH_SECTION_NO_CHANGES', error: `patchSections[${index}] contains no mutable fields` }, { status: 400 });

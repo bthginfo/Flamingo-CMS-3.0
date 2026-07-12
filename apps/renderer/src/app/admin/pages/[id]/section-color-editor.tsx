@@ -5,17 +5,22 @@ import {
   AlertTriangle,
   CheckCircle2,
   ChevronDown,
+  CircleCheck,
   Eye,
   Palette,
+  PencilLine,
   RotateCcw,
+  WandSparkles,
 } from 'lucide-react';
 import { FIELD_DEFS, sortColorFields, type ColorFieldKey } from '@/lib/section-color-fields';
 import {
   ALPHA_CAPABLE_FIELDS,
   composeColorWithAlpha,
   evaluateContrastPairs,
+  getCtaStateCoverage,
   groupEditorFields,
   parseColorWithAlpha,
+  reconcileEditorColorRoles,
 } from '@/lib/section-color-editor-utils';
 import { resolveColorContractForSection } from '@/lib/section-color-resolver';
 import { scanSectionTokens } from '@/lib/scan-section-tokens';
@@ -148,6 +153,7 @@ interface SectionColorEditorProps {
   onChange: (overrides: ColorOverrides | null) => void;
   sectionType?: string;
   industry?: string;
+  definitionKey?: string | null;
   resolvedVars?: Record<string, string>;
   iframeRef?: React.RefObject<HTMLIFrameElement | null>;
   sectionId?: string;
@@ -158,6 +164,7 @@ export function SectionColorEditor({
   onChange,
   sectionType,
   industry,
+  definitionKey,
   resolvedVars,
   iframeRef,
   sectionId,
@@ -166,8 +173,8 @@ export function SectionColorEditor({
   const editorId = useId();
   const overrides = useMemo(() => migrateLegacyOverrides<ColorOverrides>(value), [value]);
   const contractInfo = useMemo(
-    () => (sectionType ? resolveColorContractForSection(sectionType, industry) : null),
-    [industry, sectionType],
+    () => (sectionType ? resolveColorContractForSection(sectionType, industry, definitionKey) : null),
+    [definitionKey, industry, sectionType],
   );
   const allFields = useMemo(
     () => sortColorFields(contractInfo?.fields ?? (['sectionBg'] as ColorFieldKey[])),
@@ -183,10 +190,9 @@ export function SectionColorEditor({
   );
 
   const [open, setOpen] = useState(false);
-  const [showCoreOverflow, setShowCoreOverflow] = useState(false);
-  const [showSpecial, setShowSpecial] = useState(false);
+  const [showSurfaces, setShowSurfaces] = useState(false);
+  const [showStates, setShowStates] = useState(false);
   const [showDesign, setShowDesign] = useState(false);
-  const [showInactive, setShowInactive] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   const [usedTokens, setUsedTokens] = useState<Set<string> | null>(null);
   const [scanState, setScanState] = useState<PreviewScanState>('idle');
@@ -199,9 +205,9 @@ export function SectionColorEditor({
     setComputedVars({});
     setUsedTokens(null);
     setScanState(open ? 'checking' : 'idle');
-    setShowCoreOverflow(false);
-    setShowInactive(false);
-  }, [industry, open, sectionId, sectionType]);
+    setShowSurfaces(false);
+    setShowStates(false);
+  }, [definitionKey, industry, open, sectionId, sectionType]);
 
   const readComputedStyles = useCallback((markUnavailable = false) => {
     const result: Record<string, string> = {};
@@ -262,14 +268,20 @@ export function SectionColorEditor({
   }, [computedVars, resolvedVars]);
 
   const fieldGroups = useMemo(
-    () => groupEditorFields(allFields, usedTokens, overrides),
+    () => groupEditorFields(allFields),
+    [allFields],
+  );
+  const roleDiscovery = useMemo(
+    () => reconcileEditorColorRoles(allFields, usedTokens, overrides),
     [allFields, overrides, usedTokens],
   );
-  const inactiveGroups = useMemo(() => ({
-    core: fieldGroups.inactive.filter((field) => FIELD_DEFS[field]?.type !== 'size' && FIELD_DEFS[field]?.group === 'core'),
-    special: fieldGroups.inactive.filter((field) => FIELD_DEFS[field]?.type !== 'size' && FIELD_DEFS[field]?.group !== 'core'),
-    design: fieldGroups.inactive.filter((field) => FIELD_DEFS[field]?.type === 'size'),
-  }), [fieldGroups.inactive]);
+  const roleDiscoveryByField = useMemo(
+    () => new Map(roleDiscovery.map((role) => [role.field, role])),
+    [roleDiscovery],
+  );
+  const previewVisibleCount = roleDiscovery.filter((role) => role.visibleInPreview).length;
+  const overriddenRoleCount = roleDiscovery.filter((role) => role.overridden).length;
+  const ctaCoverage = useMemo(() => getCtaStateCoverage(allFields), [allFields]);
 
   const contrastResults = useMemo(() => {
     const fieldSet = new Set(allFields);
@@ -292,29 +304,87 @@ export function SectionColorEditor({
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
-  function renderUsageBadge(fieldKey: ColorFieldKey) {
-    const cssVar = FIELD_DEFS[fieldKey]?.cssVar;
-    const isSet = Boolean(cssVar && overrides[cssVar]);
-    const isRendered = fieldKey === 'sectionBg' || Boolean(cssVar && usedTokens?.has(cssVar));
-    if (isRendered) {
-      return (
-        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700">
-          <Eye size={11} aria-hidden="true" />
-          {isSet ? 'Angepasst · live' : 'In Vorschau verwendet'}
-        </span>
-      );
-    }
-    if (isSet) {
-      return (
-        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
-          Angepasst · nicht erkannt
-        </span>
-      );
-    }
+  function renderRoleBadges(fieldKey: ColorFieldKey) {
+    const role = roleDiscoveryByField.get(fieldKey);
     return (
-      <span className="inline-flex shrink-0 items-center rounded-full bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-500">
-        Nicht in Vorschau erkannt
+      <div className="mt-2 flex flex-wrap items-center gap-1.5" aria-label="Verfügbarkeit dieser Farbrolle">
+        <span
+          className="inline-flex items-center gap-1 text-[10px] font-semibold text-zinc-500"
+          aria-label="In dieser Section verfügbar"
+          title="In dieser Section verfügbar"
+        >
+          <CircleCheck size={10} aria-hidden="true" />
+          Verfügbar
+        </span>
+        {role?.visibleInPreview && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+            <Eye size={10} aria-hidden="true" />
+            In Vorschau sichtbar
+          </span>
+        )}
+        {role?.overridden && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
+            <PencilLine size={10} aria-hidden="true" />
+            Individuell gesetzt
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  function renderGroupCoverage(fields: ColorFieldKey[], label: string) {
+    const roles = fields.map((field) => roleDiscoveryByField.get(field)).filter(Boolean);
+    const visible = roles.filter((role) => role?.visibleInPreview).length;
+    const edited = roles.filter((role) => role?.overridden).length;
+    return (
+      <span className="section-color-editor__group-coverage" aria-label={`${label}: ${fields.length} verfügbar, ${visible} sichtbar, ${edited} individuell gesetzt`}>
+        <span title={`${fields.length} in dieser Section verfügbar`}><CircleCheck size={11} aria-hidden="true" />{fields.length}</span>
+        <span className={visible ? 'text-emerald-700' : ''} title={`${visible} in der Vorschau sichtbar`}><Eye size={11} aria-hidden="true" />{visible}</span>
+        <span className={edited ? 'text-blue-700' : ''} title={`${edited} individuell gesetzt`}><PencilLine size={11} aria-hidden="true" />{edited}</span>
       </span>
+    );
+  }
+
+  function renderCtaCoverageMap() {
+    if (ctaCoverage.length === 0) return null;
+    const scopes = [
+      { key: 'primary' as const, label: 'Primär' },
+      { key: 'secondary' as const, label: 'Sekundär' },
+    ];
+    return (
+      <aside className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50/80 p-3" aria-labelledby={`${editorId}-cta-coverage-title`}>
+        <div className="flex items-start gap-2">
+          <WandSparkles size={14} aria-hidden="true" className="mt-0.5 shrink-0 text-blue-600" />
+          <div>
+            <h4 id={`${editorId}-cta-coverage-title`} className="text-[11px] font-semibold text-zinc-800">Interaktionen vollständig abgedeckt</h4>
+            <p className="mt-0.5 text-[11px] leading-4 text-zinc-500">Editierbare Farben und automatisch berechnete Zustände auf einen Blick.</p>
+          </div>
+        </div>
+        <div className="mt-3 space-y-2">
+          {scopes.map((scope) => {
+            const items = ctaCoverage.filter((item) => item.scope === scope.key);
+            if (items.length === 0) return null;
+            return (
+              <div key={scope.key} className="section-color-editor__cta-row">
+                <span className="pt-1 text-[10px] font-bold uppercase tracking-[0.1em] text-zinc-500">{scope.label}</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {items.map((item) => (
+                    <span
+                      key={item.id}
+                      className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold ${item.mode === 'editable' ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-dashed border-zinc-300 bg-white text-zinc-600'}`}
+                      title={item.description}
+                      aria-label={`${scope.label} ${item.label}: ${item.mode === 'editable' ? 'editierbar' : 'automatisch'}. ${item.description}`}
+                    >
+                      {item.mode === 'editable' ? <PencilLine size={10} aria-hidden="true" /> : <WandSparkles size={10} aria-hidden="true" />}
+                      {item.label} · {item.mode === 'editable' ? 'editierbar' : 'automatisch'}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </aside>
     );
   }
 
@@ -334,16 +404,16 @@ export function SectionColorEditor({
 
     return (
       <div key={fieldKey} className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm shadow-zinc-950/[0.02]">
-        <div className="flex min-w-0 items-start justify-between gap-2">
+        <div className="min-w-0">
           <div className="min-w-0">
             <label htmlFor={inputId} className="block text-xs font-semibold text-zinc-800">
               {definition.label}
             </label>
-            <p id={descriptionId} className="mt-0.5 text-[11px] leading-4 text-zinc-500">
+            <p id={descriptionId} className="mt-0.5 text-xs leading-4 text-zinc-500">
               {definition.description}
             </p>
           </div>
-          {renderUsageBadge(fieldKey)}
+          {renderRoleBadges(fieldKey)}
         </div>
 
         <div className="mt-3 grid grid-cols-[2.75rem_minmax(0,1fr)_2.5rem] items-center gap-2">
@@ -406,7 +476,7 @@ export function SectionColorEditor({
           </div>
         )}
 
-        <p className="mt-2 truncate text-[10px] text-zinc-400" title={currentOverride || resolved || undefined}>
+        <p className="mt-2 truncate text-[11px] text-zinc-400" title={currentOverride || resolved || undefined}>
           {currentOverride ? 'Eigener Wert' : resolved ? `Geerbt: ${resolved}` : 'Kein auflösbarer Farbwert'}
         </p>
       </div>
@@ -422,12 +492,12 @@ export function SectionColorEditor({
     const descriptionId = `${inputId}-description`;
     return (
       <div key={fieldKey} className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm shadow-zinc-950/[0.02]">
-        <div className="flex items-start justify-between gap-2">
+        <div>
           <div>
             <label htmlFor={inputId} className="block text-xs font-semibold text-zinc-800">{definition.label}</label>
-            <p id={descriptionId} className="mt-0.5 text-[11px] leading-4 text-zinc-500">{definition.description}</p>
+            <p id={descriptionId} className="mt-0.5 text-xs leading-4 text-zinc-500">{definition.description}</p>
           </div>
-          {renderUsageBadge(fieldKey)}
+          {renderRoleBadges(fieldKey)}
         </div>
         <div className="mt-3 grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-2">
           <input
@@ -460,7 +530,8 @@ export function SectionColorEditor({
 
   return (
     <details
-      className="mt-4 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/70 shadow-sm shadow-zinc-950/[0.03]"
+      className="section-color-editor mt-4 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/70 shadow-sm shadow-zinc-950/[0.03]"
+      style={{ containerType: 'inline-size', fontFamily: 'Inter, system-ui, sans-serif' }}
       open={open}
       onToggle={(event) => setOpen((event.target as HTMLDetailsElement).open)}
     >
@@ -470,7 +541,7 @@ export function SectionColorEditor({
         </span>
         <span className="min-w-0 flex-1">
           <span className="block">Section-Farben</span>
-          <span className="block text-[11px] font-normal text-zinc-500">Live-Rollen gezielt überschreiben</span>
+          <span className="block text-[11px] font-normal text-zinc-500">Automatisch aus der Section-Definition erkannt</span>
         </span>
         {activeCount > 0 && (
           <span className="rounded-full bg-blue-100 px-2 py-1 text-[10px] font-bold text-blue-700">
@@ -479,16 +550,118 @@ export function SectionColorEditor({
         )}
         <ChevronDown size={16} aria-hidden="true" className="text-zinc-400 transition-transform group-open:rotate-180" />
       </summary>
-
+      <style>{`
+        .section-color-editor__intro {
+          display: grid;
+          grid-template-columns: minmax(15rem, 1fr) auto;
+          align-items: start;
+          gap: .75rem;
+        }
+        .section-color-editor__coverage-map {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(5.25rem, 1fr));
+          overflow: hidden;
+          border: 1px solid rgb(228 228 231);
+          border-radius: .75rem;
+          background: rgb(250 250 250);
+        }
+        .section-color-editor__coverage-map > span {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          align-items: center;
+          column-gap: .35rem;
+          min-width: 0;
+          padding: .5rem .65rem;
+          color: rgb(82 82 91);
+        }
+        .section-color-editor__coverage-map > span + span { border-left: 1px solid rgb(228 228 231); }
+        .section-color-editor__coverage-map strong { font-size: .75rem; line-height: 1rem; color: rgb(39 39 42); }
+        .section-color-editor__coverage-map small {
+          grid-column: 1 / -1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: .625rem;
+          line-height: .875rem;
+        }
+        .section-color-editor__role-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+          gap: .75rem;
+        }
+        .section-color-editor__group-heading {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: end;
+          justify-content: space-between;
+          gap: .5rem .75rem;
+        }
+        .section-color-editor__group-coverage {
+          display: inline-flex;
+          flex-shrink: 0;
+          align-items: center;
+          gap: .25rem;
+          color: rgb(161 161 170);
+          font-size: .625rem;
+          font-weight: 600;
+        }
+        .section-color-editor__group-coverage > span {
+          display: inline-flex;
+          align-items: center;
+          gap: .2rem;
+          border-radius: .375rem;
+          background: rgb(244 244 245);
+          padding: .2rem .35rem;
+        }
+        .section-color-editor__cta-row {
+          display: grid;
+          grid-template-columns: 4.5rem minmax(0, 1fr);
+          align-items: start;
+          gap: .375rem;
+        }
+        .section-color-editor__reset-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: .5rem;
+        }
+        @container (max-width: 36rem) {
+          .section-color-editor__intro { grid-template-columns: minmax(0, 1fr); }
+          .section-color-editor__coverage-map { width: 100%; }
+        }
+        @container (max-width: 30rem) {
+          .section-color-editor__role-grid { grid-template-columns: minmax(0, 1fr); }
+          .section-color-editor__cta-row { grid-template-columns: minmax(0, 1fr); }
+          .section-color-editor__reset-row { align-items: stretch; flex-direction: column; }
+          .section-color-editor__disclosure-description { display: none; }
+        }
+        @container (max-width: 22rem) {
+          .section-color-editor__coverage-map { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+          .section-color-editor__coverage-map > span { padding: .45rem .5rem; }
+        }
+      `}</style>
       <div className="border-t border-zinc-200 bg-white px-4 py-4 sm:px-5">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <p className="max-w-2xl text-xs leading-5 text-zinc-600">
-            Direkt sichtbar sind nur Farben, die diese Vorschau rendert oder die bereits individuell gesetzt wurden.
+        <div className="section-color-editor__intro">
+          <p className="min-w-0 text-xs leading-5 text-zinc-600">
+            Wir prüfen die Section automatisch. Die Vorschau bestätigt zusätzlich, welche Rollen im aktuellen Inhalt sichtbar sind.
           </p>
-          <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${scanState === 'ready' ? 'bg-emerald-50 text-emerald-700' : scanState === 'unavailable' ? 'bg-amber-50 text-amber-700' : 'bg-zinc-100 text-zinc-600'}`}>
-            {scanState === 'ready' ? <CheckCircle2 size={12} aria-hidden="true" /> : scanState === 'unavailable' ? <AlertTriangle size={12} aria-hidden="true" /> : <Eye size={12} aria-hidden="true" />}
-            {scanState === 'ready' ? 'Mit Vorschau synchronisiert' : scanState === 'unavailable' ? 'Vorschau nicht lesbar' : 'Vorschau wird geprüft'}
-          </span>
+          <div className="section-color-editor__coverage-map" role="group" aria-label="Abdeckung der Farbrollen">
+            <span aria-label={`${allFields.length} in dieser Section verfügbar`} title="In dieser Section verfügbar">
+              <CircleCheck size={13} aria-hidden="true" />
+              <strong>{allFields.length}</strong>
+              <small>Verfügbar</small>
+            </span>
+            <span className={scanState === 'ready' ? '!text-emerald-700' : ''} aria-label={scanState === 'ready' ? `${previewVisibleCount} in der Vorschau sichtbar` : 'Vorschau optional'} title={scanState === 'ready' ? 'In Vorschau sichtbar' : 'Vorschau optional'}>
+              <Eye size={13} aria-hidden="true" />
+              <strong>{scanState === 'ready' ? previewVisibleCount : '–'}</strong>
+              <small>{scanState === 'checking' ? 'Prüft…' : 'Vorschau'}</small>
+            </span>
+            <span className={overriddenRoleCount ? '!text-blue-700' : ''} aria-label={`${overriddenRoleCount} individuell gesetzt`} title="Individuell gesetzt">
+              <PencilLine size={13} aria-hidden="true" />
+              <strong>{overriddenRoleCount}</strong>
+              <small>Angepasst</small>
+            </span>
+          </div>
         </div>
 
         {sectionType && contractInfo?.source === 'none' && (
@@ -496,63 +669,74 @@ export function SectionColorEditor({
             Kein Farbvertrag für <strong>{sectionType}</strong>. Bis zur Regenerierung ist nur der Sektionshintergrund verfügbar.
           </div>
         )}
-        {scanState === 'unavailable' && contractInfo?.source !== 'none' && (
-          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800">
-            Ohne lesbare Vorschau bleiben nur Hintergrund und bereits gesetzte Werte offen. Weitere Contract-Rollen findest du klar gekennzeichnet unter „Contract-Reserve“.
-          </div>
-        )}
-
         <section className="mt-5" aria-labelledby={`${editorId}-core-title`}>
-          <div className="mb-3 flex items-end justify-between gap-3">
+          <div className="section-color-editor__group-heading mb-3">
             <div>
               <h3 id={`${editorId}-core-title`} className="text-xs font-bold uppercase tracking-[0.12em] text-zinc-500">Kernfarben</h3>
-              <p className="mt-1 text-[11px] text-zinc-500">Die wichtigsten Flächen, Texte und Conversion-Rollen.</p>
+              <p className="mt-1 text-[11px] text-zinc-500">Grundfläche, Überschriften und lesbarer Inhalt.</p>
             </div>
-            <span className="text-[10px] font-medium text-zinc-400">{fieldGroups.core.length} live</span>
+            {renderGroupCoverage(fieldGroups.core, 'Kernfarben')}
           </div>
-          <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+          <div className="section-color-editor__role-grid">
             {fieldGroups.core.map(renderColorField)}
           </div>
         </section>
 
-        {fieldGroups.coreOverflow.length > 0 && (
+        {fieldGroups.actions.length > 0 && (
+          <section className="mt-5 border-t border-zinc-100 pt-5" aria-labelledby={`${editorId}-actions-title`}>
+            <div className="section-color-editor__group-heading mb-3">
+              <div>
+                <h3 id={`${editorId}-actions-title`} className="text-xs font-bold uppercase tracking-[0.12em] text-zinc-500">Buttons &amp; Links</h3>
+                <p className="mt-1 text-[11px] text-zinc-500">Primäre und ergänzende Handlungsaufforderungen.</p>
+              </div>
+              {renderGroupCoverage(fieldGroups.actions, 'Buttons und Links')}
+            </div>
+            <div className="section-color-editor__role-grid">
+              {fieldGroups.actions.map(renderColorField)}
+            </div>
+            {renderCtaCoverageMap()}
+          </section>
+        )}
+
+        {fieldGroups.surfaces.length > 0 && (
           <section className="mt-4 border-t border-zinc-100 pt-2">
             <button
               type="button"
               className={disclosureButtonClass}
-              aria-expanded={showCoreOverflow}
-              aria-controls={`${editorId}-core-overflow`}
-              onClick={() => setShowCoreOverflow((current) => !current)}
+              aria-expanded={showSurfaces}
+              aria-controls={`${editorId}-surfaces`}
+              onClick={() => setShowSurfaces((current) => !current)}
             >
-              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showCoreOverflow ? 'rotate-180' : ''}`} />
-              Weitere live Kernfarben
-              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.coreOverflow.length}</span>
+              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showSurfaces ? 'rotate-180' : ''}`} />
+              Karten, Flächen &amp; Medien
+              <span className="section-color-editor__disclosure-description font-normal text-zinc-400">sekundäre Oberflächen und Details</span>
+              <span className="ml-auto">{renderGroupCoverage(fieldGroups.surfaces, 'Karten, Flächen und Medien')}</span>
             </button>
-            {showCoreOverflow && (
-              <div id={`${editorId}-core-overflow`} className="mt-2 grid grid-cols-1 gap-3 xl:grid-cols-2">
-                {fieldGroups.coreOverflow.map(renderColorField)}
+            {showSurfaces && (
+              <div id={`${editorId}-surfaces`} className="section-color-editor__role-grid mt-2">
+                {fieldGroups.surfaces.map(renderColorField)}
               </div>
             )}
           </section>
         )}
 
-        {fieldGroups.special.length > 0 && (
+        {fieldGroups.states.length > 0 && (
           <section className="mt-3 border-t border-zinc-100 pt-2">
             <button
               type="button"
               className={disclosureButtonClass}
-              aria-expanded={showSpecial}
-              aria-controls={`${editorId}-special`}
-              onClick={() => setShowSpecial((current) => !current)}
+              aria-expanded={showStates}
+              aria-controls={`${editorId}-states`}
+              onClick={() => setShowStates((current) => !current)}
             >
-              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showSpecial ? 'rotate-180' : ''}`} />
-              Spezialfarben
-              <span className="font-normal text-zinc-400">section-spezifische Akzente</span>
-              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.special.length}</span>
+              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showStates ? 'rotate-180' : ''}`} />
+              Zustände &amp; Spezialrollen
+              <span className="section-color-editor__disclosure-description font-normal text-zinc-400">Hover, Status, Preise und Akzente</span>
+              <span className="ml-auto">{renderGroupCoverage(fieldGroups.states, 'Zustände und Spezialrollen')}</span>
             </button>
-            {showSpecial && (
-              <div id={`${editorId}-special`} className="mt-2 grid grid-cols-1 gap-3 xl:grid-cols-2">
-                {fieldGroups.special.map(renderColorField)}
+            {showStates && (
+              <div id={`${editorId}-states`} className="section-color-editor__role-grid mt-2">
+                {fieldGroups.states.map(renderColorField)}
               </div>
             )}
           </section>
@@ -568,12 +752,12 @@ export function SectionColorEditor({
               onClick={() => setShowDesign((current) => !current)}
             >
               <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showDesign ? 'rotate-180' : ''}`} />
-              Design-Tokens
-              <span className="font-normal text-zinc-400">Radius, Schatten, Typografie</span>
-              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.design.length}</span>
+              Form &amp; Typografie
+              <span className="section-color-editor__disclosure-description font-normal text-zinc-400">Radius, Schatten, Typografie</span>
+              <span className="ml-auto">{renderGroupCoverage(fieldGroups.design, 'Form und Typografie')}</span>
             </button>
             {showDesign && (
-              <div id={`${editorId}-design`} className="mt-2 grid grid-cols-1 gap-3 xl:grid-cols-2">
+              <div id={`${editorId}-design`} className="section-color-editor__role-grid mt-2">
                 {fieldGroups.design.map(renderDesignField)}
               </div>
             )}
@@ -610,50 +794,8 @@ export function SectionColorEditor({
           </section>
         )}
 
-        {fieldGroups.inactive.length > 0 && (
-          <section className="mt-4 border-t border-zinc-200 pt-2">
-            <button
-              type="button"
-              className={disclosureButtonClass}
-              aria-expanded={showInactive}
-              aria-controls={`${editorId}-inactive`}
-              onClick={() => setShowInactive((current) => !current)}
-            >
-              <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showInactive ? 'rotate-180' : ''}`} />
-              Contract-Reserve
-              <span className="font-normal text-zinc-400">nicht in dieser Vorschau erkannt</span>
-              <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{fieldGroups.inactive.length}</span>
-            </button>
-            {showInactive && (
-              <div id={`${editorId}-inactive`} className="mt-3 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-3">
-                <p className="mb-4 text-[11px] leading-4 text-zinc-600">
-                  Diese Rollen gehören zum Section-Contract, wurden im aktuellen DOM aber nicht gefunden. Änderungen können ohne sichtbaren Effekt bleiben.
-                </p>
-                {inactiveGroups.core.length > 0 && (
-                  <div>
-                    <h4 className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">Kernrollen</h4>
-                    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">{inactiveGroups.core.map(renderColorField)}</div>
-                  </div>
-                )}
-                {inactiveGroups.special.length > 0 && (
-                  <div className={inactiveGroups.core.length > 0 ? 'mt-5' : ''}>
-                    <h4 className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">Spezialfarben</h4>
-                    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">{inactiveGroups.special.map(renderColorField)}</div>
-                  </div>
-                )}
-                {inactiveGroups.design.length > 0 && (
-                  <div className={inactiveGroups.core.length > 0 || inactiveGroups.special.length > 0 ? 'mt-5' : ''}>
-                    <h4 className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">Design-Tokens</h4>
-                    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">{inactiveGroups.design.map(renderDesignField)}</div>
-                  </div>
-                )}
-              </div>
-            )}
-          </section>
-        )}
-
         {activeCount > 0 && (
-          <div className="mt-5 flex flex-col gap-2 border-t border-zinc-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="section-color-editor__reset-row mt-5 border-t border-zinc-200 pt-4">
             <p className="text-[11px] text-zinc-500">Setzt alle Section-Werte auf das aktive Designrezept zurück.</p>
             <button
               type="button"

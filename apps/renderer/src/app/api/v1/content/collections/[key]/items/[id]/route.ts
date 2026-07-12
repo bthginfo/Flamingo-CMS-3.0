@@ -44,7 +44,12 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
       definitionKey: identityResolution.identities[index].definitionKey,
       schemaVersion: identityResolution.identities[index].schemaVersion,
       data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
-      styleOverrides: normalizeStyleOverridesForSection(String(s.type || ''), s.styleOverrides, auth.tenant.industry),
+      styleOverrides: normalizeStyleOverridesForSection(
+        String(s.type || ''),
+        s.styleOverrides,
+        auth.tenant.industry,
+        identityResolution.identities[index].definitionKey,
+      ),
     }));
   }
 
@@ -94,7 +99,12 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
         definitionKey: identityResolution.identities[index].definitionKey,
         schemaVersion: identityResolution.identities[index].schemaVersion,
         data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
-        styleOverrides: normalizeStyleOverridesForSection(String(s.type || ''), s.styleOverrides, auth.tenant.industry),
+        styleOverrides: normalizeStyleOverridesForSection(
+          String(s.type || ''),
+          s.styleOverrides,
+          auth.tenant.industry,
+          identityResolution.identities[index].definitionKey,
+        ),
       }));
     }
     updates.data = mergedData;

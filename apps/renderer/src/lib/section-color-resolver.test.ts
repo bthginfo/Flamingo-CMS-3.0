@@ -38,6 +38,19 @@ test('a real industry section resolves a rich contract, not just background', ()
   assert.equal(resolveColorContractForSection('hero', 'hotel').source, 'industry');
 });
 
+test('an explicit renderer definition wins over the tenant industry', () => {
+  const explicit = getFieldsForSection('hero', 'salon', 'hero.consulting.v1');
+  assert.deepEqual(explicit, getFieldsForSection('hero', 'consulting'));
+  assert.equal(resolveColorContractForSection('hero', 'salon', 'hero.consulting.v1').source, 'definition');
+});
+
+test('a stale or mismatched definition key safely falls back to the tenant industry', () => {
+  assert.deepEqual(
+    getFieldsForSection('hero', 'salon', 'faq.consulting.v1'),
+    getFieldsForSection('hero', 'salon'),
+  );
+});
+
 test('no industry falls back to generic/any/none (never throws)', () => {
   const fields = getFieldsForSection('hero');
   assert.ok(Array.isArray(fields) && fields.includes('sectionBg'));

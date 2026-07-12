@@ -393,7 +393,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     data: sanitizeRenderValue(prefixInternalLinks(section.data, linkPrefix)) as Record<string, unknown>,
     // Published snapshots and legacy rows are untrusted input too. Reapply the
     // section contract at the final rendering boundary before CSS interpolation.
-    styleOverrides: normalizeStyleOverridesForSection(section.type, section.styleOverrides, industry),
+    styleOverrides: normalizeStyleOverridesForSection(section.type, section.styleOverrides, industry, section.definitionKey),
   };
 
   // Tenant fields are the authoritative contract. A section may add fields,

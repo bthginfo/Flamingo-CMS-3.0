@@ -33,6 +33,7 @@ type SectionMeta = {
   id: string;
   type: string;
   industry?: string;
+  definitionKey?: string | null;
   styleOverrides: Record<string, string>;
 };
 
@@ -399,27 +400,13 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
   if (!section) return <Modal title="Section nicht gefunden" onClose={onClose}>—</Modal>;
 
   const [overrides, setOverrides] = useState<Record<string, string>>(section.styleOverrides || {});
-  const [showAll, setShowAll] = useState(false);
-  const allFields = getFieldsForSection(section.type, industry || section.industry);
+  const allFields = getFieldsForSection(section.type, industry || section.industry, section.definitionKey);
   // Hide the dark-pair fields — they are auto-written by FIELD_FANOUT.
   const candidateFields = allFields.filter((f) => !HIDDEN_FIELDS.has(f));
 
-  // ─── Runtime detection: which fields ACTUALLY paint pixels in this DOM? ───
-  // Both inline styles (style="background:var(--token-X)") and Tailwind
-  // arbitrary-value classes (class="bg-[var(--token-X)]") put the literal
-  // string "var(--token-X)" into outerHTML. A simple substring scan tells
-  // us which fields are wired up. Fields not detected are hidden behind an
-  // "Erweitert" toggle so the user is never shown a no-op picker.
+  // Runtime evidence marks what the current content paints. The static
+  // renderer contract remains authoritative and is never filtered out.
   const usedTokens = useUsedTokens(sectionId);
-  const liveFields = candidateFields.filter((f) => {
-    const v = FIELD_DEFS[f]?.cssVar;
-    if (!v) return false;
-    // Always treat the user's existing overrides as live (they typed them).
-    if (overrides[v]) return true;
-    return usedTokens.has(v);
-  });
-  const inactiveFields = candidateFields.filter((f) => !liveFields.includes(f));
-  const fields = showAll ? candidateFields : liveFields;
 
   const update = useCallback((key: ColorFieldKey, value: string) => {
     const def = FIELD_DEFS[key];
@@ -446,19 +433,25 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
   return (
     <Modal title={`Farben — ${section.type}`} onClose={onClose}>
       <p style={{ marginTop: 0, color: '#64748b', fontSize: 12 }}>
-        Nur Felder, die diese Section auch tatsächlich rendert. Änderungen werden sofort gespeichert.
+        Automatisch aus der Section-Definition erkannt. Die Vorschau markiert aktuell sichtbare Rollen; Änderungen werden sofort gespeichert.
       </p>
       <div style={{ display: 'grid', gap: 10 }}>
-        {fields.map((fieldKey) => {
+        {candidateFields.map((fieldKey) => {
           const def = FIELD_DEFS[fieldKey];
           if (!def) return null;
           const isSize = def.type === 'size';
           const current = overrides[def.cssVar] || '';
+          const isVisible = usedTokens.has(def.cssVar);
           return (
-            <div key={fieldKey} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div key={fieldKey} style={{ display: 'flex', alignItems: 'center', gap: 10, borderTop: '1px solid #f1f5f9', paddingTop: 10 }}>
               <label style={{ flex: 1, fontSize: 13 }}>
                 <div style={{ fontWeight: 500 }}>{def.label}</div>
                 <div style={{ color: '#94a3b8', fontSize: 11 }}>{def.description}</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 5 }}>
+                  <span style={{ border: '1px solid #e4e4e7', borderRadius: 999, padding: '2px 6px', color: '#52525b', fontSize: 9, fontWeight: 600 }}>In dieser Section verfügbar</span>
+                  {isVisible && <span style={{ borderRadius: 999, padding: '2px 6px', background: '#ecfdf5', color: '#047857', fontSize: 9, fontWeight: 600 }}>In Vorschau sichtbar</span>}
+                  {current && <span style={{ borderRadius: 999, padding: '2px 6px', background: '#eff6ff', color: '#1d4ed8', fontSize: 9, fontWeight: 600 }}>Individuell gesetzt</span>}
+                </div>
               </label>
               {isSize ? (
                 <input
@@ -504,17 +497,6 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
           );
         })}
       </div>
-      {inactiveFields.length > 0 && (
-        <button
-          type="button"
-          onClick={() => setShowAll((v) => !v)}
-          style={{ marginTop: 14, background: 'transparent', border: 0, color: '#64748b', cursor: 'pointer', fontSize: 12, textDecoration: 'underline' }}
-        >
-          {showAll
-            ? 'Nur aktive Felder zeigen'
-            : `Erweitert: ${inactiveFields.length} ungenutzte Slots anzeigen`}
-        </button>
-      )}
     </Modal>
   );
 }

@@ -393,6 +393,7 @@ export async function updateSectionTypeAndDataAction(sectionId: string, pageId: 
       update.type,
       update.styleOverrides !== undefined ? update.styleOverrides : existing.styleOverrides,
       existing.industry,
+      identity.identity.definitionKey,
     ),
     visible: update.visible ?? existing.visible,
     titleInternal: update.titleInternal !== undefined ? update.titleInternal : existing.titleInternal,
@@ -457,6 +458,7 @@ export async function updateSectionMetaAction(sectionId: string, meta: { type?: 
       meta.type || existing.type,
       meta.styleOverrides !== undefined ? meta.styleOverrides : existing.styleOverrides,
       existing.industry,
+      identity.identity.definitionKey,
     );
   }
   const result = await db.update(pageSections).set({ ...normalizedMeta, updatedAt: new Date() }).where(sectionScope).returning({ id: pageSections.id });

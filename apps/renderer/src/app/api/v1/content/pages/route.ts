@@ -79,7 +79,12 @@ export const POST = withApiHandler(async (req, auth) => {
       spacingTop: s.spacingTop || 'm',
       spacingBottom: s.spacingBottom || 'm',
       anchorId: s.anchorId || null,
-      styleOverrides: normalizeStyleOverridesForSection(s.type, s.styleOverrides, auth.tenant.industry),
+      styleOverrides: normalizeStyleOverridesForSection(
+        s.type,
+        s.styleOverrides,
+        auth.tenant.industry,
+        identityResolution.identities[i].definitionKey,
+      ),
       sortOrder: i,
     }));
   }

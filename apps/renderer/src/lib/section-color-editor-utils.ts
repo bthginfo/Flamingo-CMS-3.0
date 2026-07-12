@@ -5,8 +5,6 @@ import {
 } from './section-color-fields';
 import { getContrastRatio as calculateContrastRatio } from './color-engine';
 
-export const CORE_FIELD_LIMIT = 12;
-
 export const ALPHA_CAPABLE_FIELDS = new Set<ColorFieldKey>([
   'sectionBgAlt',
   'glowColor',
@@ -18,56 +16,209 @@ export const ALPHA_CAPABLE_FIELDS = new Set<ColorFieldKey>([
 
 export interface EditorFieldGroups {
   core: ColorFieldKey[];
-  coreOverflow: ColorFieldKey[];
-  special: ColorFieldKey[];
+  actions: ColorFieldKey[];
+  surfaces: ColorFieldKey[];
+  states: ColorFieldKey[];
   design: ColorFieldKey[];
-  inactive: ColorFieldKey[];
+}
+
+export type EditorFieldGroupKey = keyof EditorFieldGroups;
+
+/**
+ * Customer-facing editor taxonomy. Keeping this list explicit makes missing
+ * metadata a test failure instead of silently dropping a renderer token into
+ * a vague "advanced" bucket.
+ */
+export const EDITOR_FIELD_GROUPS: Readonly<Record<EditorFieldGroupKey, readonly ColorFieldKey[]>> = {
+  core: [
+    'sectionBg',
+    'headingColor',
+    'subheadingColor',
+    'bodyColor',
+    'mutedColor',
+    'iconColor',
+    'accentColor',
+  ],
+  actions: [
+    'btnBg',
+    'btnText',
+    'btnSecondaryBg',
+    'btnSecondaryText',
+    'btnSecondaryBorder',
+    'linkColor',
+  ],
+  surfaces: [
+    'sectionBgAlt',
+    'cardBg',
+    'cardHeadingColor',
+    'cardBodyColor',
+    'cardMutedColor',
+    'cardBadgeBg',
+    'cardBadgeText',
+    'cardIconColor',
+    'badgeBg',
+    'badgeText',
+    'badgeBorder',
+    'borderColor',
+    'dividerColor',
+    'imageOverlay',
+    'glowColor',
+    'inputBg',
+    'inputBorder',
+    'inputText',
+    'labelColor',
+    'pageBg',
+    'shadowColor',
+  ],
+  states: [
+    'linkHoverColor',
+    'successColor',
+    'successBg',
+    'dangerColor',
+    'dangerBg',
+    'priceColor',
+    'priceStrikeColor',
+    'eyebrow',
+    'statValue',
+    'quoteMark',
+    'ratingStar',
+    'check',
+  ],
+  design: [
+    'cardRadius',
+    'buttonRadius',
+    'cardShadow',
+    'headingWeight',
+    'headingTracking',
+  ],
+};
+
+const EDITOR_FIELD_GROUP_BY_KEY = new Map<ColorFieldKey, EditorFieldGroupKey>(
+  (Object.entries(EDITOR_FIELD_GROUPS) as [EditorFieldGroupKey, readonly ColorFieldKey[]][])
+    .flatMap(([group, fields]) => fields.map((field) => [field, group] as const)),
+);
+
+export function getEditorFieldGroup(field: ColorFieldKey): EditorFieldGroupKey | null {
+  return EDITOR_FIELD_GROUP_BY_KEY.get(field) ?? null;
 }
 
 /**
- * Keeps the default editor surface honest: a field is active only when the
- * rendered preview uses it, the user set it, or it is the section background.
- * Contract-only fields remain available in a separately labelled disclosure.
+ * Static renderer contracts are the source of truth. Runtime preview data is
+ * deliberately not accepted here, so closing the preview can never remove a
+ * supported control from the editor.
  */
-export function groupEditorFields(
+export function groupEditorFields(fields: ColorFieldKey[]): EditorFieldGroups {
+  const groups: EditorFieldGroups = {
+    core: [],
+    actions: [],
+    surfaces: [],
+    states: [],
+    design: [],
+  };
+
+  for (const field of sortColorFields(fields)) {
+    if (!FIELD_DEFS[field]) continue;
+    const group = getEditorFieldGroup(field);
+    if (group) groups[group].push(field);
+  }
+
+  return groups;
+}
+
+export interface EditorColorRoleDiscovery {
+  field: ColorFieldKey;
+  available: true;
+  visibleInPreview: boolean;
+  overridden: boolean;
+}
+
+export type CtaCoverageScope = 'primary' | 'secondary';
+export type CtaCoverageState = 'surface' | 'content' | 'border' | 'hover' | 'focus';
+export type CtaCoverageMode = 'editable' | 'derived';
+
+export interface CtaStateCoverage {
+  id: `${CtaCoverageScope}-${CtaCoverageState}`;
+  scope: CtaCoverageScope;
+  state: CtaCoverageState;
+  label: string;
+  mode: CtaCoverageMode;
+  field?: ColorFieldKey;
+  description: string;
+}
+
+const PRIMARY_CTA_COVERAGE: readonly CtaStateCoverage[] = [
+  { id: 'primary-surface', scope: 'primary', state: 'surface', label: 'Fläche', mode: 'editable', field: 'btnBg', description: 'Die Primärfläche ist direkt editierbar.' },
+  { id: 'primary-content', scope: 'primary', state: 'content', label: 'Text & Icons', mode: 'editable', field: 'btnText', description: 'Text und Icons sind direkt editierbar.' },
+  { id: 'primary-border', scope: 'primary', state: 'border', label: 'Rahmen', mode: 'derived', description: 'Der Primärrahmen bleibt automatisch passend zur Buttonfläche.' },
+  { id: 'primary-hover', scope: 'primary', state: 'hover', label: 'Hover', mode: 'derived', description: 'Der Hover-Effekt wird automatisch aus der Primärfläche berechnet.' },
+  { id: 'primary-focus', scope: 'primary', state: 'focus', label: 'Tastaturfokus', mode: 'derived', description: 'Der Fokusrahmen wird automatisch kontrastreich aus der Akzentfarbe erzeugt.' },
+];
+
+const SECONDARY_CTA_FIELDS: Partial<Record<CtaCoverageState, ColorFieldKey>> = {
+  surface: 'btnSecondaryBg',
+  content: 'btnSecondaryText',
+  border: 'btnSecondaryBorder',
+};
+
+const SECONDARY_CTA_LABELS: Record<CtaCoverageState, string> = {
+  surface: 'Fläche',
+  content: 'Text & Icons',
+  border: 'Rahmen',
+  hover: 'Hover',
+  focus: 'Tastaturfokus',
+};
+
+/**
+ * Complete CTA state map. A state is either backed by an editable renderer
+ * token or explicitly documented as derived, so the editor never implies a
+ * missing control is an undiscovered color.
+ */
+export function getCtaStateCoverage(fields: readonly ColorFieldKey[]): CtaStateCoverage[] {
+  const supported = new Set(fields);
+  const hasPrimary = supported.has('btnBg') || supported.has('btnText');
+  const hasSecondary = Object.values(SECONDARY_CTA_FIELDS).some((field) => field && supported.has(field));
+  const coverage: CtaStateCoverage[] = hasPrimary
+    ? PRIMARY_CTA_COVERAGE.map((item) => ({ ...item }))
+    : [];
+
+  if (!hasSecondary) return coverage;
+  for (const state of ['surface', 'content', 'border', 'hover', 'focus'] as const) {
+    const field = SECONDARY_CTA_FIELDS[state];
+    const editable = Boolean(field && supported.has(field));
+    const automaticDescription = state === 'focus'
+      ? 'Der Fokusrahmen wird automatisch kontrastreich aus der Akzentfarbe erzeugt.'
+      : state === 'hover'
+        ? 'Der Hover-Effekt wird automatisch aus der Sekundärfläche berechnet.'
+        : `Die ${SECONDARY_CTA_LABELS[state]} wird automatisch aus dem aktiven Designrezept abgeleitet.`;
+    coverage.push({
+      id: `secondary-${state}`,
+      scope: 'secondary',
+      state,
+      label: SECONDARY_CTA_LABELS[state],
+      mode: editable ? 'editable' : 'derived',
+      ...(editable && field ? { field } : {}),
+      description: editable ? `${SECONDARY_CTA_LABELS[state]} ist direkt editierbar.` : automaticDescription,
+    });
+  }
+  return coverage;
+}
+
+/** Merge optional runtime evidence into deterministic static role discovery. */
+export function reconcileEditorColorRoles(
   fields: ColorFieldKey[],
   usedCssVars: ReadonlySet<string> | null,
   overrides: Readonly<Record<string, string>>,
-  coreLimit = CORE_FIELD_LIMIT,
-): EditorFieldGroups {
-  const activeCore: ColorFieldKey[] = [];
-  const special: ColorFieldKey[] = [];
-  const design: ColorFieldKey[] = [];
-  const inactive: ColorFieldKey[] = [];
-
-  for (const field of sortColorFields(fields)) {
+): EditorColorRoleDiscovery[] {
+  return sortColorFields(fields).flatMap((field) => {
     const definition = FIELD_DEFS[field];
-    if (!definition) continue;
-
-    const isSet = Boolean(overrides[definition.cssVar]);
-    const isRendered = field === 'sectionBg' || Boolean(usedCssVars?.has(definition.cssVar));
-    if (!isSet && !isRendered) {
-      inactive.push(field);
-      continue;
-    }
-
-    if (definition.type === 'size') {
-      design.push(field);
-    } else if ((definition.group ?? 'advanced') === 'core') {
-      activeCore.push(field);
-    } else {
-      special.push(field);
-    }
-  }
-
-  const safeLimit = Math.max(1, coreLimit);
-  return {
-    core: activeCore.slice(0, safeLimit),
-    coreOverflow: activeCore.slice(safeLimit),
-    special,
-    design,
-    inactive,
-  };
+    if (!definition) return [];
+    return [{
+      field,
+      available: true as const,
+      visibleInPreview: Boolean(usedCssVars?.has(definition.cssVar)),
+      overridden: Boolean(overrides[definition.cssVar]?.trim()),
+    }];
+  });
 }
 
 function clamp(value: number, min: number, max: number): number {
