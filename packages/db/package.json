@@ -11,6 +11,7 @@
   },
   "scripts": {
     "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
     "push": "drizzle-kit push",
     "backfill:section-definitions": "tsx --tsconfig ../../apps/renderer/tsconfig.json scripts/backfill-section-definitions.ts",
     "studio": "drizzle-kit studio",

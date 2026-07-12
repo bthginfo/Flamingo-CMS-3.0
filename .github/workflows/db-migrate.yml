@@ -1,0 +1,64 @@
+name: Database migrations
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/db-migrate.yml'
+      - 'packages/db/drizzle/**'
+      - 'packages/db/src/schema/**'
+      - 'packages/db/package.json'
+      - 'pnpm-lock.yaml'
+
+concurrency:
+  group: production-database-migrations
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Apply pending Drizzle migrations
+        id: migrate
+        run: pnpm --filter @flamingo/db migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Report migration status
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MIGRATION_RESULT: ${{ steps.migrate.outcome }}
+        run: |
+          if [ "$MIGRATION_RESULT" = "success" ]; then
+            state=success
+            description='Production database migrations applied'
+          else
+            state=failure
+            description='Production database migration failed'
+          fi
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+            --data "{\"state\":\"$state\",\"context\":\"Database migration\",\"description\":\"$description\"}"
