@@ -5,6 +5,7 @@ import { useCart } from '@/components/shop/cart-context';
 import { useRouter } from 'next/navigation';
 import { Check, Loader2, Tag, X } from 'lucide-react';
 import { computeShippingCents } from '@/lib/shop-totals';
+import { publicFlowRequestHeaders } from '@/lib/public-flow-client-security';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -140,7 +141,7 @@ export function ShopCheckoutSection({ data }: Props) {
       idempotencyKeyRef.current ||= crypto.randomUUID();
       const res = await fetch('/api/shop/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: publicFlowRequestHeaders(idempotencyKeyRef.current),
         body: JSON.stringify({
           ...form,
           tenantId,
@@ -152,10 +153,12 @@ export function ShopCheckoutSection({ data }: Props) {
       });
       const data = await res.json();
       if (!res.ok) {
+        if (data.retryWithNewIdempotencyKey) idempotencyKeyRef.current = null;
         setCheckoutError(data.error || 'Bestellung fehlgeschlagen. Bitte versuchen Sie es erneut.');
         return;
       }
       if (data.success) {
+        idempotencyKeyRef.current = null;
         // Stripe redirect
         if (data.stripeUrl) {
           clearCart();

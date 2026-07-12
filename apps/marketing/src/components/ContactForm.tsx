@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import {
+  contactRequestHeaders,
+  createContactActionIdentity,
+  type ContactActionIdentity,
+} from '@/lib/contact-client-security';
 
 export type ContactFormField = 'name' | 'email' | 'phone' | 'branche' | 'paket' | 'subject' | 'message';
 
@@ -96,6 +101,7 @@ export function ContactForm({
 }: ContactFormProps) {
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const actionIdentity = useRef<ContactActionIdentity | null>(null);
 
   const rowsMode = Array.isArray(fieldRows) && fieldRows.length > 0;
   const normalizedRows = rowsMode ? normalizeFieldRows(fieldRows) : null;
@@ -145,14 +151,16 @@ export function ContactForm({
       .map((addon) => addon.label);
     if (selectedAddons && selectedAddons.length > 0) payload.addons = selectedAddons;
     if (Object.keys(extras).length > 0) payload.extras = extras;
+    actionIdentity.current = createContactActionIdentity(payload, actionIdentity.current);
     try {
       const r = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        headers: contactRequestHeaders(actionIdentity.current.idempotencyKey),
+        body: actionIdentity.current.serializedPayload,
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j?.ok) {
+        if (r.status === 409) actionIdentity.current = null;
         setState('error');
         const msg = j?.error || 'Senden fehlgeschlagen. Bitte später erneut versuchen.';
         setErrorMsg(msg);

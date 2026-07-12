@@ -47,7 +47,7 @@ const MAX_OPTION_LENGTH = 200;
 const MAX_OPTIONS = 50;
 const MAX_VALUE_LENGTH = 5000;
 const FIELD_NAME_PATTERN = /^[A-Za-z][A-Za-z0-9_]*$/;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 
 type ValidationResult =
   | { success: true; fields: ContactFormFieldDefinition[] }

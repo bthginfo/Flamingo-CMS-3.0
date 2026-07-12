@@ -132,6 +132,15 @@ describe('contact submission validation', () => {
     if (!invalid.success) assert.match(invalid.error, /Auswahl/);
   });
 
+  it('rejects angle brackets and header characters in public e-mail fields', () => {
+    const result = validateContactSubmission({
+      name: 'Ada',
+      email: 'victim@example.com<attacker>',
+      budget: 'ab 10.000 €',
+    }, configured);
+    assert.equal(result.success, false);
+  });
+
   it('detects the hidden honeypot without treating an empty value as spam', () => {
     assert.equal(isHoneypotFilled({ _website: '' }), false);
     assert.equal(isHoneypotFilled({ _website: 'https://spam.invalid' }), true);

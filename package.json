@@ -8,7 +8,7 @@
     "dev:renderer": "pnpm --filter @flamingo/renderer dev",
     "build": "turbo build",
     "lint": "turbo lint",
-    "test": "pnpm --filter @flamingo/renderer test",
+    "test": "pnpm --filter @flamingo/renderer test && pnpm --filter @flamingo/marketing test",
     "audit:crosstalk": "node scripts/audit-token-crosstalk.cjs",
     "audit:credentials": "node scripts/check-credential-literals.cjs",
     "check:hardcoded-colors": "node scripts/check-hardcoded-colors-regression.cjs",
@@ -37,6 +37,7 @@
     "sync:section-surface": "tsx scripts/sync-section-surface.ts",
     "check:section-surface": "tsx scripts/sync-section-surface.ts --check",
     "db:generate": "pnpm --filter @flamingo/db generate",
+    "db:migrate": "pnpm --filter @flamingo/db migrate",
     "db:push": "pnpm --filter @flamingo/db push",
     "db:backfill-sections": "pnpm --filter @flamingo/db backfill:section-definitions"
   },

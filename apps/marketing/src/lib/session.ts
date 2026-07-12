@@ -1,15 +1,26 @@
 import { cookies } from 'next/headers';
+import { createHmac } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
+import { hasValidCrmClaims } from './crm-session-claims';
 
 const COOKIE_NAME = 'flamingo_crm_session';
 const JWT_ALG = 'HS256';
 
 function getSecret() {
-  const s = process.env.CRM_JWT_SECRET || process.env.ADMIN_JWT_SECRET;
-  if (!s) {
-    throw new Error('[Flamingo CRM] CRM_JWT_SECRET or ADMIN_JWT_SECRET is not set.');
+  const dedicated = process.env.CRM_JWT_SECRET?.trim();
+  if (dedicated && dedicated.length >= 32) {
+    return new TextEncoder().encode(dedicated);
   }
-  return new TextEncoder().encode(s);
+
+  const rootSecret = process.env.ADMIN_JWT_SECRET?.trim();
+  if (!rootSecret || rootSecret.length < 32) {
+    throw new Error('[Flamingo CRM] A strong CRM_JWT_SECRET or ADMIN_JWT_SECRET is required.');
+  }
+  // Domain separation avoids reusing the admin JWT key directly while keeping
+  // existing correctly configured installations operational.
+  return createHmac('sha256', rootSecret)
+    .update('flamingo:crm-session:v1')
+    .digest();
 }
 
 export async function createCrmToken(): Promise<string> {
@@ -25,8 +36,8 @@ export async function verifyCrmSession(): Promise<boolean> {
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return false;
   try {
-    await jwtVerify(token, getSecret());
-    return true;
+    const { payload } = await jwtVerify(token, getSecret(), { algorithms: [JWT_ALG] });
+    return hasValidCrmClaims(payload);
   } catch {
     return false;
   }

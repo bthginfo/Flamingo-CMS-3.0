@@ -1,94 +1,114 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
 import { inquiries } from '@flamingo/db';
-import nodemailer from 'nodemailer';
+import { eq } from 'drizzle-orm';
+import {
+  buildStoredContactMessage,
+  contactInquiryMatchesSubmission,
+  createContactPostHandler,
+  type ContactSubmission,
+} from '@/lib/contact';
+import { getDb } from '@/lib/db';
+import { consumeFirstDeniedRateLimit } from '@/lib/marketing-security';
+import { contactRateLimitRules } from '@/lib/marketing-rate-policies';
+import { getClientAddress } from '@/lib/request-security';
+import { createHardenedSmtpTransport, resolveCrmSmtpConfiguration } from '@/lib/crm-smtp';
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    if (!body || typeof body !== 'object') {
-      return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
-    }
+export const runtime = 'nodejs';
 
-    const name = typeof body.name === 'string' ? body.name.trim().slice(0, 200) : '';
-    const email = typeof body.email === 'string' ? body.email.trim().slice(0, 320) : '';
-    const branche = typeof body.branche === 'string' ? body.branche.trim().slice(0, 100) : null;
-    const paket = typeof body.paket === 'string' ? body.paket.trim().slice(0, 100) : null;
-    const message = typeof body.message === 'string' ? body.message.trim().slice(0, 5000) : '';
-    const source = typeof body.source === 'string' ? body.source.trim().slice(0, 100) : null;
-    const rawAddons: unknown[] = Array.isArray(body.addons) ? body.addons : [];
-    const addons = rawAddons
-          .filter((addon: unknown): addon is string => typeof addon === 'string')
-          .map((addon) => addon.trim().slice(0, 160))
-          .filter(Boolean)
-          .slice(0, 20);
-
-    // Honeypot
-    if (body.website) {
-      return NextResponse.json({ ok: true });
-    }
-
-    if (!name || !email) {
-      return NextResponse.json({ error: 'Name und E-Mail sind Pflichtfelder.' }, { status: 400 });
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: 'Ungültige E-Mail-Adresse.' }, { status: 400 });
-    }
-
-    const db = getDb();
-
-    await db.insert(inquiries).values({
-      name,
-      email,
-      branche,
-      paket,
-      message: [message || '(keine Nachricht)', addons.length ? `Gewünschte Add-ons: ${addons.join(', ')}` : ''].filter(Boolean).join('\n\n'),
-      source,
-    });
-
-    // Send notification email (fire-and-forget)
-    sendNotification({ name, email, branche, paket, message, source, addons }).catch(() => {});
-
-    return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error('[api/contact] Error:', e);
-    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 });
-  }
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
-async function sendNotification(data: { name: string; email: string; branche: string | null; paket: string | null; message: string; source: string | null; addons: string[] }) {
-  const host = process.env.PLATFORM_SMTP_HOST;
-  const user = process.env.PLATFORM_SMTP_USER;
-  const pass = process.env.PLATFORM_SMTP_PASS;
-  const from = process.env.PLATFORM_SMTP_FROM;
-  if (!host || !user || !pass || !from) return;
-
-  const transporter = nodemailer.createTransport({
-    host,
-    port: Number(process.env.PLATFORM_SMTP_PORT) || 587,
-    secure: false,
-    auth: { user, pass },
-  });
-
+async function sendNotification(submission: ContactSubmission, inquiryId: string) {
+  const smtp = resolveCrmSmtpConfiguration(process.env);
+  const transporter = createHardenedSmtpTransport(smtp);
   const lines = [
-    `<strong>Name:</strong> ${escapeHtml(data.name)}`,
-    `<strong>E-Mail:</strong> ${escapeHtml(data.email)}`,
-    data.branche ? `<strong>Branche:</strong> ${escapeHtml(data.branche)}` : '',
-    data.paket ? `<strong>Paket:</strong> ${escapeHtml(data.paket)}` : '',
-    data.addons.length ? `<strong>Add-ons:</strong> ${escapeHtml(data.addons.join(', '))}` : '',
-    `<strong>Nachricht:</strong><br>${escapeHtml(data.message).replace(/\n/g, '<br>')}`,
-    data.source ? `<em>Quelle: ${escapeHtml(data.source)}</em>` : '',
+    `<strong>Name:</strong> ${escapeHtml(submission.name)}`,
+    `<strong>E-Mail:</strong> ${escapeHtml(submission.email)}`,
+    submission.phone ? `<strong>Telefon:</strong> ${escapeHtml(submission.phone)}` : '',
+    submission.branche ? `<strong>Branche:</strong> ${escapeHtml(submission.branche)}` : '',
+    submission.paket ? `<strong>Paket:</strong> ${escapeHtml(submission.paket)}` : '',
+    submission.subject ? `<strong>Betreff:</strong> ${escapeHtml(submission.subject)}` : '',
+    submission.addons.length ? `<strong>Add-ons:</strong> ${escapeHtml(submission.addons.join(', '))}` : '',
+    `<strong>Nachricht:</strong><br>${escapeHtml(submission.message || '(keine Nachricht)').replace(/\r?\n/g, '<br>')}`,
+    ...Object.entries(submission.extras).map(([key, value]) => `<strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}`),
+    submission.source ? `<em>Quelle: ${escapeHtml(submission.source)}</em>` : '',
+    `<small>CRM-Anfrage: ${escapeHtml(inquiryId)}</small>`,
   ].filter(Boolean);
+  const safeName = submission.name.replace(/[\r\n]+/g, ' ').trim().slice(0, 120) || 'Website';
 
   await transporter.sendMail({
-    from,
-    to: 'hello@flamingomedia.online',
-    subject: `Neue Anfrage von ${data.name}`,
+    from: { name: 'Flamingo Media Website', address: smtp.fromAddress },
+    replyTo: { name: safeName, address: submission.email },
+    to: { name: 'Flamingo Media', address: 'hello@flamingomedia.online' },
+    subject: `Neue Anfrage von ${safeName}`,
+    text: buildStoredContactMessage(submission),
     html: `<div style="font-family:sans-serif;line-height:1.6">${lines.join('<br><br>')}</div>`,
+    headers: { 'X-Mailer': 'Flamingo Media Contact' },
   });
 }
 
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+export const POST = createContactPostHandler({
+  inspectInquiry: async (idempotencyKey, submission) => {
+    const [existing] = await getDb()
+      .select({
+        id: inquiries.id,
+        name: inquiries.name,
+        email: inquiries.email,
+        branche: inquiries.branche,
+        paket: inquiries.paket,
+        message: inquiries.message,
+        source: inquiries.source,
+      })
+      .from(inquiries)
+      .where(eq(inquiries.id, idempotencyKey))
+      .limit(1);
+    if (!existing) return 'new';
+    return contactInquiryMatchesSubmission(existing, submission) ? 'duplicate' : 'conflict';
+  },
+  checkRateLimits: async (request, email) => {
+    const denied = await consumeFirstDeniedRateLimit(
+      contactRateLimitRules(getClientAddress(request.headers), email),
+    );
+    return denied || { allowed: true, limit: 120, remaining: 1, retryAfterSeconds: 0 };
+  },
+  saveInquiry: async (submission, idempotencyKey) => {
+    const [inquiry] = await getDb().insert(inquiries).values({
+      id: idempotencyKey,
+      name: submission.name,
+      email: submission.email,
+      branche: submission.branche || null,
+      paket: submission.paket || null,
+      message: buildStoredContactMessage(submission),
+      source: submission.source || null,
+    }).onConflictDoNothing({ target: inquiries.id }).returning({ id: inquiries.id });
+    if (inquiry) return { ...inquiry, state: 'created' as const };
+
+    const [existing] = await getDb()
+      .select({
+        id: inquiries.id,
+        name: inquiries.name,
+        email: inquiries.email,
+        branche: inquiries.branche,
+        paket: inquiries.paket,
+        message: inquiries.message,
+        source: inquiries.source,
+      })
+      .from(inquiries)
+      .where(eq(inquiries.id, idempotencyKey))
+      .limit(1);
+    if (!existing) throw new Error('Inquiry disappeared after idempotency conflict.');
+    return {
+      id: existing.id,
+      state: contactInquiryMatchesSubmission(existing, submission) ? 'duplicate' as const : 'conflict' as const,
+    };
+  },
+  sendNotification,
+  onNotificationError: (error, inquiryId) => {
+    console.error(`[api/contact] notification failed for inquiry ${inquiryId}`, error);
+  },
+});

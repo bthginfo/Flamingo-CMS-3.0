@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from 'react';
 import { Plus, Trash2, ExternalLink, Mail, Search, X, Sparkles } from 'lucide-react';
 import { createLead, updateLead, deleteLead, createLeadDemoTenant, type Lead } from './actions';
 import { toast } from 'sonner';
+import { createCrmEmailActionId, withCrmEmailIdempotency } from '@/lib/crm-email-client-security';
 
 type LeadStatus = 'offen' | 'kontaktiert' | 'angenommen' | 'abgelehnt';
 
@@ -143,7 +144,7 @@ export function LeadsClient({ initialLeads, leadTenants, rendererBaseUrl }: { in
   }
 
   // Email modal state
-  const [emailModal, setEmailModal] = useState<{ to: string; subject: string; body: string; leadId: string } | null>(null);
+  const [emailModal, setEmailModal] = useState<{ to: string; subject: string; body: string; leadId: string; idempotencyKey: string } | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailVariant, setEmailVariant] = useState<'hat-website' | 'keine-website' | 'demo-seite'>('hat-website');
   const [emailTone, setEmailTone] = useState<'locker' | 'förmlich'>('locker');
@@ -333,6 +334,7 @@ Flamingo Media`;
       subject: `Professioneller Webauftritt für ${company}`,
       body,
       leadId: lead.id,
+      idempotencyKey: createCrmEmailActionId(),
     });
   }
 
@@ -341,12 +343,15 @@ Flamingo Media`;
     if (!emailModal.to.trim()) { toast.error('Empfänger E-Mail fehlt'); return; }
     setSendingEmail(true);
     try {
-      const res = await fetch('/api/send-lead-email', {
+      const res = await fetch('/crm/api/send-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: emailModal.to, subject: emailModal.subject, body: emailModal.body }),
+        headers: withCrmEmailIdempotency(emailModal.idempotencyKey, {
+          'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify({ purpose: 'lead_outreach', entityId: emailModal.leadId, body: emailModal.body }),
       });
-      if (!res.ok) throw new Error('Send failed');
+      const result = await res.json().catch(() => null) as { success?: boolean; error?: string; code?: string } | null;
+      if (!res.ok || !result?.success) throw new Error(result?.error || 'Send failed');
       toast.success('E-Mail gesendet!');
       // Auto-update status to "kontaktiert"
       const lead = leads.find(l => l.id === emailModal.leadId);
@@ -354,8 +359,8 @@ Flamingo Media`;
         handleStatusChange(lead.id, 'kontaktiert');
       }
       setEmailModal(null);
-    } catch {
-      toast.error('E-Mail konnte nicht gesendet werden');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'E-Mail konnte nicht gesendet werden');
     } finally {
       setSendingEmail(false);
     }
@@ -563,11 +568,12 @@ Flamingo Media`;
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-slate-500">Empfänger</label>
-                <input type="email" className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={emailModal.to} onChange={e => setEmailModal({ ...emailModal, to: e.target.value })} placeholder="email@example.com" />
+                <input type="email" className="w-full border rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600 mt-1" value={emailModal.to} readOnly aria-describedby="lead-email-recipient-help" />
+                <p id="lead-email-recipient-help" className="mt-1 text-[11px] text-slate-400">Wird sicher aus dem Lead-Datensatz übernommen.</p>
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Betreff</label>
-                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={emailModal.subject} onChange={e => setEmailModal({ ...emailModal, subject: e.target.value })} />
+                <input className="w-full border rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600 mt-1" value={emailModal.subject} readOnly />
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Nachricht</label>

@@ -7,7 +7,25 @@ import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBoo
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { formatBookingDate, normalizeTimezone } from '@/lib/booking-time';
 import { bookingCustomers, bookingRequests, bookingResources, bookingServices } from '@flamingo/db';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import {
+  claimPublicFlowRequest,
+  completePublicFlowRequest,
+  consumePublicFlowRateLimit,
+  failPublicFlowRequest,
+  fingerprintPublicFlowRequest,
+  inspectPublicFlowRequest,
+  publicFlowClaimResponse,
+  publicFlowClientAddress,
+  resolvePublicFlowIdempotencyKey,
+} from '@/lib/public-flow-security';
+import {
+  isTrustedRendererContactOrigin,
+  readBoundedRendererContactJson,
+  RendererContactBodyInvalidError,
+  RendererContactBodyTooLargeError,
+} from '@/lib/renderer-contact-security';
+
+const MAX_BOOKING_REQUEST_BYTES = 64 * 1024;
 
 function resolveExplicitTenant(value: unknown) {
   if (typeof value !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) return null;
@@ -17,23 +35,22 @@ function resolveExplicitTenant(value: unknown) {
 }
 
 export async function POST(req: NextRequest) {
+  let activeClaim: { tenantId: string; idempotencyKey: string } | null = null;
+  let bookingPersisted = false;
   try {
-    const body = await req.json();
+    if (req.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase() !== 'application/json') {
+      return NextResponse.json({ error: 'Content-Type wird nicht unterstützt.' }, { status: 415 });
+    }
+    if (!isTrustedRendererContactOrigin(req)) {
+      return NextResponse.json({ error: 'Ungültiger Request-Ursprung.' }, { status: 403 });
+    }
+    const body = await readBoundedRendererContactJson(req, MAX_BOOKING_REQUEST_BYTES) as Record<string, unknown>;
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
+    }
     const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
     if (!tenantId) return NextResponse.json({ error: 'Tenant nicht gefunden.' }, { status: 404 });
     if (!(await hasBookingAddon(tenantId))) return NextResponse.json({ error: 'Booking ist nicht aktiviert.' }, { status: 403 });
-
-    // Rate limit: 10 booking requests / 10 min per IP+tenant. Stops bots from
-    // flooding the calendar with fake reservations and the admin's inbox with
-    // notification emails. Real customers comfortably stay under this.
-    const ip = getClientIp(req);
-    const rl = rateLimit(`booking:${tenantId}:${ip}`, 10, 10 * 60 * 1000);
-    if (!rl.ok) {
-      return NextResponse.json(
-        { error: 'Zu viele Buchungsanfragen. Bitte später erneut versuchen.' },
-        { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
-      );
-    }
 
     const customerName = clean(body.customerName, 255);
     const customerEmail = clean(body.customerEmail, 320);
@@ -44,6 +61,50 @@ export async function POST(req: NextRequest) {
     const partySize = clamp(Number(body.partySize) || 1, 1, 10000);
     if (!customerName) return NextResponse.json({ error: 'Name ist ein Pflichtfeld.' }, { status: 400 });
     if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) return NextResponse.json({ error: 'Ungültige E-Mail-Adresse.' }, { status: 400 });
+
+    const idempotencyKey = resolvePublicFlowIdempotencyKey(req, body.idempotencyKey);
+    if (!idempotencyKey) {
+      return NextResponse.json({ error: 'Ein gültiger Idempotency-Key ist erforderlich.' }, { status: 400 });
+    }
+    const clientAddress = publicFlowClientAddress(req);
+    const requestHash = fingerprintPublicFlowRequest('booking', tenantId, {
+      customerName,
+      customerEmail: customerEmail.toLowerCase(),
+      customerPhone,
+      serviceId,
+      resourceId,
+      message,
+      partySize,
+      date: clean(body.date, 40),
+      startDate: clean(body.startDate, 40),
+      endDate: clean(body.endDate, 40),
+      time: clean(body.time, 20),
+      timeModel: clean(body.timeModel, 30),
+      intakeAnswers: body.intakeAnswers ?? null,
+    });
+    const existingClaim = await inspectPublicFlowRequest({
+      flow: 'booking', tenantId, idempotencyKey, requestHash,
+    });
+    if (existingClaim) {
+      const replay = publicFlowClaimResponse(existingClaim);
+      if (replay) return NextResponse.json(replay.body, { status: replay.status });
+    }
+
+    try {
+      const denied = await consumePublicFlowRateLimit('booking', tenantId, clientAddress, customerEmail);
+      if (denied) {
+        return NextResponse.json(
+          { error: 'Zu viele Buchungsanfragen. Bitte später erneut versuchen.' },
+          { status: 429, headers: { 'Retry-After': String(denied.retryAfterSeconds) } },
+        );
+      }
+    } catch (error) {
+      console.error('[Booking] persistent rate limit unavailable', error);
+      return NextResponse.json(
+        { error: 'Buchungen sind vorübergehend nicht verfügbar.' },
+        { status: 503, headers: { 'Retry-After': '60' } },
+      );
+    }
 
     const db = getDb();
     const settings = await getOrCreateBookingSettings(tenantId);
@@ -116,6 +177,14 @@ export async function POST(req: NextRequest) {
       const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt, timezone, bufferBeforeMinutes, bufferAfterMinutes });
       if (conflict) return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.' }, { status: 409 });
     }
+
+    const claim = await claimPublicFlowRequest({
+      flow: 'booking', tenantId, idempotencyKey, requestHash,
+    });
+    const claimResponse = publicFlowClaimResponse(claim);
+    if (claimResponse) return NextResponse.json(claimResponse.body, { status: claimResponse.status });
+    activeClaim = { tenantId, idempotencyKey };
+
     const [customer] = await db.insert(bookingCustomers).values({
       tenantId,
       name: customerName,
@@ -158,6 +227,7 @@ export async function POST(req: NextRequest) {
       if (isBookingOverlapError(error)) throw new Error('BOOKING_CONFLICT');
       throw error;
     }
+    bookingPersisted = true;
 
     const bookingSummary = [
       service?.name ? `Leistung: ${service.name}` : null,
@@ -177,19 +247,53 @@ export async function POST(req: NextRequest) {
       cancellationUrl: `${baseUrl}/api/booking/cancel?booking=${booking.id}&token=${cancellationToken}`,
     };
 
+    const responseBody = { success: true, id: booking.id, status: booking.status };
+    await completePublicFlowRequest({
+      flow: 'booking',
+      tenantId,
+      idempotencyKey,
+      resourceId: booking.id,
+      response: responseBody,
+    });
+    activeClaim = null;
+
+    const notifications: Promise<unknown>[] = [];
     if (settings.customerEmailEnabled && customerEmail) {
-      sendBookingEmail({ tenantId, trigger: settings.mode === 'instant' ? 'booking_confirmed_customer' : 'booking_requested_customer', to: customerEmail, values }).catch(console.error);
+      notifications.push(sendBookingEmail({ tenantId, trigger: settings.mode === 'instant' ? 'booking_confirmed_customer' : 'booking_requested_customer', to: customerEmail, values }));
     }
     if (settings.adminEmailEnabled) {
       const adminEmail = await getBookingNotificationEmail(tenantId);
-      sendBookingEmail({ tenantId, trigger: 'booking_requested_admin', to: adminEmail, values }).catch(console.error);
+      notifications.push(sendBookingEmail({ tenantId, trigger: 'booking_requested_admin', to: adminEmail, values }));
+    }
+    const notificationResults = await Promise.allSettled(notifications);
+    for (const result of notificationResults) {
+      if (result.status === 'rejected') console.error('[Booking] notification failed', result.reason);
     }
 
-    return NextResponse.json({ success: true, id: booking.id, status: booking.status });
+    return NextResponse.json(responseBody);
   } catch (error) {
+    if (error instanceof RendererContactBodyTooLargeError) {
+      return NextResponse.json({ error: 'Die Anfrage ist zu groß.' }, { status: 413 });
+    }
+    if (error instanceof RendererContactBodyInvalidError) {
+      return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
+    }
     const message = error instanceof Error ? error.message : 'Interner Fehler';
-    if (message === 'BOOKING_CONFLICT') return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.' }, { status: 409 });
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (activeClaim) {
+      await failPublicFlowRequest({
+        flow: 'booking',
+        tenantId: activeClaim.tenantId,
+        idempotencyKey: activeClaim.idempotencyKey,
+        uncertain: bookingPersisted,
+      }).catch(cleanupError => console.error('[Booking] claim cleanup failed', cleanupError));
+    }
+    const retryHint = activeClaim
+      ? bookingPersisted
+        ? { retryWithSameIdempotencyKey: true }
+        : { retryWithNewIdempotencyKey: true }
+      : {};
+    if (message === 'BOOKING_CONFLICT') return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.', ...retryHint }, { status: 409 });
+    return NextResponse.json({ error: message, ...retryHint }, { status: 500 });
   }
 }
 

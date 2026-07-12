@@ -1,7 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { plain } from '@/lib/strip-html';
+import {
+  createRendererContactActionIdentity,
+  rendererContactRequestHeaders,
+  type RendererContactActionIdentity,
+} from '@/lib/renderer-contact-client-security';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -12,6 +17,7 @@ export function TattooBookingSection({ data }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  const actionIdentity = useRef<RendererContactActionIdentity | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,16 +32,19 @@ export function TattooBookingSection({ data }: Props) {
       fd.get('size') && `Größe: ${fd.get('size')}`,
       `Motiv: ${fd.get('message')}`,
     ].filter(Boolean).join('\n');
+    const payload = { name: fd.get('name'), email: fd.get('email'), message: details, _page: window.location.pathname };
+    actionIdentity.current = createRendererContactActionIdentity(payload, actionIdentity.current);
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: fd.get('name'), email: fd.get('email'), message: details, _page: window.location.pathname }),
+        headers: rendererContactRequestHeaders(actionIdentity.current.idempotencyKey),
+        body: actionIdentity.current.serializedPayload,
       });
       if (res.ok) {
         setSubmitted(true);
       } else {
         const data = await res.json().catch(() => ({}));
+        if (res.status === 409) actionIdentity.current = null;
         setError((data as { error?: string }).error || 'Senden fehlgeschlagen — bitte erneut versuchen.');
       }
     } catch {

@@ -1,8 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { Heart, CalendarDays, Inbox, ShoppingBag, Sparkles, X, Globe, Lock, Check, CalendarCheck } from 'lucide-react';
+import {
+  createRendererContactActionIdentity,
+  rendererContactRequestHeaders,
+  type RendererContactActionIdentity,
+} from '@/lib/renderer-contact-client-security';
 
 const FEATURES = [
   {
@@ -47,26 +52,41 @@ export function FunctionsClient({ i18nEnabled, bookingEnabled }: { i18nEnabled: 
   const [showModal, setShowModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
+  const supportIdentity = useRef<RendererContactActionIdentity | null>(null);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
+
+  function openSupportModal(message = '') {
+    setShowModal(true);
+    setSent(false);
+    setError('');
+    supportIdentity.current = null;
+    setForm(current => ({ ...current, message }));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) return;
     setSending(true);
+    setError('');
+    let rotateIdempotencyKey = false;
+    const payload = { name: form.name, email: form.email, message: form.message };
+    supportIdentity.current = createRendererContactActionIdentity(payload, supportIdentity.current);
     try {
-      await fetch('https://www.flamingomedia.online/api/contact', {
+      const response = await fetch('/admin/api/support-request', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.message,
-          source: 'CMS Admin – Individuelle Funktionen',
-        }),
+        headers: rendererContactRequestHeaders(supportIdentity.current.idempotencyKey),
+        body: supportIdentity.current.serializedPayload,
       });
+      const result = await response.json().catch(() => null) as { success?: boolean; error?: string; code?: string } | null;
+      rotateIdempotencyKey = response.status >= 500 || result?.code === 'SUPPORT_PREVIOUSLY_FAILED';
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.error || 'Anfrage konnte nicht gesendet werden.');
+      }
       setSent(true);
-    } catch {
-      // ignore
+    } catch (submitError) {
+      if (rotateIdempotencyKey) supportIdentity.current = null;
+      setError(submitError instanceof Error ? submitError.message : 'Anfrage konnte nicht gesendet werden.');
     } finally {
       setSending(false);
     }
@@ -143,7 +163,7 @@ export function FunctionsClient({ i18nEnabled, bookingEnabled }: { i18nEnabled: 
               <p className="text-sm text-zinc-500 mt-0.5">Website in mehreren Sprachen — automatische Übersetzung inklusive.</p>
               <p className="text-xs text-zinc-400 mt-2">Ab 290€ einmalig · Bis zu 10 Sprachen</p>
               <button
-                onClick={() => { setShowModal(true); setSent(false); setForm({ ...form, message: 'Ich hätte gerne die Mehrsprachigkeit (i18n) für meine Website aktiviert.' }); }}
+                onClick={() => openSupportModal('Ich hätte gerne die Mehrsprachigkeit (i18n) für meine Website aktiviert.')}
                 className="mt-2 text-xs font-medium text-violet-600 hover:text-violet-700 underline underline-offset-2"
               >
                 Jetzt anfragen →
@@ -158,7 +178,7 @@ export function FunctionsClient({ i18nEnabled, bookingEnabled }: { i18nEnabled: 
         <Sparkles className="w-5 h-5 text-indigo-400 mx-auto mb-2" />
         <p className="text-sm text-zinc-600">Sie möchten individuelle Funktionen zusätzlich haben?</p>
         <button
-          onClick={() => { setShowModal(true); setSent(false); }}
+          onClick={() => openSupportModal()}
           className="mt-3 text-sm font-medium text-indigo-600 hover:text-indigo-700 underline underline-offset-2"
         >
           Jetzt bei Flamingo Media anfragen →
@@ -180,6 +200,11 @@ export function FunctionsClient({ i18nEnabled, bookingEnabled }: { i18nEnabled: 
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3">
+                {error && (
+                  <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                    {error}
+                  </div>
+                )}
                 <div>
                   <label className="text-xs font-medium text-zinc-500">Name *</label>
                   <input required className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />

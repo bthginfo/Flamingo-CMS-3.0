@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from 'react';
 import { Banknote, CheckCircle2, Mail, Plus, Search, Trash2, UserPlus, X, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { createCrmEmailActionId, withCrmEmailIdempotency } from '@/lib/crm-email-client-security';
 import type { Lead } from '../leads/actions';
 import {
   addCustomerPayment,
@@ -462,22 +463,28 @@ function CustomerEmailModal({ customer, onClose }: { customer: CustomerWithPayme
   const [body, setBody] = useState(`Hallo ${customer.contactFirstName || customer.company},\n\nkurzes Update zu Ihrem Projekt: Wir melden uns mit den nächsten Schritten und offenen Punkten.\n\nViele Grüße\nMario & Julius`);
   const [file, setFile] = useState<File | null>(null);
   const [sending, setSending] = useState(false);
+  const [idempotencyKey] = useState(createCrmEmailActionId);
 
   async function send() {
     if (!to.trim()) { toast.error('Empfänger fehlt'); return; }
     setSending(true);
     try {
       const form = new FormData();
-      form.set('to', to);
-      form.set('subject', subject);
+      form.set('purpose', 'customer_update');
+      form.set('entityId', customer.id);
       form.set('body', body);
       if (file) form.set('attachment', file);
-      const res = await fetch('/api/send-lead-email', { method: 'POST', body: form });
-      if (!res.ok) throw new Error('send failed');
+      const res = await fetch('/crm/api/send-email', {
+        method: 'POST',
+        headers: withCrmEmailIdempotency(idempotencyKey),
+        body: form,
+      });
+      const result = await res.json().catch(() => null) as { success?: boolean; error?: string; code?: string } | null;
+      if (!res.ok || !result?.success) throw new Error(result?.error || 'send failed');
       toast.success('E-Mail gesendet');
       onClose();
-    } catch {
-      toast.error('E-Mail konnte nicht gesendet werden');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'E-Mail konnte nicht gesendet werden');
     } finally {
       setSending(false);
     }
@@ -488,15 +495,16 @@ function CustomerEmailModal({ customer, onClose }: { customer: CustomerWithPayme
       <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl sm:p-6" onClick={event => event.stopPropagation()}>
         <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900"><Mail size={18} className="text-indigo-600" /> E-Mail an Kunden</h2>
         <div className="mt-4 space-y-3">
-          <Field label="Empfänger" value={to} onChange={setTo} type="email" />
-          <Field label="Betreff" value={subject} onChange={setSubject} />
+          <Field label="Empfänger" value={to} onChange={setTo} type="email" readOnly help="Wird sicher aus dem Kunden-Datensatz übernommen." />
+          <Field label="Betreff" value={subject} onChange={setSubject} readOnly />
           <label className="block">
             <span className="text-xs font-medium text-slate-500">Nachricht</span>
             <textarea value={body} onChange={event => setBody(event.target.value)} className="mt-1 min-h-72 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
           </label>
           <label className="block">
             <span className="text-xs font-medium text-slate-500">Anhang optional</span>
-            <input type="file" onChange={event => setFile(event.target.files?.[0] || null)} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={event => setFile(event.target.files?.[0] || null)} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+            <span className="mt-1 block text-[11px] text-slate-400">PDF, JPG, PNG oder WebP, maximal 3 MB.</span>
           </label>
         </div>
         <div className="mt-5 flex justify-end gap-2">
@@ -513,8 +521,8 @@ function Metric({ label, value, tone = 'slate' }: { label: string; value: string
   return <div className="rounded-xl border border-slate-200 bg-white p-4"><div className={`text-2xl font-bold ${color}`}>{value}</div><div className="text-xs text-slate-500">{label}</div></div>;
 }
 
-function Field({ label, value, onChange, type = 'text', className = '' }: { label: string; value: string; onChange: (value: string) => void; type?: string; className?: string }) {
-  return <label className={`block ${className}`}><span className="text-xs font-medium text-slate-500">{label}</span><input type={type} value={value} onChange={event => onChange(event.target.value)} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" /></label>;
+function Field({ label, value, onChange, type = 'text', className = '', readOnly = false, help }: { label: string; value: string; onChange: (value: string) => void; type?: string; className?: string; readOnly?: boolean; help?: string }) {
+  return <label className={`block ${className}`}><span className="text-xs font-medium text-slate-500">{label}</span><input type={type} value={value} onChange={event => onChange(event.target.value)} readOnly={readOnly} className={`mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm ${readOnly ? 'bg-slate-50 text-slate-600' : ''}`} />{help ? <span className="mt-1 block text-[11px] text-slate-400">{help}</span> : null}</label>;
 }
 
 function Bar({ label, value, max, suffix }: { label: string; value: number; max: number; suffix: string }) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle, Info, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FormField } from '@/templates/shared/section-primitives';
@@ -15,6 +15,11 @@ import {
   resolveLeadContext,
   type LeadContext,
 } from '@/lib/lead-context';
+import {
+  createRendererContactActionIdentity,
+  rendererContactRequestHeaders,
+  type RendererContactActionIdentity,
+} from '@/lib/renderer-contact-client-security';
 
 export type FormFieldDef = ContactFormFieldDefinition;
 
@@ -36,6 +41,7 @@ export function DynamicContactForm({
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
   const [storedLeadContext, setStoredLeadContext] = useState<LeadContext | null>(null);
+  const actionIdentity = useRef<RendererContactActionIdentity | null>(null);
   const formId = useId().replace(/:/g, '');
 
   const formFields = normalizeContactFormFields(fields?.length ? fields : DEFAULT_CONTACT_FORM_FIELDS).map((field) => ({
@@ -82,12 +88,13 @@ export function DynamicContactForm({
           payload._source = leadContext.source;
           payload._summary = leadContext.summary;
         }
+        actionIdentity.current = createRendererContactActionIdentity(payload, actionIdentity.current);
 
         try {
           const response = await fetch('/api/contact', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+            headers: rendererContactRequestHeaders(actionIdentity.current.idempotencyKey),
+            body: actionIdentity.current.serializedPayload,
           });
           if (response.ok) {
             setStatus('success');
@@ -100,6 +107,7 @@ export function DynamicContactForm({
             setStoredLeadContext(null);
           } else {
             const data = await response.json().catch(() => null) as { error?: string } | null;
+            if (response.status === 409) actionIdentity.current = null;
             setError(data?.error || 'Fehler beim Senden. Bitte versuchen Sie es erneut.');
             setStatus('error');
           }
@@ -116,7 +124,7 @@ export function DynamicContactForm({
           <CheckCircle aria-hidden="true" className="text-[color:var(--token-success)]" size={44} />
           <p className="text-lg font-semibold text-[color:var(--token-heading)]">Vielen Dank!</p>
           <p className="max-w-md text-sm leading-6 text-[color:var(--token-muted)]">Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns zeitnah.</p>
-          <button type="button" onClick={() => setStatus('idle')} className="cms-button cms-button--secondary mt-2">Neue Nachricht senden</button>
+          <button type="button" onClick={() => { actionIdentity.current = null; setStatus('idle'); }} className="cms-button cms-button--secondary mt-2">Neue Nachricht senden</button>
         </div>
       ) : (
         <>

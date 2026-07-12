@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { CalendarCheck, CheckCircle, ChevronLeft, ChevronRight, Clock3, Loader2, MapPin, Sparkles } from 'lucide-react';
 import type { SectionProps } from '../restaurant';
 import { plain } from '@/lib/strip-html';
+import { createPublicFlowActionId, publicFlowRequestHeaders } from '@/lib/public-flow-client-security';
 
 type BookingTimeModel = 'time_slot' | 'full_day' | 'date_range';
 
@@ -209,6 +210,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
+  const actionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!tenantId) {
@@ -230,13 +232,18 @@ export function BookingWidgetSection({ data }: SectionProps) {
     const payload = Object.fromEntries(formData.entries());
     const intakeAnswers = getIntakeAnswers(formData, selectedService);
     try {
+      actionIdRef.current ||= createPublicFlowActionId();
       const res = await fetch('/api/booking/request', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, tenantId, intakeAnswers }),
+        headers: publicFlowRequestHeaders(actionIdRef.current),
+        body: JSON.stringify({ ...payload, tenantId, intakeAnswers, idempotencyKey: actionIdRef.current }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || 'Buchung konnte nicht gesendet werden.');
+      if (!res.ok) {
+        if (json.retryWithNewIdempotencyKey) actionIdRef.current = null;
+        throw new Error(json.error || 'Buchung konnte nicht gesendet werden.');
+      }
+      actionIdRef.current = null;
       setStatus('success');
       e.currentTarget.reset();
       setSelectedServiceId('');
@@ -414,6 +421,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
   const [selectedSlot, setSelectedSlot] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
+  const actionIdRef = useRef<string | null>(null);
   const selectedService = (config?.services || []).find((service) => service.id === selectedServiceId);
   const timeModel = selectedService?.timeModelOverride || config?.timeModel || 'time_slot';
   const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
@@ -439,13 +447,18 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
     const payload = Object.fromEntries(formData.entries());
     const intakeAnswers = getIntakeAnswers(formData, selectedService);
     try {
+      actionIdRef.current ||= createPublicFlowActionId();
       const res = await fetch('/api/booking/request', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, tenantId, time: selectedSlot, timeModel: 'time_slot', intakeAnswers }),
+        headers: publicFlowRequestHeaders(actionIdRef.current),
+        body: JSON.stringify({ ...payload, tenantId, time: selectedSlot, timeModel: 'time_slot', intakeAnswers, idempotencyKey: actionIdRef.current }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
+      if (!res.ok) {
+        if (json.retryWithNewIdempotencyKey) actionIdRef.current = null;
+        throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
+      }
+      actionIdRef.current = null;
       setStatus('success');
       e.currentTarget.reset();
     } catch (err) {
@@ -576,6 +589,7 @@ export function BookingDateRangeSection({ data }: SectionProps) {
   const [endDate, setEndDate] = useState(() => toInputDate(addDays(new Date(), 9)));
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
+  const actionIdRef = useRef<string | null>(null);
   const selectedService = (config?.services || []).find((service) => service.id === selectedServiceId);
   const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
   const availableResources = (config?.resources || []).filter((resource) => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
@@ -589,13 +603,18 @@ export function BookingDateRangeSection({ data }: SectionProps) {
     const payload = Object.fromEntries(formData.entries());
     const intakeAnswers = getIntakeAnswers(formData, selectedService);
     try {
+      actionIdRef.current ||= createPublicFlowActionId();
       const res = await fetch('/api/booking/request', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, tenantId, date: startDate, startDate, endDate, timeModel: 'date_range', intakeAnswers }),
+        headers: publicFlowRequestHeaders(actionIdRef.current),
+        body: JSON.stringify({ ...payload, tenantId, date: startDate, startDate, endDate, timeModel: 'date_range', intakeAnswers, idempotencyKey: actionIdRef.current }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
+      if (!res.ok) {
+        if (json.retryWithNewIdempotencyKey) actionIdRef.current = null;
+        throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
+      }
+      actionIdRef.current = null;
       setStatus('success');
       e.currentTarget.reset();
     } catch (err) {

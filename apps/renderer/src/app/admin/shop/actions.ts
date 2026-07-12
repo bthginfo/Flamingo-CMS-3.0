@@ -2,9 +2,41 @@
 
 import { getDb } from '@/lib/db';
 import { getSession, getWritableSession } from '@/lib/session';
-import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices, formSubmissions, tenants, promotions } from '@flamingo/db';
+import { getSessionCookieName } from '@flamingo/auth';
+import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, formSubmissions, tenants, promotions, crmEmailDeliveries } from '@flamingo/db';
 import { eq, and, desc, sql, not } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { cookies, headers } from 'next/headers';
+import {
+  createHardenedRendererSmtpTransport,
+  getEffectiveSmtp,
+  getPlatformSmtp,
+  isValidSmtpAddress,
+} from '@/lib/smtp';
+import {
+  escapeShopEmailHtml,
+  getSafeShopEmailUrl,
+  sanitizeShopEmailHeaderValue,
+} from '@/lib/shop-email-security';
+import {
+  createShopAddonIdempotencyKey,
+  createShopOrderMailIdempotencyKey,
+  classifyShopMailDelivery,
+  classifyShopSmtpSendError,
+  fingerprintShopAddonActor,
+  fingerprintShopAddonRequest,
+  fingerprintShopOrderMail,
+  isOrderStatus,
+  isShopAddonClaimStale,
+  normalizeShopAddonMessage,
+  shopAddonRateRules,
+  shouldSendShippedNotification,
+  type OrderStatus,
+} from '@/lib/shop-admin-security';
+import {
+  consumeRendererContactRateRules,
+  getRendererContactClientAddress,
+} from '@/lib/renderer-contact-security';
 
 async function requireTenant() {
   const session = await getWritableSession();
@@ -24,34 +56,151 @@ export async function isShopActive(): Promise<boolean> {
 }
 
 export async function requestShopAddon(message?: string): Promise<void> {
-  const tenantId = await requireTenant();
+  const session = await getWritableSession();
+  if (!session) throw new Error('Unauthorized');
+  const tenantId = session.tenantId;
+  const normalizedMessage = normalizeShopAddonMessage(message);
+  const requestHash = fingerprintShopAddonRequest(tenantId, normalizedMessage);
+  const idempotencyKey = createShopAddonIdempotencyKey(tenantId, normalizedMessage);
   const db = getDb();
+
+  try {
+    const requestHeaders = await headers();
+    const sessionToken = (await cookies()).get(getSessionCookieName())?.value;
+    if (!sessionToken) throw new Error('Missing authenticated shop actor.');
+    const denied = await consumeRendererContactRateRules(shopAddonRateRules(
+      tenantId,
+      fingerprintShopAddonActor(sessionToken),
+      getRendererContactClientAddress(requestHeaders),
+    ));
+    if (denied) throw new Error('Zu viele Anfragen. Bitte versuche es später erneut.');
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith('Zu viele Anfragen.')) throw error;
+    console.error('[requestShopAddon] persistent rate limit unavailable', error);
+    throw new Error('Die Shop-Anfrage ist vorübergehend nicht verfügbar.');
+  }
+
+  let claimed: { idempotencyKey: string } | undefined;
+  try {
+    [claimed] = await db.insert(crmEmailDeliveries).values({
+      idempotencyKey,
+      purpose: 'shop_addon',
+      entityId: tenantId,
+      requestHash,
+      status: 'sending',
+    }).onConflictDoNothing({ target: crmEmailDeliveries.idempotencyKey }).returning({
+      idempotencyKey: crmEmailDeliveries.idempotencyKey,
+    });
+  } catch (error) {
+    console.error('[requestShopAddon] idempotency store unavailable', error);
+    throw new Error('Die Shop-Anfrage ist vorübergehend nicht verfügbar.');
+  }
+
+  if (!claimed) {
+    const [existing] = await db.select({
+      purpose: crmEmailDeliveries.purpose,
+      entityId: crmEmailDeliveries.entityId,
+      requestHash: crmEmailDeliveries.requestHash,
+      status: crmEmailDeliveries.status,
+      updatedAt: crmEmailDeliveries.updatedAt,
+    }).from(crmEmailDeliveries)
+      .where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey))
+      .limit(1);
+
+    if (!existing
+      || existing.purpose !== 'shop_addon'
+      || existing.entityId !== tenantId
+      || existing.requestHash !== requestHash) {
+      throw new Error('Die Anfrage konnte nicht eindeutig zugeordnet werden.');
+    }
+
+    const [savedSubmission] = await db.select({ id: formSubmissions.id })
+      .from(formSubmissions)
+      .where(and(
+        eq(formSubmissions.tenantId, tenantId),
+        eq(formSubmissions.idempotencyKey, idempotencyKey),
+      ))
+      .limit(1);
+    if (savedSubmission) {
+      const recoveredAt = new Date();
+      await db.update(crmEmailDeliveries).set({
+        status: 'sent',
+        sentAt: recoveredAt,
+        lastErrorCode: null,
+        updatedAt: recoveredAt,
+      }).where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey)).catch(() => undefined);
+      return;
+    }
+
+    if (existing.status === 'failed' || (existing.status === 'sending' && isShopAddonClaimStale(existing.updatedAt))) {
+      [claimed] = await db.update(crmEmailDeliveries).set({
+        status: 'sending',
+        attemptCount: sql`${crmEmailDeliveries.attemptCount} + 1`,
+        lastErrorCode: null,
+        updatedAt: new Date(),
+      }).where(and(
+        eq(crmEmailDeliveries.idempotencyKey, idempotencyKey),
+        eq(crmEmailDeliveries.status, existing.status),
+        eq(crmEmailDeliveries.updatedAt, existing.updatedAt),
+      )).returning({ idempotencyKey: crmEmailDeliveries.idempotencyKey });
+    }
+
+    // A concurrent identical action is already processing the durable claim.
+    if (!claimed) return;
+  }
 
   // Store as form submission (visible in CRM inbox)
   const [tenant] = await db.select({ name: tenants.name, slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
 
-  await db.insert(formSubmissions).values({
-    tenantId,
-    name: tenant?.name || 'Kunde',
-    email: '',
-    message: `[Shop-Addon Anfrage] ${message || 'Keine Nachricht'}`,
-    page: '/admin/shop',
+  let createdSubmission: { id: string } | undefined;
+  try {
+    [createdSubmission] = await db.insert(formSubmissions).values({
+      tenantId,
+      idempotencyKey,
+      requestHash,
+      name: tenant?.name || 'Kunde',
+      email: '',
+      message: `[Shop-Addon Anfrage] ${normalizedMessage || 'Keine Nachricht'}`,
+      page: '/admin/shop',
+    }).onConflictDoNothing({
+      target: [formSubmissions.tenantId, formSubmissions.idempotencyKey],
+    }).returning({ id: formSubmissions.id });
+  } catch (error) {
+    await db.update(crmEmailDeliveries).set({
+      status: 'failed',
+      lastErrorCode: 'shop_addon_persist_failed',
+      updatedAt: new Date(),
+    }).where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey)).catch(() => undefined);
+    console.error('[requestShopAddon] persistence failed', error);
+    throw new Error('Die Shop-Anfrage konnte nicht gespeichert werden.');
+  }
+
+  // The action is durably accepted once its CRM record exists. Mark it before
+  // SMTP so a timeout after sending can never trigger a duplicate notification.
+  const acceptedAt = new Date();
+  await db.update(crmEmailDeliveries).set({
+    status: 'sent',
+    sentAt: acceptedAt,
+    lastErrorCode: null,
+    updatedAt: acceptedAt,
+  }).where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey)).catch((error) => {
+    console.error(`[requestShopAddon] failed to finalize ${idempotencyKey}`, error);
   });
+
+  // Another recovered worker may have inserted the same durable submission.
+  // Only the worker that created it may emit the notification.
+  if (!createdSubmission) return;
 
   // Send email notification to Flamingo Media
   try {
-    const nodemailer = await import('nodemailer');
-    const transport = nodemailer.default.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.resend.com',
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true,
-      auth: { user: process.env.SMTP_USER || 'resend', pass: process.env.SMTP_PASS || '' },
-    });
+    const smtp = await getPlatformSmtp();
+    if (!smtp) throw new Error('Platform SMTP is not configured or not publicly routable');
+    const transport = createHardenedRendererSmtpTransport(smtp);
     await transport.sendMail({
-      from: process.env.SMTP_FROM || 'noreply@flamingomedia.online',
+      from: smtp.from,
       to: 'hello@flamingomedia.online',
-      subject: `Shop-Addon Anfrage: ${tenant?.name || tenantId}`,
-      text: `Tenant: ${tenant?.name} (${tenant?.slug})\nID: ${tenantId}\n\nNachricht:\n${message || '–'}`,
+      subject: `Shop-Addon Anfrage: ${sanitizeShopEmailHeaderValue(tenant?.name || tenantId)}`,
+      text: `Tenant: ${tenant?.name} (${tenant?.slug})\nID: ${tenantId}\n\nNachricht:\n${normalizedMessage || '–'}`,
     });
   } catch (e) {
     console.error('[requestShopAddon] mail error:', e);
@@ -287,28 +436,197 @@ export async function updateOrderStatus(orderId: string, newStatus: string, note
   const tenantId = await requireTenant();
   const db = getDb();
 
+  if (!isOrderStatus(newStatus)) throw new Error('Invalid order status');
+
   const [order] = await db.select().from(orders)
     .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
   if (!order) throw new Error('Order not found');
 
-  const oldStatus = order.status;
-  await db.update(orders)
-    .set({ status: newStatus as typeof order.status, updatedAt: new Date() })
-    .where(eq(orders.id, orderId));
+  const oldStatus = order.status as OrderStatus;
+  const needsShippedMail = shouldSendShippedNotification(oldStatus, newStatus);
+  const deliveryKey = createShopOrderMailIdempotencyKey(orderId, 'shipped');
+  const requestHash = fingerprintShopOrderMail(orderId, 'shipped');
+  let transitioned = false;
+  let deliveryCreated = false;
 
-  await db.insert(orderStatusHistory).values({
-    orderId,
-    oldStatus,
-    newStatus,
-    note: note || null,
-  });
+  if (oldStatus !== newStatus) {
+    // neon-http cannot run an interactive callback transaction, but one SQL
+    // statement is atomic. The status transition, audit history and durable
+    // mail outbox therefore either commit together or not at all.
+    const result = await db.execute(sql`
+      WITH transitioned_order AS (
+        UPDATE orders AS shop_order
+        SET status = ${newStatus}::order_status, updated_at = now()
+        WHERE shop_order.id = ${orderId}::uuid
+          AND shop_order.tenant_id = ${tenantId}::uuid
+          AND shop_order.status = ${oldStatus}::order_status
+        RETURNING shop_order.id
+      ),
+      recorded_history AS (
+        INSERT INTO order_status_history (order_id, old_status, new_status, note)
+        SELECT id, ${oldStatus}, ${newStatus}, ${note || null}
+        FROM transitioned_order
+        RETURNING id
+      ),
+      created_delivery AS (
+        INSERT INTO crm_email_deliveries (
+          idempotency_key, purpose, entity_id, request_hash, status, attempt_count, created_at, updated_at
+        )
+        SELECT ${deliveryKey}::uuid, 'shop_shipped', id, ${requestHash}, 'sending', 1, now(), now()
+        FROM transitioned_order
+        WHERE ${needsShippedMail}
+        ON CONFLICT (idempotency_key) DO NOTHING
+        RETURNING idempotency_key
+      )
+      SELECT
+        EXISTS (SELECT 1 FROM transitioned_order) AS transitioned,
+        EXISTS (SELECT 1 FROM recorded_history) AS history_recorded,
+        EXISTS (SELECT 1 FROM created_delivery) AS delivery_created
+    `);
+    const transition = result.rows?.[0] as {
+      transitioned?: boolean;
+      delivery_created?: boolean;
+    } | undefined;
+    transitioned = transition?.transitioned === true;
+    deliveryCreated = transition?.delivery_created === true;
 
-  // Send shipped notification email
+    if (!transitioned) {
+      const [current] = await db.select({ status: orders.status }).from(orders)
+        .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)))
+        .limit(1);
+      if (!current || current.status !== newStatus) {
+        throw new Error('Die Bestellung wurde zwischenzeitlich geändert. Bitte Ansicht aktualisieren.');
+      }
+    }
+  }
+
   if (newStatus === 'shipped') {
-    sendShippedEmail(tenantId, order).catch(e => console.error('[Order] Shipped email error:', e));
+    await deliverShippedNotification({
+      db,
+      tenantId,
+      order,
+      deliveryKey,
+      deliveryCreated,
+    });
   }
 
   revalidatePath('/admin/shop/orders');
+}
+
+async function deliverShippedNotification(input: {
+  db: ReturnType<typeof getDb>;
+  tenantId: string;
+  order: typeof orders.$inferSelect;
+  deliveryKey: string;
+  deliveryCreated: boolean;
+}) {
+  const { db, tenantId, order, deliveryKey } = input;
+  let ownsDelivery = input.deliveryCreated;
+
+  if (!ownsDelivery) {
+    const [existing] = await db.select({
+      status: crmEmailDeliveries.status,
+      updatedAt: crmEmailDeliveries.updatedAt,
+    }).from(crmEmailDeliveries)
+      .where(and(
+        eq(crmEmailDeliveries.idempotencyKey, deliveryKey),
+        eq(crmEmailDeliveries.purpose, 'shop_shipped'),
+        eq(crmEmailDeliveries.entityId, order.id),
+      ))
+      .limit(1);
+    if (!existing) return;
+
+    const classification = classifyShopMailDelivery(existing.status, existing.updatedAt);
+    if (classification === 'sent') return;
+    if (classification === 'in_progress') {
+      throw new Error('Die Versandmail wird noch verarbeitet. Bitte in zwei Minuten erneut versuchen.');
+    }
+    if (classification === 'uncertain') {
+      if (existing.status === 'sending') {
+        await db.update(crmEmailDeliveries).set({
+          status: 'uncertain',
+          lastErrorCode: 'shop_shipped_stale_sending',
+          updatedAt: new Date(),
+        }).where(and(
+          eq(crmEmailDeliveries.idempotencyKey, deliveryKey),
+          eq(crmEmailDeliveries.status, 'sending'),
+          eq(crmEmailDeliveries.updatedAt, existing.updatedAt),
+        )).catch(error => console.error('[Order] failed to persist stale shipped delivery', error));
+      }
+      throw new Error('Der Status der Versandmail ist unklar. Bitte Versandprotokoll prüfen.');
+    }
+
+    const [reclaimed] = await db.update(crmEmailDeliveries).set({
+      status: 'sending',
+      attemptCount: sql`${crmEmailDeliveries.attemptCount} + 1`,
+      lastErrorCode: null,
+      updatedAt: new Date(),
+    }).where(and(
+      eq(crmEmailDeliveries.idempotencyKey, deliveryKey),
+      eq(crmEmailDeliveries.status, existing.status),
+      eq(crmEmailDeliveries.updatedAt, existing.updatedAt),
+    )).returning({ idempotencyKey: crmEmailDeliveries.idempotencyKey });
+    ownsDelivery = Boolean(reclaimed);
+  }
+
+  if (!ownsDelivery) return;
+
+  try {
+    await sendShippedEmail(tenantId, order);
+  } catch (error) {
+    const sendOutcome = classifyShopSmtpSendError(error);
+    const retryable = sendOutcome === 'rejected';
+    await db.update(crmEmailDeliveries).set({
+      status: retryable ? 'failed' : 'uncertain',
+      lastErrorCode: retryable
+        ? 'shop_shipped_smtp_rejected'
+        : 'shop_shipped_smtp_uncertain',
+      updatedAt: new Date(),
+    }).where(and(
+      eq(crmEmailDeliveries.idempotencyKey, deliveryKey),
+      eq(crmEmailDeliveries.status, 'sending'),
+    )).catch(auditError => console.error('[Order] failed to record shipped email failure', auditError));
+    console.error('[Order] Shipped email error:', error);
+    if (retryable) {
+      throw new Error('Bestellstatus gespeichert, Versandmail wurde abgelehnt. Erneut speichern, um den Versand zu wiederholen.');
+    }
+    throw new Error('Bestellstatus gespeichert, Versandmail-Status ist unklar. Bitte Versandprotokoll pr\u00fcfen und nicht erneut senden.');
+  }
+
+  let markedSent: { idempotencyKey: string } | undefined;
+  try {
+    [markedSent] = await db.update(crmEmailDeliveries).set({
+      status: 'sent',
+      sentAt: new Date(),
+      lastErrorCode: null,
+      updatedAt: new Date(),
+    }).where(and(
+      eq(crmEmailDeliveries.idempotencyKey, deliveryKey),
+      eq(crmEmailDeliveries.status, 'sending'),
+    )).returning({ idempotencyKey: crmEmailDeliveries.idempotencyKey });
+  } catch (error) {
+    await markShippedDeliveryUncertain(db, deliveryKey);
+    throw error;
+  }
+
+  if (!markedSent) {
+    await markShippedDeliveryUncertain(db, deliveryKey);
+    throw new Error('Versandmail wurde angenommen, der Audit-Status konnte jedoch nicht bestätigt werden.');
+  }
+}
+
+async function markShippedDeliveryUncertain(
+  db: ReturnType<typeof getDb>,
+  deliveryKey: string,
+) {
+  await db.update(crmEmailDeliveries).set({
+    status: 'uncertain',
+    lastErrorCode: 'shop_shipped_audit_uncertain',
+    updatedAt: new Date(),
+  }).where(and(
+    eq(crmEmailDeliveries.idempotencyKey, deliveryKey),
+    eq(crmEmailDeliveries.status, 'sending'),
+  )).catch(error => console.error('[Order] failed to mark shipped delivery uncertain', error));
 }
 
 export async function updateOrderTracking(orderId: string, trackingNumber: string, trackingUrl?: string) {
@@ -463,162 +781,254 @@ export async function cancelOrder(orderId: string, reason?: string): Promise<{ c
     throw new Error('Bestellung ist bereits storniert.');
   }
 
-  // Find original invoice
-  const [originalInvoice] = await db.select().from(invoices)
-    .where(and(eq(invoices.orderId, orderId), eq(invoices.tenantId, tenantId), eq(invoices.type, 'invoice')))
-    .limit(1);
-
-  // Check if credit note already exists
-  const [existingCreditNote] = await db.select().from(invoices)
-    .where(and(eq(invoices.orderId, orderId), eq(invoices.tenantId, tenantId), eq(invoices.type, 'credit_note')))
-    .limit(1);
-
-  if (existingCreditNote) {
-    // Already has a credit note, just update status
-    await db.update(orders)
-      .set({ status: 'cancelled', updatedAt: new Date() })
-      .where(eq(orders.id, orderId));
-    await db.insert(orderStatusHistory).values({ orderId, oldStatus: order.status, newStatus: 'cancelled', note: reason || 'Storno' });
-    revalidatePath('/admin/shop/orders');
-    return { creditNoteNumber: existingCreditNote.invoiceNumber };
-  }
-
-  // Generate credit note number (uses same sequential counter with "ST" prefix)
-  const [settings] = await db.select().from(shopSettings)
-    .where(eq(shopSettings.tenantId, tenantId)).limit(1);
-
-  const prefix = 'ST'; // Stornorechnung prefix
-  const nextNum = settings?.nextInvoiceNumber || 1;
+  const orderItems = order.items as {
+    productId: string;
+    variantId?: string;
+    quantity: number;
+    trackStock?: boolean;
+  }[];
+  const variantAdjustments = JSON.stringify(orderItems
+    .filter((item): item is typeof item & { variantId: string } => Boolean(item.variantId))
+    .map(item => ({ id: item.variantId, quantity: item.quantity })));
+  const productAdjustments = JSON.stringify(orderItems
+    .filter(item => !item.variantId)
+    .map(item => ({
+      id: item.productId,
+      quantity: item.quantity,
+      tracked: typeof item.trackStock === 'boolean' ? item.trackStock : null,
+    })));
   const year = new Date().getFullYear();
-  const paddedNum = String(nextNum).padStart(4, '0');
-  const creditNoteNumber = `${prefix}-${year}-${paddedNum}`;
+  const historyNote = reason ? `Storno: ${reason.slice(0, 2_000)}` : 'Storno';
 
-  // Create credit note record (negative amounts)
-  await db.insert(invoices).values({
-    tenantId,
-    orderId,
-    invoiceNumber: creditNoteNumber,
-    type: 'credit_note',
-    amountNetCents: -(order.subtotalCents - order.taxCents),
-    taxCents: -order.taxCents,
-    amountGrossCents: -order.totalCents,
-    refInvoiceNumber: originalInvoice?.invoiceNumber || null,
-  });
-
-  // Increment counter
-  await db.update(shopSettings)
-    .set({ nextInvoiceNumber: nextNum + 1 })
-    .where(eq(shopSettings.tenantId, tenantId));
-
-  // Update order status
-  await db.update(orders)
-    .set({ status: 'cancelled', updatedAt: new Date() })
-    .where(eq(orders.id, orderId));
-
-  await db.insert(orderStatusHistory).values({
-    orderId,
-    oldStatus: order.status,
-    newStatus: 'cancelled',
-    note: reason ? `Storno: ${reason}` : 'Storno',
-  });
-
-  // Restore stock for cancelled items
-  const orderItems = order.items as { productId: string; variantId?: string; quantity: number }[];
-  for (const item of orderItems) {
-    if (item.variantId) {
-      await db.execute(sql`UPDATE product_variants SET stock = stock + ${item.quantity} WHERE id = ${item.variantId}`);
-    } else {
-      await db.execute(sql`UPDATE products SET stock = stock + ${item.quantity} WHERE id = ${item.productId} AND track_stock = true`);
-    }
+  // Credit note, sequential counter, status, history and inventory compensation
+  // are one SQL transaction. A retry after a lost response sees the cancelled
+  // order and cannot restore stock or increment the counter a second time.
+  const result = await db.execute(sql`
+    WITH locked_order AS MATERIALIZED (
+      SELECT shop_order.*
+      FROM orders AS shop_order
+      WHERE shop_order.id = ${orderId}::uuid
+        AND shop_order.tenant_id = ${tenantId}::uuid
+        AND shop_order.status NOT IN ('cancelled', 'refunded')
+      FOR UPDATE OF shop_order
+    ),
+    locked_settings AS MATERIALIZED (
+      SELECT settings.tenant_id, settings.next_invoice_number
+      FROM shop_settings AS settings
+      WHERE settings.tenant_id = ${tenantId}::uuid
+      FOR UPDATE OF settings
+    ),
+    existing_credit AS MATERIALIZED (
+      SELECT invoice.invoice_number
+      FROM invoices AS invoice
+      JOIN locked_order AS locked ON locked.id = invoice.order_id
+      WHERE invoice.tenant_id = ${tenantId}::uuid
+        AND invoice.type = 'credit_note'
+      LIMIT 1
+    ),
+    original_invoice AS MATERIALIZED (
+      SELECT invoice.invoice_number
+      FROM invoices AS invoice
+      JOIN locked_order AS locked ON locked.id = invoice.order_id
+      WHERE invoice.tenant_id = ${tenantId}::uuid
+        AND invoice.type = 'invoice'
+      LIMIT 1
+    ),
+    generated_number AS MATERIALIZED (
+      SELECT COALESCE(
+        (SELECT invoice_number FROM existing_credit),
+        'ST-' || ${String(year)} || '-' || LPAD(COALESCE(
+          (SELECT next_invoice_number FROM locked_settings), 1
+        )::text, 4, '0')
+      ) AS invoice_number
+    ),
+    created_credit AS (
+      INSERT INTO invoices (
+        tenant_id, order_id, invoice_number, type,
+        amount_net_cents, tax_cents, amount_gross_cents, ref_invoice_number
+      )
+      SELECT
+        ${tenantId}::uuid,
+        locked.id,
+        generated.invoice_number,
+        'credit_note',
+        -(locked.subtotal_cents - locked.tax_cents),
+        -locked.tax_cents,
+        -locked.total_cents,
+        (SELECT invoice_number FROM original_invoice)
+      FROM locked_order AS locked, generated_number AS generated
+      WHERE NOT EXISTS (SELECT 1 FROM existing_credit)
+      RETURNING invoice_number
+    ),
+    credit_note AS MATERIALIZED (
+      SELECT invoice_number FROM existing_credit
+      UNION ALL
+      SELECT invoice_number FROM created_credit
+      LIMIT 1
+    ),
+    counter_decision AS MATERIALIZED (
+      SELECT
+        EXISTS (SELECT 1 FROM created_credit)
+        OR EXISTS (
+          SELECT 1
+          FROM existing_credit AS existing, locked_settings AS locked
+          WHERE existing.invoice_number =
+            'ST-' || ${String(year)} || '-' || LPAD(locked.next_invoice_number::text, 4, '0')
+        ) AS should_advance
+    ),
+    advanced_counter AS (
+      UPDATE shop_settings AS settings
+      SET next_invoice_number = settings.next_invoice_number + 1
+      FROM locked_settings AS locked
+      WHERE settings.tenant_id = locked.tenant_id
+        AND (SELECT should_advance FROM counter_decision)
+      RETURNING settings.tenant_id
+    ),
+    cancelled_order AS (
+      UPDATE orders AS shop_order
+      SET status = 'cancelled', updated_at = now()
+      FROM locked_order AS locked
+      WHERE shop_order.id = locked.id
+        AND EXISTS (SELECT 1 FROM credit_note)
+      RETURNING shop_order.id
+    ),
+    variant_adjustments AS MATERIALIZED (
+      SELECT id, SUM(quantity)::integer AS quantity
+      FROM jsonb_to_recordset(${variantAdjustments}::jsonb) AS item(id uuid, quantity integer)
+      GROUP BY id
+    ),
+    restored_variants AS (
+      UPDATE product_variants AS variant
+      SET stock = variant.stock + adjustment.quantity
+      FROM variant_adjustments AS adjustment
+      WHERE variant.id = adjustment.id
+        AND variant.tenant_id = ${tenantId}::uuid
+        AND EXISTS (SELECT 1 FROM cancelled_order)
+      RETURNING variant.id
+    ),
+    raw_product_adjustments AS MATERIALIZED (
+      SELECT id, quantity, tracked
+      FROM jsonb_to_recordset(${productAdjustments}::jsonb)
+        AS item(id uuid, quantity integer, tracked boolean)
+    ),
+    product_adjustments AS MATERIALIZED (
+      SELECT
+        id,
+        SUM(quantity)::integer AS quantity,
+        CASE
+          WHEN BOOL_OR(tracked IS NOT NULL) THEN BOOL_OR(COALESCE(tracked, false))
+          ELSE NULL
+        END AS tracked
+      FROM raw_product_adjustments
+      GROUP BY id
+    ),
+    restored_products AS (
+      UPDATE products AS product
+      SET stock = product.stock + adjustment.quantity
+      FROM product_adjustments AS adjustment
+      WHERE product.id = adjustment.id
+        AND product.tenant_id = ${tenantId}::uuid
+        AND COALESCE(adjustment.tracked, product.track_stock)
+        AND EXISTS (SELECT 1 FROM cancelled_order)
+      RETURNING product.id
+    ),
+    recorded_history AS (
+      INSERT INTO order_status_history (order_id, old_status, new_status, note)
+      SELECT locked.id, locked.status::text, 'cancelled', ${historyNote}
+      FROM locked_order AS locked
+      WHERE EXISTS (SELECT 1 FROM cancelled_order)
+      RETURNING id
+    )
+    SELECT
+      (SELECT invoice_number FROM credit_note) AS credit_note_number,
+      EXISTS (SELECT 1 FROM cancelled_order) AS cancelled,
+      EXISTS (SELECT 1 FROM advanced_counter) AS counter_advanced,
+      (SELECT COUNT(*)::integer FROM restored_variants) AS restored_variants,
+      (SELECT COUNT(*)::integer FROM restored_products) AS restored_products,
+      EXISTS (SELECT 1 FROM recorded_history) AS history_recorded
+  `);
+  const cancellation = result.rows?.[0] as {
+    credit_note_number?: string;
+    cancelled?: boolean;
+  } | undefined;
+  if (!cancellation?.cancelled || !cancellation.credit_note_number) {
+    throw new Error('Bestellung konnte nicht atomar storniert werden.');
   }
+  const creditNoteNumber = cancellation.credit_note_number;
 
-  // Send cancellation email (fire-and-forget)
-  sendCancellationEmail(tenantId, order, creditNoteNumber).catch(e =>
-    console.error('[Storno] Email failed:', e)
-  );
+  // Await the SMTP attempt so the serverless invocation cannot terminate it.
+  try {
+    await sendCancellationEmail(tenantId, order, creditNoteNumber);
+  } catch (error) {
+    console.error('[Storno] Email failed:', error);
+  }
 
   revalidatePath('/admin/shop/orders');
   return { creditNoteNumber };
 }
 
 async function sendCancellationEmail(tenantId: string, order: typeof orders.$inferSelect, creditNoteNumber: string) {
-  const { sendOrderEmails: _ , ...mod } = await import('@/lib/shop-email');
-  // Use getSmtp from the module's internal — reimport nodemailer directly
-  const nodemailer = (await import('nodemailer')).default;
-  const { globalSettings: gs } = await import('@flamingo/db');
-
-  const db = getDb();
-  const [settings] = await db.select({ smtp: gs.smtp })
-    .from(gs).where(eq(gs.tenantId, tenantId)).limit(1);
-
-  const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
-  const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
-    ? smtp
-    : (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM)
-      ? { host: process.env.PLATFORM_SMTP_HOST, port: Number(process.env.PLATFORM_SMTP_PORT) || 587, user: process.env.PLATFORM_SMTP_USER, pass: process.env.PLATFORM_SMTP_PASS, from: process.env.PLATFORM_SMTP_FROM }
-      : null;
-
+  const effectiveSmtp = await getEffectiveSmtp(tenantId);
   if (!effectiveSmtp) return;
+  const customerEmail = order.customerEmail.trim();
+  if (!isValidSmtpAddress(customerEmail)) {
+    console.error('[Storno] Email skipped: invalid recipient');
+    return;
+  }
 
-  const transporter = nodemailer.createTransport({
-    host: effectiveSmtp.host,
-    port: effectiveSmtp.port,
-    secure: effectiveSmtp.port === 465,
-    auth: { user: effectiveSmtp.user, pass: effectiveSmtp.pass },
-  });
+  const transporter = createHardenedRendererSmtpTransport(effectiveSmtp);
 
   const formatPrice = (c: number) => (c / 100).toFixed(2).replace('.', ',') + ' €';
+  const safeOrderNumber = sanitizeShopEmailHeaderValue(order.orderNumber);
+  const safeCreditNoteNumber = sanitizeShopEmailHeaderValue(creditNoteNumber);
+  const htmlOrderNumber = escapeShopEmailHtml(safeOrderNumber);
+  const htmlCreditNoteNumber = escapeShopEmailHtml(safeCreditNoteNumber);
+  const htmlCustomerName = escapeShopEmailHtml(order.customerName);
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
 <div style="max-width:600px;margin:0 auto;padding:32px 16px">
   <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
     <div style="background:linear-gradient(135deg,#991b1b,#dc2626);padding:24px 32px">
       <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">Bestellung storniert</h1>
-      <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:14px">Stornorechnung: ${creditNoteNumber}</p>
+      <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:14px">Stornorechnung: ${htmlCreditNoteNumber}</p>
     </div>
     <div style="padding:24px 32px">
-      <p style="margin:0 0 16px;color:#374151">Hallo ${order.customerName},</p>
-      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Ihre Bestellung <strong>${order.orderNumber}</strong> wurde storniert. Anbei die Stornorechnung als Gutschrift über ${formatPrice(order.totalCents)}.</p>
+      <p style="margin:0 0 16px;color:#374151">Hallo ${htmlCustomerName},</p>
+      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Ihre Bestellung <strong>${htmlOrderNumber}</strong> wurde storniert. Anbei die Stornorechnung als Gutschrift über ${formatPrice(order.totalCents)}.</p>
       <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Der Betrag wird Ihnen in den nächsten 5–10 Werktagen erstattet.</p>
-      <p style="margin:0;color:#6b7280;font-size:13px">Stornorechnung-Nr.: ${creditNoteNumber}</p>
+      <p style="margin:0;color:#6b7280;font-size:13px">Stornorechnung-Nr.: ${htmlCreditNoteNumber}</p>
     </div>
   </div>
 </div></body></html>`;
 
   await transporter.sendMail({
     from: effectiveSmtp.from,
-    to: order.customerEmail,
-    subject: `Stornierung Bestellung ${order.orderNumber} – Gutschrift ${creditNoteNumber}`,
+    to: customerEmail,
+    subject: `Stornierung Bestellung ${safeOrderNumber} – Gutschrift ${safeCreditNoteNumber}`,
     html,
   });
 }
 
 async function sendShippedEmail(tenantId: string, order: typeof orders.$inferSelect) {
-  const nodemailer = (await import('nodemailer')).default;
-  const { globalSettings: gs } = await import('@flamingo/db');
+  const effectiveSmtp = await getEffectiveSmtp(tenantId);
+  if (!effectiveSmtp) throw new Error('SMTP is not configured');
+  const customerEmail = order.customerEmail.trim();
+  if (!isValidSmtpAddress(customerEmail)) {
+    throw new Error('Invalid shipped-email recipient');
+  }
 
-  const db = getDb();
-  const [settings] = await db.select({ smtp: gs.smtp })
-    .from(gs).where(eq(gs.tenantId, tenantId)).limit(1);
-
-  const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
-  const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
-    ? smtp
-    : (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM)
-      ? { host: process.env.PLATFORM_SMTP_HOST, port: Number(process.env.PLATFORM_SMTP_PORT) || 587, user: process.env.PLATFORM_SMTP_USER, pass: process.env.PLATFORM_SMTP_PASS, from: process.env.PLATFORM_SMTP_FROM }
-      : null;
-
-  if (!effectiveSmtp) return;
-
-  const transporter = nodemailer.createTransport({
-    host: effectiveSmtp.host,
-    port: effectiveSmtp.port,
-    secure: effectiveSmtp.port === 465,
-    auth: { user: effectiveSmtp.user, pass: effectiveSmtp.pass },
-  });
+  const transporter = createHardenedRendererSmtpTransport(effectiveSmtp);
+  const safeOrderNumber = sanitizeShopEmailHeaderValue(order.orderNumber);
+  const htmlOrderNumber = escapeShopEmailHtml(safeOrderNumber);
+  const htmlCustomerName = escapeShopEmailHtml(order.customerName);
+  const htmlTrackingNumber = escapeShopEmailHtml(order.trackingNumber);
+  const safeTrackingUrl = getSafeShopEmailUrl(order.trackingUrl);
+  const trackingLink = safeTrackingUrl
+    ? ` — <a href="${escapeShopEmailHtml(safeTrackingUrl)}" style="color:#2563eb">Sendung verfolgen</a>`
+    : '';
 
   const trackingHtml = order.trackingNumber
-    ? `<p style="margin:16px 0;font-size:14px;color:#374151"><strong>Sendungsnummer:</strong> ${order.trackingNumber}${order.trackingUrl ? ` — <a href="${order.trackingUrl}" style="color:#2563eb">Sendung verfolgen</a>` : ''}</p>`
+    ? `<p style="margin:16px 0;font-size:14px;color:#374151"><strong>Sendungsnummer:</strong> ${htmlTrackingNumber}${trackingLink}</p>`
     : '';
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
@@ -626,11 +1036,11 @@ async function sendShippedEmail(tenantId: string, order: typeof orders.$inferSel
   <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
     <div style="background:linear-gradient(135deg,#065f46,#059669);padding:24px 32px">
       <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">Ihre Bestellung ist unterwegs! 📦</h1>
-      <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:14px">Bestellung: ${order.orderNumber}</p>
+      <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:14px">Bestellung: ${htmlOrderNumber}</p>
     </div>
     <div style="padding:24px 32px">
-      <p style="margin:0 0 16px;color:#374151">Hallo ${order.customerName},</p>
-      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Ihre Bestellung <strong>${order.orderNumber}</strong> wurde versendet.</p>
+      <p style="margin:0 0 16px;color:#374151">Hallo ${htmlCustomerName},</p>
+      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Ihre Bestellung <strong>${htmlOrderNumber}</strong> wurde versendet.</p>
       ${trackingHtml}
       <p style="margin:16px 0 0;color:#6b7280;font-size:13px">Bei Fragen antworten Sie einfach auf diese E-Mail.</p>
     </div>
@@ -639,8 +1049,9 @@ async function sendShippedEmail(tenantId: string, order: typeof orders.$inferSel
 
   await transporter.sendMail({
     from: effectiveSmtp.from,
-    to: order.customerEmail,
-    subject: `Ihre Bestellung ${order.orderNumber} wurde versendet`,
+    to: customerEmail,
+    messageId: `<shop-shipped-${order.id}@flamingomedia.online>`,
+    subject: `Ihre Bestellung ${safeOrderNumber} wurde versendet`,
     html,
   });
 }

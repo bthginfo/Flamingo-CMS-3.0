@@ -1,6 +1,5 @@
-import nodemailer from 'nodemailer';
 import { getDb } from '@/lib/db';
-import { getEffectiveSmtp } from '@/lib/smtp';
+import { createHardenedRendererSmtpTransport, getEffectiveSmtp } from '@/lib/smtp';
 import { bookingSettings, emailTemplates } from '@flamingo/db';
 import { and, eq } from 'drizzle-orm';
 
@@ -52,12 +51,7 @@ export async function sendBookingEmail({ tenantId, trigger, to, values }: Bookin
   const text = renderTemplate(template.body, values);
   const html = textToHtml(text);
 
-  const transporter = nodemailer.createTransport({
-    host: smtp.host,
-    port: smtp.port,
-    secure: smtp.port === 465,
-    auth: { user: smtp.user, pass: smtp.pass },
-  });
+  const transporter = createHardenedRendererSmtpTransport(smtp);
 
   await transporter.sendMail({ from: smtp.from, to, subject, text, html });
   return { sent: true as const };

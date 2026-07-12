@@ -396,6 +396,8 @@ export const submissionStatusEnum = pgEnum('submission_status', ['new', 'read', 
 export const formSubmissions = pgTable('form_submissions', {
   id: uuid('id').primaryKey().defaultRandom(),
   tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  idempotencyKey: uuid('idempotency_key'),
+  requestHash: varchar('request_hash', { length: 64 }),
   name: varchar('name', { length: 200 }).notNull(),
   email: varchar('email', { length: 320 }).notNull(),
   phone: varchar('phone', { length: 50 }),
@@ -407,10 +409,13 @@ export const formSubmissions = pgTable('form_submissions', {
     context?: { source?: string; summary?: string };
   }>().notNull().default({ version: 1, fields: [] }),
   status: submissionStatusEnum('status').notNull().default('new'),
+  notificationStatus: varchar('notification_status', { length: 20 }),
+  autoResponseStatus: varchar('auto_response_status', { length: 20 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index('form_submissions_tenant_idx').on(t.tenantId),
   index('form_submissions_status_idx').on(t.tenantId, t.status),
+  uniqueIndex('form_submissions_tenant_idempotency_idx').on(t.tenantId, t.idempotencyKey),
 ]);
 
 // ─── RSVP Responses (Wedding) ────────────────────────────────────────
@@ -563,6 +568,51 @@ export const crmBlogPosts = pgTable('crm_blog_posts', {
   uniqueIndex('crm_blog_posts_slug_idx').on(t.slug),
   index('crm_blog_posts_status_idx').on(t.status),
   index('crm_blog_posts_published_idx').on(t.publishedAt),
+]);
+
+export const marketingRateLimits = pgTable('marketing_rate_limits', {
+  key: varchar('key', { length: 160 }).primaryKey(),
+  hits: integer('hits').notNull().default(1),
+  windowStartedAt: timestamp('window_started_at', { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('marketing_rate_limits_expires_idx').on(t.expiresAt),
+]);
+
+export const publicFlowRequests = pgTable('public_flow_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  flow: varchar('flow', { length: 20 }).notNull(),
+  idempotencyKey: uuid('idempotency_key').notNull(),
+  requestHash: varchar('request_hash', { length: 64 }).notNull(),
+  status: varchar('status', { length: 20 }).notNull().default('processing'),
+  resourceId: uuid('resource_id'),
+  response: jsonb('response').$type<Record<string, unknown>>(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('public_flow_requests_tenant_key_idx').on(t.tenantId, t.flow, t.idempotencyKey),
+  index('public_flow_requests_status_idx').on(t.status, t.createdAt),
+  check('public_flow_requests_flow_check', sql`${t.flow} IN ('booking', 'checkout')`),
+  check('public_flow_requests_status_check', sql`${t.status} IN ('processing', 'completed', 'failed', 'uncertain')`),
+]);
+
+export const crmEmailDeliveries = pgTable('crm_email_deliveries', {
+  idempotencyKey: uuid('idempotency_key').primaryKey(),
+  purpose: varchar('purpose', { length: 40 }).notNull(),
+  entityId: uuid('entity_id').notNull(),
+  requestHash: varchar('request_hash', { length: 64 }).notNull(),
+  status: varchar('status', { length: 20 }).notNull().default('sending'),
+  attemptCount: integer('attempt_count').notNull().default(1),
+  lastErrorCode: varchar('last_error_code', { length: 80 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  sentAt: timestamp('sent_at', { withTimezone: true }),
+}, (t) => [
+  index('crm_email_deliveries_entity_idx').on(t.purpose, t.entityId),
+  index('crm_email_deliveries_status_idx').on(t.status, t.createdAt),
+  check('crm_email_deliveries_status_check', sql`${t.status} IN ('sending', 'sent', 'failed', 'uncertain')`),
 ]);
 
 // ═══════════════════════════════════════════════════════════════════════
