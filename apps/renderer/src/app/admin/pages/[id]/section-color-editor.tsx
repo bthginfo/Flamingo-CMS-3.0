@@ -18,6 +18,7 @@ import {
   composeColorWithAlpha,
   evaluateContrastPairs,
   getCtaStateCoverage,
+  getInheritedColorPresentation,
   groupEditorFields,
   parseColorWithAlpha,
   reconcileEditorColorRoles,
@@ -351,16 +352,12 @@ export function SectionColorEditor({
       { key: 'primary' as const, label: 'Primär' },
       { key: 'secondary' as const, label: 'Sekundär' },
     ];
-    return (
-      <aside className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50/80 p-3" aria-labelledby={`${editorId}-cta-coverage-title`}>
-        <div className="flex items-start gap-2">
-          <WandSparkles size={14} aria-hidden="true" className="mt-0.5 shrink-0 text-blue-600" />
-          <div>
-            <h4 id={`${editorId}-cta-coverage-title`} className="text-[11px] font-semibold text-zinc-800">Interaktionen vollständig abgedeckt</h4>
-            <p className="mt-0.5 text-[11px] leading-4 text-zinc-500">Editierbare Farben und automatisch berechnete Zustände auf einen Blick.</p>
-          </div>
-        </div>
-        <div className="mt-3 space-y-2">
+    const editableCount = ctaCoverage.filter((item) => item.mode === 'editable').length;
+    const derivedCount = ctaCoverage.length - editableCount;
+
+    function renderCoverageRows() {
+      return (
+        <div className="space-y-2">
           {scopes.map((scope) => {
             const items = ctaCoverage.filter((item) => item.scope === scope.key);
             if (items.length === 0) return null;
@@ -384,7 +381,58 @@ export function SectionColorEditor({
             );
           })}
         </div>
-      </aside>
+      );
+    }
+
+    return (
+      <>
+        <aside className="section-color-editor__cta-expanded mt-3 rounded-xl border border-zinc-200 bg-zinc-50/80 p-3" aria-labelledby={`${editorId}-cta-coverage-title`}>
+          <div className="flex items-start gap-2">
+            <WandSparkles size={14} aria-hidden="true" className="mt-0.5 shrink-0 text-blue-600" />
+            <div>
+              <h4 id={`${editorId}-cta-coverage-title`} className="text-[11px] font-semibold text-zinc-800">Interaktionen vollständig abgedeckt</h4>
+              <p className="mt-0.5 text-[11px] leading-4 text-zinc-500">Editierbare Farben und automatisch berechnete Zustände auf einen Blick.</p>
+            </div>
+          </div>
+          <div className="mt-3">{renderCoverageRows()}</div>
+        </aside>
+
+        <details className="section-color-editor__cta-compact group mt-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/80">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden">
+            <WandSparkles size={14} aria-hidden="true" className="shrink-0 text-blue-600" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-[11px] font-semibold text-zinc-800">Button-Zustände</span>
+              <span className="block text-[10px] leading-4 text-zinc-500">Interaktionsmatrix anzeigen</span>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 py-1 text-[10px] font-semibold text-blue-700" title={`${editableCount} direkt editierbar`}>
+              <PencilLine size={10} aria-hidden="true" />
+              {editableCount}<span className="sr-only"> editierbar</span>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-md border border-dashed border-zinc-300 bg-white px-1.5 py-1 text-[10px] font-semibold text-zinc-600" title={`${derivedCount} automatisch berechnet`}>
+              <WandSparkles size={10} aria-hidden="true" />
+              {derivedCount}<span className="sr-only"> automatisch</span>
+            </span>
+            <ChevronDown size={14} aria-hidden="true" className="shrink-0 text-zinc-400 transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="border-t border-zinc-200 bg-white px-3 py-3">
+            <p className="mb-3 text-[11px] leading-4 text-zinc-500">Direkt editierbare und automatisch berechnete Button-Zustände.</p>
+            {renderCoverageRows()}
+          </div>
+        </details>
+      </>
+    );
+  }
+
+  function renderDerivedValueDetail(technicalValue: string, detailId: string) {
+    return (
+      <details className="mt-1.5 text-[10px] leading-4 text-zinc-500">
+        <summary className="w-fit cursor-pointer rounded font-medium text-zinc-500 underline decoration-zinc-300 underline-offset-2 hover:text-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+          Technischen Farbwert anzeigen
+        </summary>
+        <code id={detailId} className="mt-1 block break-all rounded-md bg-zinc-100 px-2 py-1.5 font-mono text-[10px] text-zinc-600">
+          {technicalValue}
+        </code>
+      </details>
     );
   }
 
@@ -393,6 +441,10 @@ export function SectionColorEditor({
     if (!definition) return null;
     const currentOverride = overrides[definition.cssVar] || '';
     const resolved = getResolvedColor(definition.cssVar);
+    const configuredPresentation = getInheritedColorPresentation(resolvedVars?.[definition.cssVar]);
+    const inheritedPresentation = configuredPresentation.isDerived
+      ? configuredPresentation
+      : getInheritedColorPresentation(resolved);
     const displayColor = currentOverride || resolved || '';
     const parsedDisplay = parseColorWithAlpha(displayColor);
     const overrideAlpha = parseColorWithAlpha(currentOverride).alpha;
@@ -400,6 +452,8 @@ export function SectionColorEditor({
     const supportsAlpha = ALPHA_CAPABLE_FIELDS.has(fieldKey);
     const inputId = `${editorId}-${fieldKey}`;
     const descriptionId = `${inputId}-description`;
+    const inheritedValueId = `${inputId}-inherited-value`;
+    const technicalValueId = `${inputId}-technical-value`;
     const alphaId = `${inputId}-alpha`;
 
     return (
@@ -432,10 +486,10 @@ export function SectionColorEditor({
             type="text"
             spellCheck={false}
             autoComplete="off"
-            className="admin-input min-w-0 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            placeholder={resolved || 'Geerbter Wert'}
+            className="admin-input min-w-0 font-mono text-xs placeholder:font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            placeholder={inheritedPresentation.displayValue || 'Geerbter Wert'}
             value={currentOverride}
-            aria-describedby={descriptionId}
+            aria-describedby={`${descriptionId}${resolved ? ` ${inheritedValueId}` : ''}`}
             onChange={(event) => handleChange(definition.cssVar, event.target.value)}
           />
           <button
@@ -476,9 +530,20 @@ export function SectionColorEditor({
           </div>
         )}
 
-        <p className="mt-2 truncate text-[11px] text-zinc-400" title={currentOverride || resolved || undefined}>
-          {currentOverride ? 'Eigener Wert' : resolved ? `Geerbt: ${resolved}` : 'Kein auflösbarer Farbwert'}
+        <p
+          id={inheritedValueId}
+          className="mt-2 text-[11px] leading-4 text-zinc-500"
+          title={!inheritedPresentation.isDerived ? currentOverride || resolved || undefined : undefined}
+        >
+          {currentOverride
+            ? 'Eigener Wert'
+            : resolved
+              ? inheritedPresentation.isDerived
+                ? inheritedPresentation.displayValue
+                : `Geerbt: ${inheritedPresentation.displayValue}`
+              : 'Kein auflösbarer Farbwert'}
         </p>
+        {!currentOverride && inheritedPresentation.isDerived && renderDerivedValueDetail(inheritedPresentation.technicalValue, technicalValueId)}
       </div>
     );
   }
@@ -619,6 +684,7 @@ export function SectionColorEditor({
           align-items: start;
           gap: .375rem;
         }
+        .section-color-editor__cta-compact { display: none; }
         .section-color-editor__reset-row {
           display: flex;
           align-items: center;
@@ -632,6 +698,8 @@ export function SectionColorEditor({
         @container (max-width: 30rem) {
           .section-color-editor__role-grid { grid-template-columns: minmax(0, 1fr); }
           .section-color-editor__cta-row { grid-template-columns: minmax(0, 1fr); }
+          .section-color-editor__cta-expanded { display: none; }
+          .section-color-editor__cta-compact { display: block; }
           .section-color-editor__reset-row { align-items: stretch; flex-direction: column; }
           .section-color-editor__disclosure-description { display: none; }
         }

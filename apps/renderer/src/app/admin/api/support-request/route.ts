@@ -17,11 +17,16 @@ import {
   createHardenedRendererSmtpTransport,
   getPlatformSmtp,
 } from '@/lib/smtp';
+import {
+  classifyAdminSupportDelivery,
+  runAdminSupportPreflight,
+  type AdminSupportDeliveryIdentity,
+  type AdminSupportDeliveryRecord,
+} from '@/lib/admin-support-security';
 
 export const runtime = 'nodejs';
 
 const SUPPORT_REQUEST_MAX_BYTES = 16 * 1024;
-const SUPPORT_STALE_AFTER_MS = 15 * 60 * 1000;
 const requestSchema = z.object({
   name: z.string().trim().min(1).max(200),
   email: z.string().trim().email().max(320),
@@ -56,6 +61,7 @@ export async function POST(request: Request) {
 
   const idempotencyKey = parseRendererContactIdempotencyKey(request.headers.get('idempotency-key'));
   if (!idempotencyKey) return json({ error: 'Ein gültiger Idempotency-Key ist erforderlich.' }, 400);
+  const stableIdempotencyKey: string = idempotencyKey;
 
   let raw: unknown;
   try {
@@ -69,29 +75,6 @@ export async function POST(request: Request) {
   const parsed = requestSchema.safeParse(raw);
   if (!parsed.success) return json({ error: 'Ungültige Eingabe.' }, 400);
 
-  try {
-    const denied = await consumeRendererContactRateRules([
-      {
-        scope: 'admin_support_ip',
-        subject: `${session.tenantId}:${getRendererContactClientAddress(request.headers)}`,
-        limit: 8,
-        windowSeconds: 60 * 60,
-      },
-      { scope: 'admin_support_tenant', subject: session.tenantId, limit: 5, windowSeconds: 60 * 60 },
-      { scope: 'admin_support_global', subject: 'all', limit: 100, windowSeconds: 60 * 60 },
-    ]);
-    if (denied) {
-      return json(
-        { error: 'Zu viele Anfragen. Bitte später erneut versuchen.' },
-        429,
-        { 'Retry-After': String(denied.retryAfterSeconds) },
-      );
-    }
-  } catch (error) {
-    console.error('[admin-support] rate-limit unavailable', error);
-    return json({ error: 'Support-Anfrage ist vorübergehend nicht verfügbar.' }, 503, { 'Retry-After': '60' });
-  }
-
   const requestHash = createHash('sha256')
     .update(session.tenantId)
     .update('\0')
@@ -101,13 +84,94 @@ export async function POST(request: Request) {
     .update('\0')
     .update(parsed.data.message)
     .digest('hex');
-  const source = `cms_support:${idempotencyKey}`;
+  const source = `cms_support:${stableIdempotencyKey}`;
   const db = getDb();
+  const expectedDelivery: AdminSupportDeliveryIdentity = {
+    purpose: 'admin_support',
+    entityId: session.tenantId,
+    requestHash,
+  };
+
+  async function loadExistingDelivery(): Promise<AdminSupportDeliveryRecord | null> {
+    const [existing] = await db.select({
+      purpose: crmEmailDeliveries.purpose,
+      entityId: crmEmailDeliveries.entityId,
+      requestHash: crmEmailDeliveries.requestHash,
+      status: crmEmailDeliveries.status,
+      updatedAt: crmEmailDeliveries.updatedAt,
+    }).from(crmEmailDeliveries).where(eq(crmEmailDeliveries.idempotencyKey, stableIdempotencyKey)).limit(1);
+    return existing || null;
+  }
+
+  async function respondToExistingDelivery(existing: AdminSupportDeliveryRecord | null) {
+    if (!existing) {
+      return json({ error: 'Support-Anfrage ist vorübergehend nicht verfügbar.' }, 503, { 'Retry-After': '60' });
+    }
+
+    const state = classifyAdminSupportDelivery(existing, expectedDelivery);
+    if (state === 'conflict') {
+      return json({ error: 'Der Idempotency-Key wurde bereits für eine andere Anfrage verwendet.' }, 409);
+    }
+    if (state === 'sent') return json({ success: true, deduplicated: true });
+    if (state === 'failed') {
+      return json({ error: 'Der vorherige Versuch ist fehlgeschlagen.', code: 'SUPPORT_PREVIOUSLY_FAILED' }, 409);
+    }
+    if (state === 'uncertain') {
+      return json({ error: 'Der Versandstatus ist unklar. Bitte Flamingo Media direkt kontaktieren.', code: 'SUPPORT_UNCERTAIN' }, 409);
+    }
+    if (state === 'in_progress') {
+      return json(
+        { error: 'Diese Anfrage wird bereits verarbeitet.', code: 'SUPPORT_IN_PROGRESS' },
+        409,
+        { 'Retry-After': '10' },
+      );
+    }
+
+    const [savedInquiry] = await db.select({ id: inquiries.id })
+      .from(inquiries)
+      .where(eq(inquiries.source, source))
+      .limit(1);
+    await db.update(crmEmailDeliveries).set({
+      status: savedInquiry ? 'sent' : 'failed',
+      sentAt: savedInquiry ? new Date() : null,
+      lastErrorCode: savedInquiry ? null : 'stale_before_persist',
+      updatedAt: new Date(),
+    }).where(eq(crmEmailDeliveries.idempotencyKey, stableIdempotencyKey));
+    if (savedInquiry) return json({ success: true, deduplicated: true });
+    return json({ error: 'Der vorherige Versuch ist fehlgeschlagen.', code: 'SUPPORT_PREVIOUSLY_FAILED' }, 409);
+  }
+
+  try {
+    const preflight = await runAdminSupportPreflight({
+      inspectExisting: loadExistingDelivery,
+      consumeRateLimits: () => consumeRendererContactRateRules([
+        {
+          scope: 'admin_support_ip',
+          subject: `${session.tenantId}:${getRendererContactClientAddress(request.headers)}`,
+          limit: 8,
+          windowSeconds: 60 * 60,
+        },
+        { scope: 'admin_support_tenant', subject: session.tenantId, limit: 5, windowSeconds: 60 * 60 },
+        { scope: 'admin_support_global', subject: 'all', limit: 100, windowSeconds: 60 * 60 },
+      ]),
+    });
+    if (preflight.existing) return await respondToExistingDelivery(preflight.existing);
+    if (preflight.rateDecision) {
+      return json(
+        { error: 'Zu viele Anfragen. Bitte später erneut versuchen.' },
+        429,
+        { 'Retry-After': String(preflight.rateDecision.retryAfterSeconds) },
+      );
+    }
+  } catch (error) {
+    console.error('[admin-support] idempotency/rate-limit preflight unavailable', error);
+    return json({ error: 'Support-Anfrage ist vorübergehend nicht verfügbar.' }, 503, { 'Retry-After': '60' });
+  }
 
   let claimed: { idempotencyKey: string } | undefined;
   try {
     [claimed] = await db.insert(crmEmailDeliveries).values({
-      idempotencyKey,
+      idempotencyKey: stableIdempotencyKey,
       purpose: 'admin_support',
       entityId: session.tenantId,
       requestHash,
@@ -121,47 +185,12 @@ export async function POST(request: Request) {
   }
 
   if (!claimed) {
-    const [existing] = await db.select({
-      purpose: crmEmailDeliveries.purpose,
-      entityId: crmEmailDeliveries.entityId,
-      requestHash: crmEmailDeliveries.requestHash,
-      status: crmEmailDeliveries.status,
-      updatedAt: crmEmailDeliveries.updatedAt,
-    }).from(crmEmailDeliveries).where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey)).limit(1);
-
-    if (!existing
-      || existing.purpose !== 'admin_support'
-      || existing.entityId !== session.tenantId
-      || existing.requestHash !== requestHash) {
-      return json({ error: 'Der Idempotency-Key wurde bereits für eine andere Anfrage verwendet.' }, 409);
+    try {
+      return await respondToExistingDelivery(await loadExistingDelivery());
+    } catch (error) {
+      console.error('[admin-support] concurrent idempotency resolution failed', error);
+      return json({ error: 'Support-Anfrage ist vorübergehend nicht verfügbar.' }, 503, { 'Retry-After': '60' });
     }
-    if (existing.status === 'sent') return json({ success: true, deduplicated: true });
-    if (existing.status === 'failed') {
-      return json({ error: 'Der vorherige Versuch ist fehlgeschlagen.', code: 'SUPPORT_PREVIOUSLY_FAILED' }, 409);
-    }
-    if (existing.status === 'uncertain') {
-      return json({ error: 'Der Versandstatus ist unklar. Bitte Flamingo Media direkt kontaktieren.', code: 'SUPPORT_UNCERTAIN' }, 409);
-    }
-
-    if (existing.updatedAt.getTime() <= Date.now() - SUPPORT_STALE_AFTER_MS) {
-      const [savedInquiry] = await db.select({ id: inquiries.id })
-        .from(inquiries)
-        .where(eq(inquiries.source, source))
-        .limit(1);
-      await db.update(crmEmailDeliveries).set({
-        status: savedInquiry ? 'sent' : 'failed',
-        sentAt: savedInquiry ? new Date() : null,
-        lastErrorCode: savedInquiry ? null : 'stale_before_persist',
-        updatedAt: new Date(),
-      }).where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey));
-      if (savedInquiry) return json({ success: true, deduplicated: true });
-      return json({ error: 'Der vorherige Versuch ist fehlgeschlagen.', code: 'SUPPORT_PREVIOUSLY_FAILED' }, 409);
-    }
-    return json(
-      { error: 'Diese Anfrage wird bereits verarbeitet.', code: 'SUPPORT_IN_PROGRESS' },
-      409,
-      { 'Retry-After': '10' },
-    );
   }
 
   const message = [
@@ -182,7 +211,7 @@ export async function POST(request: Request) {
       status: 'failed',
       lastErrorCode: 'support_persist_failed',
       updatedAt: new Date(),
-    }).where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey)).catch(() => undefined);
+    }).where(eq(crmEmailDeliveries.idempotencyKey, stableIdempotencyKey)).catch(() => undefined);
     console.error('[admin-support] request persistence failed', error);
     return json({ error: 'Support-Anfrage konnte nicht gespeichert werden.', code: 'SUPPORT_PREVIOUSLY_FAILED' }, 500);
   }
@@ -196,8 +225,8 @@ export async function POST(request: Request) {
     sentAt: acceptedAt,
     updatedAt: acceptedAt,
     lastErrorCode: null,
-  }).where(eq(crmEmailDeliveries.idempotencyKey, idempotencyKey)).catch((error) => {
-    console.error(`[admin-support] failed to finalize ${idempotencyKey}`, error);
+  }).where(eq(crmEmailDeliveries.idempotencyKey, stableIdempotencyKey)).catch((error) => {
+    console.error(`[admin-support] failed to finalize ${stableIdempotencyKey}`, error);
   });
 
   const smtp = await getPlatformSmtp();
@@ -216,7 +245,7 @@ export async function POST(request: Request) {
     });
     return json({ success: true });
   } catch (error) {
-    console.error(`[admin-support] notification failed for ${idempotencyKey}`, error);
+    console.error(`[admin-support] notification failed for ${stableIdempotencyKey}`, error);
     return json({ success: true, notificationDelayed: true }, 202);
   }
 }

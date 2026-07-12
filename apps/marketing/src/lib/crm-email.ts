@@ -31,6 +31,10 @@ const requestSchema = z.discriminatedUnion('purpose', [
 
 export type CrmEmailPurpose = z.infer<typeof requestSchema>['purpose'];
 
+export type CrmEmailFailedErrorCode = 'crm_smtp_rejected';
+export type CrmEmailUncertainErrorCode = 'crm_smtp_uncertain' | 'stale_sending_claim';
+export type CrmEmailDeliveryErrorCode = CrmEmailFailedErrorCode | CrmEmailUncertainErrorCode;
+
 export type CrmEmailEntity = {
   company: string;
   email: string | null;
@@ -71,7 +75,14 @@ export type CrmEmailHandlerDependencies = {
     requestHash: string;
   }) => Promise<'acquired' | 'already_sent' | 'in_progress' | 'delivery_uncertain' | 'previously_failed' | 'conflict'>;
   markDeliverySent: (idempotencyKey: string) => Promise<void>;
-  markDeliveryFailed: (idempotencyKey: string, errorCode: string) => Promise<void>;
+  markDeliveryFailed: (
+    idempotencyKey: string,
+    errorCode: CrmEmailFailedErrorCode,
+  ) => Promise<void>;
+  markDeliveryUncertain: (
+    idempotencyKey: string,
+    errorCode: CrmEmailUncertainErrorCode,
+  ) => Promise<void>;
   now?: () => Date;
 };
 
@@ -313,6 +324,33 @@ function existingDeliveryResponse(
   return json({ error: 'Der Idempotency-Key wurde bereits für eine andere Anfrage verwendet.' }, 409);
 }
 
+/**
+ * A thrown send is only retry-safe when the SMTP server explicitly rejected
+ * the message with a negative reply. Transport failures can happen after DATA
+ * was accepted, so timeouts, socket failures and unknown errors must stay
+ * uncertain until they are reconciled with the provider log.
+ */
+export function classifyCrmSmtpSendError(error: unknown) {
+  if (!error || typeof error !== 'object') return 'uncertain' as const;
+
+  let responseCode: unknown;
+  try {
+    responseCode = Reflect.get(error, 'responseCode');
+  } catch {
+    return 'uncertain' as const;
+  }
+
+  if (
+    typeof responseCode === 'number'
+    && Number.isInteger(responseCode)
+    && responseCode >= 400
+    && responseCode <= 599
+  ) {
+    return 'rejected' as const;
+  }
+  return 'uncertain' as const;
+}
+
 export function createCrmEmailPostHandler(dependencies: CrmEmailHandlerDependencies) {
   return async function POST(request: Request): Promise<Response> {
     try {
@@ -380,10 +418,17 @@ export function createCrmEmailPostHandler(dependencies: CrmEmailHandlerDependenc
           attachments: parsed.attachment ? [parsed.attachment] : [],
         });
       } catch (error) {
-        await dependencies.markDeliveryFailed(idempotencyKey, 'smtp_send_failed').catch((auditError) => {
-          console.error('[crm-email] failed to record delivery failure', auditError);
+        const sendOutcome = classifyCrmSmtpSendError(error);
+        const recordOutcome = sendOutcome === 'rejected'
+          ? dependencies.markDeliveryFailed(idempotencyKey, 'crm_smtp_rejected')
+          : dependencies.markDeliveryUncertain(idempotencyKey, 'crm_smtp_uncertain');
+        await recordOutcome.catch((auditError) => {
+          console.error('[crm-email] failed to record delivery outcome', auditError);
         });
-        throw error;
+        // Never return the provider response, socket code or error message to
+        // the browser. The persisted outcome is sufficient for safe dedupe.
+        console.error('[crm-email] SMTP send did not complete', { outcome: sendOutcome });
+        return json({ error: 'E-Mail konnte nicht gesendet werden.' }, 500);
       }
 
       await dependencies.markDeliverySent(idempotencyKey).catch((auditError) => {

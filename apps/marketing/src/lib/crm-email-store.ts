@@ -1,7 +1,12 @@
 import { crmEmailDeliveries } from '@flamingo/db';
 import { and, eq, lte, sql } from 'drizzle-orm';
 import { getDb } from './db';
-import type { CrmEmailPurpose } from './crm-email';
+import type {
+  CrmEmailDeliveryErrorCode,
+  CrmEmailFailedErrorCode,
+  CrmEmailPurpose,
+  CrmEmailUncertainErrorCode,
+} from './crm-email';
 
 export type CrmEmailDeliveryClaim =
   | 'acquired'
@@ -14,6 +19,22 @@ export type CrmEmailDeliveryClaim =
 export const CRM_EMAIL_DELIVERY_STALE_AFTER_MS = 15 * 60 * 1000;
 export const CRM_EMAIL_DELIVERY_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
 export const CRM_EMAIL_DELIVERY_CLEANUP_BATCH_SIZE = 100;
+
+const CRM_EMAIL_DELIVERY_ERROR_CODES = new Set<CrmEmailDeliveryErrorCode>([
+  'crm_smtp_rejected',
+  'crm_smtp_uncertain',
+  'stale_sending_claim',
+]);
+
+export function normalizeCrmEmailDeliveryErrorCode(
+  errorCode: unknown,
+): CrmEmailDeliveryErrorCode | 'unknown' {
+  if (typeof errorCode !== 'string') return 'unknown';
+  const normalized = errorCode.trim().toLowerCase();
+  return CRM_EMAIL_DELIVERY_ERROR_CODES.has(normalized as CrmEmailDeliveryErrorCode)
+    ? normalized as CrmEmailDeliveryErrorCode
+    : 'unknown';
+}
 
 type ExistingDelivery = {
   purpose: string;
@@ -107,7 +128,7 @@ export async function inspectCrmEmailDelivery(input: {
     .update(crmEmailDeliveries)
     .set({
       status: 'uncertain',
-      lastErrorCode: 'stale_sending_claim',
+      lastErrorCode: normalizeCrmEmailDeliveryErrorCode('stale_sending_claim'),
       updatedAt: new Date(),
     })
     .where(and(
@@ -176,12 +197,32 @@ export async function markCrmEmailDeliverySent(idempotencyKey: string) {
     ));
 }
 
-export async function markCrmEmailDeliveryFailed(idempotencyKey: string, errorCode: string) {
+export async function markCrmEmailDeliveryFailed(
+  idempotencyKey: string,
+  errorCode: CrmEmailFailedErrorCode,
+) {
   await getDb()
     .update(crmEmailDeliveries)
     .set({
       status: 'failed',
-      lastErrorCode: errorCode.replace(/[^a-z0-9:_-]/gi, '').slice(0, 80) || 'unknown',
+      lastErrorCode: normalizeCrmEmailDeliveryErrorCode(errorCode),
+      updatedAt: new Date(),
+    })
+    .where(and(
+      eq(crmEmailDeliveries.idempotencyKey, idempotencyKey),
+      eq(crmEmailDeliveries.status, 'sending'),
+    ));
+}
+
+export async function markCrmEmailDeliveryUncertain(
+  idempotencyKey: string,
+  errorCode: CrmEmailUncertainErrorCode,
+) {
+  await getDb()
+    .update(crmEmailDeliveries)
+    .set({
+      status: 'uncertain',
+      lastErrorCode: normalizeCrmEmailDeliveryErrorCode(errorCode),
       updatedAt: new Date(),
     })
     .where(and(

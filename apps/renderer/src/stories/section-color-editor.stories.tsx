@@ -9,13 +9,20 @@ import { getStyleCssVars } from '@/lib/styles';
 type ColorEditorPreviewProps = {
   withPreview: boolean;
   viewport: 'wide' | 'narrow';
+  derivedRecipe: boolean;
 };
 
-function ColorEditorPreview({ withPreview, viewport }: ColorEditorPreviewProps) {
+function ColorEditorPreview({ withPreview, viewport, derivedRecipe }: ColorEditorPreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [value, setValue] = useState<Record<string, string> | null>(null);
   const styleVars = getStyleCssVars('salon', 'classic');
-  const resolvedVars = { ...styleVars, ...getBrandCssVars({}, styleVars) };
+  const resolvedVars = {
+    ...styleVars,
+    ...getBrandCssVars({}, styleVars),
+    ...(derivedRecipe
+      ? { '--token-btn-secondary-border': 'color-mix(in srgb, var(--token-accent) 22%, transparent)' }
+      : {}),
+  };
 
   return (
     <main className="min-h-screen bg-zinc-100 p-4 sm:p-8" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -55,9 +62,11 @@ const meta = {
   args: {
     withPreview: false,
     viewport: 'wide',
+    derivedRecipe: false,
   },
   argTypes: {
     viewport: { control: 'inline-radio', options: ['wide', 'narrow'] },
+    derivedRecipe: { control: 'boolean' },
   },
 } satisfies Meta<typeof ColorEditorPreview>;
 
@@ -72,4 +81,40 @@ export const PreviewConnected: Story = {
 
 export const NarrowEditor: Story = {
   args: { viewport: 'narrow' },
+};
+
+export const NarrowDerivedRecipe: Story = {
+  args: { viewport: 'narrow', derivedRecipe: true },
+  play: async ({ canvasElement }) => {
+    const editor = canvasElement.querySelector<HTMLDetailsElement>('details.section-color-editor');
+    const editorSummary = editor?.querySelector<HTMLElement>(':scope > summary');
+    if (!editor || !editorSummary) throw new Error('Der Color Editor wurde nicht gerendert.');
+    editorSummary.click();
+    await new Promise((resolve) => window.setTimeout(resolve, 100));
+
+    const compactMatrix = editor.querySelector<HTMLDetailsElement>('.section-color-editor__cta-compact');
+    const expandedMatrix = editor.querySelector<HTMLElement>('.section-color-editor__cta-expanded');
+    if (!compactMatrix || !expandedMatrix) throw new Error('Die CTA-Interaktionsmatrix fehlt.');
+    if (getComputedStyle(compactMatrix).display === 'none') throw new Error('Die kompakte CTA-Matrix ist im schmalen Container nicht sichtbar.');
+    if (getComputedStyle(expandedMatrix).display !== 'none') throw new Error('Die breite CTA-Matrix bleibt im schmalen Container sichtbar.');
+    if (compactMatrix.open) throw new Error('Die kompakte CTA-Matrix muss zunächst geschlossen sein.');
+
+    const friendlyDerivedLabel = Array.from(editor.querySelectorAll('p')).find((element) =>
+      element.textContent?.includes('Automatisch aus der Akzentfarbe abgeleitet'),
+    );
+    if (!friendlyDerivedLabel) throw new Error('Die verständliche Herkunft der abgeleiteten Farbe fehlt.');
+
+    const technicalDisclosure = Array.from(editor.querySelectorAll<HTMLDetailsElement>('details')).find((element) =>
+      element.querySelector('summary')?.textContent?.includes('Technischen Farbwert anzeigen'),
+    );
+    if (!technicalDisclosure) throw new Error('Das zugängliche technische Farbdetail fehlt.');
+    technicalDisclosure.querySelector<HTMLElement>('summary')?.click();
+    const technicalValue = technicalDisclosure.querySelector('code')?.textContent?.trim();
+    if (technicalValue !== 'color-mix(in srgb, var(--token-accent) 22%, transparent)') {
+      throw new Error('Der exakte technische Farbwert wurde nicht bewahrt.');
+    }
+
+    compactMatrix.querySelector<HTMLElement>(':scope > summary')?.click();
+    if (!compactMatrix.open) throw new Error('Die kompakte CTA-Matrix lässt sich nicht öffnen.');
+  },
 };

@@ -24,6 +24,7 @@ import {
   RendererContactBodyInvalidError,
   RendererContactBodyTooLargeError,
 } from '@/lib/renderer-contact-security';
+import { bookingRequestErrorResponse, type BookingRetryHint } from '@/lib/booking-request-errors';
 
 const MAX_BOOKING_REQUEST_BYTES = 64 * 1024;
 
@@ -278,7 +279,6 @@ export async function POST(req: NextRequest) {
     if (error instanceof RendererContactBodyInvalidError) {
       return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
     }
-    const message = error instanceof Error ? error.message : 'Interner Fehler';
     if (activeClaim) {
       await failPublicFlowRequest({
         flow: 'booking',
@@ -287,13 +287,12 @@ export async function POST(req: NextRequest) {
         uncertain: bookingPersisted,
       }).catch(cleanupError => console.error('[Booking] claim cleanup failed', cleanupError));
     }
-    const retryHint = activeClaim
+    const retryHint: BookingRetryHint = activeClaim
       ? bookingPersisted
         ? { retryWithSameIdempotencyKey: true }
         : { retryWithNewIdempotencyKey: true }
       : {};
-    if (message === 'BOOKING_CONFLICT') return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.', ...retryHint }, { status: 409 });
-    return NextResponse.json({ error: message, ...retryHint }, { status: 500 });
+    return bookingRequestErrorResponse(error, retryHint);
   }
 }
 

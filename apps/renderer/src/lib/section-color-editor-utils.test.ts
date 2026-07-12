@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { FIELD_DEFS, PUBLIC_COLOR_FIELD_KEYS, type ColorFieldKey } from './section-color-fields';
 import {
@@ -8,10 +9,16 @@ import {
   getCtaStateCoverage,
   getEditorFieldGroup,
   getContrastRatio,
+  getInheritedColorPresentation,
   groupEditorFields,
   parseColorWithAlpha,
   reconcileEditorColorRoles,
 } from './section-color-editor-utils';
+
+const colorEditorSource = readFileSync(
+  new URL('../app/admin/pages/[id]/section-color-editor.tsx', import.meta.url),
+  'utf8',
+);
 
 test('groupEditorFields keeps every statically supported role without a preview', () => {
   const fields: ColorFieldKey[] = [
@@ -97,6 +104,33 @@ test('missing secondary CTA tokens are documented as derived instead of disappea
   const coverage = getCtaStateCoverage(['btnBg', 'btnText', 'btnSecondaryText']);
   assert.equal(coverage.find((item) => item.id === 'secondary-surface')?.mode, 'derived');
   assert.equal(coverage.find((item) => item.id === 'secondary-border')?.mode, 'derived');
+});
+
+test('derived color recipes use a human label while preserving their exact technical value', () => {
+  const technicalValue = 'color-mix(in srgb, var(--token-accent) 22%, transparent)';
+  const presentation = getInheritedColorPresentation(technicalValue);
+
+  assert.equal(presentation.isDerived, true);
+  assert.equal(presentation.displayValue, 'Automatisch aus der Akzentfarbe abgeleitet');
+  assert.equal(presentation.technicalValue, technicalValue);
+  assert.doesNotMatch(presentation.displayValue, /color-mix/i);
+});
+
+test('concrete inherited colors continue to display unchanged', () => {
+  assert.deepEqual(getInheritedColorPresentation('  rgba(15, 23, 42, 0.8)  '), {
+    displayValue: 'rgba(15, 23, 42, 0.8)',
+    technicalValue: 'rgba(15, 23, 42, 0.8)',
+    isDerived: false,
+  });
+});
+
+test('the CTA interaction matrix becomes a native container-responsive disclosure', () => {
+  assert.match(colorEditorSource, /<details className="section-color-editor__cta-compact/);
+  assert.match(colorEditorSource, /Button-Zustände/);
+  assert.match(colorEditorSource, /@container \(max-width: 30rem\)/);
+  assert.match(colorEditorSource, /\.section-color-editor__cta-expanded \{ display: none; \}/);
+  assert.match(colorEditorSource, /\.section-color-editor__cta-compact \{ display: block; \}/);
+  assert.doesNotMatch(colorEditorSource, /@media[\s\S]*?section-color-editor__cta-compact/);
 });
 
 test('color parsing and composition preserve a deliberate alpha value', () => {

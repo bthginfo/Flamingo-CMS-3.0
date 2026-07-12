@@ -6,6 +6,7 @@ import {
   inspectCrmEmailDelivery,
   markCrmEmailDeliveryFailed,
   markCrmEmailDeliverySent,
+  markCrmEmailDeliveryUncertain,
 } from '@/lib/crm-email-store';
 import { createHardenedSmtpTransport, resolveCrmSmtpConfiguration } from '@/lib/crm-smtp';
 import { getDb } from '@/lib/db';
@@ -53,6 +54,7 @@ export const POST = createCrmEmailPostHandler({
   inspectDelivery: inspectCrmEmailDelivery,
   markDeliverySent: markCrmEmailDeliverySent,
   markDeliveryFailed: markCrmEmailDeliveryFailed,
+  markDeliveryUncertain: markCrmEmailDeliveryUncertain,
   sendMail: async (message) => {
     const smtp = resolveCrmSmtpConfiguration(process.env);
     const transporter = createHardenedSmtpTransport(smtp);

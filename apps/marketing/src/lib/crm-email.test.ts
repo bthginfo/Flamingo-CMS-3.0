@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { NextRequest } from 'next/server';
 import {
+  classifyCrmSmtpSendError,
   createCrmEmailPostHandler,
   MAX_CRM_EMAIL_ATTACHMENT_BYTES,
   MAX_CRM_EMAIL_REQUEST_BYTES,
@@ -17,6 +18,7 @@ import { createCrmToken } from './session';
 import {
   classifyCrmEmailDelivery,
   CRM_EMAIL_DELIVERY_STALE_AFTER_MS,
+  normalizeCrmEmailDeliveryErrorCode,
 } from './crm-email-store';
 import { createCrmEmailActionId, withCrmEmailIdempotency } from './crm-email-client-security';
 import {
@@ -62,6 +64,7 @@ function dependencies(overrides: Partial<CrmEmailHandlerDependencies> = {}) {
     claimDelivery: async () => 'acquired' as const,
     markDeliverySent: async () => undefined,
     markDeliveryFailed: async () => undefined,
+    markDeliveryUncertain: async () => undefined,
     now: () => new Date('2026-07-11T12:00:00.000Z'),
     ...overrides,
   } satisfies CrmEmailHandlerDependencies;
@@ -330,17 +333,49 @@ describe('CRM email handler security contract', () => {
     assert.equal(sent, false);
   });
 
-  it('records a failed SMTP delivery without exposing the SMTP error', async () => {
+  it('records a definitive SMTP rejection as retryable without exposing provider internals', async () => {
     const failures: Array<{ key: string; code: string }> = [];
+    const uncertain: Array<{ key: string; code: string }> = [];
     const handler = createCrmEmailPostHandler(dependencies({
-      sendMail: async () => { throw new Error('SMTP credentials and internals'); },
+      sendMail: async () => {
+        throw Object.assign(new Error('SMTP credentials and internals'), {
+          responseCode: 550,
+          code: 'EENVELOPE',
+        });
+      },
       markDeliveryFailed: async (key, code) => { failures.push({ key, code }); },
+      markDeliveryUncertain: async (key, code) => { uncertain.push({ key, code }); },
     }));
 
     const response = await handler(jsonRequest({ purpose: 'lead_outreach', entityId: ENTITY_ID, body: 'Hallo' }));
     assert.equal(response.status, 500);
-    assert.deepEqual(failures, [{ key: IDEMPOTENCY_KEY, code: 'smtp_send_failed' }]);
-    assert.doesNotMatch(JSON.stringify(await response.json()), /credentials|internals/i);
+    assert.deepEqual(failures, [{ key: IDEMPOTENCY_KEY, code: 'crm_smtp_rejected' }]);
+    assert.deepEqual(uncertain, []);
+    assert.deepEqual(await response.json(), { error: 'E-Mail konnte nicht gesendet werden.' });
+  });
+
+  it('persists timeout, socket and generic SMTP throws as uncertain', async () => {
+    const injectedErrors: unknown[] = [
+      Object.assign(new Error('timeout after DATA'), { code: 'ETIMEDOUT', command: 'DATA' }),
+      Object.assign(new Error('socket closed'), { code: 'ECONNRESET' }),
+      new Error('provider internals and credentials'),
+    ];
+
+    for (const injectedError of injectedErrors) {
+      const failures: Array<{ key: string; code: string }> = [];
+      const uncertain: Array<{ key: string; code: string }> = [];
+      const handler = createCrmEmailPostHandler(dependencies({
+        sendMail: async () => { throw injectedError; },
+        markDeliveryFailed: async (key, code) => { failures.push({ key, code }); },
+        markDeliveryUncertain: async (key, code) => { uncertain.push({ key, code }); },
+      }));
+
+      const response = await handler(jsonRequest({ purpose: 'lead_outreach', entityId: ENTITY_ID, body: 'Hallo' }));
+      assert.equal(response.status, 500);
+      assert.deepEqual(failures, []);
+      assert.deepEqual(uncertain, [{ key: IDEMPOTENCY_KEY, code: 'crm_smtp_uncertain' }]);
+      assert.deepEqual(await response.json(), { error: 'E-Mail konnte nicht gesendet werden.' });
+    }
   });
 
   it('does not trust forwarded host headers or a cross-scheme Origin', async () => {
@@ -391,20 +426,42 @@ describe('CRM email handler security contract', () => {
     assert.notEqual(hashes[0], hashes[1]);
   });
 
-  it('blocks uncertain stale deliveries instead of automatically resending', async () => {
+  it('deduplicates uncertain deliveries before limits and blocks automatic resend', async () => {
+    let limited = false;
+    let claimed = false;
     let sent = false;
     const handler = createCrmEmailPostHandler(dependencies({
-      claimDelivery: async () => 'delivery_uncertain',
+      inspectDelivery: async () => 'delivery_uncertain',
+      checkRateLimits: async () => { limited = true; throw new Error('must not run'); },
+      claimDelivery: async () => { claimed = true; return 'acquired'; },
       sendMail: async () => { sent = true; },
     }));
     const response = await handler(jsonRequest({ purpose: 'lead_outreach', entityId: ENTITY_ID, body: 'Hallo' }));
     assert.equal(response.status, 409);
     assert.equal((await response.json() as { code?: string }).code, 'DELIVERY_UNCERTAIN');
+    assert.equal(limited, false);
+    assert.equal(claimed, false);
     assert.equal(sent, false);
   });
 });
 
 describe('CRM SMTP configuration', () => {
+  it('classifies only explicit SMTP 4xx/5xx replies as retryable rejection', () => {
+    assert.equal(classifyCrmSmtpSendError({ responseCode: 450, code: 'EENVELOPE' }), 'rejected');
+    assert.equal(classifyCrmSmtpSendError({ responseCode: 550, code: 'EENVELOPE' }), 'rejected');
+    assert.equal(classifyCrmSmtpSendError({ responseCode: '550', code: 'EENVELOPE' }), 'uncertain');
+    assert.equal(classifyCrmSmtpSendError({ responseCode: 250, code: 'ETIMEDOUT' }), 'uncertain');
+    assert.equal(classifyCrmSmtpSendError({ code: 'ETIMEDOUT' }), 'uncertain');
+    assert.equal(classifyCrmSmtpSendError({ code: 'ECONNECTION' }), 'uncertain');
+    assert.equal(classifyCrmSmtpSendError(new Error('socket closed')), 'uncertain');
+  });
+
+  it('normalizes persisted delivery codes through an allowlist', () => {
+    assert.equal(normalizeCrmEmailDeliveryErrorCode(' CRM_SMTP_REJECTED '), 'crm_smtp_rejected');
+    assert.equal(normalizeCrmEmailDeliveryErrorCode('smtp response: 550 credentials=secret'), 'unknown');
+    assert.equal(normalizeCrmEmailDeliveryErrorCode({ code: 'crm_smtp_uncertain' }), 'unknown');
+  });
+
   it('keeps attachment and total request limits below the platform ceiling', () => {
     assert.equal(MAX_CRM_EMAIL_ATTACHMENT_BYTES, 3 * 1024 * 1024);
     assert.equal(MAX_CRM_EMAIL_REQUEST_BYTES, 4 * 1024 * 1024);

@@ -221,6 +221,48 @@ export function reconcileEditorColorRoles(
   });
 }
 
+export interface InheritedColorPresentation {
+  displayValue: string;
+  technicalValue: string;
+  isDerived: boolean;
+}
+
+const DERIVED_COLOR_SOURCE_LABELS: readonly [pattern: RegExp, label: string][] = [
+  [/\bcurrentColor\b/i, 'der Textfarbe'],
+  [/--token-btn-secondary-(?:bg|text|border)\b/i, 'den Farben des sekundären Buttons'],
+  [/--token-btn-(?:bg|text)\b/i, 'der primären Buttonfarbe'],
+  [/--token-accent\b/i, 'der Akzentfarbe'],
+  [/--token-(?:heading|subheading)\b/i, 'der Überschriftenfarbe'],
+  [/--token-(?:body|muted)\b/i, 'der Textfarbe'],
+  [/--token-card-(?:bg|heading|body|muted|border)\b/i, 'den Kartenfarben'],
+  [/--token-section-bg(?:-alt)?\b/i, 'der Sektionsfläche'],
+  [/--token-(?:icon|badge-bg|badge-text|badge-border)\b/i, 'der Akzentfarbe'],
+];
+
+/**
+ * Keep CSS recipes available to technical users without making raw color-mix
+ * syntax the primary value shown to non-technical customers.
+ */
+export function getInheritedColorPresentation(value: string | undefined): InheritedColorPresentation {
+  const technicalValue = value?.trim() ?? '';
+  const isDerived = /\bcolor-mix\s*\(/i.test(technicalValue);
+  if (!isDerived) {
+    return { displayValue: technicalValue, technicalValue, isDerived: false };
+  }
+
+  const sourceLabels = DERIVED_COLOR_SOURCE_LABELS
+    .filter(([pattern]) => pattern.test(technicalValue))
+    .map(([, label]) => label);
+  const uniqueSources = [...new Set(sourceLabels)];
+  const displayValue = uniqueSources.length === 1
+    ? `Automatisch aus ${uniqueSources[0]} abgeleitet`
+    : uniqueSources.length > 1
+      ? 'Automatisch aus den aktiven Designfarben abgeleitet'
+      : 'Automatisch aus dem aktiven Design abgeleitet';
+
+  return { displayValue, technicalValue, isDerived: true };
+}
+
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
