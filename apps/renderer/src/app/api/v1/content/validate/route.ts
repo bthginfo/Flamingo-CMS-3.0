@@ -27,6 +27,7 @@ import { getSectionSchemas } from '@/lib/section-data-schemas';
 import { evaluateSitePagePolicy } from '@/lib/site-page-policy';
 import type { PatAuthResult } from '@/lib/pat-auth';
 import { getWritableSession } from '@/lib/session';
+import { isStoredContentReadyToPublish } from '@/lib/publish-readiness';
 
 /**
  * GET /api/v1/content/validate
@@ -349,9 +350,7 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
     collections:     allCollections.length,
     collectionItems: allItems.length,
   };
-  const readyToPublish = summary.contentErrors === 0
-    && summary.colorErrors === 0
-    && summary.qualityWarnings === 0;
+  const readyToPublish = isStoredContentReadyToPublish(summary);
 
   return NextResponse.json({
     readyToPublish,

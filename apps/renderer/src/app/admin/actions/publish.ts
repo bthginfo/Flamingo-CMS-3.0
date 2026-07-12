@@ -11,6 +11,7 @@ import { cookies } from 'next/headers';
 import { createHash } from 'crypto';
 import { NextRequest } from 'next/server';
 import { GET as runStoredContentAudit } from '@/app/api/v1/content/validate/route';
+import { isStoredContentReadyToPublish, partitionPublishAuditIssues } from '@/lib/publish-readiness';
 
 export type PublishRepairItem = {
   severity?: string;
@@ -28,6 +29,7 @@ export type PublishResult = {
   unchanged?: true;
   summary?: Record<string, number>;
   repairQueue?: PublishRepairItem[];
+  advisoryQueue?: PublishRepairItem[];
 };
 type QueryRunner = Pick<ReturnType<typeof getDb>, 'select' | 'update' | 'insert' | 'execute'>;
 
@@ -83,11 +85,14 @@ export async function publishAction(): Promise<PublishResult> {
       new NextRequest('http://internal/api/v1/content/validate'),
     );
     const preflight = await preflightResponse.json() as StoredContentPreflight;
-    const repairQueue = [
-      ...(preflight.contentIssues || []).filter(issue => issue.severity === 'error' || (issue.severity === 'warning' && issue.repair)),
-      ...(preflight.colorIssues || []).filter(issue => issue.severity === 'error' || issue.severity === 'warning'),
-    ];
-    if (!preflightResponse.ok || !preflight.readyToPublish || (preflight.summary?.colorWarnings || 0) > 0) {
+    const { blockers: repairQueue, advisories: advisoryQueue } = partitionPublishAuditIssues(
+      preflight.contentIssues,
+      preflight.colorIssues,
+    );
+    const summaryReady = preflight.summary
+      ? isStoredContentReadyToPublish(preflight.summary)
+      : false;
+    if (!preflightResponse.ok || !preflight.readyToPublish || !summaryReady) {
       return {
         error: preflight.error || 'Die Inhalte sind noch nicht bereit zur Veröffentlichung.',
         code: 'PUBLISH_PREFLIGHT_FAILED',
@@ -178,6 +183,12 @@ export async function publishAction(): Promise<PublishResult> {
       console.warn('[publishAction] transaction unavailable, using non-transactional fallback');
       result = await runPublish(db);
     }
+
+    result = {
+      ...result,
+      summary: preflight.summary,
+      advisoryQueue,
+    };
 
     revalidateTenant(tenantId);
 
