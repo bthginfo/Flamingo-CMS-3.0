@@ -33,10 +33,24 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install workspace dependencies
+        id: install
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate migration configuration
+        id: config
+        shell: bash
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo 'DATABASE_URL repository secret is missing' >&2
+            exit 1
+          fi
 
       - name: Apply pending Drizzle migrations
         id: migrate
+        if: steps.config.outcome == 'success'
         run: pnpm --filter @flamingo/db migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -46,19 +60,34 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          INSTALL_RESULT: ${{ steps.install.outcome }}
+          CONFIG_RESULT: ${{ steps.config.outcome }}
           MIGRATION_RESULT: ${{ steps.migrate.outcome }}
         run: |
-          if [ "$MIGRATION_RESULT" = "success" ]; then
+          if [ "$INSTALL_RESULT" != "success" ]; then
+            state=failure
+            description='Migration dependency setup failed'
+          elif [ "$CONFIG_RESULT" != "success" ]; then
+            state=failure
+            description='DATABASE_URL repository secret is missing'
+          elif [ "$MIGRATION_RESULT" = "success" ]; then
             state=success
             description='Production database migrations applied'
           else
             state=failure
-            description='Production database migration failed'
+            description='Drizzle migration command failed'
           fi
+          target_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          payload=$(jq -n \
+            --arg state "$state" \
+            --arg context 'Database migration' \
+            --arg description "$description" \
+            --arg target_url "$target_url" \
+            '{state: $state, context: $context, description: $description, target_url: $target_url}')
           curl --fail-with-body --silent --show-error \
             --request POST \
             --header "Authorization: Bearer $GH_TOKEN" \
             --header 'Accept: application/vnd.github+json' \
             --header 'X-GitHub-Api-Version: 2022-11-28' \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            --data "{\"state\":\"$state\",\"context\":\"Database migration\",\"description\":\"$description\"}"
+            --data "$payload"
