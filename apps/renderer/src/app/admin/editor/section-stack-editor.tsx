@@ -17,9 +17,9 @@ type Props = {
   emptyText?: string;
   addLabel?: string;
   onReorder: (sections: EditableSection[]) => void;
-  onAddSection: (type: string) => void;
+  onAddSection: (type: string) => void | boolean | Promise<void | boolean>;
   onOpenAddMenu?: () => void;
-  onCopySection?: (sourceSectionId: string) => void;
+  onCopySection?: (sourceSectionId: string) => void | boolean | Promise<void | boolean>;
   copySources?: { pageId: string; pageTitle: string; pageSlug: string; sections: { id: string; type: string; titleInternal: string | null }[] }[];
   copySourcesLoading?: boolean;
   renderSection: (section: EditableSection) => ReactNode;
@@ -56,16 +56,6 @@ export function SectionStackEditor({
     onReorder(arrayMove(sections, oldIndex, newIndex));
   }
 
-  function handleAddSection(type: string) {
-    setShowAddMenu(false);
-    onAddSection(type);
-  }
-
-  function handleCopySection(sourceSectionId: string) {
-    setShowAddMenu(false);
-    onCopySection?.(sourceSectionId);
-  }
-
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -87,8 +77,9 @@ export function SectionStackEditor({
         {showAddMenu && (
           <SectionPickerModal
             sectionTypes={sectionTypes}
-            onSelect={handleAddSection}
-            onCopySection={onCopySection ? handleCopySection : undefined}
+            existingSectionTypes={sections.map((section) => section.type)}
+            onSelect={onAddSection}
+            onCopySection={onCopySection}
             copySources={copySources}
             copySourcesLoading={copySourcesLoading}
             onClose={() => setShowAddMenu(false)}

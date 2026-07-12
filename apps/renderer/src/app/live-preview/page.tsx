@@ -6,7 +6,7 @@ import { getDesignCssVars } from '@/lib/design-vars';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { LivePreviewClient } from './client';
-import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
+import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,7 +41,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
   const initialSections = homePage?.sections || [];
 
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
-  const brandCssVars = getBrandCssVars(brand);
+  const brandCssVars = getBrandCssVars(brand, styleCssVars);
   const designOverrides: Record<string, string> = {};
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
   if (brand.accentColor) {
@@ -49,13 +49,8 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
     designOverrides['--style-accent'] = brand.accentColor;
   }
   Object.assign(designOverrides, getDesignCssVars(design));
-  const fontCssVars: Record<string, string> = {};
-  const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
-  const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
-  if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
-  if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
-  const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
+  const fontAssets = getTenantFontAssets(brand);
+  const fontCssVars = getTenantFontCssVars(brand);
 
   const cssVars = { ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides };
 
@@ -81,7 +76,8 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
         footer: footerData || undefined,
         socialLinks,
         formFields,
-        fontsUrl: googleFontsUrl,
+        fontsUrl: fontAssets.googleFontsUrl,
+        fontFaceCss: fontAssets.fontFaceCss,
         sections: initialSections,
         collections: snapshot?.collections || [],
       }}

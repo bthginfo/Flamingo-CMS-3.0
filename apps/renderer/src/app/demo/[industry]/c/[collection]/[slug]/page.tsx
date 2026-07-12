@@ -147,6 +147,7 @@ export default async function DemoCollectionDetailPage({
           ? { ...navData.cta, href: prefixInternalHref(navData.cta.href, demoPrefix) as string }
           : { label: '', href: '' },
         brand: brandData.brand,
+        design: brandData.design,
         contact: brandData.contact,
         socialLinks: brandData.socialLinks,
         formFields: brandData.formFields,

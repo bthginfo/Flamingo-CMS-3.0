@@ -9,6 +9,8 @@ const DESIGN_TO_CSS_VARS: Record<string, string[]> = {
   textPrimary: ['--style-text-primary', '--token-heading'],
   headingColor: ['--style-text-primary', '--token-heading'],
   heading: ['--style-text-primary', '--token-heading'],
+  subheading: ['--token-subheading'],
+  subheadingColor: ['--token-subheading'],
 
   textSecondary: ['--style-text-secondary', '--token-body'],
   bodyColor: ['--style-text-secondary', '--token-body'],
@@ -17,6 +19,13 @@ const DESIGN_TO_CSS_VARS: Record<string, string[]> = {
   textMuted: ['--style-text-muted', '--token-muted'],
   mutedColor: ['--style-text-muted', '--token-muted'],
   muted: ['--style-text-muted', '--token-muted'],
+
+  cardHeading: ['--token-card-heading'],
+  cardHeadingColor: ['--token-card-heading'],
+  cardBody: ['--token-card-body'],
+  cardBodyColor: ['--token-card-body'],
+  cardMuted: ['--token-card-muted'],
+  cardMutedColor: ['--token-card-muted'],
 
   sectionBg: ['--style-section-bg', '--token-section-bg'],
   sectionBgAlt: ['--style-section-bg-alt', '--token-section-bg-alt'],
@@ -28,6 +37,13 @@ const DESIGN_TO_CSS_VARS: Record<string, string[]> = {
   brand: ['--style-brand', '--token-accent'],
   iconColor: ['--token-icon'],
   icon: ['--token-icon'],
+  cardIcon: ['--token-card-icon'],
+  eyebrow: ['--token-eyebrow'],
+  eyebrowColor: ['--token-eyebrow'],
+  statValue: ['--token-stat-value'],
+  quote: ['--token-quote'],
+  ratingStar: ['--token-rating-star'],
+  check: ['--token-check'],
 
   btnBg: ['--token-btn-bg', '--style-button-bg'],
   btnText: ['--token-btn-text', '--style-button-text'],
@@ -40,6 +56,7 @@ const DESIGN_TO_CSS_VARS: Record<string, string[]> = {
   badgeBorder: ['--token-badge-border'],
 
   borderColor: ['--token-card-border'],
+  cardBorder: ['--token-card-border'],
   borderStrong: ['--style-border-strong', '--token-card-border'],
   borderLight: ['--style-border-light'],
   dividerColor: ['--style-divider-color', '--token-divider'],

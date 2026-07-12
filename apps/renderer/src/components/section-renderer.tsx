@@ -13,6 +13,7 @@ import {
 import { mergeContactFormFields, type ContactFormFieldDefinition } from '@/lib/contact-form';
 import { resolveAccessibleRoleForeground } from '@/lib/brand-colors';
 import { parseCssColor } from '@/lib/color-engine';
+import { isMediaOverlaySectionType, resolveMediaOverlaySecondaryAction } from '@/lib/media-overlay-actions';
 
 /** Extract the best image from a collection item. Supports strings, media objects, arrays, and embedded hero sections. */
 function getImageUrl(value: unknown): string | undefined {
@@ -105,16 +106,6 @@ const CONTAINER: Record<string, string> = {
 
 const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 const CONTACT_FORM_SECTION_TYPES = new Set(['contact', 'contactForm', 'locationContact', 'tourismContact', 'smartInquiry']);
-const MEDIA_OVERLAY_SECTION_TYPES = new Set([
-  'hero',
-  'collectionHero',
-  'cinematicHero',
-  'glowHero',
-  'floristHero',
-  'fitnessHero',
-  'locationHero',
-  'immersiveCtaBanner',
-]);
 const SKIP_REVEAL_SECTION_TYPES = new Set([
   'hero',
   'collectionHero',
@@ -245,8 +236,8 @@ function withBookingStyleAliases(sectionType: string, style?: React.CSSPropertie
 }
 
 const SECTION_STYLE_TOKEN_ALIASES: Record<string, string[]> = {
-  '--style-section-bg': ['--token-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
-  '--style-section-bg-alt': ['--token-section-bg-alt', '--style-section-bg', '--token-section-bg'],
+  '--style-section-bg': ['--token-section-bg'],
+  '--style-section-bg-alt': ['--token-section-bg-alt'],
   '--style-card-bg': ['--token-card-bg'],
   '--style-border-color': ['--token-card-border', '--token-divider', '--style-border'],
   '--style-border': ['--token-card-border', '--style-border-color'],
@@ -279,8 +270,8 @@ const SECTION_STYLE_TOKEN_ALIASES: Record<string, string[]> = {
   '--style-button-secondary-border': ['--token-btn-secondary-border', '--brand-btn-secondary-border'],
   '--style-image-text-color': ['--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
   '--style-image-overlay': ['--style-overlay-color'],
-  '--token-section-bg': ['--style-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
-  '--token-section-bg-alt': ['--style-section-bg-alt', '--style-section-bg', '--token-section-bg'],
+  '--token-section-bg': ['--style-section-bg'],
+  '--token-section-bg-alt': ['--style-section-bg-alt'],
   '--token-card-bg': ['--style-card-bg'],
   '--token-card-border': ['--style-border-color', '--style-card-border-color', '--style-border'],
   '--token-divider': ['--style-divider-color'],
@@ -513,7 +504,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   // dark headlines onto dark hero photos whenever a hero had no own overrides.
   // On media sections only the section's OWN overrides may override the light
   // default; page-level tokens must not bleed through.
-  const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay);
+  const hasMediaOverlay = isMediaOverlaySectionType(section.type) || Boolean(section.data.overlay);
   const overrideStyle = section.styleOverrides
     ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
     : undefined;
@@ -552,10 +543,28 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const darkContextMutedVar = own('--token-on-dark-muted', '--token-muted') ?? 'rgba(255,255,255,0.72)';
 
   // Per-section color overrides (from CMS) applied as inline CSS vars.
-  const sectionStyle = withBookingStyleAliases(
+  const baseSectionStyle = withBookingStyleAliases(
     section.type,
     hasMediaOverlay ? withMediaTextAliases(normalizedStyle) : normalizedStyle,
   );
+  const mediaSecondaryAction = hasMediaOverlay
+    ? resolveMediaOverlaySecondaryAction({
+        background: own('--token-btn-secondary-bg'),
+        text: own('--token-btn-secondary-text'),
+        border: own('--token-btn-secondary-border'),
+      })
+    : null;
+  const sectionStyle = hasMediaOverlay
+    ? ({
+        ...(baseSectionStyle || {}),
+        // Media overlays need their own secondary action contract. Inheriting a
+        // light page's pale secondary button can make the CTA disappear over a
+        // photograph even when the hero copy itself was correctly inverted.
+        '--token-btn-secondary-bg': mediaSecondaryAction!.background,
+        '--token-btn-secondary-text': mediaSecondaryAction!.text,
+        '--token-btn-secondary-border': mediaSecondaryAction!.border,
+      } as React.CSSProperties)
+    : baseSectionStyle;
 
   // Global bridge: strict 1:1 CSS var → data prop mapping.
   // NO cross-token fallbacks. Each token maps to exactly ONE data property.

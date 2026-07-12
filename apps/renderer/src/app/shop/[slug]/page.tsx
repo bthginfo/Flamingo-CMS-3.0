@@ -13,6 +13,7 @@ import { eq, and } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { serializeJsonForHtml } from '@/lib/safe-json';
+import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
 
 export const revalidate = 60;
 
@@ -109,14 +110,11 @@ export default async function ShopProductPage({ params, searchParams }: { params
   ]);
 
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
-  const brandCssVars = getBrandCssVars(brand);
+  const brandCssVars = getBrandCssVars(brand, styleCssVars);
   const designOverrides = design ? getDesignCssVars(design) : {};
 
-  const fontCssVars: Record<string, string> = {};
-  const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
-  const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
-  if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
-  if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
+  const fontAssets = getTenantFontAssets(brand);
+  const fontCssVars = getTenantFontCssVars(brand);
 
   const product = await getProduct(slug, tenantId);
 
@@ -136,6 +134,9 @@ export default async function ShopProductPage({ params, searchParams }: { params
 
   return (
     <div data-style={tenantStyle.activeStyle} className="overflow-x-clip" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
+      {fontAssets.googleFontsUrl && <link rel="stylesheet" href={fontAssets.googleFontsUrl} />}
+      {fontAssets.fontFaceCss && <style>{fontAssets.fontFaceCss}</style>}
+      {fontAssets.hasBodyFont && <style>{'[data-style] { font-family: var(--custom-body-font) !important; }'}</style>}
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLd) }} />
       )}

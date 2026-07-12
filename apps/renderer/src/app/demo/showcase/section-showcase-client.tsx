@@ -13,6 +13,11 @@ import {
   Tablet,
   X,
 } from 'lucide-react';
+import {
+  fitPreviewScale,
+  type ShowcaseViewportKey,
+  viewportForHostWidth,
+} from './section-showcase-responsive';
 
 export type ShowcaseContext = {
   industry: string;
@@ -34,13 +39,15 @@ export type ShowcaseSection = {
 };
 
 type ShowcaseMode = 'showroom' | 'lab';
-type ViewportKey = 'desktop' | 'tablet' | 'mobile';
 
 const VIEWPORTS = {
   desktop: { label: 'Desktop', width: 1280, height: 800, icon: Monitor },
   tablet: { label: 'Tablet', width: 768, height: 1024, icon: Tablet },
   mobile: { label: 'Mobile', width: 390, height: 844, icon: Smartphone },
-} satisfies Record<ViewportKey, { label: string; width: number; height: number; icon: typeof Monitor }>;
+} satisfies Record<ShowcaseViewportKey, { label: string; width: number; height: number; icon: typeof Monitor }>;
+
+const PREVIEW_CHROME_HEIGHT = 36;
+const PREVIEW_FRAME_BORDER = 2;
 
 function previewUrl(section: ShowcaseSection, industry: string, style: string) {
   const params = new URLSearchParams({ type: section.type, industry, style });
@@ -69,19 +76,58 @@ export function SectionShowcaseClient({
   const [selectedId, setSelectedId] = useState(firstSection?.id || '');
   const [selectedIndustry, setSelectedIndustry] = useState(firstSection?.defaultIndustry || 'tradesman');
   const [style, setStyle] = useState('classic');
-  const [viewport, setViewport] = useState<ViewportKey>('desktop');
+  const [viewport, setViewport] = useState<ShowcaseViewportKey>('desktop');
+  const [previewScale, setPreviewScale] = useState(1);
   const [catalogOpen, setCatalogOpen] = useState(false);
+  const viewportLockedRef = useRef(false);
+  const previewFitRef = useRef<HTMLDivElement>(null);
   const catalogTriggerRef = useRef<HTMLButtonElement>(null);
   const catalogCloseRef = useRef<HTMLButtonElement>(null);
 
   const selected = sections.find(section => section.id === selectedId) || firstSection;
   const activeViewport = VIEWPORTS[viewport];
   const activeUrl = selected ? previewUrl(selected, selectedIndustry, style) : '';
+  const previewCanvasWidth = activeViewport.width + PREVIEW_FRAME_BORDER;
+  const previewCanvasHeight = activeViewport.height + PREVIEW_CHROME_HEIGHT + PREVIEW_FRAME_BORDER;
 
   useEffect(() => {
-    if (window.innerWidth < 640) setViewport('mobile');
-    else if (window.innerWidth < 1024) setViewport('tablet');
+    const mobileQuery = window.matchMedia('(max-width: 639px)');
+    const tabletQuery = window.matchMedia('(min-width: 640px) and (max-width: 1023px)');
+
+    function syncViewport() {
+      if (!viewportLockedRef.current) setViewport(viewportForHostWidth(window.innerWidth));
+    }
+
+    syncViewport();
+    window.addEventListener('resize', syncViewport);
+    mobileQuery.addEventListener('change', syncViewport);
+    tabletQuery.addEventListener('change', syncViewport);
+    return () => {
+      window.removeEventListener('resize', syncViewport);
+      mobileQuery.removeEventListener('change', syncViewport);
+      tabletQuery.removeEventListener('change', syncViewport);
+    };
   }, []);
+
+  useEffect(() => {
+    const fitTarget = previewFitRef.current;
+    if (!fitTarget) return;
+
+    const updatePreviewScale = () => {
+      const nextScale = fitPreviewScale(fitTarget.clientWidth, previewCanvasWidth);
+      setPreviewScale(currentScale => currentScale === nextScale ? currentScale : nextScale);
+    };
+
+    updatePreviewScale();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', updatePreviewScale);
+      return () => window.removeEventListener('resize', updatePreviewScale);
+    }
+
+    const observer = new ResizeObserver(updatePreviewScale);
+    observer.observe(fitTarget);
+    return () => observer.disconnect();
+  }, [previewCanvasWidth]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase('de');
@@ -150,6 +196,11 @@ export function SectionShowcaseClient({
     setMode(nextMode);
     const currentAllowed = nextMode === 'lab' || Boolean(selected?.isCurated);
     if (!currentAllowed && firstSection) selectSection(firstSection);
+  }
+
+  function selectViewport(nextViewport: ShowcaseViewportKey) {
+    viewportLockedRef.current = true;
+    setViewport(nextViewport);
   }
 
   return (
@@ -254,7 +305,7 @@ export function SectionShowcaseClient({
 
             <div className="flex flex-col gap-3 border-b border-[var(--token-divider)] bg-[var(--token-section-bg-alt)] p-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <div className="inline-flex min-h-12 self-start border border-[var(--token-divider)] bg-[var(--token-section-bg)] p-1" role="group" aria-label="Vorschaugröße">
-                {(Object.keys(VIEWPORTS) as ViewportKey[]).map(key => {
+                {(Object.keys(VIEWPORTS) as ShowcaseViewportKey[]).map(key => {
                   const option = VIEWPORTS[key];
                   const Icon = option.icon;
                   const active = viewport === key;
@@ -262,7 +313,7 @@ export function SectionShowcaseClient({
                     <button
                       key={key}
                       type="button"
-                      onClick={() => setViewport(key)}
+                      onClick={() => selectViewport(key)}
                       aria-pressed={active}
                       aria-label={`${option.label}-Vorschau, ${option.width} mal ${option.height} Pixel`}
                       className={`inline-flex min-h-10 items-center gap-2 px-3 text-sm font-bold transition-colors ${active ? 'bg-[var(--token-heading)] text-[color:var(--token-section-bg)]' : 'text-[color:var(--token-body)] hover:text-[color:var(--token-heading)]'}`}
@@ -292,25 +343,43 @@ export function SectionShowcaseClient({
 
             <div className="h-[clamp(34rem,72vh,58rem)] overflow-auto overscroll-contain bg-[color:color-mix(in_srgb,var(--token-section-bg-alt)_72%,var(--token-divider))] p-3 sm:p-6">
               <div
-                key={`${selected.id}-${selectedIndustry}-${style}-${viewport}`}
-                className="mx-auto overflow-hidden border border-[var(--token-divider)] bg-[var(--token-section-bg)] shadow-[0_20px_70px_var(--token-shadow)] motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
-                style={{ width: activeViewport.width }}
+                ref={previewFitRef}
+                className="w-full min-w-0"
               >
-                <div className="flex h-9 items-center gap-2 border-b border-[var(--token-divider)] bg-[var(--token-section-bg-alt)] px-3" aria-hidden="true">
-                  <span className="h-2 w-2 rounded-full bg-[var(--token-divider)]" />
-                  <span className="h-2 w-2 rounded-full bg-[var(--token-divider)]" />
-                  <span className="h-2 w-2 rounded-full bg-[var(--token-accent)]" />
-                  <span className="ml-2 truncate text-[11px] font-semibold text-[color:var(--token-muted)]">
-                    {selectedIndustry} / {selected.type}
-                  </span>
+                <div
+                  className="relative mx-auto"
+                  style={{
+                    width: previewCanvasWidth * previewScale,
+                    height: previewCanvasHeight * previewScale,
+                  }}
+                >
+                  <div
+                    key={`${selected.id}-${selectedIndustry}-${style}-${viewport}`}
+                    className="absolute left-0 top-0 overflow-hidden border border-[var(--token-divider)] bg-[var(--token-section-bg)] shadow-[0_20px_70px_var(--token-shadow)] motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+                    style={{
+                      boxSizing: 'content-box',
+                      width: activeViewport.width,
+                      transform: `scale(${previewScale})`,
+                      transformOrigin: 'top left',
+                    }}
+                  >
+                    <div className="flex h-9 items-center gap-2 border-b border-[var(--token-divider)] bg-[var(--token-section-bg-alt)] px-3" aria-hidden="true">
+                      <span className="h-2 w-2 rounded-full bg-[var(--token-divider)]" />
+                      <span className="h-2 w-2 rounded-full bg-[var(--token-divider)]" />
+                      <span className="h-2 w-2 rounded-full bg-[var(--token-accent)]" />
+                      <span className="ml-2 truncate text-[11px] font-semibold text-[color:var(--token-muted)]">
+                        {selectedIndustry} / {selected.type}
+                      </span>
+                    </div>
+                    <iframe
+                      title={`${selected.label} – ${activeViewport.label}-Vorschau`}
+                      src={activeUrl}
+                      width={activeViewport.width}
+                      height={activeViewport.height}
+                      className="block border-0 bg-[var(--token-section-bg)]"
+                    />
+                  </div>
                 </div>
-                <iframe
-                  title={`${selected.label} – ${activeViewport.label}-Vorschau`}
-                  src={activeUrl}
-                  width={activeViewport.width}
-                  height={activeViewport.height}
-                  className="block border-0 bg-[var(--token-section-bg)]"
-                />
               </div>
             </div>
           </div>

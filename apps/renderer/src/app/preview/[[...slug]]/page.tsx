@@ -2,11 +2,12 @@ import { resolveTenant, getDraftSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
+import { getDesignCssVars } from '@/lib/design-vars';
 import { notFound } from 'next/navigation';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
-import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
+import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,40 +40,24 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
   ]);
 
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
-  const brandCssVars = getBrandCssVars(brand);
+  const brandCssVars = getBrandCssVars(brand, styleCssVars);
   const designOverrides: Record<string, string> = {};
-  const designToCssVar: Record<string, string> = {
-    textPrimary: '--style-text-primary',
-    textSecondary: '--style-text-secondary',
-    sectionBg: '--style-section-bg',
-    sectionBgAlt: '--style-section-bg-alt',
-    cardBg: '--style-card-bg',
-    badgeBg: '--style-badge-bg',
-    badgeText: '--style-badge-text',
-    brand: '--style-brand',
-    dividerColor: '--style-divider-color',
-  };
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
   if (brand.accentColor) {
     designOverrides['--token-accent'] = brand.accentColor;
     designOverrides['--style-accent'] = brand.accentColor;
   }
-  for (const [key, cssVar] of Object.entries(designToCssVar)) {
-    if (design[key]) designOverrides[cssVar] = design[key];
-  }
-  const fontCssVars: Record<string, string> = {};
-  const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
-  const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
-  if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
-  if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
-  const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
+  Object.assign(designOverrides, getDesignCssVars(design));
+  const fontAssets = getTenantFontAssets(brand);
+  const fontCssVars = getTenantFontCssVars(brand);
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
   return (
-    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
-      {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
+    <div data-style={tenantStyle.activeStyle} className="overflow-x-clip" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
+      {fontAssets.googleFontsUrl && <link rel="stylesheet" href={fontAssets.googleFontsUrl} />}
+      {fontAssets.fontFaceCss && <style>{fontAssets.fontFaceCss}</style>}
+      {fontAssets.hasBodyFont && <style>{'[data-style] { font-family: var(--custom-body-font) !important; }'}</style>}
       {/* Preview banner */}
       <div className="fixed top-0 left-0 right-0 z-[9999] bg-amber-500 text-white text-center text-xs py-1 font-medium">
         Entwurfs-Vorschau — Nicht veröffentlicht

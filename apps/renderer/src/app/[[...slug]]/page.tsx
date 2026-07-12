@@ -57,7 +57,7 @@ import { WhatsAppFab } from '@/components/whatsapp-fab';
 import { generateCollectionItemMetadata, renderCollectionItemPage } from '@/app/c/[collection]/[slug]/collection-item-page';
 import { serializeJsonForHtml } from '@/lib/safe-json';
 import { composeSeoTitle } from '@/lib/seo-title';
-import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
+import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
 
 // Known locale codes for i18n routing (first slug segment)
 const LOCALE_PATTERN = /^[a-z]{2}$/;
@@ -284,24 +284,8 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
   preloadHeroImage(visibleSections[0]);
 
-  // Custom font loading
-  const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
-  const fontCssVars: Record<string, string> = {};
-  // Custom uploaded fonts take priority
-  const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
-  const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
-  if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
-  if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
-
-  // @font-face declarations for custom uploaded fonts
-  const fontFaceRules: string[] = [];
-  if (brand.customHeadingFontUrl && brand.customHeadingFontName) {
-    fontFaceRules.push(`@font-face { font-family: "${brand.customHeadingFontName}"; src: url("${brand.customHeadingFontUrl}"); font-display: swap; }`);
-  }
-  if (brand.customBodyFontUrl && brand.customBodyFontName) {
-    fontFaceRules.push(`@font-face { font-family: "${brand.customBodyFontName}"; src: url("${brand.customBodyFontUrl}"); font-display: swap; }`);
-  }
+  const fontAssets = getTenantFontAssets(brand);
+  const fontCssVars = getTenantFontCssVars(brand);
 
   // JSON-LD structured data
   const isHome = !slug || slug.length === 0;
@@ -451,7 +435,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
     });
   }
 
-  const brandCssVars = getBrandCssVars(brand);
+  const brandCssVars = getBrandCssVars(brand, styleCssVars);
   const shopEnabled = shopActive;
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
@@ -464,9 +448,9 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
 
   return (
     <div data-style={tenantStyle.activeStyle} className="overflow-x-clip" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
-      {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
-      {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
-      {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
+      {fontAssets.googleFontsUrl && <link rel="stylesheet" href={fontAssets.googleFontsUrl} />}
+      {fontAssets.fontFaceCss && <style>{fontAssets.fontFaceCss}</style>}
+      {fontAssets.hasBodyFont && <style>{'[data-style] { font-family: var(--custom-body-font) !important; }'}</style>}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLdList) }} />
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} topBar={navData.topBar} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} linkPrefix={linkPrefix} />

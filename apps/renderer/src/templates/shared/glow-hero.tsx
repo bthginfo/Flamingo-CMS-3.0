@@ -69,11 +69,11 @@ export function GlowHeroSection({ data }: Props) {
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 py-16 md:py-24">
         <div className="max-w-5xl">
           {eyebrow && <div className="section-badge mb-5 backdrop-blur" data-color-role="badge" data-edit-path="eyebrow">{eyebrow}</div>}
-          <h1 className="text-5xl font-black leading-none text-[color:var(--token-heading)] md:text-7xl lg:text-8xl" data-edit-path="headline"><WordReveal text={headline} /></h1>
+          <h1 className="break-words text-[clamp(2.75rem,11vw,5rem)] font-black leading-[0.98] tracking-[-0.035em] text-[color:var(--token-heading)] [overflow-wrap:anywhere] md:text-7xl lg:text-8xl" data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-subheading)] md:text-xl" data-edit-path="subline">{plain(subline)}</p>}
-          <div className="mt-9 flex flex-wrap gap-3">
-            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-secondary-text)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
+          <div className="mt-9 flex w-full flex-wrap gap-3 sm:w-auto">
+            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-6 py-3 text-center text-sm font-bold text-[color:var(--token-btn-text)] sm:w-auto"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--token-button-radius)] border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-6 py-3 text-center text-sm font-bold text-[color:var(--token-btn-secondary-text)] backdrop-blur sm:w-auto" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>
         {facts.length > 0 && (

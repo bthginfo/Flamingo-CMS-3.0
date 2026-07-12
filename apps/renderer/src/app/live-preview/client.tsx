@@ -21,6 +21,7 @@ interface InitialData {
   socialLinks?: Record<string, string>;
   formFields?: ContactFormFieldDefinition[];
   fontsUrl?: string | null;
+  fontFaceCss?: string;
   sections?: SnapshotSection[];
   collections?: SnapshotCollection[];
 }
@@ -40,6 +41,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [formFields, setFormFields] = useState(initialData.formFields || []);
   const [collections, setCollections] = useState<SnapshotCollection[]>(initialData.collections || []);
   const [fontsUrl, setFontsUrl] = useState(initialData.fontsUrl || null);
+  const [fontFaceCss, setFontFaceCss] = useState(initialData.fontFaceCss || '');
   const [locale, setLocale] = useState<string | undefined>(undefined);
   // editMode is owned by the parent admin shell (PreviewPanel toolbar) and
   // pushed in via postMessage. The old in-iframe toggle button is gone.
@@ -67,6 +69,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.formFields) setFormFields(p.formFields);
       if (p.collections) setCollections(p.collections);
       if (p.fontsUrl !== undefined) setFontsUrl(p.fontsUrl);
+      if (p.fontFaceCss !== undefined) setFontFaceCss(p.fontFaceCss);
       if (p.locale !== undefined) setLocale(p.locale);
       if (typeof p.editMode === 'boolean') setEditMode(p.editMode);
     }
@@ -230,8 +233,15 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
   return (
-    <div data-style={styleVariant} style={cssVars as React.CSSProperties}>
+    <div
+      data-style={styleVariant}
+      style={{
+        ...cssVars,
+        ...(cssVars['--custom-body-font'] ? { fontFamily: 'var(--custom-body-font)' } : {}),
+      } as React.CSSProperties}
+    >
       {fontsUrl && <link rel="stylesheet" href={fontsUrl} />}
+      {fontFaceCss && <style>{fontFaceCss}</style>}
       {/* Small unobtrusive badge — the actual edit-mode toggle now lives in
           the parent admin shell (PreviewPanel toolbar). */}
       <div

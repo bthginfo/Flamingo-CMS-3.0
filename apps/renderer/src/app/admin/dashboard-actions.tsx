@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Eye, History, Loader2, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
 import { publishAction, rollbackPublishAction } from './actions/publish';
-import { getPublishFailureDescription } from './publish-feedback';
+import { getPublishAdvisoryDescription, getPublishFailureDescription } from './publish-feedback';
 import { useRouter } from 'next/navigation';
 
 export function DashboardActions({
@@ -31,7 +31,10 @@ export function DashboardActions({
         toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
         return;
       }
-      toast.success(result.unchanged ? 'Website ist bereits aktuell' : `Website veröffentlicht${result.version ? ` · Version ${result.version}` : ''}`);
+      toast.success(result.unchanged ? 'Website ist bereits aktuell' : `Website veröffentlicht${result.version ? ` · Version ${result.version}` : ''}`, {
+        description: getPublishAdvisoryDescription(result),
+        duration: result.advisoryQueue?.length ? 9000 : undefined,
+      });
       router.refresh();
     } catch {
       toast.error('Veröffentlichen fehlgeschlagen');

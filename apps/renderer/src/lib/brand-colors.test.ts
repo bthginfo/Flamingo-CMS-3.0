@@ -91,3 +91,62 @@ test('bright brand accents keep their hue for decoration but foreground roles ar
   assert.ok((getHexContrastRatio(vars['--token-icon'], '#ffffff') ?? 0) >= 3);
   assert.ok((getHexContrastRatio(vars['--token-card-icon'], '#fffcf6') ?? 0) >= 3);
 });
+
+test('missing brand fields inherit matching style roles without collapsing surfaces', () => {
+  const vars = getBrandCssVars({}, {
+    '--token-section-bg': '#fffaf2',
+    '--token-section-bg-alt': '#f0e5d5',
+    '--token-card-bg': '#ffffff',
+    '--token-heading': '#2b2118',
+    '--token-body': '#51463c',
+    '--token-btn-bg': '#815a32',
+  });
+
+  assert.equal(vars['--token-section-bg'], '#fffaf2');
+  assert.equal(vars['--token-section-bg-alt'], '#f0e5d5');
+  assert.notEqual(vars['--token-section-bg'], vars['--token-section-bg-alt']);
+  assert.equal(vars['--token-card-bg'], '#ffffff');
+  assert.equal(vars['--token-btn-bg'], '#815a32');
+});
+
+test('an explicit main brand surface does not overwrite an inherited alternate surface', () => {
+  const vars = getBrandCssVars({ sectionBg: '#111827' }, {
+    '--token-section-bg': '#ffffff',
+    '--token-section-bg-alt': '#eef2ff',
+  });
+
+  assert.equal(vars['--token-section-bg'], '#111827');
+  assert.equal(vars['--token-section-bg-alt'], '#eef2ff');
+});
+
+test('persisted blank brand fields behave like unset values', () => {
+  const vars = getBrandCssVars({
+    primaryColor: ' ',
+    sectionBg: '',
+    sectionBgAlt: '   ',
+    cardBg: '',
+    headingColor: '',
+    bodyTextColor: ' ',
+    badgeBg: '',
+    btnPrimaryBg: '',
+    btnSecondaryBg: ' ',
+  }, {
+    '--style-brand': '#7c3aed',
+    '--token-section-bg': '#fffaf2',
+    '--token-section-bg-alt': '#f0e5d5',
+    '--token-card-bg': '#ffffff',
+    '--token-heading': '#2b2118',
+    '--token-body': '#51463c',
+    '--token-badge-bg': '#f5e8d2',
+    '--token-btn-bg': '#815a32',
+    '--token-btn-secondary-bg': '#f0e5d5',
+  });
+
+  assert.equal(vars['--brand-primary'], '#7c3aed');
+  assert.equal(vars['--token-section-bg'], '#fffaf2');
+  assert.equal(vars['--token-section-bg-alt'], '#f0e5d5');
+  assert.equal(vars['--token-card-bg'], '#ffffff');
+  assert.equal(vars['--token-badge-bg'], '#f5e8d2');
+  assert.equal(vars['--token-btn-bg'], '#815a32');
+  assert.equal(vars['--token-btn-secondary-bg'], '#f0e5d5');
+});

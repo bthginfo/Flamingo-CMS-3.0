@@ -3,49 +3,64 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { plain } from '@/lib/strip-html';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+import { getVisibleTimelineEntries } from '@/lib/section-collection-view';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
-
-type TimelineEntry = { year: string; title: string; text: string };
 
 export function TimelineSection({ data }: Props) {
   const badge = (data.badge as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const entries = (data.entries as TimelineEntry[]) || (data.items as TimelineEntry[]) || (data.steps as TimelineEntry[]) || [];
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const { collectionKey, entries } = getVisibleTimelineEntries(data);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const reduceMotion = useHydrationSafeReducedMotion();
 
   if (!entries.length) return null;
 
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-12">
+      <motion.header
+        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: reduceMotion ? 0 : 0.45 }}
+        className="mx-auto mb-9 max-w-3xl text-center md:mb-11"
+      >
         {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
-      </motion.div>
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
+      </motion.header>
 
-      <div className="relative max-w-3xl mx-auto">
-        {/* Vertical line */}
-        <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-[var(--token-section-bg-alt,theme(colors.zinc.200))] -translate-x-1/2" />
+      <div className="relative mx-auto max-w-5xl">
+        <div aria-hidden="true" className="absolute bottom-4 left-5 top-4 w-px bg-[color:color-mix(in_srgb,var(--token-divider)_72%,var(--token-accent))] md:left-1/2" />
 
-        {entries.map((entry, i) => {
-          const isLeft = i % 2 === 0;
-          return (
-            <motion.div key={i} initial={{ opacity: 0, x: isLeft ? -20 : 20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.12 }} className={`relative mb-10 md:flex ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} items-start`}>
-              {/* Dot */}
-              <div className="absolute left-6 md:left-1/2 top-1 w-3 h-3 rounded-full bg-[var(--token-accent)] border-2 border-[color:var(--token-section-bg,#fff)] shadow -translate-x-1/2 z-10" />
+        <ol className="relative">
+          {entries.map(({ item: entry, originalIndex }, displayIndex) => {
+            const isLeft = displayIndex % 2 === 0;
+            return (
+              <motion.li
+                key={`${entry.year || 'step'}-${entry.title || originalIndex}`}
+                initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: reduceMotion ? 0 : 0.38, delay: reduceMotion ? 0 : displayIndex * 0.07 }}
+                className="grid grid-cols-[2.5rem_minmax(0,1fr)] pb-7 last:pb-0 md:grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] md:pb-9"
+                data-edit-collection={collectionKey}
+                data-edit-index={originalIndex}
+              >
+                <div className="relative col-start-1 row-start-1 flex justify-center md:col-start-2">
+                  <span aria-hidden="true" className="mt-1.5 h-3.5 w-3.5 rounded-full border-[3px] border-[var(--token-section-bg)] bg-[var(--token-accent)] shadow-[0_0_0_1px_var(--token-divider)]" />
+                </div>
 
-              {/* Content */}
-              <div className={`ml-14 md:ml-0 md:w-1/2 ${isLeft ? 'md:pr-10 md:text-right' : 'md:pl-10 md:text-left'}`}>
-                <span className="inline-block text-xs font-bold text-[color:var(--token-heading)] bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] rounded-full px-3 py-0.5 mb-2">{entry.year}</span>
-                <h3 className="font-semibold text-[color:var(--token-card-heading,var(--token-heading))] text-base mb-1" data-edit-path="title">{entry.title}</h3>
-                <p className="text-sm text-[color:var(--token-card-body,var(--token-body))] leading-relaxed" data-edit-path="text">{plain(entry.text)}</p>
-              </div>
-            </motion.div>
-          );
-        })}
+                <article className={`col-start-2 row-start-1 min-w-0 border-t border-[var(--token-divider)] pt-3 ${isLeft ? 'md:col-start-1 md:text-right' : 'md:col-start-3 md:text-left'}`}>
+                  {entry.year && <time className="text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--token-accent)]" data-edit-path="year">{entry.year}</time>}
+                  {entry.title && <h3 className="mt-1 break-words text-lg font-semibold leading-snug text-[color:var(--token-card-heading,var(--token-heading))] [overflow-wrap:anywhere]" data-edit-path="title">{entry.title}</h3>}
+                  {entry.text && <p className={`mt-1.5 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))] ${isLeft ? 'md:ml-auto' : ''} max-w-[38rem]`} data-edit-path="text">{plain(entry.text)}</p>}
+                </article>
+              </motion.li>
+            );
+          })}
+        </ol>
       </div>
     </div>
   );

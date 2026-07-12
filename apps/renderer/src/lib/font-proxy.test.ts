@@ -13,3 +13,10 @@ test('builds a deduplicated same-origin font URL from allowlisted families', () 
 test('rejects unknown font names and injection attempts', () => {
   assert.equal(buildGoogleFontsProxyUrl(['https://example.com/font', 'Inter;url(x)']), null);
 });
+
+test('allowlists the editorial font families used by curated demos', () => {
+  assert.deepEqual(
+    normalizeGoogleFontFamilies(['Fraunces', 'Manrope', 'Nunito Sans']),
+    ['Fraunces', 'Manrope', 'Nunito Sans'],
+  );
+});

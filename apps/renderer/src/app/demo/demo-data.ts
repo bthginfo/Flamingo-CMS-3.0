@@ -7,6 +7,7 @@ export interface DemoSiteData {
   navItems: NavItem[];
   cta: NavCta;
   brand: BrandData;
+  design?: Record<string, string>;
   contact: ContactData;
   socialLinks: SocialLinks;
   footer: FooterData;

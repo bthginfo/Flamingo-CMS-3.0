@@ -20,7 +20,7 @@ import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
-import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
+import { getPublishAdvisoryDescription, getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
 
@@ -38,7 +38,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const [sections, setSections] = useState(initialSections);
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
   const sectionTypes = getSectionTypesForIndustry(industry, { hasShop, hasBooking });
-  const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
+  const styleCssVars = getStyleCssVars(industry, styleVariant);
+  const resolvedVars = { ...styleCssVars, ...getBrandCssVars(brand, styleCssVars) };
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -352,27 +353,36 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     });
   }
 
-  function handleAddSection(type: string) {
-    startTransition(async () => {
-      const section = await addSectionAction(page.id, type);
-      if (section) {
-        setSections(prev => {
-          const next = [...prev, section as Section];
-          // Push to live preview synchronously — don't wait for the
-          // useEffect tick, which sometimes misses the first paint when a
-          // brand-new section is added back-to-back with field edits.
-          if (preview.isOpen) {
-            const liveSections = buildLiveSections(next, pendingChanges.current);
-            preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+  function handleAddSection(type: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      startTransition(async () => {
+        try {
+          const section = await addSectionAction(page.id, type);
+          if (section) {
+            setSections(prev => {
+              const next = [...prev, section as Section];
+              // Push to live preview synchronously — don't wait for the
+              // useEffect tick, which sometimes misses the first paint when a
+              // brand-new section is added back-to-back with field edits.
+              if (preview.isOpen) {
+                const liveSections = buildLiveSections(next, pendingChanges.current);
+                preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+              }
+              return next;
+            });
+            setHasDirty(true);
+            setSaved(false);
+            toast.success('Sektion hinzugefügt');
+            resolve(true);
+          } else {
+            toast.error('Sektion konnte nicht hinzugefügt werden');
+            resolve(false);
           }
-          return next;
-        });
-        setHasDirty(true);
-        setSaved(false);
-        toast.success('Sektion hinzugefügt');
-      } else {
-        toast.error('Sektion konnte nicht hinzugefügt werden');
-      }
+        } catch {
+          toast.error('Sektion konnte nicht hinzugefügt werden');
+          resolve(false);
+        }
+      });
     });
   }
 
@@ -389,21 +399,30 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     });
   }
 
-  function handleCopySection(sourceSectionId: string) {
-    startTransition(async () => {
-      const section = await cloneSectionFromPageAction(page.id, sourceSectionId);
-      if (!section) {
-        toast.error('Sektion konnte nicht kopiert werden');
-        return;
-      }
-      setSections(prev => [...prev, section as Section]);
-      setHasDirty(true);
-      setSaved(false);
-      toast.success('Sektion kopiert');
-      if (preview.isOpen) {
-        const liveSections = buildLiveSections([...sectionsRef.current, section as Section], pendingChanges.current);
-        preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
-      }
+  function handleCopySection(sourceSectionId: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      startTransition(async () => {
+        try {
+          const section = await cloneSectionFromPageAction(page.id, sourceSectionId);
+          if (!section) {
+            toast.error('Sektion konnte nicht kopiert werden');
+            resolve(false);
+            return;
+          }
+          setSections(prev => [...prev, section as Section]);
+          setHasDirty(true);
+          setSaved(false);
+          toast.success('Sektion kopiert');
+          if (preview.isOpen) {
+            const liveSections = buildLiveSections([...sectionsRef.current, section as Section], pendingChanges.current);
+            preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+          }
+          resolve(true);
+        } catch {
+          toast.error('Sektion konnte nicht kopiert werden');
+          resolve(false);
+        }
+      });
     });
   }
 
@@ -606,7 +625,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       if (result.error) {
         toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
       } else {
-        toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Änderungen veröffentlicht');
+        toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Änderungen veröffentlicht', {
+          description: getPublishAdvisoryDescription(result),
+          duration: result.advisoryQueue?.length ? 9000 : undefined,
+        });
         setSaved(true);
       }
     } catch {

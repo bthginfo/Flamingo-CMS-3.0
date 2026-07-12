@@ -57,6 +57,25 @@ for (const file of walk(TEMPLATES)) {
   }
 }
 
+// SURFACE ALIAS GUARD. Main and alternate section backgrounds are deliberately
+// independent. The legacy bridge may translate style <-> token names for the
+// same role, but must never borrow the sibling surface.
+const rendererSource = fs.readFileSync(path.join(COMPONENTS, 'section-renderer.tsx'), 'utf8');
+const surfaceAliasRules = [
+  ['--style-section-bg', '--token-section-bg'],
+  ['--style-section-bg-alt', '--token-section-bg-alt'],
+  ['--token-section-bg', '--style-section-bg'],
+  ['--token-section-bg-alt', '--style-section-bg-alt'],
+];
+for (const [source, expectedTarget] of surfaceAliasRules) {
+  const escapedSource = source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = rendererSource.match(new RegExp(`['"]${escapedSource}['"]\\s*:\\s*\\[([^\\]]*)\\]`));
+  const targets = match ? [...match[1].matchAll(/['"]([^'"]+)['"]/g)].map((item) => item[1]) : [];
+  if (targets.length !== 1 || targets[0] !== expectedTarget) {
+    violations.push(`apps/renderer/src/components/section-renderer.tsx  ${source} must alias only ${expectedTarget}`);
+  }
+}
+
 // PAIR GUARD. Foreground/background roles are contracts, not a colour buffet:
 // a badge background must travel with badge text, a button background with
 // button text, etc. Mixing accent/icon fills with an unrelated foreground was
@@ -98,4 +117,4 @@ if (violations.length) {
   console.error('These slots have independent page-level defaults in brand-colors.ts.');
   process.exit(1);
 }
-console.log(`crosstalk gate OK: ${SAFE.length} role tokens have no borrowed fallbacks; ${PAIR_RULES.length} foreground/background pair rules pass.`);
+console.log(`crosstalk gate OK: ${SAFE.length} role tokens have no borrowed fallbacks; ${PAIR_RULES.length} foreground/background pair rules and ${surfaceAliasRules.length} surface alias rules pass.`);

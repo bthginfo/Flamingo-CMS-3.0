@@ -14,7 +14,7 @@ import { SiteFooter } from '@/components/site-footer';
 import { CollectionDetail } from '@/components/collection-detail';
 import { WhatsAppFab } from '@/components/whatsapp-fab';
 import { composeSeoTitle } from '@/lib/seo-title';
-import { buildGoogleFontsProxyUrl } from '@/lib/font-proxy';
+import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
 
 async function resolveTenantSlugForCollectionItem(collection: string, slug: string): Promise<string | null> {
   const db = getDb();
@@ -139,7 +139,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
 
   const shopEnabled = await isShopActive(tenantId);
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
-  const brandCssVars = getBrandCssVars(brand);
+  const brandCssVars = getBrandCssVars(brand, styleCssVars);
   const designOverrides: Record<string, string> = {};
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
   if (brand.accentColor) {
@@ -148,27 +148,14 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
   }
   Object.assign(designOverrides, getDesignCssVars(design));
 
-  const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
-  const googleFontsUrl = buildGoogleFontsProxyUrl(customFonts);
-  const fontCssVars: Record<string, string> = {};
-  const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
-  const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
-  if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
-  if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
-
-  const fontFaceRules: string[] = [];
-  if (brand.customHeadingFontUrl && brand.customHeadingFontName) {
-    fontFaceRules.push(`@font-face { font-family: "${brand.customHeadingFontName}"; src: url("${brand.customHeadingFontUrl}"); font-display: swap; }`);
-  }
-  if (brand.customBodyFontUrl && brand.customBodyFontName) {
-    fontFaceRules.push(`@font-face { font-family: "${brand.customBodyFontName}"; src: url("${brand.customBodyFontUrl}"); font-display: swap; }`);
-  }
+  const fontAssets = getTenantFontAssets(brand);
+  const fontCssVars = getTenantFontCssVars(brand);
 
   return (
     <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties} className="overflow-x-hidden">
-      {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
-      {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
-      {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
+      {fontAssets.googleFontsUrl && <link rel="stylesheet" href={fontAssets.googleFontsUrl} />}
+      {fontAssets.fontFaceCss && <style>{fontAssets.fontFaceCss}</style>}
+      {fontAssets.hasBodyFont && <style>{'[data-style] { font-family: var(--custom-body-font) !important; }'}</style>}
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} topBar={navData.topBar} linkPrefix={linkPrefix} i18n={i18n.enabled ? { locales: i18n.locales, currentLocale: activeLocale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
       <main>
         <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} globalFormFields={formFields} />

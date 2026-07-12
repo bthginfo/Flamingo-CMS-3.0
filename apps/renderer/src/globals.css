@@ -812,6 +812,8 @@ html {
     font-weight: var(--token-heading-weight);
     letter-spacing: var(--token-heading-tracking);
     line-height: 1.04;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
   }
 
   .cms-section-copy {
@@ -864,6 +866,75 @@ html {
 
   .cms-button-icon {
     transition: transform 220ms ease;
+  }
+
+  .cms-testimonial-marquee {
+    width: 100%;
+    max-width: 80rem;
+    min-width: 0;
+    margin-inline: auto;
+    overflow: hidden;
+    overflow: clip;
+    contain: inline-size;
+    container-type: inline-size;
+  }
+
+  .cms-testimonial-marquee-rail {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    overflow: clip;
+  }
+
+  .cms-testimonial-marquee-track {
+    display: flex;
+    width: max-content;
+    max-width: none;
+    animation: cms-testimonial-marquee var(--marquee-duration, 40s) linear infinite;
+    will-change: transform;
+  }
+
+  .cms-testimonial-marquee-track--reverse {
+    animation-name: cms-testimonial-marquee-reverse;
+  }
+
+  .cms-testimonial-marquee-track--paused,
+  .cms-testimonial-marquee-rail:hover .cms-testimonial-marquee-track,
+  .cms-testimonial-marquee-rail:focus-within .cms-testimonial-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .cms-testimonial-marquee-copy {
+    display: flex;
+    flex: none;
+    gap: var(--marquee-gap, 1rem);
+    padding-right: var(--marquee-gap, 1rem);
+  }
+
+  .cms-testimonial-marquee-card {
+    display: flex;
+    width: clamp(17.5rem, 32vw, 23.75rem);
+    width: var(--marquee-card-width, clamp(17.5rem, 32vw, 23.75rem));
+    min-width: 0;
+    flex: none;
+    flex-direction: column;
+    border: 1px solid var(--token-card-border);
+    border-radius: var(--token-card-radius);
+    background: var(--token-card-bg);
+    box-shadow: var(--token-card-shadow);
+    padding: clamp(1.1rem, 2.4vw, 1.4rem);
+  }
+
+  .cms-testimonial-static-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: 1rem;
+  }
+
+  .cms-testimonial-static-grid > [role="listitem"],
+  .cms-testimonial-static-grid .cms-testimonial-marquee-card {
+    width: 100%;
+    height: 100%;
   }
 
   .cms-card {
@@ -921,7 +992,7 @@ html {
 
   .cms-accordion--cards {
     display: grid;
-    gap: 0.75rem;
+    gap: 0.625rem;
   }
 
   .cms-accordion--cards .cms-accordion-item {
@@ -936,6 +1007,7 @@ html {
   .cms-accordion--cards .cms-accordion-item[open] {
     border-color: color-mix(in srgb, var(--token-accent) 45%, var(--token-card-border));
     box-shadow: 0 14px 38px var(--token-shadow);
+    background: color-mix(in srgb, var(--token-card-bg) 94%, var(--token-accent));
   }
 
   .cms-accordion--divided {
@@ -956,13 +1028,13 @@ html {
   }
 
   .cms-accordion-trigger {
-    display: flex;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
     width: 100%;
-    min-height: 3.75rem;
+    min-height: 4rem;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.1rem 1.25rem;
+    gap: 0.8rem;
+    padding: 1.05rem 1.2rem;
     color: var(--token-card-heading);
     font-size: clamp(0.98rem, 1.4vw, 1.075rem);
     font-weight: 650;
@@ -970,6 +1042,31 @@ html {
     text-align: left;
     cursor: pointer;
     list-style: none;
+  }
+
+  .cms-accordion-trigger:hover {
+    color: color-mix(in srgb, var(--token-card-heading) 78%, var(--token-accent));
+  }
+
+  .cms-accordion-trigger:focus-visible {
+    position: relative;
+    z-index: 2;
+    outline: 2px solid var(--token-accent);
+    outline-offset: -3px;
+  }
+
+  .cms-accordion-index {
+    color: var(--token-muted);
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+  }
+
+  .cms-accordion-question {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
   }
 
   .cms-accordion-trigger::-webkit-details-marker {
@@ -1000,14 +1097,33 @@ html {
   }
 
   .cms-accordion-answer {
-    padding: 0 1.25rem 1.25rem;
+    max-width: 68ch;
+    padding: 0 1.25rem 1.35rem 4.25rem;
     color: var(--token-card-body);
     font-size: 0.9375rem;
     line-height: 1.75;
   }
 
   .cms-accordion--minimal .cms-accordion-answer {
-    padding-inline: 0;
+    padding-right: 0;
+    padding-left: 3.05rem;
+  }
+
+  @media (max-width: 639px) {
+    .cms-accordion-trigger {
+      grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+      gap: 0.65rem;
+      padding-inline: 1rem;
+    }
+
+    .cms-accordion-answer {
+      padding-right: 1rem;
+      padding-left: 3.4rem;
+    }
+
+    .cms-accordion--minimal .cms-accordion-answer {
+      padding-left: 2.4rem;
+    }
   }
 
   .cms-form-field {
@@ -1108,6 +1224,16 @@ html {
 @keyframes cms-accordion-down {
   from { opacity: 0; transform: translateY(-0.35rem); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cms-testimonial-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes cms-testimonial-marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
 }
 
 /* Trustworthy shared form treatment. Radio buttons and checkboxes keep their
@@ -1217,6 +1343,30 @@ html {
     scroll-behavior: auto !important;
   }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+
+  .cms-testimonial-marquee-track {
+    animation: none !important;
+    display: block;
+    width: 100%;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .cms-testimonial-marquee-copy {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 1rem;
+    padding-right: 0;
+  }
+
+  .cms-testimonial-marquee-copy--duplicate,
+  .cms-testimonial-marquee-toggle {
+    display: none !important;
+  }
+
+  .cms-testimonial-marquee-card {
+    width: auto;
+  }
 }
 
 /* FX primitives (components/ui/fx.tsx) */

@@ -21,7 +21,7 @@ import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
-import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
+import { getPublishAdvisoryDescription, getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
 
@@ -46,7 +46,8 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
   const preview = usePreview();
   const sectionTypes = getSectionTypesForIndustry(industry, { hasShop, hasBooking });
-  const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
+  const styleCssVars = getStyleCssVars(industry, styleVariant);
+  const resolvedVars = { ...styleCssVars, ...getBrandCssVars(brand, styleCssVars) };
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -100,6 +101,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     setSections(prev => [...prev, newSection]);
     markDirty();
     toast.success('Sektion hinzugefügt');
+    return true;
   }
 
   async function handleOpenAddMenu() {
@@ -115,12 +117,12 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     }
   }
 
-  async function handleCopySection(sourceSectionId: string) {
+  async function handleCopySection(sourceSectionId: string): Promise<boolean> {
     try {
       const source = await getSectionCopySourceAction(sourceSectionId);
       if (!source) {
         toast.error('Sektion konnte nicht kopiert werden');
-        return;
+        return false;
       }
 
       const nextIndex = sectionsRef.current.length;
@@ -135,8 +137,10 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       setSections(prev => [...prev, section]);
       markDirty();
       toast.success('Sektion kopiert');
+      return true;
     } catch {
       toast.error('Sektion konnte nicht kopiert werden');
+      return false;
     }
   }
 
@@ -262,7 +266,10 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
         toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
         return;
       }
-      toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Veröffentlicht!');
+      toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Veröffentlicht!', {
+        description: getPublishAdvisoryDescription(result),
+        duration: result.advisoryQueue?.length ? 9000 : undefined,
+      });
       setSaved(true);
     } catch {
       toast.error('Veröffentlichen fehlgeschlagen');

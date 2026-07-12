@@ -5,6 +5,7 @@
 
 import { motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 
 /** Animated count-up that starts when scrolled into view.
  * Non-numeric values render as-is (e.g. "seit 2011"). */
@@ -63,7 +64,7 @@ export function BorderBeam({ duration = 7, size = 120 }: { duration?: number; si
 
 /** 3D tilt following the cursor; settles back on leave. Wrap a single card. */
 export function TiltCard({ children, className, max = 10 }: { children: React.ReactNode; className?: string; max?: number }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const x = useMotionValue(0.5);
   const y = useMotionValue(0.5);
   const sx = useSpring(x, { stiffness: 220, damping: 22 });
@@ -89,6 +90,7 @@ export function TiltCard({ children, className, max = 10 }: { children: React.Re
 
 /** Word-by-word headline reveal on scroll into view. */
 export function WordReveal({ text, className, as: Tag = 'span', delay = 0 }: { text: string; className?: string; as?: 'span' | 'h1' | 'h2'; delay?: number }) {
+  const reduceMotion = useHydrationSafeReducedMotion();
   const words = text.split(/\s+/).filter(Boolean);
 
   return (
@@ -97,10 +99,10 @@ export function WordReveal({ text, className, as: Tag = 'span', delay = 0 }: { t
         <motion.span
           key={`${word}-${i}`}
           className="inline-block"
-          initial={{ opacity: 0, y: '0.25em' }}
+          initial={reduceMotion ? false : { opacity: 0, y: '0.25em' }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.42, delay: delay + i * 0.045, ease: [0.2, 0.65, 0.3, 0.9] }}
+          transition={{ duration: reduceMotion ? 0 : 0.42, delay: reduceMotion ? 0 : delay + i * 0.045, ease: [0.2, 0.65, 0.3, 0.9] }}
         >
           {word}{i < words.length - 1 ? ' ' : ''}
         </motion.span>

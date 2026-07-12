@@ -147,10 +147,19 @@ function hexToRgb(hex: string): string {
   return `${parseInt(hex.slice(1, 3), 16)} ${parseInt(hex.slice(3, 5), 16)} ${parseInt(hex.slice(5, 7), 16)}`;
 }
 
-export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string }): Record<string, string> {
+export function getBrandCssVars(
+  brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string },
+  fallbackVars: Record<string, string> = {},
+): Record<string, string> {
   const vars: Record<string, string> = {};
-  const pageCanvas = normalizeHexColor(brand.pageBg) ?? '#ffffff';
-  const normalizedPrimary = normalizeHexColor(brand.primaryColor, pageCanvas) ?? '#1a5276';
+  const configured = (value: string | undefined) => value?.trim() || undefined;
+  const fallback = (...keys: string[]) => keys
+    .map((key) => fallbackVars[key])
+    .find((value) => typeof value === 'string' && value.trim());
+  const pageCanvasSource = configured(brand.pageBg) ?? fallback('--background', '--token-section-bg', '--style-section-bg');
+  const pageCanvas = normalizeHexColor(pageCanvasSource) ?? '#ffffff';
+  const primarySource = configured(brand.primaryColor) ?? fallback('--brand-primary', '--style-brand');
+  const normalizedPrimary = normalizeHexColor(primarySource, pageCanvas) ?? '#1a5276';
   const brandDark = darken(normalizedPrimary, 0.45);
   const footerBackground = normalizeHexColor(brand.footerColor, pageCanvas) ?? brandDark;
   vars['--brand-footer'] = footerBackground;
@@ -161,61 +170,66 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--color-primary'] = 'var(--brand-primary)';
   vars['--color-primary-rgb'] = 'var(--brand-primary-rgb)';
   vars['--brand-dark'] = brandDark;
-  vars['--brand-secondary'] = normalizeHexColor(brand.secondaryColor, pageCanvas) || lighten(normalizedPrimary, 0.3);
-  const accent = normalizeHexColor(brand.accentColor, pageCanvas) || '#f39c12';
+  vars['--brand-secondary'] = normalizeHexColor(configured(brand.secondaryColor) ?? fallback('--brand-secondary'), pageCanvas) || lighten(normalizedPrimary, 0.3);
+  const accent = normalizeHexColor(configured(brand.accentColor) ?? fallback('--token-accent', '--style-accent'), pageCanvas) || '#f39c12';
   vars['--brand-accent'] = accent;
-  vars['--brand-topbar'] = brand.topBarColor || vars['--brand-dark'];
+  vars['--brand-topbar'] = configured(brand.topBarColor) || vars['--brand-dark'];
 
   // New brand emissions use canonical --token-* variables. The renderer keeps
   // a narrow legacy alias bridge solely for older published snapshots.
 
-  if (brand.pageBg) vars['--background'] = brand.pageBg;
+  if (configured(brand.pageBg)) vars['--background'] = configured(brand.pageBg)!;
 
-  if (brand.navLinkColor) vars['--brand-nav-link'] = brand.navLinkColor;
-  if (brand.navBgColor) vars['--brand-nav-bg'] = brand.navBgColor;
-  if (brand.navBrandColor) vars['--brand-nav-brand'] = brand.navBrandColor;
-  if (brand.navLogoColor) vars['--brand-nav-logo'] = brand.navLogoColor;
-  if (brand.headingColor) vars['--brand-heading'] = brand.headingColor;
-  if (brand.bodyTextColor) vars['--brand-body-text'] = brand.bodyTextColor;
-  if (brand.linkColor) vars['--brand-link'] = brand.linkColor;
-  if (brand.linkHoverColor) vars['--brand-link-hover'] = brand.linkHoverColor;
-  if (brand.btnPrimaryBg) vars['--brand-btn-bg'] = brand.btnPrimaryBg;
-  if (brand.btnPrimaryText) vars['--brand-btn-text'] = brand.btnPrimaryText;
-  if (brand.btnSecondaryBg) vars['--brand-btn-secondary-bg'] = brand.btnSecondaryBg;
-  if (brand.btnSecondaryText) vars['--brand-btn-secondary-text'] = brand.btnSecondaryText;
-  if (brand.btnSecondaryBorder) vars['--brand-btn-secondary-border'] = brand.btnSecondaryBorder;
-  if (brand.btnOutlineBg) vars['--brand-btn-outline-bg'] = brand.btnOutlineBg;
-  if (brand.btnOutlineText) vars['--brand-btn-outline-text'] = brand.btnOutlineText;
-  if (brand.btnOutlineBorder) vars['--brand-btn-outline-border'] = brand.btnOutlineBorder;
+  if (configured(brand.navLinkColor)) vars['--brand-nav-link'] = configured(brand.navLinkColor)!;
+  if (configured(brand.navBgColor)) vars['--brand-nav-bg'] = configured(brand.navBgColor)!;
+  if (configured(brand.navBrandColor)) vars['--brand-nav-brand'] = configured(brand.navBrandColor)!;
+  if (configured(brand.navLogoColor)) vars['--brand-nav-logo'] = configured(brand.navLogoColor)!;
+  if (configured(brand.headingColor)) vars['--brand-heading'] = configured(brand.headingColor)!;
+  if (configured(brand.bodyTextColor)) vars['--brand-body-text'] = configured(brand.bodyTextColor)!;
+  if (configured(brand.linkColor)) vars['--brand-link'] = configured(brand.linkColor)!;
+  if (configured(brand.linkHoverColor)) vars['--brand-link-hover'] = configured(brand.linkHoverColor)!;
+  if (configured(brand.btnPrimaryBg)) vars['--brand-btn-bg'] = configured(brand.btnPrimaryBg)!;
+  if (configured(brand.btnPrimaryText)) vars['--brand-btn-text'] = configured(brand.btnPrimaryText)!;
+  if (configured(brand.btnSecondaryBg)) vars['--brand-btn-secondary-bg'] = configured(brand.btnSecondaryBg)!;
+  if (configured(brand.btnSecondaryText)) vars['--brand-btn-secondary-text'] = configured(brand.btnSecondaryText)!;
+  if (configured(brand.btnSecondaryBorder)) vars['--brand-btn-secondary-border'] = configured(brand.btnSecondaryBorder)!;
+  if (configured(brand.btnOutlineBg)) vars['--brand-btn-outline-bg'] = configured(brand.btnOutlineBg)!;
+  if (configured(brand.btnOutlineText)) vars['--brand-btn-outline-text'] = configured(brand.btnOutlineText)!;
+  if (configured(brand.btnOutlineBorder)) vars['--brand-btn-outline-border'] = configured(brand.btnOutlineBorder)!;
 
   // Badge overrides (modern --token-* equivalents are set further down).
 
   // Card & border overrides
-  const borderColor = brand.borderColor || brand.cardBorder;
-  if (brand.dividerColor) vars['--brand-divider'] = brand.dividerColor;
+  const borderColor = configured(brand.borderColor) || configured(brand.cardBorder) || fallback('--token-card-border', '--style-border-color');
+  if (configured(brand.dividerColor)) vars['--brand-divider'] = configured(brand.dividerColor)!;
 
-  const sectionBg = brand.sectionBg ?? '#ffffff';
-  const sectionBgAlt = brand.sectionBgAlt ?? sectionBg ?? '#f8fafc';
-  const cardBg = brand.cardBg ?? '#ffffff';
+  // Preserve the industry's authored surface hierarchy when a tenant did not
+  // explicitly override it. Main, alternate and card surfaces are independent.
+  const sectionBg = configured(brand.sectionBg) ?? fallback('--token-section-bg', '--style-section-bg') ?? '#ffffff';
+  const sectionBgAlt = configured(brand.sectionBgAlt) ?? fallback('--token-section-bg-alt', '--style-section-bg-alt') ?? '#f8fafc';
+  const cardBg = configured(brand.cardBg) ?? fallback('--token-card-bg', '--style-card-bg') ?? '#ffffff';
   const paintedSectionBg = normalizeHexColor(sectionBg, pageCanvas) ?? '#ffffff';
   const paintedSectionBgAlt = normalizeHexColor(sectionBgAlt, pageCanvas) ?? paintedSectionBg;
   const paintedCardBg = normalizeHexColor(cardBg, paintedSectionBg) ?? '#ffffff';
-  const headingValue = resolveAccessibleText(paintedSectionBg, brand.headingColor, '#111827', '#ffffff');
-  const bodyValue = resolveAccessibleText(paintedSectionBg, brand.bodyTextColor, '#374151', '#f3f4f6');
-  const mutedValue = resolveAccessibleText(paintedSectionBg, brand.mutedTextColor, '#4b5563', '#d1d5db');
-  const cardHeadingValue = resolveAccessibleText(paintedCardBg, brand.headingColor, '#111827', '#ffffff');
-  const cardBodyValue = resolveAccessibleText(paintedCardBg, brand.bodyTextColor, '#374151', '#f3f4f6');
-  const cardMutedValue = resolveAccessibleText(paintedCardBg, brand.mutedTextColor, '#4b5563', '#d1d5db');
-  const badgeBg = brand.badgeBg ?? `${normalizedPrimary}12`;
+  const headingSource = configured(brand.headingColor) ?? fallback('--token-heading', '--style-text-primary');
+  const bodySource = configured(brand.bodyTextColor) ?? fallback('--token-body', '--style-text-secondary');
+  const mutedSource = configured(brand.mutedTextColor) ?? fallback('--token-muted', '--style-text-muted', '--style-text-secondary');
+  const headingValue = resolveAccessibleText(paintedSectionBg, headingSource, '#111827', '#ffffff');
+  const bodyValue = resolveAccessibleText(paintedSectionBg, bodySource, '#374151', '#f3f4f6');
+  const mutedValue = resolveAccessibleText(paintedSectionBg, mutedSource, '#4b5563', '#d1d5db');
+  const cardHeadingValue = resolveAccessibleText(paintedCardBg, headingSource, '#111827', '#ffffff');
+  const cardBodyValue = resolveAccessibleText(paintedCardBg, bodySource, '#374151', '#f3f4f6');
+  const cardMutedValue = resolveAccessibleText(paintedCardBg, mutedSource, '#4b5563', '#d1d5db');
+  const badgeBg = configured(brand.badgeBg) ?? fallback('--token-badge-bg', '--style-badge-bg') ?? `${normalizedPrimary}12`;
   const paintedBadgeBg = normalizeHexColor(badgeBg, paintedSectionBg) ?? paintedSectionBg;
-  const badgeText = resolveAccessibleText(paintedBadgeBg, brand.badgeText ?? normalizedPrimary, '#111827', '#ffffff', 5);
-  const primaryButtonBg = brand.btnPrimaryBg ?? normalizedPrimary;
+  const badgeText = resolveAccessibleText(paintedBadgeBg, configured(brand.badgeText) ?? fallback('--token-badge-text', '--style-badge-text') ?? normalizedPrimary, '#111827', '#ffffff', 5);
+  const primaryButtonBg = configured(brand.btnPrimaryBg) ?? fallback('--token-btn-bg', '--style-button-bg') ?? normalizedPrimary;
   const paintedPrimaryButtonBg = normalizeHexColor(primaryButtonBg, paintedSectionBg) ?? normalizedPrimary;
-  const primaryButtonText = resolveAccessibleText(paintedPrimaryButtonBg, brand.btnPrimaryText, '#111827', '#ffffff');
+  const primaryButtonText = resolveAccessibleText(paintedPrimaryButtonBg, configured(brand.btnPrimaryText) ?? fallback('--token-btn-text', '--style-button-text'), '#111827', '#ffffff');
   const sharedRoleSurfaces = [paintedSectionBg, paintedSectionBgAlt, paintedCardBg];
   const readableAccent = resolveAccessibleRoleForeground(sharedRoleSurfaces, accent);
-  const readableIcon = resolveAccessibleRoleForeground(sharedRoleSurfaces, brand.iconColor ?? normalizedPrimary, 3);
-  const readableCardIcon = resolveAccessibleRoleForeground([paintedCardBg], brand.iconColor ?? normalizedPrimary, 3);
+  const readableIcon = resolveAccessibleRoleForeground(sharedRoleSurfaces, configured(brand.iconColor) ?? fallback('--token-icon') ?? normalizedPrimary, 3);
+  const readableCardIcon = resolveAccessibleRoleForeground([paintedCardBg], configured(brand.iconColor) ?? fallback('--token-card-icon', '--token-icon') ?? normalizedPrimary, 3);
 
   // Radius overrides handled by --token-card-radius / --token-button-radius below.
 
@@ -256,10 +270,10 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--token-check']         = resolveAccessibleRoleForeground(sharedRoleSurfaces, accent, 3);
   vars['--token-badge-bg']      = badgeBg;
   vars['--token-badge-text']    = badgeText;
-  vars['--token-badge-border']  = brand.badgeBorder ?? `${normalizedPrimary}28`;
+  vars['--token-badge-border']  = configured(brand.badgeBorder) ?? fallback('--token-badge-border', '--style-badge-border') ?? `${normalizedPrimary}28`;
   vars['--token-btn-bg']        = primaryButtonBg;
   vars['--token-btn-text']      = primaryButtonText;
-  vars['--token-divider']       = brand.dividerColor ?? 'rgba(15,23,42,0.12)';
+  vars['--token-divider']       = configured(brand.dividerColor) ?? fallback('--token-divider', '--style-divider-color') ?? 'rgba(15,23,42,0.12)';
 
   // ── Independent page-level defaults for every remaining semantic slot. ──
   // Each is a VALUE (not a var() reference to another slot), so a slot can NEVER
@@ -272,17 +286,17 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   const HEADING_VALUE = headingValue;
   const BODY_VALUE = bodyValue;
   const MUTED_VALUE = mutedValue;
-  const linkValue = resolveAccessibleRoleForeground(sharedRoleSurfaces, brand.linkColor ?? accent);
-  const linkHoverValue = resolveAccessibleRoleForeground(sharedRoleSurfaces, brand.linkHoverColor ?? normalizedPrimary);
-  const inputBg = brand.cardBg ?? '#ffffff';
+  const linkValue = resolveAccessibleRoleForeground(sharedRoleSurfaces, configured(brand.linkColor) ?? fallback('--token-link') ?? accent);
+  const linkHoverValue = resolveAccessibleRoleForeground(sharedRoleSurfaces, configured(brand.linkHoverColor) ?? fallback('--token-link-hover') ?? normalizedPrimary);
+  const inputBg = configured(brand.cardBg) ?? fallback('--token-input-bg', '--token-card-bg', '--style-card-bg') ?? '#ffffff';
   const paintedInputBg = normalizeHexColor(inputBg, paintedSectionBg) ?? paintedCardBg;
-  const inputText = resolveAccessibleText(paintedInputBg, brand.bodyTextColor, '#374151', '#f3f4f6');
-  const cardBadgeBg = brand.badgeBg ?? `${normalizedPrimary}12`;
+  const inputText = resolveAccessibleText(paintedInputBg, bodySource, '#374151', '#f3f4f6');
+  const cardBadgeBg = configured(brand.badgeBg) ?? fallback('--token-card-badge-bg', '--token-badge-bg', '--style-badge-bg') ?? `${normalizedPrimary}12`;
   const paintedCardBadgeBg = normalizeHexColor(cardBadgeBg, paintedCardBg) ?? paintedCardBg;
-  const cardBadgeText = resolveAccessibleText(paintedCardBadgeBg, brand.badgeText ?? normalizedPrimary, '#111827', '#ffffff', 5);
-  const secondaryButtonBg = brand.btnSecondaryBg ?? 'transparent';
+  const cardBadgeText = resolveAccessibleText(paintedCardBadgeBg, configured(brand.badgeText) ?? fallback('--token-card-badge-text', '--token-badge-text') ?? normalizedPrimary, '#111827', '#ffffff', 5);
+  const secondaryButtonBg = configured(brand.btnSecondaryBg) ?? fallback('--token-btn-secondary-bg', '--style-button-secondary-bg') ?? 'transparent';
   const paintedSecondaryButtonBg = normalizeHexColor(secondaryButtonBg, paintedSectionBg) ?? paintedSectionBg;
-  const secondaryButtonText = resolveAccessibleText(paintedSecondaryButtonBg, brand.btnSecondaryText ?? bodyValue, '#111827', '#ffffff');
+  const secondaryButtonText = resolveAccessibleText(paintedSecondaryButtonBg, configured(brand.btnSecondaryText) ?? fallback('--token-btn-secondary-text', '--style-button-secondary-text') ?? bodyValue, '#111827', '#ffffff');
   vars['--token-price']               = resolveAccessibleRoleForeground(sharedRoleSurfaces, HEADING_VALUE);
   vars['--token-price-strikethrough'] = resolveAccessibleRoleForeground(sharedRoleSurfaces, MUTED_VALUE);
   vars['--token-link']                = linkValue;
@@ -305,14 +319,16 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   // Secondary button.
   vars['--token-btn-secondary-bg']     = secondaryButtonBg;
   vars['--token-btn-secondary-text']   = secondaryButtonText;
-  vars['--token-btn-secondary-border'] = brand.btnSecondaryBorder ?? 'color-mix(in srgb, currentColor 22%, transparent)';
-  if (brand.cardRadius) vars['--token-card-radius'] = brand.cardRadius;
-  if (brand.btnRadius) vars['--token-button-radius'] = brand.btnRadius;
+  vars['--token-btn-secondary-border'] = configured(brand.btnSecondaryBorder) ?? fallback('--token-btn-secondary-border', '--style-button-secondary-border') ?? 'color-mix(in srgb, currentColor 22%, transparent)';
+  const cardRadius = configured(brand.cardRadius) ?? fallback('--token-card-radius', '--style-card-radius');
+  const buttonRadius = configured(brand.btnRadius) ?? fallback('--token-button-radius', '--style-button-radius');
+  if (cardRadius) vars['--token-card-radius'] = cardRadius;
+  if (buttonRadius) vars['--token-button-radius'] = buttonRadius;
   // Phase 4: typography utilities + shadow + image overlay.
-  vars['--token-card-shadow']      = '0 4px 20px rgba(0,0,0,0.06)';
+  vars['--token-card-shadow']      = fallback('--token-card-shadow', '--style-card-shadow') ?? '0 4px 20px rgba(0,0,0,0.06)';
   vars['--token-image-overlay']    = 'rgba(0,0,0,0.6)';
-  vars['--token-heading-weight']   = '700';
-  vars['--token-heading-tracking'] = '-0.02em';
+  vars['--token-heading-weight']   = fallback('--token-heading-weight', '--style-heading-weight') ?? '700';
+  vars['--token-heading-tracking'] = fallback('--token-heading-tracking', '--style-heading-tracking') ?? '-0.02em';
 
   return vars;
 }

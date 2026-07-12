@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 import { plain } from '@/lib/strip-html';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -26,6 +27,7 @@ export function ConsultingHeroSection({ data }: Props) {
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const reduceMotion = useHydrationSafeReducedMotion();
 
   return (
     <div ref={ref} className="relative min-h-[82vh] flex items-center overflow-hidden -mt-[112px] pt-[112px]">
@@ -49,26 +51,26 @@ export function ConsultingHeroSection({ data }: Props) {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 py-16 md:py-20">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: reduceMotion ? 0 : 0.8 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{ color: heroHeading }} data-edit-path="headline"><WordReveal text={headline} /></h1>
+          <h1 className="break-words text-[clamp(2.5rem,10vw,3.75rem)] font-bold leading-[1.04] tracking-tight [overflow-wrap:anywhere] md:text-5xl lg:text-6xl" style={{ color: heroHeading }} data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && (
             <p className="text-lg md:text-xl mt-6 max-w-2xl mx-auto leading-relaxed" style={{ color: heroBody }} data-edit-path="subline">
               {plain(subline)}
             </p>
           )}
-          <div className="flex flex-wrap justify-center gap-4 mt-10">
+          <div className="mt-10 flex flex-wrap justify-center gap-3 sm:gap-4">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-semibold text-[color:var(--token-btn-text)] shadow-lg transition-all hover:brightness-110">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-7 py-3.5 text-center font-semibold text-[color:var(--token-btn-text)] shadow-lg transition-all hover:brightness-110 sm:w-auto">
                 <DynamicIcon name="phone" size={18} />
                 <span data-edit-path="label">{primaryCta.label}</span>
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ background: 'var(--token-badge-bg)', color: 'var(--token-badge-text)' }} data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--token-button-radius)] border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-7 py-3.5 text-center font-semibold text-[color:var(--token-btn-secondary-text)] shadow-sm backdrop-blur transition-all hover:brightness-110 sm:w-auto" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

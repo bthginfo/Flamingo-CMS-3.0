@@ -13,7 +13,7 @@ export type FaqAccordionItem = {
  */
 export function FaqAccordion({
   items,
-  defaultOpenFirst = true,
+  defaultOpenFirst = false,
   variant = 'cards',
   className,
 }: {
@@ -35,7 +35,8 @@ export function FaqAccordion({
           data-edit-index={index}
         >
           <summary className="cms-accordion-trigger">
-            <span data-edit-path="question">{item.question || ''}</span>
+            <span aria-hidden="true" className="cms-accordion-index">{String(index + 1).padStart(2, '0')}</span>
+            <span className="cms-accordion-question" data-edit-path="question">{item.question || ''}</span>
             <ChevronDown aria-hidden="true" className="cms-accordion-chevron" size={19} />
           </summary>
           <div className="cms-accordion-content">

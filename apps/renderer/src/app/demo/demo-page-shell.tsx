@@ -4,8 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
-import { getStyleCssVars } from '@/lib/styles';
-import { getBrandCssVars } from '@/lib/brand-colors';
+import { getTenantFontAssets, getTenantThemeCssVars } from '@/lib/tenant-theme';
 import type { SnapshotSection } from '@/lib/snapshot';
 import { DemoFab } from './demo-fab';
 import type { DemoSiteData } from './demo-data';
@@ -20,13 +19,13 @@ interface DemoPageShellProps {
   children?: React.ReactNode;
 }
 
-export function DemoPageShell({ sections, industry, industryKey, defaultStyle: _defaultStyle, siteData, darkBg, children }: DemoPageShellProps) {
-  const style = 'classic';
+export function DemoPageShell({ sections, industry, industryKey, defaultStyle, siteData, darkBg, children }: DemoPageShellProps) {
+  const style = defaultStyle || 'classic';
   const searchParams = useSearchParams();
   const embed = searchParams.get('embed') === '1';
-  const styleCssVars = getStyleCssVars(industry, style);
   const { navItems, cta, brand, contact, socialLinks, footer } = siteData;
-  const brandCssVars = getBrandCssVars(brand);
+  const themeCssVars = getTenantThemeCssVars({ industry, style, brand, design: siteData.design });
+  const fontAssets = getTenantFontAssets(brand);
   const linkPrefix = `/demo/${industryKey}`;
 
   // Auto-detect: if first section is a hero with bgImage, nav should be light on dark
@@ -40,7 +39,17 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle: _
 
   return (
     <>
-      <div data-style={style} style={{ ...styleCssVars, ...brandCssVars } as React.CSSProperties}>
+      <div
+        data-style={style}
+        data-demo-theme=""
+        className="overflow-x-clip"
+        style={{
+          ...themeCssVars,
+          ...(fontAssets.hasBodyFont ? { fontFamily: 'var(--custom-body-font)' } : {}),
+        } as React.CSSProperties}
+      >
+        {fontAssets.googleFontsUrl && <link rel="stylesheet" href={fontAssets.googleFontsUrl} />}
+        {fontAssets.fontFaceCss && <style>{fontAssets.fontFaceCss}</style>}
         <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={resolvedDarkBg} cta={cta} homeHref={`/demo/${industryKey}`} showTopBar={false} forceDarkNav={resolvedDarkBg} />
         <main>
           {sections.map((section) => (

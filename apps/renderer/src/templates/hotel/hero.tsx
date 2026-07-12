@@ -86,9 +86,9 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
       {/* grain texture */}
       <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')]" />
       {/* scattered stars */}
-      <div className="absolute top-1/4 left-[15%] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_18%,transparent)]"><Star className="text-[color:var(--token-rating-star)]" size={24} /></div>
-      <div className="absolute top-[60%] right-[20%] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_14%,transparent)]"><Star className="text-[color:var(--token-rating-star)]" size={18} /></div>
-      <div className="absolute top-[35%] right-[10%] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)]"><Star className="text-[color:var(--token-rating-star)]" size={32} /></div>
+      <div className="absolute left-[15%] top-1/4 hidden text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_18%,transparent)] md:block"><Star className="text-[color:var(--token-rating-star)]" size={24} /></div>
+      <div className="absolute right-[20%] top-[60%] hidden text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_14%,transparent)] md:block"><Star className="text-[color:var(--token-rating-star)]" size={18} /></div>
+      <div className="absolute right-[10%] top-[35%] hidden text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] md:block"><Star className="text-[color:var(--token-rating-star)]" size={32} /></div>
       {/* border lines */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />

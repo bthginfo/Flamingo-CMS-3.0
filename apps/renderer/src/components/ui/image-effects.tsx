@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, type ReactNode } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 
 export type ImageEffect = 'none' | 'parallax' | 'kenBurns' | 'mouseGlow';
 
@@ -18,13 +18,19 @@ type Props = {
  * IMPORTANT: className is typically "absolute inset-0" — effects must preserve this.
  */
 export function ImageEffectWrapper({ effect = 'none', intensity = 'medium', children, className = '' }: Props) {
+  const prefersReducedMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  // Keep the server and hydration trees identical. Motion is disabled only
+  // after mount, inside the same effect wrapper.
+  const reduceMotion = mounted && Boolean(prefersReducedMotion);
   if (!effect || effect === 'none') return <div className={className}>{children}</div>;
 
   switch (effect) {
     case 'parallax':
-      return <ParallaxEffect intensity={intensity} className={className}>{children}</ParallaxEffect>;
+      return <ParallaxEffect intensity={intensity} className={className} reduceMotion={reduceMotion}>{children}</ParallaxEffect>;
     case 'kenBurns':
-      return <KenBurnsEffect intensity={intensity} className={className}>{children}</KenBurnsEffect>;
+      return <KenBurnsEffect intensity={intensity} className={className} reduceMotion={reduceMotion}>{children}</KenBurnsEffect>;
     case 'mouseGlow':
       // Mouse glow disabled — fallback to plain render
       return <div className={className}>{children}</div>;
@@ -34,7 +40,7 @@ export function ImageEffectWrapper({ effect = 'none', intensity = 'medium', chil
 }
 
 // ─── Parallax ──────────────────────────────────────────────────────
-function ParallaxEffect({ intensity, className, children }: Omit<Props, 'effect'>) {
+function ParallaxEffect({ intensity, className, children, reduceMotion }: Omit<Props, 'effect'> & { reduceMotion: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const range = intensity === 'subtle' ? 30 : intensity === 'strong' ? 80 : 50;
@@ -42,7 +48,7 @@ function ParallaxEffect({ intensity, className, children }: Omit<Props, 'effect'
 
   return (
     <div ref={ref} className={`overflow-hidden ${className}`}>
-      <motion.div style={{ y }} className="absolute inset-0">
+      <motion.div style={reduceMotion ? undefined : { y }} className="absolute inset-0">
         {children}
       </motion.div>
     </div>
@@ -50,14 +56,14 @@ function ParallaxEffect({ intensity, className, children }: Omit<Props, 'effect'
 }
 
 // ─── Ken Burns (slow zoom in/out loop) ─────────────────────────────
-function KenBurnsEffect({ intensity, className, children }: Omit<Props, 'effect'>) {
+function KenBurnsEffect({ intensity, className, children, reduceMotion }: Omit<Props, 'effect'> & { reduceMotion: boolean }) {
   const scale = intensity === 'subtle' ? '1.05' : intensity === 'strong' ? '1.15' : '1.1';
   const duration = intensity === 'subtle' ? '25s' : intensity === 'strong' ? '15s' : '20s';
 
   return (
     <div className={`overflow-hidden ${className}`}>
       <div
-        className="absolute inset-0 animate-kenBurns"
+        className={`absolute inset-0 ${reduceMotion ? '' : 'animate-kenBurns'}`}
         style={{ '--kb-scale': scale, '--kb-duration': duration } as React.CSSProperties}
       >
         {children}
