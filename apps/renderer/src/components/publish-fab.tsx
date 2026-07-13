@@ -1,9 +1,8 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Activity, MonitorPlay, Rocket, Save } from 'lucide-react';
-import Link from 'next/link';
+import { MonitorPlay, Rocket, Save } from 'lucide-react';
 import { publishAction } from '@/app/admin/actions/publish';
 import { useSaveState } from '@/components/save-context';
 import { usePreview } from '@/components/admin/preview-context';
@@ -13,7 +12,6 @@ import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 export function PublishFab() {
   const pathname = usePathname();
-  const router = useRouter();
   const { state: saveState, hasSaveHandler, hasLocalActions, triggerSave, reset } = useSaveState();
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
@@ -32,7 +30,6 @@ export function PublishFab() {
       if (result.error) {
         toast.error(result.error, {
           description: getPublishFailureDescription(result), duration: 9000,
-          action: { label: 'Content Health', onClick: () => router.push('/admin/content-health') },
         });
       } else {
         setPublished(true);
@@ -60,9 +57,6 @@ export function PublishFab() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3" data-tour="publish-fab">
-      <Link href="/admin/content-health" className="hidden min-h-11 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 shadow-lg transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:flex" title="Publish-Bereitschaft prüfen">
-        <Activity size={16} /> Publish-Check
-      </Link>
       <div className="relative">
         <button
           type="button"

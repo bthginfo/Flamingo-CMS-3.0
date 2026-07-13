@@ -11,6 +11,122 @@ export type ContentHealthIssue = {
   pair?: { fg?: string; bg?: string; ratio?: number; required?: number };
 };
 
+export type ContentHealthIssuePresentation = {
+  title: string;
+  action: string;
+};
+
+const FIELD_LABELS: Record<string, string> = {
+  headline: 'Überschrift',
+  subline: 'Unterzeile',
+  title: 'Titel',
+  text: 'Text',
+  description: 'Beschreibung',
+  intro: 'Einleitung',
+  label: 'Beschriftung',
+  ctaLabel: 'Button-Text',
+  href: 'Link-Ziel',
+  link: 'Link-Ziel',
+  alt: 'Bildbeschreibung',
+  imageAlt: 'Bildbeschreibung',
+  metaTitle: 'SEO-Titel',
+  metaDescription: 'SEO-Beschreibung',
+  eventDate: 'Veranstaltungsdatum',
+  validUntil: 'Gültigkeitsdatum',
+  endDate: 'Enddatum',
+  publishedUntil: 'Anzeigezeitraum',
+};
+
+export function contentHealthFieldLabel(location?: string): string {
+  if (!location) return 'Inhalt';
+  if (location.includes('styleOverrides') || location.startsWith('brand.')) return 'Farbeinstellung';
+  if (location.startsWith('siteProfile')) return 'Unternehmensprofil';
+  const raw = location.match(/\.([A-Za-z][A-Za-z0-9]*)$/)?.[1]
+    || location.match(/\[([^\]]+)\]$/)?.[1]
+    || '';
+  return FIELD_LABELS[raw] || 'Inhalt';
+}
+
+/** Converts validator details into short, non-technical tasks for the CMS UI. */
+export function presentContentHealthIssue(issue: ContentHealthIssue): ContentHealthIssuePresentation {
+  const field = contentHealthFieldLabel(issue.location);
+  switch (issue.code) {
+    case 'profile.missing':
+    case 'profile.version':
+    case 'profile.required':
+    case 'profile.array_minimum':
+      return { title: 'Unternehmensprofil vervollständigen', action: 'Ergänzen Sie die noch fehlenden Unternehmensangaben mit geprüften Informationen.' };
+    case 'plan.pages_missing':
+      return { title: 'Mindestens eine Seite anlegen', action: 'Legen Sie eine vollständige Seite mit passenden Inhaltsbereichen an.' };
+    case 'plan.title_missing':
+      return { title: 'Seitentitel ergänzen', action: 'Geben Sie der Seite einen eindeutigen, verständlichen Titel.' };
+    case 'plan.sections_missing':
+      return { title: 'Seite mit Inhalten füllen', action: 'Fügen Sie mindestens einen passenden Inhaltsbereich hinzu.' };
+    case 'plan.invalid_slug':
+    case 'plan.duplicate_slug':
+      return { title: 'Seitenadresse prüfen', action: 'Vergeben Sie eine kurze, eindeutige Seitenadresse ohne Sonderzeichen.' };
+    case 'plan.page_invalid':
+    case 'plan.section_invalid':
+    case 'plan.section_not_allowed':
+    case 'plan.definition_key_invalid':
+    case 'plan.schema_version_invalid':
+    case 'plan.section_data_invalid':
+    case 'plan.required_field':
+      return { title: 'Inhaltsbereich vervollständigen', action: 'Öffnen Sie den Bereich und ergänzen Sie die als erforderlich markierten Felder.' };
+    case 'copy.generic':
+      return { title: `${field} konkreter formulieren`, action: 'Nennen Sie das konkrete Angebot, den Nutzen oder einen überprüfbaren Beleg.' };
+    case 'budget.too_short':
+      return { title: `${field} ist noch sehr kurz`, action: 'Ergänzen Sie einen hilfreichen, konkreten Kontext für Ihre Besucher.' };
+    case 'budget.too_long':
+      return { title: `${field} ist zu lang`, action: 'Kürzen Sie den Text auf die wichtigste Aussage, ohne den konkreten Nutzen zu verlieren.' };
+    case 'array.minimum':
+      return { title: 'Bereich wirkt noch unvollständig', action: 'Ergänzen Sie weitere unterschiedliche Einträge, damit der Bereich vollständig wirkt.' };
+    case 'image.alt_missing':
+      return { title: 'Bildbeschreibung fehlt', action: 'Beschreiben Sie kurz, was auf dem Bild zu sehen ist und warum es an dieser Stelle wichtig ist.' };
+    case 'image.reused':
+      return { title: 'Dasselbe Bild wird zu oft verwendet', action: 'Behalten Sie die stärkste Verwendung und wählen Sie für die anderen Stellen eigene Motive.' };
+    case 'link.placeholder':
+      return { title: 'Link hat noch kein echtes Ziel', action: 'Wählen Sie eine vorhandene Seite, einen Abschnitt oder eine vollständige Webadresse.' };
+    case 'link.unknown_internal_route':
+      return { title: 'Verlinkte Seite wurde nicht gefunden', action: 'Wählen Sie ein vorhandenes Ziel oder legen Sie die fehlende Seite zuerst an.' };
+    case 'seo.title_missing':
+      return { title: 'SEO-Titel fehlt', action: 'Ergänzen Sie einen eindeutigen Seitentitel für Suchergebnisse.' };
+    case 'seo.title_generic':
+      return { title: 'SEO-Titel ist zu allgemein', action: 'Nennen Sie Thema, Angebot oder Ort der Seite statt eines allgemeinen Titels.' };
+    case 'seo.brand_repeated':
+      return { title: 'Unternehmensname steht mehrfach im SEO-Titel', action: 'Lassen Sie den Unternehmensnamen nur einmal im fertigen Titel stehen.' };
+    case 'seo.description_missing':
+      return { title: 'SEO-Beschreibung fehlt', action: 'Fassen Sie Angebot, Zielgruppe und Nutzen der Seite in ein bis zwei Sätzen zusammen.' };
+    case 'seo.title_duplicate':
+    case 'seo.description_duplicate':
+      return { title: 'SEO-Text wird auf mehreren Seiten verwendet', action: 'Formulieren Sie für jede Seite einen eigenen Titel und eine passende Beschreibung.' };
+    case 'identity.contact_location_mismatch':
+    case 'identity.unapproved_location':
+      return { title: 'Ortsangaben passen nicht zusammen', action: 'Vergleichen Sie Unternehmensprofil, Kontaktadresse und SEO-Angaben und korrigieren Sie die abweichende Angabe.' };
+    case 'drift.cross_tenant_phrase':
+      return { title: 'Text ist nicht individuell genug', action: 'Formulieren Sie den Text aus Angebot, Zielgruppe, Ort und Tonalität dieses Unternehmens neu.' };
+    case 'drift.cross_tenant_image':
+      return { title: 'Bild wird bereits in einer anderen Demo verwendet', action: 'Wählen Sie ein eigenes Motiv, das eindeutig zu diesem Unternehmen gehört.' };
+    case 'site.required_page_missing':
+      return { title: 'Wichtige Seite fehlt', action: 'Legen Sie die fehlende Seite an, bevor Sie die Website veröffentlichen.' };
+    case 'site.recommended_page_missing':
+      return { title: 'Eine hilfreiche Seite fehlt noch', action: 'Prüfen Sie, ob die empfohlene Seite für Besucher sinnvoll ist, und legen Sie sie bei Bedarf an.' };
+    case 'freshness.expired_date':
+      return { title: 'Datum liegt in der Vergangenheit', action: 'Aktualisieren Sie das Datum oder entfernen Sie den nicht mehr aktuellen Inhalt.' };
+    case 'LOW_CONTRAST':
+      return { title: 'Text ist schwer lesbar', action: 'Wählen Sie für Text und Hintergrund Farben, die sich deutlicher voneinander abheben.' };
+    case 'INVALID_COLOR_FORMAT':
+      return { title: 'Eine Farbe kann nicht dargestellt werden', action: 'Öffnen Sie die Farbeinstellung und wählen Sie dort eine gültige Farbe aus.' };
+    case 'DARK_BG_MISSING_TEXT':
+    case 'DARK_BG_NO_TEXT_OVERRIDE':
+      return { title: 'Textfarbe passt nicht zum dunklen Hintergrund', action: 'Wählen Sie eine helle, gut lesbare Textfarbe für diesen Hintergrund.' };
+    default:
+      if (issue.source === 'color') return { title: 'Farbe und Lesbarkeit prüfen', action: 'Öffnen Sie die Farbeinstellungen und wählen Sie eine besser lesbare Kombination.' };
+      if (issue.source === 'freshness') return { title: 'Inhalt auf Aktualität prüfen', action: 'Aktualisieren oder entfernen Sie die nicht mehr aktuelle Angabe.' };
+      return { title: `${field} prüfen`, action: 'Öffnen Sie den Bereich und prüfen Sie die markierte Angabe.' };
+  }
+}
+
 export type NormalizedStoredContentAudit = {
   readyToPublish: boolean;
   summary?: Record<string, unknown>;

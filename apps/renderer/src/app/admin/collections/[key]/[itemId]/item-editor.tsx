@@ -267,7 +267,6 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       if (result.error) {
         toast.error(result.error, {
           description: getPublishFailureDescription(result), duration: 9000,
-          action: { label: 'Content Health', onClick: () => { window.location.href = '/admin/content-health'; } },
         });
         return;
       }

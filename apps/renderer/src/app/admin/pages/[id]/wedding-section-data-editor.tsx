@@ -5,6 +5,7 @@ import { ImageUploadField } from '@/components/image-upload-field';
 import { saveMediaRecord } from '@/app/admin/media-actions';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { DetailLinkField } from '@/components/button-field';
+import { LineListField } from '@/components/string-list-field';
 
 type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
 
@@ -62,7 +63,7 @@ function GiftRegistryEditor({ data, onChange }: EditorProps) {
 function DresscodeEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({ headline: str(data.headline), description: str(data.description), colors: join(data.colors), dos: join(data.dos), donts: join(data.donts), note: str(data.note) });
   useReport({ ...d, colors: lines(d.colors), dos: lines(d.dos), donts: lines(d.donts) }, onChange);
-  return <div className="space-y-3"><Field label="Headline" value={d.headline} onChange={v => setD({ ...d, headline: v })} /><Field label="Beschreibung" value={d.description} onChange={v => setD({ ...d, description: v })} multiline /><Field label="Farben (Hex, eine pro Zeile)" value={d.colors} onChange={v => setD({ ...d, colors: v })} multiline /><Field label="Gerne gesehen (eine pro Zeile)" value={d.dos} onChange={v => setD({ ...d, dos: v })} multiline /><Field label="Bitte vermeiden (eine pro Zeile)" value={d.donts} onChange={v => setD({ ...d, donts: v })} multiline /><Field label="Hinweis" value={d.note} onChange={v => setD({ ...d, note: v })} /></div>;
+  return <div className="space-y-3"><Field label="Headline" value={d.headline} onChange={v => setD({ ...d, headline: v })} /><Field label="Beschreibung" value={d.description} onChange={v => setD({ ...d, description: v })} multiline /><LineListField label="Farben" value={d.colors} onChange={v => setD({ ...d, colors: v })} placeholder="#D8B4A0" addLabel="Farbe hinzufügen" /><LineListField label="Gerne gesehen" value={d.dos} onChange={v => setD({ ...d, dos: v })} placeholder="z. B. Festliche Kleidung" addLabel="Empfehlung hinzufügen" /><LineListField label="Bitte vermeiden" value={d.donts} onChange={v => setD({ ...d, donts: v })} placeholder="z. B. Weiß" addLabel="Hinweis hinzufügen" /><Field label="Hinweis" value={d.note} onChange={v => setD({ ...d, note: v })} /></div>;
 }
 
 function RsvpEditor({ data, onChange }: EditorProps) {

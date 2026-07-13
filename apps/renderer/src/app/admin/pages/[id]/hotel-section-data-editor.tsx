@@ -6,6 +6,7 @@ import { saveMediaRecord } from '@/app/admin/media-actions';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
+import { LineListField } from '@/components/string-list-field';
 
 type ButtonValue = { label: string; href: string };
 type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
@@ -51,7 +52,7 @@ function HotelHeroEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
-      <Field label="Trust-Items (eine pro Zeile)" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} multiline />
+      <LineListField label="Vertrauensmerkmale" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} addLabel="Merkmal hinzufügen" />
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <Field label="Verfuegbarkeits-Hinweis" value={d.availabilityHint} onChange={(v) => setD({ ...d, availabilityHint: v })} />
@@ -118,9 +119,9 @@ function RoomShowcaseEditor({ data, onChange }: EditorProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><Field label="Name" value={room.name} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, name: v }) })} /><Field label="Preis" value={room.priceLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, priceLabel: v }) })} /></div>
           <Field label="Beschreibung" value={room.description} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, description: v }) })} multiline />
           <ImageUploadField label="Bild" value={room.image} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, image: v }) })} />
-          <Field label="Galerie-Bilder (URLs, eine pro Zeile)" value={room.galleryImages} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, galleryImages: v }) })} multiline />
+          <LineListField label="Galerie-Bilder" value={room.galleryImages} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, galleryImages: v }) })} placeholder="Bild-URL" addLabel="Bild hinzufügen" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"><Field label="Groesse" value={room.sizeLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, sizeLabel: v }) })} /><Field label="Belegung" value={room.occupancyLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, occupancyLabel: v }) })} /><Field label="Bett" value={room.bedLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, bedLabel: v }) })} /></div>
-          <Field label="Features (eine pro Zeile)" value={room.features} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, features: v }) })} multiline />
+          <LineListField label="Ausstattungsmerkmale" value={room.features} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, features: v }) })} addLabel="Merkmal hinzufügen" />
           <ButtonField label="Detail CTA" value={room.detailCta} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, detailCta: v }) })} />
           <ButtonField label="Buchungs CTA" value={room.bookingCta} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, bookingCta: v }) })} />
           <Checkbox label="Highlight" checked={room.highlighted} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, highlighted: v }) })} />
@@ -143,7 +144,7 @@ function OffersEditor({ data, onChange }: EditorProps) {
           <Field label="Beschreibung" value={offer.description} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, description: v }) })} multiline />
           <ImageUploadField label="Bild" value={offer.image} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, image: v }) })} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"><Field label="Preis" value={offer.priceLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, priceLabel: v }) })} /><Field label="Dauer" value={offer.durationLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, durationLabel: v }) })} /><Field label="Gueltig bis" value={offer.validUntilLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, validUntilLabel: v }) })} /></div>
-          <Field label="Inklusive (eine pro Zeile)" value={offer.includes} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, includes: v }) })} multiline />
+          <LineListField label="Enthaltene Leistungen" value={offer.includes} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, includes: v }) })} addLabel="Leistung hinzufügen" />
           <ButtonField label="CTA" value={offer.cta} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, cta: v }) })} />
           <Field label="Detail-Link Label" value={offer.detailLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, detailLabel: v }) })} />
           <DetailLinkField label="Detail-Link" value={offer.detailHref} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, detailHref: v }) })} />
@@ -223,8 +224,8 @@ function EventSpacesEditor({ data, onChange }: EditorProps) {
           <Field label="Beschreibung" value={space.description} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, description: v }) })} multiline />
           <ImageUploadField label="Bild" value={space.image} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, image: v }) })} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><Field label="Kapazitaet" value={space.capacityLabel} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, capacityLabel: v }) })} /><Field label="Groesse" value={space.sizeLabel} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, sizeLabel: v }) })} /></div>
-          <Field label="Bestuhlungen" value={space.seatingOptions} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, seatingOptions: v }) })} multiline />
-          <Field label="Features" value={space.features} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, features: v }) })} multiline />
+          <LineListField label="Bestuhlungen" value={space.seatingOptions} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, seatingOptions: v }) })} placeholder="z. B. U-Form" addLabel="Bestuhlung hinzufügen" />
+          <LineListField label="Features" value={space.features} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, features: v }) })} placeholder="Feature" addLabel="Feature hinzufügen" />
           <ButtonField label="Anfrage CTA" value={space.inquiryCta} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, inquiryCta: v }) })} />
         </div>
       )} />

@@ -6,6 +6,7 @@ import { saveMediaRecord } from '@/app/admin/media-actions';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
 import { IconPickerField } from '@/components/icon-picker-field';
+import { LineListField } from '@/components/string-list-field';
 
 type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
 type ButtonValue = { label: string; href: string };
@@ -67,8 +68,8 @@ function MenuEditor({ data, onChange }: EditorProps) {
               </div>
               <Field label="Beschreibung" value={item.description} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, description: v })} multiline />
               <ImageUploadField label="Bild" value={item.image} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, image: v })} />
-              <Field label="Tags (eine pro Zeile)" value={item.tags} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, tags: v })} multiline />
-              <Field label="Allergene (eine pro Zeile)" value={item.allergens} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, allergens: v })} multiline />
+              <LineListField label="Tags" value={item.tags} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, tags: v })} placeholder="z. B. Hausgemacht" addLabel="Tag hinzufügen" />
+              <LineListField label="Allergene" value={item.allergens} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, allergens: v })} placeholder="z. B. Gluten" addLabel="Allergen hinzufügen" />
               <Field label="Detail-Link Label" value={item.detailLabel} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, detailLabel: v })} />
               <DetailLinkField label="Detail-Link" value={item.detailHref} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, detailHref: v })} />
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
@@ -123,7 +124,7 @@ function ReservationEditor({ data, onChange }: EditorProps) {
       <Field label="Submit-Label" value={d.submitLabel} onChange={(v) => setD({ ...d, submitLabel: v })} />
       <ButtonField label="Telefon-CTA" value={d.phoneCta} onChange={(v) => setD({ ...d, phoneCta: v })} />
       <ButtonField label="Buchungs-CTA" value={d.externalBookingCta} onChange={(v) => setD({ ...d, externalBookingCta: v })} />
-      <Field label="Formular-Platzhalter (eine pro Zeile)" value={d.partySizeOptions} onChange={(v) => setD({ ...d, partySizeOptions: v })} multiline />
+      <LineListField label="Auswahl für Personenzahl" value={d.partySizeOptions} onChange={(v) => setD({ ...d, partySizeOptions: v })} placeholder="z. B. 2 Personen" addLabel="Auswahl hinzufügen" />
       <Field label="Zeit-Hinweis" value={d.timeHint} onChange={(v) => setD({ ...d, timeHint: v })} />
       <Field label="Policy-Text" value={d.policyText} onChange={(v) => setD({ ...d, policyText: v })} multiline />
       <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
@@ -192,7 +193,7 @@ function SignatureDishesEditor({ data, onChange }: EditorProps) {
           <Field label="Label" value={dish.label} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, label: v }) })} />
           <Field label="Beschreibung" value={dish.description} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, description: v }) })} multiline />
           <ImageUploadField label="Bild" value={dish.image} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, image: v }) })} />
-          <Field label="Zutaten (eine pro Zeile)" value={dish.ingredients} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, ingredients: v }) })} multiline />
+          <LineListField label="Zutaten" value={dish.ingredients} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, ingredients: v }) })} placeholder="Zutat" addLabel="Zutat hinzufügen" />
           <ButtonField label="CTA" value={dish.cta} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, cta: v }) })} />
         </div>
       ))}
@@ -294,7 +295,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
-      <Field label="Trust-Items (je Zeile)" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} multiline />
+      <LineListField label="Vertrauensmerkmale" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} placeholder="z. B. Regional & frisch" addLabel="Merkmal hinzufügen" />
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <div><label className="text-xs font-medium text-zinc-600 mb-1 block">Bild-Effekt</label><select className="admin-input" value={d.imageEffect} onChange={(e) => setD({ ...d, imageEffect: e.target.value })}><option value="none">Kein Effekt</option><option value="parallax">Parallax</option><option value="kenBurns">Ken Burns (Zoom)</option></select>{d.imageEffect !== 'none' && (<select className="admin-input mt-2" value={d.imageEffectIntensity} onChange={(e) => setD({ ...d, imageEffectIntensity: e.target.value })}><option value="subtle">Dezent</option><option value="medium">Mittel</option><option value="strong">Stark</option></select>)}</div>

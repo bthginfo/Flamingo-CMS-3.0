@@ -1,25 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { Activity, Eye, History, Loader2, Rocket } from 'lucide-react';
+import { Eye, History, Loader2, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
 import { publishAction, rollbackPublishAction } from './actions/publish';
 import { getPublishFailureDescription } from './publish-feedback';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 export function DashboardActions({
   tenantId,
   publishDisabled = false,
   activeVersion,
   canRollback = false,
-  readiness,
 }: {
   tenantId: string;
   publishDisabled?: boolean;
   activeVersion?: number;
   canRollback?: boolean;
-  readiness?: { ready: boolean; blockers: number; advisories: number };
 }) {
   const router = useRouter();
   const [publishing, setPublishing] = useState(false);
@@ -33,7 +30,6 @@ export function DashboardActions({
       if (result.error) {
         toast.error(result.error, {
           description: getPublishFailureDescription(result), duration: 9000,
-          action: { label: 'Content Health', onClick: () => router.push('/admin/content-health') },
         });
         return;
       }
@@ -86,10 +82,6 @@ export function DashboardActions({
           <span className="hidden xl:inline">Vorherige Version</span>
         </button>
       )}
-      <Link href="/admin/content-health" className={`admin-btn-secondary ${readiness?.ready ? 'text-emerald-700' : readiness ? 'text-amber-700' : ''}`} title="Publish-Bereitschaft und konkrete Reparaturen öffnen">
-        <Activity size={16} />
-        <span className="hidden xl:inline">{readiness ? (readiness.ready ? 'Bereit' : `${readiness.blockers} offen`) : 'Publish-Check'}</span>
-      </Link>
       <button
         type="button"
         onClick={handlePublish}

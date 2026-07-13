@@ -9,6 +9,7 @@ import {
   validateContactFormFields,
   type ContactFormFieldDefinition as FormField,
 } from '@/lib/contact-form';
+import { StringListField } from '@/components/string-list-field';
 
 type AutoResponse = {
   enabled: boolean;
@@ -137,8 +138,14 @@ export default function ContactFormSettingsPage() {
                 </div>
                 {field.type === 'select' && (
                   <div className="sm:col-span-2 lg:col-span-4">
-                    <label className="admin-label">Optionen (kommagetrennt)</label>
-                    <input className="admin-input" value={field.options?.join(', ') || ''} onChange={e => updateField(i, { options: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })} placeholder="Option 1, Option 2, Option 3" />
+                    <StringListField
+                      label="Auswahlmöglichkeiten"
+                      value={field.options || []}
+                      onChange={(options) => updateField(i, { options })}
+                      placeholder="z. B. Beratung"
+                      addLabel="Auswahl hinzufügen"
+                      emptyText="Fügen Sie mindestens eine Auswahlmöglichkeit hinzu."
+                    />
                   </div>
                 )}
                 <div className="flex items-center gap-4 sm:col-span-2 lg:col-span-4">

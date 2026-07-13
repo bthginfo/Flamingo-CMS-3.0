@@ -20,7 +20,7 @@ type NavGroup = typeof NAV_GROUPS[number];
 const NAV: { href: string; label: string; icon: typeof LayoutDashboard; group: NavGroup; tour?: string; industry?: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, group: 'Übersicht' },
   { href: '/admin/pages', label: 'Seiten', icon: FileText, group: 'Inhalte', tour: 'sidebar-pages' },
-  { href: '/admin/content-health', label: 'Content Health', icon: Activity, group: 'Inhalte' },
+  { href: '/admin/content-health', label: 'Website prüfen', icon: Activity, group: 'Inhalte' },
   { href: '/admin/collections', label: 'Inhalte & Daten', icon: FolderOpen, group: 'Inhalte' },
   { href: '/admin/news', label: 'News & Blog', icon: Newspaper, group: 'Inhalte' },
   { href: '/admin/media', label: 'Mediathek', icon: ImageIcon, group: 'Inhalte', tour: 'sidebar-media' },

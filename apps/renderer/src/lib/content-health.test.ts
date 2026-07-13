@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { groupContentHealthIssues, normalizeStoredContentAudit, scanExplicitDateFreshness, scanSpecialOpeningDateFreshness, type ContentHealthIssue } from './content-health';
+import { groupContentHealthIssues, normalizeStoredContentAudit, presentContentHealthIssue, scanExplicitDateFreshness, scanSpecialOpeningDateFreshness, type ContentHealthIssue } from './content-health';
 
 describe('content health', () => {
   it('finds past explicit dates but never guesses dates from prose or unrelated keys', () => {
@@ -64,5 +64,19 @@ describe('content health', () => {
     assert.equal(audit.issues[0]?.source, 'freshness');
     assert.equal(audit.freshnessWarnings, 1);
     assert.equal(audit.readyToPublish, true);
+  });
+
+  it('turns technical validator output into short German tasks', () => {
+    assert.deepEqual(presentContentHealthIssue({
+      source: 'content', severity: 'warning', code: 'budget.too_short',
+      location: 'pages[startseite].sections[1].data.headline',
+      message: 'headline has 9 characters; recommended minimum is 12.',
+    }), {
+      title: 'Überschrift ist noch sehr kurz',
+      action: 'Ergänzen Sie einen hilfreichen, konkreten Kontext für Ihre Besucher.',
+    });
+    assert.equal(presentContentHealthIssue({
+      source: 'color', severity: 'warning', code: 'LOW_CONTRAST', message: 'WCAG 2.1 ratio 2.1',
+    }).title, 'Text ist schwer lesbar');
   });
 });

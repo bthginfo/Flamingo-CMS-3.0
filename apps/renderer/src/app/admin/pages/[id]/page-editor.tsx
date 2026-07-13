@@ -630,7 +630,6 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       if (result.error) {
         toast.error(result.error, {
           description: getPublishFailureDescription(result), duration: 9000,
-          action: { label: 'Content Health', onClick: () => { window.location.href = '/admin/content-health'; } },
         });
       } else {
         toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Änderungen veröffentlicht');

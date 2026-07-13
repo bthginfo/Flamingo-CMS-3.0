@@ -56,3 +56,72 @@ test('opening an embedded shop section never redirects out of the page editor', 
   assert.match(buttonField, /setProducts\(result\.products\)/);
   assert.doesNotMatch(buttonField, /\.then\(setProducts\)/);
 });
+
+test('website check stays in the sidebar instead of competing with primary actions', () => {
+  const sidebar = source('../components/sidebar.tsx');
+  const publishFab = source('../components/publish-fab.tsx');
+  const editorActionBar = source('../app/admin/editor/editor-action-bar.tsx');
+  const dashboardActions = source('../app/admin/dashboard-actions.tsx');
+  const dashboard = source('../app/admin/page.tsx');
+  const healthPage = source('../app/admin/content-health/page.tsx');
+
+  assert.match(sidebar, /label: 'Website prüfen'/);
+  for (const actionSource of [publishFab, editorActionBar, dashboardActions]) {
+    assert.doesNotMatch(actionSource, /Publish-Check|href="\/admin\/content-health"/);
+  }
+  assert.doesNotMatch(dashboard, /getContentHealthReport|Publish-Bereitschaft|Website-Health/);
+  assert.match(healthPage, /Verbesserungsvorschläge/);
+  assert.doesNotMatch(healthPage, /<code|font-mono|issue\.location/);
+});
+
+test('user-facing list inputs use add and remove controls instead of comma-separated text', () => {
+  const listField = source('../components/string-list-field.tsx');
+  const contactForm = source('../app/admin/contact-form/page.tsx');
+  const shipping = source('../app/admin/shop/shipping/shipping-client.tsx');
+  const sectionEditor = source('../app/admin/pages/[id]/section-data-editor.tsx');
+  const hotelEditor = source('../app/admin/pages/[id]/hotel-section-data-editor.tsx');
+  const medicalEditor = source('../app/admin/pages/[id]/medical-section-data-editor.tsx');
+  const realestateEditor = source('../app/admin/pages/[id]/realestate-section-data-editor.tsx');
+  const restaurantEditor = source('../app/admin/pages/[id]/restaurant-section-data-editor.tsx');
+  const salonEditor = source('../app/admin/pages/[id]/salon-section-data-editor.tsx');
+  const tattooEditor = source('../app/admin/pages/[id]/tattoo-section-data-editor.tsx');
+  const tourismEditor = source('../app/admin/pages/[id]/tourism-section-data-editor.tsx');
+  const weddingEditor = source('../app/admin/pages/[id]/wedding-section-data-editor.tsx');
+  const seoForm = source('../app/admin/seo/seo-form.tsx');
+  const bookingPage = source('../app/admin/functions/booking/page.tsx');
+  const bookingQuestions = source('../app/admin/functions/booking/booking-intake-questions-field.tsx');
+
+  assert.match(listField, /Eintrag hinzufügen/);
+  assert.match(listField, /Eintrag.*entfernen/);
+  assert.match(listField, /value === '' \? \[\] : value\.split\('\\n'\)/);
+  assert.match(contactForm, /<StringListField/);
+  assert.match(shipping, /<StringListField/);
+  assert.match(sectionEditor, /<StringListField/);
+  for (const editorSource of [hotelEditor, medicalEditor, realestateEditor, restaurantEditor, salonEditor, tattooEditor, tourismEditor, weddingEditor]) {
+    assert.match(editorSource, /<LineListField/);
+  }
+  assert.match(seoForm, /<SeoServicesField/);
+  assert.match(seoForm, /sameAsText: serializeStringList\(localSeo\.sameAs\)/);
+  assert.match(bookingPage, /<BookingIntakeQuestionsField/);
+  assert.match(bookingQuestions, /name="intakeQuestions"/);
+  assert.match(bookingQuestions, /serializeQuestions\(questions\)/);
+  assert.doesNotMatch(bookingPage, /<textarea[^>]+name="intakeQuestions"/);
+
+  const userFacingEditors = [contactForm, shipping, sectionEditor, hotelEditor, medicalEditor, realestateEditor, restaurantEditor, salonEditor, tattooEditor, tourismEditor, weddingEditor, seoForm, bookingPage];
+  for (const editorSource of userFacingEditors) {
+    assert.doesNotMatch(editorSource, /komma.?getrennt|kommagetrennt|(?:eine|eins|je)\s+(?:zeile\s+pro|pro\s+zeile)|mit\s+\|\s+trennen/i);
+  }
+});
+
+test('list builder actions have touch targets, keyboard focus, and safe draft cleanup', () => {
+  const listField = source('../components/string-list-field.tsx');
+  const seoForm = source('../app/admin/seo/seo-form.tsx');
+  const bookingQuestions = source('../app/admin/functions/booking/booking-intake-questions-field.tsx');
+
+  for (const builderSource of [listField, seoForm, bookingQuestions]) {
+    assert.match(builderSource, /min-h-10 min-w-10/);
+    assert.match(builderSource, /focus-visible:ring-2/);
+  }
+  assert.match(listField, /compactStringList\(value\)/);
+  assert.match(listField, /relatedTarget/);
+});

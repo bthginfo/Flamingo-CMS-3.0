@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Plus, Trash2, MapPin, Truck } from 'lucide-react';
 import { createShippingZone, deleteShippingZone, createShippingMethod, updateShippingMethod, deleteShippingMethod } from '../actions';
 import { toast } from 'sonner';
+import { StringListField } from '@/components/string-list-field';
 
 type Method = { id: string; name: string; priceCents: number; freeAboveCents: number | null; estimatedDays: string | null; active: boolean };
 type Zone = { id: string; name: string; countries: string[] | null; methods: Method[] };
@@ -21,7 +22,7 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
   // Sync zones from server when props change (after router.refresh)
   useEffect(() => { setZones(initialZones); }, [initialZones]);
   const [newZoneName, setNewZoneName] = useState('');
-  const [newZoneCountries, setNewZoneCountries] = useState('DE');
+  const [newZoneCountries, setNewZoneCountries] = useState(['DE']);
   const [addingMethodZone, setAddingMethodZone] = useState<string | null>(null);
   const [methodForm, setMethodForm] = useState({ name: '', priceCents: '', freeAboveCents: '', estimatedDays: '' });
 
@@ -29,10 +30,10 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
     if (!newZoneName.trim()) return;
     await createShippingZone({
       name: newZoneName,
-      countries: newZoneCountries.split(',').map(c => c.trim().toUpperCase()).filter(Boolean),
+      countries: newZoneCountries.map(country => country.trim().toUpperCase()).filter(Boolean),
     });
     setNewZoneName('');
-    setNewZoneCountries('DE');
+    setNewZoneCountries(['DE']);
     setShowNewZone(false);
     toast.success('Versandzone erstellt');
     router.refresh();
@@ -124,7 +125,14 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
         <div className="bg-white rounded-xl border border-zinc-100 p-4 space-y-3">
           <h3 className="font-semibold">Neue Versandzone</h3>
           <input value={newZoneName} onChange={e => setNewZoneName(e.target.value)} placeholder="Zonenname (z.B. Deutschland)" className="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2" />
-          <input value={newZoneCountries} onChange={e => setNewZoneCountries(e.target.value)} placeholder="Ländercodes (kommagetrennt, z.B. DE,AT,CH)" className="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2" />
+          <StringListField
+            label="Lieferländer"
+            value={newZoneCountries}
+            onChange={(countries) => setNewZoneCountries(countries.map(country => country.toUpperCase().slice(0, 2)))}
+            placeholder="z. B. DE"
+            addLabel="Land hinzufügen"
+            emptyText="Ohne Ländercode gilt die Zone für alle Länder."
+          />
           <div className="flex gap-2">
             <button onClick={handleCreateZone} className="text-sm px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800">Erstellen</button>
             <button onClick={() => setShowNewZone(false)} className="text-sm px-3 py-2 text-zinc-500 hover:text-zinc-700">Abbrechen</button>

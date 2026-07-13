@@ -1,9 +1,27 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
+import { StringListField } from '@/components/string-list-field';
+import { serializeStringList } from '@/lib/string-list';
 import { getLocalSeoAction, getSeoGlobalAction, saveLocalSeoAction, saveSeoGlobalAction } from './actions';
+
+type SeoServiceDraft = { name: string; description: string; url: string };
+type LocalSeoState = {
+  businessType: string;
+  priceRange: string;
+  serviceArea: string;
+  googleBusinessUrl: string;
+  sameAs: string[];
+  latitude: string;
+  longitude: string;
+  ratingValue: string;
+  ratingCount: string;
+  services: SeoServiceDraft[];
+};
+type LocalSeoScalarKey = Exclude<keyof LocalSeoState, 'sameAs' | 'services'>;
 
 export function SeoForm() {
   const [pending, startTransition] = useTransition();
@@ -18,17 +36,17 @@ export function SeoForm() {
     locale: 'de_DE',
     robots: 'index,follow',
   });
-  const [localSeo, setLocalSeo] = useState({
+  const [localSeo, setLocalSeo] = useState<LocalSeoState>({
     businessType: 'LocalBusiness',
     priceRange: '',
     serviceArea: '',
     googleBusinessUrl: '',
-    sameAsText: '',
+    sameAs: [],
     latitude: '',
     longitude: '',
     ratingValue: '',
     ratingCount: '',
-    servicesText: '',
+    services: [],
   });
 
   useEffect(() => {
@@ -49,17 +67,20 @@ export function SeoForm() {
         priceRange: typeof row.priceRange === 'string' ? row.priceRange : '',
         serviceArea: typeof row.serviceArea === 'string' ? row.serviceArea : '',
         googleBusinessUrl: typeof row.googleBusinessUrl === 'string' ? row.googleBusinessUrl : '',
-        sameAsText: Array.isArray(row.sameAs) ? row.sameAs.filter(Boolean).join('\n') : '',
+        sameAs: Array.isArray(row.sameAs) ? row.sameAs.filter((value): value is string => typeof value === 'string' && Boolean(value.trim())) : [],
         latitude: typeof row.latitude === 'number' ? String(row.latitude) : '',
         longitude: typeof row.longitude === 'number' ? String(row.longitude) : '',
         ratingValue: typeof row.ratingValue === 'number' ? String(row.ratingValue) : '',
         ratingCount: typeof row.ratingCount === 'number' ? String(row.ratingCount) : '',
-        servicesText: Array.isArray(row.services)
+        services: Array.isArray(row.services)
           ? (row.services as Record<string, unknown>[])
               .filter(s => s && typeof s.name === 'string')
-              .map(s => [s.name, s.description, s.url].filter(Boolean).join(' | '))
-              .join('\n')
-          : '',
+              .map(s => ({
+                name: typeof s.name === 'string' ? s.name : '',
+                description: typeof s.description === 'string' ? s.description : '',
+                url: typeof s.url === 'string' ? s.url : '',
+              }))
+          : [],
       });
     });
   }, []);
@@ -69,7 +90,18 @@ export function SeoForm() {
   function handleSave() {
     startTransition(async () => {
       await saveSeoGlobalAction(data);
-      await saveLocalSeoAction(localSeo);
+      await saveLocalSeoAction({
+        businessType: localSeo.businessType,
+        priceRange: localSeo.priceRange,
+        serviceArea: localSeo.serviceArea,
+        googleBusinessUrl: localSeo.googleBusinessUrl,
+        sameAsText: serializeStringList(localSeo.sameAs),
+        latitude: localSeo.latitude,
+        longitude: localSeo.longitude,
+        ratingValue: localSeo.ratingValue,
+        ratingCount: localSeo.ratingCount,
+        servicesText: localSeo.services.map(service => [service.name, service.description, service.url].map(value => value.replace(/[|\r\n]/g, ' ').trim()).join(' | ')).join('\n'),
+      });
       toast.success('SEO-Einstellungen gespeichert');
       markSaved();
     });
@@ -100,7 +132,7 @@ export function SeoForm() {
       {opts?.maxLength && <p className="text-xs text-zinc-400 mt-0.5 text-right">{data[key].length}/{opts.maxLength}</p>}
     </div>
   );
-  const localField = (label: string, key: keyof typeof localSeo, opts?: { placeholder?: string; hint?: string; multiline?: boolean }) => (
+  const localField = (label: string, key: LocalSeoScalarKey, opts?: { placeholder?: string; hint?: string; multiline?: boolean }) => (
     <div>
       <label className="admin-label">{label}</label>
       {opts?.multiline ? (
@@ -182,17 +214,63 @@ export function SeoForm() {
           {localField('Einzugsgebiet', 'serviceArea', { placeholder: 'z.B. Innsbruck, München, Ingolstadt und Umgebung', hint: 'Optional. Relevant für lokale Dienstleistungen und regionale Sichtbarkeit.' })}
           {localField('Google-Business-Link', 'googleBusinessUrl', { placeholder: 'https://g.page/...' })}
           <div className="sm:col-span-2">
-            {localField('Weitere Profile', 'sameAsText', { placeholder: 'https://www.instagram.com/...\nhttps://www.linkedin.com/company/...', hint: 'Eine URL pro Zeile. Wird als sameAs im strukturierten Datenmodell ausgegeben.', multiline: true })}
+            <StringListField label="Weitere Profile" value={localSeo.sameAs} onChange={(sameAs) => setLocalSeo(d => ({ ...d, sameAs }))} placeholder="https://www.instagram.com/..." addLabel="Profil hinzufügen" emptyText="Noch keine weiteren Profile hinzugefügt." />
+            <p className="mt-1 text-xs text-zinc-400">Verknüpft offizielle Unternehmensprofile mit den Suchmaschinen-Angaben.</p>
           </div>
           {localField('Breitengrad (Latitude)', 'latitude', { placeholder: 'z.B. 48.7758', hint: 'Optional. Genaue Position für Karten & KI-Assistenten. In Google Maps per Rechtsklick auf den Standort.' })}
           {localField('Längengrad (Longitude)', 'longitude', { placeholder: 'z.B. 9.1829', hint: 'Wird zusammen mit dem Breitengrad als geo-Koordinate ausgegeben.' })}
           {localField('Bewertung (Ø)', 'ratingValue', { placeholder: 'z.B. 4.8', hint: 'Optional. Durchschnittliche Bewertung von 0–5. Nur echte Werte verwenden.' })}
           {localField('Anzahl Bewertungen', 'ratingCount', { placeholder: 'z.B. 127', hint: 'Anzahl der Bewertungen. Wird zusammen mit dem Durchschnitt als aggregateRating ausgegeben.' })}
           <div className="sm:col-span-2">
-            {localField('Leistungen / Angebote', 'servicesText', { placeholder: 'Beratung | Persönliche Erstberatung | https://...\nMontage\nWartung | Jährliche Wartung', hint: 'Eine Leistung pro Zeile. Format: Name | Beschreibung (optional) | Link (optional). Wird als Leistungskatalog ausgegeben, damit Suchmaschinen und KI-Agenten verstehen, was angeboten wird.', multiline: true })}
+            <SeoServicesField value={localSeo.services} onChange={(services) => setLocalSeo(d => ({ ...d, services }))} />
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function SeoServicesField({ value, onChange }: { value: SeoServiceDraft[]; onChange: (value: SeoServiceDraft[]) => void }) {
+  function update(index: number, patch: Partial<SeoServiceDraft>) {
+    onChange(value.map((service, serviceIndex) => serviceIndex === index ? { ...service, ...patch } : service));
+  }
+
+  function move(index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (target < 0 || target >= value.length) return;
+    const next = [...value];
+    [next[index], next[target]] = [next[target], next[index]];
+    onChange(next);
+  }
+
+  return (
+    <fieldset className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3">
+      <legend className="px-1 text-xs font-semibold text-zinc-700">Leistungen / Angebote</legend>
+      <p className="mb-3 px-1 text-xs text-zinc-400">Hilft Suchmaschinen und KI-Assistenten, dein Angebot eindeutig zu verstehen.</p>
+      {value.length === 0 ? <p className="px-1 py-2 text-xs text-zinc-400">Noch keine Leistungen hinzugefügt.</p> : (
+        <div className="space-y-3">
+          {value.map((service, index) => (
+            <div key={index} className="rounded-xl border border-zinc-200 bg-white p-3">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <span className="text-xs font-semibold text-zinc-500">Leistung {index + 1}</span>
+                <div className="flex items-center gap-1">
+                  <button type="button" onClick={() => move(index, -1)} disabled={index === 0} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-25" aria-label={`Leistung ${index + 1} nach oben`}><ArrowUp size={14} /></button>
+                  <button type="button" onClick={() => move(index, 1)} disabled={index === value.length - 1} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-25" aria-label={`Leistung ${index + 1} nach unten`}><ArrowDown size={14} /></button>
+                  <button type="button" onClick={() => onChange(value.filter((_, serviceIndex) => serviceIndex !== index))} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-red-400 hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" aria-label={`Leistung ${index + 1} entfernen`}><Trash2 size={14} /></button>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="sm:col-span-2"><span className="admin-label">Name</span><input className="admin-input" value={service.name} onChange={(event) => update(index, { name: event.target.value })} placeholder="z. B. Persönliche Erstberatung" /></label>
+                <label><span className="admin-label">Kurzbeschreibung optional</span><input className="admin-input" value={service.description} onChange={(event) => update(index, { description: event.target.value })} placeholder="Was umfasst die Leistung?" /></label>
+                <label><span className="admin-label">Link optional</span><input className="admin-input" value={service.url} onChange={(event) => update(index, { url: event.target.value })} placeholder="https://..." /></label>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <button type="button" onClick={() => onChange([...value, { name: '', description: '', url: '' }])} className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 text-xs font-semibold text-blue-700 hover:border-blue-200 hover:bg-blue-50">
+        <Plus size={14} /> Leistung hinzufügen
+      </button>
+    </fieldset>
   );
 }

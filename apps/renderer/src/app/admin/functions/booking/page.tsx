@@ -26,6 +26,7 @@ import {
 import { getDefaultBookingEmailTemplate, type BookingEmailTrigger } from '@/lib/booking-email';
 import { ConfirmDeleteForm } from './confirm-delete-form';
 import { formatBookingDate } from '@/lib/booking-time';
+import { BookingIntakeQuestionsField } from './booking-intake-questions-field';
 
 const TRIGGERS: { key: BookingEmailTrigger; label: string }[] = [
   { key: 'booking_requested_customer', label: 'Anfrage an Kunden' },
@@ -505,9 +506,7 @@ function ResourcesPanel({ resources, services }: { resources: BookingResource[];
           </div>
           <Field label="Preislabel optional"><input name="priceLabel" placeholder="z.B. ab 89 €, kostenlos, auf Anfrage" className="admin-input" /></Field>
           <Field label="Beschreibung optional"><textarea name="description" placeholder="Kurz erklären, was gebucht wird" className="admin-input min-h-20" /></Field>
-          <Field label="Zusatzfragen optional">
-            <textarea name="intakeQuestions" placeholder={'Eine Frage pro Zeile. Stern = Pflicht. Optionen mit | trennen.\nAllergien oder Wünsche *\nBereich | Innen, Terrasse, Egal'} className="admin-input min-h-24" />
-          </Field>
+          <BookingIntakeQuestionsField />
           <label className="flex items-center gap-2 text-sm"><input name="requiresResource" type="checkbox" /> Benötigt Ressource</label>
           <AllowedResourceTypesField />
           <button className="admin-btn-secondary">Leistung hinzufügen</button>
@@ -542,9 +541,7 @@ function ResourcesPanel({ resources, services }: { resources: BookingResource[];
                   <Field label="Max. Personen/Menge"><input name="maxPartySize" type="number" min={1} defaultValue={serviceRules.maxPartySize || ''} className="admin-input" /></Field>
                   <Field label="Preislabel"><input name="priceLabel" defaultValue={service.priceLabel || ''} className="admin-input" /></Field>
                   <Field label="Beschreibung"><textarea name="description" defaultValue={service.description || ''} className="admin-input min-h-20" /></Field>
-                  <Field label="Zusatzfragen">
-                    <textarea name="intakeQuestions" defaultValue={formatIntakeQuestions(serviceRules.intakeQuestions)} className="admin-input min-h-24" />
-                  </Field>
+                  <BookingIntakeQuestionsField initialValue={serviceRules.intakeQuestions} />
                   <label className="flex items-center gap-2 self-end text-sm"><input name="requiresResource" type="checkbox" defaultChecked={service.requiresResource} /> Benötigt Ressource</label>
                   <AllowedResourceTypesField value={Array.isArray(service.allowedResourceTypes) ? service.allowedResourceTypes : []} />
                 </div>
@@ -908,18 +905,6 @@ function TimeModelSelect({ value }: { value?: string }) {
       </select>
     </Field>
   );
-}
-
-function formatIntakeQuestions(value: unknown) {
-  if (!Array.isArray(value)) return '';
-  return value.map((question) => {
-    if (!question || typeof question !== 'object') return '';
-    const item = question as { label?: unknown; required?: unknown; options?: unknown };
-    const label = typeof item.label === 'string' ? item.label.trim() : '';
-    if (!label) return '';
-    const options = Array.isArray(item.options) ? item.options.filter((option): option is string => typeof option === 'string' && Boolean(option.trim())) : [];
-    return `${label}${item.required ? ' *' : ''}${options.length ? ` | ${options.join(', ')}` : ''}`;
-  }).filter(Boolean).join('\n');
 }
 
 function WeekdayField({ value }: { value?: number }) {

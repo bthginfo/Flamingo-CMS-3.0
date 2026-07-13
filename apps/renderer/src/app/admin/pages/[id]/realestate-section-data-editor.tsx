@@ -3,6 +3,7 @@
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { DetailLinkField } from '@/components/button-field';
+import { LineListField } from '@/components/string-list-field';
 import { saveMediaRecord } from '@/app/admin/media-actions';
 
 type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
@@ -27,7 +28,7 @@ function PropertyShowcaseEditor({ data, onChange }: EditorProps) {
 function PropertySearchEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({ headline: str(data.headline), categories: join(data.categories), bgColor: str(data.bgColor) });
   useReport({ ...d, categories: lines(d.categories) }, onChange);
-  return <div className="space-y-3"><Field label="Headline" value={d.headline} onChange={v => setD({ ...d, headline: v })} /><Field label="Kategorien (eine pro Zeile, z.B. Kaufen, Mieten)" value={d.categories} onChange={v => setD({ ...d, categories: v })} multiline /><Field label="Hintergrundfarbe (optional)" value={d.bgColor} onChange={v => setD({ ...d, bgColor: v })} /></div>;
+  return <div className="space-y-3"><Field label="Headline" value={d.headline} onChange={v => setD({ ...d, headline: v })} /><LineListField label="Kategorien" value={d.categories} onChange={v => setD({ ...d, categories: v })} placeholder="z. B. Kaufen" addLabel="Kategorie hinzufügen" /><Field label="Hintergrundfarbe (optional)" value={d.bgColor} onChange={v => setD({ ...d, bgColor: v })} /></div>;
 }
 
 // ─── Market Report ───────────────────────────────────────────────

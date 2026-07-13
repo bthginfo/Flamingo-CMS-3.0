@@ -10,10 +10,12 @@ import { IconPickerField } from '@/components/icon-picker-field';
 import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
 import { RichTextEditorField } from '@/components/rich-text-editor';
 import { MiniRichTextField } from '@/components/mini-rich-text';
+import { LineListField, StringListField } from '@/components/string-list-field';
 import { saveMediaRecord } from '@/app/admin/media-actions';
 import { EMBED_PROVIDERS, EMBED_CATEGORIES, getProvider } from '@/lib/embed-providers';
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
+import { compactStringList } from '@/lib/string-list';
 import { getCollectionKeysAction } from '@/app/admin/collections/actions';
 import { InstagramConnectPanel } from './instagram-connect-panel';
 import {
@@ -338,7 +340,7 @@ const FIELD_HELP: Record<string, string> = {
   membersHeadline: 'Überschrift über der Team-Liste.',
   highlightCol: 'Welche Spalte farblich hervorgehoben wird (0-basiert).',
   categorySlug: 'URL-Slug der Shop-Kategorie.',
-  productIds: 'Komma-getrennte Liste von Produkt-IDs.',
+  productIds: 'Produkte direkt über die Auswahl hinzufügen.',
   count: 'Maximale Anzahl der angezeigten Elemente.',
   emptyText: 'Text der angezeigt wird wenn keine Einträge vorhanden sind.',
   mode: 'Betriebsmodus (z.B. automatisch, manuell).',
@@ -1405,7 +1407,7 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
               <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
             )}
           </div>
-          <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
+          <LineListField label="Features" value={item.features} onChange={(v) => update(i, 'features', v)} placeholder="Feature" addLabel="Feature hinzufügen" />
           <ButtonField label="CTA" value={{ label: item.ctaLabel, href: item.ctaHref }} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, ctaLabel: v.label, ctaHref: v.href } : it))} />
         </div>
       ))}
@@ -2146,7 +2148,7 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
       };
     })
   );
-  useReport({ ...d, packages } as unknown as Record<string, unknown>, onChange);
+  useReport({ ...d, packages: packages.map(pkg => ({ ...pkg, features: compactStringList(pkg.features) })) } as unknown as Record<string, unknown>, onChange);
 
   function updatePkg(i: number, fields: Record<string, unknown>) {
     setPackages(prev => prev.map((p, idx) => idx === i ? { ...p, ...fields } : p));
@@ -2168,8 +2170,7 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
             </div>
             <Field label="Beschreibung" value={pkg.description} onChange={(v) => updatePkg(i, { description: v })} multiline />
             <div className="mt-2">
-              <p className="text-xs text-zinc-500 mb-1">Features (eins pro Zeile)</p>
-              <textarea className="admin-input text-xs w-full" rows={3} value={pkg.features.join('\n')} onChange={(e) => updatePkg(i, { features: e.target.value.split('\n').filter(Boolean) })} />
+              <StringListField label="Features" value={pkg.features} onChange={(features) => updatePkg(i, { features })} placeholder="Feature" addLabel="Feature hinzufügen" />
             </div>
             <div className="mt-2">
               <ButtonField label="CTA" value={{ label: pkg.ctaLabel, href: pkg.ctaHref }} onChange={(v) => updatePkg(i, { ctaLabel: v.label, ctaHref: v.href })} />
@@ -2450,7 +2451,7 @@ function FeatureShowcaseEditor({ data, onChange }: EditorProps) {
   const [ctaLabel, setCtaLabel] = useState((data.ctaLabel as string) || '');
   const [ctaHref, setCtaHref] = useState((data.ctaHref as string) || '');
   const [reversed, setReversed] = useState(data.reversed === true);
-  useReport({ headline, subline, badge, text, image, features, ctaLabel, ctaHref, reversed }, onChange);
+  useReport({ headline, subline, badge, text, image, features: compactStringList(features), ctaLabel, ctaHref, reversed }, onChange);
 
   return (
     <div className="space-y-3">
@@ -2459,10 +2460,7 @@ function FeatureShowcaseEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <Field label={fieldLabel('text')} value={text} onChange={setText} multiline  />
       <ImageUploadField label={fieldLabel('image')} value={image} onChange={setImage} />
-      <div>
-        <label className="text-xs font-medium text-zinc-600">Features (eine pro Zeile)</label>
-        <textarea className="admin-input mt-1 w-full" rows={4} value={features.join('\n')} onChange={e => setFeatures(e.target.value.split('\n'))} />
-      </div>
+      <StringListField label="Features" value={features} onChange={setFeatures} placeholder="Feature" addLabel="Feature hinzufügen" />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <Field label={fieldLabel('ctaLabel')} value={ctaLabel} onChange={setCtaLabel}  />
         <Field label={fieldLabel('ctaHref')} value={ctaHref} onChange={setCtaHref}  />
@@ -3087,7 +3085,7 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
       checkmarks: Array.isArray(step.checkmarks) ? step.checkmarks : [],
     }))
   );
-  useReport({ headline, subline, bgColor, textColor, accentColor, lineColor, steps }, onChange);
+  useReport({ headline, subline, bgColor, textColor, accentColor, lineColor, steps: steps.map(step => ({ ...step, checkmarks: compactStringList(step.checkmarks) })) }, onChange);
   function addStep() { setSteps([...steps, { number: String(steps.length + 1).padStart(2, '0'), timeLabel: '', title: '', text: '', checkmarks: [] }]); }
   function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
   function updateStep(i: number, field: string, value: string | string[]) { setSteps(steps.map((step, idx) => idx === i ? { ...step, [field]: value } : step)); }
@@ -3110,7 +3108,7 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
           </div>
           <Field label={fieldLabel('title')} value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
           <Field label={fieldLabel('text')} value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
-          <Field label="Checkpunkte (eine Zeile pro Punkt)" value={step.checkmarks.join('\n')} onChange={(v) => updateStep(i, 'checkmarks', v.split('\n').map(item => item.trim()).filter(Boolean))} multiline />
+          <StringListField label="Checkpunkte" value={step.checkmarks} onChange={(value) => updateStep(i, 'checkmarks', value)} placeholder="Checkpunkt" addLabel="Checkpunkt hinzufügen" />
         </div>
       ))}
       <button type="button" onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
@@ -3622,7 +3620,7 @@ function TraitList({ items, onChange }: { items: { title: string; text: string; 
 }
 
 function PlanList({ items, onChange }: { items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label={fieldLabel('price')} value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label={fieldLabel('price')} value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><LineListField label="Features" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} placeholder="Feature" addLabel="Feature hinzufügen" /><LineListField label="Nicht enthalten" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} placeholder="Nicht enthaltene Leistung" addLabel="Ausschluss hinzufügen" /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
 }
 
 type AdditionalLocationDraft = { name: string; address: string; phone: string; email: string; mapEmbedUrl: string; openingHours: string; ctaLabel: string; ctaHref: string };
