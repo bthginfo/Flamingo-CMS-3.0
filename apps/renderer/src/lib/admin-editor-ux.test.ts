@@ -38,3 +38,21 @@ test('section focus and media dialog keyboard contracts remain wired', () => {
   assert.match(media, /libraryReturnFocusRef/);
   assert.match(media, /aria-modal="true"/);
 });
+
+test('opening an embedded shop section never redirects out of the page editor', () => {
+  const shopActions = source('../app/admin/shop/actions.ts');
+  const dataEditor = source('../app/admin/pages/[id]/section-data-editor.tsx');
+  const buttonField = source('../components/button-field.tsx');
+  const actionStart = shopActions.indexOf('export async function getProductLinksAction');
+  const actionEnd = shopActions.indexOf('\nexport async function getProduct(', actionStart);
+  const pickerAction = shopActions.slice(actionStart, actionEnd);
+
+  assert.ok(actionStart >= 0 && actionEnd > actionStart);
+  assert.match(pickerAction, /requireAuthenticatedTenant\(\)/);
+  assert.doesNotMatch(pickerAction, /requireTenant\(\)/);
+  assert.match(pickerAction, /shopActive: false as const/);
+  assert.match(dataEditor, /productListStatus/);
+  assert.match(dataEditor, /Die Section bleibt bearbeitbar/);
+  assert.match(buttonField, /setProducts\(result\.products\)/);
+  assert.doesNotMatch(buttonField, /\.then\(setProducts\)/);
+});

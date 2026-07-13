@@ -2724,11 +2724,26 @@ function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
 
   // Pick products from a list instead of typing raw IDs.
   const [productList, setProductList] = useState<{ id: string; title: string; slug: string }[]>([]);
+  const [productListStatus, setProductListStatus] = useState<'idle' | 'loading' | 'ready' | 'unavailable' | 'error'>('idle');
   useEffect(() => {
-    if (mode === 'manual' && productList.length === 0) {
-      getProductLinksAction().then(setProductList).catch(() => {});
-    }
-  }, [mode, productList.length]);
+    if (mode !== 'manual') return;
+
+    let cancelled = false;
+    setProductListStatus('loading');
+    getProductLinksAction()
+      .then((result) => {
+        if (cancelled) return;
+        setProductList(result.products);
+        setProductListStatus(result.shopActive ? 'ready' : 'unavailable');
+      })
+      .catch(() => {
+        if (!cancelled) setProductListStatus('error');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
 
   const toggleProduct = (id: string) =>
     setProductIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -2758,8 +2773,17 @@ function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
       {mode === 'manual' && (
         <div>
           <label className="block text-sm font-medium mb-1">Produkte auswählen{productIds.length ? ` (${productIds.length})` : ''}</label>
-          {productList.length === 0 ? (
-            <p className="text-sm text-zinc-400">Keine Produkte gefunden — lege zuerst Produkte im Shop an.</p>
+          {productListStatus === 'idle' || productListStatus === 'loading' ? (
+            <p className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-500">Produkte werden geladen…</p>
+          ) : productListStatus === 'unavailable' ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              <p>Die Section bleibt bearbeitbar. Die Produktauswahl ist verfügbar, sobald das Shop-Modul aktiviert ist.</p>
+              <a className="mt-1 inline-flex font-semibold underline underline-offset-2" href="/admin/shop">Shop-Modul ansehen</a>
+            </div>
+          ) : productListStatus === 'error' ? (
+            <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Produkte konnten nicht geladen werden. Die Section bleibt geöffnet und bearbeitbar.</p>
+          ) : productListStatus === 'ready' && productList.length === 0 ? (
+            <p className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-500">Noch keine aktiven Produkte vorhanden.</p>
           ) : (
             <div className="max-h-56 overflow-y-auto border rounded divide-y">
               {productList.map(p => (

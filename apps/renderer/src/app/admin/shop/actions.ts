@@ -369,15 +369,34 @@ export async function getProducts() {
     .orderBy(products.sortOrder);
 }
 
-/** Returns active products for internal link dropdowns. */
+/**
+ * Returns active products for the page-editor picker.
+ *
+ * This read is embedded in the page editor, so it must never use the shop
+ * route guard: that guard redirects tenants without the add-on to
+ * `/admin/shop`, which would throw them out of the editor merely by opening a
+ * section. Entitlement is still checked before any product data is returned.
+ */
 export async function getProductLinksAction() {
-  const tenantId = await requireTenant();
+  const tenantId = await requireAuthenticatedTenant();
   const db = getDb();
-  return db
+  const [addon] = await db
+    .select({ active: tenantAddons.active })
+    .from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+
+  if (!addon?.active) {
+    return { shopActive: false as const, products: [] };
+  }
+
+  const productLinks = await db
     .select({ id: products.id, title: products.title, slug: products.slug })
     .from(products)
     .where(and(eq(products.tenantId, tenantId), eq(products.status, 'active')))
     .orderBy(products.sortOrder);
+
+  return { shopActive: true as const, products: productLinks };
 }
 
 export async function getProduct(id: string) {

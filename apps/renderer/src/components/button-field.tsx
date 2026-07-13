@@ -22,11 +22,34 @@ function useInternalLinks(mode: string) {
   const [cols, setCols] = useState<CollectionGroup[]>([]);
   const [products, setProducts] = useState<ProductLink[]>([]);
   useEffect(() => {
-    if (mode === 'internal') {
-      getPagesAction().then((p) => setPages(p.map(pg => ({ id: pg.id, title: pg.title, slug: pg.slug }))));
-      getCollectionLinksAction().then(setCols);
-      getProductLinksAction().then(setProducts);
-    }
+    if (mode !== 'internal') return;
+
+    let cancelled = false;
+    getPagesAction()
+      .then((result) => {
+        if (!cancelled) setPages(result.map((page) => ({ id: page.id, title: page.title, slug: page.slug })));
+      })
+      .catch(() => {
+        if (!cancelled) setPages([]);
+      });
+    getCollectionLinksAction()
+      .then((result) => {
+        if (!cancelled) setCols(result);
+      })
+      .catch(() => {
+        if (!cancelled) setCols([]);
+      });
+    getProductLinksAction()
+      .then((result) => {
+        if (!cancelled) setProducts(result.products);
+      })
+      .catch(() => {
+        if (!cancelled) setProducts([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [mode]);
   return { pages, cols, products };
 }
