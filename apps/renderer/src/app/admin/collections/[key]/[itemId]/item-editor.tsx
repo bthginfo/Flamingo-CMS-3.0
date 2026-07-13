@@ -21,7 +21,7 @@ import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
-import { getPublishAdvisoryDescription, getPublishFailureDescription } from '@/app/admin/publish-feedback';
+import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
 
@@ -266,10 +266,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
         toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
         return;
       }
-      toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Veröffentlicht!', {
-        description: getPublishAdvisoryDescription(result),
-        duration: result.advisoryQueue?.length ? 9000 : undefined,
-      });
+      toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Veröffentlicht!');
       setSaved(true);
     } catch {
       toast.error('Veröffentlichen fehlgeschlagen');

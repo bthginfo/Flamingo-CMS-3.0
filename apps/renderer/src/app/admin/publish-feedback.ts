@@ -104,9 +104,3 @@ export function getPublishFailureDescription(result: PublishResult): string | un
 
   return groupedDescription(blockers, 'blockierende Probleme');
 }
-
-export function getPublishAdvisoryDescription(result: PublishResult): string | undefined {
-  const advisories = result.advisoryQueue || [];
-  if (advisories.length === 0) return undefined;
-  return groupedDescription(advisories, 'Qualitäts-Hinweise');
-}

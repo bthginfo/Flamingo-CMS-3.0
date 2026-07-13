@@ -1,6 +1,13 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getPublishAdvisoryDescription, getPublishFailureDescription } from './publish-feedback';
+import { readFileSync } from 'node:fs';
+import { getPublishFailureDescription } from './publish-feedback';
+
+const publishClientSources = [
+  readFileSync(new URL('./dashboard-actions.tsx', import.meta.url), 'utf8'),
+  readFileSync(new URL('./pages/[id]/page-editor.tsx', import.meta.url), 'utf8'),
+  readFileSync(new URL('./collections/[key]/[itemId]/item-editor.tsx', import.meta.url), 'utf8'),
+];
 
 describe('publish feedback', () => {
   it('shows one blocker with a readable section and field label', () => {
@@ -17,18 +24,11 @@ describe('publish feedback', () => {
     assert.doesNotMatch(description || '', /pages\[0\]/);
   });
 
-  it('groups large advisory queues without flooding the toast with raw paths', () => {
-    const advisoryQueue = Array.from({ length: 308 }, (_, index) => ({
-      severity: 'warning',
-      code: 'budget.too_short',
-      location: `pages[${index % 4}].sections[${index % 7}].data.de.rows[0].headline`,
-      message: 'recommended minimum is 12.',
-    }));
-
-    const description = getPublishAdvisoryDescription({ success: true, advisoryQueue });
-    assert.match(description || '', /^308 Qualitäts-Hinweise in 28 Bereichen:/);
-    assert.match(description || '', /weitere Bereiche/);
-    assert.doesNotMatch(description || '', /pages\[/);
-    assert.ok((description || '').length < 240);
+  it('keeps success toasts terse across every publish entry point', () => {
+    for (const source of publishClientSources) {
+      assert.doesNotMatch(source, /getPublishAdvisoryDescription/);
+      assert.doesNotMatch(source, /duration:\s*result\.advisoryQueue/);
+      assert.match(source, /toast\.success\(result\.unchanged/);
+    }
   });
 });

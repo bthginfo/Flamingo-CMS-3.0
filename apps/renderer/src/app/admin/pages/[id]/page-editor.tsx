@@ -20,7 +20,7 @@ import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
-import { getPublishAdvisoryDescription, getPublishFailureDescription } from '@/app/admin/publish-feedback';
+import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
 
@@ -625,10 +625,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       if (result.error) {
         toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
       } else {
-        toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Änderungen veröffentlicht', {
-          description: getPublishAdvisoryDescription(result),
-          duration: result.advisoryQueue?.length ? 9000 : undefined,
-        });
+        toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Änderungen veröffentlicht');
         setSaved(true);
       }
     } catch {

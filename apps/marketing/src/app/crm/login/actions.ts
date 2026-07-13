@@ -3,6 +3,11 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies, headers } from 'next/headers';
 import { createCrmToken, getCrmCookieName } from '@/lib/session';
+import {
+  CRM_MASTER_PASSWORD_MAX_LENGTH,
+  CRM_MASTER_PASSWORD_MIN_LENGTH,
+  normalizeConfiguredCrmMasterPassword,
+} from '@/lib/crm-login-policy';
 import { clearMarketingRateLimit, consumeFirstDeniedRateLimit } from '@/lib/marketing-security';
 import { crmLoginRateLimitRules } from '@/lib/marketing-rate-policies';
 import { getClientAddress } from '@/lib/request-security';
@@ -30,9 +35,11 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
     return { error: 'Zu viele Anmeldeversuche. Bitte später erneut versuchen.' };
   }
 
-  const masterPw = process.env.CRM_MASTER_PASSWORD?.trim();
-  if (!masterPw || masterPw.length < 16 || masterPw.length > 1_024) {
-    console.error('[crm-login] CRM_MASTER_PASSWORD must contain between 16 and 1024 characters');
+  const masterPw = normalizeConfiguredCrmMasterPassword(process.env.CRM_MASTER_PASSWORD);
+  if (!masterPw) {
+    console.error(
+      `[crm-login] CRM_MASTER_PASSWORD must contain between ${CRM_MASTER_PASSWORD_MIN_LENGTH} and ${CRM_MASTER_PASSWORD_MAX_LENGTH} characters`,
+    );
     return { error: 'Anmeldung vorübergehend nicht verfügbar' };
   }
 

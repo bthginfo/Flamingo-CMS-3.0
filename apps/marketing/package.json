@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm exec tsx --test src/lib/crm-email.test.ts src/lib/contact.test.ts"
+    "test": "pnpm exec tsx --test src/lib/crm-email.test.ts src/lib/contact.test.ts src/lib/crm-login-policy.test.ts"
   },
   "dependencies": {
     "@flamingo/auth": "workspace:*",
