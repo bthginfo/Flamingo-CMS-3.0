@@ -82,6 +82,8 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'serviceTabs', label: 'Leistungs-Tabs', description: 'Interaktive Tabs mit Bild, Feature-Liste und CTA pro Leistung', category: 'Premium' },
   { type: 'priceCalculator', label: 'Preis-Kalkulator', description: 'Interaktiver Kostenrechner mit Optionen, Live-Summe und Angebots-CTA', category: 'Premium' },
   { type: 'smartInquiry', label: 'Smart Inquiry', description: 'Progressive 3-Schritt-Anfrage mit Live-Brief und qualifizierten Kontaktdaten', category: 'Premium' },
+  { type: 'offerMatcher', label: 'Angebots-Finder', description: 'Geführter Concierge-Flow mit passender Angebotsempfehlung und vorbereiteter Anfrage', category: 'Premium' },
+  { type: 'mobileActionDock', label: 'Mobile Schnellaktionen', description: 'Kontextuelle Leiste für Anruf, Route, Termin, Anfrage oder Warenkorb', category: 'Kontakt' },
   { type: 'jobListings', label: 'Stellenangebote', description: 'Karriere-Sektion mit Job-Karten, Benefits und Bewerbungs-CTA', category: 'Team & Personen' },
   { type: 'ctaSplit', label: 'CTA Split', description: 'Zweispaltiger Premium-CTA mit Bild, Checkliste und zwei Buttons', category: 'Premium' },
   { type: 'openingStatus', label: 'Öffnungsstatus', description: 'Live "Jetzt geöffnet"-Anzeige mit Wochenplan, Adresse und Telefon', category: 'Kontakt' },

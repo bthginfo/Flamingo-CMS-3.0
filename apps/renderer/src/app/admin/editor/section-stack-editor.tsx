@@ -71,7 +71,7 @@ export function SectionStackEditor({
       )}
 
       <div className="mt-4 pb-24">
-        <button onClick={() => { setShowAddMenu(true); onOpenAddMenu?.(); }} className="admin-btn-primary w-full flex items-center justify-center gap-2">
+        <button type="button" onClick={() => { setShowAddMenu(true); onOpenAddMenu?.(); }} className="admin-btn-primary w-full flex items-center justify-center gap-2">
           <Plus size={18} /> {addLabel}
         </button>
         {showAddMenu && (

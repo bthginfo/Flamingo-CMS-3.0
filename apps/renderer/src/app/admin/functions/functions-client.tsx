@@ -37,18 +37,9 @@ const FEATURES = [
     icon: Inbox,
     color: 'text-blue-500',
   },
-  {
-    id: 'shop',
-    label: 'Shop-Bestellungen',
-    description: 'Bestellungen aus Ihrem Online-Shop.',
-    requiredSection: 'shop',
-    href: '/admin/shop',
-    icon: ShoppingBag,
-    color: 'text-green-500',
-  },
 ];
 
-export function FunctionsClient({ i18nEnabled, bookingEnabled }: { i18nEnabled: boolean; bookingEnabled: boolean }) {
+export function FunctionsClient({ i18nEnabled, bookingEnabled, bookingRequested, shopEnabled }: { i18nEnabled: boolean; bookingEnabled: boolean; bookingRequested: boolean; shopEnabled: boolean }) {
   const [showModal, setShowModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -133,7 +124,23 @@ export function FunctionsClient({ i18nEnabled, bookingEnabled }: { i18nEnabled: 
             </div>
             <p className="text-sm text-zinc-500 mt-0.5">Anfragen oder direkte Buchungen mit Ressourcen, Leistungen, Kalender und E-Mails.</p>
             <p className={`text-xs mt-2 font-medium ${bookingEnabled ? 'text-green-600' : 'text-zinc-400'}`}>
-              {bookingEnabled ? 'Aktiv · Einstellungen verwalten →' : 'Premium Add-on · Anfragen →'}
+              {bookingEnabled ? 'Aktiv · Einstellungen verwalten →' : bookingRequested ? 'Anfrage eingegangen · Wir melden uns' : 'Premium Add-on · Anfragen →'}
+            </p>
+          </div>
+        </Link>
+        <Link
+          href="/admin/shop"
+          className={`admin-card p-5 flex items-start gap-4 transition hover:ring-2 ${shopEnabled ? 'hover:ring-emerald-300' : 'opacity-80 hover:ring-amber-300'}`}
+        >
+          <ShoppingBag className="w-6 h-6 mt-0.5 shrink-0 text-emerald-500" />
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold">Online-Shop</p>
+              {shopEnabled ? <Check size={12} className="text-green-500" /> : <Lock size={12} className="text-zinc-400" />}
+            </div>
+            <p className="text-sm text-zinc-500 mt-0.5">Produkte, Zahlungen, Bestellungen, Rechnungen, Versand und Gutscheine.</p>
+            <p className={`text-xs mt-2 font-medium ${shopEnabled ? 'text-green-600' : 'text-zinc-400'}`}>
+              {shopEnabled ? 'Aktiv · Shop verwalten →' : 'Premium Add-on · Details ansehen →'}
             </p>
           </div>
         </Link>

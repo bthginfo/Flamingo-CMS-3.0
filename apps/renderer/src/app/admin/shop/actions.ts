@@ -6,6 +6,7 @@ import { getSessionCookieName } from '@flamingo/auth';
 import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, formSubmissions, tenants, promotions, crmEmailDeliveries } from '@flamingo/db';
 import { eq, and, desc, sql, not } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { cookies, headers } from 'next/headers';
 import {
   createHardenedRendererSmtpTransport,
@@ -38,16 +39,30 @@ import {
   getRendererContactClientAddress,
 } from '@/lib/renderer-contact-security';
 
-async function requireTenant() {
+async function requireAuthenticatedTenant() {
   const session = await getWritableSession();
   if (!session) throw new Error('Unauthorized');
   return session.tenantId;
 }
 
+/**
+ * Every shop-admin read and mutation must enforce the paid entitlement on the
+ * server. Hiding navigation or rendering a paywall is only presentation and
+ * must never be the authorization boundary for server actions.
+ */
+async function requireTenant() {
+  const tenantId = await requireAuthenticatedTenant();
+  const [addon] = await getDb().select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+  if (!addon?.active) redirect('/admin/shop');
+  return tenantId;
+}
+
 // ─── Addon Check ──────────────────────────────────────────────────────
 
 export async function isShopActive(): Promise<boolean> {
-  const tenantId = await requireTenant();
+  const tenantId = await requireAuthenticatedTenant();
   const db = getDb();
   const [row] = await db.select().from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
@@ -218,7 +233,7 @@ export async function requestShopAddon(message?: string): Promise<void> {
  * been onboarded for billing.
  */
 export async function activateShopAddon(): Promise<void> {
-  const tenantId = await requireTenant();
+  const tenantId = await requireAuthenticatedTenant();
   const allow = (process.env.PLATFORM_ADMIN_TENANT_IDS || '')
     .split(',').map(s => s.trim()).filter(Boolean);
   if (allow.length === 0 || !allow.includes(tenantId)) {

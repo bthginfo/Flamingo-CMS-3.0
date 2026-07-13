@@ -26,8 +26,9 @@ import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types
 import { getSectionSchemas } from '@/lib/section-data-schemas';
 import { evaluateSitePagePolicy } from '@/lib/site-page-policy';
 import type { PatAuthResult } from '@/lib/pat-auth';
-import { getWritableSession } from '@/lib/session';
+import { getSession } from '@/lib/session';
 import { isStoredContentReadyToPublish } from '@/lib/publish-readiness';
+import { scanExplicitDateFreshness, scanSpecialOpeningDateFreshness } from '@/lib/content-health';
 
 /**
  * GET /api/v1/content/validate
@@ -56,7 +57,12 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
 
   // ── Brand + design audit ──────────────────────────────────────────────
   const [settings] = await db
-    .select({ brand: globalSettings.brand, contact: globalSettings.contact, design: globalSettings.design })
+    .select({
+      brand: globalSettings.brand,
+      contact: globalSettings.contact,
+      design: globalSettings.design,
+      openingHours: globalSettings.openingHours,
+    })
     .from(globalSettings)
     .where(eq(globalSettings.tenantId, auth.tenantId));
 
@@ -296,6 +302,24 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
     }
   }
 
+  // Freshness is deliberately limited to explicit date fields. Browser-level
+  // visual checks stay in CI and are never launched from this serverless path.
+  for (const page of allPages) {
+    (sectionsByPage.get(page.id) || []).forEach((section, index) => {
+      contentIssues.push(...scanExplicitDateFreshness(section.data, {
+        baseLocation: `pages[${page.slug}].sections[${index}].data`,
+      }));
+    });
+  }
+  for (const collection of allCollections) {
+    for (const item of itemsByCollection.get(collection.id) || []) {
+      contentIssues.push(...scanExplicitDateFreshness(item.data, {
+        baseLocation: `collections[${collection.key}].items[${item.slug}].data`,
+      }));
+    }
+  }
+  contentIssues.push(...scanSpecialOpeningDateFreshness(settings?.openingHours));
+
   // ── Deterministic content quality audit ─────────────────────────────
   // This is intentionally additive: legacy clients still receive the same
   // contentIssues array, while newer agents can use stable codes + repair
@@ -374,7 +398,7 @@ const runPatStoredContentAudit = withApiHandler(runStoredContentAudit);
 export async function GET(req: NextRequest) {
   if (req.headers.has('authorization')) return runPatStoredContentAudit(req);
 
-  const session = await getWritableSession();
+  const session = await getSession();
   if (!session) return runPatStoredContentAudit(req);
 
   const db = getDb();

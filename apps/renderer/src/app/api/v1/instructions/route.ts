@@ -14,6 +14,7 @@ import {
 } from '@/lib/section-color-contracts-generated';
 import { getSectionSchemas } from '@/lib/section-data-schemas';
 import { buildAiAgentContract, buildAiAgentPrompt } from '@/lib/ai-agent-guidance';
+import { profilePassesExistingValidation, readPersistedBusinessProfile } from '@/lib/business-profile';
 
 export async function GET(req: NextRequest) {
   const auth = await validatePat(req.headers.get('authorization'));
@@ -25,12 +26,20 @@ export async function GET(req: NextRequest) {
   const hasBooking = auth.addons.includes('booking');
 
   const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
-  const [settings] = await db.select({ brand: globalSettings.brand, contact: globalSettings.contact })
+  const [settings] = await db.select({
+    brand: globalSettings.brand,
+    contact: globalSettings.contact,
+    businessProfile: globalSettings.businessProfile,
+  })
     .from(globalSettings)
     .where(eq(globalSettings.tenantId, auth.tenantId))
     .limit(1);
   const existingBrand = (settings?.brand || {}) as Record<string, unknown>;
   const existingContact = (settings?.contact || {}) as Record<string, unknown>;
+  const persistedSiteProfile = readPersistedBusinessProfile(settings?.businessProfile);
+  const approvedSiteProfile = persistedSiteProfile && profilePassesExistingValidation(persistedSiteProfile)
+    ? persistedSiteProfile
+    : null;
 
   const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry, { hasShop, hasBooking });
   // Exclude HTML-Block (freeHtml) from AI usage
@@ -68,6 +77,7 @@ export async function GET(req: NextRequest) {
     styleSystem: getStyleSystemInstructions(),
     sectionStyleContracts: getSectionStyleContracts(allowedSectionTypes, auth.tenant.industry),
     aiContentPlaybook: getAiContentPlaybook(auth.tenant.industry, { hasShop, hasBooking }),
+    approvedSiteProfile,
     agentContract: buildAiAgentContract({
       tenantName: auth.tenant.name,
       industry: auth.tenant.industry,
@@ -83,6 +93,7 @@ export async function GET(req: NextRequest) {
         phone: typeof existingContact.phone === 'string' ? existingContact.phone : undefined,
         email: typeof existingContact.email === 'string' ? existingContact.email : undefined,
       },
+      approvedSiteProfile,
     }),
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logoUrl, faviconUrl, etc.)' },

@@ -97,9 +97,15 @@ export default async function BookingAdminPage({ searchParams }: { searchParams?
                 Das einfache Reservierungsformular bleibt verfügbar. Das Booking Add-on ergänzt echte Verfügbarkeiten,
                 Ressourcen, Leistungen, Anfrage- oder Direktbuchung und automatische E-Mails.
               </p>
-              <form action={requestBookingAddonAction}>
-                <button className="admin-btn-primary mt-5">Booking Add-on anfragen</button>
-              </form>
+              {data.addonRequested ? (
+                <div role="status" className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                  <strong>Anfrage eingegangen.</strong> Wir melden uns zur Einrichtung und Freischaltung bei Ihnen.
+                </div>
+              ) : (
+                <form action={requestBookingAddonAction}>
+                  <button type="submit" className="admin-btn-primary mt-5">Booking Add-on anfragen</button>
+                </form>
+              )}
             </div>
           </div>
         </div>

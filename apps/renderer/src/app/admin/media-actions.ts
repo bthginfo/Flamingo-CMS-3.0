@@ -1,7 +1,7 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { mediaAssets } from '@flamingo/db';
 import { eq, and, desc, inArray, ne } from 'drizzle-orm';
 import { del } from '@vercel/blob';
@@ -10,6 +10,12 @@ import { revalidatePath } from 'next/cache';
 async function requireTenant() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
+  return session.tenantId;
+}
+
+async function requireWritableTenant() {
+  const session = await getWritableSession();
+  if (!session) throw new Error('Diese Demo-Sitzung ist schreibgeschützt.');
   return session.tenantId;
 }
 
@@ -61,6 +67,7 @@ async function probeMediaUrl(url: string): Promise<'ok' | 'missing' | 'unknown'>
 
 export async function getMediaAssets(): Promise<MediaAsset[]> {
   const tenantId = await requireTenant();
+  const canWrite = Boolean(await getWritableSession());
   const db = getDb();
   let rows = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.tenantId, tenantId))
@@ -92,11 +99,11 @@ export async function getMediaAssets(): Promise<MediaAsset[]> {
       if (!keeper.size && dupe.size) { merge.size = dupe.size; keeper.size = dupe.size; }
       duplicateIds.add(dupe.id);
     }
-    if (Object.keys(merge).length) {
+    if (canWrite && Object.keys(merge).length) {
       await db.update(mediaAssets).set(merge).where(eq(mediaAssets.id, keeper.id));
     }
   }
-  if (duplicateIds.size) {
+  if (canWrite && duplicateIds.size) {
     await db.delete(mediaAssets)
       .where(and(eq(mediaAssets.tenantId, tenantId), inArray(mediaAssets.id, [...duplicateIds])));
     rows = rows.filter(row => !duplicateIds.has(row.id));
@@ -134,7 +141,7 @@ export async function getMediaAssets(): Promise<MediaAsset[]> {
     .filter((entry) => entry.state === 'missing')
     .map((entry) => entry.asset.id);
 
-  if (staleIds.length) {
+  if (canWrite && staleIds.length) {
     await db.delete(mediaAssets)
       .where(and(eq(mediaAssets.tenantId, tenantId), inArray(mediaAssets.id, staleIds)));
     revalidatePath('/admin/media');
@@ -156,7 +163,7 @@ export async function saveMediaRecord(data: {
   blurDataUrl?: string;
   folder?: string | null;
 }) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const normalizedBlobUrl = normalizeMediaUrl(data.blobUrl, data.pathname, data.filename);
   if (!normalizedBlobUrl) {
@@ -211,7 +218,7 @@ async function blobHasOtherReferences(db: ReturnType<typeof getDb>, blobUrl: str
 }
 
 export async function deleteMediaAsset(id: string) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [asset] = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.id, id))
@@ -233,7 +240,7 @@ export async function deleteMediaAsset(id: string) {
 }
 
 export async function updateMediaAlt(id: string, alt: string) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [asset] = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.id, id))
@@ -246,7 +253,7 @@ export async function updateMediaAlt(id: string, alt: string) {
 }
 
 export async function updateMediaDimensions(id: string, dimensions: { width: number; height: number }) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [asset] = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.id, id))
@@ -259,7 +266,7 @@ export async function updateMediaDimensions(id: string, dimensions: { width: num
 }
 
 export async function updateMediaFolder(id: string, folder: string | null) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [asset] = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.id, id))
@@ -273,7 +280,7 @@ export async function updateMediaFolder(id: string, folder: string | null) {
 }
 
 export async function deleteMediaFolder(folder: string) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const cleaned = folder.trim();
   if (!cleaned) throw new Error('Folder name is required');

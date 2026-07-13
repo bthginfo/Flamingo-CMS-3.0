@@ -1,7 +1,7 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings, navigation, footer, tenants } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -11,6 +11,12 @@ type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: b
 export async function requireTenant() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
+  return session.tenantId;
+}
+
+async function requireWritableTenant() {
+  const session = await getWritableSession();
+  if (!session) throw new Error('Diese Demo-Sitzung ist schreibgeschützt.');
   return session.tenantId;
 }
 
@@ -27,7 +33,7 @@ export async function getBrandSettings() {
 }
 
 export async function saveBrandSettings(data: Record<string, unknown>) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
 
   // Check if row exists
@@ -65,7 +71,7 @@ export async function getContactSettings() {
 }
 
 export async function saveContactSettings(data: { phone: string; email: string; address: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string }) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   if (existing) {
@@ -78,7 +84,7 @@ export async function saveContactSettings(data: { phone: string; email: string; 
 }
 
 export async function saveOpeningHours(hours: OpeningHoursRow[]) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   if (existing) {
@@ -91,7 +97,7 @@ export async function saveOpeningHours(hours: OpeningHoursRow[]) {
 }
 
 export async function saveSocialLinks(links: Record<string, string>) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   if (existing) {
@@ -122,7 +128,7 @@ export async function getNavigationSettings() {
 }
 
 export async function saveNavigationSettings(items: { label: string; href: string; type?: string }[], cta?: { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string; topBar?: { enabled?: boolean; text?: string; linkLabel?: string; linkHref?: string; bgColor?: string; textColor?: string } } | null, locale?: string) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [existing] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
 
@@ -181,7 +187,7 @@ export async function saveFooterSettings(data: {
   columns: { title: string; items: { text: string; href?: string }[] }[];
   legalLinks: { label: string; href: string }[];
 }, locale?: string) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [existing] = await db.select().from(footer).where(eq(footer.tenantId, tenantId)).limit(1);
 
@@ -224,7 +230,7 @@ export async function getTenantInfo() {
 }
 
 export async function saveActiveStyle(_style: string) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   await db.update(tenants).set({ activeStyle: 'classic', updatedAt: new Date() }).where(eq(tenants.id, tenantId));
   revalidatePath('/admin/design');
@@ -241,7 +247,7 @@ export async function getDesignSettings(): Promise<Record<string, string>> {
 }
 
 export async function saveDesignSettings(data: Record<string, string>) {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   if (existing) {

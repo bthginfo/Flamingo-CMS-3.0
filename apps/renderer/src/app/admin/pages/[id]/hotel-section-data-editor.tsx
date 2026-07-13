@@ -289,7 +289,7 @@ function GalleryEditor({ data, onChange }: EditorProps) {
         <p className="text-xs font-medium text-zinc-600 mb-2">Kategorien</p>
         <div className="flex items-center gap-2 mb-2">
           <input className="admin-input flex-1" placeholder="Neue Kategorie…" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())} />
-          <button onClick={addCategory} className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap">+ Hinzufügen</button>
+          <button type="button" onClick={addCategory} className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap">+ Hinzufügen</button>
         </div>
       </div>
       {/* Category accordions */}
@@ -301,7 +301,7 @@ function GalleryEditor({ data, onChange }: EditorProps) {
             <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 cursor-pointer" onClick={() => setOpenCats({ ...openCats, [cat]: !isOpen })}>
               <span className="text-sm font-medium text-zinc-700">{cat} <span className="text-zinc-400 font-normal">({catImages.length})</span></span>
               <div className="flex items-center gap-2">
-                <button onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button>
+                <button type="button" onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button>
                 <span className="text-zinc-400 text-xs">{isOpen ? '▲' : '▼'}</span>
               </div>
             </div>
@@ -309,7 +309,7 @@ function GalleryEditor({ data, onChange }: EditorProps) {
               <div className="p-3 space-y-2">
                 {catImages.map((img) => { const i = images.indexOf(img); return (
                   <div key={i} className="relative border border-zinc-100 rounded p-3">
-                    <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+                    <button type="button" onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
                     <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                       <Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
@@ -318,8 +318,8 @@ function GalleryEditor({ data, onChange }: EditorProps) {
                   </div>
                 ); })}
                 <div className="flex items-center gap-3 pt-1">
-                  <button onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button>
-                  <button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button>
+                  <button type="button" onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button>
+                  <button type="button" onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button>
                   <input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
                   <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} />
                   <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} />
@@ -335,7 +335,7 @@ function GalleryEditor({ data, onChange }: EditorProps) {
           <p className="text-xs font-medium text-amber-700 mb-2">Ohne Kategorie ({uncategorized.length})</p>
           {uncategorized.map((img) => { const i = images.indexOf(img); return (
             <div key={i} className="relative border border-zinc-100 rounded p-3 mb-2">
-              <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+              <button type="button" onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
               <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
                 <Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
@@ -443,7 +443,7 @@ function Checkbox({ label, checked, onChange }: { label: string; checked: boolea
 }
 
 function Repeater({ items, addLabel, onAdd, render }: { items: any[]; addLabel: string; onAdd: () => void; render: (item: any, index: number) => React.ReactNode }) {
-  return <div className="space-y-3">{items.map((item, index) => <div key={index} className="border rounded p-3">{render(item, index)}</div>)}<button className="text-sm text-blue-600" onClick={onAdd}>{addLabel}</button></div>;
+  return <div className="space-y-3">{items.map((item, index) => <div key={index} className="border rounded p-3">{render(item, index)}</div>)}<button type="button" className="text-sm text-blue-600" onClick={onAdd}>{addLabel}</button></div>;
 }
 
 function ListWithCtaEditor({ data, onChange, itemKey, addLabel, itemFactory, renderItem }: { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; itemKey: string; addLabel: string; itemFactory: (r: Record<string, unknown>) => any; renderItem: (args: { item: any; index: number; d: any; setD: Dispatch<SetStateAction<any>> }) => React.ReactNode }) {

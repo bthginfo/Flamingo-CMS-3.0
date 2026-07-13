@@ -1,15 +1,19 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
-import { products, productCategories } from '@flamingo/db';
+import { getWritableSession } from '@/lib/session';
+import { products, productCategories, tenantAddons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 async function requireTenant() {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) redirect('/admin/login');
+  const [addon] = await getDb().select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+  if (!addon?.active) redirect('/admin/shop');
   return session.tenantId;
 }
 

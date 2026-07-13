@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { BookingPage } from './booking-client';
 
 export const metadata: Metadata = {
-  title: 'Booking-Addon – Reservierungen und Termine direkt auf Deiner Website · FlamingoMedia',
+  title: 'Booking-Addon – Reservierungen und Termine direkt auf Deiner Website',
   description:
     'Mit dem Flamingo Booking-Addon verwaltest Du Anfragen, direkte Buchungen, Ressourcen, Tagespläne, Sperrzeiten und automatische E-Mails direkt im CMS.',
   alternates: { canonical: '/booking' },

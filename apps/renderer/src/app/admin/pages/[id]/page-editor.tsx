@@ -20,6 +20,7 @@ import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
+import { EditorWorkspaceShell } from '@/app/admin/editor/editor-workspace-shell';
 import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
@@ -300,8 +301,12 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   }, [sendPreviewData]);
 
   // Sync props from server component on navigation/revalidation
-  useEffect(() => { setPage(initialPage); }, [initialPage]);
-  useEffect(() => { setSections(initialSections); }, [initialSections]);
+  useEffect(() => {
+    if (!hasDirty) setPage(initialPage);
+  }, [initialPage, hasDirty]);
+  useEffect(() => {
+    if (!hasDirty) setSections(initialSections);
+  }, [initialSections, hasDirty]);
 
   // ── Data-loss protection ─────────────────────────────────────────────
   // 1) Never let the browser close/navigate away over unsaved changes.
@@ -623,7 +628,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       if (!savedSuccessfully) return;
       const result = await publishAction();
       if (result.error) {
-        toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
+        toast.error(result.error, {
+          description: getPublishFailureDescription(result), duration: 9000,
+          action: { label: 'Content Health', onClick: () => { window.location.href = '/admin/content-health'; } },
+        });
       } else {
         toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Änderungen veröffentlicht');
         setSaved(true);
@@ -639,7 +647,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
   return (
     <PageSectionsProvider sections={sectionAnchors}>
-    <div>
+    <EditorWorkspaceShell>
       {/* SEO Panel */}
       <PageSeoPanel ref={seoRef} pageId={page.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
@@ -713,7 +721,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         saveDisabled={pending || publishing}
         publishDisabled={pending}
       />
-    </div>
+    </EditorWorkspaceShell>
     </PageSectionsProvider>
   );
 }

@@ -7,6 +7,7 @@ import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Zap,
   Menu, X, ClipboardList, Bot, HelpCircle, ChevronLeft, ChevronRight, ShoppingBag,
+  Activity, Building2,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 import { usePreview } from '@/components/admin/preview-context';
@@ -19,6 +20,7 @@ type NavGroup = typeof NAV_GROUPS[number];
 const NAV: { href: string; label: string; icon: typeof LayoutDashboard; group: NavGroup; tour?: string; industry?: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, group: 'Übersicht' },
   { href: '/admin/pages', label: 'Seiten', icon: FileText, group: 'Inhalte', tour: 'sidebar-pages' },
+  { href: '/admin/content-health', label: 'Content Health', icon: Activity, group: 'Inhalte' },
   { href: '/admin/collections', label: 'Inhalte & Daten', icon: FolderOpen, group: 'Inhalte' },
   { href: '/admin/news', label: 'News & Blog', icon: Newspaper, group: 'Inhalte' },
   { href: '/admin/media', label: 'Mediathek', icon: ImageIcon, group: 'Inhalte', tour: 'sidebar-media' },
@@ -27,6 +29,7 @@ const NAV: { href: string; label: string; icon: typeof LayoutDashboard; group: N
   { href: '/admin/shop', label: 'Shop', icon: ShoppingBag, group: 'Anfragen & Verkauf' },
   { href: '/admin/functions', label: 'Funktionen', icon: Zap, group: 'Anfragen & Verkauf' },
   { href: '/admin/navigation', label: 'Navigation & Footer', icon: Navigation, group: 'Website', tour: 'sidebar-nav' },
+  { href: '/admin/business-profile', label: 'Unternehmensprofil', icon: Building2, group: 'Website' },
   { href: '/admin/brand', label: 'Marke & Design', icon: Palette, group: 'Website', tour: 'sidebar-brand' },
   { href: '/admin/contact', label: 'Kontakt & Zeiten', icon: Phone, group: 'Website' },
   { href: '/admin/social', label: 'Social Media', icon: Share2, group: 'Website' },

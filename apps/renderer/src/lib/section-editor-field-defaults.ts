@@ -174,6 +174,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "error": false,
     "paypalUrl": "",
     "requirePhone": "",
+    "retryWithNewIdempotencyKey": "",
     "showCompanyField": false,
     "stripeUrl": "",
     "success": false,
@@ -219,9 +220,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "services": []
   },
   "courseSchedule": {
-    "badgeText": "",
-    "items": [],
-    "steps": []
+    "badgeText": ""
   },
   "trainerProfiles": {
     "badgeText": "",
@@ -442,9 +441,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "categories": []
   },
   "timeline": {
-    "badgeText": "",
-    "items": [],
-    "steps": []
+    "badgeText": ""
   },
   "immersiveCtaBanner": {
     "imagePosition": ""
@@ -611,6 +608,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "badgeText": ""
   },
   "priceCalculator": {
+    "badgeText": ""
+  },
+  "offerMatcher": {
     "badgeText": ""
   },
   "jobListings": {

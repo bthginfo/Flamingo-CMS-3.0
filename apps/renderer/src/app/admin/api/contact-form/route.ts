@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { normalizeContactFormFields, validateContactAutoResponse, validateContactFormFields } from '@/lib/contact-form';
 
 async function requireTenant() {
   const session = await getSession();
+  if (!session) throw new Error('Unauthorized');
+  return session.tenantId;
+}
+
+async function requireWritableTenant() {
+  const session = await getWritableSession();
   if (!session) throw new Error('Unauthorized');
   return session.tenantId;
 }
@@ -32,7 +38,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   let tenantId: string;
   try {
-    tenantId = await requireTenant();
+    tenantId = await requireWritableTenant();
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

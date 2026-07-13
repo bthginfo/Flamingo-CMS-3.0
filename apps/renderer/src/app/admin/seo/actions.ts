@@ -1,7 +1,7 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings, seoGlobal, seoPage, seoItem } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -9,6 +9,12 @@ import { redirect } from 'next/navigation';
 
 async function requireSession() {
   const session = await getSession();
+  if (!session) redirect('/admin/login');
+  return session;
+}
+
+async function requireWriteSession() {
+  const session = await getWritableSession();
   if (!session) redirect('/admin/login');
   return session;
 }
@@ -62,7 +68,7 @@ export async function saveLocalSeoAction(data: {
   ratingCount: string;
   servicesText: string;
 }) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const [row] = await db.select({ id: globalSettings.id, brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
   const brand = (row?.brand as Record<string, unknown>) || {};
@@ -102,7 +108,7 @@ export async function saveSeoGlobalAction(data: {
   locale: string;
   robots: string;
 }) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const [existing] = await db.select({ id: seoGlobal.id }).from(seoGlobal).where(eq(seoGlobal.tenantId, session.tenantId)).limit(1);
 
@@ -128,7 +134,7 @@ export async function saveSeoPageAction(pageId: string, data: {
   canonical: string;
   noindex: boolean;
 }) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const [existing] = await db.select({ id: seoPage.id }).from(seoPage).where(and(eq(seoPage.tenantId, session.tenantId), eq(seoPage.pageId, pageId))).limit(1);
 
@@ -155,7 +161,7 @@ export async function saveSeoItemAction(collectionItemId: string, data: {
   canonical: string;
   noindex: boolean;
 }) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const [existing] = await db.select({ id: seoItem.id }).from(seoItem).where(and(eq(seoItem.tenantId, session.tenantId), eq(seoItem.collectionItemId, collectionItemId))).limit(1);
 

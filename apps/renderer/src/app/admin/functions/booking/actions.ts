@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { and, asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
-import { getWritableSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { BOOKING_ADDON_KEY, getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isBookingOverlapError, isWithinBookingAvailability } from '@/lib/booking-core';
 import { getBookingNotificationEmail, getDefaultBookingEmailTemplate, sendBookingEmail, type BookingEmailTrigger } from '@/lib/booking-email';
 import { bookingAvailabilityRules, bookingBlackouts, bookingCalendarBlocks, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, tenantAddons } from '@flamingo/db';
@@ -35,9 +35,15 @@ async function requireBooking(tenantId: string) {
 }
 
 export async function getBookingAdminData() {
-  const tenantId = await requireTenant();
+  const session = await getSession();
+  if (!session) redirect('/admin/login');
+  const tenantId = session.tenantId;
   const db = getDb();
-  const addonActive = await hasBookingAddon(tenantId);
+  const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, BOOKING_ADDON_KEY)))
+    .limit(1);
+  const addonActive = addon?.active ?? false;
+  const addonRequested = Boolean(addon && !addon.active);
   if (!addonActive) {
     const cookieStore = await cookies();
     if (cookieStore.get('flamingo_public_demo')?.value === tenantId) {
@@ -45,6 +51,7 @@ export async function getBookingAdminData() {
     }
     return {
       addonActive,
+      addonRequested,
       settings: null,
       resources: [],
       services: [],
@@ -67,7 +74,7 @@ export async function getBookingAdminData() {
     db.select().from(emailTemplates).where(eq(emailTemplates.tenantId, tenantId)),
   ]);
 
-  return { addonActive, settings, resources, services, availabilityRules, calendarBlocks, blackouts, requests, templates };
+  return { addonActive, addonRequested: false, settings, resources, services, availabilityRules, calendarBlocks, blackouts, requests, templates };
 }
 
 async function selectBookingServicesCompat(tenantId: string) {
@@ -218,6 +225,7 @@ function getPublicDemoBookingAdminData(tenantId: string) {
   };
   return {
     addonActive: true,
+    addonRequested: false,
     settings: {
       id: 'demo-booking-settings',
       tenantId,
@@ -263,6 +271,7 @@ export async function requestBookingAddonAction() {
     await db.insert(tenantAddons).values({ tenantId, addonKey: BOOKING_ADDON_KEY, active: false });
   }
   revalidatePath('/admin/functions');
+  revalidatePath('/admin/functions/booking');
 }
 
 export async function saveBookingSettingsAction(formData: FormData) {

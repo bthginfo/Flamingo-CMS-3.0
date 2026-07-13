@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Marquee, ScrollProgress, useReveal } from '@/components/fx';
 import { ConsentProvider } from '@/lib/consent';
@@ -21,7 +21,7 @@ const AGENCY = {
   logoMarkSrc: '/brand/flamingo-icon.png',
 };
 
-const DEMO_BASE = 'https://flamingo-renderer.vercel.app';
+const DEMO_BASE = 'https://www.demo.flamingomedia.online';
 
 const SHOWCASE_PALETTE = {
   '--brand-color': '#14111a',
@@ -84,6 +84,8 @@ function MarketingAnchor({
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileTriggerRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const isLanding = pathname === '/';
   const headerSolid = scrolled || !isLanding;
@@ -96,6 +98,38 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   useEffect(() => { scrollToTop(); }, [pathname]);
+  useEffect(() => {
+    if (!mobile) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const menu = mobileMenuRef.current;
+    const focusable = () => Array.from(menu?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') || []);
+    focusable()[0]?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobile(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = focusable();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      mobileTriggerRef.current?.focus();
+    };
+  }, [mobile]);
   useReveal();
 
   return (
@@ -117,16 +151,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             {[
               'Passend für jede Branche',
               'Foto- & Videoshooting optional als Add-on',
-              'Online in wenigen Tagen',
+              'Typisch in 7–10 Werktagen online',
               'Innsbruck · München · Ingolstadt · DACH',
               'Hosting & kleine Pflege inklusive',
-            ].concat([
-              'Passend für jede Branche',
-              'Foto- & Videoshooting optional als Add-on',
-              'Online in wenigen Tagen',
-              'Innsbruck · München · Ingolstadt · DACH',
-              'Hosting & kleine Pflege inklusive',
-            ]).map((m, i) => (
+            ].map((m, i) => (
               <span key={i} className="whitespace-nowrap inline-flex items-center gap-3">
                 <span className="opacity-80">{m}</span>
                 <span aria-hidden className="opacity-40">✦</span>
@@ -190,9 +218,12 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               </MarketingAnchor>
             </nav>
             <button
+              ref={mobileTriggerRef}
               onClick={() => setMobile(true)}
               className="lg:hidden p-2 rounded-full border text-white border-white/30"
               aria-label="Menü öffnen"
+              aria-expanded={mobile}
+              aria-controls="mobile-navigation"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
@@ -202,7 +233,14 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         </header>
 
         {mobile && (
-          <div className="fixed inset-0 z-[60] bg-[var(--bg-color)]">
+          <div
+            ref={mobileMenuRef}
+            id="mobile-navigation"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Hauptnavigation"
+            className="fixed inset-0 z-[60] overflow-y-auto bg-[var(--bg-color)]"
+          >
             <div className="container-x py-5 flex justify-between items-center">
               <div className="flex items-center leading-none">
                 <img src={AGENCY.logoFullBesideSrc} alt={AGENCY.name} className="h-12 w-auto" />

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ShopPage } from './shop-client';
 
 export const metadata: Metadata = {
-  title: 'Shop-Addon – Online-Shop direkt in Deiner Website · FlamingoMedia',
+  title: 'Shop-Addon – Online-Shop direkt in Deiner Website',
   description:
     'Verkaufe Produkte direkt auf Deiner Flamingo-Website. Online-Shop mit Produkten, Kategorien, Warenkorb, Stripe, PayPal, Versand, Rechnungen und CMS-Admin.',
   alternates: { canonical: '/shop' },

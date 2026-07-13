@@ -1,13 +1,13 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 import { adminSecrets } from '@flamingo/db';
 import { verifyPassword, hashPassword } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 
 export async function changePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) return { success: false, error: 'Nicht angemeldet' };
 
   const db = getDb();

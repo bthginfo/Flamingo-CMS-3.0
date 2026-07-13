@@ -107,15 +107,17 @@ export function ImageUploadField({
   onChange,
   position,
   onPositionChange,
+  loadLibrary = getMediaAssets,
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
   position?: string;
   onPositionChange?: (position: string) => void;
+  loadLibrary?: () => Promise<MediaAsset[]>;
 }) {
   const [uploading, setUploading] = useState(false);
-  const [mode, setMode] = useState<'upload' | 'url' | 'library'>(value && !value.startsWith('blob:') ? 'url' : 'upload');
+  const [mode, setMode] = useState<'upload' | 'library'>('upload');
   const [libraryAssets, setLibraryAssets] = useState<MediaAsset[]>([]);
   const [libraryFolderFilter, setLibraryFolderFilter] = useState<string>('__all');
   const [librarySearch, setLibrarySearch] = useState('');
@@ -123,16 +125,56 @@ export function ImageUploadField({
   const [internalPosition, setInternalPosition] = useState(position || 'center');
   const [failedLibIds, setFailedLibIds] = useState<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
+  const libraryDialogRef = useRef<HTMLDivElement>(null);
+  const libraryCloseRef = useRef<HTMLButtonElement>(null);
+  const libraryReturnFocusRef = useRef<HTMLElement | null>(null);
 
   // Sync external position prop
   useEffect(() => {
     if (position) setInternalPosition(position);
   }, [position]);
 
+  useEffect(() => {
+    if (mode !== 'library') return undefined;
+    const dialog = libraryDialogRef.current;
+    const focusTimer = window.setTimeout(() => libraryCloseRef.current?.focus(), 0);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMode('upload');
+        return;
+      }
+      if (event.key !== 'Tab' || !dialog) return;
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'))
+        .filter((element) => element.offsetParent !== null);
+      if (focusable.length === 0) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener('keydown', handleKeyDown);
+      const returnTarget = libraryReturnFocusRef.current;
+      if (returnTarget?.isConnected) window.setTimeout(() => returnTarget.focus(), 0);
+    };
+  }, [mode]);
+
   function clearValue() {
     onChange('');
     if (inputRef.current) inputRef.current.value = '';
-    setMode('url');
+    setMode('upload');
   }
 
   async function handleLibraryImageError(asset: MediaAsset) {
@@ -143,13 +185,14 @@ export function ImageUploadField({
   }
 
   async function openLibrary() {
+    libraryReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setMode('library');
     setLibraryFolderFilter('__all');
     setLibrarySearch('');
     if (libraryAssets.length === 0) {
       setLoadingLib(true);
       try {
-        const assets = await getMediaAssets();
+        const assets = await loadLibrary();
         setLibraryAssets(assets);
       } catch { /* ignore */ }
       finally { setLoadingLib(false); }
@@ -221,30 +264,25 @@ export function ImageUploadField({
         <div className="flex flex-wrap justify-end gap-1">
           <button
             type="button"
-            onClick={() => setMode('upload')}
-            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'upload' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50"
+            aria-label={value ? `${label} ersetzen` : `${label} hochladen`}
           >
-            <Upload size={10} className="inline mr-0.5" /> Upload
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('url')}
-            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'url' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
-          >
-            <LinkIcon size={10} className="inline mr-0.5" /> URL
+            <Upload size={12} aria-hidden="true" /> {value ? 'Ersetzen' : 'Hochladen'}
           </button>
           <button
             type="button"
             onClick={openLibrary}
-            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'library' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${mode === 'library' ? 'bg-blue-100 text-blue-700' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'}`}
           >
-            <FolderOpen size={10} className="inline mr-0.5" /> Mediathek
+            <FolderOpen size={12} aria-hidden="true" /> Mediathek
           </button>
           {value && (
             <button
               type="button"
               onClick={clearValue}
-              className="text-[10px] px-1.5 py-0.5 rounded text-red-500 hover:bg-red-50 hover:text-red-600"
+              className="rounded-md px-2 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
             >
               Entfernen
             </button>
@@ -254,19 +292,56 @@ export function ImageUploadField({
 
       {/* Preview */}
       {value && (
-        <div className="relative inline-block mb-2">
-          <img src={value} alt="" className="w-20 h-20 object-cover rounded-lg border" style={{ objectPosition: internalPosition }} />
+        <div className="relative mb-2 aspect-[16/9] w-full max-w-md overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 shadow-sm">
+          <img src={value} alt="" className="h-full w-full object-cover" style={{ objectPosition: internalPosition }} />
+          {onPositionChange && (
+            <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 p-3 opacity-30 transition-opacity hover:opacity-100 focus-within:opacity-100" aria-label="Fokuspunkt direkt im Bild wählen">
+              {FOCUS_POINTS.flat().map((point) => (
+                <button
+                  key={point}
+                  type="button"
+                  onClick={() => { setInternalPosition(point); onPositionChange(point); }}
+                  className="group flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
+                  aria-label={`Fokuspunkt ${point}`}
+                  title={`Fokuspunkt: ${point}`}
+                >
+                  <span className={`h-3 w-3 rounded-full border-2 border-white shadow transition-all ${internalPosition === point ? 'scale-125 bg-blue-600 ring-2 ring-blue-600/40' : 'bg-zinc-900/40 group-hover:bg-white'}`} aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          )}
           <button
             type="button"
             onClick={clearValue}
-            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+            className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-950/70 text-white shadow-sm hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             aria-label="Bild entfernen"
           >
-            <X size={10} />
+            <X size={14} aria-hidden="true" />
           </button>
+          {onPositionChange && <span className="absolute bottom-2 left-2 rounded-md bg-zinc-950/70 px-2 py-1 text-[10px] font-medium text-white">Fokuspunkt im Bild wählen</span>}
         </div>
       )}
       <p className="mt-1.5 text-[11px] leading-4 text-zinc-400">{getImageQualityHint(value, Boolean(onPositionChange))}</p>
+
+      <details className="mt-2 text-xs text-zinc-500">
+          <summary className="inline-flex cursor-pointer items-center gap-1 rounded py-1 font-medium hover:text-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+            <LinkIcon size={12} aria-hidden="true" /> Eigene Bild-URL verwenden
+          </summary>
+          <input
+            aria-label={`${label}: eigene Bild-URL`}
+            className="admin-input mt-1 w-full font-mono text-xs"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onBlur={(e) => {
+              const url = e.target.value.trim();
+              if (url && url.startsWith('http')) {
+                const filename = url.split('/').pop()?.split('?')[0] || 'image';
+                saveMediaRecord({ blobUrl: url, pathname: url, filename, mimeType: 'image/unknown', size: 0 }).catch(() => {});
+              }
+            }}
+            placeholder="https://…"
+          />
+      </details>
 
       {mode === 'upload' ? (
         <div>
@@ -280,48 +355,23 @@ export function ImageUploadField({
               if (file) handleUpload(file);
             }}
           />
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            className="admin-input w-full text-center py-3 border-dashed cursor-pointer hover:bg-gray-50 transition flex items-center justify-center gap-2"
-          >
-            {uploading ? (
-              <span className="text-xs text-gray-400">Wird hochgeladen...</span>
-            ) : (
-              <>
-                <ImageIcon size={14} className="text-gray-400" />
-                <span className="text-xs text-gray-500">Bild hochladen</span>
-              </>
-            )}
-          </button>
+          {!value && (
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              disabled={uploading}
+              className="admin-input mt-2 flex w-full cursor-pointer items-center justify-center gap-2 border-dashed py-4 text-center transition hover:bg-zinc-50"
+            >
+              {uploading ? <span className="text-xs text-zinc-500">Wird hochgeladen...</span> : <><ImageIcon size={15} className="text-zinc-400" aria-hidden="true" /><span className="text-xs text-zinc-600">Bild auswählen und hochladen</span></>}
+            </button>
+          )}
         </div>
-      ) : mode === 'url' ? (
-        <input
-          className="admin-input w-full"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={(e) => {
-            const url = e.target.value.trim();
-            if (url && url.startsWith('http')) {
-              const filename = url.split('/').pop()?.split('?')[0] || 'image';
-              saveMediaRecord({
-                blobUrl: url,
-                pathname: url,
-                filename,
-                mimeType: 'image/unknown',
-                size: 0,
-              }).catch(() => {});
-            }
-          }}
-          placeholder="https://..."
-        />
       ) : (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50" onClick={() => setMode('upload')}>
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4" onClick={() => setMode('upload')}>
+          <div ref={libraryDialogRef} role="dialog" aria-modal="true" aria-label="Bild aus der Mediathek auswählen" tabIndex={-1} className="flex max-h-[80vh] w-full max-w-2xl flex-col rounded-xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200">
               <h3 className="font-semibold text-base">Mediathek</h3>
-              <button type="button" onClick={() => setMode('upload')} className="text-zinc-400 hover:text-zinc-600"><X size={18} /></button>
+              <button ref={libraryCloseRef} type="button" onClick={() => setMode('upload')} className="rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" aria-label="Mediathek schließen" title="Schließen"><X size={18} aria-hidden="true" /></button>
             </div>
             <div className="p-4 overflow-y-auto flex-1">
               {loadingLib ? (
@@ -332,6 +382,7 @@ export function ImageUploadField({
                 <div className="space-y-3">
                   <input
                     type="text"
+                    aria-label="Bilder in der Mediathek suchen"
                     value={librarySearch}
                     onChange={(e) => setLibrarySearch(e.target.value)}
                     placeholder="Bilder suchen (Dateiname, Alt-Text, URL)"
@@ -374,6 +425,7 @@ export function ImageUploadField({
                           key={asset.id}
                           type="button"
                           onClick={() => { onChange(asset.blobUrl); setMode('upload'); }}
+                          aria-label={`${asset.filename} auswählen`}
                           className="relative aspect-square rounded-lg overflow-hidden border-2 border-zinc-200 hover:border-blue-500 transition"
                           title={asset.folder ? `${asset.filename} (${asset.folder})` : asset.filename}
                         >
@@ -392,26 +444,6 @@ export function ImageUploadField({
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
-      {value && (
-        <div className="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-2">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="text-[11px] font-medium text-zinc-600">Fokuspunkt</span>
-            <span className="text-[10px] text-zinc-400">{internalPosition}</span>
-          </div>
-          <div className="grid w-24 grid-cols-3 gap-1">
-            {FOCUS_POINTS.flat().map(point => (
-              <button
-                key={point}
-                type="button"
-                onClick={() => { setInternalPosition(point); onPositionChange?.(point); }}
-                className={`h-7 rounded border transition ${(internalPosition === point) ? 'border-blue-500 bg-blue-500' : 'border-zinc-200 bg-white hover:border-blue-300'}`}
-                aria-label={`Fokuspunkt ${point}`}
-                title={`Fokuspunkt: ${point}`}
-              />
-            ))}
           </div>
         </div>
       )}

@@ -9,7 +9,7 @@ import ShopFeaturesPage, { ShopFeaturesTeaserSection } from './ShopFeatures';
 import { LiveAdminShowcase } from './LiveAdminShowcase';
 import Seo from '@/components/Seo';
 import {
-  Marquee, AnimatedCounter, RotatingWord, ScrollProgress, Accordion, useReveal,
+  Marquee, RotatingWord, ScrollProgress, Accordion, useReveal,
 } from '@/components/fx';
 import {
   Tilt3DCard, MagneticButton,
@@ -63,9 +63,6 @@ const ROTATING_WORDS = [
   'Hotels.',
   'Bäckereien.',
   'Boutiquen.',
-  'Floristik.',
-  'Fitness.',
-  'Locations.',
 ];
 
 /* ─── Showcase palette ─────────────────────────────────────────────
@@ -344,16 +341,10 @@ function ShowcaseShell() {
           {[
             'Passend für jede Branche',
             'Foto- & Videoshooting optional als Add-on',
-            'Online in wenigen Tagen',
+            'Typisch in 7–10 Werktagen online',
             'Innsbruck · München · Ingolstadt · DACH',
             'Hosting & kleine Pflege inklusive',
-          ].concat([
-            'Passend für jede Branche',
-            'Foto- & Videoshooting optional als Add-on',
-            'Online in wenigen Tagen',
-            'Innsbruck · München · Ingolstadt · DACH',
-            'Hosting & kleine Pflege inklusive',
-          ]).map((m, i) => (
+          ].map((m, i) => (
             <span key={i} className="whitespace-nowrap inline-flex items-center gap-3">
               <span className="opacity-80">{m}</span>
               <span aria-hidden className="opacity-40">✦</span>
@@ -682,14 +673,14 @@ function HeroSection() {
 
         <div className="grid md:grid-cols-12 gap-8 mt-14">
           <p className="md:col-span-7 text-lg md:text-2xl text-white/85 leading-relaxed reveal-fast is-visible">
-            Wir gestalten und betreuen Websites für inhabergeführte Betriebe, die online nicht wie alle anderen aussehen wollen.
+            Wir gestalten Websites, die klar führen, Vertrauen schaffen und Anfragen bringen.
             Starkes Design, saubere Technik, Inhalte im eigenen CMS und auf Wunsch Foto und Video von unserem Team.
           </p>
           <div className="md:col-span-5 md:pl-8 md:border-l border-white/15 self-end reveal-fast is-visible">
-            <p className="font-mono text-xs text-white/60 uppercase tracking-widest mb-4">/ Website live in wenigen Tagen</p>
+            <p className="font-mono text-xs text-white/60 uppercase tracking-widest mb-4">/ Typisch in 7–10 Werktagen online</p>
             <div className="flex flex-wrap gap-3">
               <MagneticButton strength={22}>
-                <Link to="/templates" className="btn-accent">Templates ansehen <span aria-hidden>→</span></Link>
+                <Link to="/templates" className="btn-accent">Live-Demos ansehen <span aria-hidden>→</span></Link>
               </MagneticButton>
               <MagneticButton strength={18}>
                 <Link to="/preise" className="btn-outline !border-white/60 !text-white hover:!bg-white hover:!text-slate-900">
@@ -730,7 +721,7 @@ function ClientLogosSection() {
         <p className="eyebrow">Branchen, die wir verstehen</p>
       </div>
       <Marquee speed="slow">
-        {[...ITEMS, ...ITEMS].map((n, i) => (
+        {ITEMS.map((n, i) => (
           <span key={i} className="font-display text-3xl md:text-5xl text-muted whitespace-nowrap">
             {n}
             <span className="text-[var(--accent-color-2)] ml-12">✦</span>
@@ -782,7 +773,7 @@ function ServicesSection() {
             <div className="flex items-start justify-between mb-12">
               <span className="font-mono text-xs text-muted">01</span>
               <span className="text-xs uppercase tracking-widest text-brand bg-[var(--accent-color)] text-white px-3 py-1 rounded-full">
-                In 7 Tagen live
+                Typisch 7–10 Werktage
               </span>
             </div>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
@@ -849,6 +840,14 @@ function ServicesSection() {
 }
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
+const FEATURED_TEMPLATE_KEYS: Array<keyof typeof TEMPLATE_META> = [
+  'handwerk',
+  'restaurant',
+  'medical',
+  'hotel',
+  'consulting',
+  'shop',
+];
 
 function TemplatesPreviewSection() {
   return (
@@ -869,7 +868,7 @@ function TemplatesPreviewSection() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-5 reveal-stagger">
-          {(Object.keys(TEMPLATE_META) as Array<keyof typeof TEMPLATE_META>).map((k) => {
+          {FEATURED_TEMPLATE_KEYS.map((k) => {
             const m = TEMPLATE_META[k];
             return (
               <Tilt3DCard key={k} max={8} className="rounded-3xl">
@@ -905,7 +904,7 @@ function TemplatesPreviewSection() {
         </div>
 
         <div className="mt-14 text-center reveal">
-          <Link to="/templates" className="btn-outline">Alle Details zu den Templates <span aria-hidden>→</span></Link>
+          <Link to="/templates" className="btn-outline">Alle 17 Live-Demos ansehen <span aria-hidden>→</span></Link>
         </div>
       </div>
     </section>
@@ -921,7 +920,7 @@ function ManifestoSection() {
           <span style={{ background: 'rgba(255,255,255,0.4)' }} />Was uns wichtig ist
         </p>
         <h2 className="headline-lg max-w-5xl">
-          <span className="text-white/40">Wir bauen keine Templates.</span> Wir bauen <em className="italic-pop" style={{ color: 'var(--accent-color)' }}>Werkzeuge</em>, mit denen Du weiterarbeiten kannst – auch wenn wir nicht da sind.
+          <span className="text-white/40">Wir bauen keine starren Templates.</span> Wir bauen <em className="italic-pop" style={{ color: 'var(--accent-color)' }}>anpassbare Systeme</em>, mit denen Du weiterarbeiten kannst – auch wenn wir nicht da sind.
         </h2>
 
         <div className="grid md:grid-cols-3 gap-12 mt-20 reveal-stagger">
@@ -1311,7 +1310,7 @@ function ProcessTimelineSection() {
         <div className="grid md:grid-cols-12 gap-8 mb-14 items-end">
           <div className="md:col-span-7 reveal">
             <p className="eyebrow mb-5">Ablauf</p>
-            <h2 className="headline-lg">Online in <em className="italic-pop">wenigen Tagen</em>.</h2>
+            <h2 className="headline-lg">Typisch in <em className="italic-pop">7–10 Werktagen</em> online.</h2>
           </div>
           <p className="md:col-span-5 text-lg text-muted reveal">
             Vom ersten Anruf bis zur Live-Schaltung – ein klarer Ablauf ohne Überraschungen.
@@ -1433,11 +1432,11 @@ function NumbersSection() {
             { v: 17, s: '', l: 'Branchen-Templates' },
             { v: 100, s: '%', l: 'CMS-gesteuerte Designs' },
             { v: 80, s: '+', l: 'Sections kombinierbar' },
-            { v: 7, s: ' Tage', l: 'Bis online (Ø)' },
+            { v: 1, s: '', l: 'Admin für Inhalte, Shop & Booking' },
           ].map((m, i) => (
             <div key={i} className="md:border-l border-line md:pl-8">
               <p className="num-display text-6xl md:text-8xl leading-none">
-                <AnimatedCounter to={m.v} suffix={m.s} />
+                {m.v}{m.s}
               </p>
               <p className="mt-4 text-xs uppercase tracking-widest text-muted">{m.l}</p>
             </div>
@@ -1966,7 +1965,7 @@ function Pricing() {
         'Responsive Website mit sauberer SEO-Grundstruktur',
         'Hosting & kleine Pflege inklusive',
         '1 Stunde Einrichtungs-Support',
-        'Online in wenigen Tagen – je nach Verfügbarkeit Deiner Inhalte',
+        'Typisch in 7–10 Werktagen online – nach vollständiger Inhaltsfreigabe',
       ],
     },
     {
@@ -2016,17 +2015,22 @@ function Pricing() {
 
   return (
     <>
-      <section className="pt-44 pb-12">
+      <section className="pt-40 pb-8 md:pt-44 md:pb-10">
         <div className="container-x">
           <p className="eyebrow mb-5 reveal">Preise</p>
-          <h1 className="headline-xl max-w-5xl reveal">
+          <h1 className="headline-lg max-w-4xl reveal">
             Faire Preise.<br />
             <em className="italic-pop">Keine Überraschungen.</em>
           </h1>
-          <p className="mt-8 text-lg md:text-xl text-muted max-w-2xl reveal">
+          <p className="mt-6 text-lg md:text-xl text-muted max-w-2xl reveal">
             Drei klare Pakete. Ein transparenter Festpreis, einmalig zahlbar.
             Hosting und Pflege auf Wunsch monatlich – kündbar jederzeit.
           </p>
+          <ul className="mt-8 flex flex-wrap gap-3 text-sm reveal" aria-label="Leistungsversprechen">
+            {['Klare Paketpreise', 'Quellcode und Inhalte gehören Dir', 'Typisch 7–10 Werktage nach Inhaltsfreigabe'].map(item => (
+              <li key={item} className="rounded-full border border-line bg-white px-4 py-2 text-slate-700">{item}</li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -2100,7 +2104,7 @@ function Pricing() {
           </h2>
           <Accordion
             items={[
-              { q: 'Wie lange dauert die Erstellung?', a: 'Bei Template-Projekten typischerweise wenige Tage nach Inhalts-Übergabe. Wie schnell es real geht, hängt vor allem davon ab, wie zügig Texte und Fotos von Deiner Seite kommen. Mit Content Kit planen wir zusätzlich Zeit für Dreh, Auswahl und Schnitt ein.' },
+              { q: 'Wie lange dauert die Erstellung?', a: 'Bei Template-Projekten typischerweise 7–10 Werktage nach vollständiger Inhaltsfreigabe. Mit Content Kit planen wir zusätzlich Zeit für Dreh, Auswahl und Schnitt ein.' },
               { q: 'Kann ich Inhalte selbst pflegen?', a: 'Ja. Du bekommst einen einfachen Admin-Bereich. Texte, Bilder, Speisekarte und Öffnungszeiten änderst Du ohne Vorkenntnisse direkt im Browser. Du siehst den Effekt sofort.' },
               { q: 'Was passiert, wenn etwas kaputt ist?', a: 'Im Pflegepaket überwachen wir Deine Seite automatisch – wir bekommen Probleme oft mit, bevor Du es tust. Wir reagieren innerhalb der Geschäftszeiten in der Regel binnen weniger Stunden.' },
               { q: 'Wem gehört die Website?', a: 'Dir. Du kannst den Quellcode jederzeit anfordern, das Hosting wechseln und mit anderen Agenturen weiterarbeiten. Wir liefern keine Verträge mit Lock-in-Klauseln.' },

@@ -14,13 +14,14 @@ import type { ItemSeoPanelHandle } from './item-seo-panel';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { toast } from 'sonner';
-import { createEmptyEditableSection, normalizeEditableSection, type EditableSection } from '@/app/admin/editor/editable-section';
+import { createSeededEditableSection, normalizeEditableSection, type EditableSection } from '@/app/admin/editor/editable-section';
 import { collectionItemSectionsToEditableSections, editableSectionsToCollectionItemSections, remapEditableSectionType } from '@/app/admin/editor/section-mappers';
 import { EditorActionBar } from '@/app/admin/editor/editor-action-bar';
 import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
+import { EditorWorkspaceShell } from '@/app/admin/editor/editor-workspace-shell';
 import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
@@ -97,7 +98,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   }
 
   function handleAddSection(type: string) {
-    const newSection = createEmptyEditableSection(type, generateId(), sections.length);
+    const newSection = createSeededEditableSection(type, generateId(), sections.length);
     setSections(prev => [...prev, newSection]);
     markDirty();
     toast.success('Sektion hinzugefügt');
@@ -214,7 +215,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     }, 1500);
   }
 
-  async function persistAll(announce: boolean): Promise<boolean> {
+  async function persistAll(announce: boolean, publishItem = false): Promise<boolean> {
     setSaving(true);
     try {
       clearColorDebounces();
@@ -224,10 +225,11 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       });
 
       const itemData = { ...item.data, sections: editableSectionsToCollectionItemSections(finalSections) };
+      const nextPublished = publishItem ? true : item.published;
       const result = await updateItemAction(item.id, {
         title: item.title,
         slug: item.slug,
-        published: item.published,
+        published: nextPublished,
         priority: item.priority,
         data: itemData,
       });
@@ -238,7 +240,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       await seoRef.current?.save();
 
       setSections(finalSections);
-      setItem(prev => ({ ...prev, data: itemData }));
+      setItem(prev => ({ ...prev, data: itemData, published: nextPublished }));
       pendingChanges.current.clear();
       setHasDirty(false);
       setSaved(true);
@@ -259,14 +261,17 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   async function handlePublish() {
     setPublishing(true);
     try {
-      const savedSuccessfully = await persistAll(false);
+      const savedSuccessfully = await persistAll(false, true);
       if (!savedSuccessfully) return;
       const result = await publishAction();
       if (result.error) {
-        toast.error(result.error, { description: getPublishFailureDescription(result), duration: 9000 });
+        toast.error(result.error, {
+          description: getPublishFailureDescription(result), duration: 9000,
+          action: { label: 'Content Health', onClick: () => { window.location.href = '/admin/content-health'; } },
+        });
         return;
       }
-      toast.success(result.unchanged ? 'Website ist bereits aktuell' : 'Veröffentlicht!');
+      toast.success(result.unchanged ? 'Eintrag ist bereits veröffentlicht' : 'Eintrag und Website veröffentlicht');
       setSaved(true);
     } catch {
       toast.error('Veröffentlichen fehlgeschlagen');
@@ -279,7 +284,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
 
   return (
     <PageSectionsProvider sections={sectionAnchors}>
-      <div>
+      <EditorWorkspaceShell>
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Link href={`/admin/collections/${collectionKey}`} className="text-gray-500 hover:text-gray-800"><ArrowLeft size={20} /></Link>
@@ -322,10 +327,13 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
           onCopySection={handleCopySection}
           copySources={copySources}
           copySourcesLoading={copySourcesLoading}
-          renderSection={(section) => (
+          renderSection={(section) => {
+            const pending = pendingChanges.current.get(section.id);
+            const effectiveSection = pending ? { ...section, data: pending } : section;
+            return (
               <SectionEditorCard
                 key={section.id}
-                section={section}
+                section={effectiveSection}
                 industry={industry}
                 sectionTypes={sectionTypes}
                 resolvedVars={resolvedVars}
@@ -339,7 +347,8 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
                 activeLocale={activeLocale}
                 i18n={i18n}
               />
-            )}
+            );
+          }}
         />
         <EditorActionBar
           previewOpen={preview.isOpen}
@@ -350,7 +359,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
           onSave={handleSaveAll}
           onPublish={handlePublish}
         />
-      </div>
+      </EditorWorkspaceShell>
     </PageSectionsProvider>
   );
 }

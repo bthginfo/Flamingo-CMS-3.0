@@ -24,6 +24,58 @@ export interface EditorFieldGroups {
 
 export type EditorFieldGroupKey = keyof EditorFieldGroups;
 
+export interface DesignFieldPreset {
+  label: string;
+  value: string;
+}
+
+export const DESIGN_FIELD_PRESETS: Readonly<Partial<Record<ColorFieldKey, readonly DesignFieldPreset[]>>> = {
+  cardRadius: [
+    { label: 'Eckig', value: '0' },
+    { label: 'Leicht', value: '0.5rem' },
+    { label: 'Weich', value: '1rem' },
+    { label: 'Rund', value: '1.5rem' },
+  ],
+  buttonRadius: [
+    { label: 'Eckig', value: '0' },
+    { label: 'Leicht', value: '0.375rem' },
+    { label: 'Weich', value: '0.75rem' },
+    { label: 'Rund', value: '999px' },
+  ],
+  cardShadow: [
+    { label: 'Kein', value: 'none' },
+    { label: 'Dezent', value: '0 2px 8px rgba(15, 23, 42, 0.08)' },
+    { label: 'Schwebend', value: '0 18px 48px rgba(15, 23, 42, 0.16)' },
+  ],
+  headingWeight: [
+    { label: 'Normal', value: '500' },
+    { label: 'Kräftig', value: '700' },
+    { label: 'Sehr kräftig', value: '800' },
+  ],
+  headingTracking: [
+    { label: 'Kompakt', value: '-0.03em' },
+    { label: 'Standard', value: '0' },
+    { label: 'Weit', value: '0.04em' },
+  ],
+};
+
+export function getDesignGroupPresentation(fields: readonly ColorFieldKey[]): { title: string; description: string } {
+  const fieldSet = new Set(fields);
+  const hasCorners = fieldSet.has('cardRadius') || fieldSet.has('buttonRadius');
+  const hasShadow = fieldSet.has('cardShadow');
+  const hasTypography = fieldSet.has('headingWeight') || fieldSet.has('headingTracking');
+  const parts = [hasCorners ? 'Form' : '', hasShadow ? 'Tiefe' : '', hasTypography ? 'Typografie' : ''].filter(Boolean);
+  const descriptions = [
+    hasCorners ? 'Ecken und Abrundungen' : '',
+    hasShadow ? 'Schattenwirkung' : '',
+    hasTypography ? 'Schriftbild der Überschrift' : '',
+  ].filter(Boolean);
+  return {
+    title: parts.length ? parts.join(', ').replace(/, ([^,]+)$/, ' & $1') : 'Darstellung',
+    description: descriptions.length ? descriptions.join(', ').replace(/, ([^,]+)$/, ' und $1') : 'Vom Renderer unterstützte Designoptionen',
+  };
+}
+
 /**
  * Customer-facing editor taxonomy. Keeping this list explicit makes missing
  * metadata a test failure instead of silently dropping a renderer token into

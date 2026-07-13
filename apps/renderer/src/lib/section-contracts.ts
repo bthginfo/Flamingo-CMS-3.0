@@ -128,6 +128,53 @@ export const PILOT_SECTION_CONTRACTS: SectionContract[] = [
     },
     maturity: 'formal',
   },
+  {
+    type: 'offerMatcher',
+    label: 'Angebots-Finder',
+    category: 'premium',
+    wrapper: 'contained',
+    defaultTheme: 'auto',
+    fields: [
+      { key: 'badge', label: 'Eyebrow', type: 'text' },
+      { key: 'headline', label: 'Headline', type: 'text', required: true },
+      { key: 'subline', label: 'Subline', type: 'richText' },
+      { key: 'panelTitle', label: 'Profil-Titel', type: 'text' },
+      { key: 'panelHint', label: 'Profil-Hinweis', type: 'textarea' },
+      { key: 'helperText', label: 'Zusätzlicher Hilfetext', type: 'textarea' },
+      { key: 'privacyText', label: 'Datenschutz-/Vertrauenshinweis', type: 'textarea' },
+      {
+        key: 'questions',
+        label: 'Fragen',
+        type: 'list',
+        required: true,
+        itemFields: [
+          { key: 'id', label: 'Stabile ID', type: 'text', required: true },
+          { key: 'label', label: 'Frage', type: 'text', required: true },
+          { key: 'description', label: 'Hilfetext', type: 'textarea' },
+          { key: 'options', label: 'Antworten', type: 'list', required: true },
+        ],
+      },
+      {
+        key: 'offers',
+        label: 'Angebote',
+        type: 'list',
+        required: true,
+        itemFields: [
+          { key: 'id', label: 'Stabile ID', type: 'text', required: true },
+          { key: 'title', label: 'Titel', type: 'text', required: true },
+          { key: 'description', label: 'Beschreibung', type: 'textarea' },
+          { key: 'reason', label: 'Empfehlungsgrund', type: 'textarea' },
+          { key: 'features', label: 'Leistungen', type: 'list' },
+          { key: 'primaryCta', label: 'Primärer Button', type: 'cta' },
+          { key: 'secondaryCta', label: 'Sekundärer Button', type: 'cta' },
+        ],
+      },
+    ],
+    colorFields: [],
+    colorSlots: [],
+    previewData: SECTION_PREVIEW_DATA.offerMatcher || {},
+    maturity: 'formal',
+  },
 ];
 
 export function getPilotSectionContract(type: string) {

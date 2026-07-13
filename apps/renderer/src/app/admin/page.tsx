@@ -6,6 +6,7 @@ import { Camera, FileText, Home, Layers, FolderOpen, Rocket, Globe, ImageIcon, S
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { DashboardActions } from './dashboard-actions';
+import { getContentHealthReport } from './content-health/actions';
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -62,6 +63,7 @@ export default async function DashboardPage() {
   const hasPreviousSnapshot = activeSnapshot
     ? snapshotVersionRows.some(snapshot => snapshot.version < activeSnapshot.version)
     : false;
+  const contentHealth = await getContentHealthReport();
 
   // Check SEO completeness
   const seoPageIds = new Set(seoPages.map(s => s.pageId));
@@ -93,6 +95,11 @@ export default async function DashboardPage() {
           publishDisabled={isPublicDemoMode}
           activeVersion={activeSnapshot?.version}
           canRollback={hasPreviousSnapshot && !isPublicDemoMode}
+          readiness={contentHealth.success ? {
+            ready: contentHealth.readyToPublish,
+            blockers: contentHealth.blockingCount,
+            advisories: contentHealth.advisoryCount,
+          } : undefined}
         />
       </div>
 
@@ -134,6 +141,15 @@ export default async function DashboardPage() {
         <div className="admin-card p-6">
           <h2 className="font-semibold text-zinc-900 mb-4">Website-Health</h2>
           <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-600 flex items-center gap-2"><AlertTriangle size={14} /> Publish-Bereitschaft</span>
+              {contentHealth.success ? (
+                <Link href="/admin/content-health" className={`inline-flex items-center gap-1.5 font-medium hover:underline ${contentHealth.readyToPublish ? 'text-emerald-600' : 'text-amber-700'}`}>
+                  {contentHealth.readyToPublish ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+                  {contentHealth.readyToPublish ? 'Bereit' : `${contentHealth.blockingCount} offen`}
+                </Link>
+              ) : <Link href="/admin/content-health" className="text-zinc-500 hover:underline">Prüfen</Link>}
+            </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-zinc-600 flex items-center gap-2"><Search size={14} /> SEO Global</span>
               {seoGlobalComplete ? (

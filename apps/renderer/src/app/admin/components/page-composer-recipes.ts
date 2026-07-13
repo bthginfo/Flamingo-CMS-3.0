@@ -16,6 +16,13 @@ export type ExperienceFamilyId =
   | 'planning'
   | 'products';
 
+export type ArtDirectionId =
+  | 'editorial'
+  | 'cinematic'
+  | 'studio'
+  | 'precision'
+  | 'organic';
+
 export type ComposerStageId = 'opening' | 'offer' | 'proof' | 'story' | 'conversion';
 
 export type ComposerGoal = {
@@ -28,6 +35,14 @@ export type ExperienceFamily = {
   id: ExperienceFamilyId;
   label: string;
   description: string;
+};
+
+export type ArtDirection = {
+  id: ArtDirectionId;
+  label: string;
+  description: string;
+  /** Three small swatches used to communicate the direction without a full preview. */
+  swatches: readonly [string, string, string];
 };
 
 export type ComposerPlanCandidate = {
@@ -76,7 +91,40 @@ export const EXPERIENCE_FAMILIES: readonly ExperienceFamily[] = [
   { id: 'products', label: 'Produkte & Entdeckung', description: 'Sortiment, Vergleich und Inspiration für eine sichere Kaufentscheidung.' },
 ] as const;
 
-const STAGES: readonly { id: ComposerStageId; label: string }[] = [
+export const ART_DIRECTIONS: readonly ArtDirection[] = [
+  {
+    id: 'editorial',
+    label: 'Editorial',
+    description: 'Große Typografie, klare Bildmomente und ein ruhiger Lesefluss.',
+    swatches: ['#18181b', '#faf7f2', '#b45309'],
+  },
+  {
+    id: 'cinematic',
+    label: 'Cinematic',
+    description: 'Immersive Medien, starke Kontraste und inszenierte Übergänge.',
+    swatches: ['#09090b', '#27272a', '#f59e0b'],
+  },
+  {
+    id: 'studio',
+    label: 'Studio',
+    description: 'Prägnante Module, visuelle Vielfalt und ein digitaler Premium-Look.',
+    swatches: ['#172554', '#eff6ff', '#2563eb'],
+  },
+  {
+    id: 'precision',
+    label: 'Precision',
+    description: 'Struktur, Vergleichbarkeit und eine besonders klare Entscheidungskette.',
+    swatches: ['#0f172a', '#f8fafc', '#0f766e'],
+  },
+  {
+    id: 'organic',
+    label: 'Organic',
+    description: 'Warme Nähe, natürliche Bildwechsel und bewusst gesetzte Ruhepunkte.',
+    swatches: ['#283618', '#fefae0', '#bc6c25'],
+  },
+] as const;
+
+export const COMPOSER_STAGES: readonly { id: ComposerStageId; label: string }[] = [
   { id: 'opening', label: 'Einstieg' },
   { id: 'offer', label: 'Angebot' },
   { id: 'proof', label: 'Belege' },
@@ -92,6 +140,49 @@ const BASE_CANDIDATES: Record<ComposerStageId, readonly string[]> = {
   proof: ['proofWall', 'testimonials', 'testimonialMarquee', 'socialProofBar', 'statsCounter', 'stats'],
   story: ['beforeAfterStoryPro', 'processSteps', 'timeline', 'scrollStory', 'zigzagShowcase', 'galleryPro'],
   conversion: ['smartInquiry', 'faqContactSplit', 'consultationBooking', 'ctaSplit', 'contact', 'ctaBand'],
+};
+
+/**
+ * Art directions describe page rhythm, not a tenant or industry. Their order is
+ * intentionally explicit so a recipe stays reproducible even if the section
+ * catalog itself is returned in a different order.
+ */
+const ART_DIRECTION_CANDIDATES: Record<ArtDirectionId, Record<ComposerStageId, readonly string[]>> = {
+  editorial: {
+    opening: ['editorialHero', 'hero', 'cinematicHero', 'glowHero'],
+    offer: ['serviceTabs', 'zigzagShowcase', 'featureShowcase', 'servicesGrid'],
+    proof: ['proofWall', 'testimonials', 'logoCloud', 'socialProofBar'],
+    story: ['editorialFeatureRail', 'zigzagShowcase', 'timeline', 'galleryPro'],
+    conversion: ['faqContactSplit', 'ctaSplit', 'smartInquiry', 'contact'],
+  },
+  cinematic: {
+    opening: ['cinematicHero', 'glowHero', 'editorialHero', 'hero'],
+    offer: ['featureShowcase', 'serviceTabs', 'brandShowroom', 'productShowcase'],
+    proof: ['testimonialMarquee', 'proofWall', 'statsCounter', 'testimonials'],
+    story: ['scrollStory', 'beforeAfterStoryPro', 'galleryPro', 'editorialFeatureRail'],
+    conversion: ['immersiveCtaBanner', 'ctaSplit', 'smartInquiry', 'faqContactSplit'],
+  },
+  studio: {
+    opening: ['glowHero', 'editorialHero', 'hero', 'cinematicHero'],
+    offer: ['signatureGrid', 'serviceTabs', 'bentoGrid', 'featureShowcase'],
+    proof: ['socialProofBar', 'proofWall', 'logoMarquee', 'testimonials'],
+    story: ['galleryPro', 'zigzagShowcase', 'teamSpotlight', 'editorialFeatureRail'],
+    conversion: ['smartInquiry', 'ctaSplit', 'faqContactSplit', 'contact'],
+  },
+  precision: {
+    opening: ['hero', 'editorialHero', 'glowHero', 'cinematicHero'],
+    offer: ['comparisonCardsPro', 'servicePackages', 'serviceTabs', 'servicesGrid'],
+    proof: ['caseResults', 'statsCounter', 'proofWall', 'socialProofBar'],
+    story: ['processSteps', 'verticalTimeline', 'timeline', 'zigzagShowcase'],
+    conversion: ['consultationBooking', 'faqContactSplit', 'smartInquiry', 'contact'],
+  },
+  organic: {
+    opening: ['editorialHero', 'hero', 'cinematicHero', 'glowHero'],
+    offer: ['principlesGrid', 'servicesGrid', 'serviceTabs', 'zigzagShowcase'],
+    proof: ['socialProofBar', 'testimonials', 'proofWall', 'logoCloud'],
+    story: ['zigzagShowcase', 'timeline', 'galleryPro', 'teamSpotlight'],
+    conversion: ['contact', 'ctaSplit', 'faqContactSplit', 'smartInquiry'],
+  },
 };
 
 const FAMILY_CANDIDATES: Record<ExperienceFamilyId, Partial<Record<ComposerStageId, readonly string[]>>> = {
@@ -255,12 +346,30 @@ function unique(values: readonly string[]): string[] {
   return [...new Set(values)];
 }
 
-function candidatePriority(goal: ComposerGoalId, family: ExperienceFamilyId, stage: ComposerStageId): string[] {
+function candidatePriority(
+  goal: ComposerGoalId,
+  family: ExperienceFamilyId,
+  artDirection: ArtDirectionId,
+  stage: ComposerStageId,
+): string[] {
   const goalCandidates = GOAL_CANDIDATES[goal][stage] || [];
   const familyCandidates = FAMILY_CANDIDATES[family][stage] || [];
-  if (stage === 'opening') return unique([...SHARED_OPENERS, ...familyCandidates]);
-  if (stage === 'conversion') return unique([...goalCandidates, ...familyCandidates, ...BASE_CANDIDATES[stage]]);
-  return unique([...goalCandidates, ...familyCandidates, ...BASE_CANDIDATES[stage]]);
+  const artDirectionCandidates = ART_DIRECTION_CANDIDATES[artDirection][stage];
+
+  if (stage === 'opening') {
+    return unique([...artDirectionCandidates, ...SHARED_OPENERS, ...familyCandidates]);
+  }
+
+  // Conversion and capability-led offer stages must retain their functional
+  // objective. The remaining stages lead with visual direction so changing the
+  // art direction produces a meaningfully different, but still useful, page.
+  const functionFirst = stage === 'conversion'
+    || (stage === 'offer' && ['sell', 'bookings', 'community'].includes(goal))
+    || (stage === 'offer' && family === 'products');
+
+  return functionFirst
+    ? unique([...goalCandidates, ...familyCandidates, ...artDirectionCandidates, ...BASE_CANDIDATES[stage]])
+    : unique([...artDirectionCandidates, ...goalCandidates, ...familyCandidates, ...BASE_CANDIDATES[stage]]);
 }
 
 export function inferExperienceFamily(industry?: string | null): ExperienceFamilyId {
@@ -271,15 +380,33 @@ export function getExperienceFamily(id: ExperienceFamilyId): ExperienceFamily {
   return EXPERIENCE_FAMILIES.find((family) => family.id === id) || EXPERIENCE_FAMILIES[0];
 }
 
+export function inferArtDirection(family: ExperienceFamilyId): ArtDirectionId {
+  const defaults: Record<ExperienceFamilyId, ArtDirectionId> = {
+    expertise: 'precision',
+    local: 'studio',
+    transformation: 'cinematic',
+    hospitality: 'organic',
+    planning: 'precision',
+    products: 'studio',
+  };
+  return defaults[family];
+}
+
+export function getArtDirection(id: ArtDirectionId): ArtDirection {
+  return ART_DIRECTIONS.find((direction) => direction.id === id) || ART_DIRECTIONS[0];
+}
+
 export function buildComposerPlan({
   goal,
   family,
+  artDirection = inferArtDirection(family),
   sectionTypes,
   existingSectionTypes = [],
   candidateOverrides = {},
 }: {
   goal: ComposerGoalId;
   family: ExperienceFamilyId;
+  artDirection?: ArtDirectionId;
   sectionTypes: readonly SectionTypeDefinition[];
   existingSectionTypes?: readonly string[];
   candidateOverrides?: Partial<Record<ComposerStageId, string>>;
@@ -294,8 +421,8 @@ export function buildComposerPlan({
   const plan: ComposerPlanStep[] = [];
   const candidatePools = new Map<ComposerStageId, SectionTypeDefinition[]>();
 
-  for (const stage of STAGES) {
-    const preferred = candidatePriority(goal, family, stage.id)
+  for (const [stageIndex, stage] of COMPOSER_STAGES.entries()) {
+    const preferred = candidatePriority(goal, family, artDirection, stage.id)
       .map((type) => definitions.get(type))
       .filter((definition): definition is SectionTypeDefinition => Boolean(definition));
     const candidates = [...preferred];
@@ -335,7 +462,7 @@ export function buildComposerPlan({
     plan.push({
       stage: stage.id,
       stageLabel: stage.label,
-      stageNumber: plan.length + 1,
+      stageNumber: stageIndex + 1,
       type: selected.type,
       label: selected.label,
       description: selected.description,
@@ -346,9 +473,8 @@ export function buildComposerPlan({
     });
   }
 
-  const limitedPlan = plan.slice(0, 6);
-  return limitedPlan.map((step) => {
-    const selectedByOtherSteps = new Set(limitedPlan.filter((item) => item.stage !== step.stage).map((item) => item.type));
+  return plan.map((step) => {
+    const selectedByOtherSteps = new Set(plan.filter((item) => item.stage !== step.stage).map((item) => item.type));
     const visibleCandidates = [
       definitions.get(step.type)!,
       ...(candidatePools.get(step.stage) || []),

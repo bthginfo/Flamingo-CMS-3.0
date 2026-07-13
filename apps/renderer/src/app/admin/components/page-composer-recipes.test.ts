@@ -2,27 +2,54 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../pages/[id]/section-types';
 import {
+  ART_DIRECTIONS,
   buildComposerPlan,
   canOverrideComposerStepCandidate,
+  COMPOSER_STAGES,
   COMPOSER_GOALS,
   EXPERIENCE_FAMILIES,
+  inferArtDirection,
   inferExperienceFamily,
 } from './page-composer-recipes';
 
 const fullCatalog = getSectionTypesForIndustry('tradesman', { hasBooking: true, hasShop: true });
 
 describe('guided page composer recipes', () => {
-  it('builds a stable 4–6 step plan for every goal and experience family', () => {
+  it('builds a stable five-stage plan for every goal, experience family and art direction', () => {
     for (const goal of COMPOSER_GOALS) {
       for (const family of EXPERIENCE_FAMILIES) {
-        const input = { goal: goal.id, family: family.id, sectionTypes: fullCatalog } as const;
-        const first = buildComposerPlan(input);
-        const second = buildComposerPlan(input);
-        assert.ok(first.length >= 4 && first.length <= 6, `${goal.id}/${family.id} returned ${first.length} steps`);
-        assert.deepEqual(first, second, `${goal.id}/${family.id} must be deterministic`);
-        assert.equal(new Set(first.map((step) => step.type)).size, first.length, `${goal.id}/${family.id} contains duplicate singleton choices`);
+        for (const artDirection of ART_DIRECTIONS) {
+          const input = { goal: goal.id, family: family.id, artDirection: artDirection.id, sectionTypes: fullCatalog } as const;
+          const first = buildComposerPlan(input);
+          const second = buildComposerPlan(input);
+          assert.equal(first.length, 5, `${goal.id}/${family.id}/${artDirection.id} returned ${first.length} steps`);
+          assert.deepEqual(first.map((step) => step.stage), COMPOSER_STAGES.map((stage) => stage.id));
+          assert.deepEqual(first, second, `${goal.id}/${family.id}/${artDirection.id} must be deterministic`);
+          assert.equal(new Set(first.map((step) => step.type)).size, first.length, `${goal.id}/${family.id}/${artDirection.id} contains duplicate singleton choices`);
+        }
       }
     }
+  });
+
+  it('does not let catalog order change the stage recommendations', () => {
+    const input = { goal: 'portfolio' as const, family: 'transformation' as const, artDirection: 'cinematic' as const };
+    const regular = buildComposerPlan({ ...input, sectionTypes: fullCatalog });
+    const reversed = buildComposerPlan({ ...input, sectionTypes: [...fullCatalog].reverse() });
+
+    assert.deepEqual(reversed, regular);
+  });
+
+  it('uses all five art directions to create distinct silhouettes', () => {
+    const silhouettes = ART_DIRECTIONS.map((artDirection) => buildComposerPlan({
+      goal: 'enquiries',
+      family: 'local',
+      artDirection: artDirection.id,
+      sectionTypes: fullCatalog,
+    }).map((step) => step.type).join('|'));
+
+    assert.equal(new Set(silhouettes).size, ART_DIRECTIONS.length);
+    assert.equal(inferArtDirection('local'), 'studio');
+    assert.equal(inferArtDirection('hospitality'), 'organic');
   });
 
   it('makes every displayed alternative deterministically selectable', () => {

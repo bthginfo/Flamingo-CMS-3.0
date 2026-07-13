@@ -1,6 +1,7 @@
 'use client';
 
-import { MonitorPlay, Rocket, Save } from 'lucide-react';
+import { Activity, MonitorPlay, Rocket, Save } from 'lucide-react';
+import Link from 'next/link';
 import { PreviewNudge } from '@/components/admin/preview-nudge';
 import { useSuppressGlobalActions } from '@/components/save-context';
 
@@ -41,36 +42,40 @@ export function EditorActionBar({
   const showPublish = publishable && saved && onPublish;
 
   return (
-    <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-      <div className="relative">
-        <button
-          type="button"
-          onClick={onTogglePreview}
-          className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${previewOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
-        >
-          <MonitorPlay size={16} /> Vorschau
-        </button>
-        <PreviewNudge variant="top-right" priority={3} />
+    <div className="fixed inset-x-0 bottom-0 z-50 flex min-h-[var(--editor-action-bar-height,5rem)] items-center border-t border-zinc-200 bg-white/95 px-3 py-3 shadow-[0_-8px_28px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:px-6" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+      <div className="mx-auto flex max-w-[1600px] items-center justify-end gap-2 sm:gap-3">
+        <span className="mr-auto hidden text-xs text-zinc-500 sm:inline" aria-live="polite">{saving ? savingLabel : publishing ? publishingLabel : saved ? 'Alle Änderungen gespeichert' : 'Ungespeicherte Änderungen'}</span>
+        <Link href="/admin/content-health" className="hidden min-h-10 items-center gap-2 rounded-lg px-2 text-xs font-semibold text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 md:flex" title="Publish-Bereitschaft prüfen"><Activity size={15} /> Content Health</Link>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={onTogglePreview}
+            className={`flex min-h-10 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:px-4 ${previewOpen ? 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700' : 'border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50'}`}
+          >
+            <MonitorPlay size={16} /> Vorschau
+          </button>
+          <PreviewNudge variant="top-right" priority={3} />
+        </div>
+        {!showPublish ? (
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saving || saveDisabled}
+            className="flex min-h-10 items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:px-5"
+          >
+            <Save size={16} /> {saving ? savingLabel : saveLabel}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onPublish}
+            disabled={publishing || saving || publishDisabled}
+            className="flex min-h-10 items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:px-5"
+          >
+            <Rocket size={16} /> {publishing ? publishingLabel : publishLabel}
+          </button>
+        )}
       </div>
-      {!showPublish ? (
-        <button
-          type="button"
-          onClick={onSave}
-          disabled={saving || saveDisabled}
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <Save size={16} /> {saving ? savingLabel : saveLabel}
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={onPublish}
-          disabled={publishing || saving || publishDisabled}
-          className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <Rocket size={16} /> {publishing ? publishingLabel : publishLabel}
-        </button>
-      )}
     </div>
   );
 }

@@ -115,6 +115,7 @@ const SKIP_REVEAL_SECTION_TYPES = new Set([
   'fitnessHero',
   'locationHero',
   'popup',
+  'mobileActionDock',
 ]);
 
 function getSectionFamily(type: string): 'hero' | 'form' | 'data' | 'cta' | 'proof' | 'grid' | 'content' {
@@ -487,7 +488,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     // Premium shared
     'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero', 'editorialHero',
     'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
-    'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup',
+    'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup', 'mobileActionDock',
   ]);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);

@@ -19,6 +19,9 @@ playwright-report/
 test-results/
 .lighthouseci/
 /tmp/
+dogfood-output/
+docs/audit/evidence/
+docs/audit/runtime-qa/
 
 # recolor dry-run intermediates (regenerable)
 scripts/demo-tenants/_snapshots/_recolored/

@@ -8,13 +8,20 @@ export function ShopPaywall() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    await requestShopAddon(message);
-    setSent(true);
-    setLoading(false);
+    setError('');
+    try {
+      await requestShopAddon(message);
+      setSent(true);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Die Anfrage konnte nicht gesendet werden.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   const features = [
@@ -75,11 +82,18 @@ export function ShopPaywall() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-left text-sm text-red-700">
+              {error}
+            </div>
+          )}
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Optionale Nachricht (z.B. gewünschter Umfang, Fragen, Zeitrahmen…)"
             className="w-full border border-zinc-200 rounded-xl p-4 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-pink-300"
+            maxLength={2000}
+            aria-label="Optionale Nachricht zur Shop-Anfrage"
           />
           <button
             type="submit"

@@ -2,8 +2,6 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import LinkExt from '@tiptap/extension-link';
-import Underline from '@tiptap/extension-underline';
 import { Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -21,13 +19,13 @@ function MiniBar({ editor }: { editor: ReturnType<typeof useEditor> }) {
     `p-1 rounded transition-colors ${active ? 'bg-blue-100 text-blue-700' : 'text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700'}`;
 
   return (
-    <div className="flex items-center gap-0.5 border-b border-zinc-200 px-2 py-1 bg-zinc-50 rounded-t-lg">
-      <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))} title="Fett"><Bold size={14} /></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))} title="Kursiv"><Italic size={14} /></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btn(editor.isActive('underline'))} title="Unterstrichen"><UnderlineIcon size={14} /></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))} title="Aufzählungsliste"><List size={14} /></button>
+    <div role="toolbar" aria-label="Text formatieren" className="flex items-center gap-0.5 border-b border-zinc-200 px-2 py-1 bg-zinc-50 rounded-t-lg">
+      <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))} title="Fett" aria-label="Fett" aria-pressed={editor.isActive('bold')}><Bold size={14} aria-hidden="true" /></button>
+      <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))} title="Kursiv" aria-label="Kursiv" aria-pressed={editor.isActive('italic')}><Italic size={14} aria-hidden="true" /></button>
+      <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btn(editor.isActive('underline'))} title="Unterstrichen" aria-label="Unterstrichen" aria-pressed={editor.isActive('underline')}><UnderlineIcon size={14} aria-hidden="true" /></button>
+      <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))} title="Aufzählungsliste" aria-label="Aufzählungsliste" aria-pressed={editor.isActive('bulletList')}><List size={14} aria-hidden="true" /></button>
       <div className="w-px h-4 bg-zinc-200 mx-1" />
-      <button type="button" onClick={setLink} className={btn(editor.isActive('link'))} title="Link"><LinkIcon size={14} /></button>
+      <button type="button" onClick={setLink} className={btn(editor.isActive('link'))} title="Link bearbeiten" aria-label="Link bearbeiten" aria-pressed={editor.isActive('link')}><LinkIcon size={14} aria-hidden="true" /></button>
     </div>
   );
 }
@@ -38,9 +36,14 @@ export function MiniRichTextField({ label, value, onChange }: { label: string; v
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ heading: false, orderedList: false, codeBlock: false, blockquote: false }),
-      Underline,
-      LinkExt.configure({ openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } }),
+      StarterKit.configure({
+        heading: false,
+        orderedList: false,
+        codeBlock: false,
+        blockquote: false,
+        link: { openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } },
+        underline: {},
+      }),
     ],
     content: value || '',
     onUpdate: ({ editor: e }) => {

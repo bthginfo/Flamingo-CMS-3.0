@@ -1,4 +1,5 @@
-import { CONTENT_FIELD_BUDGETS, CONTENT_GOOD_BAD_EXAMPLES } from './content-quality';
+import { CONTENT_FIELD_BUDGETS, CONTENT_GOOD_BAD_EXAMPLES, type SiteProfile } from './content-quality';
+import { profilePassesExistingValidation } from './business-profile';
 import { getSitePagePolicy } from './site-page-policy';
 
 type SectionCatalogEntry = { type?: string; id?: string; label?: string };
@@ -78,6 +79,7 @@ export function buildAiAgentContract(input: {
   hasShop: boolean;
   hasBooking: boolean;
   siteProfileSeed?: SiteProfileSeed;
+  approvedSiteProfile?: SiteProfile | null;
 }) {
   const allowed = new Set(input.allowedSections.map(sectionType).filter((type): type is string => Boolean(type)));
   const page = (slug: string, title: string, candidates: string[]) => ({
@@ -127,6 +129,10 @@ export function buildAiAgentContract(input: {
   const recommendedPages = [...sitemapPolicy.required, ...sitemapPolicy.recommended]
     .map(entry => page(entry.slug, entry.label, pageBlueprints[entry.slug] || ['collectionHero', 'richText', 'ctaBand']))
     .filter(candidate => candidate.sections.length > 0);
+  const approvedSiteProfile = input.approvedSiteProfile
+    && profilePassesExistingValidation(input.approvedSiteProfile)
+    ? input.approvedSiteProfile
+    : null;
 
   return {
     protocolVersion: '1.1',
@@ -166,13 +172,22 @@ export function buildAiAgentContract(input: {
     sitemapPolicy,
     weakModelWorkflow: {
       version: '1.0',
-      rule: 'Do not write tenant content until PROFILE and PLAN pass POST /api/v1/content/validate. Work one page at a time; repair only named issue locations.',
+      rule: approvedSiteProfile
+        ? 'Use approvedSiteProfile verbatim as siteProfile. Do not repeat intake or add facts. Then validate the PLAN before writing one page at a time.'
+        : 'Do not write tenant content until PROFILE and PLAN pass POST /api/v1/content/validate. Work one page at a time; repair only named issue locations.',
+      approvedSiteProfile,
+      profileSource: approvedSiteProfile ? 'persisted-approved' : 'intake-required',
       steps: [
         {
           state: 'PROFILE',
           output: 'siteProfile',
-          action: 'Copy verified facts into the exact siteProfile schema. Never turn an unknown into a claim; list it in facts.unknowns.',
-          gate: 'POST /api/v1/content/validate with { mode: "profile", siteProfile, brand, contact, seoGlobal }. Continue only when valid=true.',
+          skipIntake: Boolean(approvedSiteProfile),
+          action: approvedSiteProfile
+            ? 'Copy approvedSiteProfile exactly into siteProfile. Preserve facts.unknowns and prohibitedClaims; never infer or enrich missing values.'
+            : 'Copy verified facts into the exact siteProfile schema. Never turn an unknown into a claim; list it in facts.unknowns.',
+          gate: approvedSiteProfile
+            ? 'The persisted profile already passed the existing profile validator. Continue with PLAN without asking the same intake questions again.'
+            : 'POST /api/v1/content/validate with { mode: "profile", siteProfile, brand, contact, seoGlobal }. Continue only when valid=true.',
         },
         {
           state: 'PLAN',

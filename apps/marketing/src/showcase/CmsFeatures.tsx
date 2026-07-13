@@ -297,7 +297,7 @@ export function CmsFeaturesTeaserSection() {
 
         <div className="grid sm:grid-cols-3 gap-6 mt-14 text-left max-w-4xl mx-auto">
           {[
-            { icon: '🧩', title: '35+ Sektionstypen', desc: 'Hero, Services, Galerie, Testimonials und mehr — per Drag & Drop.' },
+            { icon: '🧩', title: '80+ Sektionstypen', desc: 'Hero, Services, Galerie, Testimonials und mehr — per Drag & Drop.' },
             { icon: '🎨', title: 'Design-Farben', desc: 'Globale Markenfarben und gezielte Section-Overrides direkt im CMS.' },
             { icon: '🚀', title: 'Ein-Klick-Publishing', desc: 'Draft-Modus, Vorschau und atomares Veröffentlichen.' },
           ].map(item => (

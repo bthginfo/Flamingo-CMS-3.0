@@ -134,6 +134,13 @@
       "when": 1783900800000,
       "tag": "0018_public_flow_security",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1783987200000,
+      "tag": "0019_business_profile",
+      "breakpoints": true
     }
   ]
 }

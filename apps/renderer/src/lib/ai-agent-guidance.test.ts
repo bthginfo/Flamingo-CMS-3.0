@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildAiAgentContract, buildAiAgentPrompt } from './ai-agent-guidance';
+import type { SiteProfile } from './content-quality';
 
 describe('AI agent guidance', () => {
   const contract = buildAiAgentContract({
@@ -75,5 +76,44 @@ describe('AI agent guidance', () => {
     assert.ok(slugs.includes('impressum'));
     assert.ok(!slugs.includes('leistungen'));
     assert.ok(!slugs.includes('ueber-uns'));
+  });
+
+  it('passes a validated persisted profile through verbatim and skips redundant intake', () => {
+    const approved: SiteProfile = {
+      schemaVersion: '1.0',
+      identity: { businessName: 'Werkstatt Nord', locations: [{ city: 'Hamburg' }] },
+      audience: { primary: 'Altbau-Eigentümer in Hamburg', needs: ['Klare Kosten', 'Feste Abläufe'], objections: ['Unklare Bauzeit'] },
+      goals: { primary: 'Projektanfragen', conversions: ['Kontaktanfrage'] },
+      offers: [{ name: 'Badmodernisierung', outcome: 'Bezugsfertiges Bad', ctaLabel: 'Projekt besprechen', ctaHref: '/kontakt' }],
+      voice: { attributes: ['ruhig', 'präzise'], avoid: ['Superlative'] },
+      facts: { approvedClaims: ['Ein fester Projektleiter'], prohibitedClaims: ['Günstigster Anbieter'], unknowns: ['Gründungsjahr'] },
+    };
+    const withProfile = buildAiAgentContract({
+      tenantName: 'Werkstatt Nord', industry: 'tradesman', allowedSections: [{ type: 'hero' }],
+      existingPages: [], sectionSchemas: { hero: {} }, hasShop: false, hasBooking: false,
+      approvedSiteProfile: approved,
+    });
+    assert.deepEqual(withProfile.weakModelWorkflow.approvedSiteProfile, approved);
+    assert.equal(withProfile.weakModelWorkflow.profileSource, 'persisted-approved');
+    assert.equal(withProfile.weakModelWorkflow.steps[0].skipIntake, true);
+    assert.deepEqual(withProfile.weakModelWorkflow.approvedSiteProfile?.facts.unknowns, ['Gründungsjahr']);
+    assert.equal(withProfile.weakModelWorkflow.approvedSiteProfile?.identity.legalName, undefined);
+  });
+
+  it('does not approve incomplete persisted profiles or fabricate missing facts', () => {
+    const incomplete: SiteProfile = {
+      schemaVersion: '1.0',
+      identity: { businessName: 'Werkstatt Nord', locations: [] },
+      audience: { primary: '', needs: [], objections: [] }, goals: { primary: '', conversions: [] }, offers: [],
+      voice: { attributes: [], avoid: [] }, facts: { approvedClaims: [], prohibitedClaims: [], unknowns: ['Zielgruppe'] },
+    };
+    const result = buildAiAgentContract({
+      tenantName: 'Werkstatt Nord', industry: 'tradesman', allowedSections: [{ type: 'hero' }],
+      existingPages: [], sectionSchemas: {}, hasShop: false, hasBooking: false,
+      approvedSiteProfile: incomplete,
+    });
+    assert.equal(result.weakModelWorkflow.approvedSiteProfile, null);
+    assert.equal(result.weakModelWorkflow.profileSource, 'intake-required');
+    assert.equal(result.weakModelWorkflow.steps[0].skipIntake, false);
   });
 });

@@ -16,6 +16,7 @@ import {
   Mail,
   Megaphone,
   MoreHorizontal,
+  Palette,
   Search,
   Star,
   Users,
@@ -25,16 +26,22 @@ import {
 import type { SectionTypeDefinition } from '../pages/[id]/section-types';
 import { SectionPreviewButton } from './section-preview-button';
 import {
+  ART_DIRECTIONS,
   buildComposerPlan,
   canOverrideComposerStepCandidate,
+  COMPOSER_STAGES,
   COMPOSER_GOALS,
   EXPERIENCE_FAMILIES,
+  getArtDirection,
   getExperienceFamily,
+  inferArtDirection,
   inferExperienceFamily,
+  type ArtDirectionId,
   type ComposerGoalId,
   type ComposerStageId,
   type ExperienceFamilyId,
 } from './page-composer-recipes';
+import { evaluatePageRhythm } from './page-composer-rhythm';
 import { didSectionPickerActionSucceed } from './section-picker-actions';
 
 const CATEGORY_META: Record<string, { icon: typeof FileText; color: string; description: string }> = {
@@ -95,6 +102,7 @@ type Props = {
   initialMode?: PickerMode;
   initialGoal?: ComposerGoalId;
   initialFamily?: ExperienceFamilyId;
+  initialArtDirection?: ArtDirectionId;
 };
 
 const MODE_META: Record<PickerMode, { label: string; icon: typeof Compass }> = {
@@ -116,14 +124,17 @@ export function SectionPickerModal({
   initialMode,
   initialGoal = 'enquiries',
   initialFamily,
+  initialArtDirection,
 }: Props) {
   const copyAvailable = Boolean(onCopySection);
   const inferredInitialMode = initialMode || (existingSectionTypes.length === 0 ? 'guided' : 'catalog');
   const [mode, setMode] = useState<PickerMode>(inferredInitialMode === 'copy' && !copyAvailable ? 'catalog' : inferredInitialMode);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const resolvedInitialFamily = initialFamily || inferExperienceFamily(industry);
   const [goal, setGoal] = useState<ComposerGoalId>(initialGoal);
-  const [family, setFamily] = useState<ExperienceFamilyId>(initialFamily || inferExperienceFamily(industry));
+  const [family, setFamily] = useState<ExperienceFamilyId>(resolvedInitialFamily);
+  const [artDirection, setArtDirection] = useState<ArtDirectionId>(initialArtDirection || inferArtDirection(resolvedInitialFamily));
   const [candidateOverrides, setCandidateOverrides] = useState<Partial<Record<ComposerStageId, string>>>({});
   const [addingType, setAddingType] = useState<string | null>(null);
   const [catalogPendingType, setCatalogPendingType] = useState<string | null>(null);
@@ -215,13 +226,17 @@ export function SectionPickerModal({
   const plan = useMemo(() => buildComposerPlan({
     goal,
     family,
+    artDirection,
     sectionTypes,
     existingSectionTypes,
     candidateOverrides,
-  }), [candidateOverrides, existingSectionTypes, family, goal, sectionTypes]);
+  }), [artDirection, candidateOverrides, existingSectionTypes, family, goal, sectionTypes]);
 
   const completedSteps = plan.filter((step) => step.status === 'existing').length;
   const familyMeta = getExperienceFamily(family);
+  const artDirectionMeta = getArtDirection(artDirection);
+  const rhythm = useMemo(() => evaluatePageRhythm(plan), [plan]);
+  const planByStage = useMemo(() => new Map(plan.map((step) => [step.stage, step])), [plan]);
   const categories = grouped.map(([category]) => category);
 
   function changeMode(nextMode: PickerMode, focusPanel = true) {
@@ -343,7 +358,7 @@ export function SectionPickerModal({
 
         {mode === 'guided' && (
           <div id="section-picker-panel-guided" role="tabpanel" aria-labelledby="section-picker-tab-guided" className="min-h-0 flex-1 overflow-y-auto">
-            <div className="grid min-h-full lg:grid-cols-[18rem_minmax(0,1fr)]">
+            <div className="grid min-h-full lg:grid-cols-[20rem_minmax(0,1fr)]">
               <aside className="border-b border-zinc-200 bg-[#fbfaf7] p-5 lg:border-b-0 lg:border-r lg:p-6">
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-800">01 · Ziel</p>
@@ -376,7 +391,12 @@ export function SectionPickerModal({
                   <select
                     id="experience-family"
                     value={family}
-                    onChange={(event) => { setFamily(event.target.value as ExperienceFamilyId); setCandidateOverrides({}); }}
+                    onChange={(event) => {
+                      const nextFamily = event.target.value as ExperienceFamilyId;
+                      setFamily(nextFamily);
+                      setArtDirection(inferArtDirection(nextFamily));
+                      setCandidateOverrides({});
+                    }}
                     className="mt-3 min-h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm font-semibold text-zinc-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   >
                     {EXPERIENCE_FAMILIES.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
@@ -384,16 +404,77 @@ export function SectionPickerModal({
                   <p className="mt-2 text-xs leading-5 text-zinc-600">{familyMeta.description}</p>
                   <p className="mt-3 border-l-2 border-zinc-300 pl-3 text-[11px] leading-4 text-zinc-500">Die Auswahl kuratiert nur den Aufbau. Branche und Tenant-Daten bleiben unverändert.</p>
                 </div>
+
+                <div className="mt-7 border-t border-zinc-200 pt-6">
+                  <p id="art-direction-label" className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-800">
+                    <Palette aria-hidden="true" size={14} /> 03 · Art Direction
+                  </p>
+                  <div className="mt-3 grid grid-cols-2 gap-1.5" role="radiogroup" aria-labelledby="art-direction-label">
+                    {ART_DIRECTIONS.map((direction, index) => {
+                      const selected = artDirection === direction.id;
+                      return (
+                        <label key={direction.id} className={`cursor-pointer ${index === ART_DIRECTIONS.length - 1 ? 'col-span-2' : ''}`}>
+                          <input
+                            type="radio"
+                            name="page-composer-art-direction"
+                            value={direction.id}
+                            checked={selected}
+                            onChange={() => { setArtDirection(direction.id); setCandidateOverrides({}); }}
+                            className="peer sr-only"
+                          />
+                          <span className={`flex min-h-11 items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-xs font-semibold transition peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-blue-600 ${selected ? 'border-zinc-900 bg-zinc-900 text-white shadow-sm' : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400'}`}>
+                            {direction.label}
+                            <span className="flex overflow-hidden rounded-full border border-white/30" aria-hidden="true">
+                              {direction.swatches.map((swatch) => <span key={swatch} className="h-3 w-3" style={{ backgroundColor: swatch }} />)}
+                            </span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-zinc-600">{artDirectionMeta.description}</p>
+                </div>
               </aside>
 
               <section className="p-5 sm:p-7 lg:p-8" aria-labelledby="composer-plan-title">
                 <div className="flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-5">
                   <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-700">03 · Seitendramaturgie</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-700">04 · Seitendramaturgie</p>
                     <h3 id="composer-plan-title" className="mt-2 text-xl font-semibold tracking-tight text-zinc-950 sm:text-2xl">Vom Einstieg zur Entscheidung</h3>
                     <p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-600">Jede Station hat eine Aufgabe. Ergänzen Sie die Seite Schritt für Schritt oder tauschen Sie einen Vorschlag aus.</p>
                   </div>
                   {plan.length > 0 && <div className="text-right"><span className="block text-xl font-semibold tabular-nums text-zinc-950">{completedSteps}/{plan.length}</span><span className="text-[11px] text-zinc-500">Stationen vorhanden</span></div>}
+                </div>
+
+                <div className="mt-5 rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2" aria-live="polite">
+                    <span className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-semibold ${rhythm.status === 'balanced' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${rhythm.status === 'balanced' ? 'bg-emerald-600' : 'bg-amber-600'}`} aria-hidden="true" />
+                      {rhythm.label} · {rhythm.score}/100
+                    </span>
+                    <p className="max-w-2xl text-[11px] leading-4 text-zinc-600">{rhythm.summary}</p>
+                  </div>
+
+                  <div className="mt-3 overflow-x-auto pb-1">
+                    <ol className="grid min-w-[36rem] grid-cols-5 gap-1.5" aria-label="Fünfstufige Seiten-Silhouette">
+                      {COMPOSER_STAGES.map((stage, index) => {
+                        const step = planByStage.get(stage.id);
+                        const isExisting = step?.status === 'existing';
+                        const isBlocked = step?.status === 'blocked' || step?.status === 'blockedExisting';
+                        return (
+                          <li key={stage.id} className={`relative min-w-0 rounded-lg border px-2.5 py-2.5 ${isExisting ? 'border-emerald-200 bg-emerald-50' : isBlocked ? 'border-amber-200 bg-amber-50' : step ? 'border-blue-200 bg-white' : 'border-dashed border-zinc-300 bg-white'}`}>
+                            {index < COMPOSER_STAGES.length - 1 && <span className="absolute -right-2 top-5 z-10 h-px w-2 bg-zinc-300" aria-hidden="true" />}
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-zinc-500">{String(index + 1).padStart(2, '0')} · {stage.label}</span>
+                              {isExisting && <Check aria-label="Vorhanden" className="text-emerald-700" size={12} />}
+                              {isBlocked && <Lock aria-label="Gesperrt" className="text-amber-700" size={11} />}
+                            </div>
+                            <p className="mt-1 truncate text-xs font-semibold text-zinc-900" title={step?.label}>{step?.label || 'Noch offen'}</p>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </div>
                 </div>
 
                 {plan.length === 0 ? (

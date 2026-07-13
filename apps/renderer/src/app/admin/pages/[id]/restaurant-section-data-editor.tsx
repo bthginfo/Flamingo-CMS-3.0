@@ -56,7 +56,7 @@ function MenuEditor({ data, onChange }: EditorProps) {
         <div key={categoryIndex} className="border rounded p-3 space-y-3">
           <div className="flex justify-between gap-3">
             <Field label="Kategorie" value={category.title} onChange={(v) => setD({ ...d, categories: updateAt(d.categories, categoryIndex, { ...category, title: v }) })} />
-            <button className="text-xs text-red-500" onClick={() => setD({ ...d, categories: d.categories.filter((_, i) => i !== categoryIndex) })}>Entfernen</button>
+            <button type="button" className="text-xs text-red-500" onClick={() => setD({ ...d, categories: d.categories.filter((_, i) => i !== categoryIndex) })}>Entfernen</button>
           </div>
           <Field label="Beschreibung" value={category.description} onChange={(v) => setD({ ...d, categories: updateAt(d.categories, categoryIndex, { ...category, description: v }) })} multiline />
           {category.items.map((item, itemIndex) => (
@@ -77,19 +77,19 @@ function MenuEditor({ data, onChange }: EditorProps) {
                 <Checkbox label="Vegan" checked={item.vegan} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, vegan: v })} />
                 <Checkbox label="Scharf" checked={item.spicy} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, spicy: v })} />
               </div>
-              <button className="text-xs text-red-500" onClick={() => {
+              <button type="button" className="text-xs text-red-500" onClick={() => {
                 const nextCategory = { ...category, items: category.items.filter((_, i) => i !== itemIndex) };
                 setD({ ...d, categories: updateAt(d.categories, categoryIndex, nextCategory) });
               }}>Gericht entfernen</button>
             </div>
           ))}
-          <button className="text-xs text-blue-600" onClick={() => {
+          <button type="button" className="text-xs text-blue-600" onClick={() => {
             const nextCategory = { ...category, items: [...category.items, emptyMenuItem()] };
             setD({ ...d, categories: updateAt(d.categories, categoryIndex, nextCategory) });
           }}>+ Gericht</button>
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, categories: [...d.categories, { title: '', description: '', items: [] }] })}>+ Kategorie</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, categories: [...d.categories, { title: '', description: '', items: [] }] })}>+ Kategorie</button>
       <Field label="Fussnote" value={d.footnote} onChange={(v) => setD({ ...d, footnote: v })} multiline />
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
@@ -157,7 +157,7 @@ function OpeningHoursEditor({ data, onChange }: EditorProps) {
           <Checkbox label="Geschlossen" checked={day.closed} onChange={(v) => setD({ ...d, days: updateAt(d.days, index, { ...day, closed: v }) })} />
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, days: [...d.days, { label: '', hours: '', note: '', closed: false }] })}>+ Tag</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, days: [...d.days, { label: '', hours: '', note: '', closed: false }] })}>+ Tag</button>
       <Field label="Kuechenzeiten Headline" value={d.kitchenHoursHeadline} onChange={(v) => setD({ ...d, kitchenHoursHeadline: v })} />
       <Field label="Kuechenzeiten Text" value={d.kitchenHoursText} onChange={(v) => setD({ ...d, kitchenHoursText: v })} multiline />
       <Field label="Feiertags-Hinweis" value={d.holidayNote} onChange={(v) => setD({ ...d, holidayNote: v })} multiline />
@@ -196,7 +196,7 @@ function SignatureDishesEditor({ data, onChange }: EditorProps) {
           <ButtonField label="CTA" value={dish.cta} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, cta: v }) })} />
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, dishes: [...d.dishes, emptyDish()] })}>+ Gericht</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, dishes: [...d.dishes, emptyDish()] })}>+ Gericht</button>
     </div>
   );
 }
@@ -231,7 +231,7 @@ function EventsEditor({ data, onChange }: EditorProps) {
           <DetailLinkField label="Detail-Link" value={event.detailHref} onChange={(v) => setD({ ...d, events: updateAt(d.events, index, { ...event, detailHref: v }) })} />
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, events: [...d.events, emptyEvent()] })}>+ Event</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, events: [...d.events, emptyEvent()] })}>+ Event</button>
       <Field label="Fallback-Text" value={d.fallbackText} onChange={(v) => setD({ ...d, fallbackText: v })} multiline />
     </div>
   );
@@ -267,7 +267,7 @@ function AmbienceEditor({ data, onChange }: EditorProps) {
           <Field label="Text" value={highlight.text} onChange={(v) => setD({ ...d, highlights: updateAt(d.highlights, index, { ...highlight, text: v }) })} multiline />
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, highlights: [...d.highlights, { title: '', text: '', icon: '' }] })}>+ Highlight</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, highlights: [...d.highlights, { title: '', text: '', icon: '' }] })}>+ Highlight</button>
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );
@@ -355,10 +355,10 @@ function RestaurantContactEditor({ data, onChange }: EditorProps) {
           <IconPickerField label="Icon" value={card.icon} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, i, { ...card, icon: v }) })} />
           <Field label="Label" value={card.label} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, i, { ...card, label: v }) })} />
           <Field label="Wert" value={card.value} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, i, { ...card, value: v }) })} />
-          <button className="text-xs text-red-500" onClick={() => setD({ ...d, infoCards: d.infoCards.filter((_, j) => j !== i) })}>Entfernen</button>
+          <button type="button" className="text-xs text-red-500" onClick={() => setD({ ...d, infoCards: d.infoCards.filter((_, j) => j !== i) })}>Entfernen</button>
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, infoCards: [...d.infoCards, { icon: '', label: '', value: '' }] })}>+ Info-Karte</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, infoCards: [...d.infoCards, { icon: '', label: '', value: '' }] })}>+ Info-Karte</button>
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
     </div>
@@ -396,17 +396,17 @@ function RestaurantGalleryEditor({ data, onChange }: EditorProps) {
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Kategorien</p>
-        <div className="flex items-center gap-2 mb-2"><input className="admin-input flex-1" placeholder="Neue Kategorie…" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())} /><button onClick={addCategory} className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap">+ Hinzufügen</button></div>
+        <div className="flex items-center gap-2 mb-2"><input className="admin-input flex-1" placeholder="Neue Kategorie…" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())} /><button type="button" onClick={addCategory} className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap">+ Hinzufügen</button></div>
       </div>
       {categories.map(cat => { const catImgs = images.filter(img => img.category === cat); const isOpen = openCats[cat]; return (
         <div key={cat} className="border border-zinc-200 rounded-lg overflow-hidden">
-          <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 cursor-pointer" onClick={() => setOpenCats({ ...openCats, [cat]: !isOpen })}><span className="text-sm font-medium text-zinc-700">{cat} <span className="text-zinc-400 font-normal">({catImgs.length})</span></span><div className="flex items-center gap-2"><button onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button><span className="text-zinc-400 text-xs">{isOpen ? '▲' : '▼'}</span></div></div>
-          {isOpen && (<div className="p-3 space-y-2">{catImgs.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /></div></div>); })}<div className="flex items-center gap-3 pt-1"><button onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button><button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button><input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
+          <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 cursor-pointer" onClick={() => setOpenCats({ ...openCats, [cat]: !isOpen })}><span className="text-sm font-medium text-zinc-700">{cat} <span className="text-zinc-400 font-normal">({catImgs.length})</span></span><div className="flex items-center gap-2"><button type="button" onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button><span className="text-zinc-400 text-xs">{isOpen ? '▲' : '▼'}</span></div></div>
+          {isOpen && (<div className="p-3 space-y-2">{catImgs.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3"><button type="button" onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /></div></div>); })}<div className="flex items-center gap-3 pt-1"><button type="button" onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button><button type="button" onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button><input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
                   <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} />
                   <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} /></div></div>)}
         </div>
       ); })}
-      {uncategorized.length > 0 && (<div className="border border-amber-200 rounded-lg p-3"><p className="text-xs font-medium text-amber-700 mb-2">Ohne Kategorie ({uncategorized.length})</p>{uncategorized.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3 mb-2"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /><label className="block"><span className="text-gray-600 text-xs">Kategorie</span><select className="admin-input mt-1 w-full" value={img.category} onChange={(e) => setImages(images.map((im, idx) => idx === i ? { ...im, category: e.target.value } : im))}><option value="">—</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></label></div></div>); })}</div>)}
+      {uncategorized.length > 0 && (<div className="border border-amber-200 rounded-lg p-3"><p className="text-xs font-medium text-amber-700 mb-2">Ohne Kategorie ({uncategorized.length})</p>{uncategorized.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3 mb-2"><button type="button" onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /><label className="block"><span className="text-gray-600 text-xs">Kategorie</span><select className="admin-input mt-1 w-full" value={img.category} onChange={(e) => setImages(images.map((im, idx) => idx === i ? { ...im, category: e.target.value } : im))}><option value="">—</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></label></div></div>); })}</div>)}
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );
@@ -430,10 +430,10 @@ function RestaurantFaqEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-3">
           <Field label="Frage" value={item.question} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, question: v }) })} />
           <Field label="Antwort" value={item.answer} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, answer: v }) })} multiline />
-          <button className="text-xs text-red-500" onClick={() => setD({ ...d, items: d.items.filter((_, j) => j !== i) })}>Entfernen</button>
+          <button type="button" className="text-xs text-red-500" onClick={() => setD({ ...d, items: d.items.filter((_, j) => j !== i) })}>Entfernen</button>
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, items: [...d.items, { question: '', answer: '' }] })}>+ Frage</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, items: [...d.items, { question: '', answer: '' }] })}>+ Frage</button>
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );
@@ -472,20 +472,20 @@ function RestaurantStoryEditor({ data, onChange }: EditorProps) {
           <IconPickerField label="Icon" value={v.icon} onChange={(val) => setD({ ...d, values: updateAt(d.values, i, { ...v, icon: val }) })} />
           <Field label="Titel" value={v.title} onChange={(val) => setD({ ...d, values: updateAt(d.values, i, { ...v, title: val }) })} />
           <Field label="Text" value={v.text} onChange={(val) => setD({ ...d, values: updateAt(d.values, i, { ...v, text: val }) })} multiline />
-          <button className="text-xs text-red-500" onClick={() => setD({ ...d, values: d.values.filter((_, j) => j !== i) })}>Entfernen</button>
+          <button type="button" className="text-xs text-red-500" onClick={() => setD({ ...d, values: d.values.filter((_, j) => j !== i) })}>Entfernen</button>
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, values: [...d.values, { icon: '', title: '', text: '' }] })}>+ Wert</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, values: [...d.values, { icon: '', title: '', text: '' }] })}>+ Wert</button>
       <p className="text-xs font-semibold text-gray-500 pt-2">Meilensteine</p>
       {d.milestones.map((m, i) => (
         <div key={i} className="border rounded p-3 space-y-3">
           <Field label="Jahr" value={m.year} onChange={(val) => setD({ ...d, milestones: updateAt(d.milestones, i, { ...m, year: val }) })} />
           <Field label="Titel" value={m.title} onChange={(val) => setD({ ...d, milestones: updateAt(d.milestones, i, { ...m, title: val }) })} />
           <Field label="Text" value={m.text} onChange={(val) => setD({ ...d, milestones: updateAt(d.milestones, i, { ...m, text: val }) })} multiline />
-          <button className="text-xs text-red-500" onClick={() => setD({ ...d, milestones: d.milestones.filter((_, j) => j !== i) })}>Entfernen</button>
+          <button type="button" className="text-xs text-red-500" onClick={() => setD({ ...d, milestones: d.milestones.filter((_, j) => j !== i) })}>Entfernen</button>
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, milestones: [...d.milestones, { year: '', title: '', text: '' }] })}>+ Meilenstein</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, milestones: [...d.milestones, { year: '', title: '', text: '' }] })}>+ Meilenstein</button>
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );
@@ -515,10 +515,10 @@ function RestaurantTestimonialsEditor({ data, onChange }: EditorProps) {
           <Field label="Zitat" value={item.quote} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, quote: v }) })} multiline />
           <Field label="Kontext" value={item.context} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, context: v }) })} />
           <Field label="Quelle" value={item.sourceLabel} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, sourceLabel: v }) })} />
-          <button className="text-xs text-red-500" onClick={() => setD({ ...d, items: d.items.filter((_, j) => j !== i) })}>Entfernen</button>
+          <button type="button" className="text-xs text-red-500" onClick={() => setD({ ...d, items: d.items.filter((_, j) => j !== i) })}>Entfernen</button>
         </div>
       ))}
-      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, items: [...d.items, { name: '', quote: '', context: '', sourceLabel: '', rating: 5 }] })}>+ Bewertung</button>
+      <button type="button" className="text-sm text-blue-600" onClick={() => setD({ ...d, items: [...d.items, { name: '', quote: '', context: '', sourceLabel: '', rating: 5 }] })}>+ Bewertung</button>
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );

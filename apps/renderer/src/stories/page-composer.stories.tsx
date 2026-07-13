@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { SectionPickerModal } from '@/app/admin/components/section-picker-modal';
-import type { ComposerGoalId, ExperienceFamilyId } from '@/app/admin/components/page-composer-recipes';
+import type { ArtDirectionId, ComposerGoalId, ExperienceFamilyId } from '@/app/admin/components/page-composer-recipes';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
 
 type ComposerPreviewProps = {
@@ -13,6 +13,7 @@ type ComposerPreviewProps = {
   hasShop: boolean;
   initialGoal: ComposerGoalId;
   initialFamily?: ExperienceFamilyId;
+  initialArtDirection?: ArtDirectionId;
 };
 
 function ComposerPreview({
@@ -22,6 +23,7 @@ function ComposerPreview({
   hasShop,
   initialGoal,
   initialFamily,
+  initialArtDirection,
 }: ComposerPreviewProps) {
   const [currentTypes, setCurrentTypes] = useState(existingSectionTypes);
   const sectionTypes = useMemo(
@@ -47,6 +49,7 @@ function ComposerPreview({
         initialMode="guided"
         initialGoal={initialGoal}
         initialFamily={initialFamily}
+        initialArtDirection={initialArtDirection}
       />
     </div>
   );
@@ -75,6 +78,10 @@ const meta = {
       control: 'select',
       options: ['expertise', 'local', 'transformation', 'hospitality', 'planning', 'products'],
     },
+    initialArtDirection: {
+      control: 'select',
+      options: ['editorial', 'cinematic', 'studio', 'precision', 'organic'],
+    },
   },
 } satisfies Meta<typeof ComposerPreview>;
 
@@ -87,6 +94,7 @@ export const EmptyPage: Story = {
     existingSectionTypes: [],
     initialGoal: 'enquiries',
     initialFamily: 'local',
+    initialArtDirection: 'studio',
   },
 };
 
@@ -96,6 +104,7 @@ export const PartiallyComplete: Story = {
     existingSectionTypes: ['hero', 'serviceTabs', 'proofWall'],
     initialGoal: 'trust',
     initialFamily: 'expertise',
+    initialArtDirection: 'precision',
   },
 };
 
@@ -106,5 +115,6 @@ export const LockedCapability: Story = {
     hasBooking: false,
     initialGoal: 'bookings',
     initialFamily: 'planning',
+    initialArtDirection: 'cinematic',
   },
 };

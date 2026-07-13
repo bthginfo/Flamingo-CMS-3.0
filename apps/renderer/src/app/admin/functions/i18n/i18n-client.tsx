@@ -49,13 +49,21 @@ export function I18nClient({
 
   function handleSave() {
     startTransition(async () => {
-      await updateI18nSettings({
-        locales: activeLocales,
-        defaultLocale: defLocale,
-        switcherStyle: style,
-        switcherPosition: position,
-      });
-      toast.success('i18n-Einstellungen gespeichert');
+      try {
+        const result = await updateI18nSettings({
+          locales: activeLocales,
+          defaultLocale: defLocale,
+          switcherStyle: style,
+          switcherPosition: position,
+        });
+        if ('error' in result && result.error) {
+          toast.error(result.error);
+          return;
+        }
+        toast.success('Spracheinstellungen gespeichert');
+      } catch {
+        toast.error('Spracheinstellungen konnten nicht gespeichert werden.');
+      }
     });
   }
 
@@ -82,7 +90,7 @@ export function I18nClient({
                 <span>{loc?.label || code}</span>
                 {code === defLocale && <span className="text-[10px] uppercase tracking-wide opacity-60">Standard</span>}
                 {code !== defLocale && (
-                  <button onClick={() => removeLocale(code)} className="text-zinc-400 hover:text-red-500">
+                  <button type="button" onClick={() => removeLocale(code)} className="text-zinc-400 hover:text-red-500" aria-label={`${loc?.label || code} entfernen`}>
                     <X size={14} />
                   </button>
                 )}
@@ -149,6 +157,7 @@ export function I18nClient({
 
       {/* Save */}
       <button
+        type="button"
         onClick={handleSave}
         disabled={pending}
         className="flex items-center gap-2 bg-violet-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-colors"

@@ -64,6 +64,8 @@ import { GlowHeroSection } from './shared/glow-hero';
 import { ServiceTabsSection } from './shared/service-tabs';
 import { PriceCalculatorSection } from './shared/price-calculator';
 import { SmartInquirySection } from './shared/smart-inquiry';
+import { OfferMatcherSection } from './shared/offer-matcher';
+import { MobileActionDockSection } from './shared/mobile-action-dock';
 import { JobListingsSection } from './shared/job-listings';
 import { CtaSplitSection } from './shared/cta-split';
 import { OpeningStatusSection } from './shared/opening-status';
@@ -838,6 +840,8 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   serviceTabs: ServiceTabsSection,
   priceCalculator: PriceCalculatorSection,
   smartInquiry: SmartInquirySection,
+  offerMatcher: OfferMatcherSection,
+  mobileActionDock: MobileActionDockSection,
   jobListings: JobListingsSection,
   ctaSplit: CtaSplitSection,
   openingStatus: OpeningStatusSection,

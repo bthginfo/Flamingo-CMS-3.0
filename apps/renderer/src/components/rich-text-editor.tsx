@@ -2,8 +2,6 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import Underline from '@tiptap/extension-underline';
 import { Bold, Italic, Underline as UnderlineIcon, List, ListOrdered, Heading2, Heading3, Link as LinkIcon, Undo, Redo } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -21,21 +19,21 @@ function MenuBar({ editor }: { editor: ReturnType<typeof useEditor> }) {
     `p-1.5 rounded transition-colors ${active ? 'bg-blue-100 text-blue-700' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700'}`;
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 border-b border-zinc-200 px-2 py-1.5 bg-zinc-50 rounded-t-lg">
-      <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))}><Bold size={15} /></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))}><Italic size={15} /></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btn(editor.isActive('underline'))}><UnderlineIcon size={15} /></button>
+    <div role="toolbar" aria-label="Text formatieren" className="flex flex-wrap items-center gap-0.5 border-b border-zinc-200 px-2 py-1.5 bg-zinc-50 rounded-t-lg">
+      <button type="button" aria-label="Fett" title="Fett" aria-pressed={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))}><Bold size={15} aria-hidden="true" /></button>
+      <button type="button" aria-label="Kursiv" title="Kursiv" aria-pressed={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))}><Italic size={15} aria-hidden="true" /></button>
+      <button type="button" aria-label="Unterstrichen" title="Unterstrichen" aria-pressed={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()} className={btn(editor.isActive('underline'))}><UnderlineIcon size={15} aria-hidden="true" /></button>
       <div className="w-px h-5 bg-zinc-200 mx-1" />
-      <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btn(editor.isActive('heading', { level: 2 }))}><Heading2 size={15} /></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btn(editor.isActive('heading', { level: 3 }))}><Heading3 size={15} /></button>
+      <button type="button" aria-label="Überschrift Ebene 2" title="Überschrift Ebene 2" aria-pressed={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btn(editor.isActive('heading', { level: 2 }))}><Heading2 size={15} aria-hidden="true" /></button>
+      <button type="button" aria-label="Überschrift Ebene 3" title="Überschrift Ebene 3" aria-pressed={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btn(editor.isActive('heading', { level: 3 }))}><Heading3 size={15} aria-hidden="true" /></button>
       <div className="w-px h-5 bg-zinc-200 mx-1" />
-      <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))}><List size={15} /></button>
-      <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btn(editor.isActive('orderedList'))}><ListOrdered size={15} /></button>
+      <button type="button" aria-label="Aufzählung" title="Aufzählung" aria-pressed={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))}><List size={15} aria-hidden="true" /></button>
+      <button type="button" aria-label="Nummerierte Liste" title="Nummerierte Liste" aria-pressed={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btn(editor.isActive('orderedList'))}><ListOrdered size={15} aria-hidden="true" /></button>
       <div className="w-px h-5 bg-zinc-200 mx-1" />
-      <button type="button" onClick={setLink} className={btn(editor.isActive('link'))}><LinkIcon size={15} /></button>
+      <button type="button" aria-label="Link bearbeiten" title="Link bearbeiten" aria-pressed={editor.isActive('link')} onClick={setLink} className={btn(editor.isActive('link'))}><LinkIcon size={15} aria-hidden="true" /></button>
       <div className="w-px h-5 bg-zinc-200 mx-1" />
-      <button type="button" onClick={() => editor.chain().focus().undo().run()} className="p-1.5 rounded text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"><Undo size={15} /></button>
-      <button type="button" onClick={() => editor.chain().focus().redo().run()} className="p-1.5 rounded text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"><Redo size={15} /></button>
+      <button type="button" aria-label="Rückgängig" title="Rückgängig" onClick={() => editor.chain().focus().undo().run()} className="p-1.5 rounded text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"><Undo size={15} aria-hidden="true" /></button>
+      <button type="button" aria-label="Wiederholen" title="Wiederholen" onClick={() => editor.chain().focus().redo().run()} className="p-1.5 rounded text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"><Redo size={15} aria-hidden="true" /></button>
     </div>
   );
 }
@@ -46,9 +44,10 @@ export function RichTextEditorField({ label, value, onChange }: { label: string;
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
-      Link.configure({ openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } }),
+      StarterKit.configure({
+        link: { openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } },
+        underline: {},
+      }),
     ],
     content: value,
     onUpdate: ({ editor: e }) => {

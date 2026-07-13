@@ -1,15 +1,25 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { collections, collectionItems, tenants, globalSettings, pages, pageSections, tenantAddons } from '@flamingo/db';
 import { eq, and, asc, desc, or } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { BOOKING_SECTION_TYPES } from '@/lib/booking-core';
+import { validateSectionData } from '@/lib/validate-section';
+import { resolveSectionWriteIdentity } from '@/lib/section-write-identity';
+import { normalizeStyleOverridesForSection } from '@/lib/section-style-overrides';
 
 async function requireSession() {
   const session = await getSession();
+  if (!session) redirect('/admin/login');
+  return session;
+}
+
+async function requireWriteSession() {
+  const session = await getWritableSession();
   if (!session) redirect('/admin/login');
   return session;
 }
@@ -48,6 +58,76 @@ function cloneItemData(data: Record<string, unknown>) {
   return copy;
 }
 
+async function normalizeCollectionItemData(
+  db: ReturnType<typeof getDb>,
+  tenantId: string,
+  value: Record<string, unknown>,
+): Promise<{ data?: Record<string, unknown>; error?: string }> {
+  let cleanItemData: Record<string, unknown>;
+  try {
+    cleanItemData = validateSectionData(value);
+  } catch {
+    return { error: 'Ungültige Eintragsdaten' };
+  }
+
+  if (cleanItemData.sections === undefined) return { data: cleanItemData };
+  if (!Array.isArray(cleanItemData.sections)) return { error: 'Sektionen müssen als Liste gespeichert werden' };
+
+  const [[tenant], addonRows] = await Promise.all([
+    db.select({ industry: tenants.industry }).from(tenants)
+      .where(and(eq(tenants.id, tenantId), eq(tenants.status, 'active'))).limit(1),
+    db.select({ key: tenantAddons.addonKey }).from(tenantAddons)
+      .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.active, true))),
+  ]);
+  if (!tenant) return { error: 'Mandant nicht gefunden oder inaktiv' };
+  const addons = new Set(addonRows.map(row => row.key));
+
+  const sections: Record<string, unknown>[] = [];
+  for (let index = 0; index < cleanItemData.sections.length; index += 1) {
+    const raw = cleanItemData.sections[index];
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { error: `Sektion ${index + 1} ist ungültig` };
+    const section = raw as Record<string, unknown>;
+    const type = typeof section.type === 'string' ? section.type : '';
+    if (!type) return { error: `Sektion ${index + 1} hat keinen gültigen Typ` };
+
+    const requiredAddon = BOOKING_SECTION_TYPES.has(type) ? 'booking' : type.startsWith('shop') ? 'shop' : null;
+    if (requiredAddon && !addons.has(requiredAddon)) {
+      return { error: `Die Section „${type}“ benötigt das aktive ${requiredAddon}-Add-on` };
+    }
+
+    const identity = resolveSectionWriteIdentity({
+      type,
+      industry: tenant.industry,
+      definitionKey: typeof section.definitionKey === 'string' ? section.definitionKey : null,
+      schemaVersion: typeof section.schemaVersion === 'number' ? section.schemaVersion : null,
+    });
+    if (!identity.ok) return { error: identity.error };
+
+    let sectionData: Record<string, unknown>;
+    try {
+      sectionData = validateSectionData(section.data ?? {});
+    } catch {
+      return { error: `Sektion ${index + 1} enthält ungültige Daten` };
+    }
+
+    sections.push({
+      ...section,
+      type,
+      definitionKey: identity.identity.definitionKey,
+      schemaVersion: identity.identity.schemaVersion,
+      data: sectionData,
+      styleOverrides: normalizeStyleOverridesForSection(
+        type,
+        section.styleOverrides,
+        tenant.industry,
+        identity.identity.definitionKey,
+      ),
+    });
+  }
+
+  return { data: { ...cleanItemData, sections } };
+}
+
 // ─── Collections ───────────────────────────────────────────────────
 export async function getCollectionsAction() {
   const session = await requireSession();
@@ -56,7 +136,7 @@ export async function getCollectionsAction() {
 }
 
 export async function createCollectionAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const label = (formData.get('label') as string)?.trim();
   if (!label) return;
@@ -66,14 +146,14 @@ export async function createCollectionAction(formData: FormData) {
 }
 
 export async function updateCollectionAction(id: string, data: { label?: string; key?: string }) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   await db.update(collections).set({ ...data, updatedAt: new Date() }).where(and(eq(collections.id, id), eq(collections.tenantId, session.tenantId)));
   revalidatePath('/admin/collections');
 }
 
 export async function deleteCollectionAction(id: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   await db.delete(collectionItems).where(and(eq(collectionItems.collectionId, id), eq(collectionItems.tenantId, session.tenantId)));
   await db.delete(collections).where(and(eq(collections.id, id), eq(collections.tenantId, session.tenantId)));
@@ -81,7 +161,8 @@ export async function deleteCollectionAction(id: string) {
 }
 
 export async function ensureDefaultCollections() {
-  const session = await requireSession();
+  const session = await getWritableSession();
+  if (!session) return;
   const db = getDb();
   const existing = await db.select({ key: collections.key }).from(collections).where(eq(collections.tenantId, session.tenantId));
   const existingKeys = new Set(existing.map(c => c.key));
@@ -119,7 +200,7 @@ export async function getItemsAction(collectionId: string) {
 }
 
 export async function createItemAction(collectionId: string, formData: FormData) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const title = (formData.get('title') as string)?.trim();
   if (!title) return;
@@ -142,10 +223,15 @@ export async function getItemAction(itemId: string) {
 }
 
 export async function updateItemAction(itemId: string, data: { title?: string; slug?: string; published?: boolean; priority?: number; data?: Record<string, unknown> }) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
+  const normalized = data.data
+    ? await normalizeCollectionItemData(db, session.tenantId, data.data)
+    : { data: undefined };
+  if (normalized.error) return { error: normalized.error };
+  const update = data.data ? { ...data, data: normalized.data } : data;
   const result = await db.update(collectionItems)
-    .set({ ...data, updatedAt: new Date() })
+    .set({ ...update, updatedAt: new Date() })
     .where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)))
     .returning({ id: collectionItems.id });
   if (result.length === 0) return { error: 'Eintrag nicht gefunden oder keine Berechtigung' };
@@ -154,14 +240,14 @@ export async function updateItemAction(itemId: string, data: { title?: string; s
 }
 
 export async function deleteItemAction(itemId: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   await db.delete(collectionItems).where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)));
   revalidatePath('/admin/collections');
 }
 
 export async function duplicateItemAction(itemId: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
 
   const [sourceItem] = await db
@@ -250,7 +336,7 @@ export async function getItemWithIndustryAction(itemId: string) {
 
 // ─── Collection Overview Page ──────────────────────────────────────
 export async function getOrCreateOverviewPageAction(collectionKey: string): Promise<string> {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
 
   // Check if an overview page already exists for this collection (by type + slug or by type + matching collectionKey in section data)

@@ -42,6 +42,18 @@ export function createEmptyEditableSection(type: string, id: string, sortOrder =
   return normalizeEditableSection({ id, type, sortOrder });
 }
 
+export function createSeededEditableSection(type: string, id: string, sortOrder = 0): EditableSection {
+  return normalizeEditableSection({
+    id,
+    type,
+    sortOrder,
+    data: {
+      ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}),
+      ...(SECTION_PREVIEW_DATA[type] || {}),
+    },
+  });
+}
+
 export function normalizeEditableSection(section: EditableSectionInput): EditableSection {
   return {
     id: section.id || '',
@@ -65,3 +77,5 @@ export function normalizeEditableSection(section: EditableSectionInput): Editabl
 export function sortEditableSections(sections: EditableSection[]): EditableSection[] {
   return [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 }
+import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
+import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';

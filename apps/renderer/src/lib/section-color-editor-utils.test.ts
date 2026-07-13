@@ -4,16 +4,30 @@ import test from 'node:test';
 import { FIELD_DEFS, PUBLIC_COLOR_FIELD_KEYS, type ColorFieldKey } from './section-color-fields';
 import {
   composeColorWithAlpha,
+  DESIGN_FIELD_PRESETS,
   EDITOR_FIELD_GROUPS,
   evaluateContrastPairs,
   getCtaStateCoverage,
   getEditorFieldGroup,
+  getDesignGroupPresentation,
   getContrastRatio,
   getInheritedColorPresentation,
   groupEditorFields,
   parseColorWithAlpha,
   reconcileEditorColorRoles,
 } from './section-color-editor-utils';
+
+test('design group copy only names controls supported by the renderer', () => {
+  assert.deepEqual(getDesignGroupPresentation(['cardRadius']), {
+    title: 'Form',
+    description: 'Ecken und Abrundungen',
+  });
+  assert.deepEqual(getDesignGroupPresentation(['cardShadow', 'headingWeight']), {
+    title: 'Tiefe & Typografie',
+    description: 'Schattenwirkung und Schriftbild der Überschrift',
+  });
+  assert.equal(DESIGN_FIELD_PRESETS.cardRadius?.find((preset) => preset.label === 'Weich')?.value, '1rem');
+});
 
 const colorEditorSource = readFileSync(
   new URL('../app/admin/pages/[id]/section-color-editor.tsx', import.meta.url),

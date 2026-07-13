@@ -1,7 +1,7 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
 import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems, products } from '@flamingo/db';
 import { eq, and, asc, desc, not } from 'drizzle-orm';
@@ -16,6 +16,12 @@ import { resolveSectionWriteIdentity } from '@/lib/section-write-identity';
 
 async function requireSession() {
   const session = await getSession();
+  if (!session) redirect('/admin/login');
+  return session;
+}
+
+async function requireWriteSession() {
+  const session = await getWritableSession();
   if (!session) redirect('/admin/login');
   return session;
 }
@@ -54,7 +60,8 @@ export async function getPagesAction() {
 }
 
 export async function ensureDefaultPages() {
-  const session = await requireSession();
+  const session = await getWritableSession();
+  if (!session) return;
   const db = getDb();
   const existing = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.tenantId, session.tenantId));
   const slugs = new Set(existing.map(p => p.slug));
@@ -97,7 +104,7 @@ export async function ensureDefaultPages() {
 }
 
 export async function createPageAction(formData: FormData) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const title = (formData.get('title') as string)?.trim();
   if (!title) return;
@@ -114,14 +121,14 @@ export async function createPageAction(formData: FormData) {
 }
 
 export async function deletePageAction(pageId: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   await db.delete(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
   revalidatePath('/admin/pages');
 }
 
 export async function duplicatePageAction(pageId: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
 
   const [sourcePage] = await db
@@ -204,7 +211,7 @@ export async function duplicatePageAction(pageId: string) {
 }
 
 export async function updatePageAction(pageId: string, data: { title?: string; slug?: string; visible?: boolean; status?: 'draft' | 'published' | 'archived' }) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   await db.update(pages).set({ ...data, updatedAt: new Date() }).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
   revalidatePath('/admin/pages');
@@ -244,7 +251,7 @@ export async function getPageWithSectionsAction(pageId: string) {
 }
 
 export async function addSectionAction(pageId: string, type: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const requiredAddon = BOOKING_SECTION_TYPES.has(type)
     ? 'booking'
@@ -293,7 +300,7 @@ export async function addSectionAction(pageId: string, type: string) {
 }
 
 export async function updateSectionAction(sectionId: string, data: Record<string, unknown>, pageId: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   // Validate & sanitize section data
   let cleanData: Record<string, unknown>;
@@ -332,7 +339,7 @@ type SectionTypeAndDataUpdate = {
  * component type temporarily receives the previous component's data schema.
  */
 export async function updateSectionTypeAndDataAction(sectionId: string, pageId: string, update: SectionTypeAndDataUpdate) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   let cleanData: Record<string, unknown>;
   try {
@@ -414,7 +421,7 @@ export async function updateSectionTypeAndDataAction(sectionId: string, pageId: 
 }
 
 export async function updateSectionMetaAction(sectionId: string, meta: { type?: string; definitionKey?: string | null; schemaVersion?: number | null; visible?: boolean; titleInternal?: string | null; variant?: string | null; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string | null; styleOverrides?: Record<string, unknown> | null }, pageId?: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   const sectionScope = pageId
     ? and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))
@@ -469,7 +476,7 @@ export async function updateSectionMetaAction(sectionId: string, meta: { type?: 
 }
 
 export async function deleteSectionAction(sectionId: string, pageId: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   // Prevent deletion of locked sections (shop system sections)
   const [section] = await db.select({ locked: pageSections.locked }).from(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).limit(1);
@@ -479,7 +486,7 @@ export async function deleteSectionAction(sectionId: string, pageId: string) {
 }
 
 export async function reorderSectionsAction(pageId: string, sectionIds: string[]) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
   await Promise.all(
     sectionIds.map((id, i) =>
@@ -534,7 +541,7 @@ export async function getSectionCopySourceAction(sourceSectionId: string) {
 }
 
 export async function cloneSectionFromPageAction(targetPageId: string, sourceSectionId: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
 
   const [targetPage] = await db
@@ -555,6 +562,21 @@ export async function cloneSectionFromPageAction(targetPageId: string, sourceSec
     .where(and(eq(tenants.id, session.tenantId), eq(tenants.status, 'active')))
     .limit(1);
   if (!tenant) return null;
+  const requiredAddon = BOOKING_SECTION_TYPES.has(source.type)
+    ? 'booking'
+    : source.type.startsWith('shop')
+      ? 'shop'
+      : null;
+  if (requiredAddon) {
+    const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+      .where(and(
+        eq(tenantAddons.tenantId, session.tenantId),
+        eq(tenantAddons.addonKey, requiredAddon),
+        eq(tenantAddons.active, true),
+      ))
+      .limit(1);
+    if (!addon?.active) return null;
+  }
   const identity = resolveSectionWriteIdentity({
     type: source.type,
     industry: tenant.industry,
@@ -614,8 +636,16 @@ export async function getShopPageStatus() {
 }
 
 export async function addShopPageAction(slug: string) {
-  const session = await requireSession();
+  const session = await requireWriteSession();
   const db = getDb();
+  const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(
+      eq(tenantAddons.tenantId, session.tenantId),
+      eq(tenantAddons.addonKey, 'shop'),
+      eq(tenantAddons.active, true),
+    ))
+    .limit(1);
+  if (!shopAddon?.active) return { error: 'Für Shop-Seiten wird ein aktives Shop-Add-on benötigt.' };
   const def = SHOP_PAGE_DEFS.find(d => d.slug === slug);
   if (!def) return { error: 'Unbekannte Shop-Seite' };
 

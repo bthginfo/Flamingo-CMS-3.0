@@ -16,7 +16,9 @@ import { FIELD_DEFS, sortColorFields, type ColorFieldKey } from '@/lib/section-c
 import {
   ALPHA_CAPABLE_FIELDS,
   composeColorWithAlpha,
+  DESIGN_FIELD_PRESETS,
   evaluateContrastPairs,
+  getDesignGroupPresentation,
   getCtaStateCoverage,
   getInheritedColorPresentation,
   groupEditorFields,
@@ -194,6 +196,7 @@ export function SectionColorEditor({
   const [showSurfaces, setShowSurfaces] = useState(false);
   const [showStates, setShowStates] = useState(false);
   const [showDesign, setShowDesign] = useState(false);
+  const [customDesignFields, setCustomDesignFields] = useState<Set<ColorFieldKey>>(new Set());
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   const [usedTokens, setUsedTokens] = useState<Set<string> | null>(null);
   const [scanState, setScanState] = useState<PreviewScanState>('idle');
@@ -208,6 +211,7 @@ export function SectionColorEditor({
     setScanState(open ? 'checking' : 'idle');
     setShowSurfaces(false);
     setShowStates(false);
+    setCustomDesignFields(new Set());
   }, [definitionKey, industry, open, sectionId, sectionType]);
 
   const readComputedStyles = useCallback((markUnavailable = false) => {
@@ -271,6 +275,10 @@ export function SectionColorEditor({
   const fieldGroups = useMemo(
     () => groupEditorFields(allFields),
     [allFields],
+  );
+  const designGroupPresentation = useMemo(
+    () => getDesignGroupPresentation(fieldGroups.design),
+    [fieldGroups.design],
   );
   const roleDiscovery = useMemo(
     () => reconcileEditorColorRoles(allFields, usedTokens, overrides),
@@ -555,6 +563,29 @@ export function SectionColorEditor({
     const resolved = computedVars[definition.cssVar] || resolvedVars?.[definition.cssVar] || '';
     const inputId = `${editorId}-${fieldKey}`;
     const descriptionId = `${inputId}-description`;
+    const presets = DESIGN_FIELD_PRESETS[fieldKey] || [];
+    const matchingPreset = presets.find((preset) => preset.value === currentOverride);
+    const customSelected = customDesignFields.has(fieldKey) || Boolean(currentOverride && !matchingPreset);
+    const selectValue = !currentOverride ? '__inherit' : customSelected ? '__custom' : matchingPreset?.value || '__custom';
+
+    function selectPreset(nextValue: string) {
+      if (nextValue === '__inherit') {
+        setCustomDesignFields((current) => { const next = new Set(current); next.delete(fieldKey); return next; });
+        handleClear(definition.cssVar);
+        return;
+      }
+      if (nextValue === '__custom') {
+        setCustomDesignFields((current) => new Set(current).add(fieldKey));
+        if (!currentOverride) {
+          const fallback = resolved && !resolved.includes('var(') ? resolved : presets[1]?.value || presets[0]?.value || '';
+          handleChange(definition.cssVar, fallback);
+        }
+        return;
+      }
+      setCustomDesignFields((current) => { const next = new Set(current); next.delete(fieldKey); return next; });
+      handleChange(definition.cssVar, nextValue);
+    }
+
     return (
       <div key={fieldKey} className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm shadow-zinc-950/[0.02]">
         <div>
@@ -565,17 +596,17 @@ export function SectionColorEditor({
           {renderRoleBadges(fieldKey)}
         </div>
         <div className="mt-3 grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-2">
-          <input
+          <select
             id={inputId}
-            type="text"
-            spellCheck={false}
-            autoComplete="off"
-            className="admin-input min-w-0 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            placeholder={resolved || 'Geerbter Wert'}
-            value={currentOverride}
+            className="admin-input min-w-0 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            value={selectValue}
             aria-describedby={descriptionId}
-            onChange={(event) => handleChange(definition.cssVar, event.target.value)}
-          />
+            onChange={(event) => selectPreset(event.target.value)}
+          >
+            <option value="__inherit">Designstandard</option>
+            {presets.map((preset) => <option key={preset.value} value={preset.value}>{preset.label}</option>)}
+            <option value="__custom">Eigener Wert…</option>
+          </select>
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-30"
@@ -587,6 +618,20 @@ export function SectionColorEditor({
             <RotateCcw size={15} aria-hidden="true" />
           </button>
         </div>
+        {customSelected && (
+          <label className="mt-3 block border-t border-zinc-100 pt-3">
+            <span className="text-[11px] font-medium text-zinc-600">Eigener technischer Wert</span>
+            <input
+              type="text"
+              spellCheck={false}
+              autoComplete="off"
+              className="admin-input mt-1 min-w-0 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              placeholder={resolved || 'z. B. 1rem'}
+              value={currentOverride}
+              onChange={(event) => handleChange(definition.cssVar, event.target.value)}
+            />
+          </label>
+        )}
       </div>
     );
   }
@@ -820,9 +865,9 @@ export function SectionColorEditor({
               onClick={() => setShowDesign((current) => !current)}
             >
               <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${showDesign ? 'rotate-180' : ''}`} />
-              Form &amp; Typografie
-              <span className="section-color-editor__disclosure-description font-normal text-zinc-400">Radius, Schatten, Typografie</span>
-              <span className="ml-auto">{renderGroupCoverage(fieldGroups.design, 'Form und Typografie')}</span>
+              {designGroupPresentation.title}
+              <span className="section-color-editor__disclosure-description font-normal text-zinc-400">{designGroupPresentation.description}</span>
+              <span className="ml-auto">{renderGroupCoverage(fieldGroups.design, designGroupPresentation.title)}</span>
             </button>
             {showDesign && (
               <div id={`${editorId}-design`} className="section-color-editor__role-grid mt-2">

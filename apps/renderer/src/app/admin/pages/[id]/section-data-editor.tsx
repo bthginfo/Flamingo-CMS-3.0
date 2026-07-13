@@ -16,6 +16,12 @@ import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 import { getCollectionKeysAction } from '@/app/admin/collections/actions';
 import { InstagramConnectPanel } from './instagram-connect-panel';
+import {
+  EDITORIAL_GROUPS,
+  getCommonEditorialFieldLabel,
+  groupEditorialFields,
+  type EditorialFieldGroup,
+} from '@/lib/editorial-field-metadata';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -92,6 +98,13 @@ const FIELD_LABELS: Record<string, string> = {
   summaryEmptyText: 'Hinweis vor der ersten Auswahl',
   continueShoppingLabel: 'Weiter-Einkaufen-Text',
   checkoutLabel: 'Zur-Kasse-Text',
+  compactLabel: 'Kurzer Kontext',
+  actions: 'Schnellaktionen',
+  kind: 'Aktionstyp',
+  revealAfterScroll: 'Erst nach Scrollen zeigen',
+  revealAfterPx: 'Einblenden nach Pixeln',
+  desktopMode: 'Darstellung am Desktop',
+  hideOnPaths: 'Auf diesen Seiten ausblenden',
 
   // Media
   videoUrl: 'Video-URL',
@@ -346,10 +359,17 @@ const FIELD_HELP: Record<string, string> = {
   highlights: 'Besondere Highlights hervorheben.',
   services: 'Liste der angebotenen Leistungen.',
   packages: 'Preis-/Leistungspakete.',
+  compactLabel: 'Optionaler kurzer Kontext neben den Schnellaktionen.',
+  actions: 'Bis zu drei klare Aktionen. Reihenfolge entspricht der Darstellung; die erste Aktion wird hervorgehoben.',
+  kind: 'Bestimmt Bedeutung, Standard-Icon und den stabilen Analytics-Hook der Aktion.',
+  revealAfterScroll: 'Blendet die mobile Leiste erst ein, nachdem Besucher etwas gescrollt haben.',
+  revealAfterPx: 'Scrollstrecke bis zum Einblenden, maximal 2000 Pixel.',
+  desktopMode: 'Mobil bleibt die Leiste fixiert; am Desktop kann sie verborgen oder als Inline-Leiste gezeigt werden.',
+  hideOnPaths: 'Pfade wie /checkout, auf denen die Leiste nicht erscheinen soll.',
 };
 
 function fieldLabel(key: string) {
-return FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
+return getCommonEditorialFieldLabel(key) || FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
 }
 
 function fieldHelp(key: string): string | undefined {
@@ -506,6 +526,28 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     if (typeof value === 'string') {
       const fieldName = String(path[path.length - 1] || '');
       const multiline = value.length > 80 || /content|description|text|subline|bio|answer|excerpt|intro/i.test(fieldName);
+      const enumOptions = type === 'mobileActionDock' && fieldName === 'kind'
+        ? [
+            ['call', 'Anrufen'],
+            ['route', 'Route'],
+            ['booking', 'Termin / Buchung'],
+            ['enquiry', 'Anfrage'],
+            ['internal', 'Interner Link'],
+            ['cart', 'Warenkorb'],
+          ]
+        : type === 'mobileActionDock' && fieldName === 'desktopMode'
+          ? [['hidden', 'Am Desktop ausblenden'], ['inline', 'Als kompakte Leiste anzeigen']]
+          : null;
+      if (enumOptions) {
+        return (
+          <label key={renderKey} className="block">
+            <span className="mb-1 block text-xs font-medium text-zinc-600">{label}</span>
+            <select className="admin-input" value={value} onChange={(event) => updateAtPath(path, event.target.value)}>
+              {enumOptions.map(([optionValue, optionLabel]) => <option key={optionValue} value={optionValue}>{optionLabel}</option>)}
+            </select>
+          </label>
+        );
+      }
       if (/color|colour|farbe|overlay/i.test(fieldName)) {
         return <ColorField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} allowEmpty />;
       }
@@ -548,12 +590,14 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       for (const item of value) if (isRecord(item)) for (const [k, v] of Object.entries(item)) if (!(k in itemShape)) itemShape[k] = v;
       const hasShape = Object.keys(itemShape).length > 0;
       const sample = hasShape ? itemShape : (value[0] ?? defaultSample ?? '');
+      const maxItems = type === 'mobileActionDock' && path[path.length - 1] === 'actions' ? 3 : null;
+      const canAdd = maxItems == null || value.length < maxItems;
       return (
         <div key={renderKey} className="space-y-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs font-semibold text-zinc-600">{label}</span>
             {typeof path[path.length - 1] === 'string' && <HelpHint fieldKey={String(path[path.length - 1])} />}
-            <button type="button" className="text-xs font-medium text-blue-600 hover:underline" onClick={() => updateAtPath(path, [...value, createEmptyLike(sample)])}>+ Eintrag</button>
+            <button type="button" disabled={!canAdd} className="text-xs font-medium text-blue-600 hover:underline disabled:cursor-not-allowed disabled:text-zinc-400 disabled:no-underline" onClick={() => updateAtPath(path, [...value, createEmptyLike(sample)])}>{canAdd ? '+ Eintrag' : `Maximal ${maxItems}`}</button>
           </div>
           <div className="space-y-3">
             {value.map((item, index) => (
@@ -601,14 +645,51 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
   }
 
   const hiddenKeys = imagePositionCompanionKeys(source);
-  const keys = Object.keys(source).filter((key) => !hiddenKeys.has(key));
-  if (keys.length === 0) {
+  const groupedFields = groupEditorialFields(source, hiddenKeys);
+  const visibleGroups = EDITORIAL_GROUPS.filter((group) => groupedFields[group.key].length > 0);
+  if (visibleGroups.length === 0) {
     return <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-3 text-sm text-zinc-600">Für diese Section sind aktuell keine editierbaren Felder definiert.</div>;
   }
 
+  function renderGroup(group: EditorialFieldGroup, label: string, description: string) {
+    const entries = groupedFields[group];
+    if (entries.length === 0) return null;
+    return (
+      <section key={group} className="border-t border-zinc-200 pt-5 first:border-t-0 first:pt-0" aria-labelledby={label ? `editorial-${group}-${type || 'section'}` : undefined}>
+        {label && (
+          <div className="mb-4">
+            <h3 id={`editorial-${group}-${type || 'section'}`} className="text-xs font-bold uppercase tracking-[0.12em] text-zinc-700">{label}</h3>
+            <p className="mt-1 text-xs leading-5 text-zinc-500">{description}</p>
+          </div>
+        )}
+        <div className="space-y-4">
+          {entries.map(({ key, value }) => renderValue([key], fieldLabel(key), value))}
+        </div>
+      </section>
+    );
+  }
+
+  const basicGroups = visibleGroups.filter((group) => group.key !== 'advanced');
+  const advancedGroup = visibleGroups.find((group) => group.key === 'advanced');
+
   return (
-    <div className="space-y-3">
-      {keys.map((key) => renderValue([key], fieldLabel(key), source[key]))}
+    <div className="space-y-5">
+      {basicGroups.map((group) => renderGroup(group.key, group.label, group.description))}
+      {advancedGroup && (
+        <details className="group overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/70">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden">
+            <span className="flex-1">
+              <span className="block">{advancedGroup.label}</span>
+              <span className="mt-0.5 block text-[11px] font-normal text-zinc-500">{advancedGroup.description}</span>
+            </span>
+            <span className="text-[11px] font-medium text-zinc-400">{groupedFields.advanced.length} Felder</span>
+            <span aria-hidden="true" className="text-zinc-400 transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <div className="border-t border-zinc-200 bg-white p-4">
+            {renderGroup(advancedGroup.key, '', '')}
+          </div>
+        </details>
+      )}
     </div>
   );
 }
@@ -730,10 +811,10 @@ function HeroEditor({ data, onChange }: EditorProps) {
         {d.trustItems.map((item, i) => (
           <div key={i} className="flex gap-2">
             <input className="admin-input flex-1 text-xs" value={item} onChange={(e) => setD({ ...d, trustItems: d.trustItems.map((t, idx) => idx === i ? e.target.value : t) })} />
-            <button onClick={() => setD({ ...d, trustItems: d.trustItems.filter((_, idx) => idx !== i) })} className="text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => setD({ ...d, trustItems: d.trustItems.filter((_, idx) => idx !== i) })} className="text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           </div>
         ))}
-        <button onClick={() => setD({ ...d, trustItems: [...d.trustItems, ''] })} className="text-xs text-blue-600 hover:underline">+ Trust-Element</button>
+        <button type="button" onClick={() => setD({ ...d, trustItems: [...d.trustItems, ''] })} className="text-xs text-blue-600 hover:underline">+ Trust-Element</button>
         <ColorField label="Strip-Farbe" value={d.trustStripColor} onChange={(v) => setD({ ...d, trustStripColor: v })} allowEmpty />
       </div>
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
@@ -780,12 +861,12 @@ function FaqEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={`Frage ${i + 1}`} value={item.question} onChange={(v) => updateItem(i, 'question', v)} />
           <Field label={fieldLabel('answer')} value={item.answer} onChange={(v) => updateItem(i, 'answer', v)} multiline />
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Frage hinzufügen</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Frage hinzufügen</button>
     </div>
   );
 }
@@ -834,7 +915,7 @@ function TestimonialsEditor({ data, onChange }: EditorProps) {
       </div>
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={fieldLabel('quote')} value={item.quote} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label={fieldLabel('name')} value={item.name} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
@@ -842,7 +923,7 @@ function TestimonialsEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button>
     </div>
   );
 }
@@ -962,7 +1043,7 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {links.map((link, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeLink(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeLink(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={fieldLabel('label')} value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
           <DetailLinkField label="Link" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -971,7 +1052,7 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addLink} className="text-sm text-blue-600 hover:underline">+ Link hinzufügen</button>
+      <button type="button" onClick={addLink} className="text-sm text-blue-600 hover:underline">+ Link hinzufügen</button>
     </div>
   );
 }
@@ -1014,7 +1095,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeStat(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeStat(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <label className="block text-sm"><span className="text-gray-600 text-xs">Wert</span>
               <input type="number" className="admin-input mt-1 w-full" value={stat.value} onChange={(e) => setStats(stats.map((s, idx) => idx === i ? { ...s, value: Number(e.target.value) } : s))} />
@@ -1028,7 +1109,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addStat} className="text-sm text-blue-600 hover:underline">+ Statistik hinzufügen</button>
+      <button type="button" onClick={addStat} className="text-sm text-blue-600 hover:underline">+ Statistik hinzufügen</button>
     </div>
   );
 }
@@ -1051,13 +1132,13 @@ function LogoCloudEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {logos.map((logo, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeLogo(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeLogo(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <ImageUploadField label={fieldLabel('image')} value={logo.src} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, src: v } : l))} />
           <Field label="Alt-Text" value={logo.alt} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, alt: v } : l))} />
           <DetailLinkField label="Link (optional)" value={logo.href} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, href: v } : l))} />
         </div>
       ))}
-      <button onClick={addLogo} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button>
+      <button type="button" onClick={addLogo} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button>
     </div>
   );
 }
@@ -1103,7 +1184,7 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {images.map((img, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeImage(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeImage(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <ImageUploadField label={fieldLabel('image')} value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
@@ -1112,8 +1193,8 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
         </div>
       ))}
       <div className="flex items-center gap-3">
-        <button onClick={addImage} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
-        <button onClick={() => bulkInputRef.current?.click()} disabled={bulkUploading} className="text-sm text-blue-600 hover:underline disabled:opacity-50">
+        <button type="button" onClick={addImage} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
+        <button type="button" onClick={() => bulkInputRef.current?.click()} disabled={bulkUploading} className="text-sm text-blue-600 hover:underline disabled:opacity-50">
           {bulkUploading ? '⏳ Wird hochgeladen...' : '+ Bulk Upload'}
         </button>
         <input ref={bulkInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files)} />
@@ -1138,7 +1219,7 @@ function UspStripEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => update(i, 'icon', v)} />
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
@@ -1146,7 +1227,7 @@ function UspStripEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ USP hinzufügen</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ USP hinzufügen</button>
     </div>
   );
 }
@@ -1183,7 +1264,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
       <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {cards.map((card, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label={fieldLabel('title')} value={card.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={card.text} onChange={(v) => update(i, 'text', v)} multiline />
@@ -1199,7 +1280,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
           <DetailLinkField label="Detail-Link (optional)" value={card.href} onChange={(v) => update(i, 'href', v)} />
         </div>
       ))}
-      <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
+      <button type="button" onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
     </div>
   );
 }
@@ -1223,7 +1304,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       {steps.map((step, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Field label={fieldLabel('title')} value={step.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={step.text} onChange={(v) => update(i, 'text', v)} multiline />
@@ -1231,7 +1312,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
+      <button type="button" onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
     </div>
   );
 }
@@ -1265,7 +1346,7 @@ function ContactEditor({ data, onChange }: EditorProps) {
       <h4 className="text-sm font-medium text-gray-700 pt-2">Info-Karten</h4>
       {infoCards.map((card, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => update(i, 'icon', v)} />
             <Field label={fieldLabel('label')} value={card.label} onChange={(v) => update(i, 'label', v)} />
@@ -1273,7 +1354,7 @@ function ContactEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Info-Karte hinzufügen</button>
+      <button type="button" onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Info-Karte hinzufügen</button>
     </div>
   );
 }
@@ -1311,7 +1392,7 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
@@ -1328,7 +1409,7 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
           <ButtonField label="CTA" value={{ label: item.ctaLabel, href: item.ctaHref }} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, ctaLabel: v.label, ctaHref: v.href } : it))} />
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Leistung hinzufügen</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Leistung hinzufügen</button>
     </div>
   );
 }
@@ -1364,7 +1445,7 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
       <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {projects.map((proj, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeProject(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeProject(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label={fieldLabel('title')} value={proj.title} onChange={(v) => update(i, 'title', v)} />
             <Field label={fieldLabel('category')} value={proj.category} onChange={(v) => update(i, 'category', v)} />
@@ -1384,14 +1465,14 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
                   const newStats = [...proj.stats]; newStats[j] = { ...newStats[j], label: e.target.value };
                   setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: newStats } : p));
                 }} />
-                <button onClick={() => setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: p.stats.filter((_, si) => si !== j) } : p))} className="text-red-400 text-xs">×</button>
+                <button type="button" onClick={() => setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: p.stats.filter((_, si) => si !== j) } : p))} className="text-red-400 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
               </div>
             ))}
-            <button onClick={() => setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: [...p.stats, { value: '', label: '' }] } : p))} className="text-xs text-blue-600 hover:underline">+ Statistik</button>
+            <button type="button" onClick={() => setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: [...p.stats, { value: '', label: '' }] } : p))} className="text-xs text-blue-600 hover:underline">+ Statistik</button>
           </div>
         </div>
       ))}
-      <button onClick={addProject} className="text-sm text-blue-600 hover:underline">+ Projekt hinzufügen</button>
+      <button type="button" onClick={addProject} className="text-sm text-blue-600 hover:underline">+ Projekt hinzufügen</button>
     </div>
   );
 }
@@ -1440,16 +1521,16 @@ function TeamEditor({ data, onChange }: EditorProps) {
         <div key={i} className="flex gap-3 items-end">
           <Field label={fieldLabel('value')} value={s.value} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, value: v } : st))} />
           <Field label={fieldLabel('label')} value={s.label} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, label: v } : st))} />
-          <button onClick={() => setTeamStats(teamStats.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs pb-2">×</button>
+          <button type="button" onClick={() => setTeamStats(teamStats.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs pb-2" aria-label="Eintrag entfernen" title="Entfernen">×</button>
         </div>
       ))}
-      <button onClick={() => setTeamStats([...teamStats, { value: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Statistik</button>
+      <button type="button" onClick={() => setTeamStats([...teamStats, { value: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Statistik</button>
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Werte</h4>
       <Field label="Werte-Überschrift" value={valuesHeadline} onChange={setValuesHeadline} />
       {values.map((v, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label={fieldLabel('title')} value={v.title} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, title: val } : vl))} />
             <Field label={fieldLabel('text')} value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} multiline />
@@ -1464,13 +1545,13 @@ function TeamEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={() => setValues([...values, { icon: '', title: '', text: '', image: '', mediaType: 'icon' }])} className="text-sm text-blue-600 hover:underline">+ Wert</button>
+      <button type="button" onClick={() => setValues([...values, { icon: '', title: '', text: '', image: '', mediaType: 'icon' }])} className="text-sm text-blue-600 hover:underline">+ Wert</button>
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Team-Mitglieder</h4>
       <Field label="Team-Überschrift" value={membersHeadline} onChange={setMembersHeadline} />
       {members.map((m, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => setMembers(members.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => setMembers(members.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label={fieldLabel('name')} value={m.name} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, name: v } : mem))} />
             <Field label={fieldLabel('role')} value={m.role} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, role: v } : mem))} />
@@ -1479,7 +1560,7 @@ function TeamEditor({ data, onChange }: EditorProps) {
           <Field label={fieldLabel('bio')} value={m.bio} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, bio: v } : mem))} multiline />
         </div>
       ))}
-      <button onClick={() => setMembers([...members, { name: '', role: '', image: '', bio: '' }])} className="text-sm text-blue-600 hover:underline">+ Mitglied</button>
+      <button type="button" onClick={() => setMembers([...members, { name: '', role: '', image: '', bio: '' }])} className="text-sm text-blue-600 hover:underline">+ Mitglied</button>
     </div>
   );
 }
@@ -1658,10 +1739,10 @@ function HeaderBannerEditor({ data, onChange }: EditorProps) {
             <input className="admin-input text-xs w-full" value={item.text} onChange={e => setItems(items.map((t, idx) => idx === i ? { ...t, text: e.target.value } : t))} placeholder="Text" />
             <input className="admin-input text-xs w-full" value={item.link} onChange={e => setItems(items.map((t, idx) => idx === i ? { ...t, link: e.target.value } : t))} placeholder="Link (optional)" />
           </div>
-          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs mt-1">×</button>
+          <button type="button" onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs mt-1" aria-label="Eintrag entfernen" title="Entfernen">×</button>
         </div>
       ))}
-      <button onClick={() => setItems([...items, { text: '', link: '' }])} className="text-xs text-blue-600 hover:underline">+ Eintrag</button>
+      <button type="button" onClick={() => setItems([...items, { text: '', link: '' }])} className="text-xs text-blue-600 hover:underline">+ Eintrag</button>
     </div>
   );
 }
@@ -1794,7 +1875,7 @@ function TextImageEditor({ data, onChange }: EditorProps) {
         <p className="text-xs font-medium text-zinc-600 mb-2">Auflistung (optional)</p>
         {items.map((item, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
-            <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label={fieldLabel('title')} value={item.title} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
               <IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
@@ -1802,7 +1883,7 @@ function TextImageEditor({ data, onChange }: EditorProps) {
             <Field label={fieldLabel('text')} value={item.text} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, text: v } : it))} multiline />
           </div>
         ))}
-        <button onClick={() => setItems([...items, { icon: '', title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Punkt hinzufügen</button>
+        <button type="button" onClick={() => setItems([...items, { icon: '', title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Punkt hinzufügen</button>
       </div>
       <ButtonField label="Primärer Button (optional)" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer Button (optional)" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
@@ -1875,7 +1956,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
         <p className="text-xs font-medium text-zinc-600 mb-2">Kategorien</p>
         <div className="flex items-center gap-2 mb-2">
           <input className="admin-input flex-1" placeholder="Neue Kategorie…" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())} />
-          <button onClick={addCategory} className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap">+ Hinzufügen</button>
+          <button type="button" onClick={addCategory} className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap">+ Hinzufügen</button>
         </div>
         {categories.length === 0 && <p className="text-xs text-zinc-400">Noch keine Kategorien angelegt.</p>}
       </div>
@@ -1889,7 +1970,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
             <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 cursor-pointer" onClick={() => toggleCat(cat)}>
               <span className="text-sm font-medium text-zinc-700">{cat} <span className="text-zinc-400 font-normal">({catImages.length})</span></span>
               <div className="flex items-center gap-2">
-                <button onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button>
+                <button type="button" onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button>
                 <span className="text-zinc-400 text-xs">{isOpen ? '▲' : '▼'}</span>
               </div>
             </div>
@@ -1899,7 +1980,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
                   const i = images.indexOf(img);
                   return (
                     <div key={i} className="relative border border-zinc-100 rounded p-3">
-                      <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+                      <button type="button" onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
                       <ImageUploadField label={fieldLabel('image')} value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
@@ -1909,8 +1990,8 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
                   );
                 })}
                 <div className="flex items-center gap-3 pt-1">
-                  <button onClick={() => setImages([...images, { src: '', alt: '', category: cat, location: '' }])} className="text-xs text-blue-600 hover:underline">+ Bild</button>
-                  <button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">
+                  <button type="button" onClick={() => setImages([...images, { src: '', alt: '', category: cat, location: '' }])} className="text-xs text-blue-600 hover:underline">+ Bild</button>
+                  <button type="button" onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">
                     {bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}
                   </button>
                   <input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
@@ -1930,7 +2011,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
             const i = images.indexOf(img);
             return (
               <div key={i} className="relative border border-zinc-100 rounded p-3 mb-2">
-                <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+                <button type="button" onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
                 <ImageUploadField label={fieldLabel('image')} value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
                   <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
@@ -1984,21 +2065,21 @@ function PhotographerAboutEditor({ data, onChange }: EditorProps) {
         {facts.map((f, i) => (
           <div key={i} className="flex gap-2 mb-1">
             <input className="admin-input flex-1" value={f} onChange={(e) => setFacts(facts.map((x, idx) => idx === i ? e.target.value : x))} />
-            <button onClick={() => setFacts(facts.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => setFacts(facts.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           </div>
         ))}
-        <button onClick={() => setFacts([...facts, ''])} className="text-xs text-blue-600 hover:underline">+ Fakt hinzufügen</button>
+        <button type="button" onClick={() => setFacts([...facts, ''])} className="text-xs text-blue-600 hover:underline">+ Fakt hinzufügen</button>
       </div>
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Werte</p>
         {values.map((v, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
-            <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <Field label={fieldLabel('title')} value={v.title} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, title: val } : x))} />
             <Field label={fieldLabel('text')} value={v.text} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, text: val } : x))} multiline />
           </div>
         ))}
-        <button onClick={() => setValues([...values, { title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Wert hinzufügen</button>
+        <button type="button" onClick={() => setValues([...values, { title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Wert hinzufügen</button>
       </div>
     </div>
   );
@@ -2028,7 +2109,7 @@ function ShootingProcessEditor({ data, onChange }: EditorProps) {
         <p className="text-xs font-medium text-zinc-600 mb-2">Schritte</p>
         {steps.map((step, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
-            <button onClick={() => setSteps(steps.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => setSteps(steps.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label={fieldLabel('title')} value={step.title} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, title: v } : s))} />
               <IconPickerField label={fieldLabel('icon')} value={step.icon} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
@@ -2036,7 +2117,7 @@ function ShootingProcessEditor({ data, onChange }: EditorProps) {
             <Field label="Beschreibung" value={step.text} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, text: v } : s))} multiline />
           </div>
         ))}
-        <button onClick={() => setSteps([...steps, { title: '', text: '', icon: '' }])} className="text-xs text-blue-600 hover:underline">+ Schritt hinzufügen</button>
+        <button type="button" onClick={() => setSteps([...steps, { title: '', text: '', icon: '' }])} className="text-xs text-blue-600 hover:underline">+ Schritt hinzufügen</button>
       </div>
     </div>
   );
@@ -2080,7 +2161,7 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
         <p className="text-xs font-medium text-zinc-600 mb-2">Pakete</p>
         {packages.map((pkg, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-3">
-            <button onClick={() => setPackages(packages.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => setPackages(packages.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label={fieldLabel('name')} value={pkg.name} onChange={(v) => updatePkg(i, { name: v })} />
               <Field label={fieldLabel('price')} value={pkg.price} onChange={(v) => updatePkg(i, { price: v })} placeholder="z.B. ab 490€" />
@@ -2099,7 +2180,7 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
             </label>
           </div>
         ))}
-        <button onClick={() => setPackages([...packages, { name: '', price: '', description: '', features: [], highlighted: false, ctaLabel: '', ctaHref: '' }])} className="text-xs text-blue-600 hover:underline">+ Paket hinzufügen</button>
+        <button type="button" onClick={() => setPackages([...packages, { name: '', price: '', description: '', features: [], highlighted: false, ctaLabel: '', ctaHref: '' }])} className="text-xs text-blue-600 hover:underline">+ Paket hinzufügen</button>
       </div>
       <Field label="Hinweis (unter Paketen)" value={d.note} onChange={(v) => setD({ ...d, note: v })} />
     </div>
@@ -2121,14 +2202,14 @@ function LegalContentEditor({ data, onChange }: EditorProps) {
         <p className="text-xs font-medium text-zinc-600 mb-2">Inhaltsblöcke</p>
         {blocks.map((block, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-4 mb-3">
-            <button onClick={() => setBlocks(blocks.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => setBlocks(blocks.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <Field label={`Block ${i + 1} — Überschrift`} value={block.headline} onChange={(v) => setBlocks(blocks.map((b, idx) => idx === i ? { ...b, headline: v } : b))} />
             <div className="mt-2">
               <MiniRichTextField label="Inhalt (HTML)" value={block.text} onChange={(v) => setBlocks(blocks.map((b, idx) => idx === i ? { ...b, text: v } : b))} />
             </div>
           </div>
         ))}
-        <button onClick={() => setBlocks([...blocks, { headline: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Block hinzufügen</button>
+        <button type="button" onClick={() => setBlocks([...blocks, { headline: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Block hinzufügen</button>
       </div>
     </div>
   );
@@ -2160,16 +2241,16 @@ function ComparisonTableEditor({ data, onChange }: EditorProps) {
           <div key={i} className="flex gap-2 mb-1 items-center">
             <input className="admin-input flex-1" value={col.label} onChange={(e) => { const c = [...columns]; c[i] = { label: e.target.value }; setColumns(c); }} placeholder={`Spalte ${i + 1}`} />
             <label className="text-xs flex items-center gap-1"><input type="radio" name="highlight" checked={highlightCol === i} onChange={() => setHighlightCol(i)} /> Highlight</label>
-            <button onClick={() => removeColumn(i)} className="text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => removeColumn(i)} className="text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           </div>
         ))}
-        <button onClick={addColumn} className="text-sm text-blue-600 hover:underline">+ Spalte</button>
+        <button type="button" onClick={addColumn} className="text-sm text-blue-600 hover:underline">+ Spalte</button>
       </div>
       <div>
         <span className="text-xs font-medium text-gray-600 mb-1 block">Zeilen</span>
         {rows.map((row, ri) => (
           <div key={ri} className="border rounded p-2 mb-2 space-y-1 relative">
-            <button onClick={() => removeRow(ri)} className="absolute top-1 right-1 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => removeRow(ri)} className="absolute top-1 right-1 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <input className="admin-input w-full" value={row.feature} onChange={(e) => { const r = [...rows]; r[ri] = { ...r[ri], feature: e.target.value }; setRows(r); }} placeholder="Feature-Name" />
             <div className="flex gap-1">
               {row.values.map((val, ci) => (
@@ -2178,7 +2259,7 @@ function ComparisonTableEditor({ data, onChange }: EditorProps) {
             </div>
           </div>
         ))}
-        <button onClick={addRow} className="text-sm text-blue-600 hover:underline">+ Zeile</button>
+        <button type="button" onClick={addRow} className="text-sm text-blue-600 hover:underline">+ Zeile</button>
       </div>
     </div>
   );
@@ -2208,7 +2289,7 @@ function SocialProofBarEditor({ data, onChange }: EditorProps) {
       </div>
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Wert (z.B. 500+)" value={item.value} onChange={(v) => updateItem(i, 'value', v)} />
             <Field label={fieldLabel('label')} value={item.label} onChange={(v) => updateItem(i, 'label', v)} />
@@ -2217,7 +2298,7 @@ function SocialProofBarEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Eintrag</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Eintrag</button>
     </div>
   );
 }
@@ -2243,7 +2324,7 @@ function TimelineEditor({ data, onChange }: EditorProps) {
       <Field label="Unterzeile" value={subline} onChange={setSubline} />
       {entries.map((entry, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => removeEntry(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeEntry(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Jahr / Datum" value={entry.year} onChange={(v) => updateEntry(i, 'year', v)} />
             <Field label={fieldLabel('title')} value={entry.title} onChange={(v) => updateEntry(i, 'title', v)} />
@@ -2251,7 +2332,7 @@ function TimelineEditor({ data, onChange }: EditorProps) {
           <Field label="Beschreibung" value={entry.text} onChange={(v) => updateEntry(i, 'text', v)} multiline />
         </div>
       ))}
-      <button onClick={addEntry} className="text-sm text-blue-600 hover:underline">+ Eintrag</button>
+      <button type="button" onClick={addEntry} className="text-sm text-blue-600 hover:underline">+ Eintrag</button>
     </div>
   );
 }
@@ -2273,7 +2354,7 @@ function StatsCounterEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => setStats(stats.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => setStats(stats.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label="Prefix (z.B. +)" value={stat.prefix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, prefix: v } : s))} />
             <Field label="Wert (Zahl)" value={stat.value} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, value: v } : s))} />
@@ -2282,7 +2363,7 @@ function StatsCounterEditor({ data, onChange }: EditorProps) {
           <Field label={fieldLabel('label')} value={stat.label} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
         </div>
       ))}
-      <button onClick={() => setStats([...stats, { value: '', suffix: '', prefix: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Stat</button>
+      <button type="button" onClick={() => setStats([...stats, { value: '', suffix: '', prefix: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Stat</button>
     </div>
   );
 }
@@ -2304,7 +2385,7 @@ function BentoGridEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={fieldLabel('title')} value={item.title} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
           <Field label="Beschreibung" value={item.description} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, description: v } : it))} multiline />
           <IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
@@ -2320,7 +2401,7 @@ function BentoGridEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={() => setItems([...items, { title: '', description: '', icon: '', image: '', span: '' }])} className="text-sm text-blue-600 hover:underline">+ Element</button>
+      <button type="button" onClick={() => setItems([...items, { title: '', description: '', icon: '', image: '', span: '' }])} className="text-sm text-blue-600 hover:underline">+ Element</button>
     </div>
   );
 }
@@ -2338,7 +2419,7 @@ function TestimonialMarqueeEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={fieldLabel('quote')} value={item.quote} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('name')} value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
@@ -2353,7 +2434,7 @@ function TestimonialMarqueeEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={() => setItems([...items, { quote: '', name: '', role: '', image: '', rating: 5 }])} className="text-sm text-blue-600 hover:underline">+ Bewertung</button>
+      <button type="button" onClick={() => setItems([...items, { quote: '', name: '', role: '', image: '', rating: 5 }])} className="text-sm text-blue-600 hover:underline">+ Bewertung</button>
     </div>
   );
 }
@@ -2406,12 +2487,12 @@ function LogoMarqueeEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
-          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={fieldLabel('name')} value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
           <ImageUploadField label="Logo" value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
         </div>
       ))}
-      <button onClick={() => setItems([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo</button>
+      <button type="button" onClick={() => setItems([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo</button>
     </div>
   );
 }
@@ -2730,7 +2811,7 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
       <SelectField label={fieldLabel('columns')} value={columns} options={['2', '3', '4']} onChange={setColumns} />
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
@@ -2743,7 +2824,7 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
           <Field label="Beschreibung" value={item.description} onChange={(v) => update(i, 'description', v)} />
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Produkt hinzufügen</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Produkt hinzufügen</button>
     </div>
   );
 }
@@ -2765,7 +2846,7 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
       <p className="text-xs text-zinc-500">Tipp: Die ersten 2 Einträge mit Größe "Groß" erscheinen als große Kacheln.</p>
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
@@ -2774,7 +2855,7 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Kategorie hinzufügen</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Kategorie hinzufügen</button>
     </div>
   );
 }
@@ -2797,12 +2878,12 @@ function BrandShowroomEditor({ data, onChange }: EditorProps) {
         <span className="text-xs text-gray-600 font-medium">Highlights</span>
         {highlights.map((h, i) => (
           <div key={i} className="border rounded p-2 space-y-1 relative">
-            <button onClick={() => setHighlights(highlights.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 text-red-400 text-xs">×</button>
+            <button type="button" onClick={() => setHighlights(highlights.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 text-red-400 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <Field label={fieldLabel('title')} value={h.title} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, title: v } : x))} />
             <Field label={fieldLabel('text')} value={h.text} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, text: v } : x))} />
           </div>
         ))}
-        <button onClick={() => setHighlights([...highlights, { title: '', text: '' }])} className="text-sm text-blue-600 hover:underline">+ Highlight</button>
+        <button type="button" onClick={() => setHighlights([...highlights, { title: '', text: '' }])} className="text-sm text-blue-600 hover:underline">+ Highlight</button>
       </div>
       <ButtonField label="CTA-Button" value={cta} onChange={setCta} />
     </div>
@@ -2828,7 +2909,7 @@ function ConsultationBookingEditor({ data, onChange }: EditorProps) {
         <span className="text-xs text-gray-600 font-medium">Services / Beratungsangebote</span>
         {services.map((s, i) => (
           <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-            <button onClick={() => removeService(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => removeService(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               <IconPickerField label={fieldLabel('icon')} value={s.icon} onChange={(v) => updateService(i, 'icon', v)} />
               <Field label={fieldLabel('title')} value={s.title} onChange={(v) => updateService(i, 'title', v)} />
@@ -2836,7 +2917,7 @@ function ConsultationBookingEditor({ data, onChange }: EditorProps) {
             </div>
           </div>
         ))}
-        <button onClick={addService} className="text-sm text-blue-600 hover:underline">+ Service hinzufügen</button>
+        <button type="button" onClick={addService} className="text-sm text-blue-600 hover:underline">+ Service hinzufügen</button>
       </div>
       <ButtonField label="CTA-Button" value={cta} onChange={setCta} />
     </div>
@@ -2861,16 +2942,16 @@ function MaterialGalleryEditor({ data, onChange }: EditorProps) {
         {categories.map((cat, i) => (
           <div key={i} className="flex gap-2 items-center">
             <input className="admin-input flex-1" value={cat} onChange={(e) => setCategories(categories.map((c, idx) => idx === i ? e.target.value : c))} />
-            <button onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-400 text-xs">×</button>
+            <button type="button" onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-400 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           </div>
         ))}
-        <button onClick={() => setCategories([...categories, ''])} className="text-sm text-blue-600 hover:underline">+ Kategorie</button>
+        <button type="button" onClick={() => setCategories([...categories, ''])} className="text-sm text-blue-600 hover:underline">+ Kategorie</button>
       </div>
       <div className="space-y-2">
         <span className="text-xs text-gray-600 font-medium">Materialien</span>
         {items.map((item, i) => (
           <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-            <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label={fieldLabel('name')} value={item.name} onChange={(v) => update(i, 'name', v)} />
@@ -2878,7 +2959,7 @@ function MaterialGalleryEditor({ data, onChange }: EditorProps) {
             </div>
           </div>
         ))}
-        <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Material hinzufügen</button>
+        <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Material hinzufügen</button>
       </div>
     </div>
   );
@@ -2898,7 +2979,7 @@ function DeliveryTimelineEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-          <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             <Field label="Nr." value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
             <IconPickerField label={fieldLabel('icon')} value={step.icon} onChange={(v) => updateStep(i, 'icon', v)} />
@@ -2907,7 +2988,7 @@ function DeliveryTimelineEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
+      <button type="button" onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
     </div>
   );
 }
@@ -2926,7 +3007,7 @@ function InspirationGridEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
@@ -2934,7 +3015,7 @@ function InspirationGridEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
+      <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
     </div>
   );
 }
@@ -2998,7 +3079,7 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
       </div>
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-          <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('number')} value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
             <Field label={fieldLabel('timeLabel')} value={step.timeLabel} onChange={(v) => updateStep(i, 'timeLabel', v)} placeholder="z.B. Woche 1" />
@@ -3037,7 +3118,7 @@ function BeforeAfterSliderEditor({ data, onChange }: EditorProps) {
       <SelectField label="Bildformat" value={aspectRatio} options={['16/9', '4/3', '1/1']} onChange={setAspectRatio} />
       {slides.map((slide, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-3 relative">
-          <button type="button" onClick={() => removeSlide(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removeSlide(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <ImageUploadField label="Bild vorher" value={slide.imageBefore} onChange={(v) => updateSlide(i, 'imageBefore', v)} />
@@ -3081,7 +3162,7 @@ function HorizontalScrollShowcaseEditor({ data, onChange }: EditorProps) {
       <SelectField label="Panel-Höhe" value={panelHeight} options={['full', 'compact']} onChange={setPanelHeight} />
       {panels.map((panel, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
-          <button type="button" onClick={() => removePanel(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <button type="button" onClick={() => removePanel(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <ImageUploadField label={fieldLabel('image')} value={panel.image} onChange={(v) => updatePanel(i, 'image', v)} />
           <Field label={fieldLabel('title')} value={panel.title} onChange={(v) => updatePanel(i, 'title', v)} />
           <Field label={fieldLabel('text')} value={panel.text} onChange={(v) => updatePanel(i, 'text', v)} multiline />
@@ -3150,7 +3231,7 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
         <div className="text-xs font-semibold text-zinc-600">Faktenleiste</div>
         {d.facts.map((fact, i) => (
           <div key={i} className="relative rounded-lg border p-3">
-            <button type="button" onClick={() => removeFact(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+            <button type="button" onClick={() => removeFact(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label={fieldLabel('value')} value={fact.value} onChange={(v) => updateFact(i, 'value', v)} />
               <Field label={fieldLabel('label')} value={fact.label} onChange={(v) => updateFact(i, 'label', v)} />
@@ -3183,7 +3264,7 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {cards.map((card, i) => (
         <div key={i} className="relative rounded-lg border p-3 space-y-2">
-          <button type="button" onClick={() => removeCard(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+          <button type="button" onClick={() => removeCard(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={fieldLabel('title')} value={card.title} onChange={(v) => updateCard(i, 'title', v)} />
           <Field label={fieldLabel('text')} value={card.text} onChange={(v) => updateCard(i, 'text', v)} multiline />
           <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
@@ -3214,7 +3295,7 @@ function ScrollStoryEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {steps.map((step, i) => (
         <div key={i} className="relative rounded-lg border p-3 space-y-2">
-          <button type="button" onClick={() => removeStep(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+          <button type="button" onClick={() => removeStep(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <Field label={fieldLabel('kicker')} value={step.kicker} onChange={(v) => updateStep(i, 'kicker', v)} placeholder="01 / Analyse / Woche 1" />
           <Field label={fieldLabel('title')} value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
           <Field label={fieldLabel('text')} value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
@@ -3270,7 +3351,7 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
         <div className="text-xs font-semibold text-zinc-600">Spalten</div>
         {columns.map((column, i) => (
           <div key={i} className="relative rounded-lg border p-3">
-            <button type="button" onClick={() => removeColumn(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+            <button type="button" onClick={() => removeColumn(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label={fieldLabel('label')} value={column.label} onChange={(v) => updateColumn(i, 'label', v)} />
               <Field label="Notiz" value={column.note} onChange={(v) => updateColumn(i, 'note', v)} />
@@ -3283,7 +3364,7 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
         <div className="text-xs font-semibold text-zinc-600">Zeilen</div>
         {rows.map((row, rowIndex) => (
           <div key={rowIndex} className="relative rounded-lg border p-3 space-y-2">
-            <button type="button" onClick={() => removeRow(rowIndex)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+            <button type="button" onClick={() => removeRow(rowIndex)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600" aria-label="Eintrag entfernen" title="Entfernen">×</button>
             <Field label={fieldLabel('feature')} value={row.feature} onChange={(v) => updateRow(rowIndex, 'feature', v)} />
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               {columns.map((column, colIndex) => (
@@ -3398,10 +3479,10 @@ function OfferCampaignStripEditor({ data, onChange }: EditorProps) {
         {benefits.map((b, i) => (
           <div key={i} className="flex items-center gap-2">
             <Field label="" value={b} onChange={(v) => updateBenefit(i, v)} />
-            <button onClick={() => removeBenefit(i)} className="text-red-400 hover:text-red-600 text-sm flex-shrink-0">{"×"}</button>
+            <button type="button" onClick={() => removeBenefit(i)} className="text-red-400 hover:text-red-600 text-sm flex-shrink-0" aria-label="Eintrag entfernen" title="Entfernen">{"×"}</button>
           </div>
         ))}
-        <button onClick={addBenefit} className="text-sm text-blue-600 hover:underline">+ Benefit hinzufügen</button>
+        <button type="button" onClick={addBenefit} className="text-sm text-blue-600 hover:underline">+ Benefit hinzufügen</button>
       </div>
 
       <ButtonField label="CTA" value={cta} onChange={setCta} />
@@ -3493,31 +3574,31 @@ function ComparisonCardsProEditor({ data, onChange }: EditorProps) {
 }
 
 function SimplePairs({ title, items, onAdd, onRemove, onChange, firstLabel, secondLabel }: { title: string; items: { value: string; label: string }[]; onAdd: () => void; onRemove: (i: number) => void; onChange: (i: number, item: { value: string; label: string }) => void; firstLabel: string; secondLabel: string }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3"><button type="button" onClick={() => onRemove(i)} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={firstLabel} value={item.value} onChange={(v) => onChange(i, { ...item, value: v })} /><Field label={secondLabel} value={item.label} onChange={(v) => onChange(i, { ...item, label: v })} /></div></div>)}<button type="button" onClick={onAdd} className="text-sm text-blue-600 hover:underline">+ Eintrag hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3"><button type="button" onClick={() => onRemove(i)} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={firstLabel} value={item.value} onChange={(v) => onChange(i, { ...item, value: v })} /><Field label={secondLabel} value={item.label} onChange={(v) => onChange(i, { ...item, label: v })} /></div></div>)}<button type="button" onClick={onAdd} className="text-sm text-blue-600 hover:underline">+ Eintrag hinzufügen</button></div>;
 }
 
 function ProofList({ title, items, onChange }: { title: string; items: { value: string; label: string; note: string }[]; onChange: (items: { value: string; label: string; note: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('value')} value={item.value} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, value: v } : x))} /><Field label={fieldLabel('label')} value={item.label} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, label: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /></div>)}<button type="button" onClick={() => onChange([...items, { value: '', label: '', note: '' }])} className="text-sm text-blue-600 hover:underline">+ Proof hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('value')} value={item.value} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, value: v } : x))} /><Field label={fieldLabel('label')} value={item.label} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, label: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /></div>)}<button type="button" onClick={() => onChange([...items, { value: '', label: '', note: '' }])} className="text-sm text-blue-600 hover:underline">+ Proof hinzufügen</button></div>;
 }
 
 function ReviewList({ title, items, onChange }: { title: string; items: { quote: string; name: string; context: string; rating: string }[]; onChange: (items: { quote: string; name: string; context: string; rating: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('quote')} value={item.quote} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, quote: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Kontext" value={item.context} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, context: v } : x))} /><Field label={fieldLabel('rating')} value={item.rating} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, rating: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { quote: '', name: '', context: '', rating: '5' }])} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><Field label={fieldLabel('quote')} value={item.quote} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, quote: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Kontext" value={item.context} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, context: v } : x))} /><Field label={fieldLabel('rating')} value={item.rating} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, rating: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { quote: '', name: '', context: '', rating: '5' }])} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button></div>;
 }
 
 function LogoList({ title, items, onChange }: { title: string; items: { name: string; image: string }[]; onChange: (items: { name: string; image: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><ImageUploadField label="Logo optional" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><ImageUploadField label="Logo optional" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button></div>;
 }
 
 function RailItems({ items, onChange }: { items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Slides</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('kicker')} value={item.kicker} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, kicker: v } : x))} /><Field label={fieldLabel('title')} value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label={fieldLabel('text')} value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Slide hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Slides</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><Field label={fieldLabel('kicker')} value={item.kicker} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, kicker: v } : x))} /><Field label={fieldLabel('title')} value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label={fieldLabel('text')} value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Slide hinzufügen</button></div>;
 }
 
 function TraitList({ items, onChange }: { items: { title: string; text: string; icon: string }[]; onChange: (items: { title: string; text: string; icon: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Merkmale</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('title')} value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label={fieldLabel('text')} value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, icon: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { title: '', text: '', icon: '' }])} className="text-sm text-blue-600 hover:underline">+ Merkmal hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Merkmale</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><Field label={fieldLabel('title')} value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label={fieldLabel('text')} value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, icon: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { title: '', text: '', icon: '' }])} className="text-sm text-blue-600 hover:underline">+ Merkmal hinzufügen</button></div>;
 }
 
 function PlanList({ items, onChange }: { items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label={fieldLabel('price')} value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label={fieldLabel('price')} value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
 }
 
 type AdditionalLocationDraft = { name: string; address: string; phone: string; email: string; mapEmbedUrl: string; openingHours: string; ctaLabel: string; ctaHref: string };
@@ -3550,7 +3631,7 @@ function AdditionalLocationsEditor({ data, onChange }: EditorProps) {
 }
 
 function LocationList({ items, onChange }: { items: AdditionalLocationDraft[]; onChange: (items: AdditionalLocationDraft[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400" aria-label="Eintrag entfernen" title="Entfernen">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
 }
 
 function InstagramFeedEditor({ data, onChange, sectionId }: EditorProps) {
@@ -3666,7 +3747,7 @@ function MenuCardEditor({ data, onChange }: EditorProps) {
           <details key={ci} className="border rounded mb-3 overflow-hidden" open={categories.length === 1}>
             <summary className="flex items-center justify-between px-3 py-2 bg-gray-50 cursor-pointer text-sm font-medium">
               <span>{cat.label || "Kategorie " + (ci + 1)}</span>
-              <button onClick={(e) => { e.preventDefault(); removeCategory(ci); }} className="text-red-400 hover:text-red-600 text-xs ml-2">Entfernen</button>
+              <button type="button" onClick={(e) => { e.preventDefault(); removeCategory(ci); }} className="text-red-400 hover:text-red-600 text-xs ml-2">Entfernen</button>
             </summary>
             <div className="p-3 space-y-3">
               <Field label="Tab-Name" value={cat.label} onChange={(v) => updateCategoryLabel(ci, v)} />
@@ -3674,7 +3755,7 @@ function MenuCardEditor({ data, onChange }: EditorProps) {
               <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Gerichte</h5>
               {cat.items.map((dish, di) => (
                 <div key={di} className="border rounded p-3 space-y-2 relative bg-white">
-                  <button onClick={() => removeDish(ci, di)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">\u00d7</button>
+                  <button type="button" onClick={() => removeDish(ci, di)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">\\u00d7</button>
                   <div className="grid grid-cols-2 gap-2">
                     <Field label="Name" value={dish.title} onChange={(v) => updateDish(ci, di, 'title', v)} />
                     <Field label="Preis" value={dish.price} onChange={(v) => updateDish(ci, di, 'price', v)} />
@@ -3687,11 +3768,11 @@ function MenuCardEditor({ data, onChange }: EditorProps) {
                   <ImageUploadField label="Bild (optional)" value={dish.image} onChange={(v) => updateDish(ci, di, 'image', v)} />
                 </div>
               ))}
-              <button onClick={() => addDish(ci)} className="text-sm text-blue-600 hover:underline">+ Gericht hinzufügen</button>
+              <button type="button" onClick={() => addDish(ci)} className="text-sm text-blue-600 hover:underline">+ Gericht hinzufügen</button>
             </div>
           </details>
         ))}
-        <button onClick={addCategory} className="text-sm text-blue-600 hover:underline mt-2">+ Kategorie hinzufügen</button>
+        <button type="button" onClick={addCategory} className="text-sm text-blue-600 hover:underline mt-2">+ Kategorie hinzufügen</button>
       </div>
     </div>
   );
@@ -3848,6 +3929,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   scrollStory: ScrollStoryEditor,
   premiumComparison: PremiumComparisonEditor,
   smartInquiry: SchemaSectionEditor,
+  offerMatcher: SchemaSectionEditor,
   immersiveCtaBanner: ImmersiveCtaBannerEditor,
   proofWall: ProofWallEditor,
   editorialFeatureRail: EditorialFeatureRailEditor,

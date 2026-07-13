@@ -1,7 +1,7 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getSession, getWritableSession } from '@/lib/session';
 import { formSubmissions } from '@flamingo/db';
 import { eq, and, desc, ne } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -9,6 +9,12 @@ import { revalidatePath } from 'next/cache';
 async function requireTenant() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
+  return session.tenantId;
+}
+
+async function requireWritableTenant() {
+  const session = await getWritableSession();
+  if (!session) throw new Error('Diese Demo-Sitzung ist schreibgeschützt.');
   return session.tenantId;
 }
 
@@ -22,7 +28,7 @@ export async function getSubmissions() {
 }
 
 export async function updateSubmissionStatus(id: string, status: 'new' | 'read' | 'archived') {
-  const tenantId = await requireTenant();
+  const tenantId = await requireWritableTenant();
   const db = getDb();
   await db.update(formSubmissions).set({ status }).where(and(eq(formSubmissions.id, id), eq(formSubmissions.tenantId, tenantId)));
   revalidatePath('/admin/inbox');

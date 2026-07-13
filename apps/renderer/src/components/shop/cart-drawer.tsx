@@ -19,7 +19,7 @@ export function CartDrawer() {
   return (
     <>
       <div className="fixed inset-0 bg-black/40 z-[9998]" onClick={() => setIsOpen(false)} />
-      <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-[9999] shadow-2xl flex flex-col">
+      <div data-cart-drawer className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-[9999] shadow-2xl flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <div className="flex items-center gap-2">

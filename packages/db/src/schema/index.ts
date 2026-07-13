@@ -93,6 +93,7 @@ export const globalSettings = pgTable('global_settings', {
   tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
   brand: jsonb('brand').$type<Record<string, unknown>>().default({}),
   contact: jsonb('contact').$type<Record<string, unknown>>().default({}),
+  businessProfile: jsonb('business_profile').$type<Record<string, unknown> | null>().default(null),
   openingHours: jsonb('opening_hours').$type<Record<string, unknown>[]>().default([]),
   socialLinks: jsonb('social_links').$type<Record<string, unknown>>().default({}),
   design: jsonb('design').$type<Record<string, unknown>>().default({}),
