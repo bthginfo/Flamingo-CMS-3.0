@@ -4,6 +4,7 @@ import { orders, shopSettings, orderStatusHistory } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { sendOrderEmails } from '@/lib/shop-email';
 import Stripe from 'stripe';
+import { revealShopSecrets } from '@/lib/secret-storage';
 
 /**
  * Per-tenant Stripe webhook endpoint.
@@ -21,9 +22,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ten
   const body = await req.text();
   const db = getDb();
 
-  const [settings] = await db.select().from(shopSettings)
+  const [storedSettings] = await db.select().from(shopSettings)
     .where(eq(shopSettings.tenantId, tenantId))
     .limit(1);
+  const settings = storedSettings ? revealShopSecrets(storedSettings) : null;
 
   if (!settings?.stripeSecretKey || !settings?.stripeWebhookSecret) {
     return new NextResponse('Tenant not configured for Stripe', { status: 404 });

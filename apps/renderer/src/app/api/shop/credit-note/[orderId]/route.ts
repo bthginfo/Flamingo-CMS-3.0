@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { orders, invoices } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/snapshot';
+import { getWritableSession } from '@/lib/session';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 export async function GET(
@@ -10,8 +10,9 @@ export async function GET(
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   const { orderId } = await params;
-  const tenantId = await resolveTenant();
-  if (!tenantId) return new NextResponse('Not found', { status: 404 });
+  const session = await getWritableSession();
+  if (!session) return new NextResponse('Not found', { status: 404 });
+  const tenantId = session.tenantId;
 
   const db = getDb();
   const [order] = await db.select().from(orders)
@@ -133,6 +134,7 @@ export async function GET(
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="Stornorechnung-${creditNote.invoiceNumber}.pdf"`,
+      'Cache-Control': 'private, no-store',
     },
   });
 }

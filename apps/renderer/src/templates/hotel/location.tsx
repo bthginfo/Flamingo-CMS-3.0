@@ -6,6 +6,7 @@ import { ArrowRight, Star } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps } from './types';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type TransportItem = { icon?: string; label?: string; value?: string; text?: string };
 type NearbyItem = { title?: string; distanceLabel?: string; text?: string; image?: string };
@@ -17,7 +18,7 @@ export function LocationSection({ data, styleVariant }: SectionProps) {
   const addressText = (data.addressText as string) || (data.address as string) || '';
   const phone = (data.phone as string) || '';
   const email = (data.email as string) || '';
-  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
+  const mapEmbedUrl = safeMapEmbedUrl(data.mapEmbedUrl);
   const image = (data.image as string) || '';
   const transportItems = asList<TransportItem>(data.transportItems);
   const nearbyItems = asList<NearbyItem>(data.nearbyItems);

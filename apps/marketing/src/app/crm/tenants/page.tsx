@@ -4,10 +4,12 @@ import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Building2, Plus, ArrowRight, Globe } from 'lucide-react';
 import { TenantAccordion } from './tenant-accordion';
+import { requireCrmAdmin } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export default async function TenantsPage() {
+  await requireCrmAdmin();
   const db = getDb();
   const tenantList = await db.select().from(tenants).orderBy(tenants.createdAt);
   const domains = await db.select().from(tenantDomains);

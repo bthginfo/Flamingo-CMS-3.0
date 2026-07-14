@@ -4,6 +4,7 @@ import { orders, shopSettings, orderStatusHistory } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { sendOrderEmails } from '@/lib/shop-email';
 import Stripe from 'stripe';
+import { revealShopSecrets } from '@/lib/secret-storage';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -36,9 +37,10 @@ export async function POST(req: NextRequest) {
     return new NextResponse('ok (no tenant metadata, ignored)', { status: 200 });
   }
 
-  const [settings] = await db.select().from(shopSettings)
+  const [storedSettings] = await db.select().from(shopSettings)
     .where(eq(shopSettings.tenantId, candidateTenantId))
     .limit(1);
+  const settings = storedSettings ? revealShopSecrets(storedSettings) : null;
 
   if (!settings?.stripeSecretKey || !settings?.stripeWebhookSecret) {
     return new NextResponse('Tenant not configured for Stripe', { status: 400 });

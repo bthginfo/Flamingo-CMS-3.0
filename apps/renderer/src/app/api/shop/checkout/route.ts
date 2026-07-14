@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { orders, products, productVariants, shopSettings, customers, orderStatusHistory, coupons, shippingMethods, shippingZones } from '@flamingo/db';
 import { eq, and, sql, ne } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/snapshot';
+import { isDemoTenant, resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
 import {
   claimPublicFlowRequest,
@@ -28,6 +28,7 @@ import {
   RendererContactBodyInvalidError,
   RendererContactBodyTooLargeError,
 } from '@/lib/renderer-contact-security';
+import { revealShopSecrets } from '@/lib/secret-storage';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -444,6 +445,13 @@ export async function POST(req: NextRequest) {
   const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
+  if (await isDemoTenant(tenantId)) {
+    return NextResponse.json(
+      { error: 'Demo-Bestellungen werden nicht gespeichert.' },
+      { status: 403 },
+    );
+  }
+
   const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode, idempotencyKey } = body as Record<string, any>;
 
   if (!isBoundedText(name, 200, true) || !isBoundedText(email, 320, true) || !items?.length) {
@@ -538,8 +546,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Get shop settings for order number
-  const [settings] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
-  if (!settings) return NextResponse.json({ error: 'Shop not configured' }, { status: 400 });
+  const [storedSettings] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
+  if (!storedSettings) return NextResponse.json({ error: 'Shop not configured' }, { status: 400 });
+  const settings = revealShopSecrets(storedSettings);
 
   const enabledPaymentMethods = new Set(
     Array.isArray(settings.paymentMethods) ? settings.paymentMethods : ['prepayment'],

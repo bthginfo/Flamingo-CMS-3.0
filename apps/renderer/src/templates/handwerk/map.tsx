@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -10,7 +11,7 @@ const HEIGHT: Record<string, string> = { s: 'h-64', m: 'h-[400px]', l: 'h-[500px
 
 export function MapSection({ data }: Props) {
   const headline = (data.headline as string) || '';
-  const embedUrl = (data.embedUrl as string) || (data.mapEmbedUrl as string) || '';
+  const embedUrl = safeMapEmbedUrl(data.embedUrl || data.mapEmbedUrl);
   const address = (data.address as string) || '';
   const height = HEIGHT[(data.height as string) || 'm'] || HEIGHT.m;
   const ref = useRef(null);

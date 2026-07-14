@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 import { signState } from '@/lib/instagram/state';
 import { buildAuthorizeUrl } from '@/lib/instagram/graph';
 
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
  * redirect the admin straight back into the section that initiated the flow.
  */
 export async function GET(req: NextRequest) {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const url = new URL(req.url);
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
   // Defensive: only allow relative paths to prevent open-redirect
   const safeReturnTo = returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/admin/pages';
 
-  const state = signState({ tenantId: session.tenantId, sectionId, pageId, returnTo: safeReturnTo });
+  const state = signState({ tenantId: session.tenantId, sectionId, pageId, returnTo: safeReturnTo, actor: 'admin' });
   const authorizeUrl = buildAuthorizeUrl(state);
 
   return NextResponse.redirect(authorizeUrl);

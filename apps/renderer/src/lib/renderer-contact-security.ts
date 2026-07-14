@@ -169,6 +169,18 @@ export async function consumeRendererContactRateRules(rules: readonly RendererCo
   return null;
 }
 
+export async function clearRendererRateLimit(scope: string, subject: string) {
+  const key = rateLimitKey(scope, subject);
+  await getDb().execute(sql`DELETE FROM marketing_rate_limits WHERE key = ${key}`);
+}
+
+export function rendererAdminLoginRateRules(clientAddress: string): RendererContactRateRule[] {
+  return [
+    { scope: 'renderer_admin_login_ip', subject: clientAddress, limit: 8, windowSeconds: 15 * 60 },
+    { scope: 'renderer_admin_login_global', subject: 'all', limit: 100, windowSeconds: 15 * 60 },
+  ];
+}
+
 export function rendererContactRateRules(tenantId: string, clientAddress: string, email: string): RendererContactRateRule[] {
   return [
     { scope: 'renderer_contact_email', subject: `${tenantId}:${email.toLowerCase()}`, limit: 2, windowSeconds: 60 * 60 },

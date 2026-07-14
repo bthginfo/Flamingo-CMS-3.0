@@ -9,7 +9,7 @@ import { revalidatePath } from 'next/cache';
 async function requireTenant() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
-  return session.tenantId;
+  return session;
 }
 
 async function requireWritableTenant() {
@@ -19,7 +19,9 @@ async function requireWritableTenant() {
 }
 
 export async function getSubmissions() {
-  const tenantId = await requireTenant();
+  const session = await requireTenant();
+  if (session.role === 'demo') return [];
+  const tenantId = session.tenantId;
   const db = getDb();
   return db.select().from(formSubmissions).where(and(
     eq(formSubmissions.tenantId, tenantId),

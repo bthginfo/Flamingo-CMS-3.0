@@ -6,8 +6,10 @@ import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, boo
 import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, addDomainToProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject } from '@/lib/vercel';
+import { requireCrmAdmin } from '@/lib/session';
 
 export async function createTenantAction(input: ProvisionInput) {
+  await requireCrmAdmin();
   try {
     const result = await provisionTenant(input);
     revalidatePath('/crm');
@@ -21,6 +23,7 @@ export async function createTenantAction(input: ProvisionInput) {
 }
 
 export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: 'shared' | 'lead_shared'; industry?: Industry }) {
+  await requireCrmAdmin();
   const db = getDb();
   await db.update(tenants)
     .set({ ...data, updatedAt: new Date() })
@@ -31,6 +34,7 @@ export async function updateTenantAction(tenantId: string, data: { name?: string
 }
 
 export async function addDomainAction(tenantId: string, domain: string) {
+  await requireCrmAdmin();
   const db = getDb();
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
   if (!tenant) return { success: false, error: 'Tenant nicht gefunden' };
@@ -62,6 +66,7 @@ export async function addDomainAction(tenantId: string, domain: string) {
 }
 
 export async function convertLeadSharedToStandaloneAction(tenantId: string) {
+  await requireCrmAdmin();
   const db = getDb();
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
   if (!tenant) return { success: false as const, error: 'Tenant nicht gefunden' };
@@ -90,6 +95,7 @@ export async function convertLeadSharedToStandaloneAction(tenantId: string) {
 }
 
 export async function removeDomainAction(tenantId: string, domain: string) {
+  await requireCrmAdmin();
   const db = getDb();
   await db.delete(tenantDomains).where(eq(tenantDomains.domain, domain));
   try {
@@ -102,10 +108,12 @@ export async function removeDomainAction(tenantId: string, domain: string) {
 }
 
 export async function checkDomainAction(domain: string) {
+  await requireCrmAdmin();
   return checkDomainStatus(domain);
 }
 
 export async function updateDesignAction(tenantId: string, data: { brand?: Record<string, unknown>; design?: Record<string, unknown> }) {
+  await requireCrmAdmin();
   const db = getDb();
   const updates: Record<string, unknown> = { updatedAt: new Date() };
   if (data.brand) updates.brand = data.brand;
@@ -116,6 +124,7 @@ export async function updateDesignAction(tenantId: string, data: { brand?: Recor
 }
 
 export async function deleteTenantAction(tenantId: string) {
+  await requireCrmAdmin();
   const db = getDb();
 
   // Look up tenant to check for Vercel project
@@ -142,6 +151,7 @@ export async function deleteTenantAction(tenantId: string) {
 }
 
 export async function configureBlobAction(tenantId: string) {
+  await requireCrmAdmin();
   const db = getDb();
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId));
   if (!tenant) return { success: false, error: 'Tenant nicht gefunden' };
@@ -159,6 +169,7 @@ export async function configureBlobAction(tenantId: string) {
 }
 
 export async function toggleShopAddonAction(tenantId: string, activate: boolean) {
+  await requireCrmAdmin();
   const db = getDb();
   const now = new Date();
 
@@ -197,6 +208,7 @@ export async function toggleShopAddonAction(tenantId: string, activate: boolean)
 }
 
 export async function getShopAddonStatus(tenantId: string): Promise<boolean> {
+  await requireCrmAdmin();
   const db = getDb();
   const [row] = await db.select().from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
@@ -205,6 +217,7 @@ export async function getShopAddonStatus(tenantId: string): Promise<boolean> {
 }
 
 export async function toggleBookingAddonAction(tenantId: string, activate: boolean) {
+  await requireCrmAdmin();
   const db = getDb();
   const now = new Date();
 
@@ -231,6 +244,7 @@ export async function toggleBookingAddonAction(tenantId: string, activate: boole
 }
 
 export async function getBookingAddonStatus(tenantId: string): Promise<boolean> {
+  await requireCrmAdmin();
   const db = getDb();
   const [row] = await db.select().from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'booking')))
@@ -240,6 +254,7 @@ export async function getBookingAddonStatus(tenantId: string): Promise<boolean> 
 
 export async function toggleI18nAction(tenantId: string, active: boolean) {
   'use server';
+  await requireCrmAdmin();
   const db = getDb();
   await db.update(tenants)
     .set({ i18nEnabled: active, updatedAt: new Date() })
@@ -250,6 +265,7 @@ export async function toggleI18nAction(tenantId: string, active: boolean) {
 
 export async function updateI18nSettingsAction(tenantId: string, data: { maxLanguages?: number }) {
   'use server';
+  await requireCrmAdmin();
   const db = getDb();
   const updates: Record<string, unknown> = { updatedAt: new Date() };
   if (data.maxLanguages !== undefined) updates.i18nMaxLanguages = data.maxLanguages;

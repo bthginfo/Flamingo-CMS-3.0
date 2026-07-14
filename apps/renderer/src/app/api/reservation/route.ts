@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { reservations } from '@flamingo/db';
-import { resolveTenant } from '@/lib/snapshot';
+import { isDemoTenant, resolveTenant } from '@/lib/snapshot';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
@@ -32,6 +32,10 @@ export async function POST(req: NextRequest) {
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Ungültige E-Mail-Adresse.' }, { status: 400 });
+    }
+
+    if (await isDemoTenant(tenantId)) {
+      return NextResponse.json({ success: true, demo: true });
     }
 
     const db = await getDb();

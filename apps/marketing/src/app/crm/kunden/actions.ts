@@ -4,6 +4,8 @@ import { getDb } from '@/lib/db';
 import { crmCustomerPayments, crmCustomers, leads } from '@flamingo/db';
 import { desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { requireCrmAdmin } from '@/lib/session';
+import { isProtectedCrmSecret, protectCrmSecret, revealCrmSecret } from '@/lib/secret-storage';
 
 export type CrmCustomer = typeof crmCustomers.$inferSelect;
 export type CrmCustomerPayment = typeof crmCustomerPayments.$inferSelect;
@@ -11,6 +13,19 @@ type CrmCustomerInsert = typeof crmCustomers.$inferInsert;
 type CrmPaymentInsert = typeof crmCustomerPayments.$inferInsert;
 
 export type CustomerWithPayments = CrmCustomer & { payments: CrmCustomerPayment[] };
+
+function redactCustomerPassword(customer: CrmCustomer): CrmCustomer {
+  return { ...customer, adminPassword: null };
+}
+
+async function upgradeCustomerPasswords(rows: CrmCustomer[]) {
+  const legacy = rows.filter(row => row.adminPassword && !isProtectedCrmSecret(row.adminPassword));
+  if (!legacy.length) return;
+  const db = getDb();
+  await Promise.all(legacy.map(row => db.update(crmCustomers)
+    .set({ adminPassword: protectCrmSecret(row.adminPassword), updatedAt: new Date() })
+    .where(eq(crmCustomers.id, row.id))));
+}
 
 const MISSING_CUSTOMER_SCHEMA_MESSAGE = 'Die CRM-Kundentabellen sind in der Datenbank noch nicht angelegt.';
 
@@ -39,14 +54,16 @@ function revalidateCustomers() {
 }
 
 export async function getCustomers(): Promise<CustomerWithPayments[]> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     const [customers, payments] = await Promise.all([
       db.select().from(crmCustomers).orderBy(desc(crmCustomers.createdAt)),
       db.select().from(crmCustomerPayments).orderBy(desc(crmCustomerPayments.createdAt)),
     ]);
+    await upgradeCustomerPasswords(customers);
     return customers.map(customer => ({
-      ...customer,
+      ...redactCustomerPassword(customer),
       payments: payments.filter(payment => payment.customerId === customer.id),
     }));
   } catch (error) {
@@ -59,29 +76,40 @@ export async function getCustomers(): Promise<CustomerWithPayments[]> {
 }
 
 export async function createCustomer(data: Omit<CrmCustomerInsert, 'id' | 'createdAt' | 'updatedAt'>): Promise<CustomerWithPayments> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
-    const [customer] = await db.insert(crmCustomers).values(data).returning();
+    const [customer] = await db.insert(crmCustomers).values({
+      ...data,
+      adminPassword: protectCrmSecret(data.adminPassword),
+    }).returning();
     revalidateCustomers();
-    return { ...customer, payments: [] };
+    return { ...redactCustomerPassword(customer), payments: [] };
   } catch (error) {
     handleCustomerSchemaError(error);
   }
 }
 
 export async function updateCustomer(id: string, data: Partial<Omit<CrmCustomerInsert, 'id' | 'createdAt'>>): Promise<CustomerWithPayments> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
-    const [customer] = await db.update(crmCustomers).set({ ...data, updatedAt: new Date() }).where(eq(crmCustomers.id, id)).returning();
+    const patch = {
+      ...data,
+      ...(data.adminPassword !== undefined ? { adminPassword: protectCrmSecret(data.adminPassword) } : {}),
+      updatedAt: new Date(),
+    };
+    const [customer] = await db.update(crmCustomers).set(patch).where(eq(crmCustomers.id, id)).returning();
     const payments = await db.select().from(crmCustomerPayments).where(eq(crmCustomerPayments.customerId, id)).orderBy(desc(crmCustomerPayments.createdAt));
     revalidateCustomers();
-    return { ...customer, payments };
+    return { ...redactCustomerPassword(customer), payments };
   } catch (error) {
     handleCustomerSchemaError(error);
   }
 }
 
 export async function deleteCustomer(id: string): Promise<void> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     await db.delete(crmCustomers).where(eq(crmCustomers.id, id));
@@ -97,6 +125,7 @@ export async function convertLeadToCustomer(leadId: string, data: {
   hostingMonthlyCents?: number;
   notes?: string;
 }): Promise<CustomerWithPayments> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     const [lead] = await db.select().from(leads).where(eq(leads.id, leadId));
@@ -117,7 +146,7 @@ export async function convertLeadToCustomer(leadId: string, data: {
       responsible: lead.responsible,
       tenantId: lead.tenantId,
       leadId: lead.id,
-      adminPassword: lead.adminPassword,
+      adminPassword: protectCrmSecret(revealCrmSecret(lead.adminPassword)),
       packageName: data.packageName || null,
       setupPriceCents: data.setupPriceCents || 0,
       hostingMonthlyCents: data.hostingMonthlyCents || 0,
@@ -148,13 +177,14 @@ export async function convertLeadToCustomer(leadId: string, data: {
 
     const payments = await db.select().from(crmCustomerPayments).where(eq(crmCustomerPayments.customerId, customer.id)).orderBy(desc(crmCustomerPayments.createdAt));
     revalidateCustomers();
-    return { ...customer, payments };
+    return { ...redactCustomerPassword(customer), payments };
   } catch (error) {
     handleCustomerSchemaError(error);
   }
 }
 
 export async function addCustomerPayment(data: Omit<CrmPaymentInsert, 'id' | 'createdAt'>): Promise<CrmCustomerPayment> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     const [payment] = await db.insert(crmCustomerPayments).values(data).returning();
@@ -166,6 +196,7 @@ export async function addCustomerPayment(data: Omit<CrmPaymentInsert, 'id' | 'cr
 }
 
 export async function updateCustomerPayment(id: string, data: Partial<Omit<CrmPaymentInsert, 'id' | 'createdAt'>>): Promise<CrmCustomerPayment> {
+  await requireCrmAdmin();
   const db = getDb();
   const patch: Partial<CrmPaymentInsert> & { paidAt?: Date | null } = { ...data };
   if (patch.status === 'bezahlt' && !patch.paidAt) patch.paidAt = new Date();
@@ -180,6 +211,7 @@ export async function updateCustomerPayment(id: string, data: Partial<Omit<CrmPa
 }
 
 export async function deleteCustomerPayment(id: string): Promise<void> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     await db.delete(crmCustomerPayments).where(eq(crmCustomerPayments.id, id));

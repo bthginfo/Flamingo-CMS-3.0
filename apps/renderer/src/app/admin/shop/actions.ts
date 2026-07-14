@@ -1,7 +1,7 @@
 'use server';
 
 import { getDb } from '@/lib/db';
-import { getSession, getWritableSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 import { getSessionCookieName } from '@flamingo/auth';
 import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, formSubmissions, tenants, promotions, crmEmailDeliveries } from '@flamingo/db';
 import { eq, and, desc, sql, not } from 'drizzle-orm';
@@ -38,6 +38,7 @@ import {
   consumeRendererContactRateRules,
   getRendererContactClientAddress,
 } from '@/lib/renderer-contact-security';
+import { protectStoredSecret } from '@/lib/secret-storage';
 
 async function requireAuthenticatedTenant() {
   const session = await getWritableSession();
@@ -273,7 +274,7 @@ export async function activateShopAddon(): Promise<void> {
 
 // Public action: callable from admin UI. Enforces session === tenantId.
 export async function ensureShopPages(tenantId: string) {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session || session.tenantId !== tenantId) {
     throw new Error('Unauthorized: tenantId mismatch');
   }
@@ -287,7 +288,19 @@ export async function getShopSettings() {
   const tenantId = await requireTenant();
   const db = getDb();
   const [row] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
-  return row;
+  if (!row) return row;
+  const { stripeSecretKey, stripeWebhookSecret, paypalSecret, sumupApiKey, ...safe } = row;
+  return {
+    ...safe,
+    stripeSecretKey: null,
+    stripeWebhookSecret: null,
+    paypalSecret: null,
+    sumupApiKey: null,
+    stripeSecretConfigured: Boolean(stripeSecretKey),
+    stripeWebhookConfigured: Boolean(stripeWebhookSecret),
+    paypalSecretConfigured: Boolean(paypalSecret),
+    sumupApiKeyConfigured: Boolean(sumupApiKey),
+  };
 }
 
 export async function saveShopSettings(data: Partial<{
@@ -317,6 +330,15 @@ export async function saveShopSettings(data: Partial<{
   // Upsert: create settings row if it doesn't exist, otherwise update
   const cleanData = { ...data };
   if (cleanData.paymentMethods) cleanData.paymentMethods = [...new Set(cleanData.paymentMethods)];
+  for (const key of ['stripeSecretKey', 'stripeWebhookSecret', 'paypalSecret', 'sumupApiKey'] as const) {
+    const value = cleanData[key];
+    if (typeof value === 'string' && value.trim()) {
+      cleanData[key] = protectStoredSecret(value);
+    } else {
+      // Empty write-only inputs mean "keep the existing secret".
+      delete cleanData[key];
+    }
+  }
   const [existing] = await db.select({ tenantId: shopSettings.tenantId }).from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
   if (existing) {
     await db.update(shopSettings)
@@ -673,7 +695,7 @@ export async function updateOrderTracking(orderId: string, trackingNumber: strin
 
   await db.update(orders)
     .set({ trackingNumber, trackingUrl: trackingUrl || null, updatedAt: new Date() })
-    .where(eq(orders.id, orderId));
+    .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
 
   revalidatePath('/admin/shop/orders');
 }

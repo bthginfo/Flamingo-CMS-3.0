@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { orders, shopSettings, orderStatusHistory } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { sendOrderEmails } from '@/lib/shop-email';
+import { revealShopSecrets } from '@/lib/secret-storage';
 
 /**
  * PayPal return URL handler.
@@ -35,8 +36,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/bestellung-abgeschlossen', req.nextUrl.origin));
   }
 
-  const [settings] = await db.select().from(shopSettings)
+  const [storedSettings] = await db.select().from(shopSettings)
     .where(eq(shopSettings.tenantId, tenantId)).limit(1);
+  const settings = storedSettings ? revealShopSecrets(storedSettings) : null;
 
   if (!settings?.paypalClientId || !settings?.paypalSecret) {
     return NextResponse.redirect(new URL('/checkout', req.url));

@@ -7,6 +7,7 @@ import { baseHeader, CtaButton, SectionHeader, asButton, asList } from './shared
 import type { SectionProps } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -14,7 +15,7 @@ export function MedicalLocationContactSection({ data, styleVariant }: SectionPro
   const header = baseHeader(data, 'Kontakt & Standort', 'Kontakt');
   const introText = (data.introText as string) || '';
   const image = (data.image as string) || '';
-  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
+  const mapEmbedUrl = safeMapEmbedUrl(data.mapEmbedUrl);
   const formEnabled = (data.formEnabled as boolean) ?? true;
   const submitLabel = (data.submitLabel as string) || 'Anfrage senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;

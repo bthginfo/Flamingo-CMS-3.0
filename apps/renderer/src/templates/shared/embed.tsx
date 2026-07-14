@@ -2,11 +2,13 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { getProvider } from '@/lib/embed-providers';
+import { EMBED_PROVIDERS, getProvider } from '@/lib/embed-providers';
 import Script from 'next/script';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeEmbedUrl } from '@/lib/safe-embed-url';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
+const STANDARD_EMBED_DOMAINS = [...new Set(EMBED_PROVIDERS.flatMap(provider => provider.allowedDomains))];
 
 /** Sanitize standard embed code — only allow iframe tags */
 function sanitizeEmbedCode(html: string): string | null {
@@ -43,19 +45,19 @@ export function EmbedSection({ data }: Props) {
     const p = getProvider(provider);
     if (p) {
       if (p.type === 'script' && p.buildScriptUrl) {
-        scriptSrc = p.buildScriptUrl(config);
+        scriptSrc = safeEmbedUrl(p.buildScriptUrl(config), p.allowedDomains);
         triggerFn = p.triggerFunction || null;
         isScriptWidget = true;
         iframeTitle = p.label;
         buttonColor = config.buttonColor || undefined;
         buttonTextColor = config.buttonTextColor || undefined;
       } else {
-        iframeSrc = p.buildUrl(config);
+        iframeSrc = safeEmbedUrl(p.buildUrl(config), p.allowedDomains);
         iframeTitle = p.label;
       }
     }
   } else if (mode === 'standard' && embedCode) {
-    iframeSrc = sanitizeEmbedCode(embedCode);
+    iframeSrc = safeEmbedUrl(sanitizeEmbedCode(embedCode), STANDARD_EMBED_DOMAINS);
     iframeTitle = 'External Embed';
   }
 
@@ -115,6 +117,8 @@ export function EmbedSection({ data }: Props) {
               allowFullScreen
               className="absolute inset-0 h-full w-full border-0"
               loading="lazy"
+              referrerPolicy="no-referrer"
+              sandbox="allow-forms allow-popups allow-same-origin allow-scripts"
             />
           </ConsentGate>
         </motion.div>

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { instagramConnections, instagramPosts } from '@flamingo/db';
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
  * render the connect button.
  */
 export async function GET() {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {

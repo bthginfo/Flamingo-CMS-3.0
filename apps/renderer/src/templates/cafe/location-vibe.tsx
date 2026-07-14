@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { MapPin, Clock } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type HoursItem = { day: string; hours: string };
 
@@ -16,7 +17,7 @@ export function LocationVibeSection({ data }: Props) {
   const description = (data.description as string) || '';
   const hours = (data.hours as HoursItem[]) || [];
   const mapImage = (data.mapImage as string) || '';
-  const mapEmbed = (data.mapEmbed as string) || '';
+  const mapEmbed = safeMapEmbedUrl(data.mapEmbed);
   const vibeText = (data.vibeText as string) || '';
 
   const ref = useRef(null);

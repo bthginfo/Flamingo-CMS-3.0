@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
-import { resolveTenant } from '@/lib/snapshot';
+import { isDemoTenant, resolveTenant } from '@/lib/snapshot';
 import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isBookingOverlapError, isWithinBookingAvailability, parseBookingDateRange, type BookingTimeModel } from '@/lib/booking-core';
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { formatBookingDate, normalizeTimezone } from '@/lib/booking-time';
@@ -66,6 +66,14 @@ export async function POST(req: NextRequest) {
     const idempotencyKey = resolvePublicFlowIdempotencyKey(req, body.idempotencyKey);
     if (!idempotencyKey) {
       return NextResponse.json({ error: 'Ein gültiger Idempotency-Key ist erforderlich.' }, { status: 400 });
+    }
+    if (await isDemoTenant(tenantId)) {
+      return NextResponse.json({
+        success: true,
+        demo: true,
+        id: crypto.randomUUID(),
+        status: 'requested',
+      });
     }
     const clientAddress = publicFlowClientAddress(req);
     const requestHash = fingerprintPublicFlowRequest('booking', tenantId, {

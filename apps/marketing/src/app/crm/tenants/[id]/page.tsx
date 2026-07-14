@@ -11,10 +11,12 @@ import { DesignEditor } from './design-editor';
 import { PatManager } from './pat-manager';
 import { getActiveToken } from './pat-actions';
 import { getBookingAddonStatus, getShopAddonStatus } from '../actions';
+import { requireCrmAdmin } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export default async function TenantDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireCrmAdmin();
   const { id } = await params;
   const db = getDb();
 

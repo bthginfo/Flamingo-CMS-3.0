@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { AlertCircle, ArrowRight, Inbox, LoaderCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { safeContentUrl } from '@/lib/safe-content-url';
 
 export type SectionAction = {
   label?: string;
@@ -80,12 +81,13 @@ export function ActionLink({
   showArrow?: boolean;
   className?: string;
 }) {
-  if (!action.label || !action.href) return null;
+  const href = safeContentUrl(action.href || '');
+  if (!action.label || !href) return null;
 
   return (
     <a
       data-edit-link={editKey}
-      href={action.href}
+      href={href}
       className={cn('cms-button', `cms-button--${tone}`, className)}
     >
       <span data-edit-path="label">{action.label}</span>

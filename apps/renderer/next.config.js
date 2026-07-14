@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
+const upgradeInsecureRequests = process.env.NODE_ENV === 'production' ? '; upgrade-insecure-requests' : '';
 
 const nextConfig = {
   reactStrictMode: true,
@@ -40,11 +41,12 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://www.flamingomedia.online https://flamingomedia.online https://flamingo-cms-3-0.vercel.app https://*.vercel.app http://localhost:*",
+            value: `object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://www.flamingomedia.online https://flamingomedia.online https://flamingo-cms-3-0.vercel.app http://localhost:*${upgradeInsecureRequests}`,
           },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
         ],
       },
       {

@@ -15,6 +15,7 @@ import { crmBlogPosts } from '@flamingo/db';
 import { desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { requireCrmAdmin } from '@/lib/session';
 
 export type CrmBlogPost = BlogPost;
 type BlogPayload = Omit<BlogPostInput, 'id' | 'createdAt' | 'updatedAt' | 'readingMinutes' | 'tags' | 'publishedAt'> & {
@@ -63,6 +64,7 @@ function cleanPayload(data: BlogPayload): Omit<BlogPostInput, 'id' | 'createdAt'
 }
 
 export async function getBlogPosts(): Promise<CrmBlogPost[]> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     return await db.select().from(crmBlogPosts).orderBy(desc(crmBlogPosts.updatedAt));
@@ -76,6 +78,7 @@ export async function getBlogPosts(): Promise<CrmBlogPost[]> {
 }
 
 export async function createBlogPost(data: BlogPayload): Promise<CrmBlogPost> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     const payload = cleanPayload(data);
@@ -88,6 +91,7 @@ export async function createBlogPost(data: BlogPayload): Promise<CrmBlogPost> {
 }
 
 export async function updateBlogPost(id: string, data: BlogPayload): Promise<CrmBlogPost> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     const current = await db.select().from(crmBlogPosts).where(eq(crmBlogPosts.id, id)).limit(1);
@@ -104,6 +108,7 @@ export async function updateBlogPost(id: string, data: BlogPayload): Promise<Crm
 }
 
 export async function deleteBlogPost(id: string): Promise<void> {
+  await requireCrmAdmin();
   const db = getDb();
   try {
     await db.delete(crmBlogPosts).where(eq(crmBlogPosts.id, id));

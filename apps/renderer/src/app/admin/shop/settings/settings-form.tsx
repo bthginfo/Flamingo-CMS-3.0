@@ -30,9 +30,24 @@ type Settings = {
   companyInfo: { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
 };
 
-export function ShopSettingsForm({ initial }: { initial: Settings | null | undefined }) {
+type SecretState = {
+  stripeSecretConfigured: boolean;
+  stripeWebhookConfigured: boolean;
+  paypalSecretConfigured: boolean;
+  sumupApiKeyConfigured: boolean;
+};
+
+type SettingsInitial = Settings & Partial<SecretState>;
+
+export function ShopSettingsForm({ initial }: { initial: SettingsInitial | null | undefined }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [configured, setConfigured] = useState<SecretState>({
+    stripeSecretConfigured: Boolean(initial?.stripeSecretConfigured),
+    stripeWebhookConfigured: Boolean(initial?.stripeWebhookConfigured),
+    paypalSecretConfigured: Boolean(initial?.paypalSecretConfigured),
+    sumupApiKeyConfigured: Boolean(initial?.sumupApiKeyConfigured),
+  });
   const [data, setData] = useState<Settings>({
     currency: initial?.currency || 'EUR',
     currencySymbol: initial?.currencySymbol || '€',
@@ -41,12 +56,12 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
     pickupEnabled: initial?.pickupEnabled || false,
     pickupInstructions: initial?.pickupInstructions || null,
     stripePublicKey: initial?.stripePublicKey || null,
-    stripeSecretKey: initial?.stripeSecretKey || null,
-    stripeWebhookSecret: initial?.stripeWebhookSecret || null,
+    stripeSecretKey: null,
+    stripeWebhookSecret: null,
     paypalClientId: initial?.paypalClientId || null,
-    paypalSecret: initial?.paypalSecret || null,
+    paypalSecret: null,
     paypalMode: initial?.paypalMode || 'sandbox',
-    sumupApiKey: initial?.sumupApiKey || null,
+    sumupApiKey: null,
     sumupMerchantCode: initial?.sumupMerchantCode || null,
     sumupMode: initial?.sumupMode || 'sandbox',
     orderPrefix: initial?.orderPrefix || 'FM',
@@ -77,6 +92,19 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
     try {
       await saveShopSettings(data);
       toast.success('Einstellungen gespeichert');
+      setConfigured(current => ({
+        stripeSecretConfigured: current.stripeSecretConfigured || Boolean(data.stripeSecretKey),
+        stripeWebhookConfigured: current.stripeWebhookConfigured || Boolean(data.stripeWebhookSecret),
+        paypalSecretConfigured: current.paypalSecretConfigured || Boolean(data.paypalSecret),
+        sumupApiKeyConfigured: current.sumupApiKeyConfigured || Boolean(data.sumupApiKey),
+      }));
+      setData(current => ({
+        ...current,
+        stripeSecretKey: null,
+        stripeWebhookSecret: null,
+        paypalSecret: null,
+        sumupApiKey: null,
+      }));
     } catch {
       toast.error('Speichern fehlgeschlagen');
     } finally {
@@ -325,11 +353,11 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
               </div>
               <div>
                 <label className="block text-xs text-zinc-500 mb-1">Secret Key</label>
-                <input type="password" value={data.stripeSecretKey || ''} onChange={e => set('stripeSecretKey', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder="sk_live_..." />
+                <input type="password" value={data.stripeSecretKey || ''} onChange={e => set('stripeSecretKey', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder={configured.stripeSecretConfigured ? 'Sicher gespeichert – leer lassen' : 'sk_live_...'} />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-xs text-zinc-500 mb-1">Webhook Secret</label>
-                <input type="password" value={data.stripeWebhookSecret || ''} onChange={e => set('stripeWebhookSecret', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder="whsec_..." />
+                <input type="password" value={data.stripeWebhookSecret || ''} onChange={e => set('stripeWebhookSecret', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder={configured.stripeWebhookConfigured ? 'Sicher gespeichert – leer lassen' : 'whsec_...'} />
               </div>
             </div>
           </div>
@@ -346,7 +374,7 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
               </div>
               <div>
                 <label className="block text-xs text-zinc-500 mb-1">Secret</label>
-                <input type="password" value={data.paypalSecret || ''} onChange={e => set('paypalSecret', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" />
+                <input type="password" value={data.paypalSecret || ''} onChange={e => set('paypalSecret', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder={configured.paypalSecretConfigured ? 'Sicher gespeichert – leer lassen' : 'PayPal Secret'} />
               </div>
             </div>
             <div>
@@ -367,7 +395,7 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs text-zinc-500 mb-1">API Key</label>
-                <input type="password" value={data.sumupApiKey || ''} onChange={e => set('sumupApiKey', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder="sup_sk_..." />
+                <input type="password" value={data.sumupApiKey || ''} onChange={e => set('sumupApiKey', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder={configured.sumupApiKeyConfigured ? 'Sicher gespeichert – leer lassen' : 'sup_sk_...'} />
               </div>
               <div>
                 <label className="block text-xs text-zinc-500 mb-1">Merchant Code</label>

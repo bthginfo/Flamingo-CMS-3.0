@@ -3,10 +3,12 @@ import { tenants, tenantDomains, publishedSnapshots, pages } from '@flamingo/db'
 import { eq, count, sql } from 'drizzle-orm';
 import Link from 'next/link';
 import { Building2, Globe, FileText, ArrowRight, Plus } from 'lucide-react';
+import { requireCrmAdmin } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export default async function CrmDashboard() {
+  await requireCrmAdmin();
   const db = getDb();
 
   const [tenantList] = await Promise.all([

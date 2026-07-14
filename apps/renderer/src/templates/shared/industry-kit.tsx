@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { ActionLink, CardSurface, MediaFrame, PremiumSectionHeader } from './section-primitives';
+import { safeContentUrl } from '@/lib/safe-content-url';
 
 // Canonical primitives shared by the industry template packs
 // (medical, tourism, salon, hotel, restaurant). The per-industry
@@ -19,7 +20,8 @@ export type ButtonValue = {
 };
 
 export function asButton(value: unknown): ButtonValue {
-  return (value as ButtonValue | undefined) ?? {};
+  const button = (value as ButtonValue | undefined) ?? {};
+  return { ...button, href: safeContentUrl(button.href || '') || undefined };
 }
 
 export function asList<T>(value: unknown): T[] {

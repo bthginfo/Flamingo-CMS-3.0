@@ -7,11 +7,13 @@ type SmtpConfig = { host: string; port: number; user: string; pass: string; from
 
 export default function MailPage() {
   const [config, setConfig] = useState<SmtpConfig>({ host: '', port: 587, user: '', pass: '', from: '' });
+  const [hasPassword, setHasPassword] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetch('/admin/api/smtp').then(r => r.json()).then(data => {
       if (data.smtp) setConfig(data.smtp);
+      setHasPassword(Boolean(data.hasPassword));
     }).catch(() => {});
   }, []);
 
@@ -24,7 +26,13 @@ export default function MailPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
       });
-      if (res.ok) toast.success('SMTP-Einstellungen gespeichert.');
+      if (res.ok) {
+        toast.success('SMTP-Einstellungen gespeichert.');
+        if (config.pass) {
+          setHasPassword(true);
+          setConfig(current => ({ ...current, pass: '' }));
+        }
+      }
       else toast.error('Fehler beim Speichern.');
     } finally {
       setSaving(false);
@@ -76,8 +84,8 @@ export default function MailPage() {
           </div>
           <div>
             <label className="admin-label">Passwort</label>
-            <input className="admin-input" type="password" placeholder="••••••••" value={config.pass} onChange={e => setConfig(c => ({ ...c, pass: e.target.value }))} />
-            <p className="text-xs text-zinc-400 mt-1">Das Passwort des E-Mail-Kontos</p>
+            <input className="admin-input" type="password" placeholder={hasPassword ? 'Passwort ist sicher gespeichert' : '••••••••'} value={config.pass} onChange={e => setConfig(c => ({ ...c, pass: e.target.value }))} />
+            <p className="text-xs text-zinc-400 mt-1">{hasPassword && !config.pass ? 'Gespeichert. Leer lassen, um es unverändert zu behalten.' : 'Das Passwort des E-Mail-Kontos'}</p>
           </div>
         </div>
         <div>

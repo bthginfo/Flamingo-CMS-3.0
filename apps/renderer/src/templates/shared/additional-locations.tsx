@@ -3,6 +3,7 @@
 import { ArrowRight, Clock, Mail, MapPin, Navigation, Phone } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type LocationItem = {
   name?: string;
@@ -55,17 +56,18 @@ export function AdditionalLocationsSection({ data }: Props) {
           {locations.map((location, index) => {
             const email = location.email || location.mail || '';
             const routeHref = location.ctaHref || mapsHref(location.address);
+            const mapEmbedUrl = safeMapEmbedUrl(location.mapEmbedUrl);
             return (
               <article
                 key={`${location.name || 'standort' || 'item'}-${index}`}
                 className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_80px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_32px_100px_rgba(15,23,42,0.14)]"
               >
-                {location.mapEmbedUrl && (
+                {mapEmbedUrl && (
                   <div className="relative h-56 overflow-hidden bg-[var(--token-section-bg-alt,theme(colors.slate.200))]">
                     <ConsentGate provider="Google Maps" className="h-full w-full">
                       <iframe
                         title={location.name || `Standort ${index + 1}`}
-                        src={location.mapEmbedUrl}
+                        src={mapEmbedUrl}
                         className="h-full w-full border-0 grayscale transition duration-500 group-hover:grayscale-0"
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { orders, shopSettings, invoices, globalSettings } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/snapshot';
+import { getWritableSession } from '@/lib/session';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 export async function GET(
@@ -10,8 +10,9 @@ export async function GET(
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   const { orderId } = await params;
-  const tenantId = await resolveTenant();
-  if (!tenantId) return new NextResponse('Not found', { status: 404 });
+  const session = await getWritableSession();
+  if (!session) return new NextResponse('Not found', { status: 404 });
+  const tenantId = session.tenantId;
 
   const db = getDb();
   const [order] = await db.select().from(orders)
@@ -86,8 +87,17 @@ export async function GET(
   let logoOffset = 0;
   if (logoUrl) {
     try {
-      const logoRes = await fetch(logoUrl);
+      const parsedLogoUrl = new URL(logoUrl);
+      const allowedLogoHost = parsedLogoUrl.protocol === 'https:'
+        && (parsedLogoUrl.hostname.endsWith('.public.blob.vercel-storage.com')
+          || parsedLogoUrl.hostname.endsWith('.blob.vercel-storage.com'));
+      if (!allowedLogoHost) throw new Error('Untrusted invoice logo host');
+      const logoRes = await fetch(parsedLogoUrl, { signal: AbortSignal.timeout(5_000) });
+      if (!logoRes.ok) throw new Error('Invoice logo fetch failed');
+      const declaredLength = Number(logoRes.headers.get('content-length') || 0);
+      if (declaredLength > 2 * 1024 * 1024) throw new Error('Invoice logo too large');
       const logoBytes = new Uint8Array(await logoRes.arrayBuffer());
+      if (logoBytes.byteLength > 2 * 1024 * 1024) throw new Error('Invoice logo too large');
       const contentType = logoRes.headers.get('content-type') || '';
       let logoImage;
       if (contentType.includes('png') || logoUrl.endsWith('.png')) {
@@ -258,6 +268,7 @@ export async function GET(
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="Rechnung-${invoiceNumber}.pdf"`,
+      'Cache-Control': 'private, no-store',
     },
   });
 }

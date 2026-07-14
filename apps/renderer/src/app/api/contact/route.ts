@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { formSubmissions, globalSettings } from '@flamingo/db';
 import { getDb } from '@/lib/db';
-import { resolveTenant } from '@/lib/snapshot';
+import { isDemoTenant, resolveTenant } from '@/lib/snapshot';
 import {
   isHoneypotFilled,
   mergeContactFormFields,
@@ -94,6 +94,10 @@ export async function POST(req: NextRequest) {
 
     const submission = validateContactSubmission(body, fieldContract);
     if (!submission.success) return json({ error: submission.error }, 400);
+
+    if (await isDemoTenant(tenantId)) {
+      return json({ success: true, demo: true });
+    }
 
     const name = submission.values.name;
     const email = submission.values.email;

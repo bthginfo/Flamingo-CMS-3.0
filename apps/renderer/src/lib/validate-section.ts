@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { sanitizeHtml } from './sanitize-html';
+import { isContentUrlField, safeContentUrl } from './safe-content-url';
 
 /**
  * Recursive schema for section data.
@@ -28,11 +29,14 @@ export function validateSectionData(data: unknown): Record<string, unknown> {
   return sanitizeValue(sectionDataSchema.parse(data)) as Record<string, unknown>;
 }
 
-function sanitizeValue(value: unknown): unknown {
-  if (typeof value === 'string') return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
-  if (Array.isArray(value)) return value.map(sanitizeValue);
+function sanitizeValue(value: unknown, key = ''): unknown {
+  if (typeof value === 'string') {
+    if (isContentUrlField(key)) return safeContentUrl(value);
+    return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
+  }
+  if (Array.isArray(value)) return value.map(item => sanitizeValue(item, key));
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, sanitizeValue(child)]));
+    return Object.fromEntries(Object.entries(value).map(([childKey, child]) => [childKey, sanitizeValue(child, childKey)]));
   }
   return value;
 }

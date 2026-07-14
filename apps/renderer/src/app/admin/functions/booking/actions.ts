@@ -2,7 +2,6 @@
 
 import crypto from 'crypto';
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { and, asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
@@ -38,6 +37,7 @@ export async function getBookingAdminData() {
   const session = await getSession();
   if (!session) redirect('/admin/login');
   const tenantId = session.tenantId;
+  if (session.role === 'demo') return getPublicDemoBookingAdminData(tenantId);
   const db = getDb();
   const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, BOOKING_ADDON_KEY)))
@@ -45,10 +45,6 @@ export async function getBookingAdminData() {
   const addonActive = addon?.active ?? false;
   const addonRequested = Boolean(addon && !addon.active);
   if (!addonActive) {
-    const cookieStore = await cookies();
-    if (cookieStore.get('flamingo_public_demo')?.value === tenantId) {
-      return getPublicDemoBookingAdminData(tenantId);
-    }
     return {
       addonActive,
       addonRequested,

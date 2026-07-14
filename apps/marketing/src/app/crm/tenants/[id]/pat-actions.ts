@@ -5,8 +5,10 @@ import { tenantApiTokens } from '@flamingo/db';
 import { eq, and, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { randomBytes, createHash } from 'crypto';
+import { requireCrmAdmin } from '@/lib/session';
 
 export async function generatePatAction(tenantId: string) {
+  await requireCrmAdmin();
   const db = getDb();
 
   // Revoke all existing tokens for this tenant
@@ -31,6 +33,7 @@ export async function generatePatAction(tenantId: string) {
 }
 
 export async function revokePatAction(tenantId: string) {
+  await requireCrmAdmin();
   const db = getDb();
   await db.update(tenantApiTokens)
     .set({ revoked: true })
@@ -40,6 +43,7 @@ export async function revokePatAction(tenantId: string) {
 }
 
 export async function getActiveToken(tenantId: string) {
+  await requireCrmAdmin();
   const db = getDb();
   const [token] = await db.select({
     id: tenantApiTokens.id,

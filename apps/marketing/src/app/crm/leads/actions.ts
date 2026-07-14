@@ -5,30 +5,59 @@ import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { leads, tenants } from '@flamingo/db';
 import { eq, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { requireCrmAdmin } from '@/lib/session';
+import { isProtectedCrmSecret, protectCrmSecret, revealCrmSecret } from '@/lib/secret-storage';
 
 export type Lead = typeof leads.$inferSelect;
 type LeadInsert = typeof leads.$inferInsert;
 
-export async function getLeads(): Promise<Lead[]> {
+function revealLeadPassword(lead: Lead): Lead {
+  return { ...lead, adminPassword: revealCrmSecret(lead.adminPassword) };
+}
+
+async function upgradeLeadPasswords(rows: Lead[]) {
+  const legacy = rows.filter(row => row.adminPassword && !isProtectedCrmSecret(row.adminPassword));
+  if (!legacy.length) return;
   const db = getDb();
-  return db.select().from(leads).orderBy(desc(leads.createdAt));
+  await Promise.all(legacy.map(row => db.update(leads)
+    .set({ adminPassword: protectCrmSecret(row.adminPassword), updatedAt: new Date() })
+    .where(eq(leads.id, row.id))));
+}
+
+export async function getLeads(): Promise<Lead[]> {
+  await requireCrmAdmin();
+  const db = getDb();
+  const rows = await db.select().from(leads).orderBy(desc(leads.createdAt));
+  await upgradeLeadPasswords(rows);
+  return rows.map(revealLeadPassword);
 }
 
 export async function createLead(data: Omit<LeadInsert, 'id' | 'createdAt' | 'updatedAt'>): Promise<Lead> {
+  await requireCrmAdmin();
   const db = getDb();
-  const [lead] = await db.insert(leads).values(data).returning();
+  const [lead] = await db.insert(leads).values({
+    ...data,
+    adminPassword: protectCrmSecret(data.adminPassword),
+  }).returning();
   revalidatePath('/crm/leads');
-  return lead;
+  return revealLeadPassword(lead);
 }
 
 export async function updateLead(id: string, data: Partial<Omit<LeadInsert, 'id' | 'createdAt'>>): Promise<Lead> {
+  await requireCrmAdmin();
   const db = getDb();
-  const [lead] = await db.update(leads).set({ ...data, updatedAt: new Date() }).where(eq(leads.id, id)).returning();
+  const patch = {
+    ...data,
+    ...(data.adminPassword !== undefined ? { adminPassword: protectCrmSecret(data.adminPassword) } : {}),
+    updatedAt: new Date(),
+  };
+  const [lead] = await db.update(leads).set(patch).where(eq(leads.id, id)).returning();
   revalidatePath('/crm/leads');
-  return lead;
+  return revealLeadPassword(lead);
 }
 
 export async function deleteLead(id: string): Promise<void> {
+  await requireCrmAdmin();
   const db = getDb();
   await db.delete(leads).where(eq(leads.id, id));
   revalidatePath('/crm/leads');
@@ -98,6 +127,7 @@ export async function createLeadDemoTenant(leadId: string): Promise<{
   rendererUrl?: string;
   password?: string;
 }> {
+  await requireCrmAdmin();
   const db = getDb();
   const [lead] = await db.select().from(leads).where(eq(leads.id, leadId)).limit(1);
 
@@ -105,7 +135,7 @@ export async function createLeadDemoTenant(leadId: string): Promise<{
   if (lead.tenantId) return { success: false, error: 'Dieser Lead ist bereits mit einem Tenant verknüpft.' };
 
   const slug = await getUniqueTenantSlug(slugify(lead.company));
-  const password = lead.adminPassword?.trim() || generateLeadPassword();
+  const password = revealCrmSecret(lead.adminPassword)?.trim() || generateLeadPassword();
   const industry = normalizeIndustry(lead.industry);
 
   try {
@@ -123,7 +153,7 @@ export async function createLeadDemoTenant(leadId: string): Promise<{
 
     const [updated] = await db.update(leads).set({
       tenantId: result.tenantId,
-      adminPassword: password,
+      adminPassword: protectCrmSecret(password),
       flamingoLink: result.rendererUrl,
       industry: lead.industry || industry,
       updatedAt: new Date(),
@@ -134,7 +164,7 @@ export async function createLeadDemoTenant(leadId: string): Promise<{
 
     return {
       success: true,
-      lead: updated,
+      lead: revealLeadPassword(updated),
       tenant: { id: result.tenantId, name: lead.company, slug },
       adminUrl: result.adminUrl,
       rendererUrl: result.rendererUrl,

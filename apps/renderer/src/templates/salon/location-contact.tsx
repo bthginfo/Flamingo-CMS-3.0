@@ -6,6 +6,7 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -15,7 +16,7 @@ export function LocationContactSection({ data, styleVariant }: SectionProps) {
   const badgeText = (data.badgeText as string) || 'Salon';
   const introText = (data.introText as string) || '';
   const image = (data.image as string) || '';
-  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
+  const mapEmbedUrl = safeMapEmbedUrl(data.mapEmbedUrl);
   const formEnabled = (data.formEnabled as boolean) ?? true;
   const submitLabel = (data.submitLabel as string) || 'Anfrage senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;

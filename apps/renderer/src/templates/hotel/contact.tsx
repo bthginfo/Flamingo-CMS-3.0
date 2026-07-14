@@ -7,6 +7,7 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -22,7 +23,7 @@ export function HotelContactSection({ data, styleVariant }: SectionProps) {
   const contactCta = asButton(data.contactCta);
   const routeCta = asButton(data.routeCta);
   const image = (data.image as string) || '';
-  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
+  const mapEmbedUrl = safeMapEmbedUrl(data.mapEmbedUrl);
 
   const props = { headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image, mapEmbedUrl };
 

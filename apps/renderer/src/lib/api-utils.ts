@@ -5,6 +5,7 @@ import { isSectionDefinitionKey, parseSectionDefinitionKey } from '@/lib/section
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
 import { validateStyleOverridesForApi } from '@/lib/section-style-overrides';
 import { validateAdvancedSectionData } from '@/lib/advanced-section-validation';
+import { isContentUrlField, safeContentUrl } from '@/lib/safe-content-url';
 
 export {
   normalizeStyleOverrides,
@@ -309,11 +310,14 @@ function levenshtein(a: string, b: string): number {
   return prev[b.length];
 }
 
-function sanitizeValue(value: unknown): unknown {
-  if (typeof value === 'string') return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
-  if (Array.isArray(value)) return value.map(sanitizeValue);
+function sanitizeValue(value: unknown, key = ''): unknown {
+  if (typeof value === 'string') {
+    if (isContentUrlField(key)) return safeContentUrl(value);
+    return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
+  }
+  if (Array.isArray(value)) return value.map(item => sanitizeValue(item, key));
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, sanitizeValue(child)]));
+    return Object.fromEntries(Object.entries(value).map(([childKey, child]) => [childKey, sanitizeValue(child, childKey)]));
   }
   return value;
 }

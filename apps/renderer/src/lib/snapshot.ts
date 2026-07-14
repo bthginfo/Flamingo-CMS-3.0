@@ -204,6 +204,16 @@ function logDemoTenantResolutionError(
   }));
 }
 
+/** Public demo sites must never persist visitor PII or real transactions. */
+export async function isDemoTenant(tenantId: string): Promise<boolean> {
+  const [tenant] = await getDb()
+    .select({ isDemo: tenants.isDemo })
+    .from(tenants)
+    .where(eq(tenants.id, tenantId))
+    .limit(1);
+  return tenant?.isDemo === true;
+}
+
 /** Resolve a demo tenant without collapsing a DB failure into "not found". */
 export async function resolveDemoTenantResult(
   industry: string,

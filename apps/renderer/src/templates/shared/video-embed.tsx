@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeEmbedUrl } from '@/lib/safe-embed-url';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -15,7 +16,9 @@ function getEmbedUrl(url: string): string | null {
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
   // Already an embed URL
-  if (url.includes('/embed/') || url.includes('player.vimeo.com')) return url;
+  if (url.includes('/embed/') || url.includes('player.vimeo.com')) {
+    return safeEmbedUrl(url, ['www.youtube-nocookie.com', 'www.youtube.com', 'player.vimeo.com']);
+  }
   return null;
 }
 
@@ -57,6 +60,8 @@ export function VideoEmbedSection({ data }: Props) {
               allowFullScreen
               loading="lazy"
               className="absolute inset-0 h-full w-full border-0"
+              referrerPolicy="no-referrer"
+              sandbox="allow-presentation allow-same-origin allow-scripts"
             />
           </ConsentGate>
         </motion.div>

@@ -6,12 +6,13 @@ import { MapPin, ArrowRight } from 'lucide-react';
 import { baseHeader, SectionHeader, asButton, asList } from './shared';
 import type { SectionProps } from './types';
 import { ConsentGate } from '@/components/consent-gate';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type Place = { title?: string; text?: string; category?: string; distanceLabel?: string; address?: string; image?: string; cta?: { label?: string; href?: string } };
 
 export function PlacesMapSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Orte & Sehenswuerdigkeiten', 'Karte');
-  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
+  const mapEmbedUrl = safeMapEmbedUrl(data.mapEmbedUrl);
   const places = asList<Place>(data.places);
   const ctaPrimary = asButton(data.ctaPrimary);
   const mapFallbackText = (data.mapFallbackText as string) || 'Karte im CMS hinterlegen';

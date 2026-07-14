@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { rsvpResponses } from '@flamingo/db';
-import { resolveTenant } from '@/lib/snapshot';
+import { isDemoTenant, resolveTenant } from '@/lib/snapshot';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
@@ -36,6 +36,10 @@ export async function POST(req: NextRequest) {
 
     if (!['yes', 'no'].includes(attending)) {
       return NextResponse.json({ error: 'Ungültige Zusage.' }, { status: 400 });
+    }
+
+    if (await isDemoTenant(tenantId)) {
+      return NextResponse.json({ success: true, demo: true });
     }
 
     const db = await getDb();

@@ -4,23 +4,35 @@ import { timingSafeEqual } from 'crypto';
 
 import { getDb } from '@/lib/db';
 import { adminSecrets, tenants } from '@flamingo/db';
-import { verifyPassword, createSessionToken, buildSessionCookie } from '@flamingo/auth';
+import { verifyPassword, createSessionToken } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import { cookies, headers } from 'next/headers';
 import { resolveTenantByHost } from '@/lib/tenant-host';
-import { rateLimit } from '@/lib/rate-limit';
+import {
+  clearRendererRateLimit,
+  consumeRendererContactRateRules,
+  getRendererContactClientAddress,
+  rendererAdminLoginRateRules,
+} from '@/lib/renderer-contact-security';
 
 export async function loginAction(_prev: unknown, formData: FormData): Promise<{ error?: string; success?: boolean }> {
   const password = formData.get('password') as string;
   const tenantSlug = (formData.get('tenant') as string | null)?.trim();
   if (!password) return { error: 'Passwort ist erforderlich' };
 
-  // Brute-force throttle by IP (10 attempts / 15 min). bcrypt(12) alone is not enough.
+  // Persistent serverless-safe throttle. Failing closed prevents cold-start
+  // fan-out from bypassing the login boundary.
   const h = await headers();
-  const ip = (h.get('x-forwarded-for') || '').split(',')[0].trim() || h.get('x-real-ip') || 'unknown';
-  const limit = rateLimit(`admin-login:${ip}`, 10, 15 * 60 * 1000);
-  if (!limit.ok) {
-    return { error: `Zu viele Anmeldeversuche. Bitte in ${Math.ceil(limit.resetMs / 60000)} Min. erneut versuchen.` };
+  const ip = getRendererContactClientAddress(h);
+  let denied;
+  try {
+    denied = await consumeRendererContactRateRules(rendererAdminLoginRateRules(ip));
+  } catch (error) {
+    console.error('[admin-login] rate-limit store unavailable', error);
+    return { error: 'Anmeldung vorübergehend nicht verfügbar' };
+  }
+  if (denied) {
+    return { error: `Zu viele Anmeldeversuche. Bitte in ${Math.ceil(denied.retryAfterSeconds / 60)} Min. erneut versuchen.` };
   }
 
   const db = getDb();
@@ -54,6 +66,10 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
   }
   const valid = masterValid || await verifyPassword(password, secret.passwordHash);
   if (!valid) return { error: 'Falsches Passwort' };
+
+  await clearRendererRateLimit('renderer_admin_login_ip', ip).catch(error => {
+    console.error('[admin-login] failed to clear successful login attempts', error);
+  });
 
   const token = await createSessionToken(tenant.id);
   const isProduction = process.env.NODE_ENV === 'production';

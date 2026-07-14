@@ -3,6 +3,8 @@
  * Creates a new Vercel project for a tenant's renderer and assigns a custom domain.
  */
 
+import { randomBytes } from 'node:crypto';
+
 const VERCEL_API = 'https://api.vercel.com';
 
 function getToken() {
@@ -128,19 +130,12 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
   const envVars = [
     { key: 'DATABASE_URL', value: dbUrl, target: ['production', 'preview'], type: 'encrypted' },
     { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain' },
+    // Tenant deployments must never share signing or configuration-encryption
+    // keys. A compromise is then contained to one renderer project.
+    { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted' },
+    { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted' },
+    { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted' },
   ];
-
-  // Forward optional env vars if available
-  const optionalVars = ['ADMIN_JWT_SECRET', 'MASTER_ADMIN_PASSWORD', 'PREVIEW_SECRET'];
-  for (const key of optionalVars) {
-    const val = process.env[key];
-    if (val) envVars.push({ key, value: val, target: ['production', 'preview'], type: 'encrypted' });
-  }
-  // Generate ADMIN_JWT_SECRET if not available from env
-  if (!process.env.ADMIN_JWT_SECRET) {
-    const generated = `flamingo-${slug}-${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}`;
-    envVars.push({ key: 'ADMIN_JWT_SECRET', value: generated, target: ['production', 'preview'], type: 'encrypted' });
-  }
 
   try {
     await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', envVars);

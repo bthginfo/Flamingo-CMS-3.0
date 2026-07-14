@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { getDb } from '@/lib/db';
 import { globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
+import { revealStoredSecret } from './secret-storage';
 
 export type SmtpConfig = {
   host: string;
@@ -100,7 +101,11 @@ export async function getEffectiveSmtp(tenantId: string): Promise<SmtpConfig | n
     .limit(1);
 
   if (settings?.smtp) {
-    const tenantSmtp = normalizeSmtpConfig(settings.smtp);
+    const stored = settings.smtp as Partial<SmtpConfig>;
+    const tenantSmtp = normalizeSmtpConfig({
+      ...stored,
+      pass: revealStoredSecret(stored.pass),
+    });
     if (tenantSmtp) {
       const pinnedTenantSmtp = await pinPublicSmtpHost(tenantSmtp);
       if (pinnedTenantSmtp) return pinnedTenantSmtp;

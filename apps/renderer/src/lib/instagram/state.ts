@@ -6,6 +6,7 @@ import { createHmac, randomBytes } from 'node:crypto';
  */
 export type IgState = {
   tenantId: string;
+  actor: 'admin';
   sectionId: string;
   pageId: string;
   returnTo: string;
@@ -43,7 +44,7 @@ export function verifyState(raw: string, maxAgeMs = 10 * 60 * 1000): IgState | n
   if (expected !== sig) return null;
   try {
     const parsed = JSON.parse(fromB64url(body).toString('utf8')) as IgState;
-    if (!parsed.tenantId || !parsed.ts) return null;
+    if (!parsed.tenantId || parsed.actor !== 'admin' || !parsed.ts) return null;
     if (Date.now() - parsed.ts > maxAgeMs) return null;
     return parsed;
   } catch {

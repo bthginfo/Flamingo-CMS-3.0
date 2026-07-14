@@ -43,6 +43,16 @@ export async function verifyCrmSession(): Promise<boolean> {
   }
 }
 
+/**
+ * Server Actions are externally callable endpoints. Keep authorization next
+ * to the data mutation instead of relying on middleware alone.
+ */
+export async function requireCrmAdmin(): Promise<void> {
+  if (!(await verifyCrmSession())) {
+    throw new Error('Unauthorized');
+  }
+}
+
 export function getCrmCookieName() {
   return COOKIE_NAME;
 }

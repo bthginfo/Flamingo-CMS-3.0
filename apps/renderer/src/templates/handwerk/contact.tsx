@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 import { ConsentGate } from '@/components/consent-gate';
 import { CardSurface, PremiumSectionHeader } from '@/templates/shared/section-primitives';
+import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -16,7 +17,7 @@ export function ContactSection({ data }: Props) {
   const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;
   const address = (data.address as string) || '';
-  const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
+  const mapEmbedUrl = safeMapEmbedUrl(data.mapEmbedUrl);
   const showMap = data.showMap !== false && Boolean(mapEmbedUrl);
   const infoCards = (data.infoCards as { icon: string; label: string; value: string }[]) || [
     { icon: 'phone', label: 'Telefon', value: '' },

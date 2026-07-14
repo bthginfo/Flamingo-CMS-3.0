@@ -254,7 +254,7 @@ Flamingo Media`;
     if (variant === 'demo-seite') {
       const linkedTenant = tenantOptions.find(t => t.id === lead.tenantId);
       const { siteUrl, adminUrl } = getTenantUrls(linkedTenant);
-      const pw = lead.adminPassword || 'flamingo2025';
+      const pw = lead.adminPassword || 'Noch nicht vergeben';
 
       if (du) {
         return `${greeting},

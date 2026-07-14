@@ -14,6 +14,7 @@ import { mergeContactFormFields, type ContactFormFieldDefinition } from '@/lib/c
 import { resolveAccessibleRoleForeground } from '@/lib/brand-colors';
 import { parseCssColor } from '@/lib/color-engine';
 import { isMediaOverlaySectionType, resolveMediaOverlaySecondaryAction } from '@/lib/media-overlay-actions';
+import { isContentUrlField, safeContentUrl } from '@/lib/safe-content-url';
 
 /** Extract the best image from a collection item. Supports strings, media objects, arrays, and embedded hero sections. */
 function getImageUrl(value: unknown): string | undefined {
@@ -361,13 +362,14 @@ function withMediaTextAliases(style?: React.CSSProperties): React.CSSProperties 
   return next as React.CSSProperties;
 }
 
-function sanitizeRenderValue(value: unknown): unknown {
+function sanitizeRenderValue(value: unknown, key = ''): unknown {
   if (typeof value === 'string') {
+    if (isContentUrlField(key)) return safeContentUrl(value);
     return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
   }
-  if (Array.isArray(value)) return value.map(sanitizeRenderValue);
+  if (Array.isArray(value)) return value.map(item => sanitizeRenderValue(item, key));
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, sanitizeRenderValue(child)]));
+    return Object.fromEntries(Object.entries(value).map(([childKey, child]) => [childKey, sanitizeRenderValue(child, childKey)]));
   }
   return value;
 }
@@ -464,6 +466,8 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
       };
     }
   }
+  // Collection injections and legacy snapshots pass the same final boundary.
+  section = { ...section, data: sanitizeRenderValue(section.data) as Record<string, unknown> };
   if (!Component) {
     if (process.env.NODE_ENV === 'production') return null;
     return (

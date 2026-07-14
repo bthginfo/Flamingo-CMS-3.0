@@ -4,8 +4,9 @@ import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { mediaAssets } from '@flamingo/db';
 import { NextRequest } from 'next/server';
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import { and, eq } from 'drizzle-orm';
+import { detectImageMime } from '@/lib/image-magic';
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
@@ -53,6 +54,10 @@ export async function POST(req: NextRequest) {
     }
 
     const contentType = req.headers.get('content-type') || '';
+    const declaredLength = Number(req.headers.get('content-length') || 0);
+    if (declaredLength > MAX_SIZE + 2 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 413 });
+    }
 
     // Handle multipart form data
     if (contentType.includes('multipart/form-data')) {
@@ -65,11 +70,14 @@ export async function POST(req: NextRequest) {
       if (file.size > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 400 });
 
       const fileBytes = await file.arrayBuffer();
+      if (detectImageMime(fileBytes) !== mime) {
+        return NextResponse.json({ error: 'File content does not match the declared image type.' }, { status: 400 });
+      }
       const hash = sha256Hex(fileBytes);
       const extension = resolveExtension(file.name, mime);
       const pathname = `${auth.tenantId}/media/${hash}${extension}`;
 
-      const blob = await put(pathname, file, {
+      const blob = await put(pathname, fileBytes, {
         access: 'public',
         token: process.env.BLOB_READ_WRITE_TOKEN,
         contentType: mime,
@@ -104,6 +112,9 @@ export async function POST(req: NextRequest) {
     const body = await req.arrayBuffer();
     if (body.byteLength > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 400 });
     if (body.byteLength === 0) return NextResponse.json({ error: 'Empty file body' }, { status: 400 });
+    if (detectImageMime(body) !== mime) {
+      return NextResponse.json({ error: 'File content does not match the declared image type.' }, { status: 400 });
+    }
 
     const hash = sha256Hex(body);
     const extension = resolveExtension(filename, mime);
@@ -134,8 +145,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: blob.url, filename, size: body.byteLength });
   } catch (err: unknown) {
+    const requestId = randomUUID();
     const message = err instanceof Error ? err.message : String(err);
-    console.error('[Upload Error]', message);
-    return NextResponse.json({ error: 'Upload failed', details: message }, { status: 500 });
+    console.error(`[Upload Error] ${requestId}`, message);
+    return NextResponse.json({ error: 'Upload failed', requestId }, { status: 500 });
   }
 }
