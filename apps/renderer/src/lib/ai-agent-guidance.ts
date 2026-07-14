@@ -1,6 +1,7 @@
 import { CONTENT_FIELD_BUDGETS, CONTENT_GOOD_BAD_EXAMPLES, type SiteProfile } from './content-quality';
 import { profilePassesExistingValidation } from './business-profile';
 import { getSitePagePolicy } from './site-page-policy';
+import { SECTION_PREVIEW_DATA } from './section-preview-data';
 
 type SectionCatalogEntry = { type?: string; id?: string; label?: string };
 type ExistingPage = { id: string; slug: string; title: string };
@@ -12,6 +13,15 @@ type SiteProfileSeed = {
   phone?: string;
   email?: string;
 };
+
+const ADVANCED_SECTION_TYPES = [
+  'dualWave',
+  'cinematicChapters',
+  'transformationSequence',
+  'xrayReveal',
+  'sceneLab',
+  'infiniteCanvas',
+] as const;
 
 const SECTION_EXAMPLES: Record<string, Record<string, unknown>> = {
   hero: {
@@ -274,6 +284,24 @@ export function buildAiAgentContract(input: {
         issueShape: { code: 'stable machine code', severity: 'error|warning', location: 'exact JSON path', message: 'what failed', repair: { operation: 'add|replace|remove|review', instruction: 'single repair action', acceptance: 'deterministic pass condition' } },
         repairRule: 'Group issues by location. Apply the smallest valid patch. Never regenerate unrelated pages after a local failure.',
       },
+    },
+    advancedExperienceGuide: {
+      available: ADVANCED_SECTION_TYPES.filter(type => allowed.has(type)),
+      selectionRule: 'Use at most one Advanced experience on a normal page, only when it has a distinct storytelling or exploration job and the required media assets are available. A standard section is the correct fallback when assets are missing.',
+      assetRules: {
+        dualWave: '6–12 concise titled entries; one list powers both waves. Prefer at least 4 relevant images.',
+        cinematicChapters: '3–6 coherent chapters with one strong landscape image each and short copy.',
+        transformationSequence: '3–6 chronological states with comparable imagery. Metrics must be verified facts.',
+        xrayReveal: 'Exactly two images with identical pixel dimensions, camera angle, crop and focal point.',
+        sceneLab: 'One base image plus at least 2 option groups. Every choice is a transparent pixel-aligned layer matching the base dimensions.',
+        infiniteCanvas: '10–40 optimized images. Every image needs a meaningful alt text; the visitor opens the explorer explicitly.',
+      },
+      examples: Object.fromEntries(
+        ADVANCED_SECTION_TYPES
+          .filter(type => allowed.has(type))
+          .map(type => [type, SECTION_PREVIEW_DATA[type]]),
+      ),
+      validation: 'Treat these examples as shape references only. Replace all sample copy, URLs and claims, then use POST /api/v1/content/validate before writing and GET /api/v1/content/validate before publishing.',
     },
     recommendedPages,
     schemaLookup: 'sectionDataSchemas is authoritative. Examples demonstrate shape, not facts.',

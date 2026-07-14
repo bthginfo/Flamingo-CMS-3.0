@@ -126,6 +126,25 @@ describe('content quality validator', () => {
     assert.ok(sectionResult.issues.some(entry => entry.code === 'plan.section_invalid'));
   });
 
+  it('preflights nested Advanced media contracts for weak models', () => {
+    const input = validInput();
+    input.allowedSectionTypes = [...(input.allowedSectionTypes || []), 'xrayReveal'];
+    input.sectionSchemas = {
+      ...input.sectionSchemas,
+      xrayReveal: { fields: { headline: 'string', imageBase: 'url', imageReveal: 'url' } },
+    };
+    input.pages[0].sections = [{
+      type: 'xrayReveal',
+      purpose: 'Den Aufbau eines Projektergebnisses erklären.',
+      data: { headline: 'Was unter der Oberfläche den Unterschied macht', imageBase: '/result.jpg' },
+    }];
+
+    const result = validateContentQuality(input);
+    const issue = result.issues.find(entry => entry.location === 'pages[0].sections[0].data.imageReveal');
+    assert.equal(issue?.code, 'plan.advanced_section_invalid');
+    assert.match(issue?.repair.instruction || '', /exact same crop/);
+  });
+
   it('detects duplicate image and cross-tenant phrase drift', () => {
     const input = validInput();
     const phrase = 'Wir planen jeden Schritt mit klaren Kosten, fester Verantwortung und einer dokumentierten Abnahme vor Ort.';

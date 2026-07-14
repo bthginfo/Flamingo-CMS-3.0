@@ -48,7 +48,7 @@ function DockSurface({ compactLabel, actions, mobile = false }: { compactLabel: 
   return (
     <nav
       aria-label="Schnellaktionen"
-      className={`border border-[var(--token-card-border)] bg-[var(--token-card-bg)] text-[color:var(--token-card-body,var(--token-body))] shadow-[0_18px_55px_color-mix(in_srgb,var(--token-shadow,#0f172a)_22%,transparent)] ${
+      className={`border border-[var(--token-card-border)] bg-[var(--token-card-bg)] text-[color:var(--token-card-body,var(--token-body))] shadow-[0_18px_55px_color-mix(in_srgb,var(--token-shadow)_22%,transparent)] ${
         mobile
           ? 'mx-auto flex w-full max-w-xl items-center gap-3 rounded-[calc(var(--token-card-radius)+0.25rem)] p-2'
           : 'mx-auto flex max-w-5xl items-center gap-5 rounded-[var(--token-card-radius)] p-3'

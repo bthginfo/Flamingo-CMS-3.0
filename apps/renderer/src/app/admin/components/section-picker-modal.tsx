@@ -18,6 +18,7 @@ import {
   MoreHorizontal,
   Palette,
   Search,
+  Sparkles,
   Star,
   Users,
   Wrench,
@@ -54,6 +55,7 @@ const CATEGORY_META: Record<string, { icon: typeof FileText; color: string; desc
   Leistungen: { icon: Wrench, color: 'text-red-600 bg-red-50', description: 'Services, Preise & Prozesse' },
   Branchenspezifisch: { icon: MoreHorizontal, color: 'text-gray-600 bg-gray-100', description: 'Sektionen passend zur aktuellen Branche' },
   Premium: { icon: Star, color: 'text-fuchsia-700 bg-fuchsia-50', description: 'Visuell starke Premium-Sektionen' },
+  Advanced: { icon: Sparkles, color: 'text-violet-700 bg-violet-50', description: 'Geführte Erlebnis-Sektionen mit besonderen Medienanforderungen' },
   Booking: { icon: CalendarDays, color: 'text-emerald-700 bg-emerald-50', description: 'Buchung, Verfügbarkeit & Ressourcen' },
   Shop: { icon: Layers, color: 'text-cyan-700 bg-cyan-50', description: 'Produkte, Warenkorb & Checkout' },
 };
@@ -68,6 +70,7 @@ function getCategoryMeta(category: string) {
 
 const CATEGORY_ORDER = [
   'Branchenspezifisch',
+  'Advanced',
   'Premium',
   'Booking',
   'Inhalt',
@@ -593,14 +596,17 @@ export function SectionPickerModal({
                       </div>
                       <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                         {items.map((section) => (
-                          <div key={section.type} className={`group relative flex min-h-[4.75rem] items-stretch rounded-xl border transition ${section.locked ? 'border-zinc-200 bg-zinc-50' : 'border-zinc-200 bg-white hover:border-blue-300 hover:bg-blue-50/40'}`}>
+                          <div key={section.type} className={`group relative flex min-h-[4.75rem] items-stretch rounded-xl border transition ${section.locked ? 'border-zinc-200 bg-zinc-50' : category === 'Advanced' ? 'border-violet-200 bg-gradient-to-br from-white to-violet-50/60 hover:border-violet-400 hover:shadow-md' : 'border-zinc-200 bg-white hover:border-blue-300 hover:bg-blue-50/40'}`}>
                             <button type="button" onClick={() => { if (!section.locked) void handleCatalogSelect(section.type); }} disabled={section.locked || Boolean(catalogPendingType)} aria-busy={catalogPendingType === section.type} className="min-w-0 flex-1 p-3 text-left disabled:cursor-not-allowed disabled:opacity-60">
                               <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 transition group-hover:text-blue-800">
                                 {catalogPendingType === section.type && <LoaderCircle aria-hidden="true" className="animate-spin" size={14} />}
                                 {catalogPendingType === section.type ? 'Wird hinzugefügt …' : section.label}
+                                {category === 'Advanced' && <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-violet-700">Advanced</span>}
                                 {section.locked && <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-zinc-500"><Lock size={10} /> Gesperrt</span>}
                               </div>
                               <p className="mt-0.5 line-clamp-2 text-xs leading-4 text-zinc-500">{section.description}</p>
+                              {section.setupHint && <p className="mt-1.5 text-[10px] leading-4 text-violet-700"><span className="font-bold">{section.setupLevel === 'specialist' ? 'Spezial-Assets:' : 'Einrichtung:'}</span> {section.setupHint}</p>}
+                              {section.serviceAvailable && <p className="mt-1 text-[10px] font-semibold text-zinc-500">Auf Wunsch von Flamingo befüllbar · Preis auf Anfrage</p>}
                               {section.locked && section.lockReason && <p className="mt-1 text-[11px] font-medium text-amber-800">{section.lockReason}</p>}
                             </button>
                             {industry && <div className="flex items-center pr-2"><SectionPreviewButton sectionType={section.type} industry={industry} style={styleVariant || 'classic'} /></div>}

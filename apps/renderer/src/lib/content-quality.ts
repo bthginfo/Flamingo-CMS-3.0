@@ -1,4 +1,5 @@
 import { isSectionDefinitionKey, parseSectionDefinitionKey } from './section-definition-registry';
+import { validateAdvancedSectionData } from './advanced-section-validation';
 
 export type QualitySeverity = 'error' | 'warning';
 
@@ -380,6 +381,18 @@ function validatePlanStructure(input: ContentQualityInput, issues: ContentQualit
               repair: repair('add', `Fill ${field} using sectionDataSchemas.${section.type}.fields.${field}.`, `${field} has a substantive value with the documented shape.`),
             }));
           }
+        }
+        for (const advancedIssue of validateAdvancedSectionData(section.type, section.data, `${loc}.data`)) {
+          const genericIndex = issues.findIndex(existing => existing.location === advancedIssue.path && existing.code === 'plan.required_field');
+          if (genericIndex >= 0) issues.splice(genericIndex, 1);
+          if (issues.some(existing => existing.location === advancedIssue.path)) continue;
+          issues.push(issue({
+            code: 'plan.advanced_section_invalid',
+            severity: 'error',
+            location: advancedIssue.path,
+            message: advancedIssue.message,
+            repair: repair('replace', advancedIssue.instruction, `${advancedIssue.path} satisfies the documented Advanced section contract.`),
+          }));
         }
       }
     }

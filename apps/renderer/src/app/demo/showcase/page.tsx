@@ -64,6 +64,12 @@ const CURATED_DEFINITIONS = [
   ['tradesman:comparisonCardsPro', 'Hilft bei der Entscheidung zwischen Paketen.'],
   ['tradesman:openingStatus', 'Beantwortet die häufigste lokale Frage sofort.'],
   ['tradesman:teamSpotlight', 'Macht Kompetenz persönlich und ansprechbar.'],
+  ['tradesman:dualWave', 'Inszeniert ein Portfolio als rhythmische, geführte Entdeckungsreise.'],
+  ['tradesman:cinematicChapters', 'Erzählt eine Marken- oder Projektgeschichte in klar begrenzten, filmischen Kapiteln.'],
+  ['tradesman:transformationSequence', 'Macht Entwicklung und Wirkung als nachvollziehbare Abfolge sichtbar.'],
+  ['tradesman:xrayReveal', 'Erklärt verborgene Qualität mit zwei exakt vergleichbaren Bildebenen.'],
+  ['tradesman:sceneLab', 'Lässt Besucher Varianten direkt in einer performanten 2D-Szene konfigurieren.'],
+  ['tradesman:infiniteCanvas', 'Verwandelt umfangreiches Bildmaterial in einen optionalen, immersiven Explorer.'],
 ] as const;
 
 const CURATED_BY_CONTEXT = new Map<string, { rank: number; outcome: string }>(
@@ -87,6 +93,7 @@ function defaultOutcome(category: string) {
     Marketing: 'Schärft Positionierung und führt zu einer klaren Aktion.',
     Medien: 'Gibt Bildern und Geschichten eine fokussierte Bühne.',
     Premium: 'Inszeniert Marke, Proof und Conversion in einer starken Komposition.',
+    Advanced: 'Erzeugt einen eigenständigen, interaktiven Markenmoment mit geführter Einrichtung.',
     Shop: 'Verkürzt Produktsuche und Kaufentscheidung.',
     'Social Proof': 'Senkt wahrgenommenes Risiko mit belastbaren Vertrauenssignalen.',
     'Team & Personen': 'Macht Expertise sichtbar und persönlich.',

@@ -55,6 +55,22 @@ describe('AI agent guidance', () => {
     assert.deepEqual(contract.weakModelWorkflow.validationContract.preflight.body.mode, 'plan');
   });
 
+  it('only exposes valid Advanced examples and their asset constraints', () => {
+    const advanced = buildAiAgentContract({
+      tenantName: 'Studio Beispiel',
+      industry: 'tradesman',
+      allowedSections: [{ type: 'hero' }, { type: 'xrayReveal' }, { type: 'infiniteCanvas' }],
+      existingPages: [],
+      sectionSchemas: { hero: {}, xrayReveal: {}, infiniteCanvas: {} },
+      hasShop: false,
+      hasBooking: false,
+    });
+    assert.deepEqual(advanced.advancedExperienceGuide.available, ['xrayReveal', 'infiniteCanvas']);
+    assert.match(advanced.advancedExperienceGuide.assetRules.xrayReveal, /identical pixel dimensions/);
+    assert.equal((advanced.advancedExperienceGuide.examples.infiniteCanvas as { items: unknown[] }).items.length, 10);
+    assert.equal(advanced.advancedExperienceGuide.examples.sceneLab, undefined);
+  });
+
   it('uses the vertical sitemap policy instead of universal service/about pages', () => {
     const club = buildAiAgentContract({
       tenantName: 'EHC Beispiel',

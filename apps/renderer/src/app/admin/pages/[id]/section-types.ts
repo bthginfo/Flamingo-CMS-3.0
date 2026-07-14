@@ -6,6 +6,9 @@ export type SectionTypeDefinition = {
   requiresAddon?: 'shop' | 'booking';
   locked?: boolean;
   lockReason?: string;
+  setupLevel?: 'guided' | 'specialist';
+  setupHint?: string;
+  serviceAvailable?: boolean;
 };
 
 // Shared sections available to all templates
@@ -106,6 +109,12 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'glowHero', label: 'Glow Hero', description: 'Interaktiver Premium-Hero mit Mouse-Glow, Bild, Fakten und CTAs', category: 'Premium' },
   { type: 'instagramFeed', label: 'Instagram-Feed', description: 'Live-Feed deines Instagram-Business-Accounts (Posts, Reels, Carousels) — direkt im Editor verbinden', category: 'Social Proof' },
   { type: 'menuCard', label: 'Speisekarte', description: 'Gerichte als Karten mit Kategorien als Tabs, optional mit Bild', category: 'Inhalt' },
+  { type: 'dualWave', label: 'Dual Wave', description: 'Gegenläufige Typografie-Wellen mit synchronem Fokusbild', category: 'Advanced', setupLevel: 'guided', setupHint: 'Empfohlen: 6–12 kurze Begriffe mit passenden Bildern.', serviceAvailable: true },
+  { type: 'cinematicChapters', label: 'Cinematic Chapters', description: 'Scrollgesteuerte Markengeschichte in bildstarken Kapiteln', category: 'Advanced', setupLevel: 'guided', setupHint: 'Empfohlen: 3–6 Kapitel mit einheitlich starken Bildern.', serviceAvailable: true },
+  { type: 'transformationSequence', label: 'Transformation Sequence', description: 'Mehrstufige Vorher-bis-Ergebnis-Erzählung mit visuellen Übergängen', category: 'Advanced', setupLevel: 'guided', setupHint: 'Benötigt 3–6 nachvollziehbare Zustände oder Projektschritte.', serviceAvailable: true },
+  { type: 'xrayReveal', label: 'X-Ray Reveal', description: 'Interaktive Linse zwischen zwei exakt ausgerichteten Bildwelten', category: 'Advanced', setupLevel: 'specialist', setupHint: 'Benötigt zwei Bilder mit identischer Perspektive und identischem Zuschnitt.', serviceAvailable: true },
+  { type: 'sceneLab', label: 'Scene Lab', description: 'Visueller 2D-Konfigurator aus Basisbild und austauschbaren Ebenen', category: 'Advanced', setupLevel: 'specialist', setupHint: 'Benötigt deckungsgleiche, transparente Bild-Layer.', serviceAvailable: true },
+  { type: 'infiniteCanvas', label: 'Infinite Canvas', description: 'Räumlicher Galerie-Explorer mit Bulk-Medien und Fullscreen-Modus', category: 'Advanced', setupLevel: 'guided', setupHint: 'Empfohlen: 10–40 hochwertige Bilder mit kurzen Titeln.', serviceAvailable: true },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [

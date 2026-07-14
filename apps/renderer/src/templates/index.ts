@@ -1,4 +1,5 @@
 import type { SectionProps } from './restaurant';
+import dynamic from 'next/dynamic';
 import {
   createSectionDefinitionRegistry,
   type ResolveSectionDefinitionInput,
@@ -244,6 +245,15 @@ import {
 } from './tattoo';
 
 export type TemplateComponent = React.FC<SectionProps>;
+
+// Advanced experiences live in isolated chunks. A tenant that does not use one
+// of these sections does not pay for its interaction code.
+const DualWaveSection = dynamic(() => import('./advanced/dual-wave').then((module) => module.DualWaveSection)) as TemplateComponent;
+const CinematicChaptersSection = dynamic(() => import('./advanced/cinematic-chapters').then((module) => module.CinematicChaptersSection)) as TemplateComponent;
+const TransformationSequenceSection = dynamic(() => import('./advanced/transformation-sequence').then((module) => module.TransformationSequenceSection)) as TemplateComponent;
+const XrayRevealSection = dynamic(() => import('./advanced/xray-reveal').then((module) => module.XrayRevealSection)) as TemplateComponent;
+const SceneLabSection = dynamic(() => import('./advanced/scene-lab').then((module) => module.SceneLabSection)) as TemplateComponent;
+const InfiniteCanvasSection = dynamic(() => import('./advanced/infinite-canvas').then((module) => module.InfiniteCanvasSection)) as TemplateComponent;
 
 /**
  * Explicitly preserves the former ALL_TEMPLATES last-write-wins behavior.
@@ -807,6 +817,12 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   verticalTimeline: VerticalTimelineSection,
   beforeAfterSlider: BeforeAfterSliderSection,
   horizontalScrollShowcase: HorizontalScrollShowcaseSection,
+  dualWave: DualWaveSection,
+  cinematicChapters: CinematicChaptersSection,
+  transformationSequence: TransformationSequenceSection,
+  xrayReveal: XrayRevealSection,
+  sceneLab: SceneLabSection,
+  infiniteCanvas: InfiniteCanvasSection,
   productShowcase: ProductShowcaseSection,
   categoryMosaic: CategoryMosaicSection,
   brandShowroom: BrandShowroomSection,

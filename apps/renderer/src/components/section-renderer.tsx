@@ -116,6 +116,12 @@ const SKIP_REVEAL_SECTION_TYPES = new Set([
   'locationHero',
   'popup',
   'mobileActionDock',
+  'dualWave',
+  'cinematicChapters',
+  'transformationSequence',
+  'xrayReveal',
+  'sceneLab',
+  'infiniteCanvas',
 ]);
 
 function getSectionFamily(type: string): 'hero' | 'form' | 'data' | 'cta' | 'proof' | 'grid' | 'content' {
@@ -489,6 +495,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero', 'editorialHero',
     'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
     'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup', 'mobileActionDock',
+    'dualWave', 'cinematicChapters', 'transformationSequence', 'xrayReveal', 'sceneLab', 'infiniteCanvas',
   ]);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
@@ -633,9 +640,9 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
 [data-section-id="${escapedSectionId}"][data-style] [data-edit-collection] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${escapedSectionId}"][data-style] [data-card] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardMutedColorVar} !important; }
 [data-section-id="${escapedSectionId}"][data-style] .section-badge { color: ${badgeTextVar} !important; background-color: ${badgeBgVar} !important; border-color: ${badgeBorderVar} !important; }
 [data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"],[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] [data-edit-collection],[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] [data-card] { --token-heading:var(--_on-dark-h); --token-on-dark-heading:var(--_on-dark-h); --token-body:var(--_on-dark-b); --token-on-dark-body:var(--_on-dark-b); --token-muted:var(--_on-dark-m); --token-on-dark-muted:var(--_on-dark-m); }
-[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(h1,h2,h3,h4,h5,h6):not([class*="text-black"]) { color: var(--_on-dark-h) !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(p,li):not(.section-badge):not([class*="text-black"]) { color: var(--_on-dark-b) !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-black"]) { color: var(--_on-dark-m) !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: var(--_on-dark-h) !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(p,li):not(.section-badge):not([class*="text-white"]):not([class*="text-black"]) { color: var(--_on-dark-b) !important; }
+[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: var(--_on-dark-m) !important; }
 `;
   const sectionOverlayCss = buildImageOverlayCss(section);
   const sectionOverrideCss = escapeStyleElementText(

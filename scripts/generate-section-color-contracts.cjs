@@ -138,6 +138,15 @@ function loadTemplateRegistry() {
     for (const n of names) componentToFile.set(n, resolved);
   }
 
+  // Performance-heavy templates may be registered through next/dynamic. They
+  // still need the exact same static color contract as direct imports so the
+  // CMS can expose every role even when no live preview is open.
+  const dynamicRe = /const\s+([A-Z][A-Za-z0-9]+)\s*=\s*dynamic\(\(\)\s*=>\s*import\(['"](\.[^'"]+)['"]\)/g;
+  while ((m = dynamicRe.exec(src)) !== null) {
+    const resolved = resolveImport(m[2], TEMPLATES_DIR);
+    if (resolved) componentToFile.set(m[1], resolved);
+  }
+
   // Re-resolve any name that landed in an industry-level index.ts (e.g. ./salon)
   // by walking that index for its named re-exports.
   const indexFollow = new Set();

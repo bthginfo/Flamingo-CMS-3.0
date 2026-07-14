@@ -245,7 +245,7 @@ export function OfferMatcherSection({ data }: Props) {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:color-mix(in_srgb,var(--token-accent)_12%,var(--token-card-bg))] text-[color:var(--token-icon)]">
                 <Sparkles aria-hidden="true" size={22} />
               </div>
-              <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-label)]" data-edit-path="eyebrow">
+              <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">
                 {result.offer.eyebrow || 'Unsere Empfehlung'}
               </p>
               <h3 ref={resultHeadingRef} tabIndex={-1} data-edit-path="title" className="mt-2 text-3xl font-semibold tracking-[var(--token-heading-tracking,-0.03em)] text-[color:var(--token-card-heading,var(--token-heading))] outline-none">

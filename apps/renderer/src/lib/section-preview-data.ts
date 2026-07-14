@@ -2,7 +2,73 @@
  * Example preview data for each section type.
  * Used by the section-preview route to render isolated section previews.
  */
+const SCENE_LAYER_WARM = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23b76d38" fill-opacity=".22"/%3E%3C/svg%3E';
+const SCENE_LAYER_LIGHT = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23f6efe4" fill-opacity=".32"/%3E%3C/svg%3E';
+const SCENE_LAYER_BLACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%2313171d" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%2313171d" stop-opacity=".28"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%2313171d" stroke-width="8" stroke-opacity=".18"/%3E%3C/svg%3E';
+const SCENE_LAYER_BRASS = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%23b08d57" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%23b08d57" stop-opacity=".3"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%23b08d57" stroke-width="8" stroke-opacity=".24"/%3E%3C/svg%3E';
+
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  dualWave: {
+    badge: 'Leistungsspektrum',
+    headline: 'Kompetenz, die sich nicht in ein Raster pressen lässt.',
+    subline: 'Jeder Fokus öffnet eine neue Perspektive auf Angebot, Material und Arbeitsweise.',
+    preset: 'editorial',
+    items: [
+      { title: 'Strategie', text: 'Klarheit vor Gestaltung.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=85', href: '#' },
+      { title: 'Konzept', text: 'Eine Idee mit erkennbarem System.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1200&q=85', href: '#' },
+      { title: 'Design', text: 'Präzise, charaktervoll, funktional.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=85', href: '#' },
+      { title: 'Material', text: 'Qualität, die man sehen kann.', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=85', href: '#' },
+      { title: 'Umsetzung', text: 'Saubere Übergabe ohne Reibung.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=85', href: '#' },
+      { title: 'Wirkung', text: 'Ein Ergebnis, das im Gedächtnis bleibt.', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=85', href: '#' },
+    ],
+  },
+  cinematicChapters: {
+    badge: 'Unsere Geschichte',
+    headline: 'Aus einer Idee wird ein Ort mit eigener Energie.',
+    intro: 'Vier Kapitel, ein roter Faden und genug Raum für starke Bilder.',
+    transition: 'depth',
+    chapters: [
+      { kicker: '01 · Ursprung', title: 'Alles beginnt mit einer klaren Haltung.', text: 'Nicht mehr zeigen, sondern das Richtige spürbar machen.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1800&q=88' },
+      { kicker: '02 · Entwurf', title: 'Die Idee bekommt Rhythmus und Form.', text: 'Inhalt, Raum und Bewegung folgen derselben Dramaturgie.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1800&q=88' },
+      { kicker: '03 · Handwerk', title: 'Präzision zeigt sich in den Übergängen.', text: 'Jedes Detail unterstützt Orientierung und Atmosphäre.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1800&q=88' },
+      { kicker: '04 · Ergebnis', title: 'Am Ende fühlt sich alles selbstverständlich an.', text: 'Ein Auftritt, der Vertrauen schafft und im Gedächtnis bleibt.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1800&q=88', ctaLabel: 'Projekt entdecken', ctaHref: '#' },
+    ],
+  },
+  transformationSequence: {
+    badge: 'Transformation', headline: 'Vom ungenutzten Potenzial zum sichtbaren Ergebnis.', subline: 'Jede Phase macht Fortschritt, Entscheidung und Wirkung nachvollziehbar.',
+    states: [
+      { kicker: '01 · Ausgangspunkt', title: 'Zu viel Reibung, zu wenig Klarheit.', text: 'Das Angebot war gut, aber sein Wert wurde nicht schnell genug verstanden.', image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1600&q=88' },
+      { kicker: '02 · Fokus', title: 'Die entscheidenden Momente werden sichtbar.', text: 'Inhalt und Nutzerführung richten sich an den echten Besucherfragen aus.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=88' },
+      { kicker: '03 · Umsetzung', title: 'Aus Strategie wird ein präzises System.', text: 'Gestaltung, Bewegung und Conversion greifen kontrolliert ineinander.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1600&q=88' },
+      { kicker: '04 · Wirkung', title: 'Der Unterschied ist nicht nur sichtbar.', text: 'Besucher finden schneller zum passenden Angebot und zur Anfrage.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=88', metricValue: '+38%', metricLabel: 'qualifizierte Anfragen' },
+    ], cta: { label: 'Case ansehen', href: '#' },
+  },
+  xrayReveal: {
+    badge: 'Blick hinter die Oberfläche', headline: 'Was Qualität ausmacht, liegt oft darunter.', subline: 'Bewege die Linse und entdecke Aufbau, Technik oder Prozess hinter dem fertigen Ergebnis.',
+    imageBase: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=88', imageReveal: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=88', labelBase: 'Ergebnis', labelReveal: 'Aufbau', caption: 'Die Demo zeigt das Verhalten. Für den echten X-Ray-Effekt müssen beide Bilder deckungsgleich sein.', revealStyle: 'lens', aspectRatio: '16/9',
+  },
+  sceneLab: {
+    badge: 'Scene Lab', headline: 'Stellen Sie Ihre Wunschwelt direkt zusammen.', subline: 'Varianten werden ohne Seitenwechsel unmittelbar in derselben Szene sichtbar.', baseImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=88', aspectRatio: '4/3',
+    groups: [
+      { id: 'material', label: 'Material', description: 'Wählen Sie die gewünschte Grundstimmung.', choices: [{ id: 'warm', label: 'Warm', image: SCENE_LAYER_WARM, swatch: '#b78b65', priceLabel: 'inklusive' }, { id: 'light', label: 'Hell', image: SCENE_LAYER_LIGHT, swatch: '#e7e3db', priceLabel: 'inklusive' }] },
+      { id: 'finish', label: 'Finish', description: 'Bestimmen Sie den Charakter der Details.', choices: [{ id: 'black', label: 'Mattschwarz', image: SCENE_LAYER_BLACK, swatch: '#202124' }, { id: 'brass', label: 'Messing', image: SCENE_LAYER_BRASS, swatch: '#b08d57' }] },
+    ], cta: { label: 'Konfiguration anfragen', href: '#kontakt' },
+  },
+  infiniteCanvas: {
+    badge: 'Selected Work', headline: 'Eine Galerie ohne vorgegebene Blickrichtung.', subline: 'Öffnen, bewegen und entdecken Sie Projekte, Details und Perspektiven im eigenen Tempo.', ctaLabel: 'Galerie erkunden',
+    items: [
+      { image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1000&q=85', alt: 'Heller Arbeitsraum', title: 'Workspace', category: 'Interior', featured: true },
+      { image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1000&q=85', alt: 'Moderner Konferenzraum', title: 'Focus', category: 'Interior' },
+      { image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&q=85', alt: 'Hochwertiges Badezimmer', title: 'Material Study', category: 'Detail', featured: true },
+      { image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1000&q=85', alt: 'Grünes Sofa im Wohnzimmer', title: 'Living', category: 'Interior' },
+      { image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&q=85', alt: 'Modernes Wohnhaus', title: 'Architecture', category: 'Exterior' },
+      { image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1000&q=85', alt: 'Architektonisches Detail', title: 'Structure', category: 'Detail' },
+      { image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1000&q=85', alt: 'Offenes Büro', title: 'Collaboration', category: 'Interior' },
+      { image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1000&q=85', alt: 'Moderner Innenraum', title: 'Calm', category: 'Interior' },
+      { image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1000&q=85', alt: 'Wohnraum mit natürlicher Farbwelt', title: 'Balance', category: 'Interior' },
+      { image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1000&q=85', alt: 'Moderne Küche', title: 'Craft', category: 'Detail' },
+    ],
+  },
   bookingWidget: {
     badge: 'Booking',
     headline: 'Termin oder Anfrage senden',

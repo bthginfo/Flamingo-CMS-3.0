@@ -39,7 +39,7 @@ export type SectionColorSlot = ColorFieldKey;
 export type SectionContract = {
   type: string;
   label: string;
-  category: 'shared' | 'premium' | 'industry' | 'shop' | 'system';
+  category: 'shared' | 'premium' | 'advanced' | 'industry' | 'shop' | 'system';
   industry?: string;
   wrapper?: 'contained' | 'fullBleed';
   defaultTheme?: 'light' | 'dark' | 'auto';
@@ -359,6 +359,7 @@ function getSchemaFieldsByType() {
 
 function categoryFor(type: string, category?: string): SectionContract['category'] {
   if (SHOP_TYPES.has(type) || category === 'Shop') return 'shop';
+  if (category === 'Advanced') return 'advanced';
   if (PREMIUM_TYPES.has(type) || category === 'Premium') return 'premium';
   if (category && !['Inhalt', 'Marketing', 'Medien', 'Kontakt', 'Leistungen', 'Social Proof', 'Team & Personen', 'Booking'].includes(category)) return 'industry';
   return 'shared';

@@ -155,6 +155,14 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
           contentIssues.push({ severity: 'error', message: `${loc}: data.${key} is required and must be non-empty.`, location: loc });
         }
       };
+      const requireArrayMax = (key: string, max: number) => {
+        const value = data[key];
+        if (Array.isArray(value) && value.length > max) {
+          contentIssues.push({
+            severity: 'error', message: `${loc}: data.${key} must contain no more than ${max} items.`, location: loc,
+          });
+        }
+      };
 
       switch (s.type) {
         case 'hero':         requireString('headline'); break;
@@ -176,6 +184,36 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
         case 'gallery':      requireArray('images', 4, 'Each image needs { src, alt }.'); break;
         case 'contact':      requireString('headline'); break;
         case 'ctaBand':      requireString('headline'); break;
+        case 'dualWave':
+          requireString('headline');
+          requireArray('items', 6, 'Use 6–12 concise entries. Every item needs { title, text?, image?, href? }. The second wave is generated automatically.');
+          requireArrayMax('items', 12);
+          break;
+        case 'cinematicChapters':
+          requireString('headline');
+          requireArray('chapters', 3, 'Use 3–6 chapters. Every chapter needs { title, image, text?, kicker?, ctaLabel?, ctaHref? }.');
+          requireArrayMax('chapters', 6);
+          break;
+        case 'transformationSequence':
+          requireString('headline');
+          requireArray('states', 3, 'Use 3–6 chronological states. Every state needs { title, image, text?, metricValue?, metricLabel? }.');
+          requireArrayMax('states', 6);
+          break;
+        case 'xrayReveal':
+          requireString('headline');
+          requireString('imageBase');
+          requireString('imageReveal');
+          break;
+        case 'sceneLab':
+          requireString('headline');
+          requireString('baseImage');
+          requireArray('groups', 2, 'Use at least 2 groups with at least 2 choices each. Every choice needs a transparent, pixel-aligned image layer.');
+          break;
+        case 'infiniteCanvas':
+          requireString('headline');
+          requireArray('items', 10, 'Use 10–40 images. Every item needs { image, alt, title?, caption?, category?, href?, featured? }.');
+          requireArrayMax('items', 40);
+          break;
       }
 
       if (s.styleOverrides && typeof s.styleOverrides === 'object') {

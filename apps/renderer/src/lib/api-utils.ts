@@ -4,6 +4,7 @@ import { sanitizeHtml } from '@/lib/sanitize-html';
 import { isSectionDefinitionKey, parseSectionDefinitionKey } from '@/lib/section-definition-registry';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
 import { validateStyleOverridesForApi } from '@/lib/section-style-overrides';
+import { validateAdvancedSectionData } from '@/lib/advanced-section-validation';
 
 export {
   normalizeStyleOverrides,
@@ -217,6 +218,10 @@ export function validateSectionIdentity(
 }
 
 function validateSectionData(type: string, data: Record<string, unknown>, idx: number): string | null {
+  const location = `sections[${idx}] (${type})`;
+  const advancedIssue = validateAdvancedSectionData(type, data, 'data')[0];
+  if (advancedIssue) return `${location}: ${advancedIssue.path}: ${advancedIssue.message} ${advancedIssue.instruction}`;
+
   switch (type) {
     case 'servicesGrid':
       if ((!Array.isArray(data.manualCards) || data.manualCards.length === 0) && (!Array.isArray(data.services) || data.services.length === 0))
