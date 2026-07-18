@@ -117,8 +117,9 @@ test('wave two responsive and selection semantics cannot drift', () => {
   assert.match(editorial, /overflow-wrap:anywhere/);
   const kinetic = readFileSync(new URL('../templates/advanced/kinetic-identity.tsx', import.meta.url), 'utf8');
   assert.match(kinetic, /items-end/, 'kinetic text and media must leave the sticky stage on the same baseline');
-  assert.match(kinetic, /setSceneVisible\(value >= \.12\)/, 'kinetic scene visibility must latch on after its reveal threshold');
-  assert.match(kinetic, /opacity: reduceMotion \|\| sceneVisible \? 1 : 0/, 'kinetic scene visibility must not fade out at the terminal scroll point');
+  assert.match(kinetic, /window\.addEventListener\('scroll', schedule/, 'kinetic scenes need a native scroll fallback');
+  assert.match(kinetic, /requestAnimationFrame\(update\)/, 'the native fallback must stay frame-throttled');
+  assert.doesNotMatch(kinetic, /initial=\{reduceMotion \? false : \{ opacity: 0/, 'server-rendered kinetic content must fail open as visible');
 });
 
 test('material atelier keeps an accessible ledger and a no-hidden-content mobile sequence', () => {

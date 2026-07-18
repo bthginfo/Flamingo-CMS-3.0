@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { plain } from '@/lib/strip-html';
 import { AdvancedIntro, AdvancedLink, EmptyVisual, type AdvancedCta } from './advanced-shared';
 
@@ -17,14 +17,31 @@ export function KineticIdentitySection({ data }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const [active, setActive] = useState(0);
-  const [sceneVisible, setSceneVisible] = useState(false);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
   const introOpacity = useTransform(scrollYProgress, [0, .1, .2], [1, .45, 0]);
   const introY = useTransform(scrollYProgress, [0, .2], [0, -18]);
-  useMotionValueEvent(scrollYProgress, 'change', (value) => {
-    setActive(Math.min(items.length - 1, Math.max(0, Math.round(value * Math.max(0, items.length - 1)))));
-    setSceneVisible(value >= .12);
-  });
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const section = sectionRef.current;
+      if (!section) return;
+      const travel = Math.max(1, section.offsetHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / travel));
+      setActive(Math.min(items.length - 1, Math.max(0, Math.round(progress * Math.max(0, items.length - 1)))));
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    schedule();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+    };
+  }, [items.length]);
   if (!items.length) return null;
   const current = items[active] || items[0];
   const intro = <AdvancedIntro badge={String(data.badge || '')} headline={String(data.headline || '')} subline={String(data.subline || '')} />;
@@ -36,14 +53,14 @@ export function KineticIdentitySection({ data }: Props) {
       <div className="sticky top-0 grid h-[100svh] grid-rows-[auto_minmax(0,1fr)] overflow-hidden px-10 py-6 xl:px-14">
         <motion.div className="relative z-10 max-w-6xl" style={{ opacity: introOpacity, y: introY }} aria-hidden={active > 0 ? true : undefined}><AdvancedIntro compact badge={String(data.badge || '')} headline={String(data.headline || '')} subline={String(data.subline || '')} /></motion.div>
         <div className="grid min-h-0 items-end gap-8 pb-5 pt-4 lg:grid-cols-[1.08fr_.92fr] xl:gap-12">
-          <motion.div className="relative z-10 min-w-0" initial={false} animate={{ opacity: reduceMotion || sceneVisible ? 1 : 0 }} transition={{ duration: reduceMotion ? 0 : .28 }} aria-hidden={!reduceMotion && !sceneVisible}>
-            <motion.div key={active} initial={reduceMotion ? false : { opacity: 0, y: 38, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .52, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.div className="relative z-10 min-w-0" initial={false} animate={{ opacity: 1 }} transition={{ duration: reduceMotion ? 0 : .28 }}>
+            <motion.div key={active} initial={false} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: reduceMotion ? 0 : .38, ease: [0.22, 1, 0.36, 1] }}>
               <StatementLine item={current} index={active} compact />
               {current.text && <p className="mt-4 max-w-xl text-base leading-7 text-[color:var(--token-body)]" data-edit-path="text">{plain(current.text)}</p>}
               <AdvancedLink cta={data.cta as AdvancedCta} className="mt-5" />
             </motion.div>
           </motion.div>
-          <motion.div key={`media-${active}`} initial={reduceMotion ? false : { opacity: 0, scale: .94, rotate: 1.8 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={reduceMotion ? { duration: 0 } : undefined} className="relative mx-auto aspect-[4/5] max-h-[50vh] w-full max-w-lg overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_34px_100px_var(--token-shadow)]" data-card>
+          <motion.div key={`media-${active}`} initial={false} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={reduceMotion ? { duration: 0 } : { duration: .38 }} className="relative mx-auto aspect-[4/5] max-h-[50vh] w-full max-w-lg overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_34px_100px_var(--token-shadow)]" data-card>
             {current.image ? <img src={current.image} alt="" loading="lazy" className="h-full w-full object-cover" data-edit-image="image" /> : <EmptyVisual />}
             <div data-color-context="dark" className="absolute inset-x-5 bottom-5 flex items-center justify-between border-t border-[var(--token-divider)] pt-3 text-xs font-bold tracking-[.18em] text-[color:var(--token-on-dark-heading)] [text-shadow:0_1px_12px_var(--token-image-overlay)]"><span>{String(active + 1).padStart(2, '0')}</span><span>{String(items.length).padStart(2, '0')}</span></div>
           </motion.div>
