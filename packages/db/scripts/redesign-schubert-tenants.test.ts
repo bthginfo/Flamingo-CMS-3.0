@@ -82,6 +82,28 @@ test('collection redesign preserves unrelated item data and the exact source sec
   assert.deepEqual(buildItemData(target, collection, { ...items[0], data: next }, items), next);
 });
 
+test('collection redesign replaces legacy placeholder links with a real contact destination', () => {
+  const collection = { id: '30000000-0000-4000-8000-000000000002', key: 'projekte', label: 'Projekte' };
+  const sourceSections = sections.map((section, index) => ({
+    type: section.type,
+    data: { ...section.data, ...(index === 0 ? { ctaPrimary: { label: 'Anfragen', href: '#' } } : {}) },
+  }));
+  const item = {
+    id: '40000000-0000-4000-8000-000000000010',
+    collection_id: collection.id,
+    slug: 'baeder',
+    title: 'BÃ¤der',
+    data: { image: '/collection/0.jpg', text: 'BÃ¤der Text', sections: sourceSections },
+    published: true,
+    priority: 0,
+  };
+
+  const next = buildItemData(target, collection, item, [item]);
+  assert.doesNotMatch(JSON.stringify(next), /"href":"#"/);
+  assert.match(JSON.stringify(next), /"href":"\/kontakt"/);
+  assert.deepEqual(buildItemData(target, collection, { ...item, data: next }, [item]), next);
+});
+
 test('page narratives are tenant-specific and semantic source sections remain visible', () => {
   const semanticSections = [
     ...sections,

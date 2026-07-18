@@ -108,6 +108,17 @@ function walk(value: unknown, visit: (key: string, value: unknown) => void, key 
   else if (value && typeof value === 'object') Object.entries(value as Json).forEach(([childKey, child]) => childKey !== '_premiumRedesign' && walk(child, visit, childKey));
 }
 
+function replacePlaceholderLinks(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(replacePlaceholderLinks);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value as Json).map(([key, child]) => [
+    key,
+    nonEmpty(child) && child.trim() === '#' && /(href|link|url)$/i.test(key) && !/(image|video|embed)/i.test(key)
+      ? '/kontakt'
+      : replacePlaceholderLinks(child),
+  ]));
+}
+
 function images(value: unknown) {
   const result: string[] = [];
   walk(value, (key, child) => {
@@ -129,7 +140,7 @@ function directImages(value: Json) {
 
 function href(value: unknown) {
   let found = '';
-  walk(value, (key, child) => { if (!found && nonEmpty(child) && /(href|link|url)$/i.test(key) && !/(image|video|embed)/i.test(key) && /^(#|\/|https?:\/\/|mailto:|tel:)/i.test(child)) found = child; });
+  walk(value, (key, child) => { if (!found && nonEmpty(child) && child.trim() !== '#' && /(href|link|url)$/i.test(key) && !/(image|video|embed)/i.test(key) && /^(#|\/|https?:\/\/|mailto:|tel:)/i.test(child)) found = child; });
   return found;
 }
 
@@ -173,9 +184,9 @@ function unitsFrom(value: unknown, fallback: string): Unit[] {
 function sourceArchive(sections: SectionRow[]) {
   for (const section of sections) {
     const marker = record(section.data._premiumRedesign);
-    if (Array.isArray(marker.sourceSections)) return marker.sourceSections as SectionRow[];
+    if (Array.isArray(marker.sourceSections)) return replacePlaceholderLinks(marker.sourceSections) as SectionRow[];
   }
-  return sections;
+  return replacePlaceholderLinks(sections) as SectionRow[];
 }
 
 function localizeData(data: Json, locale?: string): Json {
@@ -318,7 +329,7 @@ export function buildPageComposition(target: Target, page: PageRow, current: Sec
 function sourceItemSections(item: ItemRow) {
   const current = Array.isArray(item.data.sections) ? item.data.sections as Json[] : [];
   const marker = current.map((section) => record(record(section.data)._premiumRedesign)).find((entry) => Array.isArray(entry.sourceSections));
-  return marker ? marker.sourceSections as Json[] : current;
+  return replacePlaceholderLinks(marker ? marker.sourceSections : current) as Json[];
 }
 
 function legacyBuildItemData(target: Target, collection: CollectionRow, item: ItemRow, allItems: ItemRow[]): Json {
@@ -335,11 +346,11 @@ function legacyBuildItemData(target: Target, collection: CollectionRow, item: It
     { id: `${item.slug}-path`, type: 'signaturePath', definitionKey: 'signaturePath.shared.v1', schemaVersion: 1, visible: true, data: { badge: target.preset === 'quiet' ? 'Orientierung' : 'Im Detail', headline: item.title, pathPreset: target.preset === 'quiet' ? 'flow' : 'craft', items: units.slice(0, 7).map((unit) => ({ id: unit.id, title: unit.title, text: unit.text, image: unit.image, href: unit.href })) }, styleOverrides: darkStyle(target) },
     ...source.filter((section) => /^(faq|faqContactSplit|richText|freeText|textBlock|contact|contactForm)$/i.test(String(section.type))).map((section) => ({ ...section, styleOverrides: { ...record(section.styleOverrides), ...darkStyle(target) } })),
   ];
-  return { ...item.data, sections: embedded, _premiumRedesign: { version: 1 } };
+  return { ...record(replacePlaceholderLinks(item.data)), sections: embedded, _premiumRedesign: { version: 1 } };
 }
 
 function itemNarrative(item: ItemRow, source: Json[]): Unit[] {
-  const candidates: Array<{ data: Json; fallback: string }> = [{ data: item.data, fallback: item.title }];
+  const candidates: Array<{ data: Json; fallback: string }> = [{ data: record(replacePlaceholderLinks(item.data)), fallback: item.title }];
   source.forEach((section, index) => {
     const data = record(section.data);
     candidates.push({ data, fallback: String(section.titleInternal || section.title_internal || section.type || `${item.title} ${index + 1}`) });
