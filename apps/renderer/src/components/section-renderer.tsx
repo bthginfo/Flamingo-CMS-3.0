@@ -123,6 +123,14 @@ const SKIP_REVEAL_SECTION_TYPES = new Set([
   'xrayReveal',
   'sceneLab',
   'infiniteCanvas',
+  'kineticIdentity',
+  'signaturePath',
+  'layeredAnatomy',
+  'guidedChoice',
+  'dayToNight',
+  'livingBlueprint',
+  'editorialCardMorph',
+  'materialAtelier',
 ]);
 
 function getSectionFamily(type: string): 'hero' | 'form' | 'data' | 'cta' | 'proof' | 'grid' | 'content' {
@@ -500,6 +508,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
     'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup', 'mobileActionDock',
     'dualWave', 'cinematicChapters', 'transformationSequence', 'xrayReveal', 'sceneLab', 'infiniteCanvas',
+    'kineticIdentity', 'signaturePath', 'layeredAnatomy', 'guidedChoice', 'dayToNight', 'livingBlueprint', 'editorialCardMorph', 'materialAtelier',
   ]);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);

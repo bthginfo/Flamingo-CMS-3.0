@@ -43,6 +43,16 @@ export type OfferMatcherResult = {
   matchedAnswers: number;
 };
 
+/** Shared deterministic weighted ranking used by guided recommendation experiences. */
+export function getDeterministicWeightedResultId(
+  resultIds: string[],
+  scores: Readonly<Record<string, number>>,
+): string {
+  return resultIds
+    .map((id, index) => ({ id, index, score: Number.isFinite(scores[id]) ? scores[id] : 0 }))
+    .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.id || '';
+}
+
 type UnknownRecord = Record<string, unknown>;
 
 function isRecord(value: unknown): value is UnknownRecord {

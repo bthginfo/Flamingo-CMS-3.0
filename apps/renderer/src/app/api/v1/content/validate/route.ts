@@ -23,7 +23,7 @@ import {
 } from '@/lib/color-validation';
 import { validateContentQuality, type ContentQualityIssue, type ContentQualityInput } from '@/lib/content-quality';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
-import { getSectionSchemas } from '@/lib/section-data-schemas';
+import { getCatalogSectionSchemas } from '@/lib/section-data-schemas';
 import { evaluateSitePagePolicy } from '@/lib/site-page-policy';
 import type { PatAuthResult } from '@/lib/pat-auth';
 import { getSession } from '@/lib/session';
@@ -214,6 +214,23 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
           requireArray('items', 10, 'Use 10–40 images. Every item needs { image, alt, title?, caption?, category?, href?, featured? }.');
           requireArrayMax('items', 40);
           break;
+        case 'kineticIdentity':
+          requireString('headline'); requireArray('statements', 3, 'Use 3–6 statements with one highlight each.'); requireArrayMax('statements', 6); break;
+        case 'signaturePath':
+          requireString('headline'); requireArray('items', 3, 'Use 3–7 ordered stations; do not provide SVG path data.'); requireArrayMax('items', 7); break;
+        case 'layeredAnatomy':
+          requireString('headline'); requireString('baseImage');
+          if (data.mode === 'layers') { requireArray('layers', 2, 'Use 2–8 transparent aligned layers.'); requireArrayMax('layers', 8); }
+          else { requireArray('hotspots', 2, 'Use 2–8 positioned hotspots.'); requireArrayMax('hotspots', 8); }
+          break;
+        case 'guidedChoice':
+          requireString('headline'); requireArray('questions', 2, 'Use 2–6 questions with stable ids and 2–4 answers each.'); requireArrayMax('questions', 6); requireArray('results', 2, 'Use 2–6 results with stable ids.'); requireArrayMax('results', 6); break;
+        case 'dayToNight':
+          requireString('headline'); requireArray('scenes', 2, 'Use 2–4 chronological scenes with time, label, title and image.'); requireArrayMax('scenes', 4); break;
+        case 'livingBlueprint':
+          requireString('headline'); requireArray('nodes', 3, 'Use 3–8 ordered nodes with stable ids; do not provide coordinates.'); requireArrayMax('nodes', 8); break;
+        case 'editorialCardMorph':
+          requireString('headline'); requireArray('items', 3, 'Use 3–8 image-led cases with concise copy.'); requireArrayMax('items', 8); break;
       }
 
       if (s.styleOverrides && typeof s.styleOverrides === 'object') {
@@ -392,7 +409,7 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
         data: (item.data || {}) as Record<string, unknown>,
       })),
     })),
-    sectionSchemas: getSectionSchemas(auth.tenant.industry),
+    sectionSchemas: getCatalogSectionSchemas(auth.tenant.industry),
   });
   const existingIssueKeys = new Set(contentIssues.map(entry => `${entry.location || ''}:${entry.message}`));
   for (const qualityIssue of qualityResult.issues) {
@@ -523,7 +540,7 @@ export const POST = withApiHandler(async (req, auth) => {
     pages: Array.isArray(body.pages) ? body.pages : [],
     collections: Array.isArray(body.collections) ? body.collections : [],
     allowedSectionTypes,
-    sectionSchemas: getSectionSchemas(auth.tenant.industry),
+    sectionSchemas: getCatalogSectionSchemas(auth.tenant.industry),
   });
 
   return NextResponse.json({

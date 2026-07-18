@@ -80,6 +80,7 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
     ...(SECTION_EDITOR_FIELD_DEFAULTS[previewType] || {}),
     ...(SECTION_PREVIEW_DATA[type] || {}),
     ...(SECTION_PREVIEW_DATA[previewType] || {}),
+    _isSectionPreview: true,
   };
   const styleCssVars = getStyleCssVars(industry, style);
   const previewSection = {

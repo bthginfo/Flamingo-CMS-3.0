@@ -69,6 +69,86 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1000&q=85', alt: 'Moderne Küche', title: 'Craft', category: 'Detail' },
     ],
   },
+  kineticIdentity: {
+    badge: 'Unsere Haltung', headline: 'Eine Marke. Viele präzise Wirkungen.', subline: 'Beim Scrollen verändert sich die Aussage – der rote Faden bleibt.', preset: 'editorial',
+    statements: [
+      { id: 'klarheit', prefix: 'Wir schaffen', highlight: 'Klarheit', suffix: 'im Komplexen.', text: 'Jede Entscheidung macht den nächsten Schritt verständlicher.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1400&q=86' },
+      { id: 'raeume', prefix: 'Wir gestalten', highlight: 'Räume', suffix: 'mit Haltung.', text: 'Material, Licht und Funktion folgen einer gemeinsamen Idee.', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400&q=86' },
+      { id: 'vertrauen', prefix: 'Wir bauen', highlight: 'Vertrauen', suffix: 'durch Details.', text: 'Qualität wird dort sichtbar, wo andere aufhören.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1400&q=86' },
+    ], cta: { label: 'Haltung entdecken', href: '#details' },
+  },
+  signaturePath: {
+    badge: 'Unser Weg', headline: 'Eine Linie verbindet Idee und Wirkung.', subline: 'Jede Station macht sichtbar, wie aus einem ersten Impuls ein belastbares Ergebnis wird.', pathPreset: 'craft',
+    items: [
+      { id: 'dialog', title: 'Dialog', text: 'Wir beginnen mit den Fragen, die wirklich zählen.' },
+      { id: 'fokus', title: 'Fokus', text: 'Ziele, Rahmen und Prioritäten werden konkret.' },
+      { id: 'entwurf', title: 'Entwurf', text: 'Die Idee bekommt eine klare Form.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=900&q=84' },
+      { id: 'handwerk', title: 'Handwerk', text: 'Präzision verbindet alle Übergänge.' },
+      { id: 'wirkung', title: 'Wirkung', text: 'Das Ergebnis fühlt sich selbstverständlich an.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=84' },
+    ], cta: { label: 'Projekt starten', href: '#kontakt' },
+  },
+  layeredAnatomy: {
+    badge: 'Bis ins Detail', headline: 'Qualität wird sichtbar, wenn man genauer hinsieht.', subline: 'Entdecken Sie Materialien, Technik und Entscheidungen direkt im Ergebnis.', mode: 'hotspots', baseImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=88', aspectRatio: '4/3',
+    hotspots: [
+      { id: 'material', x: 24, y: 32, title: 'Fugenloses Material', text: 'Pflegeleicht, ruhig und auf den Raum abgestimmt.' },
+      { id: 'licht', x: 71, y: 21, title: 'Integriertes Licht', text: 'Blendfrei geplant für Atmosphäre und Funktion.' },
+      { id: 'armatur', x: 61, y: 63, title: 'Präzise Armatur', text: 'Langlebige Technik mit sauberer Linienführung.' },
+    ], cta: { label: 'Details besprechen', href: '#kontakt' },
+  },
+  guidedChoice: {
+    badge: 'Schnell zum passenden Angebot', headline: 'Was passt wirklich zu Ihrem Vorhaben?', subline: 'Drei kurze Antworten reichen für eine erste, nachvollziehbare Empfehlung.', mode: 'score', restartLabel: 'Neu starten',
+    questions: [
+      { id: 'ziel', label: 'Was ist Ihnen am wichtigsten?', answers: [{ id: 'komfort', label: 'Mehr Komfort', scores: [{ resultId: 'premium', points: 3 }, { resultId: 'smart', points: 1 }] }, { id: 'effizienz', label: 'Mehr Effizienz', scores: [{ resultId: 'smart', points: 3 }] }, { id: 'design', label: 'Starkes Design', scores: [{ resultId: 'premium', points: 2 }, { resultId: 'design', points: 3 }] }] },
+      { id: 'umfang', label: 'Wie groß ist das Vorhaben?', answers: [{ id: 'fokus', label: 'Ein klarer Schwerpunkt', scores: [{ resultId: 'smart', points: 2 }] }, { id: 'gesamt', label: 'Ganzheitliche Lösung', scores: [{ resultId: 'premium', points: 3 }, { resultId: 'design', points: 1 }] }] },
+      { id: 'tempo', label: 'Wann soll es losgehen?', answers: [{ id: 'bald', label: 'So bald wie möglich', scores: [{ resultId: 'smart', points: 2 }] }, { id: 'geplant', label: 'Mit Zeit für Details', scores: [{ resultId: 'premium', points: 2 }, { resultId: 'design', points: 2 }] }] },
+    ],
+    results: [
+      { id: 'smart', title: 'Smart Start', text: 'Ein klar umrissener Einstieg mit schnellem, messbarem Nutzen.', features: ['Fokussierter Umfang', 'Kurzer Projektstart'], cta: { label: 'Smart Start anfragen', href: '#kontakt' } },
+      { id: 'premium', title: 'Signature Lösung', text: 'Die ganzheitliche Lösung für maximalen Komfort und langfristige Qualität.', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1100&q=86', features: ['Ganzheitliche Planung', 'Persönliche Begleitung'], cta: { label: 'Beratung anfragen', href: '#kontakt' } },
+      { id: 'design', title: 'Design Fokus', text: 'Für Vorhaben, bei denen Material, Form und Atmosphäre im Mittelpunkt stehen.', features: ['Individuelles Konzept', 'Kuratierte Details'], cta: { label: 'Designgespräch buchen', href: '#kontakt' } },
+    ],
+  },
+  dayToNight: {
+    badge: 'Ein Tag bei uns', headline: 'Jede Stunde hat ihre eigene Atmosphäre.', subline: 'Bewegen Sie sich vom ruhigen Morgen bis zum besonderen Abend.',
+    scenes: [
+      { id: 'morgen', time: '08:00', label: 'Sanfter Start', title: 'Der Morgen gehört der Ruhe.', text: 'Klares Licht, leise Details und Raum zum Ankommen.', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=88', tint: '#d8a567' },
+      { id: 'mittag', time: '13:00', label: 'Volle Energie', title: 'Mittags wird der Ort lebendig.', text: 'Offene Räume und eine Atmosphäre voller Bewegung.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1600&q=88', tint: '#6d8ca5' },
+      { id: 'abend', time: '19:30', label: 'Goldene Stunde', title: 'Am Abend bleibt das Besondere.', text: 'Warmes Licht und Momente, die länger nachwirken.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=88', tint: '#283654' },
+    ], cta: { label: 'Besuch planen', href: '#kontakt' },
+  },
+  livingBlueprint: {
+    badge: 'So greift alles ineinander', headline: 'Ein System, das mit jedem Schritt lebendig wird.', subline: 'Der Bauplan zeigt Zusammenhänge, Verantwortungen und Wirkung auf einen Blick.', layout: 'blueprint',
+    nodes: [
+      { id: 'analyse', title: 'Analyse', text: 'Bedarf und Ausgangslage werden sichtbar.', metric: '01' },
+      { id: 'strategie', title: 'Strategie', text: 'Prioritäten geben allen Entscheidungen Richtung.', metric: '02' },
+      { id: 'konzept', title: 'Konzept', text: 'Inhalt, Raum und Nutzung greifen zusammen.', metric: '03', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=900&q=84' },
+      { id: 'umsetzung', title: 'Umsetzung', text: 'Präzises Handwerk macht die Idee belastbar.', metric: '04' },
+      { id: 'qualitaet', title: 'Qualität', text: 'Kontrolle sichert alle entscheidenden Details.', metric: '05' },
+      { id: 'wirkung', title: 'Wirkung', text: 'Das Ergebnis erfüllt seinen Zweck langfristig.', metric: '06' },
+    ], cta: { label: 'System kennenlernen', href: '#kontakt' },
+  },
+  editorialCardMorph: {
+    badge: 'Ausgewählte Arbeiten', headline: 'Jeder Case öffnet eine eigene Welt.', subline: 'Wählen Sie ein Projekt und wechseln Sie von der Übersicht in eine großzügige Editorial-Bühne.', layout: 'stack',
+    items: [
+      { id: 'refugium', kicker: 'Interior · 2026', title: 'Stilles Refugium', text: 'Ein Rückzugsort, in dem Material, Licht und Funktion eine ruhige Einheit bilden.', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400&q=88', facts: [{ value: '12 Wo.', label: 'Projektzeit' }, { value: '140 m²', label: 'Fläche' }], href: '#projekt', ctaLabel: 'Case ansehen' },
+      { id: 'atelier', kicker: 'Workspace · 2026', title: 'Offenes Atelier', text: 'Flexible Räume für konzentrierte Arbeit und echten Austausch.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1400&q=88', facts: [{ value: '+32 %', label: 'Flächennutzung' }] },
+      { id: 'haus', kicker: 'Architecture · 2025', title: 'Haus am Hang', text: 'Eine präzise Antwort auf Topografie, Aussicht und Alltag.', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=88', facts: [{ value: '18 Mon.', label: 'Planung & Bau' }] },
+      { id: 'studio', kicker: 'Retail · 2025', title: 'Material Studio', text: 'Ein Showroom, der Beratung zu einem räumlichen Erlebnis macht.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1400&q=88', facts: [{ value: '4', label: 'Materialwelten' }] },
+    ],
+  },
+  materialAtelier: {
+    badge: 'Materialbibliothek',
+    headline: 'Material wird zur räumlichen Entscheidung.',
+    subline: 'Wählen Sie eine Position. Bild, Herkunft und Charakter wechseln gemeinsam – präzise statt verspielt.',
+    preset: 'architectural',
+    items: [
+      { id: 'travertin', kicker: 'Naturstein · 01', title: 'Travertin Romano', text: 'Warm, lebendig und mit einer Oberfläche, die Licht weich aufnimmt.', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=88', href: '#travertin', meta: ['Innenraum', 'Matt', 'Naturstein'] },
+      { id: 'marmor', kicker: 'Naturstein · 02', title: 'Marmor Arabescato', text: 'Ausdrucksstarke Zeichnung für präzise gesetzte Solitäre und Flächen.', image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1600&q=88', href: '#marmor', meta: ['Bad', 'Poliert', 'Unikat'] },
+      { id: 'basalt', kicker: 'Naturstein · 03', title: 'Basaltina', text: 'Ruhige Tiefe, feine Struktur und eine fast monolithische Präsenz.', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=88', href: '#basalt', meta: ['Treppe', 'Gebürstet', 'Robust'] },
+      { id: 'quarzit', kicker: 'Naturstein · 04', title: 'Quarzit Verde', text: 'Ein markanter Akzent für Räume, die Material selbst sprechen lassen.', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=88', href: '#quarzit', meta: ['Statement', 'Langlebig', 'Individuell'] },
+    ],
+    cta: { label: 'Materialberatung anfragen', href: '#kontakt' },
+  },
   bookingWidget: {
     badge: 'Booking',
     headline: 'Termin oder Anfrage senden',

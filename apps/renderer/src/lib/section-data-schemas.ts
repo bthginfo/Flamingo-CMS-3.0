@@ -149,6 +149,14 @@
     xrayReveal: { fields: { badge: 'string?', headline: 'string', subline: 'string?', imageBase: 'url (Bild A, identischer Zuschnitt wie Bild B)', imageReveal: 'url (Bild B, identischer Zuschnitt wie Bild A)', labelBase: 'string?', labelReveal: 'string?', caption: 'string?', revealStyle: '"lens"|"soft"|"scan"?', aspectRatio: '"16/9"|"4/3"|"1/1"?' }, note: 'Advanced Section. Nur verwenden, wenn beide Bilder Perspektive, Abmessungen und Fokus exakt teilen.' },
     sceneLab: { fields: { badge: 'string?', headline: 'string', subline: 'string?', baseImage: 'url', aspectRatio: '"16/9"|"4/3"|"1/1"?', groups: '{ id: stable-string, label: string, description?: string, choices: { id: stable-string, label: string, image: url (transparenter deckungsgleicher Layer), swatch?: css-color, description?: string, priceLabel?: string }[] }[]', cta: '{ label: string, href: safe-url }?' }, note: 'Advanced 2D-Konfigurator. Alle Choice-Layer müssen transparent, deckungsgleich und im Format des Basisbilds sein.' },
     infiniteCanvas: { fields: { badge: 'string?', headline: 'string', subline: 'string?', ctaLabel: 'string?', items: '{ image: url, alt: string, title?: string, caption?: string, category?: string, href?: safe-url, featured?: boolean }[] (10–40 Bilder empfohlen)' }, note: 'Advanced Section. Explorer öffnet erst nach expliziter Besucheraktion; Positionen werden automatisch berechnet.' },
+    kineticIdentity: { fields: { badge: 'string?', headline: 'string', subline: 'string?', preset: '"editorial"|"architectural"|"expressive"?', statements: '{ id?: stable-string, prefix?: string, highlight: string, suffix?: string, text?: string, image?: url }[] (3–6 Aussagen)', cta: '{ label: string, href: safe-url }?' }, note: 'Advanced Section. Das highlight ist das typografische Fokuswort; Aussagen kurz halten. Mobile rendert eine statische hochwertige Sequenz.' },
+    signaturePath: { fields: { badge: 'string?', headline: 'string', subline: 'string?', pathPreset: '"flow"|"route"|"craft"|"pulse"?', items: '{ id?: stable-string, title: string, text?: string, icon?: lucide-icon-name, image?: url, href?: safe-url }[] (3–7 Stationen)', cta: '{ label: string, href: safe-url }?' }, note: 'Advanced Section. Keine SVG-Pfade oder Koordinaten liefern; Flamingo erzeugt Pfad und Positionen aus dem Preset.' },
+    layeredAnatomy: { fields: { badge: 'string?', headline: 'string', subline: 'string?', mode: '"hotspots"|"layers" (default hotspots)', baseImage: 'url', aspectRatio: '"16/9"|"4/3"|"1/1"?', hotspots: '{ id?: stable-string, x: number 0–100, y: number 0–100, title: string, text?: string, icon?: lucide-icon-name }[] (2–8 im hotspots-Modus)', layers: '{ id?: stable-string, image: url (transparenter ausgerichteter Layer), title: string, text?: string, direction: "left"|"right"|"up"|"down", depth?: number 1–8 }[] (2–8 im layers-Modus)', cta: '{ label: string, href: safe-url }?' }, note: 'Advanced Section mit zwei Modi. Pro-Layer nur mit transparenten, pixelgenau zum Basisbild ausgerichteten Assets verwenden; sonst hotspots wählen.' },
+    guidedChoice: { fields: { badge: 'string?', headline: 'string', subline: 'string?', mode: '"score"|"branch" (default score)', restartLabel: 'string?', questions: '{ id: stable-string, label: string, description?: string, answers: { id: stable-string, label: string, description?: string, scores?: { resultId: stable-string, points: integer 0–10 }[], nextQuestionId?: stable-string, resultId?: stable-string }[] (2–4 Antworten) }[] (2–6 Fragen)', results: '{ id: stable-string, title: string, text?: string, image?: url, features?: string[], cta?: { label: string, href: safe-url } }[] (2–6 Ergebnisse)' }, note: 'Advanced Empfehlung. Score: jede Antwort braucht mindestens einen gültigen Score; erster Result-Eintrag gewinnt deterministische Gleichstände. Branch: jede Antwort braucht genau ein erreichbares Ziel; keine Zyklen oder Sackgassen.' },
+    dayToNight: { fields: { badge: 'string?', headline: 'string', subline: 'string?', scenes: '{ id?: stable-string, time: string, label: string, title: string, text?: string, image: url, tint?: sanitized-css-color }[] (2–4 chronologisch geordnete Szenen)', cta: '{ label: string, href: safe-url }?' }, note: 'Advanced Section ohne Scroll-Hijacking. Ein Bild darf mit unterschiedlichen Tints wiederholt werden; mehrere koordinierte Bilder sind besser.' },
+    livingBlueprint: { fields: { badge: 'string?', headline: 'string', subline: 'string?', layout: '"flow"|"radial"|"blueprint"?', nodes: '{ id: stable-string, title: string, text?: string, icon?: lucide-icon-name, image?: url, metric?: string }[] (3–8 Knoten)', cta: '{ label: string, href: safe-url }?' }, note: 'Advanced Section. Keine SVG-Daten, Verbindungen oder Koordinaten liefern; sie werden aus Reihenfolge und Layout-Preset erzeugt.' },
+    editorialCardMorph: { fields: { badge: 'string?', headline: 'string', subline: 'string?', layout: '"stack"|"rail"?', items: '{ id?: stable-string, kicker?: string, title: string, text?: string, image: url, facts?: { value: string, label: string }[] (max 4), href?: safe-url, ctaLabel?: string }[] (3–8 Cases)' }, note: 'Advanced Editorial Section. items kann manuell gepflegt oder durch die bestehende Collection-Injektion geliefert werden; kein separates Collection-System anlegen.' },
+    materialAtelier: { fields: { badge: 'string?', headline: 'string', subline: 'string?', preset: '"architectural"|"quiet"|"editorial"?', items: '{ id?: stable-string, title: string, kicker?: string, text?: string, image: url, href?: safe-url, meta?: string[] }[] (3–8 Positionen)', cta: '{ label: string, href: safe-url }?' }, note: 'Advanced Section für Materialien, Leistungen, Kollektionen, Räume oder Produkte. Das Ledger entsteht automatisch aus einer einzigen geordneten Liste; keine Koordinaten oder separaten Mobile-Daten liefern.' },
   };
 
   if (industry === 'wedding') {
@@ -343,6 +351,75 @@
   });
 
   return schemas;
+}
+
+const SECTION_SCHEMA_PRESET_INDUSTRIES = [
+  'wedding',
+  'tradesman',
+  'restaurant',
+  'hotel',
+  'salon',
+  'medical',
+  'tourism',
+  'photography',
+  'consulting',
+  'realestate',
+  'cafe',
+  'florist',
+  'fitness',
+  'retail',
+] as const;
+
+type CatalogSchemaIndex = {
+  schemasByIndustry: Map<string, Record<string, object>>;
+  uniqueForeignSchemas: Map<string, { industry: string; schema: object }>;
+};
+
+let catalogSchemaIndex: CatalogSchemaIndex | null = null;
+
+function schemaEquals(left: object | undefined, right: object | undefined) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function getCatalogSchemaIndex(): CatalogSchemaIndex {
+  if (catalogSchemaIndex) return catalogSchemaIndex;
+  const baseSchemas = getSectionSchemas('__catalog_base__');
+  const schemasByIndustry = new Map<string, Record<string, object>>();
+  const ownersByType = new Map<string, { industry: string; schema: object }[]>();
+
+  for (const industry of SECTION_SCHEMA_PRESET_INDUSTRIES) {
+    const schemas = getSectionSchemas(industry);
+    schemasByIndustry.set(industry, schemas);
+    for (const [type, schema] of Object.entries(schemas)) {
+      if (schemaEquals(schema, baseSchemas[type])) continue;
+      const owners = ownersByType.get(type) ?? [];
+      owners.push({ industry, schema });
+      ownersByType.set(type, owners);
+    }
+  }
+
+  const uniqueForeignSchemas = new Map<string, { industry: string; schema: object }>();
+  for (const [type, owners] of ownersByType) {
+    if (owners.length === 1) uniqueForeignSchemas.set(type, owners[0]);
+  }
+  catalogSchemaIndex = { schemasByIndustry, uniqueForeignSchemas };
+  return catalogSchemaIndex;
+}
+
+/**
+ * Schemas for the cross-industry section catalog. The active tenant keeps its
+ * complete schema semantics; only section types owned by exactly one foreign
+ * preset are added. Ambiguous shared names never inherit a random industry.
+ */
+export function getCatalogSectionSchemas(industry: string): Record<string, object> {
+  const index = getCatalogSchemaIndex();
+  const currentSchemas = index.schemasByIndustry.get(industry) ?? getSectionSchemas(industry);
+  const catalog = { ...currentSchemas };
+  for (const [type, owner] of index.uniqueForeignSchemas) {
+    if (owner.industry === industry || Object.hasOwn(catalog, type)) continue;
+    catalog[type] = owner.schema;
+  }
+  return catalog;
 }
 
 

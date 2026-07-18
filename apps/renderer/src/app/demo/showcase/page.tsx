@@ -70,6 +70,13 @@ const CURATED_DEFINITIONS = [
   ['tradesman:xrayReveal', 'Erklärt verborgene Qualität mit zwei exakt vergleichbaren Bildebenen.'],
   ['tradesman:sceneLab', 'Lässt Besucher Varianten direkt in einer performanten 2D-Szene konfigurieren.'],
   ['tradesman:infiniteCanvas', 'Verwandelt umfangreiches Bildmaterial in einen optionalen, immersiven Explorer.'],
+  ['tradesman:kineticIdentity', 'Verwandelt Kernbotschaften in eine choreografierte typografische Markenbühne.'],
+  ['tradesman:signaturePath', 'Führt Besucher entlang einer gezeichneten, branchentypischen Markenlinie.'],
+  ['tradesman:layeredAnatomy', 'Erklärt Aufbau und Qualität mit Hotspots oder präzise ausgerichteten Bildebenen.'],
+  ['tradesman:guidedChoice', 'Übersetzt wenige verständliche Antworten in eine konkrete Empfehlung.'],
+  ['tradesman:dayToNight', 'Inszeniert Angebot und Atmosphäre entlang unterschiedlicher Tageszeiten.'],
+  ['tradesman:livingBlueprint', 'Macht Prozesse und Systeme als automatisch verbundenes, interaktives Schema verständlich.'],
+  ['tradesman:editorialCardMorph', 'Öffnet Cases und Leistungen aus einer visuellen Übersicht in eine große Editorial-Bühne.'],
 ] as const;
 
 const CURATED_BY_CONTEXT = new Map<string, { rank: number; outcome: string }>(

@@ -12,7 +12,7 @@ import {
   SECTION_COLOR_CONTRACTS_GENERIC,
   SECTION_COLOR_CONTRACTS_ANY,
 } from '@/lib/section-color-contracts-generated';
-import { getSectionSchemas } from '@/lib/section-data-schemas';
+import { getCatalogSectionSchemas } from '@/lib/section-data-schemas';
 import { buildAiAgentContract, buildAiAgentPrompt } from '@/lib/ai-agent-guidance';
 import { profilePassesExistingValidation, readPersistedBusinessProfile } from '@/lib/business-profile';
 
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
         schemaVersion: definition?.schemaVersion,
       };
     });
-  const sectionDataSchemas = getSectionSchemas(auth.tenant.industry);
+  const sectionDataSchemas = getCatalogSectionSchemas(auth.tenant.industry);
 
   const response: Record<string, unknown> = {
     tenant: auth.tenant,

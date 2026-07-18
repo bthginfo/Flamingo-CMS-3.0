@@ -254,6 +254,14 @@ const TransformationSequenceSection = dynamic(() => import('./advanced/transform
 const XrayRevealSection = dynamic(() => import('./advanced/xray-reveal').then((module) => module.XrayRevealSection)) as TemplateComponent;
 const SceneLabSection = dynamic(() => import('./advanced/scene-lab').then((module) => module.SceneLabSection)) as TemplateComponent;
 const InfiniteCanvasSection = dynamic(() => import('./advanced/infinite-canvas').then((module) => module.InfiniteCanvasSection)) as TemplateComponent;
+const KineticIdentitySection = dynamic(() => import('./advanced/kinetic-identity').then((module) => module.KineticIdentitySection)) as TemplateComponent;
+const SignaturePathSection = dynamic(() => import('./advanced/signature-path').then((module) => module.SignaturePathSection)) as TemplateComponent;
+const LayeredAnatomySection = dynamic(() => import('./advanced/layered-anatomy').then((module) => module.LayeredAnatomySection)) as TemplateComponent;
+const GuidedChoiceSection = dynamic(() => import('./advanced/guided-choice').then((module) => module.GuidedChoiceSection)) as TemplateComponent;
+const DayToNightSection = dynamic(() => import('./advanced/day-to-night').then((module) => module.DayToNightSection)) as TemplateComponent;
+const LivingBlueprintSection = dynamic(() => import('./advanced/living-blueprint').then((module) => module.LivingBlueprintSection)) as TemplateComponent;
+const EditorialCardMorphSection = dynamic(() => import('./advanced/editorial-card-morph').then((module) => module.EditorialCardMorphSection)) as TemplateComponent;
+const MaterialAtelierSection = dynamic(() => import('./advanced/material-atelier').then((module) => module.MaterialAtelierSection)) as TemplateComponent;
 
 /**
  * Explicitly preserves the former ALL_TEMPLATES last-write-wins behavior.
@@ -823,6 +831,14 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   xrayReveal: XrayRevealSection,
   sceneLab: SceneLabSection,
   infiniteCanvas: InfiniteCanvasSection,
+  kineticIdentity: KineticIdentitySection,
+  signaturePath: SignaturePathSection,
+  layeredAnatomy: LayeredAnatomySection,
+  guidedChoice: GuidedChoiceSection,
+  dayToNight: DayToNightSection,
+  livingBlueprint: LivingBlueprintSection,
+  editorialCardMorph: EditorialCardMorphSection,
+  materialAtelier: MaterialAtelierSection,
   productShowcase: ProductShowcaseSection,
   categoryMosaic: CategoryMosaicSection,
   brandShowroom: BrandShowroomSection,

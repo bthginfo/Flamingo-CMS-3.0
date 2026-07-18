@@ -21,6 +21,13 @@ const ADVANCED_SECTION_TYPES = [
   'xrayReveal',
   'sceneLab',
   'infiniteCanvas',
+  'kineticIdentity',
+  'signaturePath',
+  'layeredAnatomy',
+  'guidedChoice',
+  'dayToNight',
+  'livingBlueprint',
+  'editorialCardMorph',
 ] as const;
 
 const SECTION_EXAMPLES: Record<string, Record<string, unknown>> = {
@@ -295,6 +302,13 @@ export function buildAiAgentContract(input: {
         xrayReveal: 'Exactly two images with identical pixel dimensions, camera angle, crop and focal point.',
         sceneLab: 'One base image plus at least 2 option groups. Every choice is a transparent pixel-aligned layer matching the base dimensions.',
         infiniteCanvas: '10–40 optimized images. Every image needs a meaningful alt text; the visitor opens the explorer explicitly.',
+        kineticIdentity: '3–6 concise statements. Each needs a highlight; optional images should share one coherent visual language.',
+        signaturePath: '3–7 ordered stations. Choose a curated path preset; never generate SVG path data or coordinates.',
+        layeredAnatomy: 'Hotspots: one base image plus 2–8 positioned details. Pro layers: one base plus 2–8 transparent pixel-aligned assets; use hotspots when specialist layers are unavailable.',
+        guidedChoice: '2–6 questions, 2–4 answers each and 2–6 results. Prefer score mode; every score or branch target must reference a stable existing id. No cycles or dead ends.',
+        dayToNight: '2–4 chronological scenes with time, label, title and image. Reusing one image with sanitized tints is valid.',
+        livingBlueprint: '3–8 stable ordered nodes. Choose a layout preset; never provide SVG connections or coordinates.',
+        editorialCardMorph: '3–8 image-led cases with concise copy and at most 4 facts each. Existing collection injection may supply items.',
       },
       examples: Object.fromEntries(
         ADVANCED_SECTION_TYPES

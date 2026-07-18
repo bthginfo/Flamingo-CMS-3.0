@@ -53,7 +53,7 @@ const CATEGORY_META: Record<string, { icon: typeof FileText; color: string; desc
   Kontakt: { icon: Mail, color: 'text-green-700 bg-green-50', description: 'Formulare & Karten' },
   'Team & Personen': { icon: Users, color: 'text-indigo-600 bg-indigo-50', description: 'Team-Mitglieder & Personen' },
   Leistungen: { icon: Wrench, color: 'text-red-600 bg-red-50', description: 'Services, Preise & Prozesse' },
-  Branchenspezifisch: { icon: MoreHorizontal, color: 'text-gray-600 bg-gray-100', description: 'Sektionen passend zur aktuellen Branche' },
+  Branchenspezifisch: { icon: MoreHorizontal, color: 'text-teal-700 bg-teal-50', description: 'Kuratierte Startideen – frei anpassbar und nicht auf eine Branche beschränkt' },
   Premium: { icon: Star, color: 'text-fuchsia-700 bg-fuchsia-50', description: 'Visuell starke Premium-Sektionen' },
   Advanced: { icon: Sparkles, color: 'text-violet-700 bg-violet-50', description: 'Geführte Erlebnis-Sektionen mit besonderen Medienanforderungen' },
   Booking: { icon: CalendarDays, color: 'text-emerald-700 bg-emerald-50', description: 'Buchung, Verfügbarkeit & Ressourcen' },
@@ -63,9 +63,15 @@ const CATEGORY_META: Record<string, { icon: typeof FileText; color: string; desc
 function getCategoryMeta(category: string) {
   if (CATEGORY_META[category]) return CATEGORY_META[category];
   if (category.startsWith('Andere:')) {
-    return { icon: Layers, color: 'text-teal-700 bg-teal-50', description: 'Sektionen aus anderen Branchen' };
+    return { icon: Layers, color: 'text-teal-700 bg-teal-50', description: 'Optionale Inspiration aus einer anderen Vorlage – vollständig nutzbar' };
   }
   return { icon: Layers, color: 'text-gray-600 bg-gray-100', description: 'Weitere Sektionen' };
+}
+
+function getCategoryLabel(category: string) {
+  if (category === 'Branchenspezifisch') return 'Branchen-Empfehlungen';
+  if (category.startsWith('Andere:')) return `Inspiration: ${category.slice('Andere:'.length).trim()}`;
+  return category;
 }
 
 const CATEGORY_ORDER = [
@@ -562,7 +568,7 @@ export function SectionPickerModal({
             <div className="flex gap-1.5 overflow-x-auto border-b px-4 py-2.5 sm:hidden">
               <button type="button" onClick={() => setActiveCategory(null)} className={`min-h-11 shrink-0 rounded-lg px-3 text-xs font-semibold ${!activeCategory ? 'bg-blue-100 text-blue-800' : 'text-zinc-600 hover:bg-zinc-100'}`}>Alle</button>
               {categories.map((category) => (
-                <button key={category} type="button" onClick={() => setActiveCategory(activeCategory === category ? null : category)} className={`min-h-11 shrink-0 rounded-lg px-3 text-xs font-semibold ${activeCategory === category ? 'bg-blue-100 text-blue-800' : 'text-zinc-600 hover:bg-zinc-100'}`}>{category}</button>
+                <button key={category} type="button" onClick={() => setActiveCategory(activeCategory === category ? null : category)} className={`min-h-11 shrink-0 rounded-lg px-3 text-xs font-semibold ${activeCategory === category ? 'bg-blue-100 text-blue-800' : 'text-zinc-600 hover:bg-zinc-100'}`}>{getCategoryLabel(category)}</button>
               ))}
             </div>
 
@@ -577,13 +583,16 @@ export function SectionPickerModal({
                   const count = grouped.find(([groupCategory]) => groupCategory === category)?.[1].length || 0;
                   return (
                     <button key={category} type="button" onClick={() => setActiveCategory(activeCategory === category ? null : category)} className={`mb-1 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-left text-xs font-medium transition ${activeCategory === category ? 'bg-blue-100 text-blue-800' : 'text-zinc-700 hover:bg-white'}`}>
-                      <Icon size={14} /><span className="min-w-0 flex-1 truncate">{category}</span><span className="text-[10px] text-current/50">{count}</span>
+                      <Icon size={14} /><span className="min-w-0 flex-1 truncate">{getCategoryLabel(category)}</span><span className="text-[10px] text-current/50">{count}</span>
                     </button>
                   );
                 })}
               </aside>
 
               <div className="min-w-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+                <div className="mb-5 rounded-lg border border-teal-200 bg-teal-50/70 px-4 py-3 text-xs leading-5 text-teal-900">
+                  <strong className="font-semibold">Deine Branche sortiert nur Empfehlungen.</strong> Du kannst jede nicht gesperrte Sektion verwenden und frei anpassen. Nur Shop- und Booking-Funktionen benötigen das passende Add-on.
+                </div>
                 {filtered.length === 0 && <div className="py-14 text-center text-sm text-zinc-500">Keine Sektionen gefunden. Versuchen Sie einen anderen Begriff.</div>}
                 {filtered.map(([category, items]) => {
                   const meta = getCategoryMeta(category);
@@ -592,7 +601,7 @@ export function SectionPickerModal({
                     <section key={category} className="mb-7" aria-labelledby={`category-${category.replace(/\W/g, '-')}`}>
                       <div className="mb-2 flex items-center gap-2">
                         <span className={`rounded-md p-1.5 ${meta.color}`}><Icon size={13} /></span>
-                        <div><h3 id={`category-${category.replace(/\W/g, '-')}`} className="text-xs font-bold uppercase tracking-wide text-zinc-700">{category}</h3><p className="text-[10px] text-zinc-500">{meta.description}</p></div>
+                        <div><h3 id={`category-${category.replace(/\W/g, '-')}`} className="text-xs font-bold uppercase tracking-wide text-zinc-700">{getCategoryLabel(category)}</h3><p className="text-[10px] text-zinc-500">{meta.description}</p></div>
                       </div>
                       <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                         {items.map((section) => (
