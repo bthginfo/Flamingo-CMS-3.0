@@ -103,11 +103,56 @@ export function parseRendererContactIdempotencyKey(value: string | null) {
 }
 
 function rateLimitSecret() {
-  const secret = [process.env.RENDERER_RATE_LIMIT_SECRET, process.env.ADMIN_JWT_SECRET]
+  const secret = [
+    process.env.RENDERER_RATE_LIMIT_SECRET,
+    process.env.ADMIN_JWT_SECRET,
+    process.env.CONFIG_ENCRYPTION_KEY,
+  ]
     .map(value => value?.trim())
     .find(value => value && value.length >= 32);
   if (!secret) throw new Error('Renderer rate-limit secret is missing or too short.');
   return secret;
+}
+
+export function isMissingRendererRateLimitStore(error: unknown) {
+  const visited = new Set<unknown>();
+  let current = error;
+  for (let depth = 0; depth < 6 && current && typeof current === 'object' && !visited.has(current); depth += 1) {
+    visited.add(current);
+    const record = current as { code?: unknown; cause?: unknown };
+    if (record.code === '42P01') return true;
+    current = record.cause;
+  }
+  return false;
+}
+
+let rendererRateLimitStoreBootstrap: Promise<void> | null = null;
+
+async function ensureRendererRateLimitStore() {
+  if (!rendererRateLimitStoreBootstrap) {
+    rendererRateLimitStoreBootstrap = (async () => {
+      const db = getDb();
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS marketing_rate_limits (
+          key varchar(160) PRIMARY KEY NOT NULL,
+          hits integer DEFAULT 1 NOT NULL,
+          window_started_at timestamp with time zone DEFAULT now() NOT NULL,
+          expires_at timestamp with time zone NOT NULL,
+          updated_at timestamp with time zone DEFAULT now() NOT NULL
+        )
+      `);
+      await db.execute(sql`
+        CREATE INDEX IF NOT EXISTS marketing_rate_limits_expires_idx
+        ON marketing_rate_limits USING btree (expires_at)
+      `);
+    })();
+  }
+  try {
+    await rendererRateLimitStoreBootstrap;
+  } catch (error) {
+    rendererRateLimitStoreBootstrap = null;
+    throw error;
+  }
 }
 
 function rateLimitKey(scope: string, subject: string) {
@@ -127,16 +172,24 @@ async function consumeRendererContactRateLimit(rule: RendererContactRateRule, no
   const key = rateLimitKey(rule.scope, rule.subject);
   const expiresAt = new Date(now.getTime() + rule.windowSeconds * 1000);
   const db = getDb();
-  const result = await db.execute(sql`
-    INSERT INTO marketing_rate_limits (key, hits, window_started_at, expires_at, updated_at)
-    VALUES (${key}, 1, ${now}, ${expiresAt}, ${now})
-    ON CONFLICT (key) DO UPDATE SET
-      hits = CASE WHEN marketing_rate_limits.expires_at <= ${now} THEN 1 ELSE marketing_rate_limits.hits + 1 END,
-      window_started_at = CASE WHEN marketing_rate_limits.expires_at <= ${now} THEN ${now} ELSE marketing_rate_limits.window_started_at END,
-      expires_at = CASE WHEN marketing_rate_limits.expires_at <= ${now} THEN ${expiresAt} ELSE marketing_rate_limits.expires_at END,
-      updated_at = ${now}
-    RETURNING hits, expires_at
-  `);
+  const consume = () => db.execute(sql`
+      INSERT INTO marketing_rate_limits (key, hits, window_started_at, expires_at, updated_at)
+      VALUES (${key}, 1, ${now}, ${expiresAt}, ${now})
+      ON CONFLICT (key) DO UPDATE SET
+        hits = CASE WHEN marketing_rate_limits.expires_at <= ${now} THEN 1 ELSE marketing_rate_limits.hits + 1 END,
+        window_started_at = CASE WHEN marketing_rate_limits.expires_at <= ${now} THEN ${now} ELSE marketing_rate_limits.window_started_at END,
+        expires_at = CASE WHEN marketing_rate_limits.expires_at <= ${now} THEN ${expiresAt} ELSE marketing_rate_limits.expires_at END,
+        updated_at = ${now}
+      RETURNING hits, expires_at
+    `);
+  let result;
+  try {
+    result = await consume();
+  } catch (error) {
+    if (!isMissingRendererRateLimitStore(error)) throw error;
+    await ensureRendererRateLimitStore();
+    result = await consume();
+  }
   const row = result.rows?.[0] as { hits?: number | string; expires_at?: Date | string } | undefined;
   if (!row) throw new Error('Renderer rate-limit store returned no row.');
   const hits = Number(row.hits);

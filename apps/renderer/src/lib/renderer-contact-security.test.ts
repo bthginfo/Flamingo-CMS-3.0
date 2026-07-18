@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 import {
   classifyRendererContactIdempotency,
   fingerprintRendererContactSubmission,
+  isMissingRendererRateLimitStore,
   isTrustedRendererContactOrigin,
   MAX_RENDERER_CONTACT_REQUEST_BYTES,
   readBoundedRendererContactJson,
@@ -63,6 +64,13 @@ describe('renderer contact security', () => {
       'renderer_autoresponse_global',
     ]);
     assert.equal(rendererAutoResponseRateRules(TENANT_ID, 'ip', 'person@example.com')[0]?.limit, 1);
+  });
+
+  it('recovers only from a missing persistent rate-limit table', () => {
+    assert.equal(isMissingRendererRateLimitStore({ code: '42P01' }), true);
+    assert.equal(isMissingRendererRateLimitStore({ cause: { code: '42P01' } }), true);
+    assert.equal(isMissingRendererRateLimitStore({ code: '28P01' }), false);
+    assert.equal(isMissingRendererRateLimitStore(new Error('database unavailable')), false);
   });
 
   it('keeps the browser idempotency key stable across retries of one action', () => {

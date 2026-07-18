@@ -14,11 +14,54 @@ function getRateLimitSecret() {
     process.env.CRM_RATE_LIMIT_SECRET,
     process.env.CRM_JWT_SECRET,
     process.env.ADMIN_JWT_SECRET,
+    process.env.CRM_CONFIG_ENCRYPTION_KEY,
+    process.env.CONFIG_ENCRYPTION_KEY,
   ].map(value => value?.trim()).find(value => value && value.length >= 32);
   if (!secret) {
     throw new Error('A rate-limit secret with at least 32 characters is required.');
   }
   return secret;
+}
+
+export function isMissingMarketingRateLimitStore(error: unknown) {
+  const visited = new Set<unknown>();
+  let current = error;
+  for (let depth = 0; depth < 6 && current && typeof current === 'object' && !visited.has(current); depth += 1) {
+    visited.add(current);
+    const record = current as { code?: unknown; cause?: unknown };
+    if (record.code === '42P01') return true;
+    current = record.cause;
+  }
+  return false;
+}
+
+let marketingRateLimitStoreBootstrap: Promise<void> | null = null;
+
+async function ensureMarketingRateLimitStore() {
+  if (!marketingRateLimitStoreBootstrap) {
+    marketingRateLimitStoreBootstrap = (async () => {
+      const db = getDb();
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS marketing_rate_limits (
+          key varchar(160) PRIMARY KEY NOT NULL,
+          hits integer DEFAULT 1 NOT NULL,
+          window_started_at timestamp with time zone DEFAULT now() NOT NULL,
+          expires_at timestamp with time zone NOT NULL,
+          updated_at timestamp with time zone DEFAULT now() NOT NULL
+        )
+      `);
+      await db.execute(sql`
+        CREATE INDEX IF NOT EXISTS marketing_rate_limits_expires_idx
+        ON marketing_rate_limits USING btree (expires_at)
+      `);
+    })();
+  }
+  try {
+    await marketingRateLimitStoreBootstrap;
+  } catch (error) {
+    marketingRateLimitStoreBootstrap = null;
+    throw error;
+  }
 }
 
 function buildRateLimitKey(scope: string, subject: string) {
@@ -46,25 +89,33 @@ export async function consumeMarketingRateLimit(input: {
   const now = input.now || new Date();
   const expiresAt = new Date(now.getTime() + windowSeconds * 1000);
   const db = getDb();
-  const result = await db.execute(sql`
-    INSERT INTO marketing_rate_limits (key, hits, window_started_at, expires_at, updated_at)
-    VALUES (${key}, 1, ${now}, ${expiresAt}, ${now})
-    ON CONFLICT (key) DO UPDATE SET
-      hits = CASE
-        WHEN marketing_rate_limits.expires_at <= ${now} THEN 1
-        ELSE marketing_rate_limits.hits + 1
-      END,
-      window_started_at = CASE
-        WHEN marketing_rate_limits.expires_at <= ${now} THEN ${now}
-        ELSE marketing_rate_limits.window_started_at
-      END,
-      expires_at = CASE
-        WHEN marketing_rate_limits.expires_at <= ${now} THEN ${expiresAt}
-        ELSE marketing_rate_limits.expires_at
-      END,
-      updated_at = ${now}
-    RETURNING hits, expires_at
-  `);
+  const consume = () => db.execute(sql`
+      INSERT INTO marketing_rate_limits (key, hits, window_started_at, expires_at, updated_at)
+      VALUES (${key}, 1, ${now}, ${expiresAt}, ${now})
+      ON CONFLICT (key) DO UPDATE SET
+        hits = CASE
+          WHEN marketing_rate_limits.expires_at <= ${now} THEN 1
+          ELSE marketing_rate_limits.hits + 1
+        END,
+        window_started_at = CASE
+          WHEN marketing_rate_limits.expires_at <= ${now} THEN ${now}
+          ELSE marketing_rate_limits.window_started_at
+        END,
+        expires_at = CASE
+          WHEN marketing_rate_limits.expires_at <= ${now} THEN ${expiresAt}
+          ELSE marketing_rate_limits.expires_at
+        END,
+        updated_at = ${now}
+      RETURNING hits, expires_at
+    `);
+  let result;
+  try {
+    result = await consume();
+  } catch (error) {
+    if (!isMissingMarketingRateLimitStore(error)) throw error;
+    await ensureMarketingRateLimitStore();
+    result = await consume();
+  }
   const row = result.rows?.[0] as { hits?: number | string; expires_at?: string | Date } | undefined;
   if (!row) throw new Error('Rate-limit store returned no result.');
 
