@@ -581,10 +581,10 @@ Options:
 
 Legacy fallback:
   --legacy-shared-standalone is honored only for a standalone tenant when the
-  tenant_database_connections registry query fails with PostgreSQL 42P01.
-  It then uses the exact control DATABASE_URL as the data database. Missing
-  records, inactive records, decryption failures and every other DB error remain
-  fail-closed.`;
+  tenant_database_connections registry is absent (PostgreSQL 42P01) or has no
+  record yet for that exact legacy tenant. It then uses the exact control
+  DATABASE_URL as the data database. Duplicate/inactive records, decryption
+  failures and every other DB error remain fail-closed.`;
 
 export function parseArgs(argv: string[]) {
   const apply = argv.includes('--apply');
@@ -609,6 +609,10 @@ export function canUseLegacySharedStandalone(input: { enabled: boolean; deployme
   return input.enabled && input.deploymentMode === 'standalone' && postgresErrorCode(input.error) === '42P01';
 }
 
+export function canUseLegacySharedRecordFallback(input: { enabled: boolean; deploymentMode: string; recordCount: number }) {
+  return input.enabled && input.deploymentMode === 'standalone' && input.recordCount === 0;
+}
+
 async function dataConnection(controlSql: SqlClient, controlUrl: string, target: Target, options: ReturnType<typeof parseArgs>) {
   const tenants = await controlSql`SELECT id, slug, deployment_mode::text FROM tenants WHERE id = ${target.id} AND slug = ${target.slug}` as { id: string; slug: string; deployment_mode: string }[];
   if (tenants.length !== 1) throw new Error(`${target.slug}: exact control-plane tenant identity not found.`);
@@ -619,6 +623,10 @@ async function dataConnection(controlSql: SqlClient, controlUrl: string, target:
   } catch (error) {
     if (!canUseLegacySharedStandalone({ enabled: options.legacySharedStandalone, deploymentMode: tenants[0].deployment_mode, error })) throw error;
     console.warn(`${target.slug}: legacy shared-standalone mode active (registry table is absent; exact control DATABASE_URL is used).`);
+    return { sql: neon(controlUrl, { fetchOptions: { cache: 'no-store' } }), legacySharedStandalone: true };
+  }
+  if (canUseLegacySharedRecordFallback({ enabled: options.legacySharedStandalone, deploymentMode: tenants[0].deployment_mode, recordCount: records.length })) {
+    console.warn(`${target.slug}: legacy shared-standalone mode active (registry record is absent; exact control DATABASE_URL is used).`);
     return { sql: neon(controlUrl, { fetchOptions: { cache: 'no-store' } }), legacySharedStandalone: true };
   }
   if (records.length !== 1 || records[0].status !== 'active') throw new Error(`${target.slug}: active standalone database registry entry not found.`);

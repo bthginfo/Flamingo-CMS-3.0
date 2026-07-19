@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   buildItemData,
   buildPageComposition,
+  canUseLegacySharedRecordFallback,
   canUseLegacySharedStandalone,
   COLLECTION_DETAIL_COMPOSITION_MAPS,
   findUnavailableSelectedMedia,
@@ -139,5 +140,9 @@ test('tenant guards and legacy database fallback remain exact and fail-closed', 
   assert.equal(canUseLegacySharedStandalone({ enabled: true, deploymentMode: 'standalone', error: { code: '42P01' } }), true);
   assert.equal(canUseLegacySharedStandalone({ enabled: true, deploymentMode: 'shared', error: { code: '42P01' } }), false);
   assert.equal(canUseLegacySharedStandalone({ enabled: true, deploymentMode: 'standalone', error: { code: '42501' } }), false);
-  assert.match(REDESIGN_HELP, /PostgreSQL 42P01/);
+  assert.equal(canUseLegacySharedRecordFallback({ enabled: true, deploymentMode: 'standalone', recordCount: 0 }), true);
+  assert.equal(canUseLegacySharedRecordFallback({ enabled: false, deploymentMode: 'standalone', recordCount: 0 }), false);
+  assert.equal(canUseLegacySharedRecordFallback({ enabled: true, deploymentMode: 'standalone', recordCount: 1 }), false);
+  assert.equal(canUseLegacySharedRecordFallback({ enabled: true, deploymentMode: 'shared', recordCount: 0 }), false);
+  assert.match(REDESIGN_HELP, /PostgreSQL 42P01[\s\S]*no\s+record/i);
 });
