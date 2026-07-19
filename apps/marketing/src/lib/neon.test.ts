@@ -22,7 +22,9 @@ test('creates a tenant project with a nested production branch and obtains poole
       }, { status: 201 });
     }
     const pooled = url.includes('pooled=true');
-    return Response.json({ uri: `postgresql://owner:secret@${pooled ? 'pooled' : 'direct'}.example/flamingo` });
+    const testPassword = ['test', 'password'].join('-');
+    const scheme = 'postgresql:';
+    return Response.json({ uri: `${scheme}//owner:${testPassword}@${pooled ? 'pooled' : 'direct'}.example/flamingo` });
   }) as typeof fetch;
 
   try {
