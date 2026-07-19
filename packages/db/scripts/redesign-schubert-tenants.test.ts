@@ -50,6 +50,9 @@ test('page redesign is deterministic, source-lossless and deliberately restraine
   assert.deepEqual(second, first);
   assert.deepEqual(first.map((entry) => entry.type), PAGE_COMPOSITION_MAPS['schubert-design'].startseite);
   assert.ok(first.every((entry) => !['kineticIdentity', 'materialAtelier', 'editorialCardMorph', 'signaturePath'].includes(entry.type)));
+  assert.ok(first.every((entry) => entry.style_overrides?.['--token-badge-bg'] === '#141817'));
+  assert.ok(first.every((entry) => entry.style_overrides?.['--token-badge-text'] === '#B99B65'));
+  assert.ok(first.every((entry) => entry.style_overrides?.['--token-icon'] === '#B99B65'));
   assert.deepEqual((first[0].data._premiumRedesign as { sourceSections: unknown[] }).sourceSections, designHomeSections);
   assert.equal(((first[0].data._localized as Record<string, Record<string, unknown>>).en).headline, 'Welcome to Schubert');
 });
