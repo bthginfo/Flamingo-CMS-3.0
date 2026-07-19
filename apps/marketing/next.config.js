@@ -5,6 +5,9 @@ const upgradeInsecureRequests = process.env.NODE_ENV === 'production' ? '; upgra
 const nextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: path.join(__dirname, '../..'),
+  outputFileTracingIncludes: {
+    '/*': ['../../packages/db/drizzle/**/*'],
+  },
   transpilePackages: ['@flamingo/db', '@flamingo/auth'],
   images: {
     remotePatterns: [

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
+import { resolveIndustryEditorOwner } from '../app/admin/editor/industry-editor-resolution';
 
 function source(relative: string) {
   return readFileSync(new URL(relative, import.meta.url), 'utf8');
@@ -19,6 +20,100 @@ test('page and collection editors reserve the shared bottom action bar', () => {
   assert.match(itemEditor, /<EditorWorkspaceShell>/);
 });
 
+test('page and collection items use the same document editing hierarchy', () => {
+  const header = source('../app/admin/editor/editor-document-header.tsx');
+  const actionBar = source('../app/admin/editor/editor-action-bar.tsx');
+  const localeTabs = source('../app/admin/editor/editor-locale-tabs.tsx');
+  const sectionStack = source('../app/admin/editor/section-stack-editor.tsx');
+  const pageEditor = source('../app/admin/pages/[id]/page-editor.tsx');
+  const itemEditor = source('../app/admin/collections/[key]/[itemId]/item-editor.tsx');
+
+  assert.match(header, /export function EditorDocumentHeader/);
+  assert.match(header, /Bereit zum Bearbeiten/);
+  assert.match(header, /Noch nicht gespeichert/);
+  assert.match(header, /statusActiveLabel/);
+  assert.match(actionBar, /dirty \? 'Noch nicht gespeichert'/);
+  assert.match(localeTabs, /role="tablist"/);
+  assert.match(sectionStack, />Inhalte</);
+
+  for (const editor of [pageEditor, itemEditor]) {
+    assert.match(editor, /<EditorDocumentHeader/);
+    assert.match(editor, /const \[saved, setSaved\] = useState\(true\)/);
+    assert.match(editor, /dirty=\{hasDirty\}/);
+  }
+
+  assert.ok(pageEditor.indexOf('<EditorDocumentHeader') < pageEditor.indexOf('<PageSeoPanel ref'));
+  assert.ok(itemEditor.indexOf('<EditorDocumentHeader') < itemEditor.indexOf('<ItemSeoPanel ref'));
+  assert.match(pageEditor, /statusInactiveLabel="Nicht sichtbar"/);
+  assert.match(itemEditor, /statusInactiveLabel="Entwurf"/);
+  assert.match(itemEditor, /secondaryControls=/);
+});
+
+test('industry acts as a preferred preset without degrading foreign section editors', () => {
+  const industryEditor = source('../app/admin/pages/[id]/industry-section-editor.tsx');
+  const sectionTypes = source('../app/admin/pages/[id]/section-types.ts');
+  const picker = source('../app/admin/components/section-picker-modal.tsx');
+
+  assert.match(industryEditor, /resolveIndustryEditorOwner/);
+  assert.match(industryEditor, /resolveIndustryEditorKey/);
+  assert.match(source('../app/admin/editor/section-editor-card.tsx'), /definitionKey=\{section\.definitionKey\}/);
+  assert.match(sectionTypes, /Collect foreign sections from other industries/);
+  assert.match(sectionTypes, /withAddonLock\(\{ \.\.\.s, category: `Andere:/);
+  assert.match(picker, /Deine Branche sortiert nur Empfehlungen/);
+  assert.match(picker, /Inspiration:/);
+  assert.match(picker, /Nur Shop- und Booking-Funktionen benötigen das passende Add-on/);
+  assert.match(sectionTypes, /Shop-Addon erforderlich/);
+  assert.match(sectionTypes, /Booking-Addon erforderlich/);
+});
+
+test('page and collection editors share the complete trusted preview bridge', () => {
+  const bridge = source('../app/admin/editor/use-live-preview-message-bridge.ts');
+  const pathHelper = source('../app/admin/editor/live-preview-path.ts');
+  const pageEditor = source('../app/admin/pages/[id]/page-editor.tsx');
+  const itemEditor = source('../app/admin/collections/[key]/[itemId]/item-editor.tsx');
+  const itemPage = source('../app/admin/collections/[key]/[itemId]/page.tsx');
+
+  for (const editor of [pageEditor, itemEditor]) {
+    assert.match(editor, /useLivePreviewMessageBridge\(\{/);
+    assert.doesNotMatch(editor, /setNested|addEventListener\('message'/);
+  }
+  for (const messageType of ['live-preview-ready', 'section-clicked', 'field-edit', 'rich-edit', 'image-edit', 'icon-edit', 'link-edit', 'color-edit']) {
+    assert.match(bridge, new RegExp(`flamingo-${messageType}`));
+  }
+  assert.match(bridge, /event\.source !== previewWindow/);
+  assert.match(bridge, /event\.origin !== window\.location\.origin/);
+  assert.match(bridge, /patchPreviewSectionData/);
+  assert.match(bridge, /resolveEditableSectionData\(pendingOrStoredData, i18n, activeLocale\)/);
+  assert.match(source('../app/admin/editor/section-editor-card.tsx'), /resolveEditableSectionData\(section\.data, i18n, activeLocale\)/);
+  assert.match(pathHelper, /BLOCKED_PATH_SEGMENTS/);
+  assert.match(itemEditor, /collections, tenantId, previewProducts/);
+  assert.match(itemPage, /collections=\{result\.collections\}/);
+});
+
+test('AI instructions and both validation modes use cross-industry catalog schemas', () => {
+  const instructions = source('../app/api/v1/instructions/route.ts');
+  const validate = source('../app/api/v1/content/validate/route.ts');
+
+  assert.match(instructions, /getCatalogSectionSchemas\(auth\.tenant\.industry\)/);
+  assert.equal((validate.match(/getCatalogSectionSchemas\(auth\.tenant\.industry\)/g) || []).length, 2);
+  assert.match(validate, /getSectionTypesForIndustry\(auth\.tenant\.industry/);
+  assert.match(validate, /entry\.requiresAddon === 'shop'/);
+  assert.match(validate, /entry\.requiresAddon === 'booking'/);
+});
+
+test('industry editor ownership prefers stable identity and rejects ambiguous fallbacks', () => {
+  const candidates = [
+    { industry: 'hotel', matches: (type: string) => ['hero', 'roomShowcase'].includes(type) },
+    { industry: 'wedding', matches: (type: string) => ['hero', 'coupleStory'].includes(type) },
+  ];
+
+  assert.equal(resolveIndustryEditorOwner(candidates, { industry: 'hotel', type: 'hero' }), 'hotel');
+  assert.equal(resolveIndustryEditorOwner(candidates, { industry: 'tradesman', type: 'roomShowcase' }), 'hotel');
+  assert.equal(resolveIndustryEditorOwner(candidates, { industry: 'tradesman', type: 'hero' }), null);
+  assert.equal(resolveIndustryEditorOwner(candidates, { industry: 'tradesman', type: 'hero', definitionKey: 'hero.wedding.v1' }), 'wedding');
+  assert.equal(resolveIndustryEditorOwner(candidates, { industry: 'tradesman', type: 'hero', definitionKey: 'faq.wedding.v1' }), null);
+});
+
 test('shared section editor controls cannot accidentally submit an outer form', () => {
   const dataEditor = source('../app/admin/pages/[id]/section-data-editor.tsx');
   const buttonLines = dataEditor.split(/\r?\n/).filter((line) => line.includes('<button'));
@@ -32,7 +127,9 @@ test('shared section editor controls cannot accidentally submit an outer form', 
 test('section focus and media dialog keyboard contracts remain wired', () => {
   const card = source('../app/admin/editor/section-editor-card.tsx');
   const media = source('../components/image-upload-field.tsx');
+  const previewNudge = source('../components/admin/preview-nudge.tsx');
   assert.match(card, /data-section-card-id=\{section\.id\}/);
+  assert.match(previewNudge, /hidden sm:block/);
   assert.match(media, /event\.key === 'Escape'/);
   assert.match(media, /event\.key !== 'Tab'/);
   assert.match(media, /libraryReturnFocusRef/);

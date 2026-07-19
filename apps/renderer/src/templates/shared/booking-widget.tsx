@@ -159,7 +159,7 @@ function useBookingSlots(input: {
 
 function mockSlots(date: string) {
   if (!date) return [];
-  const day = new Date(`${date}T00:00:00`).getDay();
+  const day = new Date(`${date}T00:00:00Z`).getUTCDay();
   if (day === 0) return [];
   return ['11:30', '12:00', '12:30', '18:00', '18:30', '19:00', '20:00'].map((value) => ({ value, label: `${value} Uhr` }));
 }
@@ -362,11 +362,11 @@ export function BookingWidgetSection({ data }: SectionProps) {
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <BookingField id={`${formId}-date`} label="Datum" required>
-                    <input id={`${formId}-date`} name="date" type="date" required value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className={FORM_CONTROL_CLASS} />
+                    <input id={`${formId}-date`} name="date" type="date" required min={zonedToday(config?.timezone)} value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className={FORM_CONTROL_CLASS} />
                   </BookingField>
                   {timeModel === 'date_range' ? (
                     <BookingField id={`${formId}-end-date`} label="Enddatum" required>
-                      <input id={`${formId}-end-date`} name="endDate" type="date" required className={FORM_CONTROL_CLASS} />
+                      <input id={`${formId}-end-date`} name="endDate" type="date" required min={selectedDate || zonedToday(config?.timezone)} className={FORM_CONTROL_CLASS} />
                     </BookingField>
                   ) : timeModel === 'time_slot' ? (
                     <BookingField id={`${formId}-time`} label="Uhrzeit" required help={slotsLoading ? 'Freie Zeiten werden geladen.' : undefined}>
@@ -417,7 +417,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
   const formId = useId();
   const [selectedServiceId, setSelectedServiceId] = useState('');
   const [selectedResourceId, setSelectedResourceId] = useState('');
-  const [selectedDate, setSelectedDate] = useState(() => toInputDate(addDays(new Date(), 1)));
+  const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
@@ -438,6 +438,9 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
   });
 
   useEffect(() => setSelectedSlot(''), [selectedResourceId, selectedServiceId]);
+  useEffect(() => {
+    if (config?.timezone && !selectedDate) setSelectedDate(addInputDays(zonedToday(config.timezone), 1));
+  }, [config?.timezone, selectedDate]);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -512,7 +515,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                   </BookingField>
                 </div>
                 <BookingField id={`${formId}-date`} label="Datum" required>
-                  <input id={`${formId}-date`} name="date" type="date" required value={selectedDate} onChange={(event) => { setSelectedDate(event.target.value); setSelectedSlot(''); }} className={FORM_CONTROL_CLASS} />
+                  <input id={`${formId}-date`} name="date" type="date" required min={zonedToday(config?.timezone)} value={selectedDate} onChange={(event) => { setSelectedDate(event.target.value); setSelectedSlot(''); }} className={FORM_CONTROL_CLASS} />
                 </BookingField>
               </fieldset>
 
@@ -585,8 +588,8 @@ export function BookingDateRangeSection({ data }: SectionProps) {
   const formId = useId();
   const [selectedServiceId, setSelectedServiceId] = useState('');
   const [selectedResourceId, setSelectedResourceId] = useState('');
-  const [startDate, setStartDate] = useState(() => toInputDate(addDays(new Date(), 7)));
-  const [endDate, setEndDate] = useState(() => toInputDate(addDays(new Date(), 9)));
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
   const actionIdRef = useRef<string | null>(null);
@@ -594,6 +597,12 @@ export function BookingDateRangeSection({ data }: SectionProps) {
   const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
   const availableResources = (config?.resources || []).filter((resource) => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
   const resourceRequired = Boolean(selectedService?.requiresResource);
+  useEffect(() => {
+    if (!config?.timezone || startDate || endDate) return;
+    const today = zonedToday(config.timezone);
+    setStartDate(addInputDays(today, 7));
+    setEndDate(addInputDays(today, 9));
+  }, [config?.timezone, endDate, startDate]);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -651,7 +660,7 @@ export function BookingDateRangeSection({ data }: SectionProps) {
                 <legend className={LEGEND_CLASS}>Zeitraum und Angebot</legend>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <BookingField id={`${formId}-start-date`} label="Anreise / Start" required>
-                    <input id={`${formId}-start-date`} name="startDate" type="date" required value={startDate} onChange={(event) => setStartDate(event.target.value)} className={FORM_CONTROL_CLASS} />
+                    <input id={`${formId}-start-date`} name="startDate" type="date" required min={zonedToday(config?.timezone)} value={startDate} onChange={(event) => setStartDate(event.target.value)} className={FORM_CONTROL_CLASS} />
                   </BookingField>
                   <BookingField id={`${formId}-end-date`} label="Abreise / Ende" required>
                     <input id={`${formId}-end-date`} name="endDate" type="date" required value={endDate} min={startDate || undefined} onChange={(event) => setEndDate(event.target.value)} className={FORM_CONTROL_CLASS} />
@@ -713,37 +722,42 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
   const tenantId = (data.tenantId as string) || '';
   const [counts, setCounts] = useState<Record<string, number | null>>({});
   const [monthOffset, setMonthOffset] = useState(0);
-  const [selectedDate, setSelectedDate] = useState(() => toInputDate(new Date()));
+  const [selectedDate, setSelectedDate] = useState('');
   const config = useBookingConfig(tenantId);
   const calendarService = (config?.services || []).find(service => service.timeModelOverride !== 'date_range') || config?.services?.[0];
   const allowedResourceTypes = Array.isArray(calendarService?.allowedResourceTypes) ? calendarService.allowedResourceTypes : [];
   const calendarResource = (config?.resources || []).find(resource => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
   const days = useMemo(() => {
-    const today = new Date();
-    const visibleMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
-    const monthStart = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
-    const monthEnd = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 0);
-    const start = addDays(monthStart, -((monthStart.getDay() + 6) % 7));
-    const end = addDays(monthEnd, 6 - ((monthEnd.getDay() + 6) % 7));
+    const todayKey = zonedToday(config?.timezone);
+    const [year, month] = todayKey.split('-').map(Number);
+    const visibleMonth = new Date(Date.UTC(year, month - 1 + monthOffset, 1));
+    const monthStart = new Date(Date.UTC(visibleMonth.getUTCFullYear(), visibleMonth.getUTCMonth(), 1));
+    const monthEnd = new Date(Date.UTC(visibleMonth.getUTCFullYear(), visibleMonth.getUTCMonth() + 1, 0));
+    const start = addUtcDays(monthStart, -((monthStart.getUTCDay() + 6) % 7));
+    const end = addUtcDays(monthEnd, 6 - ((monthEnd.getUTCDay() + 6) % 7));
     const length = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
     return Array.from({ length }, (_, index) => {
-      const date = addDays(start, index);
-      const dateKey = toInputDate(date);
+      const date = addUtcDays(start, index);
+      const dateKey = toUtcInputDate(date);
       return {
-        label: new Intl.DateTimeFormat('de-DE', { weekday: 'short' }).format(date),
+        label: new Intl.DateTimeFormat('de-DE', { weekday: 'short', timeZone: 'UTC' }).format(date),
         date: dateKey,
-        day: date.getDate(),
-        inMonth: date.getMonth() === visibleMonth.getMonth(),
-        isToday: dateKey === toInputDate(today),
+        day: date.getUTCDate(),
+        inMonth: date.getUTCMonth() === visibleMonth.getUTCMonth(),
+        isToday: dateKey === todayKey,
       };
     });
-  }, [monthOffset]);
+  }, [config?.timezone, monthOffset]);
   const visibleMonthLabel = useMemo(() => {
-    const today = new Date();
-    const visibleMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
-    return new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(visibleMonth);
-  }, [monthOffset]);
+    const [year, month] = zonedToday(config?.timezone).split('-').map(Number);
+    const visibleMonth = new Date(Date.UTC(year, month - 1 + monthOffset, 1));
+    return new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(visibleMonth);
+  }, [config?.timezone, monthOffset]);
   const selectedCount = counts[selectedDate];
+
+  useEffect(() => {
+    if (config?.timezone && !selectedDate) setSelectedDate(zonedToday(config.timezone));
+  }, [config?.timezone, selectedDate]);
 
   useEffect(() => {
     if (!tenantId) {
@@ -853,25 +867,32 @@ function BookingShell({ data, icon, defaultBadge, defaultHeadline, children }: {
   );
 }
 
-function addDays(date: Date, days: number) {
+function addUtcDays(date: Date, days: number) {
   const next = new Date(date);
-  next.setDate(next.getDate() + days);
+  next.setUTCDate(next.getUTCDate() + days);
   return next;
 }
 
-function nextWeekend(date: Date) {
-  const next = new Date(date);
-  const day = next.getDay();
-  const daysUntilSaturday = (6 - day + 7) % 7 || 7;
-  next.setDate(next.getDate() + daysUntilSaturday);
-  return next;
+function zonedToday(timezone?: string | null) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: timezone || 'Europe/Berlin',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const value = (type: string) => parts.find(part => part.type === type)?.value || '';
+  return `${value('year')}-${value('month')}-${value('day')}`;
 }
 
-function toInputDate(date: Date) {
+function toUtcInputDate(date: Date) {
   return date.toISOString().slice(0, 10);
+}
+
+function addInputDays(value: string, days: number) {
+  return toUtcInputDate(addUtcDays(new Date(`${value}T00:00:00Z`), days));
 }
 
 function formatInputDate(value: string) {
   if (!value) return '';
-  return new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
+  return new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${value}T00:00:00Z`));
 }

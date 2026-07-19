@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { shippingZones, shippingMethods, shopSettings } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
+import { isShopActive } from '@/lib/shop-pages';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -16,6 +17,7 @@ function resolveExplicitTenant(queryTenantId: string | null) {
 export async function GET(req: NextRequest) {
   const tenantId = resolveExplicitTenant(req.nextUrl.searchParams.get('tenantId')) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+  if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
   const country = req.nextUrl.searchParams.get('country') || 'DE';
   const db = getDb();

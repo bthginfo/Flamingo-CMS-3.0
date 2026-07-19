@@ -2,11 +2,13 @@
  * Tenant provisioning: creates all necessary DB records for a new tenant.
  */
 import { getDb } from './db';
-import { tenants, tenantDomains, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
+import { createDb, migrateDatabase, tenants, tenantDomains, tenantDatabaseConnections, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
 import { hashPassword } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { addDomainToRenderer, createStandaloneProject, addDomainToProject, triggerProjectDeployment, configureBlobForProject } from './vercel';
+import { addDomainToRenderer, createStandaloneProject, addDomainToProject, deleteVercelProject } from './vercel';
+import { createNeonTenantProject, deleteNeonProject, type NeonTenantProject } from './neon';
+import { markTenantDatabaseActive, registerTenantDatabase } from './tenant-data-db';
 
 export type ProvisionInput = {
   name: string;
@@ -76,7 +78,12 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   const [existing] = await db.select().from(tenants).where(eq(tenants.slug, input.slug)).limit(1);
   if (existing) {
     if (existing.status === 'provisioning') {
-      // Safe to delete — was never fully provisioned
+      // Clean up external resources from an interrupted previous attempt before
+      // removing the control-plane registry row.
+      const [databaseRecord] = await db.select().from(tenantDatabaseConnections)
+        .where(eq(tenantDatabaseConnections.tenantId, existing.id)).limit(1);
+      if (existing.vercelProjectId) await deleteVercelProject(existing.vercelProjectId).catch(error => console.warn('Interrupted Vercel cleanup failed:', error));
+      if (databaseRecord?.projectId) await deleteNeonProject(databaseRecord.projectId).catch(error => console.warn('Interrupted Neon cleanup failed:', error));
       await db.delete(tenants).where(eq(tenants.id, existing.id));
     } else {
       throw new Error(`Ein Tenant mit dem Slug "${input.slug}" existiert bereits.`);
@@ -96,13 +103,25 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   }).returning();
 
   const tenantId = tenant.id;
+  let dataDb = db;
+  let neonProject: NeonTenantProject | undefined;
+  let vercelProjectId: string | undefined;
+
+  try {
+    if (deploymentMode === 'standalone') {
+      neonProject = await createNeonTenantProject(input.slug);
+      await registerTenantDatabase({ tenantId, ...neonProject });
+      await migrateDatabase(neonProject.directConnectionUri);
+      dataDb = createDb(neonProject.pooledConnectionUri);
+      await dataDb.insert(tenants).values({ ...tenant, deploymentMode: 'standalone', status: 'provisioning' });
+    }
 
   // 2. Admin secret
   const passwordHash = await hashPassword(input.password);
-  await db.insert(adminSecrets).values({ tenantId, passwordHash });
+  await dataDb.insert(adminSecrets).values({ tenantId, passwordHash });
 
   // 3. Global settings
-  await db.insert(globalSettings).values({
+  await dataDb.insert(globalSettings).values({
     tenantId,
     brand: {
       companyName: input.companyName,
@@ -119,14 +138,14 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   });
 
   // 4. Default navigation
-  await db.insert(navigation).values({
+  await dataDb.insert(navigation).values({
     tenantId,
     items: defaults.navigationItems,
     cta: defaults.navigationCta,
   });
 
   // 5. Default footer
-  await db.insert(footer).values({
+  await dataDb.insert(footer).values({
     tenantId,
     columns: defaults.footerColumns,
     legalLinks: [
@@ -138,7 +157,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
   // 6. Default pages + sections
   for (const pageDefinition of defaults.pages) {
-    const [page] = await db.insert(pages).values({
+    const [page] = await dataDb.insert(pages).values({
       tenantId,
       title: pageDefinition.title,
       slug: pageDefinition.slug,
@@ -148,7 +167,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       sortOrder: pageDefinition.sortOrder,
     }).returning();
 
-    await db.insert(pageSections).values(pageDefinition.sections.map((section, index) => ({
+    await dataDb.insert(pageSections).values(pageDefinition.sections.map((section, index) => ({
       tenantId,
       pageId: page.id,
       type: section.type,
@@ -164,8 +183,8 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   }
 
   // 7. Publish initial snapshot
-  const allPages = await db.select().from(pages).where(eq(pages.tenantId, tenantId));
-  const allSections = await db.select().from(pageSections).where(eq(pageSections.tenantId, tenantId));
+  const allPages = await dataDb.select().from(pages).where(eq(pages.tenantId, tenantId));
+  const allSections = await dataDb.select().from(pageSections).where(eq(pageSections.tenantId, tenantId));
   const snapshot = {
     pages: allPages.map(p => ({
       ...p,
@@ -177,7 +196,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   const snapshotJson = JSON.stringify(snapshot);
   const checksum = crypto.createHash('sha256').update(snapshotJson).digest('hex');
 
-  await db.insert(publishedSnapshots).values({
+  await dataDb.insert(publishedSnapshots).values({
     tenantId,
     version: 1,
     snapshot: snapshot as unknown as Record<string, unknown>,
@@ -188,29 +207,23 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
   // 8. Domain provisioning
   let domainConfigured = false;
-  let vercelProjectId: string | undefined;
-  let standaloneError: string | undefined;
+  let standaloneWarning: string | undefined;
+  const storeDomain = async (values: typeof tenantDomains.$inferInsert) => {
+    await db.insert(tenantDomains).values(values);
+    if (dataDb !== db) await dataDb.insert(tenantDomains).values(values);
+  };
+  const markDomainVerified = async (domain: string) => {
+    await db.update(tenantDomains).set({ verified: true }).where(eq(tenantDomains.domain, domain));
+    if (dataDb !== db) await dataDb.update(tenantDomains).set({ verified: true }).where(eq(tenantDomains.domain, domain));
+  };
 
   if (deploymentMode === 'standalone') {
-    // Create a dedicated Vercel project for this tenant
-    try {
-      const standaloneResult = await createStandaloneProject(input.slug, tenantId);
-      vercelProjectId = standaloneResult.projectId;
-      if (!standaloneResult.blobConnected) {
-        // Auto-retry blob configuration after 30s delay
-        console.log('  ⏳ Blob nicht verbunden – warte 30s und versuche erneut...');
-        await new Promise(resolve => setTimeout(resolve, 30000));
-        const retryResult = await configureBlobForProject(`flamingo-${input.slug}`);
-        if (!retryResult.success) {
-          standaloneError = 'Blob Storage konnte nicht automatisch konfiguriert werden. Bitte manuell über CRM konfigurieren.';
-        } else {
-          console.log('  ✅ Blob Storage beim Retry erfolgreich konfiguriert');
-        }
-      }
-    } catch (err) {
-      standaloneError = err instanceof Error ? err.message : 'Unbekannter Fehler';
-      console.error('Standalone project creation failed:', standaloneError);
-    }
+    if (!neonProject) throw new Error('Die dedizierte Neon-Datenbank wurde nicht angelegt.');
+    const standaloneResult = await createStandaloneProject(input.slug, tenantId, neonProject.pooledConnectionUri);
+    vercelProjectId = standaloneResult.projectId;
+    if (!standaloneResult.blobConnected) standaloneWarning = 'Blob Storage konnte nicht automatisch verbunden werden. Bitte im CRM konfigurieren.';
+    // Persist early so an interrupted retry can clean up the Vercel project.
+    await db.update(tenants).set({ vercelProjectId, updatedAt: new Date() }).where(eq(tenants.id, tenantId));
 
     // Store the Vercel test domain as preview
     const vercelDomain = vercelProjectId
@@ -218,7 +231,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       : undefined;
 
     if (vercelDomain) {
-      await db.insert(tenantDomains).values({
+      await storeDomain({
         tenantId,
         domain: vercelDomain,
         type: 'preview',
@@ -232,7 +245,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
     // Optional: add custom domain if provided
     if (input.domain && vercelProjectId) {
-      await db.insert(tenantDomains).values({
+      await storeDomain({
         tenantId,
         domain: input.domain,
         type: 'primary',
@@ -240,11 +253,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       });
       try {
         const customResult = await addDomainToProject(vercelProjectId, input.domain);
-        if (customResult.verified) {
-          await db.update(tenantDomains)
-            .set({ verified: true })
-            .where(eq(tenantDomains.domain, input.domain));
-        }
+        if (customResult.verified) await markDomainVerified(input.domain);
       } catch (err) {
         console.error('Custom domain provisioning failed:', err);
       }
@@ -254,7 +263,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     // costs low until the lead becomes a customer and is converted to standalone.
     // Only add custom domain if explicitly provided
     if (input.domain) {
-      await db.insert(tenantDomains).values({
+      await storeDomain({
         tenantId,
         domain: input.domain,
         type: 'primary',
@@ -263,11 +272,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
       try {
         const result = await addDomainToRenderer(input.domain);
-        if (result.verified) {
-          await db.update(tenantDomains)
-            .set({ verified: true })
-            .where(eq(tenantDomains.domain, input.domain));
-        }
+        if (result.verified) await markDomainVerified(input.domain);
         domainConfigured = result.configured;
       } catch (err) {
         console.error('Custom domain provisioning failed:', err);
@@ -283,6 +288,10 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   await db.update(tenants)
     .set(updateData as any)
     .where(eq(tenants.id, tenantId));
+  if (dataDb !== db) {
+    await dataDb.update(tenants).set(updateData as any).where(eq(tenants.id, tenantId));
+    await markTenantDatabaseActive(tenantId);
+  }
 
   const standaloneUrl = vercelProjectId ? `https://flamingo-${input.slug}.vercel.app` : undefined;
 
@@ -296,8 +305,14 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     domainConfigured,
     adminUrl: standaloneUrl ? `${standaloneUrl}/admin` : `${rendererBaseUrl}/admin/login?tenant=${input.slug}`,
     rendererUrl: standaloneUrl || sharedUrl,
-    warning: standaloneError ? `Standalone-Projekt Fehler: ${standaloneError}` : undefined,
+    warning: standaloneWarning,
   };
+  } catch (error) {
+    if (vercelProjectId) await deleteVercelProject(vercelProjectId).catch(cleanupError => console.error('Vercel rollback failed:', cleanupError));
+    if (neonProject?.projectId) await deleteNeonProject(neonProject.projectId).catch(cleanupError => console.error('Neon rollback failed:', cleanupError));
+    await db.delete(tenants).where(eq(tenants.id, tenantId)).catch(cleanupError => console.error('Control-plane rollback failed:', cleanupError));
+    throw error;
+  }
 }
 
 function getProvisioningDefaults(input: ProvisionInput): ProvisioningDefaults {

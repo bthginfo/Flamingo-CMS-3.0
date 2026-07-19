@@ -16,7 +16,7 @@ import {
   resolvePublicFlowIdempotencyKey,
 } from '@/lib/public-flow-security';
 import { getTaxRate } from '@/lib/tax';
-import { couponEffect, computeShippingCents, computeTaxCents } from '@/lib/shop-totals';
+import { couponEffect, computeShippingCents, computeTaxCentsAfterDiscount } from '@/lib/shop-totals';
 import {
   externalProvisioningUncertain,
   runExternalCheckoutLifecycle,
@@ -29,6 +29,7 @@ import {
   RendererContactBodyTooLargeError,
 } from '@/lib/renderer-contact-security';
 import { revealShopSecrets } from '@/lib/secret-storage';
+import { isShopActive } from '@/lib/shop-pages';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -444,6 +445,7 @@ export async function POST(req: NextRequest) {
   }
   const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+  if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
   if (await isDemoTenant(tenantId)) {
     return NextResponse.json(
@@ -590,6 +592,9 @@ export async function POST(req: NextRequest) {
       missingProducts.push(String(item.productId));
       continue;
     }
+    if (product.isDigital) {
+      return NextResponse.json({ error: `Das digitale Produkt "${product.title}" ist derzeit nicht verkäuflich.` }, { status: 409 });
+    }
 
     let priceCents = product.priceCents;
     let variantName: string | undefined;
@@ -668,7 +673,7 @@ export async function POST(req: NextRequest) {
   let discountCents = 0;
   let freeShipping = false;
   let appliedCouponId: string | null = null;
-  let pendingCoupon: { id: string; discountCents: number; freeShipping: boolean } | null = null;
+  let pendingCoupon: { id: string; discountCents: number; freeShipping: boolean; eligibleProductIds: string[] } | null = null;
   if (couponCode) {
     const [coupon] = await db.select().from(coupons)
       .where(and(eq(coupons.tenantId, tenantId), eq(coupons.code, couponCode.toUpperCase()), eq(coupons.active, true)))
@@ -710,7 +715,7 @@ export async function POST(req: NextRequest) {
 
       if (!expired && !maxedOut) {
         const effect = couponEffect(coupon, eligibleSubtotal);
-        pendingCoupon = { id: coupon.id, ...effect };
+        pendingCoupon = { id: coupon.id, ...effect, eligibleProductIds: [...new Set(eligibleItems.map(item => item.productId))] };
         discountCents = effect.discountCents;
         freeShipping = effect.freeShipping;
       }
@@ -745,9 +750,6 @@ export async function POST(req: NextRequest) {
     selectedShipping = { priceCents: method.priceCents, freeAboveCents: method.freeAboveCents };
     shippingCents = computeShippingCents(selectedShipping, subtotalCents, freeShipping);
   }
-
-  // Tax contained in the gross prices (informational; not added to the total).
-  const taxCents = computeTaxCents(orderItems);
 
   const flowIdentity = {
     flow: 'checkout' as const,
@@ -815,6 +817,9 @@ export async function POST(req: NextRequest) {
 
   // Ensure total never goes negative
   const totalCents = Math.max(0, subtotalCents + shippingCents - discountCents);
+  // German gross-price tax must be extracted after allocating discounts;
+  // otherwise discounted orders overstate VAT on invoices.
+  const taxCents = computeTaxCentsAfterDiscount(orderItems, discountCents, pendingCoupon?.eligibleProductIds);
 
   // Reserve the next order number atomically so parallel checkouts do not collide.
   const orderNumber = await reserveOrderNumber(db, tenantId, settings.orderPrefix);

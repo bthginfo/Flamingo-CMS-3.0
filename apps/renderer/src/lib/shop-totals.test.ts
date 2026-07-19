@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  computeSubtotalCents, computeTaxCents, couponEffect, computeShippingCents, computeOrderTotals,
+  computeSubtotalCents, computeTaxCents, computeTaxCentsAfterDiscount, couponEffect, computeShippingCents, computeOrderTotals,
 } from './shop-totals';
 
 test('subtotal sums priceCents * quantity', () => {
@@ -16,6 +16,15 @@ test('tax is extracted from gross prices, mixed rates', () => {
   assert.equal(computeTaxCents([{ priceCents: 107, quantity: 1, taxRate: 7 }]), 7);
   // 0% / missing rate contributes nothing
   assert.equal(computeTaxCents([{ priceCents: 500, quantity: 2, taxRate: 0 }, { priceCents: 100, quantity: 1 }]), 0);
+});
+
+test('tax is extracted from the discounted gross amount and only eligible products', () => {
+  const items = [
+    { productId: 'standard', priceCents: 1190, quantity: 1, taxRate: 19 },
+    { productId: 'reduced', priceCents: 1070, quantity: 1, taxRate: 7 },
+  ];
+  assert.equal(computeTaxCentsAfterDiscount(items, 119, ['standard']), 171 + 70);
+  assert.equal(computeTaxCentsAfterDiscount(items, 0, ['standard']), 190 + 70);
 });
 
 test('couponEffect: percent', () => {

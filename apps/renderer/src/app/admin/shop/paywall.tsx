@@ -26,15 +26,14 @@ export function ShopPaywall() {
 
   const features = [
     'Unbegrenzte Produkte & Kategorien',
-    'Varianten (Größe, Farbe, etc.)',
     'Stripe, PayPal, Vorkasse, Abholung',
     'Bestellverwaltung & Statusverlauf',
-    'Automatische Rechnungen (PDF)',
-    'Coupons & Aktions-Rabatte',
+    'Rechnungen und Stornorechnungen (PDF)',
+    'Gutscheincodes & Versandrabatte',
     'Versandzonen & Methoden',
     'E-Mail-Benachrichtigungen',
-    'Warenwirtschaft & Low-Stock-Alerts',
-    'Digitale Produkte (Download)',
+    'Bestandsverwaltung & Warnschwellen',
+    'Rechtliche Shop-Systemseiten',
   ];
 
   return (

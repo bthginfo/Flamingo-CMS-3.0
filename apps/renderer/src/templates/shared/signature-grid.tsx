@@ -5,6 +5,7 @@ import { NumberTicker } from '@/components/ui/fx';
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
+import { ResilientImage } from '@/components/ui/resilient-image';
 
 type Trait = { title: string; text?: string; icon?: string };
 type Stat = { value: string; label: string };
@@ -21,7 +22,7 @@ export function SignatureGridSection({ data }: Props) {
   return (
     <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
       <div className="relative min-h-[560px] overflow-hidden rounded-3xl bg-[var(--token-section-bg-alt)]">
-        {image && <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" />}
+        {image && <ResilientImage data-edit-image="image" src={image} alt={headline || ''} className="h-full w-full object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/18 to-transparent" />
         <div className="absolute bottom-6 left-6 right-6">
           {badge && <div className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-[color:var(--token-badge-text)]" data-edit-path="badge">{badge}</div>}

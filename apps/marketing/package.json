@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm exec tsx --test src/lib/crm-email.test.ts src/lib/contact.test.ts src/lib/crm-login-policy.test.ts src/lib/crm-authorization-boundaries.test.ts src/lib/secret-storage.test.ts"
+    "test": "pnpm exec tsx --test src/lib/crm-email.test.ts src/lib/contact.test.ts src/lib/crm-login-policy.test.ts src/lib/crm-authorization-boundaries.test.ts src/lib/secret-storage.test.ts src/lib/neon.test.ts src/lib/standalone-database-boundaries.test.ts",
+    "migrate:standalone": "pnpm exec tsx scripts/migrate-standalone-databases.ts",
+    "isolate:standalone": "pnpm exec tsx scripts/isolate-existing-standalone.ts",
+    "purge:standalone-shared-copy": "pnpm exec tsx scripts/purge-standalone-shared-copy.ts"
   },
   "dependencies": {
     "@flamingo/auth": "workspace:*",

@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { plain } from '@/lib/strip-html';
+import { ResilientImage } from '@/components/ui/resilient-image';
 
 type Category = {
   image?: string;
@@ -47,7 +48,7 @@ export function CategoryMosaicSection({ data }: Props) {
             className="relative col-span-2 row-span-2 rounded-[var(--token-card-radius)] overflow-hidden group ring-2 ring-transparent hover:ring-[var(--token-icon)] transition-all duration-300"
            data-edit-collection="displayLarge" data-edit-index={i}>
             {item.image ? (
-              <img data-edit-image="image" src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <ResilientImage data-edit-image="image" src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300" />
             )}
@@ -68,7 +69,7 @@ export function CategoryMosaicSection({ data }: Props) {
             className="relative col-span-1 row-span-1 rounded-[var(--token-card-radius)] overflow-hidden group ring-2 ring-transparent hover:ring-[var(--token-icon)] transition-all duration-300"
            data-edit-collection="displaySmall" data-edit-index={i}>
             {item.image ? (
-              <img data-edit-image="image" src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <ResilientImage data-edit-image="image" src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200" />
             )}

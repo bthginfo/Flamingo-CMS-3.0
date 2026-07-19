@@ -22,6 +22,7 @@ type OrderData = {
   shippingCents: number;
   totalCents: number;
   paymentMethod: string;
+  bankDetails?: { iban: string; bic: string; bankName: string; accountHolder: string } | null;
   shippingAddress?: { street: string; city: string; zip: string; country: string; company?: string } | null;
 };
 
@@ -51,6 +52,9 @@ function buildOrderHtml(order: OrderData, isCustomer: boolean) {
   const heading = isCustomer
     ? 'Vielen Dank für Ihre Bestellung!'
     : `Neue Bestellung: ${htmlOrderNumber}`;
+  const bankDetails = isCustomer && order.paymentMethod === 'prepayment' && order.bankDetails
+    ? `<div style="margin-top:18px;padding:16px;background:#f4f4f5;border-radius:10px"><h3 style="margin:0 0 8px;font-size:14px;color:#18181b">Zahlung per Vorkasse</h3><p style="margin:0;color:#52525b;font-size:13px;line-height:1.6">Empfänger: ${escapeShopEmailHtml(order.bankDetails.accountHolder)}<br>IBAN: ${escapeShopEmailHtml(order.bankDetails.iban)}<br>BIC: ${escapeShopEmailHtml(order.bankDetails.bic)}<br>Bank: ${escapeShopEmailHtml(order.bankDetails.bankName)}<br>Verwendungszweck: ${htmlOrderNumber}</p></div>`
+    : '';
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
 <div style="max-width:600px;margin:0 auto;padding:32px 16px">
@@ -71,6 +75,7 @@ function buildOrderHtml(order: OrderData, isCustomer: boolean) {
         </tfoot>
       </table>
       ${address ? `<div style="margin-top:16px"><h3 style="margin:0 0 4px;font-size:14px;color:#6b7280">Lieferadresse</h3>${address}</div>` : ''}
+      ${bankDetails}
       <p style="margin:16px 0 0;font-size:13px;color:#9ca3af">Zahlungsart: ${htmlPaymentMethod}</p>
     </div>
   </div>
@@ -85,7 +90,7 @@ export async function sendOrderEmails(tenantId: string, order: OrderData) {
 
   // Get notification email from shop settings
   const db = getDb();
-  const [shop] = await db.select({ notificationEmail: shopSettings.notificationEmail })
+  const [shop] = await db.select({ notificationEmail: shopSettings.notificationEmail, bankDetails: shopSettings.bankDetails })
     .from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
 
   const configuredAdminEmail = shop?.notificationEmail?.trim() || '';
@@ -96,6 +101,7 @@ export async function sendOrderEmails(tenantId: string, order: OrderData) {
   const customerEmail = order.customerEmail.trim();
   const safeOrderNumber = sanitizeShopEmailHeaderValue(order.orderNumber);
   const safeCustomerName = sanitizeShopEmailHeaderValue(order.customerName);
+  const customerOrder = order.paymentMethod === 'prepayment' ? { ...order, bankDetails: shop?.bankDetails || null } : order;
 
   // Send customer confirmation
   if (isValidSmtpAddress(customerEmail)) {
@@ -104,7 +110,7 @@ export async function sendOrderEmails(tenantId: string, order: OrderData) {
         from: smtp.from,
         to: customerEmail,
         subject: `Bestellbestätigung ${safeOrderNumber}`,
-        html: buildOrderHtml(order, true),
+        html: buildOrderHtml(customerOrder, true),
       });
     } catch (e) {
       console.error('[Shop Email] Customer email failed:', e);

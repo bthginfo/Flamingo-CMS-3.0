@@ -1,12 +1,12 @@
 'use client';
 
 import { useTransition } from 'react';
-import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleBookingAddonAction, toggleI18nAction, updateI18nSettingsAction, convertLeadSharedToStandaloneAction } from '../actions';
+import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleBookingAddonAction, toggleBillingAddonAction, toggleI18nAction, updateI18nSettingsAction, convertSharedToStandaloneAction } from '../actions';
 import { toast } from 'sonner';
-import { CalendarCheck, Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe, CloudUpload } from 'lucide-react';
+import { CalendarCheck, Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe, CloudUpload, ReceiptText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploymentMode, shopActive, bookingActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean; bookingActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
+export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploymentMode, shopActive, bookingActive, billingActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean; bookingActive?: boolean; billingActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -29,6 +29,20 @@ export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploym
     startTransition(async () => {
       await updateTenantAction(tenantId, { isLead: !isLead });
       toast.success(isLead ? 'Lead-Flag entfernt' : 'Als Lead-Seite markiert');
+    });
+  }
+
+  function toggleBilling() {
+    if (billingActive && !confirm('Rechnungen & Kunden deaktivieren? Vorhandene Kunden, Rechnungen und Belegarchive bleiben vollständig erhalten.')) return;
+    startTransition(async () => {
+      try {
+        const result = await toggleBillingAddonAction(tenantId, !billingActive);
+        if (!result.success) throw new Error('Die Freischaltung konnte nicht geändert werden.');
+        toast.success(billingActive ? 'Rechnungen & Kunden deaktiviert – Archiv bleibt erhalten' : 'Rechnungen & Kunden aktiviert');
+        router.refresh();
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Rechnungen & Kunden konnte nicht aktualisiert werden.');
+      }
     });
   }
 
@@ -82,6 +96,15 @@ export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploym
       >
         <CalendarCheck size={14} /> {bookingActive ? 'Booking-Addon deaktivieren' : 'Booking-Addon aktivieren'}
       </button>
+      <button
+        onClick={toggleBilling}
+        disabled={pending}
+        aria-busy={pending}
+        className={`w-full crm-btn ${billingActive ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+      >
+        <ReceiptText size={14} /> {billingActive ? 'Rechnungen & Kunden deaktivieren' : 'Rechnungen & Kunden aktivieren'}
+      </button>
+      <p className="px-1 text-xs leading-5 text-slate-500">{billingActive ? 'Aktiv. Beim Deaktivieren bleiben alle Belege und Kundendaten erhalten.' : 'Nicht aktiv. Das Modul bleibt serverseitig gesperrt.'}</p>
       {/* i18n */}
       <div className="border-t border-slate-100 pt-3 space-y-2">
         <button
@@ -151,12 +174,12 @@ export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploym
           Blob Storage konfigurieren
         </button>
       )}
-      {deploymentMode === 'lead_shared' && (
+      {(deploymentMode === 'shared' || deploymentMode === 'lead_shared') && (
         <button
           onClick={() => {
-            if (!confirm('Lead-Shared-Tenant jetzt in ein eigenes Standalone-Projekt umziehen?')) return;
+            if (!confirm('Shared-Tenant jetzt vollständig in ein eigenes Standalone-Projekt mit eigener Datenbank umziehen? Die Quelldaten werden erst nach erfolgreicher Prüfung entfernt.')) return;
             startTransition(async () => {
-              const result = await convertLeadSharedToStandaloneAction(tenantId);
+              const result = await convertSharedToStandaloneAction(tenantId);
               if (result.success) {
                 toast.success(result.warning || 'Tenant wurde in ein Standalone-Projekt umgezogen');
                 router.refresh();

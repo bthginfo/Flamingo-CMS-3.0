@@ -53,6 +53,7 @@ const NAV: NavItem[] = [
       { href: '/cms', label: 'CMS', description: 'Inhalte, Design und SEO selbst pflegen' },
       { href: '/shop', label: 'Shop-Addon', description: 'Produkte, Checkout und Bestellungen' },
       { href: '/booking', label: 'Booking-Addon', description: 'Anfragen, Kalender und Ressourcen' },
+      { href: '/rechnungen', label: 'Rechnungen & Kunden', description: 'Kundenstamm, PDF und XRechnung' },
     ],
   },
   { href: '/foerderrechner', label: 'Förderrechner' },
@@ -320,6 +321,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   <li><MarketingAnchor href="/cms" className="hover:text-accent">CMS</MarketingAnchor></li>
                   <li><MarketingAnchor href="/shop" className="hover:text-accent">Shop-Addon</MarketingAnchor></li>
                   <li><MarketingAnchor href="/booking" className="hover:text-accent">Booking-Addon</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/rechnungen" className="hover:text-accent">Rechnungen & Kunden</MarketingAnchor></li>
                   <li><MarketingAnchor href="/prozess" className="hover:text-accent">Ablauf</MarketingAnchor></li>
                   <li><MarketingAnchor href="/preise" className="hover:text-accent">Preise</MarketingAnchor></li>
                   <li><MarketingAnchor href="/blog" className="hover:text-accent">Blog</MarketingAnchor></li>

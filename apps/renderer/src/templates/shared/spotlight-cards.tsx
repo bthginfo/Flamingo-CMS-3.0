@@ -5,6 +5,7 @@ import { TiltCard } from '@/components/ui/fx';
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
+import { ResilientImage } from '@/components/ui/resilient-image';
 
 type Card = { title: string; text?: string; icon?: string; image?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -42,7 +43,7 @@ export function SpotlightCardsSection({ data }: Props) {
               style={{ background: 'var(--token-card-bg)', borderColor: 'var(--token-card-border)' }}
             >
               <div className="spotlight-card-hover-layer pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100" style={{ background: 'radial-gradient(720px circle at var(--x,50%) var(--y,30%), color-mix(in_srgb,var(--token-accent)_12%,transparent), transparent 42%)' }} />
-              {card.image && <img data-edit-image="image" src={card.image} alt="" className="spotlight-card-image-layer absolute inset-0 h-full w-full object-cover opacity-12 transition duration-500 group-hover:opacity-20" />}
+              {card.image && <ResilientImage data-edit-image="image" src={card.image} alt="" className="spotlight-card-image-layer absolute inset-0 h-full w-full object-cover opacity-12 transition duration-500 group-hover:opacity-20" />}
               <div className="relative z-10 flex h-full flex-col justify-between gap-8">
                 {card.icon && <span className="flex h-12 w-12 items-center justify-center rounded-full border bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]" data-color-slot="iconColor cardBg accentColor" style={{ borderColor: 'color-mix(in srgb, var(--token-accent) 28%, transparent)' }}><DynamicIcon editPath="icon" name={card.icon} size={24} /></span>}
                 <div>

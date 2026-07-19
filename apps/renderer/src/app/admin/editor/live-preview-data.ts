@@ -8,6 +8,24 @@ export type EditorI18nConfig = {
 
 type PendingChanges = ReadonlyMap<string, Record<string, unknown>>;
 
+function asEditableRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
+export function resolveEditableSectionData(
+  data: Record<string, unknown>,
+  i18n?: EditorI18nConfig,
+  activeLocale?: string,
+): Record<string, unknown> {
+  if (!i18n?.enabled || !data._localized) return data;
+  const locale = activeLocale || i18n.defaultLocale;
+  return asEditableRecord(data[locale])
+    ?? asEditableRecord(data[i18n.defaultLocale])
+    ?? {};
+}
+
 export function buildLiveSections(
   sections: EditableSection[],
   pendingChanges: PendingChanges,

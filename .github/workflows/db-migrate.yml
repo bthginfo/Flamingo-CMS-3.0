@@ -55,6 +55,14 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+      - name: Apply migrations to standalone tenant databases
+        id: migrate_standalone
+        if: steps.migrate.outcome == 'success'
+        run: pnpm --filter @flamingo/marketing migrate:standalone
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CRM_CONFIG_ENCRYPTION_KEY: ${{ secrets.CRM_CONFIG_ENCRYPTION_KEY }}
+
       - name: Report migration status
         if: always()
         shell: bash
@@ -63,6 +71,7 @@ jobs:
           INSTALL_RESULT: ${{ steps.install.outcome }}
           CONFIG_RESULT: ${{ steps.config.outcome }}
           MIGRATION_RESULT: ${{ steps.migrate.outcome }}
+          STANDALONE_MIGRATION_RESULT: ${{ steps.migrate_standalone.outcome }}
         run: |
           if [ "$INSTALL_RESULT" != "success" ]; then
             state=failure
@@ -70,12 +79,15 @@ jobs:
           elif [ "$CONFIG_RESULT" != "success" ]; then
             state=failure
             description='DATABASE_URL repository secret is missing'
-          elif [ "$MIGRATION_RESULT" = "success" ]; then
+          elif [ "$MIGRATION_RESULT" != "success" ]; then
+            state=failure
+            description='Control-plane database migration failed'
+          elif [ "$STANDALONE_MIGRATION_RESULT" = "success" ]; then
             state=success
-            description='Production database migrations applied'
+            description='Control-plane and standalone database migrations applied'
           else
             state=failure
-            description='Drizzle migration command failed'
+            description='Standalone tenant database migration failed'
           fi
           target_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           payload=$(jq -n \

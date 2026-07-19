@@ -2,8 +2,8 @@
 
 import { getDb } from '@/lib/db';
 import { getSession, getWritableSession } from '@/lib/session';
-import { collections, collectionItems, tenants, globalSettings, pages, pageSections, tenantAddons } from '@flamingo/db';
-import { eq, and, asc, desc, or } from 'drizzle-orm';
+import { collections, collectionItems, tenants, globalSettings, pages, pageSections, tenantAddons, products } from '@flamingo/db';
+import { eq, and, asc, desc, or, not } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -315,14 +315,28 @@ export async function getItemWithIndustryAction(itemId: string) {
     i18nLocales: tenants.i18nLocales,
     i18nDefaultLocale: tenants.i18nDefaultLocale,
   }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
-  const [brandResult, shopAddonResult, bookingAddonResult] = await Promise.all([
+  const [brandResult, shopAddonResult, bookingAddonResult, collectionsResult] = await Promise.all([
     db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1),
     db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop'))).limit(1),
     db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'booking'))).limit(1),
+    db.select().from(collections).where(eq(collections.tenantId, session.tenantId)),
   ]);
   const i18n = tenant?.i18nEnabled
     ? { enabled: true, locales: (tenant.i18nLocales || 'de').split(','), defaultLocale: tenant.i18nDefaultLocale || 'de' }
     : undefined;
+  const allItems = collectionsResult.length > 0
+    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority))
+    : [];
+  const previewCollections = collectionsResult.map(collection => ({
+    key: collection.key,
+    label: collection.label,
+    items: allItems
+      .filter(candidate => candidate.collectionId === collection.id)
+      .map(candidate => ({ id: candidate.id, title: candidate.title, slug: candidate.slug, data: candidate.data })),
+  }));
+  const previewProducts = shopAddonResult[0]?.active
+    ? await db.select().from(products).where(and(eq(products.tenantId, session.tenantId), not(eq(products.status, 'archived')))).orderBy(asc(products.sortOrder)).limit(200)
+    : [];
   return {
     item,
     industry: tenant?.industry ?? 'tradesman',
@@ -331,6 +345,9 @@ export async function getItemWithIndustryAction(itemId: string) {
     hasShop: !!shopAddonResult[0]?.active,
     hasBooking: !!bookingAddonResult[0]?.active,
     i18n,
+    collections: previewCollections,
+    tenantId: session.tenantId,
+    previewProducts,
   };
 }
 

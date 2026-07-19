@@ -24,6 +24,9 @@ export async function GET(req: NextRequest) {
   const [order] = await db.select().from(orders)
     .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
   if (!order) return NextResponse.redirect(new URL('/checkout', req.url));
+  if (order.paymentMethod !== 'sumup' || !order.paymentId) {
+    return NextResponse.redirect(new URL('/checkout?error=payment_mismatch', req.nextUrl.origin));
+  }
 
   // Idempotency: the buyer can reload this redirect URL. Without this guard we
   // would re-verify, re-write status/history and re-send the confirmation email
@@ -47,16 +50,37 @@ export async function GET(req: NextRequest) {
     });
     const checkout = await checkoutRes.json();
 
-    if (checkout.status !== 'PAID') {
+    const amountCents = Math.round(Number(checkout.amount) * 100);
+    if (
+      checkout.status !== 'PAID'
+      || checkout.id !== order.paymentId
+      || checkout.checkout_reference !== order.id
+      || checkout.currency !== settings.currency
+      || !Number.isFinite(amountCents)
+      || amountCents !== order.totalCents
+    ) {
+      console.error('[SumUp] Checkout did not match order', {
+        orderId: order.id,
+        checkoutId: checkout.id,
+        reference: checkout.checkout_reference,
+        amount: checkout.amount,
+        currency: checkout.currency,
+      });
       return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.nextUrl.origin));
     }
 
     // Update order to paid
-    await db.update(orders).set({
+    const [updated] = await db.update(orders).set({
       status: 'paid',
       paymentStatus: 'paid',
       updatedAt: new Date(),
-    }).where(eq(orders.id, orderId));
+    }).where(and(
+      eq(orders.id, orderId),
+      eq(orders.tenantId, tenantId),
+      eq(orders.paymentId, order.paymentId),
+      eq(orders.status, 'awaiting_payment'),
+    )).returning({ id: orders.id });
+    if (!updated) return NextResponse.redirect(new URL('/bestellung-abgeschlossen', req.nextUrl.origin));
 
     await db.insert(orderStatusHistory).values({
       orderId,
@@ -66,7 +90,7 @@ export async function GET(req: NextRequest) {
     });
 
     // Send confirmation emails
-    sendOrderEmails(tenantId, {
+    await sendOrderEmails(tenantId, {
       orderNumber: order.orderNumber,
       customerName: order.customerName,
       customerEmail: order.customerEmail,
@@ -76,7 +100,7 @@ export async function GET(req: NextRequest) {
       totalCents: order.totalCents,
       paymentMethod: 'SumUp',
       shippingAddress: order.shippingAddress as any,
-    }).catch(e => console.error('[SumUp] Email error:', e));
+    });
   } catch (e) {
     console.error('[SumUp] Verification error:', e);
     return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.nextUrl.origin));

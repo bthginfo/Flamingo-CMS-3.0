@@ -24,10 +24,10 @@ const FEATURES = [
     demoUrl: demoEmbedUrl('/demo/shop/warenkorb'),
   },
   {
-    badge: 'Bestellungen & Rechnungen',
+    badge: 'Bestellungen & Belege',
     title: 'Bestellungen.\nAutomatisch verwaltet.',
-    description: 'Jede Bestellung erzeugt automatisch eine PDF-Rechnung. Statusänderungen, Tracking-Nummern und Storno mit Gutschrift — alles im Admin.',
-    highlights: ['Automatische PDF-Rechnungen', 'Storno mit Gutschrift-PDF', 'Tracking-Nummern & Versand-E-Mails', 'Bestellhistorie pro Kunde'],
+    description: 'Shop-Bestellungen erhalten automatisch einen PDF-Beleg. Freie Rechnungen, XRechnung und Kundenstammdaten gibt es im separaten Add-on Rechnungen & Kunden.',
+    highlights: ['Automatische PDF-Bestellbelege', 'Storno mit Korrekturbeleg', 'Tracking-Nummern & Versand-E-Mails', 'Optional: XRechnung & Kundenverwaltung'],
     demoUrl: demoAdminUrl('/admin/shop/orders'),
   },
   {
@@ -188,7 +188,7 @@ export function ShopFeaturesTeaserSection() {
           {[
             { icon: '🛒', title: 'Vollwertiger Shop', desc: 'Produkte, Varianten, Kategorien, Bilder — alles im gewohnten Admin.' },
             { icon: '💳', title: 'Stripe & PayPal', desc: 'Kreditkarte, PayPal, Vorkasse oder Abholung. Du wählst.' },
-            { icon: '📦', title: 'Versand & Rechnungen', desc: 'Automatische PDF-Rechnungen, Versandzonen, Gutscheine & Tracking.' },
+            { icon: '📦', title: 'Versand & Belege', desc: 'Automatische PDF-Bestellbelege, Versandzonen, Gutscheine & Tracking.' },
           ].map(item => (
             <div key={item.title} className="p-6 rounded-2xl border border-line bg-white hover:shadow-lg transition-shadow">
               <span className="text-3xl">{item.icon}</span>

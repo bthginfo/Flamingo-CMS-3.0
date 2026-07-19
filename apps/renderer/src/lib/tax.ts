@@ -16,6 +16,7 @@ const DE_DEFAULTS: Record<string, number> = {
   standard: 19,
   reduced: 7,
   zero: 0,
+  free: 0,
 };
 
 type Key = `${string}:${string}`;

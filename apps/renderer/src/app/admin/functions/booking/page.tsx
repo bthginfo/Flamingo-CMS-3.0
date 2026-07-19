@@ -25,7 +25,7 @@ import {
 } from './actions';
 import { getDefaultBookingEmailTemplate, type BookingEmailTrigger } from '@/lib/booking-email';
 import { ConfirmDeleteForm } from './confirm-delete-form';
-import { formatBookingDate } from '@/lib/booking-time';
+import { formatBookingDate, normalizeTimezone, zonedDayEndToUtc, zonedDayStartToUtc } from '@/lib/booking-time';
 import { BookingIntakeQuestionsField } from './booking-intake-questions-field';
 
 const TRIGGERS: { key: BookingEmailTrigger; label: string }[] = [
@@ -83,8 +83,9 @@ type BookingBlackout = Awaited<ReturnType<typeof getBookingAdminData>>['blackout
 export default async function BookingAdminPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
   const params = await (searchParams || Promise.resolve({}));
   const activeTab = tabParam(param(params, 'tab'));
-  const selectedDay = param(params, 'day') || todayInput();
   const data = await getBookingAdminData();
+  const timezone = normalizeTimezone(data.settings?.timezone);
+  const selectedDay = param(params, 'day') || todayInput(timezone);
 
   if (!data.addonActive || !data.settings) {
     return (
@@ -121,9 +122,9 @@ export default async function BookingAdminPage({ searchParams }: { searchParams?
     service: request.serviceId ? serviceById.get(request.serviceId) : null,
     resource: request.resourceId ? resourceById.get(request.resourceId) : null,
   }));
-  const filteredRequests = filterRequests(enrichedRequests, params);
+  const filteredRequests = filterRequests(enrichedRequests, params, timezone);
   const dayRequests = enrichedRequests
-    .filter(request => sameDate(request.startsAt, selectedDay))
+    .filter(request => sameDate(request.startsAt, selectedDay, timezone))
     .filter(request => !request.status.startsWith('cancelled'))
     .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
   const pendingCount = enrichedRequests.filter(request => request.status === 'requested').length;
@@ -175,15 +176,20 @@ export default async function BookingAdminPage({ searchParams }: { searchParams?
           nextRequest={nextRequest}
           day={selectedDay}
           dayRequests={dayRequests.slice(0, 5)}
+          services={data.services.length}
+          availabilityRules={data.availabilityRules}
+          calendarBlocks={data.calendarBlocks}
+          settings={data.settings}
+          timezone={timezone}
         />
       ) : null}
 
       {activeTab === 'inbox' ? (
-        <InboxPanel params={params} requests={filteredRequests} resources={data.resources} services={data.services} />
+        <InboxPanel params={params} requests={filteredRequests} resources={data.resources} services={data.services} timezone={timezone} />
       ) : null}
 
       {activeTab === 'day' ? (
-        <DayPanel day={selectedDay} requests={dayRequests} resources={data.resources} />
+        <DayPanel day={selectedDay} requests={dayRequests} resources={data.resources} timezone={timezone} />
       ) : null}
 
       {activeTab === 'calendar' ? (
@@ -195,7 +201,7 @@ export default async function BookingAdminPage({ searchParams }: { searchParams?
       ) : null}
 
       {activeTab === 'blackouts' ? (
-        <BlackoutsPanel blackouts={data.blackouts} resources={data.resources} />
+        <BlackoutsPanel blackouts={data.blackouts} resources={data.resources} timezone={timezone} />
       ) : null}
 
       {activeTab === 'emails' ? (
@@ -209,7 +215,7 @@ export default async function BookingAdminPage({ searchParams }: { searchParams?
   );
 }
 
-function OverviewPanel({ total, pending, confirmedToday, resources, resourceOptions, nextRequest, day, dayRequests }: {
+function OverviewPanel({ total, pending, confirmedToday, resources, resourceOptions, nextRequest, day, dayRequests, services, availabilityRules, calendarBlocks, settings, timezone }: {
   total: number;
   pending: number;
   confirmedToday: number;
@@ -218,19 +224,67 @@ function OverviewPanel({ total, pending, confirmedToday, resources, resourceOpti
   nextRequest?: EnrichedRequest;
   day: string;
   dayRequests: EnrichedRequest[];
+  services: number;
+  availabilityRules: BookingAvailabilityRule[];
+  calendarBlocks: BookingCalendarBlock[];
+  settings: NonNullable<Awaited<ReturnType<typeof getBookingAdminData>>['settings']>;
+  timezone: string;
 }) {
+  const hasRecurringAvailability = availabilityRules.length > 0;
+  const hasFutureAvailableBlock = calendarBlocks.some(block => block.type === 'available' && block.endsAt.getTime() > Date.now());
+  const availabilityReady = settings.timeModel === 'time_slot'
+    ? hasRecurringAvailability
+    : hasRecurringAvailability || hasFutureAvailableBlock;
+  const emailReady = Boolean(settings.adminEmailEnabled && settings.notificationEmail?.trim());
+  const workflowReady = services > 0 && availabilityReady;
+  const readiness = [
+    { label: 'Leistung', detail: services ? `${services} buchbar` : 'Angebot anlegen', done: services > 0, href: '/admin/functions/booking?tab=resources' },
+    { label: 'Freie Zeiten', detail: availabilityReady ? (hasRecurringAvailability ? 'Wochenzeiten gepflegt' : 'Verfügbare Kalenderzeiträume gepflegt') : settings.timeModel === 'time_slot' ? 'Mindestens eine wiederkehrende Wochenzeit fehlt' : 'Verfügbarkeit festlegen', done: availabilityReady, href: '/admin/functions/booking?tab=calendar' },
+    { label: 'Buchungsablauf', detail: workflowReady ? (settings.mode === 'instant' ? 'Direktbuchung einsatzbereit' : 'Anfrage & Bestätigung einsatzbereit') : 'Nach Angebot und Zeiten einsatzbereit', done: workflowReady, href: '/admin/functions/booking?tab=settings' },
+    { label: 'Benachrichtigung', detail: emailReady ? 'Admin-Empfänger hinterlegt' : settings.adminEmailEnabled ? 'Empfänger fehlt' : 'Admin-Benachrichtigung ist deaktiviert', done: emailReady, href: '/admin/functions/booking?tab=settings' },
+    { label: 'Ressourcen', detail: resources ? `${resources} eingerichtet` : 'Optional bei Bedarf', done: resources > 0, href: '/admin/functions/booking?tab=resources', optional: true },
+  ];
+  const essential = readiness.filter(step => !step.optional);
+  const essentialDone = essential.filter(step => step.done).length;
+  const nextStep = essential.find(step => !step.done);
+
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-4">
-        <MetricCard label="Alle Buchungen" value={String(total)} />
+      <section className={`overflow-hidden rounded-2xl border ${nextStep ? 'border-amber-200 bg-amber-50/40' : 'border-emerald-200 bg-emerald-50/40'}`} aria-labelledby="booking-readiness-heading">
+        <div className="flex flex-col gap-4 p-5 md:flex-row md:items-start md:justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              {nextStep ? <Clock className="size-4 text-amber-700" /> : <CheckCircle2 className="size-4 text-emerald-700" />}
+              <h2 id="booking-readiness-heading" className="font-semibold text-zinc-950">{nextStep ? 'Booking fertig einrichten' : 'Booking ist bereit'}</h2>
+            </div>
+            <p className="mt-1 text-sm text-zinc-600">{nextStep ? `Als Nächstes: ${nextStep.detail}.` : 'Alle wichtigen Grundlagen für Buchungsanfragen sind eingerichtet.'}</p>
+          </div>
+          {nextStep ? <Link href={nextStep.href} className="admin-btn-primary min-h-11 shrink-0">Jetzt erledigen</Link> : null}
+        </div>
+        <ol className="grid gap-px border-t border-zinc-200 bg-zinc-200 sm:grid-cols-2 xl:grid-cols-5">
+          {readiness.map(step => (
+            <li key={step.label} className="bg-white">
+              <Link href={step.href} className="flex min-h-20 items-center gap-3 p-4 hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-pink-400">
+                <span className={`grid size-7 shrink-0 place-items-center rounded-full ${step.done ? 'bg-emerald-100 text-emerald-700' : step.optional ? 'bg-zinc-100 text-zinc-500' : 'bg-amber-100 text-amber-800'}`}>
+                  {step.done ? <CheckCircle2 className="size-4" /> : <span className="size-2 rounded-full bg-current" />}
+                </span>
+                <span className="min-w-0"><span className="block text-sm font-medium text-zinc-900">{step.label}{step.optional ? <span className="ml-1 text-[10px] font-normal text-zinc-400">optional</span> : null}</span><span className="mt-0.5 block truncate text-xs text-zinc-500">{step.detail}</span></span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+        <div className="h-1.5 bg-zinc-100"><div className={`h-full ${essentialDone === essential.length ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${(essentialDone / essential.length) * 100}%` }} /></div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
         <MetricCard label="Offene Anfragen" value={String(pending)} href="/admin/functions/booking?tab=inbox&status=requested" />
         <MetricCard label="Heute bestätigt" value={String(confirmedToday)} href={`/admin/functions/booking?tab=day&day=${day}`} />
-        <MetricCard label="Aktive Ressourcen" value={String(resources)} href="/admin/functions/booking?tab=resources" />
+        <MetricCard label="Alle Buchungen" value={String(total)} href="/admin/functions/booking?tab=inbox" />
       </section>
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="admin-card p-5">
           <h2 className="font-semibold">Nächster Termin</h2>
-          {nextRequest ? <BookingCard request={nextRequest} resources={resourceOptions} compact /> : <EmptyText>Keine kommenden Buchungen.</EmptyText>}
+          {nextRequest ? <BookingCard request={nextRequest} resources={resourceOptions} timezone={timezone} compact /> : <EmptyText>Keine kommenden Buchungen.</EmptyText>}
         </div>
         <div className="admin-card p-5">
           <div className="flex items-center justify-between gap-3">
@@ -238,7 +292,7 @@ function OverviewPanel({ total, pending, confirmedToday, resources, resourceOpti
             <Link className="text-sm font-medium text-blue-600" href={`/admin/functions/booking?tab=day&day=${day}`}>Tagesplan öffnen</Link>
           </div>
           <div className="mt-4 space-y-3">
-            {dayRequests.length ? dayRequests.map(request => <BookingMiniRow key={request.id} request={request} />) : <EmptyText>Heute noch keine bestätigten Buchungen.</EmptyText>}
+            {dayRequests.length ? dayRequests.map(request => <BookingMiniRow key={request.id} request={request} timezone={timezone} />) : <EmptyText>Heute noch keine bestätigten Buchungen.</EmptyText>}
           </div>
         </div>
       </section>
@@ -246,7 +300,7 @@ function OverviewPanel({ total, pending, confirmedToday, resources, resourceOpti
   );
 }
 
-function InboxPanel({ params, requests, resources, services }: { params: SearchParams; requests: EnrichedRequest[]; resources: BookingResource[]; services: BookingService[] }) {
+function InboxPanel({ params, requests, resources, services, timezone }: { params: SearchParams; requests: EnrichedRequest[]; resources: BookingResource[]; services: BookingService[]; timezone: string }) {
   return (
     <section className="admin-card p-5">
       <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -286,13 +340,13 @@ function InboxPanel({ params, requests, resources, services }: { params: SearchP
         </Field>
       </form>
       <div className="mt-5 space-y-3">
-        {requests.length ? requests.map(request => <BookingCard key={request.id} request={request} resources={resources} />) : <EmptyText>Keine Buchungen passen zu diesen Filtern.</EmptyText>}
+        {requests.length ? requests.map(request => <BookingCard key={request.id} request={request} resources={resources} timezone={timezone} />) : <EmptyText>Keine Buchungen passen zu diesen Filtern.</EmptyText>}
       </div>
     </section>
   );
 }
 
-function DayPanel({ day, requests, resources }: { day: string; requests: EnrichedRequest[]; resources: BookingResource[] }) {
+function DayPanel({ day, requests, resources, timezone }: { day: string; requests: EnrichedRequest[]; resources: BookingResource[]; timezone: string }) {
   const unassigned = requests.filter(request => !request.resourceId);
   return (
     <section className="admin-card p-5">
@@ -315,7 +369,7 @@ function DayPanel({ day, requests, resources }: { day: string; requests: Enriche
               <h3 className="font-semibold">{resource.name}</h3>
               <p className="text-xs text-zinc-400">{resource.type} · {resource.capacity} Buchung(en) gleichzeitig</p>
               <div className="mt-4 space-y-3">
-                {items.length ? items.map(request => <BookingMiniRow key={request.id} request={request} resources={resources} />) : <p className="text-sm text-zinc-400">Keine Buchungen.</p>}
+                {items.length ? items.map(request => <BookingMiniRow key={request.id} request={request} resources={resources} timezone={timezone} />) : <p className="text-sm text-zinc-400">Keine Buchungen.</p>}
               </div>
             </div>
           );
@@ -324,7 +378,7 @@ function DayPanel({ day, requests, resources }: { day: string; requests: Enriche
           <h3 className="font-semibold">Ohne Ressource</h3>
           <p className="text-xs text-zinc-400">Anfragen, die keiner konkreten Ressource zugeordnet sind.</p>
           <div className="mt-4 space-y-3">
-            {unassigned.length ? unassigned.map(request => <BookingMiniRow key={request.id} request={request} resources={resources} />) : <p className="text-sm text-zinc-400">Keine Buchungen.</p>}
+            {unassigned.length ? unassigned.map(request => <BookingMiniRow key={request.id} request={request} resources={resources} timezone={timezone} />) : <p className="text-sm text-zinc-400">Keine Buchungen.</p>}
           </div>
         </div>
       </div>
@@ -345,7 +399,7 @@ function CalendarBlocksPanel({ day, blocks, resources, services, timezone }: { d
   const resourceById = new Map(resources.map(resource => [resource.id, resource]));
   const serviceById = new Map(services.map(service => [service.id, service]));
   const dayBlocks = blocks
-    .filter(block => sameDate(block.startsAt, day))
+    .filter(block => sameDate(block.startsAt, day, normalizeTimezone(timezone)))
     .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
   const availableCount = dayBlocks.filter(block => block.type === 'available').length;
   const blockedCount = dayBlocks.filter(block => block.type === 'blocked').length;
@@ -596,7 +650,7 @@ function AvailabilityPanel({ rules, resources, services }: { rules: BookingAvail
   );
 }
 
-function BlackoutsPanel({ blackouts, resources }: { blackouts: BookingBlackout[]; resources: BookingResource[] }) {
+function BlackoutsPanel({ blackouts, resources, timezone }: { blackouts: BookingBlackout[]; resources: BookingResource[]; timezone: string }) {
   const resourceById = new Map(resources.map(resource => [resource.id, resource]));
   return (
     <section className="admin-card p-5">
@@ -623,7 +677,7 @@ function BlackoutsPanel({ blackouts, resources }: { blackouts: BookingBlackout[]
             <div key={blackout.id} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 p-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <h3 className="font-semibold text-zinc-950">{title}</h3>
-                <p className="text-sm text-zinc-500">{formatDate(blackout.startsAt)} bis {formatDate(blackout.endsAt)}</p>
+                <p className="text-sm text-zinc-500">{formatDate(blackout.startsAt, timezone)} bis {formatDate(blackout.endsAt, timezone)}</p>
                 <p className="text-sm text-zinc-500">{resource ? `Ressource: ${resource.name}` : 'Gilt global für alle Ressourcen'}</p>
               </div>
               <DeleteButton action={deleteBookingBlackoutAction} id={blackout.id} label="Sperrzeit löschen" subject={title} />
@@ -700,7 +754,7 @@ type EnrichedRequest = BookingRequest & {
   service?: BookingService | null;
 };
 
-function BookingCard({ request, resources, compact }: { request: EnrichedRequest; resources: BookingResource[]; compact?: boolean }) {
+function BookingCard({ request, resources, timezone, compact }: { request: EnrichedRequest; resources: BookingResource[]; timezone: string; compact?: boolean }) {
   return (
     <div className="rounded-xl border border-zinc-200 p-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -709,7 +763,7 @@ function BookingCard({ request, resources, compact }: { request: EnrichedRequest
             <h3 className="font-semibold">{request.customerName}</h3>
             <StatusBadge status={request.status} />
           </div>
-          <p className="mt-1 text-sm text-zinc-500">{formatDate(request.startsAt)} bis {formatDate(request.endsAt)} · {request.partySize} Person(en)/Einheit(en)</p>
+          <p className="mt-1 text-sm text-zinc-500">{formatDate(request.startsAt, timezone)} bis {formatDate(request.endsAt, timezone)} · {request.partySize} Person(en)/Einheit(en)</p>
           <p className="text-sm text-zinc-500">{[request.service?.name, request.resource?.name].filter(Boolean).join(' · ') || 'Keine Leistung/Ressource'}</p>
           {!compact ? <p className="text-sm text-zinc-500">{[request.customerEmail, request.customerPhone].filter(Boolean).join(' · ') || 'Keine Kontaktdaten'}</p> : null}
           {!compact && request.message ? <p className="mt-3 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-600">{request.message}</p> : null}
@@ -723,12 +777,12 @@ function BookingCard({ request, resources, compact }: { request: EnrichedRequest
   );
 }
 
-function BookingMiniRow({ request, resources }: { request: EnrichedRequest; resources?: BookingResource[] }) {
-  const returnTo = `/admin/functions/booking?tab=day&day=${request.startsAt.toISOString().slice(0, 10)}`;
+function BookingMiniRow({ request, resources, timezone }: { request: EnrichedRequest; resources?: BookingResource[]; timezone: string }) {
+  const returnTo = `/admin/functions/booking?tab=day&day=${dateInputForTimezone(request.startsAt, timezone)}`;
   return (
     <div className="rounded-xl bg-white p-3 text-sm shadow-sm ring-1 ring-zinc-200">
       <div className="flex items-center justify-between gap-3">
-        <p className="font-medium text-zinc-900">{timeOnly(request.startsAt)} · {request.customerName}</p>
+        <p className="font-medium text-zinc-900">{timeOnly(request.startsAt, timezone)} · {request.customerName}</p>
         <StatusBadge status={request.status} />
       </div>
       <p className="mt-1 text-zinc-500">{[request.service?.name, request.resource?.name, `${request.partySize} Person(en)/Einheit(en)`].filter(Boolean).join(' · ')}</p>
@@ -939,7 +993,7 @@ function ServiceSelect({ services, value }: { services: BookingService[]; value?
   );
 }
 
-function filterRequests(requests: EnrichedRequest[], params: SearchParams) {
+function filterRequests(requests: EnrichedRequest[], params: SearchParams, timezone: string) {
   const status = param(params, 'status');
   const from = param(params, 'from');
   const to = param(params, 'to');
@@ -950,8 +1004,8 @@ function filterRequests(requests: EnrichedRequest[], params: SearchParams) {
     if (status && request.status !== status) return false;
     if (resourceId && request.resourceId !== resourceId) return false;
     if (serviceId && request.serviceId !== serviceId) return false;
-    if (from && request.startsAt < startOfDay(from)) return false;
-    if (to && request.startsAt > endOfDay(to)) return false;
+    if (from && request.startsAt < startOfDay(from, timezone)) return false;
+    if (to && request.startsAt > endOfDay(to, timezone)) return false;
     if (query) {
       const haystack = [request.customerName, request.customerEmail, request.customerPhone, request.message, request.service?.name, request.resource?.name]
         .filter(Boolean)
@@ -972,8 +1026,8 @@ function tabParam(value: string): BookingTab {
   return TABS.some(tab => tab.key === value) ? value as BookingTab : 'overview';
 }
 
-function todayInput() {
-  return new Date().toISOString().slice(0, 10);
+function todayInput(timezone: string) {
+  return dateInputForTimezone(new Date(), timezone);
 }
 
 function toDateTimeLocal(date: Date, timezone?: string | null) {
@@ -990,22 +1044,33 @@ function toDateTimeLocal(date: Date, timezone?: string | null) {
   return `${value('year')}-${value('month')}-${value('day')}T${value('hour')}:${value('minute')}`;
 }
 
-function sameDate(date: Date, input: string) {
-  return date >= startOfDay(input) && date <= endOfDay(input);
+function sameDate(date: Date, input: string, timezone: string) {
+  return date >= startOfDay(input, timezone) && date <= endOfDay(input, timezone);
 }
 
-function startOfDay(input: string) {
-  return new Date(`${input}T00:00:00`);
+function startOfDay(input: string, timezone: string) {
+  return zonedDayStartToUtc(input, timezone);
 }
 
-function endOfDay(input: string) {
-  return new Date(`${input}T23:59:59.999`);
+function endOfDay(input: string, timezone: string) {
+  return zonedDayEndToUtc(input, timezone);
 }
 
-function formatDate(date: Date) {
-  return formatBookingDate(date);
+function formatDate(date: Date, timezone: string) {
+  return formatBookingDate(date, timezone);
 }
 
-function timeOnly(date: Date) {
-  return new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' }).format(date);
+function timeOnly(date: Date, timezone: string) {
+  return new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: normalizeTimezone(timezone) }).format(date);
+}
+
+function dateInputForTimezone(date: Date, timezone: string) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: normalizeTimezone(timezone),
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const value = (type: string) => parts.find(part => part.type === type)?.value || '';
+  return `${value('year')}-${value('month')}-${value('day')}`;
 }

@@ -7,7 +7,7 @@ import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Zap,
   Menu, X, ClipboardList, Bot, HelpCircle, ChevronLeft, ChevronRight, ShoppingBag,
-  Activity, Building2,
+  Activity, Building2, ReceiptText,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 import { usePreview } from '@/components/admin/preview-context';
@@ -27,6 +27,7 @@ const NAV: { href: string; label: string; icon: typeof LayoutDashboard; group: N
   { href: '/admin/inbox', label: 'Posteingang', icon: Inbox, group: 'Anfragen & Verkauf' },
   { href: '/admin/contact-form', label: 'Kontaktformular', icon: ClipboardList, group: 'Anfragen & Verkauf' },
   { href: '/admin/shop', label: 'Shop', icon: ShoppingBag, group: 'Anfragen & Verkauf' },
+  { href: '/admin/billing', label: 'Rechnungen & Kunden', icon: ReceiptText, group: 'Anfragen & Verkauf' },
   { href: '/admin/functions', label: 'Funktionen', icon: Zap, group: 'Anfragen & Verkauf' },
   { href: '/admin/navigation', label: 'Navigation & Footer', icon: Navigation, group: 'Website', tour: 'sidebar-nav' },
   { href: '/admin/business-profile', label: 'Unternehmensprofil', icon: Building2, group: 'Website' },

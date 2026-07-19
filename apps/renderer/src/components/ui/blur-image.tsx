@@ -1,7 +1,8 @@
 'use client';
 
-import Image, { type ImageProps } from 'next/image';
+import { type ImageProps } from 'next/image';
 import { useState } from 'react';
+import { ResilientNextImage } from './resilient-image';
 
 /**
  * Enhanced Image component with automatic blur-up loading effect.
@@ -12,7 +13,7 @@ export function BlurImage({ className = '', style, onLoad, ...props }: ImageProp
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <Image
+    <ResilientNextImage
       {...props}
       className={`${className} transition-all duration-700 ${loaded ? '' : 'scale-[1.02] blur-sm'}`}
       style={style}

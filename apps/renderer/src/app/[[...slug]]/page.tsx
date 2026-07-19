@@ -280,7 +280,10 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
   if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
   Object.assign(designOverrides, getDesignCssVars(design));
-  const visibleSections = page.sections.filter(s => s.visible);
+  const [bookingActive, shopActive] = await Promise.all([hasBookingAddon(tenantId), isShopActive(tenantId)]);
+  const publishedSections = page.sections.filter(s => s.visible);
+  if (!shopActive && publishedSections.length > 0 && publishedSections.every(section => section.type.startsWith('shop'))) notFound();
+  const visibleSections = publishedSections.filter(s => shopActive || !s.type.startsWith('shop'));
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
   preloadHeroImage(visibleSections[0]);
 
@@ -325,7 +328,6 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
   const isHomeSlug = (s: string) => s === '' || s === 'home' || s === 'startseite';
   const pageUrlFor = (s: string) => (isHomeSlug(s) ? canonicalBase : `${canonicalBase.replace(/\/$/, '')}/${s}`);
-  const [bookingActive, shopActive] = await Promise.all([hasBookingAddon(tenantId), isShopActive(tenantId)]);
   const bookingPage = snapshot.pages.find(p => p.visible && p.sections.some(s => s.visible !== false && BOOKING_SECTION_TYPES.has(s.type)));
   const actionPlatform = ['http://schema.org/DesktopWebPlatform', 'http://schema.org/MobileWebPlatform', 'http://schema.org/IOSPlatform', 'http://schema.org/AndroidPlatform'];
   const potentialActions: Record<string, unknown>[] = [];

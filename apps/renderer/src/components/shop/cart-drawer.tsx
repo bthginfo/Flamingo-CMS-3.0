@@ -13,6 +13,8 @@ export function CartDrawer() {
   const { items, totalItems, totalCents, isOpen, setIsOpen, updateQuantity, removeItem } = useCart();
   const pathname = usePathname();
   const isDemo = pathname.startsWith('/demo/');
+  const demoBase = isDemo ? `/${pathname.split('/').filter(Boolean).slice(0, 2).join('/')}` : '';
+  const cartHref = isDemo ? `${demoBase}/warenkorb` : '/warenkorb';
 
   if (!isOpen) return null;
 
@@ -62,7 +64,7 @@ export function CartDrawer() {
               </Link>
             )}
             <Link
-              href="/warenkorb"
+              href={cartHref}
               onClick={() => setIsOpen(false)}
               className="block w-full text-center py-2 text-sm text-zinc-500 hover:text-zinc-700"
             >

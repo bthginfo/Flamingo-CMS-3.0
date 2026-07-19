@@ -6,7 +6,7 @@ import { Phone, CheckCircle } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { Spotlight } from '@/components/ui/spotlight';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
-import Image from 'next/image';
+import { ResilientNextImage as Image } from '@/components/ui/resilient-image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };

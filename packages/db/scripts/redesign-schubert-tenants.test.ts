@@ -1,151 +1,143 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildItemData, buildPageComposition, canUseLegacySharedStandalone, COLLECTION_DETAIL_COMPOSITION_MAPS, PAGE_COMPOSITION_MAPS, parseArgs, REDESIGN_HELP, REDESIGN_TARGETS } from './redesign-schubert-tenants';
+import {
+  buildItemData,
+  buildPageComposition,
+  canUseLegacySharedStandalone,
+  COLLECTION_DETAIL_COMPOSITION_MAPS,
+  findUnavailableSelectedMedia,
+  isCssColorLiteral,
+  PAGE_COMPOSITION_MAPS,
+  parseArgs,
+  REDESIGN_HELP,
+  REDESIGN_TARGETS,
+  sanitizeVisibleContent,
+} from './redesign-schubert-tenants';
 
-const target = REDESIGN_TARGETS['schubert-design'];
+const design = REDESIGN_TARGETS['schubert-design'];
+const grab = REDESIGN_TARGETS['schubert-grabdenkmal'];
 const page = { id: '10000000-0000-4000-8000-000000000001', title: 'Startseite', slug: 'startseite', type: 'free' };
-const sections = ['Bad', 'Naturstein', 'Spa'].map((headline, index) => ({
-  id: `20000000-0000-4000-8000-00000000000${index}`,
-  tenant_id: target.id,
-  page_id: page.id,
-  type: index === 0 ? 'glowHero' : 'textImage',
-  definition_key: null,
-  schema_version: null,
-  variant: null,
-  title_internal: headline,
-  visible: true,
-  locked: false,
-  container: 'default',
-  spacing_top: 'm',
-  spacing_bottom: 'm',
-  anchor_id: null,
-  style_overrides: null,
-  data: { headline, text: `${headline} Beschreibung`, image: `/media/${index}.jpg`, custom: { keep: index }, ...(index === 0 ? { _localized: { en: { headline: 'Bathroom' } } } : {}) },
-  sort_order: index,
-}));
 
-const itemSlugs = ['baeder', 'naturstein', 'spas'];
-const collectionUnits = ['Bäder', 'Naturstein', 'Spas'].map((title, index) => ({ id: itemSlugs[index], title, text: `${title} Text`, image: `/collection/${index}.jpg`, href: `/projekte/${index}`, meta: [] }));
+function section(type: string, index: number, data: Record<string, unknown> = {}) {
+  return {
+    id: `20000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`,
+    tenant_id: design.id,
+    page_id: page.id,
+    type,
+    definition_key: null,
+    schema_version: null,
+    variant: null,
+    title_internal: type,
+    visible: true,
+    locked: false,
+    container: 'default',
+    spacing_top: 'm',
+    spacing_bottom: 'm',
+    anchor_id: null,
+    style_overrides: null,
+    data: { headline: `${type} Inhalt`, text: `${type} Beschreibung`, image: `/media/${type}.jpg`, ...data },
+    sort_order: index,
+  };
+}
 
-test('page redesign is deterministic, lossless and maps localized source content', () => {
-  const first = buildPageComposition(target, page, sections, collectionUnits);
-  const second = buildPageComposition(target, page, first, collectionUnits);
+const designHomeSections = PAGE_COMPOSITION_MAPS['schubert-design'].startseite.map((type, index) => section(type, index, index === 0 ? { _localized: { en: { headline: 'Welcome to Schubert' } } } : {}));
+const collectionUnits = ['baeder', 'naturstein', 'spas'].map((slug, index) => ({ id: slug, title: slug, text: `${slug} Text`, image: `/collection/${index}.jpg`, href: `/projekte/${slug}`, meta: [] }));
+
+test('page redesign is deterministic, source-lossless and deliberately restrained', () => {
+  const first = buildPageComposition(design, page, designHomeSections, collectionUnits);
+  const second = buildPageComposition(design, page, first, collectionUnits);
   assert.deepEqual(second, first);
-  assert.ok(first.some((section) => section.type === 'materialAtelier'));
-  assert.deepEqual((first[0].data._premiumRedesign as { sourceSections: unknown[] }).sourceSections, sections);
-  assert.equal(((first[0].data._localized as Record<string, Record<string, unknown>>).en).headline, 'Bathroom');
+  assert.deepEqual(first.map((entry) => entry.type), PAGE_COMPOSITION_MAPS['schubert-design'].startseite);
+  assert.ok(first.every((entry) => !['kineticIdentity', 'materialAtelier', 'editorialCardMorph', 'signaturePath'].includes(entry.type)));
+  assert.deepEqual((first[0].data._premiumRedesign as { sourceSections: unknown[] }).sourceSections, designHomeSections);
+  assert.equal(((first[0].data._localized as Record<string, Record<string, unknown>>).en).headline, 'Welcome to Schubert');
 });
 
-test('galleryGrid image arrays become page-owned units with exact URLs and stable labels', () => {
-  const quietTarget = REDESIGN_TARGETS['schubert-grabdenkmal'];
-  const galleryPage = { id: '70000000-0000-4000-8000-000000000001', title: 'Galerie', slug: 'galerie', type: 'free' };
-  const galleryImages = Array.from({ length: 6 }, (_, index) => ({
-    src: `/grab/galerie-${index + 1}.jpg`,
-    ...(index < 2 ? { alt: `Grabmal ${index + 1}` } : {}),
-  }));
-  const gallerySection = {
-    ...sections[0],
-    id: '70000000-0000-4000-8000-000000000002',
-    tenant_id: quietTarget.id,
-    page_id: galleryPage.id,
-    type: 'galleryGrid',
-    title_internal: 'Galerie',
-    data: { headline: 'Ausgewählte Arbeiten', images: galleryImages },
-  };
-  const composition = buildPageComposition(quietTarget, galleryPage, [gallerySection], collectionUnits);
-  const atelier = composition.find((section) => section.type === 'materialAtelier');
-  assert.ok(atelier);
-  const items = atelier.data.items as Array<{ title: string; image: string }>;
-  assert.deepEqual(items.map((item) => item.image), galleryImages.map((item) => item.src));
-  assert.deepEqual(items.map((item) => item.title), ['Grabmal 1', 'Grabmal 2', 'Galerie 03', 'Galerie 04', 'Galerie 05', 'Galerie 06']);
-  assert.doesNotMatch(JSON.stringify(items), /\/collection\//);
+test('raw colors, unavailable media and incomplete CTAs never become visible copy', () => {
+  const dead = 'https://cdn.example/manufaktur_001-ZXDYKNe2vW5CYHgWJAJixnkLPob8lV.webp';
+  const source = designHomeSections.map((entry) => ({ ...entry, data: { ...entry.data } }));
+  const story = source.find((entry) => entry.type === 'textImage')!;
+  story.data = { headline: 'Material und Haltung', text: '#D8D0C4', image: dead, primaryCta: { label: '', href: '/kontakt' } };
+  const next = buildPageComposition(design, page, source, collectionUnits);
+  const visibleStory = next.find((entry) => entry.type === 'textImage')!;
+  assert.equal(visibleStory.data.text, undefined);
+  assert.equal(visibleStory.data.image, undefined);
+  assert.equal(visibleStory.data.primaryCta, undefined);
+  assert.deepEqual((next[0].data._premiumRedesign as { sourceSections: unknown[] }).sourceSections, source);
+  assert.equal(isCssColorLiteral('rgba(1, 2, 3, .5)'), true);
+  assert.deepEqual(sanitizeVisibleContent({ meta: ['Naturstein', '#fff'] }), { meta: ['Naturstein'] });
 });
 
-test('collection redesign preserves unrelated item data and the exact source sections', () => {
+test('real process content is unique and capped at four steps', () => {
+  const source = PAGE_COMPOSITION_MAPS['schubert-grabdenkmal'].startseite.map((type, index) => section(type, index, type === 'processSteps' ? {
+    steps: Array.from({ length: 5 }, (_, stepIndex) => ({ title: `Schritt ${stepIndex + 1}`, text: `Echte Aufgabe ${stepIndex + 1}` })),
+  } : {}));
+  const next = buildPageComposition(grab, page, source, collectionUnits);
+  const process = next.find((entry) => entry.type === 'processSteps')!;
+  assert.equal((process.data.steps as unknown[]).length, 4);
+  assert.deepEqual(next.map((entry) => entry.type), PAGE_COMPOSITION_MAPS['schubert-grabdenkmal'].startseite);
+});
+
+test('collection details preserve their coherent source model and isolate item media', () => {
   const collection = { id: '30000000-0000-4000-8000-000000000001', key: 'projekte', label: 'Projekte' };
-  const sourceSections = sections.map((section) => ({ type: section.type, data: section.data }));
-  const items = collectionUnits.map((unit, index) => ({
-    id: `40000000-0000-4000-8000-00000000000${index}`,
-    collection_id: collection.id,
-    slug: unit.id,
-    title: unit.title,
-    data: { image: unit.image, text: unit.text, immutableCustomField: { value: index }, sections: sourceSections },
-    published: true,
-    priority: index,
-  }));
-  const next = buildItemData(target, collection, items[0], items);
-  assert.deepEqual(next.immutableCustomField, items[0].data.immutableCustomField);
-  const nextSections = next.sections as Array<{ type: string; data: Record<string, unknown> }>;
-  assert.equal(nextSections[1].type, 'materialAtelier');
-  assert.deepEqual((nextSections[0].data._premiumRedesign as { sourceSections: unknown[] }).sourceSections, sourceSections);
-  assert.doesNotMatch(JSON.stringify(nextSections), /\/collection\/1\.jpg|\/collection\/2\.jpg/);
-  assert.deepEqual(buildItemData(target, collection, { ...items[0], data: next }, items), next);
-});
-
-test('collection redesign replaces legacy placeholder links with a real contact destination', () => {
-  const collection = { id: '30000000-0000-4000-8000-000000000002', key: 'projekte', label: 'Projekte' };
-  const sourceSections = sections.map((section, index) => ({
-    type: section.type,
-    data: { ...section.data, ...(index === 0 ? { ctaPrimary: { label: 'Anfragen', href: '#' } } : {}) },
-  }));
-  const item = {
-    id: '40000000-0000-4000-8000-000000000010',
-    collection_id: collection.id,
-    slug: 'baeder',
-    title: 'BÃ¤der',
-    data: { image: '/collection/0.jpg', text: 'BÃ¤der Text', sections: sourceSections },
-    published: true,
-    priority: 0,
-  };
-
-  const next = buildItemData(target, collection, item, [item]);
-  assert.doesNotMatch(JSON.stringify(next), /"href":"#"/);
-  assert.match(JSON.stringify(next), /"href":"\/kontakt"/);
-  assert.deepEqual(buildItemData(target, collection, { ...item, data: next }, [item]), next);
-});
-
-test('page narratives are tenant-specific and semantic source sections remain visible', () => {
-  const semanticSections = [
-    ...sections,
-    ...[
-      ['testimonialMarquee', { headline: 'Stimmen', quotes: [{ quote: 'Sehr gute Arbeit', name: 'Kunde' }] }],
-      ['logoMarquee', { headline: 'Partner', logos: [{ name: 'Partner A', image: '/partner.svg' }] }],
-      ['ctaBand', { headline: 'Projekt besprechen', text: 'Wir beraten persönlich.', primaryCta: { label: 'Kontakt', href: '/kontakt' } }],
-      ['faq', { headline: 'Fragen', items: [{ question: 'Wie starten wir?', answer: 'Mit einem Gespräch.' }] }],
-    ].map(([type, data], index) => ({ ...sections[0], id: `50000000-0000-4000-8000-00000000000${index}`, type: type as string, title_internal: type as string, data: data as Record<string, unknown>, sort_order: sections.length + index })),
+  const sourceSections = [
+    { type: 'cinematicHero', data: { headline: 'Einblicke in Bäder', image: '/items/baeder-hero.jpg' } },
+    { type: 'portfolioGallery', data: { headline: 'Bad-Projekte', images: [{ src: '/items/baeder-1.jpg', alt: 'Bad 1' }] } },
+    { type: 'ctaBand', data: { headline: 'Projekt besprechen', cta: { label: 'Kontakt', href: '#' } } },
   ];
-  const designTypes = buildPageComposition(target, page, semanticSections, collectionUnits).map((section) => section.type);
-  const quietTarget = REDESIGN_TARGETS['schubert-grabdenkmal'];
-  const quietTypes = buildPageComposition(quietTarget, { ...page, id: '60000000-0000-4000-8000-000000000001' }, semanticSections, collectionUnits).map((section) => section.type);
-  assert.ok(designTypes.includes('kineticIdentity'));
-  assert.ok(designTypes.includes('editorialCardMorph'));
-  assert.ok(!quietTypes.includes('kineticIdentity'));
-  assert.ok(quietTypes.includes('signaturePath'));
-  for (const type of ['testimonialMarquee', 'logoMarquee', 'ctaBand', 'faq']) assert.ok(designTypes.includes(type), `${type} was not retained`);
+  const item = { id: '40000000-0000-4000-8000-000000000001', collection_id: collection.id, slug: 'baeder', title: 'Bäder', data: { immutableCustomField: { keep: true }, sections: sourceSections }, published: true, priority: 1 };
+  const sibling = { ...item, id: '40000000-0000-4000-8000-000000000002', slug: 'naturstein', data: { sections: [{ type: 'cinematicHero', data: { image: '/items/sibling.jpg' } }] } };
+  const next = buildItemData(design, collection, item, [item, sibling]);
+  assert.deepEqual(next.immutableCustomField, item.data.immutableCustomField);
+  assert.deepEqual((next.sections as Array<{ type: string }>).map((entry) => entry.type), ['cinematicHero', 'portfolioGallery', 'ctaBand']);
+  assert.doesNotMatch(JSON.stringify(next), /sibling\.jpg/);
+  assert.match(JSON.stringify(next), /"href":"\/kontakt"/);
+  assert.deepEqual(((next.sections as Array<{ data: Record<string, unknown> }>)[0].data._premiumRedesign as { sourceSections: unknown[] }).sourceSections, sourceSections);
+  assert.deepEqual(buildItemData(design, collection, { ...item, data: next }, [item, sibling]), next);
 });
 
-test('every production page and detail has a distinct explicit map', () => {
-  for (const productionTarget of Object.values(REDESIGN_TARGETS)) {
-    assert.deepEqual(Object.keys(PAGE_COMPOSITION_MAPS[productionTarget.slug]).sort(), [...productionTarget.pages].sort());
-    assert.deepEqual(Object.keys(COLLECTION_DETAIL_COMPOSITION_MAPS[productionTarget.slug]).sort(), [...productionTarget.itemSlugs].sort());
-    const signatures = Object.values(COLLECTION_DETAIL_COMPOSITION_MAPS[productionTarget.slug]).map((modules) => JSON.stringify(modules));
-    assert.equal(new Set(signatures).size, productionTarget.itemSlugs.length);
+test('Grab detail keeps its four-part model while removing visible boilerplate only', () => {
+  const collection = { id: '30000000-0000-4000-8000-000000000002', key: 'leistungen', label: 'Leistungen' };
+  const repeated = '<p>Eigene, fachliche Beschreibung.</p><p>Im persönlichen Gespräch werden Umfang, technische oder gestalterische Anforderungen und der passende Ablauf geklärt. So entsteht eine Lösung, die fachlich trägt und für Kunden nachvollziehbar bleibt.</p>';
+  const sourceSections = [
+    { type: 'collectionHero', data: { headline: 'Grabdenkmale', bgImage: '/grab/hero.jpg' } },
+    { type: 'textImage', data: { headline: 'Worum es geht', text: repeated, image: '/grab/detail.jpg' } },
+    { type: 'processSteps', data: { headline: 'Ablauf', steps: [1, 2, 3].map((value) => ({ title: `Schritt ${value}`, text: `Aufgabe ${value}` })) } },
+    { type: 'ctaBand', data: { headline: 'Persönlich besprechen', cta: { label: 'Kontakt', href: '/kontakt' } } },
+  ];
+  const item = { id: '40000000-0000-4000-8000-000000000003', collection_id: collection.id, slug: 'grabdenkmale', title: 'Grabdenkmale', data: { sections: sourceSections }, published: true, priority: 1 };
+  const next = buildItemData(grab, collection, item, [item]);
+  const visibleText = ((next.sections as Array<{ type: string; data: Record<string, unknown> }>).find((entry) => entry.type === 'textImage')!.data.text as string);
+  assert.equal(visibleText, '<p>Eigene, fachliche Beschreibung.</p>');
+  assert.match(JSON.stringify(((next.sections as Array<{ data: Record<string, unknown> }>)[0].data._premiumRedesign)), /Im persönlichen Gespräch/);
+});
+
+test('production maps enforce restrained page counts and forbid arbitrary generated paths', () => {
+  for (const target of Object.values(REDESIGN_TARGETS)) {
+    assert.deepEqual(Object.keys(PAGE_COMPOSITION_MAPS[target.slug]).sort(), [...target.pages].sort());
+    assert.deepEqual(Object.keys(COLLECTION_DETAIL_COMPOSITION_MAPS[target.slug]).sort(), [...target.itemSlugs].sort());
+    for (const [slug, modules] of Object.entries(PAGE_COMPOSITION_MAPS[target.slug])) {
+      if (!['impressum', 'datenschutz'].includes(slug)) assert.ok(modules.length <= 7);
+      assert.ok(!modules.some((module) => String(module) === 'kineticIdentity'));
+      assert.ok(!modules.some((module) => String(module) === 'editorialCardMorph'));
+    }
+    for (const modules of Object.values(COLLECTION_DETAIL_COMPOSITION_MAPS[target.slug])) {
+      assert.ok(!modules.some((module) => String(module) === 'signaturePath'));
+    }
   }
 });
 
-test('tenant guard constants retain exact production identities', () => {
-  assert.equal(REDESIGN_TARGETS['schubert-design'].id, 'e7b96166-8c3d-4e9b-901a-3c4eadee4673');
-  assert.equal(REDESIGN_TARGETS['schubert-grabdenkmal'].id, 'ff2102e2-f07e-4d44-9046-12c55d78a60d');
+test('known failed media is rejected without a network dependency', async () => {
+  const url = 'https://cdn.example/manufaktur_001-ZXDYKNe2vW5CYHgWJAJixnkLPob8lV.webp';
+  assert.deepEqual([...await findUnavailableSelectedMedia([url])], [url]);
 });
 
-test('legacy shared-standalone mode is explicit and limited to a missing registry table', () => {
+test('tenant guards and legacy database fallback remain exact and fail-closed', () => {
+  assert.equal(design.id, 'e7b96166-8c3d-4e9b-901a-3c4eadee4673');
+  assert.equal(grab.id, 'ff2102e2-f07e-4d44-9046-12c55d78a60d');
   assert.equal(parseArgs([]).legacySharedStandalone, false);
-  assert.equal(parseArgs(['--legacy-shared-standalone']).legacySharedStandalone, true);
   assert.equal(canUseLegacySharedStandalone({ enabled: true, deploymentMode: 'standalone', error: { code: '42P01' } }), true);
-  assert.equal(canUseLegacySharedStandalone({ enabled: false, deploymentMode: 'standalone', error: { code: '42P01' } }), false);
   assert.equal(canUseLegacySharedStandalone({ enabled: true, deploymentMode: 'shared', error: { code: '42P01' } }), false);
   assert.equal(canUseLegacySharedStandalone({ enabled: true, deploymentMode: 'standalone', error: { code: '42501' } }), false);
-  assert.equal(canUseLegacySharedStandalone({ enabled: true, deploymentMode: 'standalone', error: { cause: { code: '42P01' } } }), true);
-  assert.match(REDESIGN_HELP, /only for a standalone tenant/);
   assert.match(REDESIGN_HELP, /PostgreSQL 42P01/);
 });

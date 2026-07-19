@@ -10,10 +10,12 @@ import { DomainManager } from './domain-manager';
 import { DesignEditor } from './design-editor';
 import { PatManager } from './pat-manager';
 import { getActiveToken } from './pat-actions';
-import { getBookingAddonStatus, getShopAddonStatus } from '../actions';
+import { getBillingAddonStatus, getBookingAddonStatus, getShopAddonStatus } from '../actions';
 import { requireCrmAdmin } from '@/lib/session';
+import { getTenantDataDb, getTenantDatabaseRecord } from '@/lib/tenant-data-db';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 300;
 
 export default async function TenantDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireCrmAdmin();
@@ -22,15 +24,18 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, id));
   if (!tenant) notFound();
+  const dataDb = await getTenantDataDb(id);
 
-  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive, bookingActive] = await Promise.all([
+  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive, bookingActive, billingActive, databaseRecord] = await Promise.all([
     db.select().from(tenantDomains).where(eq(tenantDomains.tenantId, id)),
-    db.select().from(pages).where(eq(pages.tenantId, id)),
-    db.select({ count: count() }).from(publishedSnapshots).where(eq(publishedSnapshots.tenantId, id)),
-    db.select().from(globalSettings).where(eq(globalSettings.tenantId, id)),
+    dataDb.select().from(pages).where(eq(pages.tenantId, id)),
+    dataDb.select({ count: count() }).from(publishedSnapshots).where(eq(publishedSnapshots.tenantId, id)),
+    dataDb.select().from(globalSettings).where(eq(globalSettings.tenantId, id)),
     getActiveToken(id),
     getShopAddonStatus(id),
     getBookingAddonStatus(id),
+    getBillingAddonStatus(id),
+    getTenantDatabaseRecord(id),
   ]);
 
   const brand = settings[0]?.brand as Record<string, unknown> | undefined;
@@ -116,7 +121,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
         {/* Right sidebar */}
         <div className="space-y-6">
-          <TenantActions tenantId={id} currentStatus={tenant.status} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} shopActive={shopActive} bookingActive={bookingActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
+          <TenantActions tenantId={id} currentStatus={tenant.status} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} shopActive={shopActive} bookingActive={bookingActive} billingActive={billingActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
 
           {/* Info */}
           <div className="crm-card p-5 space-y-3 text-sm">
@@ -141,6 +146,18 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                   <span>Vercel Project</span>
                   <span className="text-slate-900 font-mono text-xs">{tenant.vercelProjectId.slice(0, 12)}…</span>
                 </div>
+              )}
+              {databaseRecord && (
+                <>
+                  <div className="flex justify-between">
+                    <span>Tenant-Datenbank</span>
+                    <span className={databaseRecord.status === 'active' ? 'crm-badge-green' : 'crm-badge-amber'}>{databaseRecord.status === 'active' ? 'Isoliert' : databaseRecord.status}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Neon Project</span>
+                    <span className="text-slate-900 font-mono text-xs">{databaseRecord.projectId.slice(0, 12)}…</span>
+                  </div>
+                </>
               )}
               {typeof brand?.companyName === 'string' && brand.companyName && (
                 <div className="flex justify-between">

@@ -37,7 +37,13 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof
   refunded: { label: 'Erstattet', color: 'bg-zinc-100 text-zinc-800', icon: XCircle },
 };
 
-const STATUS_FLOW = ['pending', 'paid', 'processing', 'shipped', 'delivered'];
+const STATUS_TRANSITIONS: Record<string, string[]> = {
+  awaiting_payment: ['pending', 'paid'],
+  pending: ['paid', 'processing'],
+  paid: ['processing'],
+  processing: ['shipped'],
+  shipped: ['delivered'],
+};
 
 function formatPrice(cents: number) {
   return (cents / 100).toFixed(2).replace('.', ',') + ' €';
@@ -47,11 +53,11 @@ function formatDate(date: Date) {
   return new Date(date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
+export function OrdersClient({ orders: initialOrders, initialOrderId }: { orders: Order[]; initialOrderId?: string }) {
   const [orders, setOrders] = useState(initialOrders);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(initialOrderId || null);
   const [updating, setUpdating] = useState<string | null>(null);
 
   const filtered = orders.filter(o => {
@@ -224,8 +230,7 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
                     <div>
                       <h4 className="text-xs font-semibold text-zinc-500 uppercase mb-2">Status ändern</h4>
                       <div className="flex flex-wrap gap-2">
-                        {STATUS_FLOW.map(s => {
-                          if (s === order.status) return null;
+                        {(STATUS_TRANSITIONS[order.status] || []).map(s => {
                           const sCfg = STATUS_CONFIG[s];
                           return (
                             <button

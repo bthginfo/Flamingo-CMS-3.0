@@ -5,6 +5,7 @@ import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { couponEffect } from '@/lib/shop-totals';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { isShopActive } from '@/lib/shop-pages';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -19,6 +20,7 @@ export async function POST(req: NextRequest) {
   const { code, subtotalCents, tenantId: bodyTenantId } = await req.json();
   const tenantId = resolveExplicitTenant(bodyTenantId) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+  if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
   if (!code) return NextResponse.json({ error: 'Code required' }, { status: 400 });
 
   // Throttle to stop brute-forcing valid coupon codes / hammering the DB.

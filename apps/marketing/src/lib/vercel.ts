@@ -78,10 +78,10 @@ export async function removeDomainFromRenderer(domain: string): Promise<void> {
 }
 
 /** Check domain configuration status. */
-export async function checkDomainStatus(domain: string): Promise<{ configured: boolean; verified: boolean; dns: unknown }> {
-  const projectId = await getRendererProjectId();
+export async function checkDomainStatus(domain: string, projectId?: string): Promise<{ configured: boolean; verified: boolean; dns: unknown }> {
+  const resolvedProjectId = projectId || await getRendererProjectId();
   try {
-    const data = await vercelFetch(`/v9/projects/${projectId}/domains/${domain}`);
+    const data = await vercelFetch(`/v9/projects/${resolvedProjectId}/domains/${encodeURIComponent(domain)}`);
     return { configured: true, verified: data.verified ?? false, dns: data.verification ?? [] };
   } catch {
     return { configured: false, verified: false, dns: [] };
@@ -89,12 +89,63 @@ export async function checkDomainStatus(domain: string): Promise<{ configured: b
 }
 
 /** Create a standalone Vercel project for a tenant. */
-export async function createStandaloneProject(slug: string, tenantId: string): Promise<{ projectId: string; projectUrl: string; blobConnected: boolean }> {
+type ProjectEnvironmentVariable = {
+  key: string;
+  value: string;
+  target: string[];
+  type: 'encrypted' | 'plain';
+};
+
+async function configureProjectEnvironment(
+  projectId: string,
+  variables: Array<ProjectEnvironmentVariable & { replaceExisting: boolean }>,
+) {
+  const current = await vercelFetch(`/v9/projects/${projectId}/env`) as { envs?: Array<{ id: string; key: string }> };
+  const byKey = new Map((current.envs || []).map(variable => [variable.key, variable]));
+  for (const { replaceExisting, ...variable } of variables) {
+    const existing = byKey.get(variable.key);
+    if (existing) {
+      // Per-tenant signing keys stay stable across retries and DB migrations.
+      if (replaceExisting) {
+        await vercelFetch(`/v9/projects/${projectId}/env/${existing.id}`, 'PATCH', {
+          value: variable.value,
+          target: variable.target,
+          type: variable.type,
+        });
+      }
+      continue;
+    }
+    await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [variable]);
+  }
+}
+
+export async function waitForVercelDeploymentReady(deploymentId: string, timeoutMs = 300_000) {
+  if (!deploymentId) throw new Error('Es wurde keine Vercel-Deployment-ID zurückgegeben. Der automatische Cutover wurde abgebrochen.');
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    const deployment = await vercelFetch(`/v13/deployments/${encodeURIComponent(deploymentId)}`) as {
+      readyState?: string;
+      state?: string;
+      url?: string;
+      errorCode?: string;
+      errorMessage?: string;
+    };
+    const state = (deployment.readyState || deployment.state || '').toUpperCase();
+    if (state === 'READY') return { deploymentId, url: deployment.url || '' };
+    if (['ERROR', 'CANCELED', 'CANCELLED'].includes(state)) {
+      throw new Error(`Das Standalone-Deployment ist fehlgeschlagen (${deployment.errorCode || state}): ${deployment.errorMessage || 'Keine weiteren Details'}`);
+    }
+    await new Promise(resolve => setTimeout(resolve, 2_500));
+  }
+  throw new Error('Das Standalone-Deployment wurde nicht rechtzeitig bereit. Die Quelldaten wurden nicht gelöscht.');
+}
+
+export async function createStandaloneProject(slug: string, tenantId: string, databaseUrl: string): Promise<{ projectId: string; projectUrl: string; blobConnected: boolean; projectCreated: boolean; deploymentId: string }> {
   const projectName = `flamingo-${slug}`;
 
   // Validate required env vars upfront
   if (!process.env.VERCEL_TOKEN) throw new Error('VERCEL_TOKEN ist nicht gesetzt. Bitte in den Vercel-Umgebungsvariablen konfigurieren.');
-  if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL ist nicht gesetzt.');
+  if (!databaseUrl?.startsWith('postgres')) throw new Error('Eine dedizierte Standalone-Datenbankverbindung fehlt.');
 
   // Create project linked to the monorepo
   const repoId = process.env.GITHUB_REPO_ID;
@@ -110,6 +161,7 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
   }
 
   let project: Record<string, unknown>;
+  let projectCreated = true;
   try {
     project = await vercelFetch('/v9/projects', 'POST', projectBody);
   } catch (err) {
@@ -117,6 +169,7 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     // If project already exists, try to fetch it
     if (msg.includes('409') || msg.includes('already exist')) {
       project = await vercelFetch(`/v9/projects/${projectName}`);
+      projectCreated = false;
     } else {
       throw new Error(`Vercel-Projekt konnte nicht erstellt werden: ${msg}`);
     }
@@ -124,46 +177,16 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
 
   const projectId = project.id as string;
 
-  // Set environment variables — skip the upfront check since we already validated
-  const dbUrl = process.env.DATABASE_URL!;
-
-  const envVars = [
-    { key: 'DATABASE_URL', value: dbUrl, target: ['production', 'preview'], type: 'encrypted' },
-    { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain' },
+  const envVars: Array<ProjectEnvironmentVariable & { replaceExisting: boolean }> = [
+    { key: 'DATABASE_URL', value: databaseUrl, target: ['production', 'preview'], type: 'encrypted', replaceExisting: true },
+    { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain', replaceExisting: true },
     // Tenant deployments must never share signing or configuration-encryption
     // keys. A compromise is then contained to one renderer project.
-    { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted' },
-    { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted' },
-    { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted' },
+    { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
+    { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
+    { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
   ];
-
-  try {
-    await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', envVars);
-  } catch (err) {
-    const msg = (err as Error).message || '';
-    // If some vars already exist, update them individually
-    if (msg.includes('ENV_CONFLICT') || msg.includes('already exists')) {
-      for (const envVar of envVars) {
-        try {
-          await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [envVar]);
-        } catch (innerErr) {
-          const innerMsg = (innerErr as Error).message || '';
-          if (innerMsg.includes('ENV_CONFLICT') || innerMsg.includes('already exists')) {
-            // Fetch existing env var ID and update it
-            const existing = await vercelFetch(`/v9/projects/${projectId}/env`) as { envs: Array<{ id: string; key: string }> };
-            const found = existing.envs?.find((e) => e.key === envVar.key);
-            if (found) {
-              await vercelFetch(`/v9/projects/${projectId}/env/${found.id}`, 'PATCH', { value: envVar.value, target: envVar.target, type: envVar.type });
-            }
-          } else {
-            console.warn(`Failed to set env var ${envVar.key}:`, innerMsg);
-          }
-        }
-      }
-    } else {
-      throw err;
-    }
-  }
+  await configureProjectEnvironment(projectId, envVars);
 
   // Connect shared Blob store to the new project (provides BLOB_READ_WRITE_TOKEN automatically)
   const blobStoreId = process.env.VERCEL_BLOB_STORE_ID;
@@ -215,19 +238,29 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
   // This guarantees the running deployment has access to BLOB_READ_WRITE_TOKEN,
   // regardless of any earlier auto-deployment that started without it.
   const numericRepoId = process.env.GITHUB_REPO_NUMERIC_ID;
+  let deploymentId = '';
   if (numericRepoId) {
-    try {
-      await vercelFetch('/v13/deployments', 'POST', {
-        name: projectName,
-        target: 'production',
-        gitSource: { type: 'github', repoId: Number(numericRepoId), ref: 'main' },
-      });
-    } catch (err) {
-      console.warn('Final redeploy after env setup failed (non-critical):', (err as Error).message);
-    }
-  }
+    const deployment = await vercelFetch('/v13/deployments', 'POST', {
+      name: projectName,
+      target: 'production',
+      gitSource: { type: 'github', repoId: Number(numericRepoId), ref: 'main' },
+    }) as { id?: string };
+    deploymentId = deployment.id || '';
+  } else throw new Error('GITHUB_REPO_NUMERIC_ID muss für ein verifiziertes, vollautomatisches Production-Deployment gesetzt sein.');
+  if (!deploymentId) throw new Error('Vercel hat keine Production-Deployment-ID zurückgegeben.');
+  await waitForVercelDeploymentReady(deploymentId);
 
-  return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app`, blobConnected };
+  return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app`, blobConnected, projectCreated, deploymentId };
+}
+
+/** Switches an existing standalone renderer between databases without rotating its auth secrets. */
+export async function setStandaloneDatabaseConnection(projectId: string, slug: string, tenantId: string, databaseUrl: string) {
+  if (!databaseUrl?.startsWith('postgres')) throw new Error('Eine gültige Datenbankverbindung fehlt.');
+  await configureProjectEnvironment(projectId, [
+    { key: 'DATABASE_URL', value: databaseUrl, target: ['production', 'preview'], type: 'encrypted', replaceExisting: true },
+    { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain', replaceExisting: true },
+  ]);
+  await triggerProjectDeployment(`flamingo-${slug}`);
 }
 
 /** Configure Blob storage for an existing standalone project. */
@@ -296,6 +329,15 @@ export async function addDomainToProject(projectId: string, domain: string): Pro
       return { configured: true, verified: true };
     }
     throw err;
+  }
+}
+
+export async function removeDomainFromProject(projectId: string, domain: string): Promise<void> {
+  try {
+    await vercelFetch(`/v9/projects/${projectId}/domains/${encodeURIComponent(domain)}`, 'DELETE');
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.includes('404')) throw error;
   }
 }
 

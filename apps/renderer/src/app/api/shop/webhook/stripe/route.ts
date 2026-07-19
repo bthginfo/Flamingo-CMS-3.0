@@ -66,12 +66,21 @@ export async function POST(req: NextRequest) {
       .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
 
     if (order && (order.status === 'pending' || order.status === 'awaiting_payment')) {
-      await db.update(orders).set({
+      if (session.payment_status !== 'paid' || session.amount_total !== order.totalCents || session.currency?.toUpperCase() !== (settings.currency || 'EUR').toUpperCase()) {
+        console.error('[Stripe Webhook] Paid session did not match order total', { orderId, amount: session.amount_total, currency: session.currency });
+        return new NextResponse('Payment mismatch', { status: 400 });
+      }
+      const [updated] = await db.update(orders).set({
         status: 'paid',
         paymentStatus: 'paid',
         paymentId: session.payment_intent as string || session.id,
         updatedAt: new Date(),
-      }).where(eq(orders.id, orderId));
+      }).where(and(
+        eq(orders.id, orderId),
+        eq(orders.tenantId, tenantId),
+        eq(orders.status, order.status),
+      )).returning({ id: orders.id });
+      if (!updated) return new NextResponse('ok', { status: 200 });
 
       await db.insert(orderStatusHistory).values({
         orderId,

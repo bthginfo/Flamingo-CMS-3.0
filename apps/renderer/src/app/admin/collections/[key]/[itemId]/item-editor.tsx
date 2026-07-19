@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
 import { updateItemAction } from '../../actions';
 import { getSectionCopySourceAction, getSectionCopySourcesAction } from '@/app/admin/pages/actions';
@@ -22,6 +20,8 @@ import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
 import { EditorWorkspaceShell } from '@/app/admin/editor/editor-workspace-shell';
+import { EditorDocumentHeader } from '@/app/admin/editor/editor-document-header';
+import { useLivePreviewMessageBridge } from '@/app/admin/editor/use-live-preview-message-bridge';
 import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
@@ -39,7 +39,7 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
+export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n, collections, tenantId, previewProducts }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; tenantId?: string; previewProducts?: { id: string; title: string; slug: string; priceCents: number; comparePriceCents?: number | null; images: unknown }[]; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string }; collections?: { key: string; label: string; items: { id: string; title: string; slug: string; data: unknown }[] }[] }) {
   const [item, setItem] = useState(initial);
   const [sections, setSections] = useState<Section[]>(
     collectionItemSectionsToEditableSections(initial.data.sections, generateId)
@@ -50,7 +50,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   const styleCssVars = getStyleCssVars(industry, styleVariant);
   const resolvedVars = { ...styleCssVars, ...getBrandCssVars(brand, styleCssVars) };
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [hasDirty, setHasDirty] = useState(false);
   const [copySources, setCopySources] = useState<{ pageId: string; pageTitle: string; pageSlug: string; sections: { id: string; type: string; titleInternal: string | null }[] }[]>([]);
@@ -59,26 +59,29 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   const seoRef = useRef<ItemSeoPanelHandle>(null);
   const sectionsRef = useRef(sections);
   sectionsRef.current = sections;
+  const handleSectionChangeRef = useRef<((sectionId: string, data: Record<string, unknown>) => void) | null>(null);
+  const handleSaveColorOverridesRef = useRef<((sectionId: string, overrides: Record<string, unknown> | null) => void) | null>(null);
 
   // Send live preview data to iframe
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
     const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current);
-    preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
-  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale]);
+    preview.sendLiveData({ sections: liveSections.map(section => section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId, products: previewProducts } } : section), industry, styleVariant, locale: activeLocale, collections });
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale, collections, tenantId, previewProducts]);
 
   // Re-send on sections array change (add/remove/reorder/toggle)
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
 
-  // Listen for iframe ready signal to send initial data
-  useEffect(() => {
-    function onMsg(e: MessageEvent) {
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
-    }
-    window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
-  }, [sendPreviewData]);
+  useLivePreviewMessageBridge({
+    sendPreviewData,
+    iframeRef: preview.iframeRef,
+    sectionsRef,
+    pendingChangesRef: pendingChanges,
+    sectionChangeRef: handleSectionChangeRef,
+    colorChangeRef: handleSaveColorOverridesRef,
+    i18n,
+    activeLocale,
+  });
 
   function markDirty() { setHasDirty(true); setSaved(false); }
 
@@ -165,9 +168,9 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     setSaved(false);
     if (preview.isOpen) {
       const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current, { sectionId, data: saveData });
-      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+      preview.sendLiveData({ sections: liveSections.map(section => section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId, products: previewProducts } } : section), industry, styleVariant, locale: activeLocale, collections });
     }
-  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale]);
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale, collections, tenantId, previewProducts]);
 
   function handleSaveMeta(sectionId: string, meta: Partial<Section>) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, ...meta } : s));
@@ -191,7 +194,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     markDirty();
     if (preview.isOpen) {
       const liveSections = buildLiveSections(nextSections, pendingChanges.current);
-      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+      preview.sendLiveData({ sections: liveSections.map(section => section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId, products: previewProducts } } : section), industry, styleVariant, locale: activeLocale, collections });
     }
     toast.success('Sektionstyp geändert');
   }
@@ -214,6 +217,9 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       toast.success('Farben übernommen', { id: `color-save-${sectionId}` });
     }, 1500);
   }
+
+  handleSectionChangeRef.current = handleSectionChange;
+  handleSaveColorOverridesRef.current = handleSaveColorOverrides;
 
   async function persistAll(announce: boolean, publishItem = false): Promise<boolean> {
     setSaving(true);
@@ -284,31 +290,37 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   return (
     <PageSectionsProvider sections={sectionAnchors}>
       <EditorWorkspaceShell>
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Link href={`/admin/collections/${collectionKey}`} className="text-gray-500 hover:text-gray-800"><ArrowLeft size={20} /></Link>
-          <div className="flex-1">
-            <input className="text-2xl font-bold bg-transparent border-none outline-none w-full" value={item.title} onChange={(e) => { setItem({ ...item, title: e.target.value }); markDirty(); }} />
-            <div className="flex items-center gap-3 mt-1">
-              <span className="text-sm text-gray-500">/c/{collectionKey}/</span>
-              <input className="text-sm text-gray-500 bg-transparent border-none outline-none" value={item.slug} onChange={(e) => { setItem({ ...item, slug: e.target.value }); markDirty(); }} />
-            </div>
-          </div>
-        </div>
-
-        {/* Item meta */}
-        <div className="admin-card mb-4 p-4">
-          <div className="flex flex-wrap items-center gap-6">
-            <label className="flex items-center gap-2.5 text-sm cursor-pointer">
-              <input type="checkbox" className="rounded border-gray-300" checked={item.published} onChange={() => { setItem({ ...item, published: !item.published }); markDirty(); }} />
-              <span className={item.published ? 'text-green-700 font-medium' : 'text-zinc-600'}>Veröffentlicht</span>
+        <EditorDocumentHeader
+          backHref={`/admin/collections/${collectionKey}`}
+          kindLabel={collectionKey}
+          title={item.title}
+          onTitleChange={(title) => { setItem({ ...item, title }); markDirty(); }}
+          pathPrefix={`/c/${collectionKey}/`}
+          slug={item.slug}
+          onSlugChange={(slug) => { setItem({ ...item, slug }); markDirty(); }}
+          statusActive={item.published}
+          statusActiveLabel="Veröffentlicht"
+          statusInactiveLabel="Entwurf"
+          onStatusChange={(published) => { setItem({ ...item, published }); markDirty(); }}
+          dirty={hasDirty}
+          saved={saved}
+          saving={saving}
+          secondaryControls={(
+            <label className="flex max-w-sm items-center justify-between gap-4 text-sm">
+              <span>
+                <span className="block font-semibold text-zinc-800">Priorität</span>
+                <span className="mt-0.5 block text-xs text-zinc-500">Höhere Werte erscheinen weiter oben.</span>
+              </span>
+              <input
+                type="number"
+                className="admin-input w-24 !py-2 text-center"
+                value={item.priority}
+                onChange={(event) => { setItem({ ...item, priority: parseInt(event.target.value, 10) || 0 }); markDirty(); }}
+                aria-label="Priorität"
+              />
             </label>
-            <label className="flex items-center gap-2.5 text-sm">
-              <span className="text-zinc-500">Priorität</span>
-              <input type="number" className="admin-input w-20 !py-1.5 text-center" value={item.priority} onChange={(e) => { setItem({ ...item, priority: parseInt(e.target.value, 10) || 0 }); markDirty(); }} />
-            </label>
-          </div>
-        </div>
+          )}
+        />
 
         <EditorLocaleTabs i18n={i18n} activeLocale={activeLocale} onChange={setActiveLocale} />
 
@@ -352,6 +364,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
         <EditorActionBar
           previewOpen={preview.isOpen}
           saved={saved}
+          dirty={hasDirty}
           saving={saving}
           publishing={publishing}
           onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open(); }}

@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { products, productVariants, variantOptions, productCategories } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
+import { isShopActive } from '@/lib/shop-pages';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -32,6 +33,7 @@ export async function GET(
   const queryTenantId = req.nextUrl.searchParams.get('tenantId');
   const tenantId = resolveExplicitTenant(queryTenantId) || resolveTenantFromReferer(req) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+  if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
   const db = getDb();
 
@@ -54,8 +56,37 @@ export async function GET(
   }
 
   return NextResponse.json({
-    product: { ...product, images: product.images ?? [], categoryName: category?.name, categorySlug: category?.slug },
-    variants,
-    options,
+    product: {
+      id: product.id,
+      title: product.title,
+      slug: product.slug,
+      description: product.description,
+      shortDescription: product.shortDescription,
+      priceCents: product.priceCents,
+      comparePriceCents: product.comparePriceCents,
+      currency: product.currency,
+      stock: product.stock,
+      trackStock: product.trackStock,
+      isDigital: product.isDigital,
+      images: product.images ?? [],
+      highlights: product.highlights ?? [],
+      categoryName: category?.name,
+      categorySlug: category?.slug,
+    },
+    variants: variants.map(variant => ({
+      id: variant.id,
+      name: variant.name,
+      priceCents: variant.priceCents,
+      stock: variant.stock,
+      attributes: variant.attributes ?? {},
+      image: variant.image,
+      sortOrder: variant.sortOrder,
+    })),
+    options: options.map(option => ({
+      id: option.id,
+      name: option.name,
+      values: option.values ?? [],
+      sortOrder: option.sortOrder,
+    })),
   });
 }

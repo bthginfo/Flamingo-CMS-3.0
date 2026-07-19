@@ -869,6 +869,18 @@ html {
     color: var(--token-btn-text);
   }
 
+  /* Dynamic section link/accent rules must never repaint primary CTA copy.
+     Keep descendants on the same foreground so icons/spans cannot inherit the
+     accent colour and disappear against an accent-coloured button. */
+  [data-style] :is(a, button).cms-button.cms-button--primary {
+    background-color: var(--token-btn-bg) !important;
+    color: var(--token-btn-text) !important;
+  }
+
+  [data-style] :is(a, button).cms-button.cms-button--primary > * {
+    color: inherit !important;
+  }
+
   .cms-button--secondary {
     border-color: var(--token-btn-secondary-border);
     background: var(--token-btn-secondary-bg);

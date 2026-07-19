@@ -31,6 +31,7 @@ export function ShopProductGridSection({ data }: Props) {
   const showCategories = data.showCategories !== false;
   const columns = (data.columns as number) || 3;
   const shopBase = (data.basePath as string) || '/shop';
+  const isSectionPreview = data._isSectionPreview === true;
 
   const previewProducts = (data.products as Product[] | undefined) || [];
   const previewCategories = (data.categories as { name: string; slug: string }[] | undefined) || [];
@@ -168,8 +169,8 @@ export function ShopProductGridSection({ data }: Props) {
         </div>
       ) : (
         <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6 md:gap-8`}>
-          {filtered.map(product => (
-            <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
+          {filtered.map(product => {
+            const card = (
               <div className="rounded-2xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-[var(--token-card-bg)]">
                 <div className="aspect-[4/5] bg-[var(--token-section-bg-alt)] relative overflow-hidden">
                   {product.images?.[0] ? (
@@ -198,8 +199,17 @@ export function ShopProductGridSection({ data }: Props) {
                   </div>
                 </div>
               </div>
-            </Link>
-          ))}
+            );
+            return isSectionPreview ? (
+              <div key={product.id} className="group" aria-label={`${product.title} – Produktvorschau`}>
+                {card}
+              </div>
+            ) : (
+              <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
+                {card}
+              </Link>
+            );
+          })}
         </div>
       )}
       </div>

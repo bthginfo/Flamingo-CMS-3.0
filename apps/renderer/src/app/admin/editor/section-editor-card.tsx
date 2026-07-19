@@ -9,9 +9,8 @@ import { IndustrySectionDataEditor } from '../pages/[id]/industry-section-editor
 import { SectionColorEditor } from '../pages/[id]/section-color-editor';
 import type { SectionTypeDefinition } from '../pages/[id]/section-types';
 import type { EditableSection } from './editable-section';
+import { resolveEditableSectionData, type EditorI18nConfig } from './live-preview-data';
 import { getSectionEditorialSummary } from '@/lib/editorial-field-metadata';
-
-type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
 
 type Props = {
   section: EditableSection;
@@ -26,7 +25,7 @@ type Props = {
   onSaveMeta: (meta: Partial<EditableSection>) => void;
   onSaveColorOverrides: (overrides: Record<string, unknown> | null) => void;
   activeLocale?: string;
-  i18n?: I18nConfig;
+  i18n?: EditorI18nConfig;
 };
 
 export function SectionEditorCard({
@@ -51,9 +50,7 @@ export function SectionEditorCard({
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : !section.visible ? 0.5 : 1 };
   const typeInfo = sectionTypes.find((type) => type.type === section.type);
-  const editorData = i18n?.enabled && section.data._localized
-    ? (section.data[activeLocale || i18n.defaultLocale] as Record<string, unknown> ?? section.data[i18n.defaultLocale] as Record<string, unknown> ?? {})
-    : section.data;
+  const editorData = resolveEditableSectionData(section.data, i18n, activeLocale);
   const summary = getSectionEditorialSummary(editorData);
   const sectionLabel = typeInfo?.label ?? section.type;
 
@@ -101,7 +98,7 @@ export function SectionEditorCard({
           {/* Keyed by locale: the per-type editors hold their form state in
               useState(data) and would otherwise keep showing (and save!) the
               previous locale's content after a locale-tab switch. */}
-          <IndustrySectionDataEditor key={`${section.type}:${activeLocale || 'default'}`} industry={industry} type={section.type} data={editorData} onChange={stableOnChange} sectionId={section.id} />
+          <IndustrySectionDataEditor key={`${section.type}:${activeLocale || 'default'}`} industry={industry} type={section.type} definitionKey={section.definitionKey} data={editorData} onChange={stableOnChange} sectionId={section.id} />
           <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} industry={industry} definitionKey={section.definitionKey} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>

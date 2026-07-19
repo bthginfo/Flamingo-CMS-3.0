@@ -2,6 +2,7 @@ import { ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
+import { visibleText } from '@/lib/visible-content';
 
 export type AdvancedCta = { label?: string; href?: string };
 
@@ -22,8 +23,9 @@ export function AdvancedIntro({ badge, headline, subline, aside, compact = false
 
 export function AdvancedLink({ cta, className = '' }: { cta?: AdvancedCta; className?: string }) {
   const href = safeContentUrl(cta?.href || '');
-  if (!href || !cta?.label) return null;
-  return <a href={href} className={`inline-flex min-h-11 items-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)] transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${className}`} data-edit-path="cta.label">{cta.label}<ArrowUpRight size={16} /></a>;
+  const label = visibleText(cta?.label);
+  if (!href || !label) return null;
+  return <a href={href} className={`inline-flex min-h-11 items-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)] transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${className}`} data-edit-path="cta.label">{label}<ArrowUpRight size={16} /></a>;
 }
 
 export function EmptyVisual({ label = 'Bild ergänzen' }: { label?: string }) {

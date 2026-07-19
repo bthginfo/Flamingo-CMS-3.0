@@ -35,7 +35,7 @@ export function DomainManager({ tenantId, domains }: { tenantId: string; domains
 
   function handleCheck(domain: string) {
     startTransition(async () => {
-      const status = await checkDomainAction(domain);
+      const status = await checkDomainAction(tenantId, domain);
       if (status.verified) {
         toast.success(`${domain} ist verifiziert`);
       } else {

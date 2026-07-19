@@ -27,6 +27,7 @@ export async function getReservations() {
 
 export async function updateReservationStatus(id: string, status: string) {
   const tenantId = await requireWritableTenant();
+  if (!['pending', 'confirmed', 'cancelled'].includes(status)) throw new Error('Ungültiger Reservierungsstatus.');
   const db = getDb();
   await db.update(reservations).set({ status, updatedAt: new Date() }).where(and(
     eq(reservations.id, id),

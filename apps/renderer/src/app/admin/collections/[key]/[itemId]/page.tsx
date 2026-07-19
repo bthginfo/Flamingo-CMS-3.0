@@ -8,5 +8,5 @@ export default async function CollectionItemEditPage({ params }: { params: Promi
   const { key, itemId } = await params;
   const result = await getItemWithIndustryAction(itemId);
   if (!result) notFound();
-  return <ItemEditor item={result.item} collectionKey={key} industry={result.industry} styleVariant={result.styleVariant} brand={result.brand} hasShop={result.hasShop} hasBooking={result.hasBooking} i18n={result.i18n} />;
+  return <ItemEditor item={result.item} collectionKey={key} industry={result.industry} styleVariant={result.styleVariant} brand={result.brand} hasShop={result.hasShop} hasBooking={result.hasBooking} i18n={result.i18n} collections={result.collections} tenantId={result.tenantId} previewProducts={result.previewProducts} />;
 }

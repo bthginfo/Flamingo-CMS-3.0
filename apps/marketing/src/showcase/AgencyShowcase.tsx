@@ -316,6 +316,7 @@ function ShowcaseShell() {
     { to: '/templates', label: 'Templates' },
     { to: '/cms', label: 'CMS' },
     { to: '/shop', label: 'Shop' },
+    { to: '/rechnungen', label: 'Rechnungen' },
     { to: '/foerderrechner', label: 'Förderrechner' },
     { to: '/prozess', label: 'Ablauf' },
     { to: '/preise', label: 'Preise' },
@@ -469,6 +470,7 @@ function ShowcaseFooter() {
               <li><Link to="/templates" className="hover:text-accent">Templates</Link></li>
                   <li><Link to="/prozess" className="hover:text-accent">Ablauf</Link></li>
                   <li><Link to="/preise" className="hover:text-accent">Preise</Link></li>
+                  <li><Link to="/rechnungen" className="hover:text-accent">Rechnungen & Kunden</Link></li>
                   <li><Link to="/blog" className="hover:text-accent">Blog</Link></li>
                   <li><Link to="/ueber-uns" className="hover:text-accent">Über uns</Link></li>
               <li><Link to="/kontakt" className="hover:text-accent">Kontakt</Link></li>
@@ -548,6 +550,7 @@ function Landing({ newsSlot }: { newsSlot?: ReactNode } = {}) {
       <CmsFeaturesTeaserSection />
       <ShopFeaturesTeaserSection />
       <BookingAddonTeaserSection />
+      <BillingAddonTeaserSection />
       <ProcessTimelineSection />
       <ProductionSection />
       <NumbersSection />
@@ -602,6 +605,22 @@ function BookingAddonTeaserSection() {
             </div>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function BillingAddonTeaserSection() {
+  return (
+    <section className="py-20 md:py-24 bg-brand text-white">
+      <div className="container-x grid gap-10 md:grid-cols-12 md:items-center">
+        <div className="md:col-span-7 reveal">
+          <p className="font-mono text-xs uppercase tracking-[.2em] text-white/50">Rechnungen & Kunden · Paid Feature</p>
+          <h2 className="headline-lg mt-5">Kunden verwalten. Rechnungen schreiben. <em className="italic-pop">Ohne Tool-Wechsel.</em></h2>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">Eigene Stammdatenfelder, Leistungskatalog, fortlaufende Nummern, PDF, XRechnung, SMTP-Versand und nachvollziehbare Stornos direkt im CMS.</p>
+          <div className="mt-8 flex flex-wrap gap-3"><Link to="/rechnungen" className="btn-accent">Feature ansehen <span aria-hidden>→</span></Link><Link to="/kontakt" className="rounded-full border border-white/25 px-6 py-3 text-sm font-semibold hover:bg-white/10">Anfragen</Link></div>
+        </div>
+        <div className="md:col-span-5 reveal"><div className="rounded-3xl border border-white/10 bg-white/[.05] p-7"><p className="text-sm text-white/50">Einrichtung</p><p className="mt-1 font-display text-4xl">499 €</p><p className="mt-2 text-white/65">+ 29 € / Monat</p><div className="mt-6 space-y-3 text-sm text-white/80">{['PDF + XRechnung', 'Kunden + eigene Felder', 'SMTP + Storno + Prüfspur'].map(item => <div key={item} className="rounded-xl border border-white/10 px-4 py-3">{item}</div>)}</div></div></div>
       </div>
     </section>
   );
@@ -2005,10 +2024,10 @@ function Pricing() {
   const addons = [
     { t: 'Shop-Addon', p: 'ab 999 €', d: 'Vollwertiger Online-Shop mit Produkten, Kategorien, Varianten, Warenkorb, Checkout, Stripe & PayPal, Versandverwaltung, Rechnungen und Gutscheinen. Auf Wunsch inkl. Einrichtung: 1.450 €.', featured: true },
     { t: 'Booking-Addon', p: '399 € + 20 € / Monat', d: 'Flexibles Buchungssystem für Termine, Tische, Räume, ganze Tage oder Datumsbereiche. Inkl. Ressourcen, Verfügbarkeiten, Anfrage- oder Direktbuchung und automatischen E-Mails.', featured: true },
+    { t: 'Rechnungen & Kunden', p: '499 € + 29 € / Monat', d: 'Kundenstamm mit eigenen Feldern, Leistungskatalog, fortlaufende Rechnungsnummern, PDF, XRechnung, SMTP-Versand, Zahlungsstatus und nachvollziehbare Stornos.', featured: true },
     { t: 'Mehrsprachigkeit', p: 'ab 290 €', d: 'DE + EN, weitere Sprachen auf Anfrage. Inkl. Sprach-Switcher.' },
     { t: 'Foto-/Video-Nachshooting', p: '890 €', d: '1 Drehtag light für saisonale Updates, neue Produkte oder Teamwechsel (ca. 25 Bilder + 1 Reel).' },
     { t: 'SEO optimierte Texte', p: 'ab 450 €', d: 'Professionelle Website-Texte mit klarer Struktur, lokaler Suchintention und sauberer Onpage-Grundlage.' },
-    { t: 'Eigenes CRM/Kundenverwaltung', p: 'ab 800 €', d: 'Ein eigener geschützter Bereich für Kontakte, Kunden, Status, Notizen und einfache Auswertungen.' },
     { t: 'Logo-Refresh', p: 'ab 899 €', d: 'Modernisierung Deines bestehenden Logos. Drei Iterationen.' },
     { t: 'Individuelle Sections', p: 'ab 200 €', d: 'Maßgeschneiderte Inhaltsblöcke außerhalb des Templates. Preis abhängig von Anzahl, Komplexität und Interaktivität.' },
   ];

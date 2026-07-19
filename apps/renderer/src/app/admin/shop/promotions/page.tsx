@@ -1,15 +1,8 @@
-import { getPromotions } from '../actions';
-import { PromotionsClient } from './promotions-client';
-import { ShopBackLink } from '../shop-back-link';
+import { redirect } from 'next/navigation';
 
-export default async function PromotionsPage() {
-  const promoList = await getPromotions();
-  return (
-    <div>
-      <ShopBackLink />
-      <h1 className="text-2xl font-bold mb-1">Rabattaktionen</h1>
-      <p className="text-zinc-500 text-sm mb-6">Automatische Rabatte die ohne Code greifen — basierend auf Bestellwert, Menge oder Bedingungen.</p>
-      <PromotionsClient promotions={promoList} />
-    </div>
-  );
+export default function PromotionsPage() {
+  // Automatic promotion rules are intentionally not exposed until their
+  // checkout calculation and customer-facing price preview share one engine.
+  // Coupon codes are fully supported and are the safe discount workflow.
+  redirect('/admin/shop/coupons');
 }

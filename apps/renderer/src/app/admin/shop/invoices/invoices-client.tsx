@@ -59,7 +59,7 @@ export function InvoicesClient({ invoices }: { invoices: Invoice[] }) {
           <p className="text-sm text-red-600">-{formatPrice(credits)}</p>
         </div>
         <div className="bg-white rounded-xl border p-4">
-          <p className="text-xs text-zinc-500 uppercase">Netto-Umsatz</p>
+          <p className="text-xs text-zinc-500 uppercase">Rechnungssaldo (brutto)</p>
           <p className="text-2xl font-bold">{formatPrice(revenue - credits)}</p>
         </div>
       </div>

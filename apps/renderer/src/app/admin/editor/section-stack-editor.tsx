@@ -57,7 +57,14 @@ export function SectionStackEditor({
   }
 
   return (
-    <>
+    <section aria-labelledby="editor-sections-title">
+      <div className="mb-3 flex items-end justify-between gap-4">
+        <div>
+          <h2 id="editor-sections-title" className="text-sm font-bold text-zinc-900">Inhalte</h2>
+          <p className="mt-0.5 text-xs text-zinc-500">Sektionen bearbeiten, sortieren oder ergänzen.</p>
+        </div>
+        <span className="shrink-0 rounded-md bg-zinc-100 px-2 py-1 text-xs font-semibold text-zinc-600">{sections.length} {sections.length === 1 ? 'Sektion' : 'Sektionen'}</span>
+      </div>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={sections.map((section) => section.id)} strategy={verticalListSortingStrategy}>
           {sections.map((section) => renderSection(section))}
@@ -88,6 +95,6 @@ export function SectionStackEditor({
           />
         )}
       </div>
-    </>
+    </section>
   );
 }

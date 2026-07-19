@@ -5,6 +5,7 @@ import { saveShopSettings } from '../actions';
 import { useRouter } from 'next/navigation';
 import { Save, Info } from 'lucide-react';
 import { toast } from 'sonner';
+import { getShopCurrencySymbol, normalizeShopCurrency, SHOP_CURRENCIES } from '@/lib/shop-currency';
 
 type Settings = {
   currency: string;
@@ -71,7 +72,7 @@ export function ShopSettingsForm({ initial }: { initial: SettingsInitial | null 
     taxClasses: initial?.taxClasses || [
       { key: 'standard', label: 'Standard', rate: 19 },
       { key: 'reduced', label: 'Ermäßigt', rate: 7 },
-      { key: 'free', label: 'Steuerfrei', rate: 0 },
+      { key: 'zero', label: 'Steuerfrei', rate: 0 },
     ],
     companyInfo: initial?.companyInfo || null,
   });
@@ -90,7 +91,7 @@ export function ShopSettingsForm({ initial }: { initial: SettingsInitial | null 
   async function handleSave() {
     setSaving(true);
     try {
-      await saveShopSettings(data);
+      await saveShopSettings({ ...data, currency: normalizeShopCurrency(data.currency) });
       toast.success('Einstellungen gespeichert');
       setConfigured(current => ({
         stripeSecretConfigured: current.stripeSecretConfigured || Boolean(data.stripeSecretKey),
@@ -131,7 +132,16 @@ export function ShopSettingsForm({ initial }: { initial: SettingsInitial | null 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1">Währung</label>
-            <input value={data.currency} onChange={e => set('currency', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
+            <select
+              value={normalizeShopCurrency(data.currency)}
+              onChange={e => {
+                set('currency', e.target.value);
+                set('currencySymbol', getShopCurrencySymbol(e.target.value));
+              }}
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 bg-white text-sm"
+            >
+              {SHOP_CURRENCIES.map(currency => <option key={currency.code} value={currency.code}>{currency.code} · {currency.label}</option>)}
+            </select>
           </div>
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1">Symbol</label>
@@ -162,21 +172,17 @@ export function ShopSettingsForm({ initial }: { initial: SettingsInitial | null 
       {/* Tax classes */}
       <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
         <h2 className="font-semibold text-sm text-zinc-700">Steuerklassen</h2>
-        <p className="text-xs text-zinc-500">Definieren Sie die verfügbaren Steuersätze für Ihre Produkte.</p>
+        <p className="text-xs text-zinc-500">Diese Sätze werden bei der Steuerberechnung im Checkout verwendet.</p>
         <div className="space-y-2">
           {(data.taxClasses || []).map((tc, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <input value={tc.label} onChange={e => { const arr = [...(data.taxClasses || [])]; arr[idx] = { ...arr[idx], label: e.target.value }; set('taxClasses', arr); }} className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Bezeichnung" />
+            <div key={tc.key} className="flex items-center gap-3">
+              <span className="flex-1 text-sm font-medium text-zinc-700">{tc.label}</span>
               <div className="flex items-center gap-1">
                 <input type="number" value={tc.rate} onChange={e => { const arr = [...(data.taxClasses || [])]; arr[idx] = { ...arr[idx], rate: Number(e.target.value) }; set('taxClasses', arr); }} className="w-16 px-2 py-2 rounded-lg border border-zinc-200 text-sm text-right" min={0} max={100} />
                 <span className="text-xs text-zinc-500">%</span>
               </div>
-              {(data.taxClasses || []).length > 1 && (
-                <button type="button" onClick={() => set('taxClasses', (data.taxClasses || []).filter((_, i) => i !== idx))} className="text-xs text-red-500 hover:text-red-700">×</button>
-              )}
             </div>
           ))}
-          <button type="button" onClick={() => set('taxClasses', [...(data.taxClasses || []), { key: `custom-${Date.now()}`, label: '', rate: 0 }])} className="text-xs text-blue-600 hover:underline">+ Steuerklasse hinzufügen</button>
         </div>
       </div>
 

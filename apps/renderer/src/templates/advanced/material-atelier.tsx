@@ -5,6 +5,8 @@ import { ArrowUpRight, Check, ChevronRight } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
+import { visibleText } from '@/lib/visible-content';
+import { ResilientImage } from '@/components/ui/resilient-image';
 import { AdvancedIntro, AdvancedLink, type AdvancedCta } from './advanced-shared';
 
 type AtelierItem = {
@@ -26,7 +28,7 @@ function itemKey(item: AtelierItem, index: number) {
 export function MaterialAtelierSection({ data }: Props) {
   const items = Array.isArray(data.items)
     ? (data.items as AtelierItem[])
-      .map((item) => ({ ...item, image: safeContentUrl(item?.image || '') || '' }))
+      .map((item) => ({ ...item, title: visibleText(item?.title), kicker: visibleText(item?.kicker), text: visibleText(item?.text), image: safeContentUrl(item?.image || '') || '', meta: Array.isArray(item?.meta) ? item.meta.map(visibleText).filter(Boolean) : [] }))
       .filter((item) => item?.title && item.image)
       .slice(0, 8)
     : [];
@@ -71,7 +73,7 @@ export function MaterialAtelierSection({ data }: Props) {
                 data-edit-collection="items"
                 data-edit-index={active}
               >
-                <img
+                <ResilientImage
                   src={selected.image}
                   alt={selected.title || ''}
                   className="h-full w-full object-cover"
@@ -133,7 +135,7 @@ export function MaterialAtelierSection({ data }: Props) {
             return (
               <article key={itemKey(item, index)} className="w-[86vw] max-w-[28rem] shrink-0 snap-center border-y border-[var(--token-divider)] bg-[var(--token-card-bg)]" data-card data-edit-collection="items" data-edit-index={index}>
                 <div className="relative aspect-[4/3] overflow-hidden bg-[var(--token-section-bg-alt)]">
-                  <img src={item.image} alt={item.title || ''} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} className="h-full w-full object-cover" data-edit-image="image" />
+                  <ResilientImage src={item.image} alt={item.title || ''} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} className="h-full w-full object-cover" data-edit-image="image" />
                   <span className="absolute left-4 top-4 bg-[var(--token-card-bg)] px-2 py-1 font-mono text-[10px] tracking-[.15em] text-[color:var(--token-card-heading,var(--token-heading))]">{String(index + 1).padStart(2, '0')}</span>
                 </div>
                 <div className="p-5">

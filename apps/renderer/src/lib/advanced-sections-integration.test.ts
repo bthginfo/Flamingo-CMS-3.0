@@ -103,7 +103,7 @@ test('wave two responsive and selection semantics cannot drift', () => {
   const signature = readFileSync(new URL('../templates/advanced/signature-path.tsx', import.meta.url), 'utf8');
   assert.match(signature, /lg:hidden/, 'signaturePath must keep a normal-flow mobile/tablet timeline');
   assert.doesNotMatch(signature, /whileInView/, 'signaturePath items must not disappear outside the viewport');
-  assert.match(signature, /repeat\(\$\{items\.length\}, minmax\(13rem, 1fr\)\)/, 'signaturePath markers and cards must share one column geometry');
+  assert.match(signature, /repeat\(\$\{items\.length\}, minmax\(0, 1fr\)\)/, 'signaturePath markers and cards must share one non-overflowing column geometry');
   assert.match(signature, /grid-rows-\[8rem_1fr\]/, 'each desktop marker must remain attached to its card');
   for (const file of ['day-to-night.tsx', 'layered-anatomy.tsx', 'living-blueprint.tsx']) {
     const source = readFileSync(new URL(`../templates/advanced/${file}`, import.meta.url), 'utf8');
@@ -133,4 +133,12 @@ test('material atelier keeps an accessible ledger and a no-hidden-content mobile
   assert.match(source, /aria-label="Merkmale"/, 'mobile and tablet cards must expose item metadata as a semantic list');
   assert.match(source, /item\.meta\.slice\(0, 5\)/, 'responsive metadata must stay deliberately compact');
   assert.match(source, /--token-card-muted/, 'responsive metadata must use semantic color tokens');
+  assert.match(source, /visibleText\(item\?\.text\)/, 'raw CSS values must not leak into visible atelier copy');
+  assert.match(source, /ResilientImage/, 'atelier media must fail into an intentional visual state');
+});
+
+test('primary cms buttons keep the explicit button foreground token', () => {
+  const css = readFileSync(new URL('../globals.css', import.meta.url), 'utf8');
+  assert.match(css, /:is\(a, button\)\.cms-button\.cms-button--primary\s*\{[\s\S]*?background-color:\s*var\(--token-btn-bg\)\s*!important;[\s\S]*?color:\s*var\(--token-btn-text\)\s*!important;/);
+  assert.match(css, /\.cms-button\.cms-button--primary\s*>\s*\*\s*\{[\s\S]*?color:\s*inherit\s*!important;/);
 });

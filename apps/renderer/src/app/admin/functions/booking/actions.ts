@@ -8,8 +8,9 @@ import { getDb } from '@/lib/db';
 import { getSession, getWritableSession } from '@/lib/session';
 import { BOOKING_ADDON_KEY, getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isBookingOverlapError, isWithinBookingAvailability } from '@/lib/booking-core';
 import { getBookingNotificationEmail, getDefaultBookingEmailTemplate, sendBookingEmail, type BookingEmailTrigger } from '@/lib/booking-email';
-import { bookingAvailabilityRules, bookingBlackouts, bookingCalendarBlocks, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, tenantAddons } from '@flamingo/db';
+import { bookingAvailabilityRules, bookingBlackouts, bookingCalendarBlocks, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, formSubmissions, tenantAddons, tenants } from '@flamingo/db';
 import { formatBookingDate, normalizeTimezone, zonedDateTimeToUtc } from '@/lib/booking-time';
+import { createHardenedRendererSmtpTransport, getPlatformSmtp } from '@/lib/smtp';
 
 const BOOKING_MODES = ['request', 'instant'] as const;
 const BOOKING_TIME_MODELS = ['time_slot', 'full_day', 'date_range'] as const;
@@ -264,7 +265,34 @@ export async function requestBookingAddonAction() {
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, BOOKING_ADDON_KEY)))
     .limit(1);
   if (!existing) {
-    await db.insert(tenantAddons).values({ tenantId, addonKey: BOOKING_ADDON_KEY, active: false });
+    const [created] = await db.insert(tenantAddons)
+      .values({ tenantId, addonKey: BOOKING_ADDON_KEY, active: false })
+      .onConflictDoNothing({ target: [tenantAddons.tenantId, tenantAddons.addonKey] })
+      .returning({ id: tenantAddons.id });
+    if (created) {
+      const [tenant] = await db.select({ name: tenants.name, slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+      await db.insert(formSubmissions).values({
+        tenantId,
+        idempotencyKey: crypto.randomUUID(),
+        name: tenant?.name || 'Kunde',
+        email: '',
+        message: '[Booking-Addon Anfrage] Einrichtung und Freischaltung angefragt.',
+        page: '/admin/functions/booking',
+      });
+      try {
+        const smtp = await getPlatformSmtp();
+        if (!smtp) throw new Error('Platform SMTP unavailable');
+        const safeTenantName = (tenant?.name || tenantId).replace(/[\r\n]+/g, ' ').slice(0, 160);
+        await createHardenedRendererSmtpTransport(smtp).sendMail({
+          from: smtp.from,
+          to: 'hello@flamingomedia.online',
+          subject: `Booking-Addon Anfrage: ${safeTenantName}`,
+          text: `Tenant: ${tenant?.name || '-'} (${tenant?.slug || '-'})\nID: ${tenantId}`,
+        });
+      } catch (error) {
+        console.error('[requestBookingAddonAction] notification failed', error);
+      }
+    }
   }
   revalidatePath('/admin/functions');
   revalidatePath('/admin/functions/booking');

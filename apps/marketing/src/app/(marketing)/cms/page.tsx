@@ -4,7 +4,7 @@ import { CmsPage } from './cms-client';
 export const metadata: Metadata = {
   title: 'Flamingo CMS – Inhalte selbst pflegen',
   description:
-    'Flamingo CMS ist das einfache Content-Management-System für lokale Betriebe. Seiten, Texte, Bilder, SEO, Navigation und Shop-Inhalte direkt im Browser pflegen.',
+    'Flamingo CMS für lokale Betriebe: Seiten, Texte, Bilder, SEO und Navigation selbst pflegen – erweiterbar um Shop, Booking sowie Rechnungen & Kunden.',
   alternates: { canonical: '/cms' },
   openGraph: {
     title: 'Flamingo CMS – Inhalte selbst pflegen · FlamingoMedia',

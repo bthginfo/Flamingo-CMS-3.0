@@ -2,6 +2,7 @@
 
 import { useId, type ReactNode } from 'react';
 import { EDITORIAL_GROUPS, groupEditorialFields } from '@/lib/editorial-field-metadata';
+import { resolveIndustryEditorOwner } from '@/app/admin/editor/industry-editor-resolution';
 
 import { SectionDataEditor } from './section-data-editor';
 import { hasHotelEditor, HotelSectionDataEditor } from './hotel-section-data-editor';
@@ -15,45 +16,38 @@ import { hasRealestateEditor, RealestateSectionDataEditor } from './realestate-s
 import { hasCafeEditor, CafeSectionDataEditor } from './cafe-section-data-editor';
 import { hasConsultingEditor, ConsultingSectionDataEditor } from './consulting-section-data-editor';
 
-export function IndustrySectionDataEditor({ industry, type, data, onChange, sectionId }: { industry: string; type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string }) {
-  if (industry === 'wedding' && hasWeddingEditor(type)) {
-    return <SpecializedEditorShell data={data}><WeddingSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
+type SpecializedEditorProps = {
+  type: string;
+  data: Record<string, unknown>;
+  onChange: (data: Record<string, unknown>) => void;
+};
 
-  if (industry === 'medical' && hasMedicalEditor(type)) {
-    return <SpecializedEditorShell data={data}><MedicalSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
+const INDUSTRY_EDITOR_OWNERS = [
+  { industry: 'wedding', matches: hasWeddingEditor, render: (props: SpecializedEditorProps) => <WeddingSectionDataEditor {...props} /> },
+  { industry: 'medical', matches: hasMedicalEditor, render: (props: SpecializedEditorProps) => <MedicalSectionDataEditor {...props} /> },
+  { industry: 'salon', matches: hasSalonEditor, render: (props: SpecializedEditorProps) => <SalonSectionDataEditor {...props} /> },
+  { industry: 'tourism', matches: hasTourismEditor, render: (props: SpecializedEditorProps) => <TourismSectionDataEditor {...props} /> },
+  { industry: 'hotel', matches: hasHotelEditor, render: (props: SpecializedEditorProps) => <HotelSectionDataEditor {...props} /> },
+  { industry: 'restaurant', matches: hasRestaurantEditor, render: (props: SpecializedEditorProps) => <RestaurantSectionDataEditor {...props} /> },
+  { industry: 'tattoo', matches: hasTattooEditor, render: (props: SpecializedEditorProps) => <TattooSectionDataEditor {...props} /> },
+  { industry: 'realestate', matches: hasRealestateEditor, render: (props: SpecializedEditorProps) => <RealestateSectionDataEditor {...props} /> },
+  { industry: 'cafe', matches: hasCafeEditor, render: (props: SpecializedEditorProps) => <CafeSectionDataEditor {...props} /> },
+  { industry: 'consulting', matches: hasConsultingEditor, render: (props: SpecializedEditorProps) => <ConsultingSectionDataEditor {...props} /> },
+] as const;
 
-  if (industry === 'salon' && hasSalonEditor(type)) {
-    return <SpecializedEditorShell data={data}><SalonSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
+export function resolveIndustryEditorKey(industry: string, type: string, definitionKey?: string | null): string | null {
+  return resolveIndustryEditorOwner(INDUSTRY_EDITOR_OWNERS, { industry, type, definitionKey });
+}
 
-  if (industry === 'tourism' && hasTourismEditor(type)) {
-    return <SpecializedEditorShell data={data}><TourismSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
-
-  if (industry === 'hotel' && hasHotelEditor(type)) {
-    return <SpecializedEditorShell data={data}><HotelSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
-
-  if (industry === 'restaurant' && hasRestaurantEditor(type)) {
-    return <SpecializedEditorShell data={data}><RestaurantSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
-
-  if (industry === 'tattoo' && hasTattooEditor(type)) {
-    return <SpecializedEditorShell data={data}><TattooSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
-
-  if (industry === 'realestate' && hasRealestateEditor(type)) {
-    return <SpecializedEditorShell data={data}><RealestateSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
-
-  if (industry === 'cafe' && hasCafeEditor(type)) {
-    return <SpecializedEditorShell data={data}><CafeSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
-  }
-
-  if (industry === 'consulting' && hasConsultingEditor(type)) {
-    return <SpecializedEditorShell data={data}><ConsultingSectionDataEditor type={type} data={data} onChange={onChange} /></SpecializedEditorShell>;
+export function IndustrySectionDataEditor({ industry, type, definitionKey, data, onChange, sectionId }: { industry: string; type: string; definitionKey?: string | null; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string }) {
+  const ownerKey = resolveIndustryEditorKey(industry, type, definitionKey);
+  const owner = INDUSTRY_EDITOR_OWNERS.find(candidate => candidate.industry === ownerKey);
+  if (owner) {
+    return (
+      <SpecializedEditorShell data={data}>
+        {owner.render({ type, data, onChange })}
+      </SpecializedEditorShell>
+    );
   }
 
   return <SectionDataEditor type={type} data={data} onChange={onChange} sectionId={sectionId} />;

@@ -28,6 +28,32 @@ export function computeTaxCents(items: TotalsItem[]): number {
   }, 0);
 }
 
+/** Tax contained in gross prices after a gross discount has been allocated
+ * proportionally across the eligible products. */
+export function computeTaxCentsAfterDiscount(
+  items: (TotalsItem & { productId?: string })[],
+  discountCents: number,
+  eligibleProductIds?: string[],
+): number {
+  if (discountCents <= 0) return computeTaxCents(items);
+  const eligible = eligibleProductIds?.length
+    ? items.filter(item => item.productId && eligibleProductIds.includes(item.productId))
+    : items;
+  const eligibleSubtotal = computeSubtotalCents(eligible);
+  if (eligibleSubtotal <= 0) return computeTaxCents(items);
+
+  return items.reduce((sum, item) => {
+    const rate = item.taxRate ?? 0;
+    if (rate <= 0) return sum;
+    const gross = item.priceCents * item.quantity;
+    const canDiscount = eligible.includes(item);
+    const allocatedDiscount = canDiscount
+      ? Math.min(gross, Math.round(discountCents * gross / eligibleSubtotal))
+      : 0;
+    return sum + Math.round(((gross - allocatedDiscount) * rate) / (100 + rate));
+  }, 0);
+}
+
 /** The discount + free-shipping effect of a coupon (already validated upstream). */
 export function couponEffect(
   coupon: CouponLike,

@@ -7,6 +7,7 @@ import { ArrowRight, Play } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 import { plain } from '@/lib/strip-html';
+import { ResilientImage } from '@/components/ui/resilient-image';
 
 type Cta = { label?: string; href?: string };
 type Fact = { value: string; label: string };
@@ -71,7 +72,7 @@ export function CinematicHeroSection({ data }: Props) {
       {videoUrl ? (
         <video ref={videoRef} src={videoUrl} poster={image} autoPlay={false} muted loop playsInline className="h-[110%] w-full object-cover" />
       ) : image ? (
-        <img data-edit-image="image" src={image} alt="" className="h-[110%] w-full object-cover" />
+        <ResilientImage data-edit-image="image" src={image} alt="" className="h-[110%] w-full object-cover" />
       ) : (
         <div className="h-full w-full bg-[var(--token-section-bg)]" />
       )}

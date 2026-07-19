@@ -1,6 +1,6 @@
 'use server';
 
-import { getDb } from '@/lib/db';
+import { getTenantDataDb } from '@/lib/tenant-data-db';
 import { tenantApiTokens } from '@flamingo/db';
 import { eq, and, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -9,7 +9,7 @@ import { requireCrmAdmin } from '@/lib/session';
 
 export async function generatePatAction(tenantId: string) {
   await requireCrmAdmin();
-  const db = getDb();
+  const db = await getTenantDataDb(tenantId);
 
   // Revoke all existing tokens for this tenant
   await db.update(tenantApiTokens)
@@ -34,7 +34,7 @@ export async function generatePatAction(tenantId: string) {
 
 export async function revokePatAction(tenantId: string) {
   await requireCrmAdmin();
-  const db = getDb();
+  const db = await getTenantDataDb(tenantId);
   await db.update(tenantApiTokens)
     .set({ revoked: true })
     .where(eq(tenantApiTokens.tenantId, tenantId));
@@ -44,7 +44,7 @@ export async function revokePatAction(tenantId: string) {
 
 export async function getActiveToken(tenantId: string) {
   await requireCrmAdmin();
-  const db = getDb();
+  const db = await getTenantDataDb(tenantId);
   const [token] = await db.select({
     id: tenantApiTokens.id,
     label: tenantApiTokens.label,

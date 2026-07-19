@@ -5,6 +5,7 @@ import { WordReveal } from '@/components/ui/fx';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { plain } from '@/lib/strip-html';
+import { ResilientImage } from '@/components/ui/resilient-image';
 
 type Cta = { label?: string; href?: string };
 type Fact = { value?: string; label?: string };
@@ -58,7 +59,7 @@ export function GlowHeroSection({ data }: Props) {
 
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--token-section-bg)] text-[color:var(--token-body)]">
-      {image && <img data-edit-image="image" src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" style={{ objectPosition: imagePosition }} />}
+      {image && <ResilientImage data-edit-image="image" src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" style={{ objectPosition: imagePosition }} />}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
       <div
         className="pointer-events-none absolute inset-0 transition duration-150"

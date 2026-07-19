@@ -7,6 +7,7 @@ import { useSuppressGlobalActions } from '@/components/save-context';
 type Props = {
   previewOpen: boolean;
   saved?: boolean;
+  dirty?: boolean;
   saving: boolean;
   publishing?: boolean;
   publishable?: boolean;
@@ -24,6 +25,7 @@ type Props = {
 export function EditorActionBar({
   previewOpen,
   saved = false,
+  dirty = false,
   saving,
   publishing = false,
   publishable = true,
@@ -43,7 +45,7 @@ export function EditorActionBar({
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 flex min-h-[var(--editor-action-bar-height,5rem)] items-center border-t border-zinc-200 bg-white/95 px-3 py-3 shadow-[0_-8px_28px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:px-6" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
       <div className="mx-auto flex max-w-[1600px] items-center justify-end gap-2 sm:gap-3">
-        <span className="mr-auto hidden text-xs text-zinc-500 sm:inline" aria-live="polite">{saving ? savingLabel : publishing ? publishingLabel : saved ? 'Alle Änderungen gespeichert' : 'Ungespeicherte Änderungen'}</span>
+        <span className="mr-auto hidden text-xs text-zinc-500 sm:inline" aria-live="polite">{saving ? savingLabel : publishing ? publishingLabel : dirty ? 'Noch nicht gespeichert' : saved ? 'Alle Änderungen gespeichert' : 'Bereit zum Bearbeiten'}</span>
         <div className="relative">
           <button
             type="button"
@@ -52,7 +54,9 @@ export function EditorActionBar({
           >
             <MonitorPlay size={16} /> Vorschau
           </button>
-          <PreviewNudge variant="top-right" priority={3} />
+          <div className="hidden sm:block">
+            <PreviewNudge variant="top-right" priority={3} />
+          </div>
         </div>
         {!showPublish ? (
           <button

@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { plain } from '@/lib/strip-html';
+import { ResilientImage } from '@/components/ui/resilient-image';
 import { getTestimonialMarqueeRowLayout, shouldAnimateTestimonialMarquee } from '@/lib/testimonial-marquee-policy';
 import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 import {
@@ -36,7 +37,7 @@ function TestimonialCard({ item, originalIndex, duplicate = false }: { item: Tes
     >
       {item.quote && <p className="mb-5 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]"><span aria-hidden="true" className="text-[color:var(--token-quote)]">“</span><span data-edit-path={duplicate ? undefined : 'quote'}>{plain(item.quote)}</span><span aria-hidden="true" className="text-[color:var(--token-quote)]">”</span></p>}
       <footer className="mt-auto flex items-center gap-3">
-        {item.image && <img data-edit-image={duplicate ? undefined : 'image'} src={item.image} alt="" className="h-10 w-10 rounded-full object-cover" />}
+        {item.image && <ResilientImage data-edit-image={duplicate ? undefined : 'image'} src={item.image} alt="" className="h-10 w-10 rounded-full object-cover" />}
         <div className="min-w-0 flex-1">
           {item.name && <div className="truncate text-sm font-semibold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path={duplicate ? undefined : 'name'}>{item.name}</div>}
           {item.role && <div className="truncate text-xs text-[color:var(--token-card-muted,var(--token-muted))]" data-edit-path={duplicate ? undefined : 'role'}>{item.role}</div>}

@@ -558,7 +558,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
     const productSlug = targetSlug.includes('/') ? targetSlug.split('/').pop()! : targetSlug;
     return (
       <DemoPageShell
-        sections={[{ id: 'product-detail', type: 'shopProductDetail', variant: null, visible: true, container: 'default', spacingTop: 'none', spacingBottom: 'none', anchorId: null, data: { _slug: productSlug, tenantId, basePath: demoPrefix } }]}
+        sections={[{ id: 'product-detail', type: 'shopProductDetail', variant: null, visible: true, container: 'default', spacingTop: 'none', spacingBottom: 'none', anchorId: null, data: { _slug: productSlug, tenantId, basePath: demoPrefix, catalogPath: `${demoPrefix}/shop` } }]}
         industry={tenantStyle.industry}
         industryKey={industry}
         defaultStyle={tenantStyle.activeStyle}
@@ -587,7 +587,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   const firstIsHero = isHeroSection(page.sections[0]?.type);
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
-  const visibleSections = page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s);
+  const visibleSections = page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}), ...(s.type === 'shopProductDetail' ? { catalogPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s);
   const normalizedSections = industry === 'shop'
     ? normalizeDemoShopSections(visibleSections, targetSlug, brandData.contact)
     : visibleSections;

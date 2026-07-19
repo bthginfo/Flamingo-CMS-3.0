@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { ResilientNextImage as Image } from '@/components/ui/resilient-image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 import { plain } from '@/lib/strip-html';
 

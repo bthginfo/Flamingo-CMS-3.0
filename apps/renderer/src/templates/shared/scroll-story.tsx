@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { plain } from '@/lib/strip-html';
+import { ResilientImage } from '@/components/ui/resilient-image';
 
 type Step = { kicker?: string; title: string; text?: string; image?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -28,7 +29,7 @@ export function ScrollStorySection({ data }: Props) {
       <div className="space-y-6">
         {steps.map((step, i) => (
           <motion.article key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-120px' }} className="overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="steps" data-edit-index={i}>
-            {step.image && <img data-edit-image="image" src={step.image} alt="" className="h-64 w-full object-cover" />}
+            {step.image && <ResilientImage data-edit-image="image" src={step.image} alt={step.title || ''} className="h-64 w-full object-cover" />}
             <div className="p-6 md:p-8">
               <div className="mb-3 text-xs font-bold uppercase text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{step.kicker || String(i + 1).padStart(2, '0')}</div>
               <h3 className="text-2xl font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{step.title}</h3>

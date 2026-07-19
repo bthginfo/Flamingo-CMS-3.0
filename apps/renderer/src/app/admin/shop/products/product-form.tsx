@@ -87,6 +87,10 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
 
   async function handleSave() {
     if (!data.title.trim()) return;
+    if (data.isDigital) {
+      toast.error('Digitale Produkte benötigen eine sichere Download-Auslieferung und können noch nicht aktiviert werden.');
+      return;
+    }
 
     setSaving(true);
     const slug = data.slug || slugify(data.title);
@@ -108,6 +112,8 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
       }
       router.push('/admin/shop/products');
       router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Produkt konnte nicht gespeichert werden');
     } finally {
       setSaving(false);
     }
@@ -288,6 +294,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
             <input type="checkbox" checked={data.isDigital} onChange={e => set('isDigital', e.target.checked)} className="rounded" />
             Digitales Produkt (kein Versand)
           </label>
+          <p className="text-xs text-amber-700">Noch nicht verfügbar: Vor dem Verkauf wird eine geschützte Download-Auslieferung benötigt.</p>
         </div>
       </div>
 
@@ -326,7 +333,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
             >
               <option value="standard">Standard (19%)</option>
               <option value="reduced">Ermäßigt (7%)</option>
-              <option value="free">Steuerfrei</option>
+              <option value="zero">Steuerfrei</option>
             </select>
           </div>
         </div>

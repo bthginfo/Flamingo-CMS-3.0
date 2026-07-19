@@ -108,7 +108,7 @@ export function PreviewNudge({
 
   return (
     <div
-      className={`pointer-events-auto absolute ${position} ${compact ? 'w-56' : 'w-72'} rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 text-white text-xs px-3.5 py-2.5 shadow-2xl ring-1 ring-white/20 z-50`}
+      className={`pointer-events-auto absolute hidden sm:block ${position} ${compact ? 'w-56' : 'w-72'} rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 text-white text-xs px-3.5 py-2.5 shadow-2xl ring-1 ring-white/20 z-50`}
       role="dialog"
       aria-label="Hinweis zur Live-Vorschau"
     >

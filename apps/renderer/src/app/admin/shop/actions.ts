@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getWritableSession } from '@/lib/session';
 import { getSessionCookieName } from '@flamingo/auth';
-import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, formSubmissions, tenants, promotions, crmEmailDeliveries } from '@flamingo/db';
+import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, formSubmissions, tenants, promotions, crmEmailDeliveries, taxRates } from '@flamingo/db';
 import { eq, and, desc, sql, not } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -39,6 +39,7 @@ import {
   getRendererContactClientAddress,
 } from '@/lib/renderer-contact-security';
 import { protectStoredSecret } from '@/lib/secret-storage';
+import { getShopCurrencySymbol, normalizeShopCurrency } from '@/lib/shop-currency';
 
 async function requireAuthenticatedTenant() {
   const session = await getWritableSession();
@@ -287,7 +288,11 @@ export async function ensureShopPages(tenantId: string) {
 export async function getShopSettings() {
   const tenantId = await requireTenant();
   const db = getDb();
-  const [row] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
+  const [[row], configuredTaxRates] = await Promise.all([
+    db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1),
+    db.select({ name: taxRates.name, rate: taxRates.rate }).from(taxRates)
+      .where(and(eq(taxRates.tenantId, tenantId), eq(taxRates.country, 'DE'))),
+  ]);
   if (!row) return row;
   const { stripeSecretKey, stripeWebhookSecret, paypalSecret, sumupApiKey, ...safe } = row;
   return {
@@ -296,6 +301,11 @@ export async function getShopSettings() {
     stripeWebhookSecret: null,
     paypalSecret: null,
     sumupApiKey: null,
+    taxClasses: ['standard', 'reduced', 'zero'].map(key => ({
+      key,
+      label: key === 'standard' ? 'Standard' : key === 'reduced' ? 'Ermäßigt' : 'Steuerfrei',
+      rate: Number(configuredTaxRates.find(item => item.name === key)?.rate ?? (key === 'standard' ? 19 : key === 'reduced' ? 7 : 0)),
+    })),
     stripeSecretConfigured: Boolean(stripeSecretKey),
     stripeWebhookConfigured: Boolean(stripeWebhookSecret),
     paypalSecretConfigured: Boolean(paypalSecret),
@@ -323,12 +333,17 @@ export async function saveShopSettings(data: Partial<{
   invoicePrefix: string;
   notificationEmail: string | null;
   lowStockThreshold: number;
+  taxClasses: { key: string; label: string; rate: number }[];
   companyInfo: { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
 }>) {
   const tenantId = await requireTenant();
   const db = getDb();
   // Upsert: create settings row if it doesn't exist, otherwise update
-  const cleanData = { ...data };
+  const { taxClasses: requestedTaxClasses, ...cleanData } = data;
+  if ('currency' in cleanData) {
+    cleanData.currency = normalizeShopCurrency(cleanData.currency);
+    if (!cleanData.currencySymbol?.trim()) cleanData.currencySymbol = getShopCurrencySymbol(cleanData.currency);
+  }
   if (cleanData.paymentMethods) cleanData.paymentMethods = [...new Set(cleanData.paymentMethods)];
   for (const key of ['stripeSecretKey', 'stripeWebhookSecret', 'paypalSecret', 'sumupApiKey'] as const) {
     const value = cleanData[key];
@@ -346,6 +361,20 @@ export async function saveShopSettings(data: Partial<{
       .where(eq(shopSettings.tenantId, tenantId));
   } else {
     await db.insert(shopSettings).values({ tenantId, ...cleanData });
+  }
+  for (const taxClass of requestedTaxClasses || []) {
+    if (!['standard', 'reduced', 'zero'].includes(taxClass.key)) continue;
+    const rate = Math.max(0, Math.min(100, Number(taxClass.rate) || 0));
+    await db.insert(taxRates).values({
+      tenantId,
+      name: taxClass.key,
+      rate: String(rate),
+      country: 'DE',
+      isDefault: taxClass.key === 'standard',
+    }).onConflictDoUpdate({
+      target: [taxRates.tenantId, taxRates.name, taxRates.country],
+      set: { rate: String(rate), isDefault: taxClass.key === 'standard' },
+    });
   }
   revalidatePath('/admin/shop');
 }
@@ -449,6 +478,7 @@ export async function createProduct(data: {
   metaTitle?: string; metaDescription?: string; highlights?: string[];
 }) {
   const tenantId = await requireTenant();
+  if (data.isDigital) throw new Error('Digitale Produkte sind erst mit sicherer Download-Auslieferung verfügbar.');
   const db = getDb();
   const [row] = await db.insert(products).values({ tenantId, ...data }).returning({ id: products.id });
   revalidatePath('/admin/shop');
@@ -465,6 +495,7 @@ export async function updateProduct(id: string, data: Partial<{
   highlights: string[];
 }>) {
   const tenantId = await requireTenant();
+  if (data.isDigital) throw new Error('Digitale Produkte sind erst mit sicherer Download-Auslieferung verfügbar.');
   const db = getDb();
   await db.update(products).set({ ...data, updatedAt: new Date() })
     .where(and(eq(products.id, id), eq(products.tenantId, tenantId)));
@@ -499,6 +530,16 @@ export async function updateOrderStatus(orderId: string, newStatus: string, note
   if (!order) throw new Error('Order not found');
 
   const oldStatus = order.status as OrderStatus;
+  const allowedTransitions: Partial<Record<OrderStatus, OrderStatus[]>> = {
+    awaiting_payment: ['pending', 'paid'],
+    pending: ['paid', 'processing'],
+    paid: ['processing'],
+    processing: ['shipped'],
+    shipped: ['delivered'],
+  };
+  if (oldStatus !== newStatus && !allowedTransitions[oldStatus]?.includes(newStatus)) {
+    throw new Error(`Statuswechsel von ${oldStatus} zu ${newStatus} ist nicht erlaubt`);
+  }
   const needsShippedMail = shouldSendShippedNotification(oldStatus, newStatus);
   const deliveryKey = createShopOrderMailIdempotencyKey(orderId, 'shipped');
   const requestHash = fingerprintShopOrderMail(orderId, 'shipped');

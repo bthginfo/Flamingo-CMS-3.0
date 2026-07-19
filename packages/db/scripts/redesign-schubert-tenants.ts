@@ -47,50 +47,50 @@ export const REDESIGN_TARGETS: Record<Target['slug'], Target> = {
   },
 };
 
-type PageModule = 'cinematicArrival' | 'editorialArrival' | 'collectionAtelier' | 'pageAtelier' | 'kineticIdentity' | 'chapters' | 'projectMorph' | 'gallery' | 'signaturePath' | 'sourceProof' | 'sourceLogos' | 'sourceCta' | 'sourceGuidance' | 'sourceContact' | 'sourceTeam' | 'sourceReassurance';
+type PageModule = 'hero' | 'collectionHero' | 'glowHero' | 'cinematicHero' | 'uspStrip' | 'servicesGrid' | 'spotlightCards' | 'serviceDetail' | 'signatureGrid' | 'textImage' | 'categoryMosaic' | 'collectionList' | 'scrollStory' | 'locationVibe' | 'team' | 'timeline' | 'galleryGrid' | 'testimonialMarquee' | 'logoMarquee' | 'stats' | 'processSteps' | 'faq' | 'contact' | 'map' | 'richText' | 'legalContent' | 'ctaBand';
 
 /** Explicit narrative systems; no page falls back to a shared generic formula. */
 export const PAGE_COMPOSITION_MAPS: Record<Target['slug'], Record<string, PageModule[]>> = {
   'schubert-design': {
-    startseite: ['cinematicArrival', 'kineticIdentity', 'collectionAtelier', 'projectMorph', 'sourceProof', 'sourceLogos', 'sourceCta'],
-    leistungen: ['editorialArrival', 'collectionAtelier', 'projectMorph', 'signaturePath', 'sourceGuidance', 'sourceCta'],
-    showroom: ['cinematicArrival', 'pageAtelier', 'gallery', 'sourceProof', 'sourceLogos', 'sourceCta'],
-    projekte: ['editorialArrival', 'collectionAtelier', 'projectMorph', 'gallery', 'sourceProof', 'sourceCta'],
-    'ueber-uns': ['editorialArrival', 'chapters', 'kineticIdentity', 'signaturePath', 'sourceTeam', 'sourceProof', 'sourceLogos', 'sourceCta'],
-    kontakt: ['editorialArrival', 'sourceReassurance', 'sourceGuidance', 'sourceContact', 'sourceCta'],
-    impressum: [], datenschutz: [],
+    startseite: ['glowHero', 'spotlightCards', 'textImage', 'categoryMosaic', 'testimonialMarquee', 'logoMarquee', 'ctaBand'],
+    leistungen: ['cinematicHero', 'serviceDetail', 'signatureGrid', 'ctaBand'],
+    showroom: ['collectionHero', 'scrollStory', 'locationVibe', 'ctaBand'],
+    projekte: ['glowHero', 'collectionList', 'ctaBand'],
+    'ueber-uns': ['cinematicHero', 'textImage', 'team', 'timeline', 'galleryGrid', 'spotlightCards', 'ctaBand'],
+    kontakt: ['cinematicHero', 'contact', 'map'],
+    impressum: ['legalContent'], datenschutz: ['legalContent'],
   },
   'schubert-grabdenkmal': {
-    startseite: ['cinematicArrival', 'sourceReassurance', 'collectionAtelier', 'signaturePath', 'sourceGuidance', 'sourceCta'],
-    leistungen: ['editorialArrival', 'collectionAtelier', 'signaturePath', 'sourceGuidance', 'sourceContact'],
-    galerie: ['cinematicArrival', 'gallery', 'pageAtelier', 'sourceReassurance', 'sourceCta'],
-    ratgeber: ['editorialArrival', 'sourceGuidance', 'signaturePath', 'sourceReassurance', 'sourceContact'],
-    'ueber-uns': ['editorialArrival', 'chapters', 'sourceTeam', 'sourceReassurance', 'signaturePath', 'sourceCta'],
-    kontakt: ['editorialArrival', 'sourceReassurance', 'sourceGuidance', 'sourceContact'],
-    impressum: [], datenschutz: [],
+    startseite: ['hero', 'uspStrip', 'servicesGrid', 'textImage', 'processSteps', 'ctaBand'],
+    leistungen: ['hero', 'servicesGrid', 'richText', 'faq'],
+    galerie: ['hero', 'galleryGrid'],
+    ratgeber: ['hero', 'richText', 'faq'],
+    'ueber-uns': ['collectionHero', 'textImage', 'stats', 'processSteps', 'galleryGrid', 'faq', 'ctaBand'],
+    kontakt: ['hero', 'contact', 'map'],
+    impressum: ['richText'], datenschutz: ['richText'],
   },
 };
 
-type ItemModule = 'cinematicArrival' | 'editorialArrival' | 'collectionArrival' | 'glowArrival' | 'ownAtelier' | 'ownGallery' | 'ownChapters' | 'ownMorph' | 'ownTransformation' | 'ownPath' | 'sourceContent';
+type ItemModule = 'cinematicHero' | 'portfolioGallery' | 'collectionHero' | 'textImage' | 'processSteps' | 'ctaBand';
 
 /** Every detail has its own rhythm. Item ateliers can only consume that item's media. */
 export const COLLECTION_DETAIL_COMPOSITION_MAPS: Record<Target['slug'], Record<string, ItemModule[]>> = {
   'schubert-design': {
-    baeder: ['cinematicArrival', 'ownAtelier', 'ownGallery', 'sourceContent'],
-    naturstein: ['editorialArrival', 'ownAtelier', 'ownPath', 'sourceContent'],
-    spas: ['glowArrival', 'ownChapters', 'ownGallery', 'sourceContent'],
-    wcs: ['collectionArrival', 'ownMorph', 'ownPath', 'sourceContent'],
-    gastro: ['cinematicArrival', 'ownChapters', 'ownPath', 'sourceContent'],
-    gewerbe: ['editorialArrival', 'ownGallery', 'ownPath', 'sourceContent'],
+    baeder: ['cinematicHero', 'portfolioGallery', 'ctaBand'],
+    naturstein: ['cinematicHero', 'portfolioGallery', 'ctaBand'],
+    spas: ['cinematicHero', 'portfolioGallery', 'ctaBand'],
+    wcs: ['cinematicHero', 'portfolioGallery', 'ctaBand'],
+    gastro: ['cinematicHero', 'portfolioGallery', 'ctaBand'],
+    gewerbe: ['cinematicHero', 'portfolioGallery', 'ctaBand'],
   },
   'schubert-grabdenkmal': {
-    grabdenkmale: ['cinematicArrival', 'ownAtelier', 'ownPath', 'sourceContent'],
-    grabeinfassungen: ['editorialArrival', 'ownPath', 'ownGallery', 'sourceContent'],
-    abdeckplatten: ['collectionArrival', 'ownGallery', 'ownPath', 'sourceContent'],
-    grabaccessoires: ['editorialArrival', 'ownMorph', 'ownGallery', 'sourceContent'],
-    'grabpflege-wartung': ['glowArrival', 'ownTransformation', 'ownPath', 'sourceContent'],
-    'restaurierung-nachbeschriftung': ['cinematicArrival', 'ownTransformation', 'ownGallery', 'sourceContent'],
-    'beratung-planung': ['editorialArrival', 'ownPath', 'sourceContent'],
+    grabdenkmale: ['collectionHero', 'textImage', 'processSteps', 'ctaBand'],
+    grabeinfassungen: ['collectionHero', 'textImage', 'processSteps', 'ctaBand'],
+    abdeckplatten: ['collectionHero', 'textImage', 'processSteps', 'ctaBand'],
+    grabaccessoires: ['collectionHero', 'textImage', 'processSteps', 'ctaBand'],
+    'grabpflege-wartung': ['collectionHero', 'textImage', 'processSteps', 'ctaBand'],
+    'restaurierung-nachbeschriftung': ['collectionHero', 'textImage', 'processSteps', 'ctaBand'],
+    'beratung-planung': ['collectionHero', 'textImage', 'processSteps', 'ctaBand'],
   },
 };
 
@@ -101,6 +101,89 @@ function record(value: unknown): Json { return value && typeof value === 'object
 function nonEmpty(value: unknown): value is string { return typeof value === 'string' && Boolean(value.trim()); }
 function firstString(data: Json, keys: string[]) { for (const key of keys) if (nonEmpty(data[key])) return String(data[key]); return ''; }
 function stableUuid(seed: string) { const hex = createHash('sha256').update(seed).digest('hex').slice(0, 32).split(''); hex[12] = '4'; hex[16] = ((parseInt(hex[16], 16) & 3) | 8).toString(16); return `${hex.slice(0, 8).join('')}-${hex.slice(8, 12).join('')}-${hex.slice(12, 16).join('')}-${hex.slice(16, 20).join('')}-${hex.slice(20).join('')}`; }
+
+const KNOWN_UNAVAILABLE_MEDIA = [
+  'manufaktur_001-ZXDYKNe2vW5CYHgWJAJixnkLPob8lV.webp',
+  '61c334a9842e5daac2534246_bad-1_001-TJhAdbOKLJA4o4jG1O2HJ4ZvrtdPuI.webp',
+  'Steinboden-Naturstein-Esszimmer-1-uyPJ0vTD27kRW0IDrOYX4zoes6M7U3.webp',
+  'stein-fliese-3_001-nUk3lzbC62rGXXdrUjrrLO6Vq3aHAX.webp',
+  'Zach-Export-Masterbad-8-1-HlHmtLgPFzOX3Ut13b7LaGGIwNyGJN.webp',
+] as const;
+
+const MEDIA_KEY = /(image|img|src|photo|thumbnail|poster|background|cover)/i;
+const NARRATIVE_KEY = /(headline|title|heading|name|label|text|subline|description|intro|body|copy|answer|quote|excerpt|caption|kicker|eyebrow|badge|category|meta|feature|fact|trust)/i;
+
+export function isCssColorLiteral(value: unknown): value is string {
+  if (!nonEmpty(value)) return false;
+  const input = value.trim();
+  return /^#(?:[0-9a-f]{3,8})$/i.test(input)
+    || /^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)\(/i.test(input)
+    || /^(?:var|color-mix)\(/i.test(input);
+}
+
+function isSafeDestination(value: unknown): value is string {
+  return nonEmpty(value) && value.trim() !== '#' && /^(\/|https?:\/\/|mailto:|tel:)/i.test(value.trim());
+}
+
+function mediaUnavailable(url: string, unavailable: Set<string>) {
+  return KNOWN_UNAVAILABLE_MEDIA.some((part) => url.includes(part)) || unavailable.has(url);
+}
+
+export function sanitizeVisibleContent(value: unknown, unavailable = new Set<string>(), key = ''): unknown {
+  if (typeof value === 'string') {
+    if (MEDIA_KEY.test(key) && mediaUnavailable(value, unavailable)) return undefined;
+    if (NARRATIVE_KEY.test(key) && isCssColorLiteral(value)) return undefined;
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((entry) => sanitizeVisibleContent(entry, unavailable, key)).filter((entry) => {
+      if (entry === undefined) return false;
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return true;
+      const source = entry as Json;
+      const hasMediaShape = Object.keys(source).some((childKey) => MEDIA_KEY.test(childKey));
+      return !hasMediaShape || Object.entries(source).some(([childKey, child]) => MEDIA_KEY.test(childKey) && nonEmpty(child));
+    });
+  }
+  if (!value || typeof value !== 'object') return value;
+  const input = value as Json;
+  if (/(?:cta|action|button)/i.test(key)) {
+    const label = firstString(input, ['label', 'text', 'title']);
+    const destination = firstString(input, ['href', 'url', 'link']);
+    if (!label || isCssColorLiteral(label) || !isSafeDestination(destination)) return undefined;
+  }
+  return Object.fromEntries(Object.entries(input)
+    .map(([childKey, child]) => [childKey, sanitizeVisibleContent(child, unavailable, childKey)] as const)
+    .filter(([, child]) => child !== undefined));
+}
+
+function sanitizeSectionData(type: string, data: Json, unavailable: Set<string>) {
+  const sanitized = record(sanitizeVisibleContent(data, unavailable));
+  if (type === 'ctaBand' && !sanitized.ctaPrimary && sanitized.cta) {
+    sanitized.ctaPrimary = sanitized.cta;
+    delete sanitized.cta;
+  }
+  if (type === 'processSteps' && Array.isArray(sanitized.steps)) {
+    const steps = (sanitized.steps as Json[]).filter((step, index, list) => {
+      const stepTitle = title(step, '');
+      const stepText = text(step);
+      return Boolean(stepTitle && stepText) && list.findIndex((candidate) => title(candidate, '') === stepTitle && text(candidate) === stepText) === index;
+    }).slice(0, 4);
+    if (steps.length < 3) throw new Error('A visible process requires three distinct, content-backed steps.');
+    sanitized.steps = steps;
+  }
+  for (const key of ['images', 'items']) {
+    if (!Array.isArray(sanitized[key])) continue;
+    const seen = new Set<string>();
+    sanitized[key] = (sanitized[key] as unknown[]).filter((entry) => {
+      const url = images(entry)[0];
+      if (!url) return true;
+      if (seen.has(url)) return false;
+      seen.add(url);
+      return true;
+    });
+  }
+  return sanitized;
+}
 
 function walk(value: unknown, visit: (key: string, value: unknown) => void, key = '') {
   visit(key, value);
@@ -146,16 +229,23 @@ function href(value: unknown) {
 
 function text(value: unknown) {
   const data = record(value);
-  const direct = firstString(data, ['subline', 'text', 'description', 'intro', 'body', 'copy', 'answer', 'quote', 'excerpt', 'caption']);
-  if (direct) return direct;
+  const narrativeKeys = new Set(['subline', 'text', 'description', 'intro', 'body', 'copy', 'answer', 'quote', 'excerpt', 'caption', 'storyText', 'introText', 'vibeText', 'supportingText']);
+  for (const key of narrativeKeys) {
+    if (nonEmpty(data[key]) && !isCssColorLiteral(data[key])) return String(data[key]);
+  }
   let found = '';
-  walk(value, (key, child) => { if (!found && nonEmpty(child) && /(text|description|intro|body|copy|answer|quote|excerpt|caption)$/i.test(key)) found = child; });
+  walk(value, (key, child) => {
+    if (!found && narrativeKeys.has(key) && nonEmpty(child) && !isCssColorLiteral(child)) found = child;
+  });
   return found;
 }
 
 function title(value: unknown, fallback: string) {
   const data = record(value);
-  return firstString(data, ['headline', 'title', 'heading', 'name', 'label', 'question', 'alt']) || fallback;
+  for (const key of ['headline', 'title', 'heading', 'name', 'label', 'question', 'alt']) {
+    if (nonEmpty(data[key]) && !isCssColorLiteral(data[key])) return String(data[key]);
+  }
+  return fallback;
 }
 
 function unitsFrom(value: unknown, fallback: string): Unit[] {
@@ -184,9 +274,9 @@ function unitsFrom(value: unknown, fallback: string): Unit[] {
 function sourceArchive(sections: SectionRow[]) {
   for (const section of sections) {
     const marker = record(section.data._premiumRedesign);
-    if (Array.isArray(marker.sourceSections)) return replacePlaceholderLinks(marker.sourceSections) as SectionRow[];
+    if (Array.isArray(marker.sourceSections)) return marker.sourceSections as SectionRow[];
   }
-  return replacePlaceholderLinks(sections) as SectionRow[];
+  return sections;
 }
 
 function localizeData(data: Json, locale?: string): Json {
@@ -219,7 +309,7 @@ function itemUnits(items: ItemRow[]) {
   return items.map((item) => ({ id: item.slug, title: item.title, kicker: '', text: text(item.data), image: images(item.data)[0], href: href(item.data), meta: [] })).filter((unit) => unit.image) as Unit[];
 }
 
-const SOURCE_FAMILIES: Record<Extract<PageModule, `source${string}`>, RegExp> = {
+const SOURCE_FAMILIES: Record<string, RegExp> = {
   sourceProof: /(testimonial|review|proof|socialProof|stat|rating|certification)/i,
   sourceLogos: /(logo|sponsor|partner|brand)/i,
   sourceCta: /(cta|campaign|booking|consultation|inquiry|offer|action)/i,
@@ -262,61 +352,37 @@ function legacyLocalizedComposition(target: Target, page: PageRow, source: Secti
   return result;
 }
 
-function localizedComposition(target: Target, page: PageRow, source: SectionRow[], collectionUnits: Unit[], locale?: string): SectionRow[] {
+function localizedComposition(target: Target, page: PageRow, source: SectionRow[], _collectionUnits: Unit[], locale?: string, unavailable = new Set<string>()): SectionRow[] {
   const localizedSource = source.map((section) => ({ ...section, data: localizeData(section.data, locale) }));
-  const pageUnits = localizedSource.flatMap((section, index) => unitsFrom(section.data, section.title_internal || `${page.title} ${index + 1}`));
-  const allUnits = [...pageUnits, ...collectionUnits].filter((unit, index, list) => unit.image && list.findIndex((entry) => entry.title === unit.title && entry.image === unit.image) === index);
-  if (!allUnits.length) throw new Error(`${target.slug}/${page.slug}: no reusable image content found.`);
-  const lead = pageUnits[0] || allUnits[0];
-  if (page.slug === 'impressum' || page.slug === 'datenschutz' || page.type === 'legal') {
-    return localizedSource.map((section, index) => ({ ...section, tenant_id: target.id, page_id: page.id, sort_order: index, spacing_top: index ? section.spacing_top : 'l', spacing_bottom: index === localizedSource.length - 1 ? 'l' : section.spacing_bottom, style_overrides: { ...(section.style_overrides || {}), ...darkStyle(target) } }));
-  }
   const modules = PAGE_COMPOSITION_MAPS[target.slug][page.slug];
   if (!modules) throw new Error(`${target.slug}/${page.slug}: no explicit composition map exists.`);
-  const result: SectionRow[] = [];
-  const retained = new Set<string>();
-  const add = (type: string, data: Json, label: string) => result.push(draft(target, page, result.length, type, data, label));
-  for (const module of modules) {
-    if (module === 'cinematicArrival') add('cinematicHero', { eyebrow: lead.kicker || page.title, headline: lead.title || page.title, subline: lead.text || '', image: lead.image, primaryCta: lead.href ? { label: 'Mehr erfahren', href: lead.href } : undefined, align: 'left' }, 'Cinematic Arrival');
-    else if (module === 'editorialArrival') add('editorialHero', { eyebrow: lead.kicker || page.title, headline: lead.title || page.title, text: lead.text || '', imagePrimary: lead.image, imageSecondary: pageUnits[1]?.image, primaryCta: lead.href ? { label: 'Mehr erfahren', href: lead.href } : undefined }, 'Editorial Arrival');
-    else if (module === 'collectionAtelier') {
-      if (collectionUnits.length < 3) throw new Error(`${target.slug}/${page.slug}: collection atelier needs three source items.`);
-      add('materialAtelier', { badge: target.preset === 'quiet' ? 'Behutsame Orientierung' : 'Materialatelier', headline: page.title, subline: lead.text || '', preset: target.preset, items: collectionUnits.slice(0, 8) }, 'Collection Atelier');
-    } else if (module === 'pageAtelier') {
-      if (pageUnits.length < 3) throw new Error(`${target.slug}/${page.slug}: page atelier needs three page-owned images.`);
-      add('materialAtelier', { badge: target.preset === 'quiet' ? 'Auswahl in Ruhe' : 'Im Showroom', headline: page.title, subline: lead.text || '', preset: target.preset, items: pageUnits.slice(0, 8) }, 'Page Atelier');
-    } else if (module === 'kineticIdentity') {
-      if (allUnits.length < 3) throw new Error(`${target.slug}/${page.slug}: kinetic identity needs three source statements.`);
-      add('kineticIdentity', { badge: page.title, headline: lead.title, subline: lead.text || '', preset: 'architectural', statements: allUnits.slice(0, 6).map((unit) => ({ id: unit.id, prefix: '', highlight: unit.title, suffix: '', text: unit.text, image: unit.image })) }, 'Kinetic Identity');
-    } else if (module === 'chapters') {
-      if (allUnits.length < 3) throw new Error(`${target.slug}/${page.slug}: chapters need three image-backed sources.`);
-      add('cinematicChapters', { badge: page.title, headline: lead.title, intro: lead.text || '', transition: target.preset === 'quiet' ? 'crossfade' : 'depth', chapters: allUnits.slice(0, 6).map((unit, index) => ({ kicker: unit.kicker || `${String(index + 1).padStart(2, '0')} · ${page.title}`, title: unit.title, text: unit.text, image: unit.image, ctaLabel: unit.href ? 'Mehr erfahren' : undefined, ctaHref: unit.href })) }, 'Editorial Chapters');
-    } else if (module === 'projectMorph') {
-      if (collectionUnits.length < 3) throw new Error(`${target.slug}/${page.slug}: project morph needs three collection sources.`);
-      add('editorialCardMorph', { badge: page.title, headline: lead.title, subline: lead.text || '', layout: 'stack', items: collectionUnits.slice(0, 8).map((unit) => ({ ...unit, ctaLabel: unit.href ? 'Details ansehen' : undefined })) }, 'Project Universe');
-    } else if (module === 'gallery') {
-      const gallery = (pageUnits.length >= 3 ? pageUnits : allUnits).slice(0, 12);
-      add('galleryPro', { badge: page.title, headline: lead.title, subline: lead.text || '', images: gallery.map((unit) => ({ src: unit.image, alt: unit.title, caption: unit.text, category: unit.kicker })) }, 'Curated Gallery');
-    } else if (module === 'signaturePath') {
-      const paths = [...pageUnits, ...collectionUnits].slice(0, 7);
-      if (paths.length < 3) throw new Error(`${target.slug}/${page.slug}: signature path needs three source stations.`);
-      add('signaturePath', { badge: target.preset === 'quiet' ? 'In Ruhe begleitet' : 'Unser Weg', headline: page.title, subline: lead.text || '', pathPreset: target.preset === 'quiet' ? 'flow' : 'craft', items: paths.map((unit) => ({ id: unit.id, title: unit.title, text: unit.text, image: unit.image, href: unit.href })) }, 'Signature Path');
-    } else if (module in SOURCE_FAMILIES) {
-      const matcher = SOURCE_FAMILIES[module as keyof typeof SOURCE_FAMILIES];
-      localizedSource.filter((section) => !retained.has(section.id) && matcher.test(section.type)).forEach((section) => { retained.add(section.id); result.push(retainedSection(target, page, section, result.length)); });
-    }
-  }
-  localizedSource.filter((section) => !retained.has(section.id) && images(section.data).length === 0 && !/(hero|gallery|mosaic|showcase)/i.test(section.type)).forEach((section) => { retained.add(section.id); result.push(retainedSection(target, page, section, result.length)); });
+  const legal = page.slug === 'impressum' || page.slug === 'datenschutz' || page.type === 'legal';
+  const used = new Set<string>();
+  const result = modules.map((type, index) => {
+    const section = localizedSource.find((candidate) => candidate.type === type && !used.has(candidate.id));
+    if (!section) throw new Error(`${target.slug}/${page.slug}: required source section ${type} is missing.`);
+    used.add(section.id);
+    return {
+      ...section,
+      id: stableUuid(`premium-redesign:${target.id}:${page.id}:${index}:${section.id}`),
+      tenant_id: target.id,
+      page_id: page.id,
+      sort_order: index,
+      data: legal ? section.data : sanitizeSectionData(section.type, record(replacePlaceholderLinks(section.data)), unavailable),
+      style_overrides: { ...(section.style_overrides || {}), ...darkStyle(target) },
+    };
+  });
+  if (!legal && result.length > 7) throw new Error(`${target.slug}/${page.slug}: premium composition exceeds seven visible sections.`);
   return result;
 }
 
-export function buildPageComposition(target: Target, page: PageRow, current: SectionRow[], collectionUnits: Unit[]) {
+export function buildPageComposition(target: Target, page: PageRow, current: SectionRow[], collectionUnits: Unit[], unavailable = new Set<string>()) {
   const source = sourceArchive(current);
   if (!source.length) throw new Error(`${target.slug}/${page.slug}: page has no source sections.`);
-  const base = localizedComposition(target, page, source, collectionUnits);
+  const base = localizedComposition(target, page, source, collectionUnits, undefined, unavailable);
   const localized = localesIn(source);
   for (const locale of localized) {
-    const version = localizedComposition(target, page, source, collectionUnits, locale);
+    const version = localizedComposition(target, page, source, collectionUnits, locale, unavailable);
     base.forEach((section, index) => {
       if (!version[index] || version[index].type !== section.type) throw new Error(`${target.slug}/${page.slug}: localized ${locale} composition drifted.`);
       section.data = { ...section.data, _localized: { ...record(section.data._localized), [locale]: version[index].data } };
@@ -329,7 +395,7 @@ export function buildPageComposition(target: Target, page: PageRow, current: Sec
 function sourceItemSections(item: ItemRow) {
   const current = Array.isArray(item.data.sections) ? item.data.sections as Json[] : [];
   const marker = current.map((section) => record(record(section.data)._premiumRedesign)).find((entry) => Array.isArray(entry.sourceSections));
-  return replacePlaceholderLinks(marker ? marker.sourceSections : current) as Json[];
+  return (marker ? marker.sourceSections : current) as Json[];
 }
 
 function legacyBuildItemData(target: Target, collection: CollectionRow, item: ItemRow, allItems: ItemRow[]): Json {
@@ -373,7 +439,7 @@ function itemNarrative(item: ItemRow, source: Json[]): Unit[] {
   );
 }
 
-export function buildItemData(target: Target, collection: CollectionRow, item: ItemRow, _allItems: ItemRow[]): Json {
+function generatedBuildItemData(target: Target, collection: CollectionRow, item: ItemRow, _allItems: ItemRow[]): Json {
   const source = sourceItemSections(item);
   if (!source.length) throw new Error(`${target.slug}/${collection.key}/${item.slug}: collection item has no source sections.`);
   const modules = COLLECTION_DETAIL_COMPOSITION_MAPS[target.slug][item.slug];
@@ -465,6 +531,36 @@ export function buildItemData(target: Target, collection: CollectionRow, item: I
   return { ...item.data, sections: embedded, _premiumRedesign: { version: 1 } };
 }
 
+function conciseGrabDetailText(value: unknown) {
+  if (!nonEmpty(value)) return value;
+  return value.replace(/<p>Im persönlichen Gespräch werden Umfang,[\s\S]*?nachvollziehbar bleibt\.<\/p>/i, '').trim();
+}
+
+export function buildItemData(target: Target, collection: CollectionRow, item: ItemRow, _allItems: ItemRow[], unavailable = new Set<string>()): Json {
+  const source = sourceItemSections(item);
+  if (!source.length) throw new Error(`${target.slug}/${collection.key}/${item.slug}: collection item has no source sections.`);
+  const modules = COLLECTION_DETAIL_COMPOSITION_MAPS[target.slug][item.slug];
+  if (!modules) throw new Error(`${target.slug}/${collection.key}/${item.slug}: no explicit detail composition map exists.`);
+  const used = new Set<number>();
+  const embedded = modules.map((type, index) => {
+    const sourceIndex = source.findIndex((candidate, candidateIndex) => !used.has(candidateIndex) && candidate.type === type);
+    if (sourceIndex < 0) throw new Error(`${target.slug}/${collection.key}/${item.slug}: required source section ${type} is missing.`);
+    used.add(sourceIndex);
+    const section = source[sourceIndex];
+    const visibleSource = record(replacePlaceholderLinks(record(section.data)));
+    if (target.slug === 'schubert-grabdenkmal' && type === 'textImage') visibleSource.text = conciseGrabDetailText(visibleSource.text);
+    return {
+      ...section,
+      id: section.id || `${item.slug}-source-${index + 1}`,
+      data: sanitizeSectionData(type, visibleSource, unavailable),
+      styleOverrides: { ...record(section.styleOverrides || section.style_overrides), ...darkStyle(target) },
+    } as Json;
+  });
+  if (!embedded.length) throw new Error(`${target.slug}/${collection.key}/${item.slug}: detail composition is empty.`);
+  embedded[0] = { ...embedded[0], data: { ...record(embedded[0].data), _premiumRedesign: { version: 1, sourceSections: source } } };
+  return { ...item.data, sections: embedded, _premiumRedesign: { version: 1 } };
+}
+
 function brandAndDesign(target: Target, settings: SettingsRow) {
   const p = target.palette;
   return {
@@ -548,18 +644,63 @@ async function load(sql: SqlClient, target: Target) {
   return { pages, sections, collection: collections[0], items, settings: settings[0] };
 }
 
+function selectedMedia(target: Target, before: Awaited<ReturnType<typeof load>>) {
+  const urls = new Set<string>();
+  for (const page of before.pages) {
+    const wanted = PAGE_COMPOSITION_MAPS[target.slug][page.slug] || [];
+    const source = sourceArchive(before.sections.filter((section) => section.page_id === page.id));
+    source.filter((section) => wanted.includes(section.type)).forEach((section) => images(section.data).forEach((url) => urls.add(url)));
+  }
+  for (const item of before.items) {
+    const wanted = COLLECTION_DETAIL_COMPOSITION_MAPS[target.slug][item.slug] || [];
+    sourceItemSections(item).filter((section) => wanted.includes(String(section.type))).forEach((section) => images(section.data).forEach((url) => urls.add(url)));
+  }
+  return [...urls].filter((url) => /^https?:\/\//i.test(url));
+}
+
+async function mediaAvailable(url: string) {
+  if (KNOWN_UNAVAILABLE_MEDIA.some((part) => url.includes(part))) return false;
+  const request = async (method: 'HEAD' | 'GET') => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8_000);
+    try {
+      return await fetch(url, { method, redirect: 'follow', signal: controller.signal, headers: method === 'GET' ? { Range: 'bytes=0-1023' } : undefined });
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+  try {
+    const head = await request('HEAD');
+    if (head.ok) return true;
+    const get = await request('GET');
+    return get.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function findUnavailableSelectedMedia(urls: string[]) {
+  const unavailable = new Set<string>();
+  for (let index = 0; index < urls.length; index += 12) {
+    const batch = urls.slice(index, index + 12);
+    const results = await Promise.all(batch.map(async (url) => ({ url, available: await mediaAvailable(url) })));
+    results.filter((result) => !result.available).forEach((result) => unavailable.add(result.url));
+  }
+  return unavailable;
+}
+
 async function processTarget(sql: SqlClient, target: Target, options: ReturnType<typeof parseArgs>, legacySharedStandalone: boolean) {
   const before = await load(sql, target);
   const collections = itemUnits(before.items);
-  if (collections.length !== before.items.length) throw new Error(`${target.slug}: every required collection item must retain a reusable image.`);
-  const afterSections = before.pages.flatMap((page) => buildPageComposition(target, page, before.sections.filter((section) => section.page_id === page.id), collections));
-  const afterItems = before.items.map((item) => ({ ...item, data: buildItemData(target, before.collection, item, before.items) }));
+  const unavailable = await findUnavailableSelectedMedia(selectedMedia(target, before));
+  const afterSections = before.pages.flatMap((page) => buildPageComposition(target, page, before.sections.filter((section) => section.page_id === page.id), collections, unavailable));
+  const afterItems = before.items.map((item) => ({ ...item, data: buildItemData(target, before.collection, item, before.items, unavailable) }));
   const settings = brandAndDesign(target, before.settings);
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   await mkdir(options.backupDir, { recursive: true });
   const backupPath = path.join(options.backupDir, `${target.slug}-${timestamp}.json`);
   await writeFile(backupPath, JSON.stringify({ version: 1, createdAt: new Date().toISOString(), tenant: { id: target.id, slug: target.slug }, globalSettings: { id: before.settings.id, tenantId: before.settings.tenant_id, brand: before.settings.brand, design: before.settings.design }, pageSections: before.sections, collectionItems: before.items }, null, 2), { encoding: 'utf8', flag: 'wx' });
-  const manifest = { tenant: target.slug, mode: options.apply ? 'apply' : 'dry-run', legacySharedStandalone, backupPath, before: { pages: before.pages.length, pageSections: before.sections.length, collectionItems: before.items.length }, after: { pages: before.pages.length, pageSections: afterSections.length, collectionItems: afterItems.length, sectionTypes: [...new Set(afterSections.map((section) => section.type))] }, untouched: ['pages', 'SEO', 'media', 'navigation', 'footer', 'contact settings', 'published snapshots'] };
+  const manifest = { tenant: target.slug, mode: options.apply ? 'apply' : 'dry-run', legacySharedStandalone, backupPath, media: { checked: selectedMedia(target, before).length, excludedFromVisibleComposition: unavailable.size }, before: { pages: before.pages.length, pageSections: before.sections.length, collectionItems: before.items.length }, after: { pages: before.pages.length, pageSections: afterSections.length, collectionItems: afterItems.length, sectionTypes: [...new Set(afterSections.map((section) => section.type))] }, untouched: ['pages', 'SEO', 'media', 'navigation', 'footer', 'contact settings', 'published snapshots'] };
   console.log(JSON.stringify(manifest, null, 2));
   if (!options.apply) return manifest;
   await sql.transaction((tx) => [

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
 import { updatePageAction, addSectionAction, cloneSectionFromPageAction, deleteSectionAction, getSectionCopySourcesAction, updateSectionAction, updateSectionMetaAction, updateSectionTypeAndDataAction, reorderSectionsAction } from '../actions';
 import { publishAction } from '../../actions/publish';
@@ -21,6 +19,8 @@ import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor
 import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
 import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
 import { EditorWorkspaceShell } from '@/app/admin/editor/editor-workspace-shell';
+import { EditorDocumentHeader } from '@/app/admin/editor/editor-document-header';
+import { useLivePreviewMessageBridge } from '@/app/admin/editor/use-live-preview-message-bridge';
 import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
 
 type Section = EditableSection;
@@ -43,7 +43,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const resolvedVars = { ...styleCssVars, ...getBrandCssVars(brand, styleCssVars) };
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(true);
   const [copySources, setCopySources] = useState<{ pageId: string; pageTitle: string; pageSlug: string; sections: { id: string; type: string; titleInternal: string | null }[] }[]>([]);
   const [copySourcesLoading, setCopySourcesLoading] = useState(false);
   const preview = usePreview();
@@ -64,241 +64,20 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     if (!preview.isOpen) return;
     const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current);
     preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
-  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale]);
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale, collections, tenantId, previewProducts]);
 
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
 
-  useEffect(() => {
-    function onMsg(e: MessageEvent) {
-      // Only trust the same-origin iframe (the live-preview tab).
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
-      // Click-to-focus from live-preview: scroll matching editor card into view
-      // and pulse it briefly so the user sees where their click landed.
-      if (e.data?.type === 'flamingo-section-clicked') {
-        const id = e.data.sectionId;
-        if (typeof id !== 'string') return;
-        const card = document.querySelector<HTMLElement>(`[data-section-card-id="${CSS.escape(id)}"]`);
-        if (!card) return;
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        card.classList.add('ring-2', 'ring-pink-400', 'ring-offset-2');
-        setTimeout(() => card.classList.remove('ring-2', 'ring-pink-400', 'ring-offset-2'), 1600);
-      }
-      // In-place text edits from live-preview: a text element with
-      // data-edit-path was blurred. Patch the corresponding field on the
-      // section (supports nested paths like "items.0.title" for items
-      // rendered inside .map()) and push back to preview for instant
-      // feedback.
-      if (e.data?.type === 'flamingo-field-edit') {
-        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
-        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
-        const current = sectionsRef.current.find(s => s.id === sectionId);
-        if (!current) return;
-        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
-        // Path: dot-separated, numeric segments index into arrays.
-        // e.g. "items.0.title" → base.items[0].title = value.
-        const segments = path.split('.').filter(Boolean);
-        if (segments.length === 0) return;
-        // No-op guard: read current value at the same path
-        let probe: unknown = base;
-        for (const seg of segments) {
-          if (probe == null) { probe = undefined; break; }
-          probe = (probe as Record<string, unknown>)[seg];
-        }
-        if (probe === value) return;
-        // Immutably set the nested value, cloning every container along
-        // the path so React sees a new reference at every level.
-        const setNested = (obj: unknown, segs: string[], val: string): Record<string, unknown> | unknown[] => {
-          const [head, ...rest] = segs;
-          const isIndex = /^\d+$/.test(head);
-          if (rest.length === 0) {
-            if (Array.isArray(obj)) {
-              const copy = [...obj];
-              copy[Number(head)] = val;
-              return copy;
-            }
-            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
-          }
-          if (Array.isArray(obj)) {
-            const copy = [...obj];
-            const idx = Number(head);
-            copy[idx] = setNested(copy[idx], rest, val);
-            return copy;
-          }
-          const container = (obj as Record<string, unknown> | null) ?? {};
-          const childExisting = container[head];
-          const childContainer = isIndex
-            ? (Array.isArray(childExisting) ? childExisting : [])
-            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
-          return { ...container, [head]: setNested(childContainer, rest, val) };
-        };
-        const next = setNested(base, segments, value) as Record<string, unknown>;
-        handleSectionChangeRef.current?.(sectionId, next);
-      }
-      // Rich-text edit from live-preview: same shape as field-edit but the
-      // value is innerHTML. Reuse the same setNested helper.
-      if (e.data?.type === 'flamingo-rich-edit') {
-        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
-        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
-        const current = sectionsRef.current.find(s => s.id === sectionId);
-        if (!current) return;
-        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
-        const segments = path.split('.').filter(Boolean);
-        if (segments.length === 0) return;
-        let probe: unknown = base;
-        for (const seg of segments) {
-          if (probe == null) { probe = undefined; break; }
-          probe = (probe as Record<string, unknown>)[seg];
-        }
-        if (probe === value) return;
-        const setNested = (obj: unknown, segs: string[], val: string): Record<string, unknown> | unknown[] => {
-          const [head, ...rest] = segs;
-          const isIndex = /^\d+$/.test(head);
-          if (rest.length === 0) {
-            if (Array.isArray(obj)) {
-              const copy = [...obj];
-              copy[Number(head)] = val;
-              return copy;
-            }
-            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
-          }
-          if (Array.isArray(obj)) {
-            const copy = [...obj];
-            const idx = Number(head);
-            copy[idx] = setNested(copy[idx], rest, val);
-            return copy;
-          }
-          const container = (obj as Record<string, unknown> | null) ?? {};
-          const childExisting = container[head];
-          const childContainer = isIndex
-            ? (Array.isArray(childExisting) ? childExisting : [])
-            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
-          return { ...container, [head]: setNested(childContainer, rest, val) };
-        };
-        const next = setNested(base, segments, value) as Record<string, unknown>;
-        handleSectionChangeRef.current?.(sectionId, next);
-      }
-      // Image-edit from live-preview overlay: set a string at the given
-      // path (same engine as field-edit).
-      if (e.data?.type === 'flamingo-image-edit') {
-        const { sectionId, path, url } = e.data as { sectionId: string; path: string; url: string };
-        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof url !== 'string') return;
-        const current = sectionsRef.current.find(s => s.id === sectionId);
-        if (!current) return;
-        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
-        const segments = path.split('.').filter(Boolean);
-        if (segments.length === 0) return;
-        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
-          const [head, ...rest] = segs;
-          const isIndex = /^\d+$/.test(head);
-          if (rest.length === 0) {
-            if (Array.isArray(obj)) {
-              const copy = [...obj];
-              copy[Number(head)] = val;
-              return copy;
-            }
-            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
-          }
-          if (Array.isArray(obj)) {
-            const copy = [...obj];
-            const idx = Number(head);
-            copy[idx] = setNested(copy[idx], rest, val);
-            return copy;
-          }
-          const container = (obj as Record<string, unknown> | null) ?? {};
-          const childExisting = container[head];
-          const childContainer = isIndex
-            ? (Array.isArray(childExisting) ? childExisting : [])
-            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
-          return { ...container, [head]: setNested(childContainer, rest, val) };
-        };
-        const next = setNested(base, segments, url) as Record<string, unknown>;
-        handleSectionChangeRef.current?.(sectionId, next);
-      }
-      // Icon-edit from live-preview overlay: writes a Lucide icon name string
-      // at the given path. Same set-nested engine as image-edit.
-      if (e.data?.type === 'flamingo-icon-edit') {
-        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
-        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
-        const current = sectionsRef.current.find(s => s.id === sectionId);
-        if (!current) return;
-        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
-        const segments = path.split('.').filter(Boolean);
-        if (segments.length === 0) return;
-        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
-          const [head, ...rest] = segs;
-          const isIndex = /^\d+$/.test(head);
-          if (rest.length === 0) {
-            if (Array.isArray(obj)) {
-              const copy = [...obj];
-              copy[Number(head)] = val;
-              return copy;
-            }
-            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
-          }
-          if (Array.isArray(obj)) {
-            const copy = [...obj];
-            const idx = Number(head);
-            copy[idx] = setNested(copy[idx], rest, val);
-            return copy;
-          }
-          const container = (obj as Record<string, unknown> | null) ?? {};
-          const childExisting = container[head];
-          const childContainer = isIndex
-            ? (Array.isArray(childExisting) ? childExisting : [])
-            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
-          return { ...container, [head]: setNested(childContainer, rest, val) };
-        };
-        const next = setNested(base, segments, value) as Record<string, unknown>;
-        handleSectionChangeRef.current?.(sectionId, next);
-      }
-      // Link-edit from live-preview overlay: writes an object {label, href, icon?}.
-      if (e.data?.type === 'flamingo-link-edit') {
-        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: Record<string, unknown> };
-        if (typeof sectionId !== 'string' || typeof path !== 'string' || !value || typeof value !== 'object') return;
-        const current = sectionsRef.current.find(s => s.id === sectionId);
-        if (!current) return;
-        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
-        const segments = path.split('.').filter(Boolean);
-        if (segments.length === 0) return;
-        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
-          const [head, ...rest] = segs;
-          const isIndex = /^\d+$/.test(head);
-          if (rest.length === 0) {
-            if (Array.isArray(obj)) {
-              const copy = [...obj];
-              copy[Number(head)] = val;
-              return copy;
-            }
-            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
-          }
-          if (Array.isArray(obj)) {
-            const copy = [...obj];
-            const idx = Number(head);
-            copy[idx] = setNested(copy[idx], rest, val);
-            return copy;
-          }
-          const container = (obj as Record<string, unknown> | null) ?? {};
-          const childExisting = container[head];
-          const childContainer = isIndex
-            ? (Array.isArray(childExisting) ? childExisting : [])
-            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
-          return { ...container, [head]: setNested(childContainer, rest, val) };
-        };
-        const next = setNested(base, segments, value) as Record<string, unknown>;
-        handleSectionChangeRef.current?.(sectionId, next);
-      }
-      // Color-edit from live-preview overlay: replaces the section's
-      // styleOverrides wholesale (the overlay sends the merged object).
-      if (e.data?.type === 'flamingo-color-edit') {
-        const { sectionId, overrides } = e.data as { sectionId: string; overrides: Record<string, string> };
-        if (typeof sectionId !== 'string' || !overrides || typeof overrides !== 'object') return;
-        handleSaveColorOverridesRef.current?.(sectionId, overrides);
-      }
-    }
-    window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
-  }, [sendPreviewData]);
+  useLivePreviewMessageBridge({
+    sendPreviewData,
+    iframeRef: preview.iframeRef,
+    sectionsRef,
+    pendingChangesRef: pendingChanges,
+    sectionChangeRef: handleSectionChangeRef,
+    colorChangeRef: handleSaveColorOverridesRef,
+    i18n,
+    activeLocale,
+  });
 
   // Sync props from server component on navigation/revalidation
   useEffect(() => {
@@ -647,26 +426,26 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   return (
     <PageSectionsProvider sections={sectionAnchors}>
     <EditorWorkspaceShell>
-      {/* SEO Panel */}
-      <PageSeoPanel ref={seoRef} pageId={page.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
-
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Link href="/admin/pages" className="text-gray-500 hover:text-gray-800"><ArrowLeft size={20} /></Link>
-        <div className="flex-1">
-          <input className="text-2xl font-bold bg-transparent border-none outline-none w-full" value={page.title} onChange={(e) => { setPage({ ...page, title: e.target.value }); setHasDirty(true); setSaved(false); }} />
-          <div className="flex items-center gap-3 mt-1">
-            <span className="text-sm text-gray-500">/</span>
-            <input className="text-sm text-gray-500 bg-transparent border-none outline-none" value={page.slug} onChange={(e) => { setPage({ ...page, slug: e.target.value }); setHasDirty(true); setSaved(false); }} />
-          </div>
-        </div>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={page.visible} onChange={() => { setPage({ ...page, visible: !page.visible }); setHasDirty(true); setSaved(false); }} />
-          Sichtbar
-        </label>
-      </div>
+      <EditorDocumentHeader
+        backHref="/admin/pages"
+        kindLabel="Seite"
+        title={page.title}
+        onTitleChange={(title) => { setPage({ ...page, title }); setHasDirty(true); setSaved(false); }}
+        pathPrefix="/"
+        slug={page.slug}
+        onSlugChange={(slug) => { setPage({ ...page, slug }); setHasDirty(true); setSaved(false); }}
+        statusActive={page.visible}
+        statusActiveLabel="Sichtbar"
+        statusInactiveLabel="Nicht sichtbar"
+        onStatusChange={(visible) => { setPage({ ...page, visible }); setHasDirty(true); setSaved(false); }}
+        dirty={hasDirty}
+        saved={saved}
+        saving={saving}
+      />
 
       <EditorLocaleTabs i18n={i18n} activeLocale={activeLocale} onChange={setActiveLocale} />
+
+      <PageSeoPanel ref={seoRef} pageId={page.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
       <SectionStackEditor
         sections={sections}
@@ -712,6 +491,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       <EditorActionBar
         previewOpen={preview.isOpen}
         saved={saved}
+        dirty={hasDirty}
         saving={saving}
         publishing={publishing}
         onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open(); }}
