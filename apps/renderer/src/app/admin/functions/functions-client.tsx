@@ -275,7 +275,7 @@ export function FunctionsClient({
             <article className="admin-card flex min-h-64 flex-col p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="grid size-11 place-items-center rounded-xl bg-violet-50 text-violet-700 ring-1 ring-violet-100"><Globe className="size-5" /></div>
-                <StatusPill tone="available" label="Verfügbar" />
+                <StatusPill tone="available" label="Premium" />
               </div>
               <h3 className="mt-5 font-semibold text-zinc-950">Mehrsprachigkeit</h3>
               <p className="mt-1 text-sm leading-6 text-zinc-500">Sprachen im CMS verwalten und Inhalte pro Sprache gezielt pflegen.</p>
@@ -371,7 +371,7 @@ function getPremiumPresentation(
   if (!state.enabled) {
     return state.requested
       ? { href: moduleHref, action: 'Anfrage ansehen', status: 'Freischaltung angefragt', tone: 'attention' }
-      : { href: moduleHref, action: `${label} kennenlernen`, status: 'Verfügbar', tone: 'available' };
+      : { href: moduleHref, action: `${label} kennenlernen`, status: 'Premium', tone: 'available' };
   }
   if (!state.ready) return { href: moduleHref, action: 'Jetzt einrichten', status: 'Einrichtung offen', tone: 'attention' };
   if (!state.used) return { href: '/admin/pages', action: 'Auf Website einbauen', status: 'Noch nicht auf Website', tone: 'attention' };

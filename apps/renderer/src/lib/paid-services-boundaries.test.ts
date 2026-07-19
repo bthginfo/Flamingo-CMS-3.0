@@ -75,6 +75,9 @@ test('billing entitlement uses one shared key and truthful active/locked admin s
   assert.match(functionsClient, /billingEnabled \? \(/);
   assert.match(functionsClient, /href="\/admin\/billing"/);
   assert.match(functionsClient, /Modul anfragen/);
+  assert.doesNotMatch(functionsClient, /label="Verfügbar"|status: 'Verfügbar'/);
+  assert.match(functionsClient, /label="Premium"/);
+  assert.match(functionsClient, /status: 'Premium'/);
   assert.match(billingPage, /eq\(tenantAddons\.addonKey, BILLING_ADDON_KEY\)/);
   assert.match(billingPage, /if \(!addon\?\.active\) return <BillingPaywall/);
 });
