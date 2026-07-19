@@ -4,6 +4,7 @@ import { createDb, DATABASE_SCHEMA_VERSION, migrateDatabase, tenantDatabaseConne
 import { eq, inArray } from 'drizzle-orm';
 import { revealCrmSecret } from '../src/lib/secret-storage';
 
+async function main() {
 const controlUrl = process.env.DATABASE_URL?.trim();
 if (!controlUrl) throw new Error('DATABASE_URL is required.');
 const controlDb = createDb(controlUrl);
@@ -12,7 +13,7 @@ const records = await controlDb.select().from(tenantDatabaseConnections)
 
 if (!records.length) {
   console.log('No dedicated standalone databases registered.');
-  process.exit(0);
+  return;
 }
 if (!process.env.CRM_CONFIG_ENCRYPTION_KEY?.trim() && !process.env.CONFIG_ENCRYPTION_KEY?.trim()) {
   throw new Error('CRM_CONFIG_ENCRYPTION_KEY is required to migrate standalone databases.');
@@ -42,3 +43,9 @@ for (const record of records) {
 }
 
 if (failures) throw new Error(`${failures} standalone database migration(s) failed.`);
+}
+
+main().catch(error => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+});

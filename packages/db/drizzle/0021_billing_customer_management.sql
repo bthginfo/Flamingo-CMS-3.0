@@ -1,23 +1,43 @@
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "customer_number" varchar(80);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "customer_type" varchar(20) DEFAULT 'company' NOT NULL;
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "company_name" varchar(255);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "salutation" varchar(40);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "first_name" varchar(120);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "last_name" varchar(120);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "mobile" varchar(50);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "website" varchar(500);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "tax_number" varchar(100);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "vat_id" varchar(100);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "e_invoice_routing_id" varchar(100);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "buyer_reference" varchar(100);
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "language" varchar(10) DEFAULT 'de' NOT NULL;
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "payment_term_days" integer DEFAULT 14 NOT NULL;
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "notes" text;
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "custom_fields" jsonb DEFAULT '{}'::jsonb NOT NULL;
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "archived_at" timestamp with time zone;
+--> statement-breakpoint
 ALTER TABLE "customers" ADD COLUMN IF NOT EXISTS "updated_at" timestamp with time zone DEFAULT now() NOT NULL;
+--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "customers_tenant_number_idx" ON "customers" ("tenant_id", "customer_number");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "customers_tenant_archived_idx" ON "customers" ("tenant_id", "archived_at");
+--> statement-breakpoint
 DO $$ BEGIN
   ALTER TABLE "customers" ADD CONSTRAINT "customers_type_check" CHECK ("customer_type" IN ('company', 'person'));
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
@@ -37,7 +57,9 @@ CREATE TABLE IF NOT EXISTS "customer_custom_field_definitions" (
   "updated_at" timestamp with time zone DEFAULT now() NOT NULL,
   CONSTRAINT "customer_custom_fields_type_check" CHECK ("field_type" IN ('text', 'textarea', 'number', 'date', 'email', 'phone', 'boolean', 'select'))
 );
+--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "customer_custom_fields_tenant_key_idx" ON "customer_custom_field_definitions" ("tenant_id", "field_key");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "customer_custom_fields_tenant_sort_idx" ON "customer_custom_field_definitions" ("tenant_id", "sort_order");
 --> statement-breakpoint
 
@@ -72,6 +94,7 @@ CREATE TABLE IF NOT EXISTS "billing_settings" (
   CONSTRAINT "billing_settings_counters_check" CHECK ("next_invoice_number" > 0 AND "next_cancellation_number" > 0 AND "next_customer_number" > 0),
   CONSTRAINT "billing_settings_sequence_reset_check" CHECK ("sequence_reset" IN ('never', 'year', 'month'))
 );
+--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "billing_settings_tenant_idx" ON "billing_settings" ("tenant_id");
 --> statement-breakpoint
 
@@ -87,7 +110,9 @@ CREATE TABLE IF NOT EXISTS "billing_services" (
   CONSTRAINT "billing_services_price_check" CHECK ("unit_price_net_cents" >= 0),
   CONSTRAINT "billing_services_tax_check" CHECK ("tax_rate_basis_points" BETWEEN 0 AND 10000)
 );
+--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "billing_services_tenant_code_idx" ON "billing_services" ("tenant_id", "service_code");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_services_tenant_active_idx" ON "billing_services" ("tenant_id", "active");
 --> statement-breakpoint
 
@@ -120,9 +145,13 @@ CREATE TABLE IF NOT EXISTS "billing_documents" (
   CONSTRAINT "billing_documents_status_check" CHECK ("status" IN ('draft', 'finalized', 'sent', 'paid', 'cancelled')),
   CONSTRAINT "billing_documents_amount_check" CHECK ("subtotal_net_cents" >= 0 AND "tax_cents" >= 0 AND "total_gross_cents" >= 0)
 );
+--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "billing_documents_tenant_number_idx" ON "billing_documents" ("tenant_id", "document_number");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_documents_tenant_status_idx" ON "billing_documents" ("tenant_id", "status", "created_at");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_documents_customer_idx" ON "billing_documents" ("tenant_id", "customer_id");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_documents_original_idx" ON "billing_documents" ("original_document_id");
 --> statement-breakpoint
 
@@ -142,6 +171,7 @@ CREATE TABLE IF NOT EXISTS "billing_document_items" (
   CONSTRAINT "billing_document_items_price_check" CHECK ("unit_price_net_cents" >= 0 AND "line_net_cents" >= 0),
   CONSTRAINT "billing_document_items_rates_check" CHECK ("discount_basis_points" BETWEEN 0 AND 10000 AND "tax_rate_basis_points" BETWEEN 0 AND 10000)
 );
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_document_items_document_idx" ON "billing_document_items" ("document_id", "position");
 --> statement-breakpoint
 
@@ -153,7 +183,9 @@ CREATE TABLE IF NOT EXISTS "billing_document_events" (
   "payload" jsonb DEFAULT '{}'::jsonb NOT NULL, "previous_hash" varchar(64), "event_hash" varchar(64) NOT NULL,
   "created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_document_events_document_idx" ON "billing_document_events" ("document_id", "created_at");
+--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "billing_document_events_hash_idx" ON "billing_document_events" ("tenant_id", "event_hash");
 --> statement-breakpoint
 
@@ -169,7 +201,9 @@ CREATE TABLE IF NOT EXISTS "billing_delivery_attempts" (
   "sent_at" timestamp with time zone,
   CONSTRAINT "billing_delivery_status_check" CHECK ("status" IN ('sending', 'sent', 'failed', 'uncertain'))
 );
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_delivery_document_idx" ON "billing_delivery_attempts" ("document_id", "created_at");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "billing_delivery_status_idx" ON "billing_delivery_attempts" ("tenant_id", "status", "created_at");
 --> statement-breakpoint
 
@@ -206,7 +240,9 @@ BEGIN
   RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql;
+--> statement-breakpoint
 DROP TRIGGER IF EXISTS billing_documents_immutable ON "billing_documents";
+--> statement-breakpoint
 CREATE TRIGGER billing_documents_immutable BEFORE UPDATE OR DELETE ON "billing_documents"
 FOR EACH ROW EXECUTE FUNCTION flamingo_guard_billing_document();
 --> statement-breakpoint
@@ -224,7 +260,9 @@ BEGIN
   RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql;
+--> statement-breakpoint
 DROP TRIGGER IF EXISTS billing_document_items_immutable ON "billing_document_items";
+--> statement-breakpoint
 CREATE TRIGGER billing_document_items_immutable BEFORE INSERT OR UPDATE OR DELETE ON "billing_document_items"
 FOR EACH ROW EXECUTE FUNCTION flamingo_guard_billing_item();
 --> statement-breakpoint
@@ -237,6 +275,8 @@ BEGIN
   RAISE EXCEPTION 'Billing audit events are append-only';
 END;
 $$ LANGUAGE plpgsql;
+--> statement-breakpoint
 DROP TRIGGER IF EXISTS billing_document_events_append_only ON "billing_document_events";
+--> statement-breakpoint
 CREATE TRIGGER billing_document_events_append_only BEFORE UPDATE OR DELETE ON "billing_document_events"
 FOR EACH ROW EXECUTE FUNCTION flamingo_guard_billing_event();

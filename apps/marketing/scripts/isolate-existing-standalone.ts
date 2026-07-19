@@ -11,6 +11,7 @@ import {
 import { copyTenantData } from '../src/lib/tenant-data-migration';
 import { setStandaloneDatabaseConnection } from '../src/lib/vercel';
 
+async function main() {
 const tenantId = process.env.TENANT_ID?.trim();
 if (!tenantId) throw new Error('TENANT_ID is required.');
 if (!process.env.GITHUB_REPO_NUMERIC_ID?.trim()) throw new Error('GITHUB_REPO_NUMERIC_ID is required to deploy the database cutover.');
@@ -54,3 +55,9 @@ try {
   await removeTenantDatabaseRecord(tenantId).catch(rollbackError => console.error('Registry rollback failed:', rollbackError));
   throw error;
 }
+}
+
+main().catch(error => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+});

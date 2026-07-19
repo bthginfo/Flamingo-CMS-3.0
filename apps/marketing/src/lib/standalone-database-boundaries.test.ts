@@ -52,3 +52,24 @@ test('tenant connection URIs are stored encrypted outside the tenant record', ()
   assert.match(registry, /directConnectionUriEncrypted: text\('direct_connection_uri_encrypted'\)/);
   assert.doesNotMatch(tenant, /connectionUri|databaseUrl/i);
 });
+
+test('standalone maintenance entrypoints run without unsupported top-level await', () => {
+  for (const file of [
+    '../../scripts/migrate-standalone-databases.ts',
+    '../../scripts/isolate-existing-standalone.ts',
+    '../../scripts/purge-standalone-shared-copy.ts',
+  ]) {
+    const script = source(file);
+    assert.match(script, /async function main\(\)/);
+    assert.match(script, /main\(\)\.catch\(/);
+  }
+});
+
+test('billing migration keeps one prepared command per breakpoint', () => {
+  const migration = source('../../../../packages/db/drizzle/0021_billing_customer_management.sql');
+  const chunks = migration.split(/--> statement-breakpoint\s*/).map(value => value.trim()).filter(Boolean);
+  for (const chunk of chunks) {
+    if (/^(?:DO \$\$|CREATE OR REPLACE FUNCTION)/.test(chunk)) continue;
+    assert.equal((chunk.match(/;/g) || []).length, 1, `multiple commands in migration chunk: ${chunk.slice(0, 80)}`);
+  }
+});

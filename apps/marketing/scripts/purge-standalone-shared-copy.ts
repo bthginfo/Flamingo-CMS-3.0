@@ -4,6 +4,7 @@ import { getDb } from '../src/lib/db';
 import { getRequiredStandaloneDatabase } from '../src/lib/tenant-data-db';
 import { purgeSharedTenantData } from '../src/lib/tenant-data-migration';
 
+async function main() {
 const tenantId = process.env.TENANT_ID?.trim();
 const confirmation = process.env.CONFIRM_TENANT_SLUG?.trim();
 if (!tenantId || !confirmation) throw new Error('TENANT_ID and CONFIRM_TENANT_SLUG are required.');
@@ -23,3 +24,9 @@ if (!targetTenant || !snapshot) throw new Error('Dedicated database verification
 
 await purgeSharedTenantData(controlDb, tenantId);
 console.log(`${tenant.slug}: shared customer-data copy purged. Control-plane tenant and domains were retained.`);
+}
+
+main().catch(error => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+});
