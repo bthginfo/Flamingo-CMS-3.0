@@ -15,6 +15,7 @@
     "push": "drizzle-kit push",
     "backfill:section-definitions": "tsx --tsconfig ../../apps/renderer/tsconfig.json scripts/backfill-section-definitions.ts",
     "redesign:schubert": "tsx scripts/redesign-schubert-tenants.ts",
+    "verify:billing-operations": "tsx scripts/verify-billing-operations.ts",
     "studio": "drizzle-kit studio",
     "typecheck": "tsc --noEmit"
   },

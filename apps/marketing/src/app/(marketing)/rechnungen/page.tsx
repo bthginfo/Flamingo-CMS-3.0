@@ -1,23 +1,25 @@
 import type { Metadata } from 'next';
-import { Check, FileCheck2, FileText, Mail, ReceiptText, ShieldCheck, UsersRound } from 'lucide-react';
+import { BadgePercent, CalendarClock, Check, FileCheck2, FileText, Mail, ReceiptText, ShieldCheck, UsersRound } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Rechnungen & Kunden – Kundenverwaltung, PDF und XRechnung im Flamingo CMS',
-  description: 'Kunden, Leistungen, fortlaufende Rechnungsnummern, PDF-Vorschau, XRechnung, sicherer SMTP-Versand und nachvollziehbare Stornos direkt im Flamingo CMS.',
+  description: 'Kunden, Angebote, Rechnungen, Rabatte, Serienrechnungen, Zahlungen, Mahnungen, PDF und E-Rechnung für Deutschland und Österreich direkt im Flamingo CMS.',
   alternates: { canonical: '/rechnungen' },
   openGraph: {
     title: 'Rechnungen & Kunden · FlamingoMedia',
-    description: 'Vom Kundenstamm bis zur festgeschriebenen PDF- und XRechnung – ohne separates Rechnungstool.',
+    description: 'Vom Angebot bis zu Zahlung und Mahnung – mit PDF, E-Rechnung und Serienläufen direkt im CMS.',
   },
 };
 
 const capabilities = [
   { icon: UsersRound, title: 'Kundenstamm, der zu Deinem Betrieb passt', text: 'Firmen und Personen, Rechnungs- und Lieferadressen, Zahlungsziel, Steuerdaten, Leitweg-ID und eigene strukturierte Stammdatenfelder.' },
-  { icon: ReceiptText, title: 'Rechnungen ohne Tabellen-Bastelei', text: 'Leistungen aus dem Katalog einsetzen, Mengen und Steuern prüfen und die Rechnung während der Eingabe als echtes Dokument sehen.' },
-  { icon: FileCheck2, title: 'PDF und XRechnung zusammen', text: 'Jede festgeschriebene Rechnung steht als lesbares PDF und als strukturierte XRechnung nach EN 16931 bereit.' },
+  { icon: ReceiptText, title: 'Vom Angebot bis zur Schlussrechnung', text: 'Angebote in Rechnungen übernehmen sowie Anzahlungs-, Abschlags-, Schlussrechnungen und Gutschriften in einem Ablauf erstellen.' },
+  { icon: FileCheck2, title: 'PDF und E-Rechnung zusammen', text: 'Deutschland erhält XRechnung/UBL, Österreich UBL 2.1 – jeweils zusammen mit einem lesbaren PDF und passendem Steuerprofil.' },
   { icon: ShieldCheck, title: 'Korrekturen bleiben nachvollziehbar', text: 'Festgeschriebene Inhalte werden nicht überschrieben. Eine Korrektur erzeugt ein verknüpftes Stornodokument mit eigener Nummer und Prüfspur.' },
-  { icon: Mail, title: 'Direkt sicher versenden', text: 'PDF und XML gehen gemeinsam über Deinen hinterlegten Mail-Server oder den vollständig konfigurierten Flamingo-Versand an den Kunden.' },
-  { icon: FileText, title: 'Eigene Nummernlogik', text: 'Zum Beispiel RE-2026-0001, 2026/07/0001 oder ein eigenes Format – fortlaufend und mit optionalem Jahres- oder Monatswechsel.' },
+  { icon: BadgePercent, title: 'Rabatte, Skonto und Steuerfälle', text: 'Positions- und Gesamtrabatte, Skonto, Kleinunternehmer, Reverse Charge, innergemeinschaftliche Leistungen und Steuerbefreiungen sauber abbilden.' },
+  { icon: CalendarClock, title: 'Serien, Zahlungen und Mahnungen', text: 'Wiederkehrende Belege automatisch vorbereiten oder versenden, Teilzahlungen dokumentieren und überfällige Beträge gezielt anmahnen.' },
+  { icon: Mail, title: 'Direkt senden oder sicher teilen', text: 'PDF und XML per SMTP versenden oder einen zeitlich begrenzten Kundenlink für Ansicht, Download und Zahlungslink erzeugen.' },
+  { icon: FileText, title: 'Eigene Nummernlogik', text: 'Separate Nummernkreise für Rechnungen, Angebote, Gutschriften und Stornos – mit eigenen Formaten und optionalem Jahres- oder Monatswechsel.' },
 ];
 
 export default function BillingMarketingPage() {
@@ -29,7 +31,7 @@ export default function BillingMarketingPage() {
           <div className="lg:col-span-7">
             <p className="eyebrow mb-6 text-white/60">Paid Feature · Rechnungen & Kunden</p>
             <h1 className="headline-xl max-w-5xl">Vom Kundenstamm zur Rechnung. <em className="italic-pop">In einem ruhigen Workflow.</em></h1>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-white/68 md:text-xl">Kein zweites Login, keine Rechnungsvorlage in Word. Kunden, Leistungen, PDF, XRechnung, Versand und Storno leben direkt in Deinem Flamingo CMS.</p>
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-white/68 md:text-xl">Kein zweites Login, keine Rechnungsvorlage in Word. Angebote, Rechnungen, Rabatte, Serien, Zahlungen, Mahnungen und E-Rechnungen leben direkt in Deinem Flamingo CMS.</p>
             <div className="mt-9 flex flex-wrap gap-3">
               <a href="/kontakt" className="btn-accent">Feature anfragen <span aria-hidden>→</span></a>
               <a href="#preise" className="rounded-full border border-white/25 px-6 py-3 text-sm font-semibold transition hover:bg-white/10">Preis ansehen</a>
@@ -61,9 +63,9 @@ export default function BillingMarketingPage() {
 
       <section className="bg-brand py-24 text-white md:py-32">
         <div className="container-x grid gap-12 lg:grid-cols-12 lg:items-start">
-          <div className="lg:col-span-5"><p className="eyebrow mb-5 text-white/55">Der sichere Dokumentweg</p><h2 className="headline-lg">Entwurf bleibt flexibel. Festgeschrieben bleibt <em className="italic-pop">nachvollziehbar.</em></h2><p className="mt-6 leading-8 text-white/62">Vor dem Festschreiben prüft Flamingo Pflichtangaben. Danach sind Nummer, Inhalte und Dokumentdateien unveränderbar; Korrekturen erfolgen per Storno. Die technische Ablage ist für nachvollziehbare Belegprozesse ausgelegt. Steuerliche und organisatorische Pflichten bleiben Teil Deines Betriebs.</p></div>
+          <div className="min-w-0 lg:col-span-5"><p className="eyebrow mb-5 text-white/55">Der sichere Dokumentweg</p><h2 className="break-words text-[clamp(3.15rem,4.35vw,4.5rem)] font-black leading-[.9] tracking-[-.055em]">Entwurf bleibt flexibel. Festgeschrieben bleibt <em className="italic-pop">nachvollziehbar.</em></h2><p className="mt-6 leading-8 text-white/62">Vor dem Festschreiben prüft Flamingo Pflichtangaben. Danach sind Nummer, Inhalte und Dokumentdateien unveränderbar; Korrekturen erfolgen per Storno. Die technische Ablage ist für nachvollziehbare Belegprozesse ausgelegt. Steuerliche und organisatorische Pflichten bleiben Teil Deines Betriebs.</p></div>
           <ol className="grid gap-3 lg:col-span-7">
-            {['Kunde wählen und Leistungen einsetzen', 'Pflichtangaben und Summen prüfen', 'Fortlaufende Nummer vergeben und festschreiben', 'PDF und XRechnung ansehen oder herunterladen', 'Per SMTP versenden, Zahlung markieren oder verknüpft stornieren'].map((step, index) => <li key={step} className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.04] p-5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-sm font-black text-brand">{index + 1}</span><span className="font-semibold text-white/85">{step}</span></li>)}
+            {['Kunde wählen und Leistungen einsetzen', 'Rabatte, Steuerfall und Zahlungsregeln festlegen', 'Fortlaufende Nummer vergeben und festschreiben', 'PDF und passende E-Rechnung ansehen oder herunterladen', 'Sicher versenden, Zahlungen verbuchen und bei Bedarf mahnen'].map((step, index) => <li key={step} className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[.04] p-5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-sm font-black text-brand">{index + 1}</span><span className="font-semibold text-white/85">{step}</span></li>)}
           </ol>
         </div>
       </section>
@@ -73,7 +75,7 @@ export default function BillingMarketingPage() {
           <div className="lg:col-span-6"><p className="eyebrow mb-5">Preis</p><h2 className="headline-lg">Ein integriertes Werkzeug. <em className="italic-pop">Klar kalkuliert.</em></h2><p className="mt-6 max-w-xl text-lg leading-8 text-muted">Der laufende Preis deckt Formatpflege für E-Rechnungen, sicheren Dokumentbetrieb und die Weiterentwicklung des Moduls ab.</p></div>
           <div className="lg:col-span-6 rounded-[2rem] border border-line bg-[#fff8fa] p-8 shadow-xl md:p-10">
             <p className="text-sm font-bold uppercase tracking-widest text-accent">Rechnungen & Kunden</p><div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-2"><strong className="font-display text-5xl">499 €</strong><span className="pb-1 text-muted">einmalig</span></div><p className="mt-2 text-2xl font-bold">+ 29 € / Monat</p>
-            <ul className="mt-7 space-y-3 text-sm">{['Einrichtung des Moduls und Nummernkreises', 'Kunden, eigene Stammdatenfelder und Leistungskatalog', 'PDF, XRechnung, Vorschau und Download', 'SMTP-Versand, Zahlungsstatus, Storno und Prüfspur'].map(item => <li key={item} className="flex gap-3"><Check size={18} className="mt-0.5 shrink-0 text-emerald-600" /><span>{item}</span></li>)}</ul>
+            <ul className="mt-7 space-y-3 text-sm">{['Vier Nummernkreise sowie Profile für Deutschland und Österreich', 'Kunden, eigene Stammdatenfelder und Leistungskatalog', 'Angebote, Rechnungsarten, Rabatte, Skonto, PDF und E-Rechnung', 'Serienläufe, Teilzahlungen, Mahnungen, SMTP, Storno und Prüfspur'].map(item => <li key={item} className="flex gap-3"><Check size={18} className="mt-0.5 shrink-0 text-emerald-600" /><span>{item}</span></li>)}</ul>
             <div className="mt-7 rounded-2xl bg-white p-4 text-sm leading-6 text-muted"><strong className="text-brand">Optional Done-for-you: 799 €</strong><br />inklusive Einrichtung, Übernahme vorhandener Stammdaten und fünf Leistungen.</div>
             <a href="/kontakt" className="btn-primary mt-7 inline-flex">Rechnungen & Kunden anfragen →</a>
           </div>

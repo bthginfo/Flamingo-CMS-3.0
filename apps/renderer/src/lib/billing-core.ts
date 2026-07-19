@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { Invoice } from '@e-invoice-eu/core';
 import { PDFDocument, rgb, StandardFonts, type PDFFont, type PDFPage } from 'pdf-lib';
+import { getBillingJurisdiction } from './billing-jurisdictions';
 export { BILLING_ADDON_KEY } from './billing-constants';
 
 export type BillingAddress = {
@@ -56,6 +57,9 @@ export type BillingLine = {
   unitLabel: string;
   unitPriceNetCents: number;
   discountBasisPoints: number;
+  discountType?: 'percent' | 'fixed';
+  discountValue?: number;
+  discountCents?: number;
   taxRateBasisPoints: number;
   lineNetCents?: number;
 };
@@ -63,7 +67,7 @@ export type BillingLine = {
 export type BillingDocumentSnapshot = {
   id?: string;
   documentNumber: string;
-  documentType: 'invoice' | 'cancellation';
+  documentType: 'invoice' | 'cancellation' | 'credit_note' | 'quote' | 'advance_invoice' | 'partial_invoice' | 'final_invoice';
   issueDate: Date;
   serviceDateFrom: Date;
   serviceDateTo?: Date;
@@ -75,33 +79,72 @@ export type BillingDocumentSnapshot = {
   closingText?: string;
   notes?: string;
   originalDocumentNumber?: string;
+  taxMode?: BillingTaxMode;
+  taxExemptionReason?: string;
+  discountType?: 'percent' | 'fixed';
+  discountValue?: number;
+  cashDiscountBasisPoints?: number;
+  cashDiscountDays?: number;
+  paymentLinkUrl?: string;
+  quoteValidUntil?: Date;
 };
 
 export type BillingTaxBreakdown = { rateBasisPoints: number; netCents: number; taxCents: number };
+export type BillingTaxMode = 'standard' | 'small_business' | 'reverse_charge' | 'intra_eu' | 'exempt';
+export type BillingDocumentDiscount = { type: 'percent' | 'fixed'; value: number };
 
-export function calculateBillingLineNetCents(line: Pick<BillingLine, 'quantity' | 'unitPriceNetCents' | 'discountBasisPoints'>) {
+type BillingCalculationOptions = {
+  taxMode?: BillingTaxMode;
+  documentDiscount?: BillingDocumentDiscount;
+};
+
+export function calculateBillingLineNetCents(line: Pick<BillingLine, 'quantity' | 'unitPriceNetCents' | 'discountBasisPoints' | 'discountType' | 'discountValue'>) {
   const beforeDiscount = line.quantity * line.unitPriceNetCents;
-  return Math.round(beforeDiscount * (1 - line.discountBasisPoints / 10_000));
+  const type = line.discountType || 'percent';
+  const value = line.discountValue ?? line.discountBasisPoints;
+  const discountCents = type === 'fixed'
+    ? Math.min(Math.max(0, value), Math.round(beforeDiscount))
+    : Math.round(beforeDiscount * Math.min(10_000, Math.max(0, value)) / 10_000);
+  return Math.max(0, Math.round(beforeDiscount) - discountCents);
 }
 
-export function calculateBillingTotals(lines: BillingLine[], smallBusiness = false) {
-  const taxGroups = new Map<number, { netCents: number; taxCents: number }>();
-  const normalizedLines = lines.map(line => {
-    const lineNetCents = calculateBillingLineNetCents(line);
-    const rate = smallBusiness ? 0 : line.taxRateBasisPoints;
-    const group = taxGroups.get(rate) || { netCents: 0, taxCents: 0 };
-    group.netCents += lineNetCents;
-    taxGroups.set(rate, group);
-    return { ...line, taxRateBasisPoints: rate, lineNetCents };
+function allocateDiscount(amount: number, bases: number[]) {
+  const total = bases.reduce((sum, value) => sum + value, 0);
+  if (!amount || !total) return bases.map(() => 0);
+  let allocated = 0;
+  return bases.map((base, index) => {
+    const value = index === bases.length - 1 ? amount - allocated : Math.round(amount * base / total);
+    allocated += value;
+    return Math.min(base, Math.max(0, value));
   });
-  const taxBreakdown = [...taxGroups].sort(([a], [b]) => a - b).map(([rateBasisPoints, group]) => ({
-    rateBasisPoints,
-    netCents: group.netCents,
-    taxCents: Math.round(group.netCents * rateBasisPoints / 10_000),
-  }));
-  const subtotalNetCents = normalizedLines.reduce((sum, line) => sum + line.lineNetCents, 0);
+}
+
+export function calculateBillingTotals(lines: BillingLine[], options: boolean | BillingCalculationOptions = false) {
+  const calculation = typeof options === 'boolean'
+    ? { taxMode: options ? 'small_business' as const : 'standard' as const, documentDiscount: undefined }
+    : { taxMode: options.taxMode || 'standard', documentDiscount: options.documentDiscount };
+  const normalizedLines = lines.map(line => {
+    const beforeDiscountCents = Math.round(line.quantity * line.unitPriceNetCents);
+    const lineNetCents = calculateBillingLineNetCents(line);
+    const discountCents = beforeDiscountCents - lineNetCents;
+    const rate = calculation.taxMode === 'standard' ? line.taxRateBasisPoints : 0;
+    return { ...line, taxRateBasisPoints: rate, discountCents, lineNetCents };
+  });
+  const subtotalBeforeDocumentDiscountCents = normalizedLines.reduce((sum, line) => sum + line.lineNetCents, 0);
+  const documentDiscount = calculation.documentDiscount;
+  const documentDiscountCents = !documentDiscount ? 0 : documentDiscount.type === 'fixed'
+    ? Math.min(subtotalBeforeDocumentDiscountCents, Math.max(0, documentDiscount.value))
+    : Math.round(subtotalBeforeDocumentDiscountCents * Math.min(10_000, Math.max(0, documentDiscount.value)) / 10_000);
+  const rates = [...new Set(normalizedLines.map(line => line.taxRateBasisPoints))].sort((a, b) => a - b);
+  const groupBases = rates.map(rate => normalizedLines.filter(line => line.taxRateBasisPoints === rate).reduce((sum, line) => sum + line.lineNetCents, 0));
+  const groupDiscounts = allocateDiscount(documentDiscountCents, groupBases);
+  const taxBreakdown = rates.map((rateBasisPoints, index) => {
+    const netCents = Math.max(0, groupBases[index] - groupDiscounts[index]);
+    return { rateBasisPoints, netCents, taxCents: Math.round(netCents * rateBasisPoints / 10_000) };
+  });
+  const subtotalNetCents = subtotalBeforeDocumentDiscountCents - documentDiscountCents;
   const taxCents = taxBreakdown.reduce((sum, group) => sum + group.taxCents, 0);
-  return { normalizedLines, taxBreakdown, subtotalNetCents, taxCents, totalGrossCents: subtotalNetCents + taxCents };
+  return { normalizedLines, taxBreakdown, subtotalBeforeDocumentDiscountCents, documentDiscountCents, subtotalNetCents, taxCents, totalGrossCents: subtotalNetCents + taxCents };
 }
 
 export function sequencePeriod(date: Date, reset: 'never' | 'year' | 'month') {
@@ -146,7 +189,26 @@ function amount(cents: number) {
   return (cents / 100).toFixed(2);
 }
 
-export async function generateXRechnung(input: {
+function billingDocumentTitle(type: BillingDocumentSnapshot['documentType']) {
+  return ({
+    invoice: 'Rechnung',
+    cancellation: 'Stornorechnung',
+    credit_note: 'Gutschrift',
+    quote: 'Angebot',
+    advance_invoice: 'Anzahlungsrechnung',
+    partial_invoice: 'Abschlagsrechnung',
+    final_invoice: 'Schlussrechnung',
+  } as const)[type];
+}
+
+function taxCategory(taxMode: BillingTaxMode) {
+  if (taxMode === 'reverse_charge') return 'AE';
+  if (taxMode === 'intra_eu') return 'K';
+  if (taxMode === 'exempt' || taxMode === 'small_business') return 'E';
+  return 'S';
+}
+
+export async function generateEInvoice(input: {
   document: BillingDocumentSnapshot;
   seller: BillingSellerSnapshot;
   customer: BillingCustomerSnapshot;
@@ -154,6 +216,10 @@ export async function generateXRechnung(input: {
   totals: ReturnType<typeof calculateBillingTotals>;
 }) {
   const { document, seller, customer, totals } = input;
+  const jurisdiction = getBillingJurisdiction(seller.countryCode);
+  const taxMode = document.taxMode || (seller.smallBusiness ? 'small_business' : 'standard');
+  const category = taxCategory(taxMode);
+  const exemptionReason = document.taxExemptionReason || (taxMode === 'small_business' ? seller.smallBusinessNotice : undefined);
   const currency = 'EUR' as const;
   const customerEndpoint = customer.eInvoiceRoutingId || customer.email;
   const customerScheme = customer.eInvoiceRoutingId ? '0204' : 'EM';
@@ -166,8 +232,8 @@ export async function generateXRechnung(input: {
       'cbc:ID': document.documentNumber,
       'cbc:IssueDate': isoDate(document.issueDate),
       'cbc:DueDate': isoDate(document.dueDate),
-      'cbc:InvoiceTypeCode': document.documentType === 'cancellation' ? '381' : '380',
-      'cbc:Note': [document.notes, seller.smallBusiness ? seller.smallBusinessNotice : undefined].filter(Boolean) as string[],
+      'cbc:InvoiceTypeCode': ['cancellation', 'credit_note'].includes(document.documentType) ? '381' : '380',
+      'cbc:Note': [document.notes, exemptionReason].filter(Boolean) as string[],
       'cbc:DocumentCurrencyCode': currency,
       'cbc:BuyerReference': document.buyerReference || customer.buyerReference || customer.customerNumber || 'Direktauftrag',
       'cac:InvoicePeriod': {
@@ -225,7 +291,19 @@ export async function generateXRechnung(input: {
           },
         }],
       } : {}),
-      'cac:PaymentTerms': { 'cbc:Note': `Zahlbar bis ${new Intl.DateTimeFormat('de-DE').format(document.dueDate)} ohne Abzug.` },
+      'cac:PaymentTerms': { 'cbc:Note': document.cashDiscountBasisPoints && document.cashDiscountDays
+        ? `Zahlbar bis ${new Intl.DateTimeFormat('de-DE').format(document.dueDate)}. ${document.cashDiscountBasisPoints / 100} % Skonto bei Zahlung innerhalb von ${document.cashDiscountDays} Tagen.`
+        : `Zahlbar bis ${new Intl.DateTimeFormat('de-DE').format(document.dueDate)} ohne Abzug.` },
+      ...(totals.documentDiscountCents ? {
+        'cac:AllowanceCharge': [{
+          'cbc:ChargeIndicator': 'false',
+          'cbc:AllowanceChargeReason': 'Rechnungsrabatt',
+          'cbc:Amount': amount(totals.documentDiscountCents),
+          'cbc:Amount@currencyID': currency,
+          'cbc:BaseAmount': amount(totals.subtotalBeforeDocumentDiscountCents),
+          'cbc:BaseAmount@currencyID': currency,
+        }] as never,
+      } : {}),
       'cac:TaxTotal': [{
         'cbc:TaxAmount': amount(totals.taxCents),
         'cbc:TaxAmount@currencyID': currency,
@@ -235,15 +313,15 @@ export async function generateXRechnung(input: {
           'cbc:TaxAmount': amount(group.taxCents),
           'cbc:TaxAmount@currencyID': currency,
           'cac:TaxCategory': {
-            'cbc:ID': seller.smallBusiness ? 'E' : 'S',
+            'cbc:ID': category,
             'cbc:Percent': String(group.rateBasisPoints / 100),
-            ...(seller.smallBusiness ? { 'cbc:TaxExemptionReason': seller.smallBusinessNotice || 'Steuerbefreiung nach § 19 UStG' } : {}),
+            ...(exemptionReason ? { 'cbc:TaxExemptionReason': exemptionReason } : {}),
             'cac:TaxScheme': { 'cbc:ID': 'VAT' },
           },
         })),
       }],
       'cac:LegalMonetaryTotal': {
-        'cbc:LineExtensionAmount': amount(totals.subtotalNetCents),
+        'cbc:LineExtensionAmount': amount(totals.subtotalBeforeDocumentDiscountCents),
         'cbc:LineExtensionAmount@currencyID': currency,
         'cbc:TaxExclusiveAmount': amount(totals.subtotalNetCents),
         'cbc:TaxExclusiveAmount@currencyID': currency,
@@ -251,6 +329,10 @@ export async function generateXRechnung(input: {
         'cbc:TaxInclusiveAmount@currencyID': currency,
         'cbc:PayableAmount': amount(totals.totalGrossCents),
         'cbc:PayableAmount@currencyID': currency,
+        ...(totals.documentDiscountCents ? {
+          'cbc:AllowanceTotalAmount': amount(totals.documentDiscountCents),
+          'cbc:AllowanceTotalAmount@currencyID': currency,
+        } : {}),
       },
       'cac:InvoiceLine': totals.normalizedLines.map((line, index) => ({
         'cbc:ID': String(index + 1),
@@ -259,11 +341,21 @@ export async function generateXRechnung(input: {
         'cbc:InvoicedQuantity@unitCode': line.unitCode as never,
         'cbc:LineExtensionAmount': amount(line.lineNetCents),
         'cbc:LineExtensionAmount@currencyID': currency,
+        ...(line.discountCents ? {
+          'cac:AllowanceCharge': [{
+            'cbc:ChargeIndicator': 'false',
+            'cbc:AllowanceChargeReason': 'Positionsrabatt',
+            'cbc:Amount': amount(line.discountCents),
+            'cbc:Amount@currencyID': currency,
+            'cbc:BaseAmount': amount(Math.round(line.quantity * line.unitPriceNetCents)),
+            'cbc:BaseAmount@currencyID': currency,
+          }],
+        } : {}),
         'cac:Item': {
           ...(line.description ? { 'cbc:Description': line.description } : {}),
           'cbc:Name': line.name,
           'cac:ClassifiedTaxCategory': {
-            'cbc:ID': seller.smallBusiness ? 'E' : 'S',
+            'cbc:ID': category,
             'cbc:Percent': String(line.taxRateBasisPoints / 100),
             'cac:TaxScheme': { 'cbc:ID': 'VAT' },
           },
@@ -276,9 +368,11 @@ export async function generateXRechnung(input: {
   // reads and PDF previews; it is loaded only for finalization/export.
   const { InvoiceService } = await import('@e-invoice-eu/core');
   const service = new InvoiceService(console);
-  const generated = await service.generate(invoice, { format: 'XRECHNUNG-UBL', lang: 'de-de', noWarnings: true });
+  const generated = await service.generate(invoice, { format: jurisdiction.eInvoiceFormat, lang: seller.countryCode === 'AT' ? 'de-at' : 'de-de', noWarnings: true });
   return typeof generated === 'string' ? generated : new TextDecoder().decode(generated);
 }
+
+export const generateXRechnung = generateEInvoice;
 
 function formatMoney(cents: number) {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(cents / 100);
@@ -323,7 +417,10 @@ export async function renderBillingPdf(input: {
   totals: ReturnType<typeof calculateBillingTotals>;
 }) {
   const pdf = await PDFDocument.create();
-  pdf.setTitle(`${input.document.documentType === 'cancellation' ? 'Stornorechnung' : 'Rechnung'} ${input.document.documentNumber}`);
+  const title = billingDocumentTitle(input.document.documentType);
+  const taxMode = input.document.taxMode || (input.seller.smallBusiness ? 'small_business' : 'standard');
+  const exemptionReason = input.document.taxExemptionReason || (taxMode === 'small_business' ? input.seller.smallBusinessNotice : undefined);
+  pdf.setTitle(`${title} ${input.document.documentNumber}`);
   pdf.setAuthor(input.seller.companyName);
   pdf.setCreationDate(input.document.issueDate);
   pdf.setModificationDate(input.document.issueDate);
@@ -348,17 +445,17 @@ export async function renderBillingPdf(input: {
     const scale = Math.min(130 / logo.width, 48 / logo.height);
     page!.drawImage(logo, { x: margin, y: 748, width: logo.width * scale, height: logo.height * scale });
   } else page!.drawText(input.seller.companyName, { x: margin, y: 770, font: bold, size: 17, color: ink });
-  page!.drawText(input.document.documentType === 'cancellation' ? 'STORNORECHNUNG' : 'RECHNUNG', { x: 360, y: 770, font: bold, size: 19, color: ink });
+  page!.drawText(title.toUpperCase(), { x: 338, y: 770, font: bold, size: title.length > 17 ? 14 : 19, color: ink });
   page!.drawText(input.document.documentNumber, { x: 360, y: 750, font: regular, size: 10, color: accent });
   page!.drawLine({ start: { x: margin, y: 722 }, end: { x: 547, y: 722 }, thickness: 1, color: pale });
 
   y = 690;
-  const sender = `${input.seller.companyName} · ${input.seller.street} · ${input.seller.postalCode} ${input.seller.city}`;
+  const sender = `${input.seller.companyName} · ${input.seller.street} · ${input.seller.postalCode} ${input.seller.city} · ${input.seller.countryCode}`;
   page!.drawText(sender.slice(0, 90), { x: margin, y, font: regular, size: 7, color: muted });
   y -= 24;
   page!.drawText(input.customer.displayName, { x: margin, y, font: bold, size: 11, color: ink }); y -= 15;
   page!.drawText(input.customer.street, { x: margin, y, font: regular, size: 10, color: ink }); y -= 14;
-  page!.drawText(`${input.customer.postalCode} ${input.customer.city}`, { x: margin, y, font: regular, size: 10, color: ink });
+  page!.drawText(`${input.customer.postalCode} ${input.customer.city} · ${input.customer.countryCode}`, { x: margin, y, font: regular, size: 10, color: ink });
 
   const metaX = 358;
   let metaY = 690;
@@ -396,6 +493,10 @@ export async function renderBillingPdf(input: {
     page!.drawText(String(line.position), { x: 58, y, font: regular, size: 8.5, color: ink });
     page!.drawText(line.name.slice(0, 46), { x: 92, y, font: bold, size: 8.5, color: ink });
     descriptions.forEach((description, index) => page!.drawText(description, { x: 92, y: y - 12 - index * 9, font: regular, size: 7.5, color: muted }));
+    if (line.discountCents) {
+      const discountLabel = line.discountType === 'fixed' ? `Rabatt ${formatMoney(line.discountCents)}` : `Rabatt ${(line.discountValue ?? line.discountBasisPoints) / 100} %`;
+      page!.drawText(discountLabel, { x: 400, y: y - 11, font: regular, size: 7, color: accent });
+    }
     page!.drawText(`${line.quantity} ${line.unitLabel}`, { x: 340, y, font: regular, size: 8, color: ink });
     page!.drawText(formatMoney(line.unitPriceNetCents), { x: 400, y, font: regular, size: 8, color: ink });
     page!.drawText(formatMoney(line.lineNetCents), { x: 486, y, font: bold, size: 8, color: ink });
@@ -410,13 +511,20 @@ export async function renderBillingPdf(input: {
     page!.drawText(value, { x: 490, y, font: strong ? bold : regular, size: strong ? 10 : 8.5, color: ink });
     y -= strong ? 22 : 15;
   };
+  if (input.totals.documentDiscountCents) {
+    drawTotal('Zwischensumme', formatMoney(input.totals.subtotalBeforeDocumentDiscountCents));
+    drawTotal('Rechnungsrabatt', `− ${formatMoney(input.totals.documentDiscountCents)}`);
+  }
   drawTotal('Netto', formatMoney(input.totals.subtotalNetCents));
   input.totals.taxBreakdown.forEach(group => drawTotal(`${group.rateBasisPoints / 100} % USt.`, formatMoney(group.taxCents)));
   page!.drawLine({ start: { x: totalX, y: y + 8 }, end: { x: 547, y: y + 8 }, thickness: 1.5, color: accent });
   drawTotal('Gesamt', formatMoney(input.totals.totalGrossCents), true);
 
   y = Math.min(y - 8, 125);
-  const notes = [input.document.closingText, input.seller.smallBusiness ? input.seller.smallBusinessNotice : undefined].filter(Boolean) as string[];
+  const cashDiscount = input.document.cashDiscountBasisPoints && input.document.cashDiscountDays
+    ? `${input.document.cashDiscountBasisPoints / 100} % Skonto bei Zahlung innerhalb von ${input.document.cashDiscountDays} Tagen.`
+    : undefined;
+  const notes = [input.document.closingText, cashDiscount, exemptionReason, input.document.paymentLinkUrl ? `Online bezahlen: ${input.document.paymentLinkUrl}` : undefined].filter(Boolean) as string[];
   for (const note of notes) for (const line of wrap(regular, note, 8, 499)) { page!.drawText(line, { x: margin, y, font: regular, size: 8, color: muted }); y -= 11; }
   const footer = [input.seller.footer, input.seller.iban ? `IBAN ${input.seller.iban}${input.seller.bic ? ` · BIC ${input.seller.bic}` : ''}` : undefined, input.seller.vatId ? `USt-IdNr. ${input.seller.vatId}` : input.seller.taxNumber ? `Steuernummer ${input.seller.taxNumber}` : undefined].filter(Boolean).join(' · ');
   for (const line of wrap(regular, footer, 7, 499).slice(0, 2)) { y -= 9; page!.drawText(line, { x: margin, y, font: regular, size: 7, color: muted }); }

@@ -236,8 +236,8 @@ export function FunctionsClient({
           {billingEnabled ? (
             <FeatureCard
               title="Rechnungen & Kunden"
-              description="Kundenstammdaten, Leistungskatalog, PDF-Rechnungen und XRechnung in einem ruhigen Arbeitsbereich."
-              note="Festgeschriebene Belege bleiben unverändert; Korrekturen erfolgen nachvollziehbar per Storno."
+              description="Angebote, Rechnungen, Kunden, Serienläufe, Zahlungen und Mahnungen in einem ruhigen Arbeitsbereich."
+              note="Mit Rabatten, DE/AT-E-Rechnung, sicherem Versand und nachvollziehbaren Korrekturen."
               href="/admin/billing"
               action="Rechnungen verwalten"
               status="Aktiv"
@@ -252,8 +252,8 @@ export function FunctionsClient({
                 <StatusPill tone="available" label="Premium" />
               </div>
               <h3 className="mt-5 font-semibold text-zinc-950">Rechnungen & Kunden</h3>
-              <p className="mt-1 text-sm leading-6 text-zinc-500">Kundenstammdaten, Leistungskatalog, PDF und XRechnung professionell verwalten.</p>
-              <p className="mt-3 border-l-2 border-blue-100 pl-3 text-xs leading-5 text-zinc-400">Mit fortlaufenden Nummern, SMTP-Versand und nachvollziehbarem Storno.</p>
+              <p className="mt-1 text-sm leading-6 text-zinc-500">Angebote, Rechnungen, Kunden, Serien und Zahlungen professionell verwalten.</p>
+              <p className="mt-3 border-l-2 border-blue-100 pl-3 text-xs leading-5 text-zinc-400">Mit DE/AT-E-Rechnung, Rabatten, Mahnungen, SMTP und nachvollziehbarem Storno.</p>
               <button type="button" onClick={() => openSupportModal('Ich möchte das Modul Rechnungen & Kunden für meine Website aktivieren.')} className="mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-sm font-semibold text-blue-700 hover:text-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                 Modul anfragen <ArrowRight className="size-4" />
               </button>

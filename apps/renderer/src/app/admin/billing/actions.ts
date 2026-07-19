@@ -1,15 +1,20 @@
 'use server';
 
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { and, asc, desc, eq, inArray, isNull, ne, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNull, lte, ne, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import {
   billingDeliveryAttempts,
   billingDocumentEvents,
   billingDocumentItems,
   billingDocuments,
+  billingPayments,
+  billingPortalLinks,
+  billingRecurringRuns,
+  billingRecurringSchedules,
+  billingReminders,
   billingServices,
   billingSettings,
   customerCustomFieldDefinitions,
@@ -23,7 +28,7 @@ import { createHardenedRendererSmtpTransport, getEffectiveSmtp, isValidSmtpAddre
 import {
   BILLING_ADDON_KEY,
   calculateBillingTotals,
-  generateXRechnung,
+  generateEInvoice,
   renderBillingPdf,
   sequencePeriod,
   sha256,
@@ -33,7 +38,9 @@ import {
   type BillingDocumentSnapshot,
   type BillingLine,
   type BillingSellerSnapshot,
+  type BillingTaxMode,
 } from '@/lib/billing-core';
+import { getBillingJurisdiction, normalizeBillingCountryCode } from '@/lib/billing-jurisdictions';
 
 const nullableText = (max: number) => z.string().trim().max(max).optional().nullable().transform(value => value || null);
 const addressSchema = z.object({
@@ -41,7 +48,7 @@ const addressSchema = z.object({
   addressLine2: nullableText(255),
   postalCode: z.string().trim().min(1).max(30),
   city: z.string().trim().min(1).max(120),
-  countryCode: z.string().trim().length(2).transform(value => value.toUpperCase()),
+  countryCode: z.enum(['DE', 'AT']),
 });
 
 const settingsSchema = z.object({
@@ -50,7 +57,7 @@ const settingsSchema = z.object({
   street: z.string().trim().min(1).max(255),
   postalCode: z.string().trim().min(1).max(30),
   city: z.string().trim().min(1).max(120),
-  countryCode: z.string().trim().length(2).transform(value => value.toUpperCase()),
+  countryCode: z.enum(['DE', 'AT']),
   email: z.string().trim().email().max(255),
   phone: nullableText(80),
   website: nullableText(500),
@@ -66,13 +73,24 @@ const settingsSchema = z.object({
   bic: nullableText(30),
   invoicePrefix: z.string().trim().min(1).max(20),
   cancellationPrefix: z.string().trim().min(1).max(20),
+  quotePrefix: z.string().trim().min(1).max(20),
+  creditPrefix: z.string().trim().min(1).max(20),
   invoiceNumberFormat: z.string().trim().min(3).max(120),
   cancellationNumberFormat: z.string().trim().min(3).max(120),
+  quoteNumberFormat: z.string().trim().min(3).max(120),
+  creditNumberFormat: z.string().trim().min(3).max(120),
   sequenceReset: z.enum(['never', 'year', 'month']),
   nextInvoiceNumber: z.coerce.number().int().min(1).max(999_999_999),
   nextCancellationNumber: z.coerce.number().int().min(1).max(999_999_999),
+  nextQuoteNumber: z.coerce.number().int().min(1).max(999_999_999),
+  nextCreditNumber: z.coerce.number().int().min(1).max(999_999_999),
   currency: z.literal('EUR').default('EUR'),
   defaultPaymentTermDays: z.coerce.number().int().min(0).max(365),
+  defaultCashDiscountBasisPoints: z.coerce.number().int().min(0).max(10_000),
+  defaultCashDiscountDays: z.coerce.number().int().min(0).max(365),
+  defaultReminderDays: z.coerce.number().int().min(1).max(365),
+  defaultReminderFeeCents: z.coerce.number().int().min(0).max(10_000_000),
+  paymentLinkBaseUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().transform(value => value || null),
   defaultIntroText: nullableText(5000),
   defaultClosingText: nullableText(5000),
   defaultFooter: nullableText(2000),
@@ -80,14 +98,14 @@ const settingsSchema = z.object({
   smallBusinessNotice: z.string().trim().min(3).max(1000),
   senderName: nullableText(255),
 }).superRefine((value, context) => {
-  const invoiceError = validateNumberFormat(value.invoiceNumberFormat);
-  const cancellationError = validateNumberFormat(value.cancellationNumberFormat);
-  if (invoiceError) context.addIssue({ code: 'custom', path: ['invoiceNumberFormat'], message: invoiceError });
-  if (cancellationError) context.addIssue({ code: 'custom', path: ['cancellationNumberFormat'], message: cancellationError });
   for (const [path, format] of [
     ['invoiceNumberFormat', value.invoiceNumberFormat],
     ['cancellationNumberFormat', value.cancellationNumberFormat],
+    ['quoteNumberFormat', value.quoteNumberFormat],
+    ['creditNumberFormat', value.creditNumberFormat],
   ] as const) {
+    const formatError = validateNumberFormat(format);
+    if (formatError) context.addIssue({ code: 'custom', path: [path], message: formatError });
     if (value.sequenceReset === 'year' && !/\{YYYY\}|\{YY\}/.test(format)) {
       context.addIssue({ code: 'custom', path: [path], message: 'Bei jährlichem Neustart muss das Jahr im Format stehen.' });
     }
@@ -155,6 +173,8 @@ const lineSchema = z.object({
   unitLabel: z.string().trim().min(1).max(40),
   unitPriceNetCents: z.coerce.number().int().min(0).max(1_000_000_000),
   discountBasisPoints: z.coerce.number().int().min(0).max(10_000),
+  discountType: z.enum(['percent', 'fixed']).default('percent'),
+  discountValue: z.coerce.number().int().min(0).max(1_000_000_000).default(0),
   taxRateBasisPoints: z.coerce.number().int().min(0).max(10_000),
 });
 
@@ -170,8 +190,29 @@ const draftSchema = z.object({
   introText: nullableText(5000),
   closingText: nullableText(5000),
   notes: nullableText(10_000),
+  taxMode: z.enum(['standard', 'small_business', 'reverse_charge', 'intra_eu', 'exempt']).default('standard'),
+  taxExemptionReason: nullableText(2000),
+  discountType: z.enum(['percent', 'fixed']).default('percent'),
+  discountValue: z.coerce.number().int().min(0).max(1_000_000_000).default(0),
+  cashDiscountBasisPoints: z.coerce.number().int().min(0).max(10_000).default(0),
+  cashDiscountDays: z.coerce.number().int().min(0).max(365).default(0),
+  paymentLinkUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().nullable().transform(value => value || null),
+  quoteValidUntil: z.coerce.date().optional().nullable(),
   lines: z.array(lineSchema).min(1).max(500),
-}).refine(value => !value.serviceDateTo || value.serviceDateTo >= value.serviceDateFrom, { path: ['serviceDateTo'], message: 'Das Enddatum liegt vor dem Startdatum.' });
+}).superRefine((value, context) => {
+  if (value.serviceDateTo && value.serviceDateTo < value.serviceDateFrom) context.addIssue({ code: 'custom', path: ['serviceDateTo'], message: 'Das Enddatum liegt vor dem Startdatum.' });
+  if (value.taxMode !== 'standard' && value.taxMode !== 'small_business' && !value.taxExemptionReason) context.addIssue({ code: 'custom', path: ['taxExemptionReason'], message: 'Für diesen Steuerfall ist ein Hinweis erforderlich.' });
+  if (value.cashDiscountBasisPoints > 0 && value.cashDiscountDays < 1) context.addIssue({ code: 'custom', path: ['cashDiscountDays'], message: 'Für Skonto ist eine Frist erforderlich.' });
+});
+
+const paymentSchema = z.object({
+  documentId: z.string().uuid(),
+  amountCents: z.coerce.number().int().positive().max(1_000_000_000),
+  paidAt: z.coerce.date(),
+  method: z.enum(['bank_transfer', 'cash', 'card', 'paypal', 'stripe', 'other']).default('bank_transfer'),
+  reference: nullableText(255),
+  notes: nullableText(2000),
+});
 
 async function requireBillingTenant(writable = true) {
   const session = writable ? await getWritableSession() : await getSession();
@@ -196,7 +237,7 @@ export async function getBillingWorkspaceData() {
   const tenantId = await requireBillingTenant(false);
   const db = getDb();
   const settings = await ensureBillingSettings(tenantId);
-  const [customerRows, fieldRows, serviceRows, documentRows] = await Promise.all([
+  const [customerRows, fieldRows, serviceRows, documentRows, recurringRows] = await Promise.all([
     db.select().from(customers).where(and(eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).orderBy(asc(customers.name)),
     db.select().from(customerCustomFieldDefinitions).where(and(eq(customerCustomFieldDefinitions.tenantId, tenantId), eq(customerCustomFieldDefinitions.active, true))).orderBy(asc(customerCustomFieldDefinitions.sortOrder)),
     db.select().from(billingServices).where(and(eq(billingServices.tenantId, tenantId), eq(billingServices.active, true))).orderBy(asc(billingServices.name)),
@@ -205,10 +246,14 @@ export async function getBillingWorkspaceData() {
       documentNumber: billingDocuments.documentNumber, documentType: billingDocuments.documentType, status: billingDocuments.status,
       issueDate: billingDocuments.issueDate, dueDate: billingDocuments.dueDate, subtotalNetCents: billingDocuments.subtotalNetCents,
       taxCents: billingDocuments.taxCents, totalGrossCents: billingDocuments.totalGrossCents, finalizedAt: billingDocuments.finalizedAt,
-      sentAt: billingDocuments.sentAt, paidAt: billingDocuments.paidAt, cancelledAt: billingDocuments.cancelledAt, createdAt: billingDocuments.createdAt,
+      amountPaidCents: billingDocuments.amountPaidCents, reminderLevel: billingDocuments.reminderLevel,
+      sentAt: billingDocuments.sentAt, paidAt: billingDocuments.paidAt, cancelledAt: billingDocuments.cancelledAt,
+      acceptedAt: billingDocuments.acceptedAt, rejectedAt: billingDocuments.rejectedAt, convertedAt: billingDocuments.convertedAt,
+      quoteValidUntil: billingDocuments.quoteValidUntil, recurringScheduleId: billingDocuments.recurringScheduleId, createdAt: billingDocuments.createdAt,
     }).from(billingDocuments).where(eq(billingDocuments.tenantId, tenantId)).orderBy(desc(billingDocuments.createdAt)).limit(500),
+    db.select().from(billingRecurringSchedules).where(eq(billingRecurringSchedules.tenantId, tenantId)).orderBy(asc(billingRecurringSchedules.nextRunAt)),
   ]);
-  return { settings, customers: customerRows, customFields: fieldRows, services: serviceRows, documents: documentRows };
+  return { settings, customers: customerRows, customFields: fieldRows, services: serviceRows, documents: documentRows, recurringSchedules: recurringRows };
 }
 
 export async function getBillingDocumentAction(documentId: string) {
@@ -216,20 +261,35 @@ export async function getBillingDocumentAction(documentId: string) {
   const db = getDb();
   const [document] = await db.select().from(billingDocuments).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
   if (!document) throw new Error('Dokument nicht gefunden.');
-  const items = await db.select().from(billingDocumentItems).where(and(eq(billingDocumentItems.documentId, documentId), eq(billingDocumentItems.tenantId, tenantId))).orderBy(asc(billingDocumentItems.position));
-  return { document: { ...document, pdfBase64: undefined, xmlContent: undefined }, items };
+  const [items, payments, reminders, events] = await Promise.all([
+    db.select().from(billingDocumentItems).where(and(eq(billingDocumentItems.documentId, documentId), eq(billingDocumentItems.tenantId, tenantId))).orderBy(asc(billingDocumentItems.position)),
+    db.select().from(billingPayments).where(and(eq(billingPayments.documentId, documentId), eq(billingPayments.tenantId, tenantId))).orderBy(desc(billingPayments.paidAt)),
+    db.select().from(billingReminders).where(and(eq(billingReminders.documentId, documentId), eq(billingReminders.tenantId, tenantId))).orderBy(desc(billingReminders.createdAt)),
+    db.select().from(billingDocumentEvents).where(and(eq(billingDocumentEvents.documentId, documentId), eq(billingDocumentEvents.tenantId, tenantId))).orderBy(desc(billingDocumentEvents.createdAt)).limit(100),
+  ]);
+  return { document: { ...document, pdfBase64: undefined, xmlContent: undefined }, items, payments, reminders, events };
 }
 
 export async function saveBillingSettingsAction(input: unknown) {
   const tenantId = await requireBillingTenant();
   const value = settingsSchema.parse(input);
   const db = getDb();
-  const [current] = await db.select({ nextInvoiceNumber: billingSettings.nextInvoiceNumber, nextCancellationNumber: billingSettings.nextCancellationNumber })
+  const [current] = await db.select({
+    nextInvoiceNumber: billingSettings.nextInvoiceNumber,
+    nextCancellationNumber: billingSettings.nextCancellationNumber,
+    nextQuoteNumber: billingSettings.nextQuoteNumber,
+    nextCreditNumber: billingSettings.nextCreditNumber,
+  })
     .from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
   if (!current) throw new Error('Rechnungseinstellungen wurden nicht gefunden.');
   const [issued] = await db.select({ id: billingDocuments.id }).from(billingDocuments)
     .where(and(eq(billingDocuments.tenantId, tenantId), ne(billingDocuments.status, 'draft'))).limit(1);
-  if (issued && (value.nextInvoiceNumber < current.nextInvoiceNumber || value.nextCancellationNumber < current.nextCancellationNumber)) {
+  if (issued && (
+    value.nextInvoiceNumber < current.nextInvoiceNumber
+    || value.nextCancellationNumber < current.nextCancellationNumber
+    || value.nextQuoteNumber < current.nextQuoteNumber
+    || value.nextCreditNumber < current.nextCreditNumber
+  )) {
     throw new Error('Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.');
   }
   await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
@@ -348,28 +408,56 @@ export async function archiveBillingServiceAction(id: string) {
   return { success: true as const };
 }
 
-export async function createBillingDraftAction(customerId?: string) {
-  const tenantId = await requireBillingTenant();
+async function createBillingDraftForTenant(
+  tenantId: string,
+  customerId?: string,
+  documentTypeInput: 'invoice' | 'quote' | 'advance_invoice' | 'partial_invoice' | 'final_invoice' = 'invoice',
+  originalDocumentIdInput?: string,
+) {
   const settings = await ensureBillingSettings(tenantId);
+  const documentType = z.enum(['invoice', 'quote', 'advance_invoice', 'partial_invoice', 'final_invoice']).parse(documentTypeInput);
+  const parsedCustomerId = customerId ? z.string().uuid().parse(customerId) : null;
+  const originalDocumentId = originalDocumentIdInput ? z.string().uuid().parse(originalDocumentIdInput) : null;
+  if (parsedCustomerId) {
+    const [customer] = await getDb().select({ id: customers.id }).from(customers)
+      .where(and(eq(customers.id, parsedCustomerId), eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).limit(1);
+    if (!customer) throw new Error('Kunde nicht gefunden.');
+  }
   const now = new Date();
   const dueDate = new Date(now.getTime() + settings.defaultPaymentTermDays * 86_400_000);
   const [document] = await getDb().insert(billingDocuments).values({
-    tenantId, customerId: customerId ? z.string().uuid().parse(customerId) : null, issueDate: now, serviceDateFrom: now,
+    tenantId, customerId: parsedCustomerId, originalDocumentId, documentType, issueDate: now, serviceDateFrom: now,
     dueDate, currency: 'EUR', introText: settings.defaultIntroText, closingText: settings.defaultClosingText,
+    taxMode: settings.smallBusiness ? 'small_business' : 'standard',
+    taxExemptionReason: settings.smallBusiness ? settings.smallBusinessNotice : null,
+    cashDiscountBasisPoints: settings.defaultCashDiscountBasisPoints,
+    cashDiscountDays: settings.defaultCashDiscountDays,
+    paymentLinkUrl: settings.paymentLinkBaseUrl,
+    quoteValidUntil: documentType === 'quote' ? dueDate : null,
   }).returning({ id: billingDocuments.id });
   revalidatePath('/admin/billing');
   return { success: true as const, id: document.id };
 }
 
-export async function saveBillingDraftAction(input: unknown) {
-  const tenantId = await requireBillingTenant();
+export async function createBillingDraftAction(customerId?: string, documentTypeInput: 'invoice' | 'quote' | 'advance_invoice' | 'partial_invoice' | 'final_invoice' = 'invoice', originalDocumentIdInput?: string) {
+  return createBillingDraftForTenant(await requireBillingTenant(), customerId, documentTypeInput, originalDocumentIdInput);
+}
+
+async function saveBillingDraftForTenant(tenantId: string, input: unknown) {
   const value = draftSchema.parse(input);
-  const totals = calculateBillingTotals(value.lines as BillingLine[]);
+  const totals = calculateBillingTotals(value.lines as BillingLine[], {
+    taxMode: value.taxMode,
+    documentDiscount: { type: value.discountType, value: value.discountValue },
+  });
   const db = getDb();
   const [saved] = await db.update(billingDocuments).set({
     customerId: value.customerId, issueDate: value.issueDate, serviceDateFrom: value.serviceDateFrom, serviceDateTo: value.serviceDateTo,
     dueDate: value.dueDate, buyerReference: value.buyerReference, purchaseOrderReference: value.purchaseOrderReference,
     introText: value.introText, closingText: value.closingText, notes: value.notes,
+    taxMode: value.taxMode, taxExemptionReason: value.taxExemptionReason,
+    discountType: value.discountType, discountValue: value.discountValue, discountCents: totals.documentDiscountCents,
+    cashDiscountBasisPoints: value.cashDiscountBasisPoints, cashDiscountDays: value.cashDiscountDays,
+    paymentLinkUrl: value.paymentLinkUrl, quoteValidUntil: value.quoteValidUntil,
     subtotalNetCents: totals.subtotalNetCents, taxCents: totals.taxCents, totalGrossCents: totals.totalGrossCents,
     taxBreakdown: totals.taxBreakdown, updatedAt: new Date(),
   }).where(and(eq(billingDocuments.id, value.id), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.status, 'draft'))).returning({ id: billingDocuments.id });
@@ -378,10 +466,18 @@ export async function saveBillingDraftAction(input: unknown) {
   await db.insert(billingDocumentItems).values(totals.normalizedLines.map((line, index) => ({
     tenantId, documentId: value.id, serviceId: value.lines[index]?.serviceId || null, position: line.position,
     name: line.name, description: line.description || null, quantity: String(line.quantity), unitCode: line.unitCode, unitLabel: line.unitLabel,
-    unitPriceNetCents: line.unitPriceNetCents, discountBasisPoints: line.discountBasisPoints, taxRateBasisPoints: line.taxRateBasisPoints, lineNetCents: line.lineNetCents,
+    unitPriceNetCents: line.unitPriceNetCents,
+    discountBasisPoints: line.discountType === 'percent' ? line.discountValue ?? line.discountBasisPoints : 0,
+    discountType: line.discountType || 'percent', discountValue: line.discountValue ?? line.discountBasisPoints,
+    discountCents: line.discountCents || 0,
+    taxRateBasisPoints: line.taxRateBasisPoints, lineNetCents: line.lineNetCents,
   })));
   revalidatePath('/admin/billing');
   return { success: true as const };
+}
+
+export async function saveBillingDraftAction(input: unknown) {
+  return saveBillingDraftForTenant(await requireBillingTenant(), input);
 }
 
 export async function deleteBillingDraftAction(id: string) {
@@ -413,10 +509,23 @@ function sellerSnapshot(settings: typeof billingSettings.$inferSelect): BillingS
   };
 }
 
-async function allocateDocumentNumber(tenantId: string, documentId: string, settings: typeof billingSettings.$inferSelect, date: Date, type: 'invoice' | 'cancellation') {
+type BillingNumberSeries = 'invoice' | 'cancellation' | 'quote' | 'credit';
+
+function numberSeries(documentType: BillingDocumentSnapshot['documentType']): BillingNumberSeries {
+  if (documentType === 'quote') return 'quote';
+  if (documentType === 'credit_note') return 'credit';
+  if (documentType === 'cancellation') return 'cancellation';
+  return 'invoice';
+}
+
+async function allocateDocumentNumber(tenantId: string, documentId: string, settings: typeof billingSettings.$inferSelect, date: Date, type: BillingNumberSeries) {
   const period = sequencePeriod(date, settings.sequenceReset as 'never' | 'year' | 'month');
-  const format = type === 'invoice' ? settings.invoiceNumberFormat : settings.cancellationNumberFormat;
-  const prefix = type === 'invoice' ? settings.invoicePrefix : settings.cancellationPrefix;
+  const format = type === 'invoice' ? settings.invoiceNumberFormat
+    : type === 'cancellation' ? settings.cancellationNumberFormat
+      : type === 'quote' ? settings.quoteNumberFormat : settings.creditNumberFormat;
+  const prefix = type === 'invoice' ? settings.invoicePrefix
+    : type === 'cancellation' ? settings.cancellationPrefix
+      : type === 'quote' ? settings.quotePrefix : settings.creditPrefix;
   const result = await getDb().execute(sql`
     WITH locked_document AS MATERIALIZED (
       SELECT id, document_number, document_type FROM billing_documents
@@ -426,10 +535,14 @@ async function allocateDocumentNumber(tenantId: string, documentId: string, sett
     allocated AS MATERIALIZED (
       SELECT CASE
         WHEN settings.sequence_period IS NULL AND ${type} = 'invoice' THEN settings.next_invoice_number
-        WHEN settings.sequence_period IS NULL THEN settings.next_cancellation_number
+        WHEN settings.sequence_period IS NULL AND ${type} = 'cancellation' THEN settings.next_cancellation_number
+        WHEN settings.sequence_period IS NULL AND ${type} = 'quote' THEN settings.next_quote_number
+        WHEN settings.sequence_period IS NULL THEN settings.next_credit_number
         WHEN settings.sequence_period IS DISTINCT FROM ${period} THEN 1
         WHEN ${type} = 'invoice' THEN settings.next_invoice_number
-        ELSE settings.next_cancellation_number
+        WHEN ${type} = 'cancellation' THEN settings.next_cancellation_number
+        WHEN ${type} = 'quote' THEN settings.next_quote_number
+        ELSE settings.next_credit_number
       END AS value
       FROM billing_settings settings, locked_document document
       WHERE settings.tenant_id = ${tenantId}::uuid AND document.document_number IS NULL
@@ -447,6 +560,16 @@ async function allocateDocumentNumber(tenantId: string, documentId: string, sett
           WHEN ${type} = 'cancellation' THEN (SELECT value + 1 FROM allocated)
           WHEN settings.sequence_period IS NOT NULL AND settings.sequence_period IS DISTINCT FROM ${period} THEN 1
           ELSE settings.next_cancellation_number
+        END,
+        next_quote_number = CASE
+          WHEN ${type} = 'quote' THEN (SELECT value + 1 FROM allocated)
+          WHEN settings.sequence_period IS NOT NULL AND settings.sequence_period IS DISTINCT FROM ${period} THEN 1
+          ELSE settings.next_quote_number
+        END,
+        next_credit_number = CASE
+          WHEN ${type} = 'credit' THEN (SELECT value + 1 FROM allocated)
+          WHEN settings.sequence_period IS NOT NULL AND settings.sequence_period IS DISTINCT FROM ${period} THEN 1
+          ELSE settings.next_credit_number
         END,
         updated_at = now()
       WHERE settings.tenant_id = ${tenantId}::uuid AND EXISTS (SELECT 1 FROM allocated)
@@ -480,8 +603,7 @@ async function appendEvent(tenantId: string, documentId: string, eventType: stri
   return eventHash;
 }
 
-export async function finalizeBillingDocumentAction(id: string) {
-  const tenantId = await requireBillingTenant();
+async function finalizeBillingDocumentForTenant(tenantId: string, id: string) {
   const documentId = z.string().uuid().parse(id);
   const db = getDb();
   const [document, settings] = await Promise.all([
@@ -498,12 +620,21 @@ export async function finalizeBillingDocumentAction(id: string) {
   if (!customer) throw new Error('Der ausgewählte Kunde wurde nicht gefunden.');
   const seller = sellerSnapshot(settings);
   const buyer = customerSnapshot(customer);
-  const lines: BillingLine[] = storedItems.map(item => ({ ...item, quantity: Number(item.quantity), description: item.description || undefined }));
+  const lines: BillingLine[] = storedItems.map(item => ({
+    ...item,
+    quantity: Number(item.quantity),
+    description: item.description || undefined,
+    discountType: item.discountType as 'percent' | 'fixed',
+  }));
   const missing = validateBillingReadiness(seller, buyer, lines);
   if (missing.length) throw new Error(`Noch nicht bereit: ${missing.join(', ')}.`);
-  const totals = calculateBillingTotals(lines, seller.smallBusiness);
-  const type = document.documentType as 'invoice' | 'cancellation';
-  const documentNumber = await allocateDocumentNumber(tenantId, documentId, settings, document.issueDate, type);
+  const type = document.documentType as BillingDocumentSnapshot['documentType'];
+  const taxMode = (seller.smallBusiness ? 'small_business' : document.taxMode) as BillingTaxMode;
+  const totals = calculateBillingTotals(lines, {
+    taxMode,
+    documentDiscount: { type: document.discountType as 'percent' | 'fixed', value: document.discountValue },
+  });
+  const documentNumber = await allocateDocumentNumber(tenantId, documentId, settings, document.issueDate, numberSeries(type));
   let originalDocumentNumber: string | undefined;
   if (document.originalDocumentId) {
     const [original] = await db.select({ documentNumber: billingDocuments.documentNumber }).from(billingDocuments)
@@ -515,41 +646,57 @@ export async function finalizeBillingDocumentAction(id: string) {
     serviceDateTo: document.serviceDateTo || undefined, dueDate: document.dueDate, currency: 'EUR', buyerReference: document.buyerReference || undefined,
     purchaseOrderReference: document.purchaseOrderReference || undefined, introText: document.introText || undefined,
     closingText: document.closingText || undefined, notes: document.notes || undefined, originalDocumentNumber,
+    taxMode, taxExemptionReason: document.taxExemptionReason || undefined,
+    discountType: document.discountType as 'percent' | 'fixed', discountValue: document.discountValue,
+    cashDiscountBasisPoints: document.cashDiscountBasisPoints, cashDiscountDays: document.cashDiscountDays,
+    paymentLinkUrl: document.paymentLinkUrl || undefined, quoteValidUntil: document.quoteValidUntil || undefined,
   };
   const [pdf, xml] = await Promise.all([
     renderBillingPdf({ document: snapshot, seller, customer: buyer, lines, totals }),
-    generateXRechnung({ document: snapshot, seller, customer: buyer, lines, totals }),
+    type === 'quote' ? Promise.resolve(null) : generateEInvoice({ document: snapshot, seller, customer: buyer, lines, totals }),
   ]);
   const pdfSha256 = sha256(pdf);
-  const xmlSha256 = sha256(xml);
+  const xmlSha256 = xml ? sha256(xml) : null;
   const documentSha256 = sha256(JSON.stringify({ snapshot, seller, buyer, lines: totals.normalizedLines, totals, pdfSha256, xmlSha256 }));
   const retentionUntil = new Date(document.issueDate);
-  retentionUntil.setUTCFullYear(retentionUntil.getUTCFullYear() + 8);
+  retentionUntil.setUTCFullYear(retentionUntil.getUTCFullYear() + getBillingJurisdiction(settings.countryCode).retentionYears);
   const finalizedAt = new Date();
+  const finalizedStatus = type === 'quote' ? 'issued' : 'finalized';
   const [finalized] = await db.update(billingDocuments).set({
-    documentNumber, sellerSnapshot: seller, customerSnapshot: buyer, paymentSnapshot: { bankName: seller.bankName, accountHolder: seller.accountHolder, iban: seller.iban, bic: seller.bic },
+    documentNumber, sellerSnapshot: seller, customerSnapshot: buyer, paymentSnapshot: { bankName: seller.bankName, accountHolder: seller.accountHolder, iban: seller.iban, bic: seller.bic, paymentLinkUrl: document.paymentLinkUrl, cashDiscountBasisPoints: document.cashDiscountBasisPoints, cashDiscountDays: document.cashDiscountDays },
     subtotalNetCents: totals.subtotalNetCents, taxCents: totals.taxCents, totalGrossCents: totals.totalGrossCents, taxBreakdown: totals.taxBreakdown,
+    discountCents: totals.documentDiscountCents,
     pdfBase64: Buffer.from(pdf).toString('base64'), xmlContent: xml, pdfSha256, xmlSha256, documentSha256,
-    finalizedAt, retentionUntil, status: 'finalized', updatedAt: finalizedAt,
+    finalizedAt, retentionUntil, status: finalizedStatus, updatedAt: finalizedAt,
   }).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.status, 'draft'))).returning({ id: billingDocuments.id });
-  if (finalized) await appendEvent(tenantId, documentId, 'finalized', { documentNumber, documentSha256, pdfSha256, xmlSha256, retentionUntil: retentionUntil.toISOString() });
+  if (finalized) await appendEvent(tenantId, documentId, type === 'quote' ? 'issued' : 'finalized', { documentNumber, documentSha256, pdfSha256, xmlSha256, retentionUntil: retentionUntil.toISOString() });
   revalidatePath('/admin/billing');
   return { success: true as const, documentNumber };
+}
+
+export async function finalizeBillingDocumentAction(id: string) {
+  return finalizeBillingDocumentForTenant(await requireBillingTenant(), id);
 }
 
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character] || character);
 }
 
-export async function sendBillingDocumentAction(id: string, recipientInput: string, idempotencyInput?: string) {
-  const tenantId = await requireBillingTenant();
+function documentMailLabel(type: string) {
+  return ({
+    invoice: 'Rechnung', cancellation: 'Stornorechnung', credit_note: 'Gutschrift', quote: 'Angebot',
+    advance_invoice: 'Anzahlungsrechnung', partial_invoice: 'Abschlagsrechnung', final_invoice: 'Schlussrechnung',
+  } as Record<string, string>)[type] || 'Dokument';
+}
+
+async function sendBillingDocumentForTenant(tenantId: string, id: string, recipientInput: string, idempotencyInput?: string) {
   const documentId = z.string().uuid().parse(id);
   const recipient = recipientInput.trim().toLowerCase();
   if (!isValidSmtpAddress(recipient)) throw new Error('Bitte eine gültige Empfängeradresse angeben.');
   const idempotencyKey = idempotencyInput ? z.string().uuid().parse(idempotencyInput) : randomUUID();
   const db = getDb();
   const [document] = await db.select().from(billingDocuments).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
-  if (!document?.documentNumber || !document.pdfBase64 || !document.xmlContent || !document.documentSha256 || document.status === 'draft') throw new Error('Die Rechnung muss zuerst festgeschrieben werden.');
+  if (!document?.documentNumber || !document.pdfBase64 || !document.documentSha256 || document.status === 'draft') throw new Error('Das Dokument muss zuerst festgeschrieben werden.');
   if (document.status === 'cancelled') throw new Error('Eine stornierte Rechnung kann nicht erneut versendet werden. Bitte die Stornorechnung senden.');
   const requestHash = sha256(JSON.stringify({ documentId, recipient, documentSha256: document.documentSha256 }));
   const [claimed] = await db.insert(billingDeliveryAttempts).values({ idempotencyKey, tenantId, documentId, recipient, requestHash }).onConflictDoNothing({ target: billingDeliveryAttempts.idempotencyKey }).returning({ idempotencyKey: billingDeliveryAttempts.idempotencyKey });
@@ -567,21 +714,25 @@ export async function sendBillingDocumentAction(id: string, recipientInput: stri
   const settings = await ensureBillingSettings(tenantId);
   const senderName = (settings.senderName || settings.companyName || '').replace(/[\r\n"<>]/g, '').trim().slice(0, 160);
   const from = senderName ? `"${senderName}" <${smtp.from}>` : smtp.from;
-  const subject = `${document.documentType === 'cancellation' ? 'Stornorechnung' : 'Rechnung'} ${document.documentNumber}`;
+  const label = documentMailLabel(document.documentType);
+  const jurisdiction = getBillingJurisdiction(settings.countryCode);
+  const attachmentDescription = document.xmlContent ? ` als PDF und ${jurisdiction.eInvoiceLabel}` : ' als PDF';
+  const attachments = [
+    { filename: `${document.documentNumber}.pdf`, content: Buffer.from(document.pdfBase64, 'base64'), contentType: 'application/pdf' },
+    ...(document.xmlContent ? [{ filename: `${document.documentNumber}-${settings.countryCode === 'AT' ? 'ubl' : 'xrechnung'}.xml`, content: Buffer.from(document.xmlContent, 'utf8'), contentType: 'application/xml' }] : []),
+  ];
+  const subject = `${label} ${document.documentNumber}`;
   try {
     const info = await createHardenedRendererSmtpTransport(smtp).sendMail({
       from, to: recipient, subject,
-      text: `Guten Tag,\n\nim Anhang erhalten Sie ${document.documentType === 'cancellation' ? 'die Stornorechnung' : 'die Rechnung'} ${document.documentNumber} als PDF und XRechnung.\n\nFreundliche Grüße`,
-      html: `<p>Guten Tag,</p><p>im Anhang erhalten Sie ${document.documentType === 'cancellation' ? 'die Stornorechnung' : 'die Rechnung'} <strong>${escapeHtml(document.documentNumber)}</strong> als PDF und XRechnung.</p><p>Freundliche Grüße</p>`,
-      attachments: [
-        { filename: `${document.documentNumber}.pdf`, content: Buffer.from(document.pdfBase64, 'base64'), contentType: 'application/pdf' },
-        { filename: `${document.documentNumber}-xrechnung.xml`, content: Buffer.from(document.xmlContent, 'utf8'), contentType: 'application/xml' },
-      ],
+      text: `Guten Tag,\n\nim Anhang erhalten Sie ${label.toLowerCase()} ${document.documentNumber}${attachmentDescription}.\n\nFreundliche Grüße`,
+      html: `<p>Guten Tag,</p><p>im Anhang erhalten Sie ${escapeHtml(label.toLowerCase())} <strong>${escapeHtml(document.documentNumber)}</strong>${escapeHtml(attachmentDescription)}.</p><p>Freundliche Grüße</p>`,
+      attachments,
       messageId: `<billing-${idempotencyKey}@flamingomedia.online>`,
     });
     const sentAt = new Date();
     await db.update(billingDeliveryAttempts).set({ status: 'sent', messageId: info.messageId, sentAt, updatedAt: sentAt }).where(eq(billingDeliveryAttempts.idempotencyKey, idempotencyKey));
-    await db.update(billingDocuments).set({ sentAt, status: document.status === 'paid' ? 'paid' : 'sent', updatedAt: sentAt }).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId)));
+    await db.update(billingDocuments).set({ sentAt, status: ['paid', 'partially_paid'].includes(document.status) ? document.status : 'sent', updatedAt: sentAt }).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId)));
     await appendEvent(tenantId, documentId, 'sent', { recipient, messageId: info.messageId, idempotencyKey });
     revalidatePath('/admin/billing');
     return { success: true as const };
@@ -593,16 +744,72 @@ export async function sendBillingDocumentAction(id: string, recipientInput: stri
   }
 }
 
+export async function sendBillingDocumentAction(id: string, recipientInput: string, idempotencyInput?: string) {
+  return sendBillingDocumentForTenant(await requireBillingTenant(), id, recipientInput, idempotencyInput);
+}
+
+async function refreshPaymentState(tenantId: string, documentId: string) {
+  const db = getDb();
+  const [document, activePayments] = await Promise.all([
+    db.select().from(billingDocuments).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1).then(rows => rows[0]),
+    db.select({ amountCents: billingPayments.amountCents, paidAt: billingPayments.paidAt }).from(billingPayments)
+      .where(and(eq(billingPayments.documentId, documentId), eq(billingPayments.tenantId, tenantId), isNull(billingPayments.reversedAt))),
+  ]);
+  if (!document) throw new Error('Dokument nicht gefunden.');
+  const amountPaidCents = activePayments.reduce((sum, payment) => sum + payment.amountCents, 0);
+  const fullyPaid = amountPaidCents >= document.totalGrossCents && document.totalGrossCents > 0;
+  const status = fullyPaid ? 'paid' : amountPaidCents > 0 ? 'partially_paid' : document.sentAt ? 'sent' : 'finalized';
+  const paidAt = fullyPaid ? activePayments.sort((a, b) => b.paidAt.getTime() - a.paidAt.getTime())[0]?.paidAt || new Date() : null;
+  await db.update(billingDocuments).set({ amountPaidCents, status, paidAt, updatedAt: new Date() })
+    .where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId)));
+  return { amountPaidCents, outstandingCents: Math.max(0, document.totalGrossCents - amountPaidCents), status };
+}
+
+export async function recordBillingPaymentAction(input: unknown) {
+  const tenantId = await requireBillingTenant();
+  const value = paymentSchema.parse(input);
+  const db = getDb();
+  const [document] = await db.select().from(billingDocuments)
+    .where(and(eq(billingDocuments.id, value.documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
+  if (!document || !['invoice', 'advance_invoice', 'partial_invoice', 'final_invoice'].includes(document.documentType) || ['draft', 'cancelled'].includes(document.status)) {
+    throw new Error('Zahlungen können nur auf festgeschriebene, aktive Rechnungen gebucht werden.');
+  }
+  const outstanding = Math.max(0, document.totalGrossCents - document.amountPaidCents);
+  if (value.amountCents > outstanding) throw new Error(`Der Zahlungseingang übersteigt den offenen Betrag von ${(outstanding / 100).toFixed(2)} €.`);
+  const [payment] = await db.insert(billingPayments).values({ tenantId, ...value }).returning({ id: billingPayments.id });
+  const state = await refreshPaymentState(tenantId, value.documentId);
+  await appendEvent(tenantId, value.documentId, state.status === 'paid' ? 'paid' : 'payment_recorded', { paymentId: payment.id, amountCents: value.amountCents, paidAt: value.paidAt.toISOString(), method: value.method, outstandingCents: state.outstandingCents });
+  revalidatePath('/admin/billing');
+  return { success: true as const, paymentId: payment.id, ...state };
+}
+
+export async function reverseBillingPaymentAction(id: string, reasonInput: string) {
+  const tenantId = await requireBillingTenant();
+  const paymentId = z.string().uuid().parse(id);
+  const reason = z.string().trim().min(3).max(2000).parse(reasonInput);
+  const reversedAt = new Date();
+  const [payment] = await getDb().update(billingPayments).set({ reversedAt, reversalReason: reason })
+    .where(and(eq(billingPayments.id, paymentId), eq(billingPayments.tenantId, tenantId), isNull(billingPayments.reversedAt)))
+    .returning({ documentId: billingPayments.documentId, amountCents: billingPayments.amountCents });
+  if (!payment) throw new Error('Zahlung wurde nicht gefunden oder bereits storniert.');
+  const state = await refreshPaymentState(tenantId, payment.documentId);
+  await appendEvent(tenantId, payment.documentId, 'payment_reversed', { paymentId, amountCents: payment.amountCents, reason, outstandingCents: state.outstandingCents });
+  revalidatePath('/admin/billing');
+  return { success: true as const, ...state };
+}
+
 export async function markBillingDocumentPaidAction(id: string) {
   const tenantId = await requireBillingTenant();
   const documentId = z.string().uuid().parse(id);
-  const paidAt = new Date();
-  const [updated] = await getDb().update(billingDocuments).set({ status: 'paid', paidAt, updatedAt: paidAt })
-    .where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.documentType, 'invoice'), inArray(billingDocuments.status, ['finalized', 'sent']))).returning({ id: billingDocuments.id });
-  if (!updated) throw new Error('Nur festgeschriebene Rechnungen können als bezahlt markiert werden.');
-  await appendEvent(tenantId, documentId, 'paid', { paidAt: paidAt.toISOString() });
+  const [document] = await getDb().select().from(billingDocuments).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
+  if (!document) throw new Error('Rechnung nicht gefunden.');
+  const amountCents = document.totalGrossCents - document.amountPaidCents;
+  if (amountCents <= 0) return { success: true as const };
+  await getDb().insert(billingPayments).values({ tenantId, documentId, amountCents, paidAt: new Date(), method: 'bank_transfer', notes: 'Als vollständig bezahlt markiert' });
+  const state = await refreshPaymentState(tenantId, documentId);
+  await appendEvent(tenantId, documentId, 'paid', { amountCents, paidAt: new Date().toISOString(), method: 'bank_transfer' });
   revalidatePath('/admin/billing');
-  return { success: true as const };
+  return { success: true as const, ...state };
 }
 
 export async function cancelBillingDocumentAction(id: string, reasonInput: string) {
@@ -610,7 +817,10 @@ export async function cancelBillingDocumentAction(id: string, reasonInput: strin
   const originalId = z.string().uuid().parse(id);
   const reason = z.string().trim().min(3).max(2000).parse(reasonInput);
   const db = getDb();
-  const [original] = await db.select().from(billingDocuments).where(and(eq(billingDocuments.id, originalId), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.documentType, 'invoice'), ne(billingDocuments.status, 'draft'))).limit(1);
+  const [original] = await db.select().from(billingDocuments).where(and(
+    eq(billingDocuments.id, originalId), eq(billingDocuments.tenantId, tenantId),
+    inArray(billingDocuments.documentType, ['invoice', 'advance_invoice', 'partial_invoice', 'final_invoice']), ne(billingDocuments.status, 'draft'),
+  )).limit(1);
   if (!original || original.status === 'cancelled') throw new Error('Diese Rechnung kann nicht storniert werden.');
   const [existing] = await db.select({ id: billingDocuments.id }).from(billingDocuments).where(and(eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.originalDocumentId, originalId), eq(billingDocuments.documentType, 'cancellation'))).limit(1);
   if (existing) {
@@ -638,4 +848,307 @@ export async function cancelBillingDocumentAction(id: string, reasonInput: strin
   await appendEvent(tenantId, originalId, 'cancelled', { cancellationDocumentId: cancellation.id, reason });
   revalidatePath('/admin/billing');
   return { ...result, cancellationId: cancellation.id };
+}
+
+const recurringTemplateSchema = z.object({
+  documentType: z.enum(['invoice', 'advance_invoice', 'partial_invoice', 'final_invoice']).default('invoice'),
+  introText: nullableText(5000),
+  closingText: nullableText(5000),
+  notes: nullableText(10_000),
+  buyerReference: nullableText(100),
+  purchaseOrderReference: nullableText(100),
+  taxMode: z.enum(['standard', 'small_business', 'reverse_charge', 'intra_eu', 'exempt']).default('standard'),
+  taxExemptionReason: nullableText(2000),
+  discountType: z.enum(['percent', 'fixed']).default('percent'),
+  discountValue: z.coerce.number().int().min(0).max(1_000_000_000).default(0),
+  cashDiscountBasisPoints: z.coerce.number().int().min(0).max(10_000).default(0),
+  cashDiscountDays: z.coerce.number().int().min(0).max(365).default(0),
+  paymentLinkUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().nullable().transform(value => value || null),
+  servicePeriodDays: z.coerce.number().int().min(0).max(3660).default(0),
+  lines: z.array(lineSchema).min(1).max(500),
+});
+
+const recurringScheduleSchema = z.object({
+  id: z.string().uuid().optional(),
+  customerId: z.string().uuid(),
+  name: z.string().trim().min(1).max(255),
+  status: z.enum(['active', 'paused', 'completed']).default('active'),
+  intervalUnit: z.enum(['day', 'week', 'month', 'year']),
+  intervalCount: z.coerce.number().int().min(1).max(120),
+  startAt: z.coerce.date(),
+  endAt: z.coerce.date().optional().nullable(),
+  nextRunAt: z.coerce.date(),
+  deliveryMode: z.enum(['draft', 'finalize', 'finalize_send']).default('draft'),
+  recipient: nullableText(320),
+  template: recurringTemplateSchema,
+}).superRefine((value, context) => {
+  if (value.endAt && value.endAt < value.startAt) context.addIssue({ code: 'custom', path: ['endAt'], message: 'Das Enddatum liegt vor dem Startdatum.' });
+  if (value.deliveryMode === 'finalize_send' && !value.recipient) context.addIssue({ code: 'custom', path: ['recipient'], message: 'Für automatischen Versand ist eine E-Mail-Adresse erforderlich.' });
+  if (value.recipient && !isValidSmtpAddress(value.recipient)) context.addIssue({ code: 'custom', path: ['recipient'], message: 'Bitte eine gültige E-Mail-Adresse angeben.' });
+  if (value.template.taxMode !== 'standard' && value.template.taxMode !== 'small_business' && !value.template.taxExemptionReason) context.addIssue({ code: 'custom', path: ['template', 'taxExemptionReason'], message: 'Für diesen Steuerfall ist ein Hinweis erforderlich.' });
+});
+
+function nextRecurringDate(value: Date, unit: 'day' | 'week' | 'month' | 'year', count: number) {
+  const next = new Date(value);
+  if (unit === 'day' || unit === 'week') {
+    next.setUTCDate(next.getUTCDate() + count * (unit === 'week' ? 7 : 1));
+    return next;
+  }
+  const day = next.getUTCDate();
+  next.setUTCDate(1);
+  if (unit === 'month') next.setUTCMonth(next.getUTCMonth() + count);
+  else next.setUTCFullYear(next.getUTCFullYear() + count);
+  const maxDay = new Date(Date.UTC(next.getUTCFullYear(), next.getUTCMonth() + 1, 0)).getUTCDate();
+  next.setUTCDate(Math.min(day, maxDay));
+  return next;
+}
+
+export async function saveBillingRecurringScheduleAction(input: unknown) {
+  const tenantId = await requireBillingTenant();
+  const value = recurringScheduleSchema.parse(input);
+  const db = getDb();
+  const [customer] = await db.select({ id: customers.id }).from(customers)
+    .where(and(eq(customers.id, value.customerId), eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).limit(1);
+  if (!customer) throw new Error('Kunde nicht gefunden.');
+  const update = {
+    customerId: value.customerId, name: value.name, status: value.status, intervalUnit: value.intervalUnit,
+    intervalCount: value.intervalCount, startAt: value.startAt, endAt: value.endAt, nextRunAt: value.nextRunAt,
+    deliveryMode: value.deliveryMode, recipient: value.recipient, template: value.template, updatedAt: new Date(),
+  };
+  if (value.id) {
+    const [saved] = await db.update(billingRecurringSchedules).set(update)
+      .where(and(eq(billingRecurringSchedules.id, value.id), eq(billingRecurringSchedules.tenantId, tenantId)))
+      .returning({ id: billingRecurringSchedules.id });
+    if (!saved) throw new Error('Serienvorlage nicht gefunden.');
+    revalidatePath('/admin/billing');
+    return { success: true as const, id: saved.id };
+  }
+  const [saved] = await db.insert(billingRecurringSchedules).values({ tenantId, ...update }).returning({ id: billingRecurringSchedules.id });
+  revalidatePath('/admin/billing');
+  return { success: true as const, id: saved.id };
+}
+
+export async function setBillingRecurringScheduleStatusAction(id: string, statusInput: string) {
+  const tenantId = await requireBillingTenant();
+  const status = z.enum(['active', 'paused', 'completed']).parse(statusInput);
+  const [updated] = await getDb().update(billingRecurringSchedules).set({ status, updatedAt: new Date() })
+    .where(and(eq(billingRecurringSchedules.id, z.string().uuid().parse(id)), eq(billingRecurringSchedules.tenantId, tenantId)))
+    .returning({ id: billingRecurringSchedules.id });
+  if (!updated) throw new Error('Serienvorlage nicht gefunden.');
+  revalidatePath('/admin/billing');
+  return { success: true as const };
+}
+
+async function runBillingRecurringScheduleForTenant(tenantId: string, id: string, scheduledForInput?: Date | string) {
+  const scheduleId = z.string().uuid().parse(id);
+  const db = getDb();
+  const [schedule] = await db.select().from(billingRecurringSchedules)
+    .where(and(eq(billingRecurringSchedules.id, scheduleId), eq(billingRecurringSchedules.tenantId, tenantId))).limit(1);
+  if (!schedule || schedule.status !== 'active') throw new Error('Diese Serienvorlage ist nicht aktiv.');
+  const scheduledFor = scheduledForInput ? z.coerce.date().parse(scheduledForInput) : schedule.nextRunAt;
+  if (schedule.endAt && scheduledFor > schedule.endAt) throw new Error('Die Serie ist bereits beendet.');
+  let [claim] = await db.insert(billingRecurringRuns).values({ tenantId, scheduleId, scheduledFor })
+    .onConflictDoNothing({ target: [billingRecurringRuns.scheduleId, billingRecurringRuns.scheduledFor] })
+    .returning({ id: billingRecurringRuns.id });
+  if (!claim) {
+    [claim] = await db.update(billingRecurringRuns).set({ status: 'running', errorCode: null, completedAt: null })
+      .where(and(eq(billingRecurringRuns.scheduleId, scheduleId), eq(billingRecurringRuns.scheduledFor, scheduledFor), eq(billingRecurringRuns.status, 'failed')))
+      .returning({ id: billingRecurringRuns.id });
+    if (!claim) return { success: true as const, alreadyGenerated: true };
+  }
+  try {
+    const template = recurringTemplateSchema.parse(schedule.template);
+    const settings = await ensureBillingSettings(tenantId);
+    const issueDate = new Date();
+    const serviceDateFrom = new Date(issueDate);
+    serviceDateFrom.setUTCDate(serviceDateFrom.getUTCDate() - template.servicePeriodDays);
+    const dueDate = new Date(issueDate.getTime() + settings.defaultPaymentTermDays * 86_400_000);
+    const created = await createBillingDraftForTenant(tenantId, schedule.customerId, template.documentType);
+    await db.update(billingDocuments).set({ recurringScheduleId: scheduleId }).where(and(eq(billingDocuments.id, created.id), eq(billingDocuments.tenantId, tenantId)));
+    await saveBillingDraftForTenant(tenantId, {
+      id: created.id, customerId: schedule.customerId, issueDate, serviceDateFrom, serviceDateTo: issueDate, dueDate,
+      buyerReference: template.buyerReference, purchaseOrderReference: template.purchaseOrderReference,
+      introText: template.introText, closingText: template.closingText, notes: template.notes,
+      taxMode: template.taxMode, taxExemptionReason: template.taxExemptionReason,
+      discountType: template.discountType, discountValue: template.discountValue,
+      cashDiscountBasisPoints: template.cashDiscountBasisPoints, cashDiscountDays: template.cashDiscountDays,
+      paymentLinkUrl: template.paymentLinkUrl, quoteValidUntil: null, lines: template.lines,
+    });
+    if (schedule.deliveryMode !== 'draft') await finalizeBillingDocumentForTenant(tenantId, created.id);
+    if (schedule.deliveryMode === 'finalize_send' && schedule.recipient) await sendBillingDocumentForTenant(tenantId, created.id, schedule.recipient, randomUUID());
+    const nextRunAt = nextRecurringDate(scheduledFor, schedule.intervalUnit as 'day' | 'week' | 'month' | 'year', schedule.intervalCount);
+    const completed = Boolean(schedule.endAt && nextRunAt > schedule.endAt);
+    await Promise.all([
+      db.update(billingRecurringRuns).set({ status: 'completed', documentId: created.id, completedAt: new Date() }).where(eq(billingRecurringRuns.id, claim.id)),
+      db.update(billingRecurringSchedules).set({ status: completed ? 'completed' : schedule.status, lastRunAt: scheduledFor, nextRunAt, updatedAt: new Date() }).where(and(eq(billingRecurringSchedules.id, scheduleId), eq(billingRecurringSchedules.tenantId, tenantId))),
+    ]);
+    revalidatePath('/admin/billing');
+    return { success: true as const, documentId: created.id, nextRunAt, completed };
+  } catch (error) {
+    await db.update(billingRecurringRuns).set({ status: 'failed', errorCode: (error instanceof Error ? error.name : 'generation_error').slice(0, 100), completedAt: new Date() }).where(eq(billingRecurringRuns.id, claim.id));
+    throw error;
+  }
+}
+
+export async function runBillingRecurringScheduleAction(id: string, scheduledForInput?: Date | string) {
+  return runBillingRecurringScheduleForTenant(await requireBillingTenant(), id, scheduledForInput);
+}
+
+export async function runDueBillingRecurringSchedules(authorization: string | null, now = new Date(), limit = 50) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || authorization !== `Bearer ${secret}`) throw new Error('Unauthorized');
+  const due = await getDb().select({ id: billingRecurringSchedules.id, tenantId: billingRecurringSchedules.tenantId, nextRunAt: billingRecurringSchedules.nextRunAt })
+    .from(billingRecurringSchedules)
+    .where(and(eq(billingRecurringSchedules.status, 'active'), lte(billingRecurringSchedules.nextRunAt, now)))
+    .orderBy(asc(billingRecurringSchedules.nextRunAt))
+    .limit(Math.min(200, Math.max(1, limit)));
+  const results: Array<{ id: string; ok: boolean; alreadyGenerated?: boolean; error?: string }> = [];
+  for (const schedule of due) {
+    try {
+      const result = await runBillingRecurringScheduleForTenant(schedule.tenantId, schedule.id, schedule.nextRunAt);
+      results.push({ id: schedule.id, ok: true, alreadyGenerated: 'alreadyGenerated' in result ? result.alreadyGenerated : false });
+    } catch (error) {
+      results.push({ id: schedule.id, ok: false, error: error instanceof Error ? error.name : 'generation_error' });
+    }
+  }
+  return { processed: results.length, succeeded: results.filter(result => result.ok).length, failed: results.filter(result => !result.ok).length, results };
+}
+
+export async function updateBillingQuoteStatusAction(id: string, statusInput: string) {
+  const tenantId = await requireBillingTenant();
+  const documentId = z.string().uuid().parse(id);
+  const status = z.enum(['accepted', 'rejected']).parse(statusInput);
+  const now = new Date();
+  const [updated] = await getDb().update(billingDocuments).set({ status, acceptedAt: status === 'accepted' ? now : null, rejectedAt: status === 'rejected' ? now : null, updatedAt: now })
+    .where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.documentType, 'quote'), inArray(billingDocuments.status, ['issued', 'sent', 'accepted', 'rejected'])))
+    .returning({ id: billingDocuments.id });
+  if (!updated) throw new Error('Nur versendete oder ausgestellte Angebote können aktualisiert werden.');
+  await appendEvent(tenantId, documentId, `quote_${status}`, { at: now.toISOString() });
+  revalidatePath('/admin/billing');
+  return { success: true as const };
+}
+
+export async function convertBillingQuoteToInvoiceAction(id: string) {
+  const tenantId = await requireBillingTenant();
+  const quoteId = z.string().uuid().parse(id);
+  const detail = await getBillingDocumentAction(quoteId);
+  const quote = detail.document;
+  if (quote.documentType !== 'quote' || !['issued', 'sent', 'accepted'].includes(quote.status)) throw new Error('Dieses Angebot kann nicht in eine Rechnung übernommen werden.');
+  const settings = await ensureBillingSettings(tenantId);
+  const issueDate = new Date();
+  const dueDate = new Date(issueDate.getTime() + settings.defaultPaymentTermDays * 86_400_000);
+  const created = await createBillingDraftAction(quote.customerId || undefined, 'invoice', quoteId);
+  await saveBillingDraftAction({
+    id: created.id, customerId: quote.customerId, issueDate, serviceDateFrom: issueDate, serviceDateTo: null, dueDate,
+    buyerReference: quote.buyerReference, purchaseOrderReference: quote.purchaseOrderReference,
+    introText: quote.introText, closingText: quote.closingText, notes: `Übernommen aus Angebot ${quote.documentNumber}.`,
+    taxMode: quote.taxMode, taxExemptionReason: quote.taxExemptionReason,
+    discountType: quote.discountType, discountValue: quote.discountValue,
+    cashDiscountBasisPoints: quote.cashDiscountBasisPoints, cashDiscountDays: quote.cashDiscountDays,
+    paymentLinkUrl: quote.paymentLinkUrl, quoteValidUntil: null,
+    lines: detail.items.map(item => ({ ...item, quantity: Number(item.quantity) })),
+  });
+  const now = new Date();
+  await getDb().update(billingDocuments).set({ status: 'converted', convertedAt: now, updatedAt: now }).where(and(eq(billingDocuments.id, quoteId), eq(billingDocuments.tenantId, tenantId)));
+  await appendEvent(tenantId, quoteId, 'quote_converted', { invoiceDraftId: created.id });
+  revalidatePath('/admin/billing');
+  return { success: true as const, documentId: created.id };
+}
+
+export async function createBillingCreditNoteDraftAction(id: string) {
+  const tenantId = await requireBillingTenant();
+  const originalId = z.string().uuid().parse(id);
+  const db = getDb();
+  const [original, items] = await Promise.all([
+    db.select().from(billingDocuments).where(and(eq(billingDocuments.id, originalId), eq(billingDocuments.tenantId, tenantId), inArray(billingDocuments.documentType, ['invoice', 'advance_invoice', 'partial_invoice', 'final_invoice']), ne(billingDocuments.status, 'draft'))).limit(1).then(rows => rows[0]),
+    db.select().from(billingDocumentItems).where(and(eq(billingDocumentItems.documentId, originalId), eq(billingDocumentItems.tenantId, tenantId))).orderBy(asc(billingDocumentItems.position)),
+  ]);
+  if (!original) throw new Error('Aus diesem Dokument kann keine Gutschrift erstellt werden.');
+  const now = new Date();
+  const [credit] = await db.insert(billingDocuments).values({
+    tenantId, customerId: original.customerId, originalDocumentId: originalId, documentType: 'credit_note', issueDate: now,
+    serviceDateFrom: original.serviceDateFrom || now, serviceDateTo: original.serviceDateTo, dueDate: now,
+    buyerReference: original.buyerReference, purchaseOrderReference: original.purchaseOrderReference,
+    introText: `Gutschrift zu ${original.documentNumber}.`, closingText: original.closingText,
+    taxMode: original.taxMode, taxExemptionReason: original.taxExemptionReason,
+  }).returning({ id: billingDocuments.id });
+  if (items.length) await db.insert(billingDocumentItems).values(items.map(item => ({ ...item, id: randomUUID(), documentId: credit.id, createdAt: now, updatedAt: now })));
+  await appendEvent(tenantId, credit.id, 'credit_note_created', { originalDocumentId: originalId });
+  revalidatePath('/admin/billing');
+  return { success: true as const, documentId: credit.id };
+}
+
+const reminderSchema = z.object({
+  documentId: z.string().uuid(),
+  feeCents: z.coerce.number().int().min(0).max(10_000_000).default(0),
+  interestCents: z.coerce.number().int().min(0).max(100_000_000).default(0),
+  dueDate: z.coerce.date(),
+  recipient: z.string().trim().email().max(320),
+  message: z.string().trim().min(3).max(10_000),
+  sendNow: z.boolean().default(false),
+});
+
+export async function createBillingReminderAction(input: unknown) {
+  const tenantId = await requireBillingTenant();
+  const value = reminderSchema.parse(input);
+  const db = getDb();
+  const [document] = await db.select().from(billingDocuments).where(and(eq(billingDocuments.id, value.documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
+  if (!document || !['finalized', 'sent', 'partially_paid'].includes(document.status) || document.amountPaidCents >= document.totalGrossCents) throw new Error('Nur offene, festgeschriebene Rechnungen können gemahnt werden.');
+  const level = document.reminderLevel + 1;
+  const reminderDate = new Date();
+  const [reminder] = await db.insert(billingReminders).values({ tenantId, documentId: value.documentId, level, feeCents: value.feeCents, interestCents: value.interestCents, reminderDate, dueDate: value.dueDate, recipient: value.recipient, message: value.message }).returning({ id: billingReminders.id });
+  if (value.sendNow) await sendBillingReminderAction(reminder.id);
+  else {
+    await db.update(billingDocuments).set({ reminderLevel: level, lastReminderAt: reminderDate, updatedAt: reminderDate }).where(and(eq(billingDocuments.id, value.documentId), eq(billingDocuments.tenantId, tenantId)));
+    await appendEvent(tenantId, value.documentId, 'reminder_created', { reminderId: reminder.id, level, feeCents: value.feeCents, interestCents: value.interestCents });
+  }
+  revalidatePath('/admin/billing');
+  return { success: true as const, reminderId: reminder.id, level };
+}
+
+export async function sendBillingReminderAction(id: string) {
+  const tenantId = await requireBillingTenant();
+  const reminderId = z.string().uuid().parse(id);
+  const db = getDb();
+  const [reminder] = await db.select().from(billingReminders).where(and(eq(billingReminders.id, reminderId), eq(billingReminders.tenantId, tenantId))).limit(1);
+  if (!reminder || reminder.status !== 'draft' || !reminder.recipient) throw new Error('Mahnung wurde nicht gefunden oder bereits gesendet.');
+  const [document, settings] = await Promise.all([
+    db.select().from(billingDocuments).where(and(eq(billingDocuments.id, reminder.documentId), eq(billingDocuments.tenantId, tenantId))).limit(1).then(rows => rows[0]),
+    ensureBillingSettings(tenantId),
+  ]);
+  if (!document?.pdfBase64 || !document.documentNumber) throw new Error('Die zugehörige Rechnung ist nicht verfügbar.');
+  const smtp = await getEffectiveSmtp(tenantId);
+  if (!smtp) throw new Error('Kein sicherer Mail-Server ist eingerichtet.');
+  const senderName = (settings.senderName || settings.companyName || '').replace(/[\r\n"<>]/g, '').trim().slice(0, 160);
+  const from = senderName ? `"${senderName}" <${smtp.from}>` : smtp.from;
+  const info = await createHardenedRendererSmtpTransport(smtp).sendMail({
+    from, to: reminder.recipient, subject: `${reminder.level}. Zahlungserinnerung zu ${document.documentNumber}`,
+    text: `${reminder.message}\n\nOffener Rechnungsbetrag: ${((document.totalGrossCents - document.amountPaidCents) / 100).toFixed(2)} EUR\nNeue Frist: ${reminder.dueDate.toLocaleDateString('de-DE')}`,
+    html: `<p>${escapeHtml(reminder.message).replace(/\n/g, '<br>')}</p><p><strong>Offener Rechnungsbetrag:</strong> ${((document.totalGrossCents - document.amountPaidCents) / 100).toFixed(2)} EUR<br><strong>Neue Frist:</strong> ${reminder.dueDate.toLocaleDateString('de-DE')}</p>`,
+    attachments: [{ filename: `${document.documentNumber}.pdf`, content: Buffer.from(document.pdfBase64, 'base64'), contentType: 'application/pdf' }],
+    messageId: `<billing-reminder-${reminderId}@flamingomedia.online>`,
+  });
+  const sentAt = new Date();
+  await Promise.all([
+    db.update(billingReminders).set({ status: 'sent', sentAt }).where(and(eq(billingReminders.id, reminderId), eq(billingReminders.tenantId, tenantId), eq(billingReminders.status, 'draft'))),
+    db.update(billingDocuments).set({ reminderLevel: reminder.level, lastReminderAt: sentAt, updatedAt: sentAt }).where(and(eq(billingDocuments.id, reminder.documentId), eq(billingDocuments.tenantId, tenantId))),
+  ]);
+  await appendEvent(tenantId, reminder.documentId, 'reminder_sent', { reminderId, level: reminder.level, recipient: reminder.recipient, messageId: info.messageId });
+  revalidatePath('/admin/billing');
+  return { success: true as const };
+}
+
+export async function createBillingPortalLinkAction(id: string, validDaysInput = 30) {
+  const tenantId = await requireBillingTenant();
+  const documentId = z.string().uuid().parse(id);
+  const validDays = z.coerce.number().int().min(1).max(365).parse(validDaysInput);
+  const [document] = await getDb().select({ id: billingDocuments.id, status: billingDocuments.status }).from(billingDocuments)
+    .where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
+  if (!document || document.status === 'draft') throw new Error('Nur festgeschriebene Dokumente können geteilt werden.');
+  const token = randomBytes(32).toString('base64url');
+  const tokenHash = sha256(token);
+  const expiresAt = new Date(Date.now() + validDays * 86_400_000);
+  await getDb().insert(billingPortalLinks).values({ tenantId, documentId, tokenHash, expiresAt });
+  await appendEvent(tenantId, documentId, 'portal_link_created', { expiresAt: expiresAt.toISOString() });
+  return { success: true as const, path: `/billing/share/${token}`, expiresAt };
 }

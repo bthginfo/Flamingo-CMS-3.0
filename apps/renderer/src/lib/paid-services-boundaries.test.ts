@@ -85,12 +85,30 @@ test('billing entitlement uses one shared key and truthful active/locked admin s
 test('billing finalization is immutable, numbered atomically and delivered with PDF plus XML', () => {
   const actions = read('../app/admin/billing/actions.ts');
   const migration = read('../../../../packages/db/drizzle/0021_billing_customer_management.sql');
+  const operationsMigration = read('../../../../packages/db/drizzle/0022_billing_operations_suite.sql');
   assert.match(actions, /WITH locked_document AS MATERIALIZED/);
   assert.match(actions, /settings\.sequence_period IS NULL AND \$\{type\} = 'invoice' THEN settings\.next_invoice_number/);
-  assert.match(actions, /status: 'finalized'/);
+  assert.match(actions, /const finalizedStatus = type === 'quote' \? 'issued' : 'finalized'/);
+  assert.match(actions, /status: finalizedStatus/);
   assert.match(actions, /attachments: \[/);
   assert.match(actions, /application\/pdf/);
   assert.match(actions, /application\/xml/);
   assert.match(migration, /Finalized billing document content is immutable/);
   assert.match(migration, /Billing audit events are append-only/);
+  assert.match(operationsMigration, /billing_recurring_runs_schedule_time_idx/);
+  assert.match(operationsMigration, /Billing payment entries are append-only/);
+});
+
+test('billing automation and customer shares fail closed and remain tenant scoped', () => {
+  const actions = read('../app/admin/billing/actions.ts');
+  const cron = read('../app/api/cron/billing-recurring/route.ts');
+  const portal = read('../app/billing/share/[token]/page.tsx');
+  const portalPdf = read('../app/billing/share/[token]/pdf/route.ts');
+  assert.match(actions, /authorization !== `Bearer \$\{secret\}`/);
+  assert.match(actions, /eq\(billingRecurringSchedules\.tenantId, tenantId\)/);
+  assert.match(actions, /onConflictDoNothing/);
+  assert.match(cron, /request\.headers\.get\('authorization'\)/);
+  assert.match(portal, /sha256\(token\)/);
+  assert.match(portalPdf, /sha256\(token\)/);
+  assert.match(portalPdf, /private, no-store/);
 });

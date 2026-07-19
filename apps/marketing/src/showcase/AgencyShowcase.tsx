@@ -617,10 +617,10 @@ function BillingAddonTeaserSection() {
         <div className="md:col-span-7 reveal">
           <p className="font-mono text-xs uppercase tracking-[.2em] text-white/50">Rechnungen & Kunden · Paid Feature</p>
           <h2 className="headline-lg mt-5">Kunden verwalten. Rechnungen schreiben. <em className="italic-pop">Ohne Tool-Wechsel.</em></h2>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">Eigene Stammdatenfelder, Leistungskatalog, fortlaufende Nummern, PDF, XRechnung, SMTP-Versand und nachvollziehbare Stornos direkt im CMS.</p>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">Angebote, Rechnungsarten, eigene Stammdatenfelder, Rabatte, Serienläufe, Zahlungen, Mahnungen und E-Rechnung für DE/AT direkt im CMS.</p>
           <div className="mt-8 flex flex-wrap gap-3"><Link to="/rechnungen" className="btn-accent">Feature ansehen <span aria-hidden>→</span></Link><Link to="/kontakt" className="rounded-full border border-white/25 px-6 py-3 text-sm font-semibold hover:bg-white/10">Anfragen</Link></div>
         </div>
-        <div className="md:col-span-5 reveal"><div className="rounded-3xl border border-white/10 bg-white/[.05] p-7"><p className="text-sm text-white/50">Einrichtung</p><p className="mt-1 font-display text-4xl">499 €</p><p className="mt-2 text-white/65">+ 29 € / Monat</p><div className="mt-6 space-y-3 text-sm text-white/80">{['PDF + XRechnung', 'Kunden + eigene Felder', 'SMTP + Storno + Prüfspur'].map(item => <div key={item} className="rounded-xl border border-white/10 px-4 py-3">{item}</div>)}</div></div></div>
+        <div className="md:col-span-5 reveal"><div className="rounded-3xl border border-white/10 bg-white/[.05] p-7"><p className="text-sm text-white/50">Einrichtung</p><p className="mt-1 font-display text-4xl">499 €</p><p className="mt-2 text-white/65">+ 29 € / Monat</p><div className="mt-6 space-y-3 text-sm text-white/80">{['PDF + E-Rechnung DE/AT', 'Angebote + Serien + Rabatte', 'Zahlungen + Mahnungen + Prüfspur'].map(item => <div key={item} className="rounded-xl border border-white/10 px-4 py-3">{item}</div>)}</div></div></div>
       </div>
     </section>
   );

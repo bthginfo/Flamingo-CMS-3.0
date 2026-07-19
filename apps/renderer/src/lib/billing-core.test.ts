@@ -55,6 +55,39 @@ test('billing totals use line rounding and grouped VAT', () => {
   assert.deepEqual(totals.taxBreakdown, [{ rateBasisPoints: 1900, netCents: 70_000, taxCents: 13_300 }]);
 });
 
+test('line and document discounts are allocated before VAT without rounding drift', () => {
+  const discountedLines: BillingLine[] = [
+    { position: 1, name: 'Planung', quantity: 2, unitCode: 'HUR', unitLabel: 'Stunde', unitPriceNetCents: 10_000, discountBasisPoints: 0, discountType: 'percent', discountValue: 1000, taxRateBasisPoints: 1900 },
+    { position: 2, name: 'Material', quantity: 1, unitCode: 'C62', unitLabel: 'Stück', unitPriceNetCents: 20_000, discountBasisPoints: 0, discountType: 'fixed', discountValue: 2_500, taxRateBasisPoints: 700 },
+  ];
+  const totals = calculateBillingTotals(discountedLines, { taxMode: 'standard', documentDiscount: { type: 'percent', value: 500 } });
+  assert.equal(totals.subtotalBeforeDocumentDiscountCents, 35_500);
+  assert.equal(totals.documentDiscountCents, 1_775);
+  assert.equal(totals.subtotalNetCents, 33_725);
+  assert.equal(totals.taxBreakdown.reduce((sum, group) => sum + group.netCents, 0), totals.subtotalNetCents);
+  assert.equal(totals.totalGrossCents, totals.subtotalNetCents + totals.taxCents);
+});
+
+test('non-standard tax modes suppress VAT while retaining the net amount', () => {
+  for (const taxMode of ['small_business', 'reverse_charge', 'intra_eu', 'exempt'] as const) {
+    const totals = calculateBillingTotals(lines, { taxMode });
+    assert.equal(totals.subtotalNetCents, 70_000);
+    assert.equal(totals.taxCents, 0);
+    assert.equal(totals.totalGrossCents, 70_000);
+  }
+});
+
+test('Austrian UBL uses the local seller profile without XRechnung customization', async () => {
+  const austrianSeller = { ...seller, countryCode: 'AT', vatId: 'ATU12345678' };
+  const austrianCustomer = { ...customer, countryCode: 'AT', city: 'Wien', postalCode: '1010' };
+  const austrianLines = [{ ...lines[0], taxRateBasisPoints: 2000 }];
+  const totals = calculateBillingTotals(austrianLines);
+  const xml = await generateXRechnung({ document, seller: austrianSeller, customer: austrianCustomer, lines: austrianLines, totals });
+  assert.match(xml, /<Invoice/);
+  assert.match(xml, /ATU12345678/);
+  assert.doesNotMatch(xml, /urn:xeinkauf\.de:kosit:xrechnung_3\.0/);
+});
+
 test('XRechnung generator emits UBL with invoice identity and parties', async () => {
   const totals = calculateBillingTotals(lines);
   const xml = await generateXRechnung({ document, seller, customer, lines, totals });
