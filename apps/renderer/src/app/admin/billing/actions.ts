@@ -43,6 +43,16 @@ import {
 import { getBillingJurisdiction, normalizeBillingCountryCode } from '@/lib/billing-jurisdictions';
 
 const nullableText = (max: number) => z.string().trim().max(max).optional().nullable().transform(value => value || null);
+const nullableUrl = (max: number) => z.string().trim().max(max).optional().nullable().transform(value => {
+  if (!value) return null;
+  const normalized = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  try {
+    const url = new URL(normalized);
+    return url.toString();
+  } catch {
+    return value;
+  }
+}).pipe(z.string().url().max(max).nullable());
 const addressSchema = z.object({
   street: z.string().trim().min(1).max(255),
   addressLine2: nullableText(255),
@@ -60,7 +70,7 @@ const settingsSchema = z.object({
   countryCode: z.enum(['DE', 'AT']),
   email: z.string().trim().email().max(255),
   phone: nullableText(80),
-  website: nullableText(500),
+  website: nullableUrl(500),
   taxNumber: nullableText(100),
   vatId: nullableText(100),
   registerCourt: nullableText(160),
@@ -91,7 +101,7 @@ const settingsSchema = z.object({
   defaultCashDiscountDays: z.coerce.number().int().min(0).max(365),
   defaultReminderDays: z.coerce.number().int().min(1).max(365),
   defaultReminderFeeCents: z.coerce.number().int().min(0).max(10_000_000),
-  paymentLinkBaseUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().transform(value => value || null),
+  paymentLinkBaseUrl: nullableUrl(1000),
   defaultIntroText: nullableText(5000),
   defaultClosingText: nullableText(5000),
   defaultFooter: nullableText(2000),
@@ -133,7 +143,7 @@ const customerSchema = z.object({
   email: z.string().trim().email().max(255),
   phone: nullableText(50),
   mobile: nullableText(50),
-  website: nullableText(500),
+  website: nullableUrl(500),
   taxNumber: nullableText(100),
   vatId: nullableText(100),
   eInvoiceRoutingId: nullableText(100),
@@ -559,6 +569,7 @@ function sellerSnapshot(settings: typeof billingSettings.$inferSelect): BillingS
     registerNumber: settings.registerNumber || undefined, managingDirector: settings.managingDirector || undefined, logoUrl: settings.logoUrl || undefined,
     logoDisplay: (settings.logoDisplay as BillingSellerSnapshot['logoDisplay']) || 'logo_and_name',
     bankName: settings.bankName || undefined, accountHolder: settings.accountHolder || undefined, iban: settings.iban || undefined, bic: settings.bic || undefined,
+    senderName: settings.senderName || undefined,
     footer: settings.defaultFooter || undefined, smallBusiness: settings.smallBusiness, smallBusinessNotice: settings.smallBusinessNotice,
   };
 }

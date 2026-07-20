@@ -30,6 +30,7 @@ export type BillingSellerSnapshot = BillingAddress & {
   iban?: string;
   bic?: string;
   footer?: string;
+  senderName?: string;
   smallBusiness: boolean;
   smallBusinessNotice?: string;
 };
@@ -396,6 +397,12 @@ function wrap(font: PDFFont, text: string, size: number, maxWidth: number) {
   return lines;
 }
 
+function drawWrappedText(page: PDFPage, font: PDFFont, text: string, input: { x: number; y: number; size: number; maxWidth: number; lineHeight?: number; color: ReturnType<typeof rgb>; maxLines?: number }) {
+  const lines = wrap(font, text, input.size, input.maxWidth).slice(0, input.maxLines ?? Number.POSITIVE_INFINITY);
+  lines.forEach((line, index) => page.drawText(line, { x: input.x, y: input.y - index * (input.lineHeight || input.size + 3), font, size: input.size, color: input.color }));
+  return input.y - lines.length * (input.lineHeight || input.size + 3);
+}
+
 async function embedLogo(doc: PDFDocument, url?: string) {
   if (!url) return null;
   try {
@@ -435,11 +442,25 @@ export async function renderBillingPdf(input: {
   const margin = 48;
   let page: PDFPage;
   let y: number;
+  const drawPageFooter = () => {
+    const footerY = 46;
+    page.drawLine({ start: { x: margin, y: footerY + 18 }, end: { x: 547, y: footerY + 18 }, thickness: 0.5, color: pale });
+    const contact = [input.seller.companyName, input.seller.email, input.seller.website].filter(Boolean).join(' · ');
+    const bank = [input.seller.bankName, input.seller.accountHolder, input.seller.iban ? `IBAN ${input.seller.iban}` : undefined, input.seller.bic ? `BIC ${input.seller.bic}` : undefined].filter(Boolean).join(' · ');
+    const legal = [
+      input.seller.taxNumber ? `Steuernummer ${input.seller.taxNumber}` : undefined,
+      input.seller.vatId ? `USt-IdNr. ${input.seller.vatId}` : undefined,
+      input.seller.registerCourt && input.seller.registerNumber ? `${input.seller.registerCourt} ${input.seller.registerNumber}` : undefined,
+      input.seller.managingDirector ? `Geschäftsführung ${input.seller.managingDirector}` : undefined,
+    ].filter(Boolean).join(' · ');
+    const footerLines = [contact, bank, legal, input.seller.footer].filter((line): line is string => Boolean(line)).flatMap(line => wrap(regular, line, 6.5, 499)).slice(0, 4);
+    footerLines.forEach((line, index) => page.drawText(line, { x: margin, y: footerY - index * 8, font: regular, size: 6.5, color: muted }));
+    page.drawText(input.document.documentNumber || '', { x: 452, y: 24, font: regular, size: 6.5, color: muted });
+  };
   const newPage = () => {
     page = pdf.addPage([595.28, 841.89]);
     y = 794;
-    page.drawText(input.seller.companyName, { x: margin, y: 28, font: regular, size: 7, color: muted });
-    page.drawText(input.document.documentNumber, { x: 452, y: 28, font: regular, size: 7, color: muted });
+    drawPageFooter();
   };
   newPage();
   const logoDisplay = input.seller.logoDisplay || 'logo_and_name';
@@ -452,18 +473,17 @@ export async function renderBillingPdf(input: {
     const width = logo.width * scale;
     const height = logo.height * scale;
     page!.drawImage(logo, { x: margin, y: 778 - height, width, height });
-    if (showName) page!.drawText(input.seller.companyName, { x: margin + width + 14, y: 770, font: bold, size: 14, color: ink });
+    if (showName) drawWrappedText(page!, bold, input.seller.companyName, { x: margin + width + 14, y: 770, size: 13, maxWidth: 165, lineHeight: 15, color: ink, maxLines: 3 });
   } else {
-    page!.drawText(input.seller.companyName, { x: margin, y: 770, font: bold, size: 17, color: ink });
+    drawWrappedText(page!, bold, input.seller.companyName, { x: margin, y: 770, size: 17, maxWidth: 260, lineHeight: 19, color: ink, maxLines: 3 });
   }
   page!.drawText(title.toUpperCase(), { x: 338, y: 770, font: bold, size: title.length > 17 ? 14 : 19, color: ink });
   page!.drawText(input.document.documentNumber, { x: 360, y: 750, font: regular, size: 10, color: accent });
   page!.drawLine({ start: { x: margin, y: 722 }, end: { x: 547, y: 722 }, thickness: 1, color: pale });
 
   y = 690;
-  const sender = `${input.seller.companyName} · ${input.seller.street} · ${input.seller.postalCode} ${input.seller.city} · ${input.seller.countryCode}`;
-  page!.drawText(sender.slice(0, 90), { x: margin, y, font: regular, size: 7, color: muted });
-  y -= 24;
+  const sender = input.seller.senderName?.trim();
+  if (sender) y = drawWrappedText(page!, regular, sender, { x: margin, y, size: 7, maxWidth: 245, color: muted, maxLines: 2 }) - 10;
   page!.drawText(input.customer.displayName, { x: margin, y, font: bold, size: 11, color: ink }); y -= 15;
   page!.drawText(input.customer.street, { x: margin, y, font: regular, size: 10, color: ink }); y -= 14;
   page!.drawText(`${input.customer.postalCode} ${input.customer.city} · ${input.customer.countryCode}`, { x: margin, y, font: regular, size: 10, color: ink });
@@ -484,7 +504,7 @@ export async function renderBillingPdf(input: {
   y = 565;
   if (input.document.introText) {
     for (const line of wrap(regular, input.document.introText, 9, 499)) { page!.drawText(line, { x: margin, y, font: regular, size: 9, color: ink }); y -= 13; }
-    y -= 12;
+    y -= 24;
   }
 
   const drawTableHeader = () => {
@@ -537,8 +557,6 @@ export async function renderBillingPdf(input: {
     : undefined;
   const notes = [input.document.closingText, cashDiscount, exemptionReason, input.document.paymentLinkUrl ? `Online bezahlen: ${input.document.paymentLinkUrl}` : undefined].filter(Boolean) as string[];
   for (const note of notes) for (const line of wrap(regular, note, 8, 499)) { page!.drawText(line, { x: margin, y, font: regular, size: 8, color: muted }); y -= 11; }
-  const footer = [input.seller.footer, input.seller.iban ? `IBAN ${input.seller.iban}${input.seller.bic ? ` · BIC ${input.seller.bic}` : ''}` : undefined, input.seller.vatId ? `USt-IdNr. ${input.seller.vatId}` : input.seller.taxNumber ? `Steuernummer ${input.seller.taxNumber}` : undefined].filter(Boolean).join(' · ');
-  for (const line of wrap(regular, footer, 7, 499).slice(0, 2)) { y -= 9; page!.drawText(line, { x: margin, y, font: regular, size: 7, color: muted }); }
   return new Uint8Array(await pdf.save({ useObjectStreams: false }));
 }
 
