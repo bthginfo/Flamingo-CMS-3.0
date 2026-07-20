@@ -236,8 +236,8 @@ async function ensureBillingSettings(tenantId: string) {
   await db.insert(billingSettings).values({ tenantId, companyName: tenant?.name || null }).onConflictDoNothing({ target: billingSettings.tenantId });
   let [settings] = await db.select().from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1).catch(async (error: unknown) => {
     if (!isMissingBillingLogoDisplayColumn(error)) throw error;
-    await ensureBillingLogoDisplayColumn();
-    return db.select().from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
+    const fallback = await selectBillingSettingsWithoutLogoDisplay(tenantId);
+    return fallback ? [fallback] : [];
   });
   if (!settings) throw new Error('Rechnungseinstellungen konnten nicht angelegt werden.');
   return settings;
@@ -248,21 +248,26 @@ function isMissingBillingLogoDisplayColumn(error: unknown) {
   return /logo_display|column .* does not exist/i.test(message);
 }
 
-async function ensureBillingLogoDisplayColumn() {
-  const db = getDb();
-  await db.execute(sql`ALTER TABLE "billing_settings" ADD COLUMN IF NOT EXISTS "logo_display" varchar(20) DEFAULT 'logo_and_name' NOT NULL`);
-  await db.execute(sql`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint WHERE conname = 'billing_settings_logo_display_check'
-      ) THEN
-        ALTER TABLE "billing_settings"
-          ADD CONSTRAINT "billing_settings_logo_display_check"
-          CHECK ("logo_display" IN ('logo_and_name', 'logo_only', 'name_only'));
-      END IF;
-    END $$;
-  `);
+async function selectBillingSettingsWithoutLogoDisplay(tenantId: string) {
+  const [settings] = await getDb().select({
+    id: billingSettings.id, tenantId: billingSettings.tenantId, companyName: billingSettings.companyName, legalForm: billingSettings.legalForm,
+    street: billingSettings.street, postalCode: billingSettings.postalCode, city: billingSettings.city, countryCode: billingSettings.countryCode,
+    email: billingSettings.email, phone: billingSettings.phone, website: billingSettings.website, taxNumber: billingSettings.taxNumber, vatId: billingSettings.vatId,
+    registerCourt: billingSettings.registerCourt, registerNumber: billingSettings.registerNumber, managingDirector: billingSettings.managingDirector,
+    logoUrl: billingSettings.logoUrl, bankName: billingSettings.bankName, accountHolder: billingSettings.accountHolder, iban: billingSettings.iban, bic: billingSettings.bic,
+    invoicePrefix: billingSettings.invoicePrefix, cancellationPrefix: billingSettings.cancellationPrefix, quotePrefix: billingSettings.quotePrefix, creditPrefix: billingSettings.creditPrefix,
+    invoiceNumberFormat: billingSettings.invoiceNumberFormat, cancellationNumberFormat: billingSettings.cancellationNumberFormat,
+    quoteNumberFormat: billingSettings.quoteNumberFormat, creditNumberFormat: billingSettings.creditNumberFormat, sequenceReset: billingSettings.sequenceReset,
+    sequencePeriod: billingSettings.sequencePeriod, nextInvoiceNumber: billingSettings.nextInvoiceNumber, nextCancellationNumber: billingSettings.nextCancellationNumber,
+    nextQuoteNumber: billingSettings.nextQuoteNumber, nextCreditNumber: billingSettings.nextCreditNumber, customerPrefix: billingSettings.customerPrefix,
+    nextCustomerNumber: billingSettings.nextCustomerNumber, currency: billingSettings.currency, defaultPaymentTermDays: billingSettings.defaultPaymentTermDays,
+    defaultCashDiscountBasisPoints: billingSettings.defaultCashDiscountBasisPoints, defaultCashDiscountDays: billingSettings.defaultCashDiscountDays,
+    defaultReminderDays: billingSettings.defaultReminderDays, defaultReminderFeeCents: billingSettings.defaultReminderFeeCents,
+    paymentLinkBaseUrl: billingSettings.paymentLinkBaseUrl, defaultIntroText: billingSettings.defaultIntroText, defaultClosingText: billingSettings.defaultClosingText,
+    defaultFooter: billingSettings.defaultFooter, smallBusiness: billingSettings.smallBusiness, smallBusinessNotice: billingSettings.smallBusinessNotice,
+    senderName: billingSettings.senderName, createdAt: billingSettings.createdAt, updatedAt: billingSettings.updatedAt,
+  }).from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
+  return settings ? { ...settings, logoDisplay: 'logo_and_name' } as typeof billingSettings.$inferSelect : undefined;
 }
 
 export async function getBillingWorkspaceData() {
@@ -324,7 +329,11 @@ export async function saveBillingSettingsAction(input: unknown) {
   )) {
     throw new Error('Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.');
   }
-  await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+  await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+    if (!isMissingBillingLogoDisplayColumn(error)) throw error;
+    const { logoDisplay: _logoDisplay, ...compatibleValue } = value;
+    await db.update(billingSettings).set({ ...compatibleValue, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+  });
   revalidatePath('/admin/billing');
   return { success: true as const };
 }
@@ -333,7 +342,10 @@ export async function saveBillingLogoSettingsAction(input: unknown) {
   const tenantId = await requireBillingTenant();
   const value = logoSettingsSchema.parse(input);
   const db = getDb();
-  await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+  await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+    if (!isMissingBillingLogoDisplayColumn(error)) throw error;
+    await db.update(billingSettings).set({ logoUrl: value.logoUrl, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+  });
   revalidatePath('/admin/billing');
   return { success: true as const };
 }
