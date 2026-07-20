@@ -1016,7 +1016,7 @@ html {
 
   .cms-accordion--cards {
     display: grid;
-    gap: clamp(0.95rem, 1.5vw, 1.25rem);
+    gap: clamp(1.35rem, 2vw, 1.75rem);
   }
 
   .cms-accordion--cards .cms-accordion-item {
@@ -1029,8 +1029,12 @@ html {
       linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg) 98%, white), var(--token-card-bg));
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.78) inset,
-      0 14px 34px color-mix(in srgb, var(--token-shadow) 42%, transparent);
+      0 18px 44px color-mix(in srgb, var(--token-shadow) 34%, transparent);
     transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease, background 220ms ease;
+  }
+
+  .cms-accordion--cards .cms-accordion-item + .cms-accordion-item {
+    margin-top: clamp(0.25rem, 0.65vw, 0.55rem);
   }
 
   .cms-accordion--cards .cms-accordion-item::before {
@@ -1047,18 +1051,18 @@ html {
   }
 
   .cms-accordion--cards .cms-accordion-item:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--token-accent) 30%, var(--token-card-border));
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.82) inset,
-      0 18px 42px color-mix(in srgb, var(--token-shadow) 54%, transparent);
+      0 24px 58px color-mix(in srgb, var(--token-shadow) 46%, transparent);
   }
 
   .cms-accordion--cards .cms-accordion-item[open] {
     border-color: color-mix(in srgb, var(--token-accent) 46%, var(--token-card-border));
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.8) inset,
-      0 22px 52px color-mix(in srgb, var(--token-shadow) 68%, transparent);
+      0 28px 70px color-mix(in srgb, var(--token-shadow) 58%, transparent);
     background:
       radial-gradient(circle at 96% 0%, color-mix(in srgb, var(--token-accent) 12%, transparent), transparent 34%),
       linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg) 96%, white), color-mix(in srgb, var(--token-card-bg) 96%, var(--token-accent)));
@@ -1090,10 +1094,10 @@ html {
     display: grid;
     grid-template-columns: 2.25rem minmax(0, 1fr) auto;
     width: 100%;
-    min-height: 4rem;
+    min-height: 4.45rem;
     align-items: center;
     gap: 0.8rem;
-    padding: 1.15rem 1.28rem;
+    padding: 1.22rem 1.35rem;
     color: var(--token-card-heading);
     font-size: clamp(0.98rem, 1.4vw, 1.075rem);
     font-weight: 650;
@@ -1189,13 +1193,18 @@ html {
 
   @media (max-width: 639px) {
     .cms-accordion--cards {
-      gap: 0.8rem;
+      gap: 1rem;
+    }
+
+    .cms-accordion--cards .cms-accordion-item + .cms-accordion-item {
+      margin-top: 0.25rem;
     }
 
     .cms-accordion-trigger {
       grid-template-columns: 1.75rem minmax(0, 1fr) auto;
       gap: 0.65rem;
       padding-inline: 1rem;
+      min-height: 4.25rem;
     }
 
     .cms-accordion-answer {
