@@ -261,7 +261,9 @@ export async function setStandaloneDatabaseConnection(projectId: string, slug: s
     { key: 'DATABASE_URL', value: databaseUrl, target: ['production', 'preview'], type: 'encrypted', replaceExisting: true },
     { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain', replaceExisting: true },
   ]);
-  await triggerProjectDeployment(`flamingo-${slug}`);
+  const deployment = await triggerProjectDeployment(`flamingo-${slug}`);
+  if (!deployment.id) throw new Error('Der Datenbank-Cutover wurde nicht deployed. Die bisherige Verbindung bleibt aktiv.');
+  await waitForVercelDeploymentReady(deployment.id);
 }
 
 /** Configure Blob storage for an existing standalone project. */

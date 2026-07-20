@@ -2,20 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { shippingZones, shippingMethods, shopSettings } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/snapshot';
+import { resolvePublicTenantId } from '@/lib/public-tenant';
 import { isShopActive } from '@/lib/shop-pages';
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function resolveExplicitTenant(queryTenantId: string | null) {
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (!queryTenantId || !UUID_RE.test(queryTenantId)) return null;
-  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
-  return queryTenantId;
-}
+const CACHE_HEADERS = { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' };
 
 export async function GET(req: NextRequest) {
-  const tenantId = resolveExplicitTenant(req.nextUrl.searchParams.get('tenantId')) || await resolveTenant();
+  const tenantId = await resolvePublicTenantId(req.nextUrl.searchParams.get('tenantId'));
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
@@ -32,7 +25,7 @@ export async function GET(req: NextRequest) {
   });
 
   if (matchingZones.length === 0) {
-    return NextResponse.json({ methods: [] });
+    return NextResponse.json({ methods: [] }, { headers: CACHE_HEADERS });
   }
 
   const zoneIds = matchingZones.map(z => z.id);
@@ -65,5 +58,5 @@ export async function GET(req: NextRequest) {
       estimatedDays: m.estimatedDays,
     })),
     paymentMethods: availablePayments,
-  });
+  }, { headers: CACHE_HEADERS });
 }

@@ -18,6 +18,13 @@ export type NeonTenantProject = {
   directConnectionUri: string;
 };
 
+export async function getNeonOrganizationPlan(): Promise<string | null> {
+  const orgId = process.env.NEON_ORG_ID?.trim();
+  if (!orgId) return null;
+  const result = await neonFetch<{ plan?: string; organization?: { plan?: string } }>(`/organizations/${encodeURIComponent(orgId)}`);
+  return (result.organization?.plan || result.plan || '').trim().toLowerCase() || null;
+}
+
 function token() {
   const value = process.env.NEON_API_KEY?.trim();
   if (!value) throw new Error('NEON_API_KEY ist nicht gesetzt. Standalone-Datenbanken können nicht provisioniert werden.');
@@ -82,6 +89,12 @@ export async function createNeonTenantProject(slug: string): Promise<NeonTenantP
   const region = process.env.NEON_REGION_ID?.trim() || 'aws-eu-central-1';
   const pgVersion = Number.parseInt(process.env.NEON_PG_VERSION || '17', 10);
   const orgId = process.env.NEON_ORG_ID?.trim();
+  if (orgId) {
+    const plan = await getNeonOrganizationPlan();
+    if (plan && plan !== 'free' && process.env.ALLOW_PAID_NEON_PROVISIONING !== 'true') {
+      throw new Error(`Die konfigurierte Neon-Organisation nutzt den Tarif "${plan}". Automatische Standalone-Provisionierung ist auf Neon Free begrenzt; für kostenpflichtige Ressourcen ist eine bewusste separate Konfiguration erforderlich.`);
+    }
+  }
   const created = await neonFetch<NeonCreateResponse>('/projects', {
     method: 'POST',
     body: JSON.stringify({

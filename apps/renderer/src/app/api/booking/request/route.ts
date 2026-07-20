@@ -2,7 +2,8 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
-import { isDemoTenant, resolveTenant } from '@/lib/snapshot';
+import { isDemoTenant } from '@/lib/snapshot';
+import { resolvePublicTenantId } from '@/lib/public-tenant';
 import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isBookingOverlapError, isWithinBookingAvailability, parseBookingDateRange, type BookingTimeModel } from '@/lib/booking-core';
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { formatBookingDate, normalizeTimezone } from '@/lib/booking-time';
@@ -28,13 +29,6 @@ import { bookingRequestErrorResponse, type BookingRetryHint } from '@/lib/bookin
 
 const MAX_BOOKING_REQUEST_BYTES = 64 * 1024;
 
-function resolveExplicitTenant(value: unknown) {
-  if (typeof value !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) return null;
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (fixedTenantId) return value === fixedTenantId ? value : null;
-  return value;
-}
-
 export async function POST(req: NextRequest) {
   let activeClaim: { tenantId: string; idempotencyKey: string } | null = null;
   let bookingPersisted = false;
@@ -49,7 +43,7 @@ export async function POST(req: NextRequest) {
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
     }
-    const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
+    const tenantId = await resolvePublicTenantId(body.tenantId);
     if (!tenantId) return NextResponse.json({ error: 'Tenant nicht gefunden.' }, { status: 404 });
     if (!(await hasBookingAddon(tenantId))) return NextResponse.json({ error: 'Booking ist nicht aktiviert.' }, { status: 403 });
 

@@ -13,15 +13,54 @@ function requireStableDatabaseEncryptionKey() {
 }
 
 export async function getTenantDatabaseRecord(tenantId: string) {
-  const [record] = await getDb().select().from(tenantDatabaseConnections).where(eq(tenantDatabaseConnections.tenantId, tenantId)).limit(1);
-  return record || null;
+  const db = getDb();
+  try {
+    const [record] = await db.select().from(tenantDatabaseConnections).where(eq(tenantDatabaseConnections.tenantId, tenantId)).limit(1);
+    return record || null;
+  } catch (error) {
+    if (!/billing_plan_intent|column .* does not exist/i.test(error instanceof Error ? error.message : String(error))) throw error;
+    const [record] = await db.select({
+      tenantId: tenantDatabaseConnections.tenantId,
+      provider: tenantDatabaseConnections.provider,
+      projectId: tenantDatabaseConnections.projectId,
+      region: tenantDatabaseConnections.region,
+      databaseName: tenantDatabaseConnections.databaseName,
+      roleName: tenantDatabaseConnections.roleName,
+      connectionUriEncrypted: tenantDatabaseConnections.connectionUriEncrypted,
+      directConnectionUriEncrypted: tenantDatabaseConnections.directConnectionUriEncrypted,
+      status: tenantDatabaseConnections.status,
+      schemaVersion: tenantDatabaseConnections.schemaVersion,
+      lastMigratedAt: tenantDatabaseConnections.lastMigratedAt,
+      createdAt: tenantDatabaseConnections.createdAt,
+      updatedAt: tenantDatabaseConnections.updatedAt,
+    }).from(tenantDatabaseConnections).where(eq(tenantDatabaseConnections.tenantId, tenantId)).limit(1);
+    return record ? { ...record, billingPlanIntent: 'free' as const } : null;
+  }
 }
 
 export async function getTenantDataDb(tenantId: string): Promise<Database> {
   const cached = tenantDbs.get(tenantId);
   if (cached) return cached;
-  const record = await getTenantDatabaseRecord(tenantId);
-  if (!record || record.status === 'provisioning') return getDb();
+  const controlDb = getDb();
+  const [[tenant], record] = await Promise.all([
+    controlDb.select({ deploymentMode: tenants.deploymentMode }).from(tenants).where(eq(tenants.id, tenantId)).limit(1),
+    getTenantDatabaseRecord(tenantId),
+  ]);
+  if (!tenant) throw new Error('Der Tenant ist im Control-Plane-Register nicht vorhanden.');
+  if (!record) {
+    if (tenant.deploymentMode === 'standalone') {
+      throw new Error('Für diesen Standalone-Tenant ist keine dedizierte Datenbank registriert.');
+    }
+    return controlDb;
+  }
+  if (record.status === 'provisioning') {
+    if (tenant.deploymentMode === 'standalone') {
+      throw new Error('Die Standalone-Datenbank wird noch bereitgestellt und ist noch nicht verfügbar.');
+    }
+    // During an explicit shared-to-standalone migration the source remains the
+    // shared database until the verified cutover flips deploymentMode.
+    return controlDb;
+  }
   if (record.status === 'migration_failed') {
     throw new Error('Die Standalone-Datenbank benötigt eine erfolgreiche Schema-Migration, bevor sie wieder verwendet werden kann.');
   }
@@ -74,6 +113,18 @@ export async function markTenantDatabaseActive(tenantId: string, schemaVersion =
 
 export async function markTenantDatabaseMigrationFailed(tenantId: string) {
   await getDb().update(tenantDatabaseConnections).set({ status: 'migration_failed', updatedAt: new Date() }).where(eq(tenantDatabaseConnections.tenantId, tenantId));
+  tenantDbs.delete(tenantId);
+}
+
+export async function updateTenantRuntimeDatabaseConnection(tenantId: string, input: { roleName: string; connectionUri: string }) {
+  requireStableDatabaseEncryptionKey();
+  const connectionUriEncrypted = protectCrmSecret(input.connectionUri);
+  if (!connectionUriEncrypted) throw new Error('Die Runtime-Datenbankverbindung ist ungültig.');
+  await getDb().update(tenantDatabaseConnections).set({
+    roleName: input.roleName,
+    connectionUriEncrypted,
+    updatedAt: new Date(),
+  }).where(eq(tenantDatabaseConnections.tenantId, tenantId));
   tenantDbs.delete(tenantId);
 }
 

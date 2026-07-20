@@ -13,6 +13,7 @@ import { getActiveToken } from './pat-actions';
 import { getBillingAddonStatus, getBookingAddonStatus, getShopAddonStatus } from '../actions';
 import { requireCrmAdmin } from '@/lib/session';
 import { getTenantDataDb, getTenantDatabaseRecord } from '@/lib/tenant-data-db';
+import { getNeonOrganizationPlan } from '@/lib/neon';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -26,7 +27,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
   if (!tenant) notFound();
   const dataDb = await getTenantDataDb(id);
 
-  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive, bookingActive, billingActive, databaseRecord] = await Promise.all([
+  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive, bookingActive, billingActive, databaseRecord, neonPlan] = await Promise.all([
     db.select().from(tenantDomains).where(eq(tenantDomains.tenantId, id)),
     dataDb.select().from(pages).where(eq(pages.tenantId, id)),
     dataDb.select({ count: count() }).from(publishedSnapshots).where(eq(publishedSnapshots.tenantId, id)),
@@ -36,7 +37,9 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
     getBookingAddonStatus(id),
     getBillingAddonStatus(id),
     getTenantDatabaseRecord(id),
+    tenant.deploymentMode === 'standalone' ? getNeonOrganizationPlan().catch(() => null) : Promise.resolve(null),
   ]);
+  const neonPlanLabel = neonPlan ? neonPlan.charAt(0).toUpperCase() + neonPlan.slice(1) : 'unbekannt';
 
   const brand = settings[0]?.brand as Record<string, unknown> | undefined;
   const design = settings[0]?.design as Record<string, unknown> | undefined;
@@ -61,7 +64,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <IndustrySelect tenantId={tenant.id} currentIndustry={tenant.industry} />
               <span className="hidden sm:inline">·</span>
               <span className={tenant.status === 'active' ? 'crm-badge-green' : tenant.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{tenant.status}</span>
-              {tenant.deploymentMode === 'standalone' && <span className="crm-badge-amber">Standalone</span>}
+              {tenant.deploymentMode === 'standalone' && <span className="crm-badge-amber">Standalone · Neon {neonPlanLabel}</span>}
               {tenant.deploymentMode === 'lead_shared' && <span className="crm-badge-amber">Lead-Shared</span>}
             </div>
           </div>
@@ -121,7 +124,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
         {/* Right sidebar */}
         <div className="space-y-6">
-          <TenantActions tenantId={id} currentStatus={tenant.status} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} shopActive={shopActive} bookingActive={bookingActive} billingActive={billingActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
+          <TenantActions tenantId={id} currentStatus={tenant.status} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} databasePlanIntent={databaseRecord?.billingPlanIntent} databaseRoleName={databaseRecord?.roleName} shopActive={shopActive} bookingActive={bookingActive} billingActive={billingActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
 
           {/* Info */}
           <div className="crm-card p-5 space-y-3 text-sm">
@@ -157,6 +160,25 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                     <span>Neon Project</span>
                     <span className="text-slate-900 font-mono text-xs">{databaseRecord.projectId.slice(0, 12)}…</span>
                   </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span>DB-Tarif</span>
+                    <span className={neonPlan === 'free' ? 'crm-badge-green' : 'crm-badge-amber'}>Neon {neonPlanLabel}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span>Tenant-Planung</span>
+                    <span className={databaseRecord.billingPlanIntent === 'free' ? 'crm-badge-slate' : 'crm-badge-amber'}>
+                      {databaseRecord.billingPlanIntent === 'paid_requested' ? 'Paid-DB vorgemerkt' : databaseRecord.billingPlanIntent === 'external_paid' ? 'Extern Paid' : 'Free'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span>Runtime-Zugriff</span>
+                    <span className={databaseRecord.roleName.startsWith('flamingo_app_') ? 'crm-badge-green' : 'crm-badge-amber'}>
+                      {databaseRecord.roleName.startsWith('flamingo_app_') ? 'Eingeschränkt' : 'Owner (Legacy)'}
+                    </span>
+                  </div>
+                  <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-500">
+                    Der Tarif gilt organisationsweit. Ein Upgrade wird deshalb bewusst nicht pro Tenant automatisch ausgelöst.
+                  </p>
                 </>
               )}
               {typeof brand?.companyName === 'string' && brand.companyName && (

@@ -24,7 +24,31 @@ test('standalone provisioning creates, migrates and registers a dedicated Neon d
   assert.match(provisioning, /createNeonTenantProject\(input\.slug\)/);
   assert.match(provisioning, /registerTenantDatabase\(\{ tenantId, \.\.\.neonProject \}\)/);
   assert.match(provisioning, /migrateDatabase\(neonProject\.directConnectionUri\)/);
+  assert.match(provisioning, /createRuntimeDatabaseRole\(neonProject\.directConnectionUri\)/);
   assert.match(provisioning, /createStandaloneProject\(input\.slug, tenantId, neonProject\.pooledConnectionUri\)/);
+});
+
+test('new customer tenants default to isolated Neon Free infrastructure', () => {
+  const provisioning = source('./provisioning.ts');
+  const newTenantPage = source('../app/crm/tenants/new/page.tsx');
+  const schema = source('../../../../packages/db/src/schema/index.ts');
+  assert.match(provisioning, /input\.deploymentMode \|\| 'standalone'/);
+  assert.match(newTenantPage, /deploymentMode: 'standalone'/);
+  assert.match(newTenantPage, /Neon Free/);
+  assert.match(schema, /deploymentMode: deploymentModeEnum\('deployment_mode'\)\.notNull\(\)\.default\('standalone'\)/);
+});
+
+test('paid database needs remain an explicit cost-free CRM intent flag', () => {
+  const schema = source('../../../../packages/db/src/schema/index.ts');
+  const actions = source('../app/crm/tenants/actions.ts');
+  const tenantActions = source('../app/crm/tenants/[id]/tenant-actions.tsx');
+  const tenantList = source('../app/crm/tenants/page.tsx');
+  assert.match(schema, /billingPlanIntent: varchar\('billing_plan_intent'/);
+  assert.match(schema, /'free', 'paid_requested', 'external_paid'/);
+  assert.match(actions, /setDatabasePlanIntentAction/);
+  assert.match(actions, /billingPlanIntent: intent/);
+  assert.match(tenantActions, /Die Vormerkung ändert keinen Tarif und erzeugt keine Kosten/);
+  assert.match(tenantList, /Paid-DB vorgemerkt/);
 });
 
 test('shared-to-standalone cutover verifies deployment and every copied table before purging shared data', () => {

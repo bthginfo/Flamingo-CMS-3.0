@@ -2,24 +2,17 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '@/lib/db';
 import { products, productCategories } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/snapshot';
+import { parsePublicTenantId, resolvePublicTenantId } from '@/lib/public-tenant';
 import { isShopActive } from '@/lib/shop-pages';
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function resolveExplicitTenant(queryTenantId: string | null) {
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (!queryTenantId || !UUID_RE.test(queryTenantId)) return null;
-  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
-  return queryTenantId;
-}
+const CACHE_HEADERS = { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' };
 
 function resolveTenantFromReferer(request: NextRequest) {
   const referer = request.headers.get('referer');
   if (!referer) return null;
   try {
     const refererUrl = new URL(referer);
-    return resolveExplicitTenant(refererUrl.searchParams.get('tenant'));
+    return parsePublicTenantId(refererUrl.searchParams.get('tenant'));
   } catch {
     return null;
   }
@@ -27,14 +20,14 @@ function resolveTenantFromReferer(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   const queryTenantId = request.nextUrl.searchParams.get('tenantId');
-  const tenantId = resolveExplicitTenant(queryTenantId) || resolveTenantFromReferer(request) || await resolveTenant();
+  const tenantId = await resolvePublicTenantId(queryTenantId || resolveTenantFromReferer(request));
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
   const { searchParams } = request.nextUrl;
-  const limit = Math.min(Number(searchParams.get('limit')) || 100, 100);
-  const categoryFilter = searchParams.get('category') || '';
-  const idsParam = searchParams.get('ids') || '';
+  const limit = Math.min(Math.max(Number(searchParams.get('limit')) || 100, 1), 100);
+  const categoryFilter = (searchParams.get('category') || '').slice(0, 120);
+  const idsParam = (searchParams.get('ids') || '').slice(0, 3_700);
 
   const db = getDb();
 
@@ -81,9 +74,9 @@ export async function GET(request: NextRequest) {
 
   // Filter by explicit IDs
   if (idsParam) {
-    const ids = idsParam.split(',').map(s => s.trim());
+    const ids = idsParam.split(',').map(s => s.trim()).filter(id => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 100);
     mapped = mapped.filter(p => ids.includes(p.id));
   }
 
-  return NextResponse.json({ products: mapped.slice(0, limit), categories: allCategories });
+  return NextResponse.json({ products: mapped.slice(0, limit), categories: allCategories }, { headers: CACHE_HEADERS });
 }

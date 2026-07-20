@@ -4,6 +4,8 @@ import { eq, and, asc, desc, notInArray } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
 
+const lastKnownSnapshots = new Map<string, Snapshot>();
+
 export type SnapshotPage = {
   id: string;
   title: string;
@@ -96,21 +98,27 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
  * tenants who never clicked "Veröffentlichen"), we fall back to the draft
  * read so existing sites keep working transparently.
  *
- * Cache key includes the active snapshot's version so a publish flip
- * naturally invalidates without needing tag-revalidation to land everywhere.
+ * The complete lookup is cached. Publish and rollback invalidate the tenant
+ * tag, while the TTL provides a bounded fallback for other mutations.
  */
 export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | null> {
-  const meta = await getActiveSnapshotMeta(tenantId);
-  const cacheKey = meta ? `snapshot-pub-${tenantId}-v${meta.version}` : `snapshot-draft-${tenantId}`;
   const cached = unstable_cache(
     async () => {
+      const meta = await getActiveSnapshotMeta(tenantId);
       if (meta) return meta.snapshot;
       return getDraftSnapshot(tenantId);
     },
-    [cacheKey],
-    { revalidate: 60, tags: [`tenant-${tenantId}`] },
+    ['public-snapshot', tenantId],
+    { revalidate: 300, tags: [`tenant-${tenantId}`] },
   );
-  return cached();
+  try {
+    const snapshot = await cached();
+    if (snapshot) lastKnownSnapshots.set(tenantId, snapshot);
+    return snapshot;
+  } catch (err) {
+    console.warn('[getActiveSnapshot] cached public snapshot unavailable:', err);
+    return lastKnownSnapshots.get(tenantId) || null;
+  }
 }
 
 async function getActiveSnapshotMeta(tenantId: string): Promise<{ version: number; snapshot: Snapshot } | null> {
@@ -125,8 +133,8 @@ async function getActiveSnapshotMeta(tenantId: string): Promise<{ version: numbe
     if (!row) return null;
     return { version: row.version, snapshot: row.snapshot as unknown as Snapshot };
   } catch (err) {
-    console.warn('[getActiveSnapshotMeta] DB error — falling back to draft:', err);
-    return null;
+    console.warn('[getActiveSnapshotMeta] DB error:', err);
+    throw err;
   }
 }
 

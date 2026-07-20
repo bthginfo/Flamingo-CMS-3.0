@@ -1,12 +1,12 @@
 'use client';
 
 import { useTransition } from 'react';
-import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleBookingAddonAction, toggleBillingAddonAction, toggleI18nAction, updateI18nSettingsAction, convertSharedToStandaloneAction } from '../actions';
+import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleBookingAddonAction, toggleBillingAddonAction, toggleI18nAction, updateI18nSettingsAction, convertSharedToStandaloneAction, setDatabasePlanIntentAction, hardenStandaloneDatabaseRoleAction } from '../actions';
 import { toast } from 'sonner';
 import { CalendarCheck, Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe, CloudUpload, ReceiptText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploymentMode, shopActive, bookingActive, billingActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean; bookingActive?: boolean; billingActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
+export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploymentMode, databasePlanIntent, databaseRoleName, shopActive, bookingActive, billingActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; databasePlanIntent?: string; databaseRoleName?: string; shopActive?: boolean; bookingActive?: boolean; billingActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -157,6 +157,7 @@ export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploym
         <Trash2 size={14} /> Löschen
       </button>
       {deploymentMode === 'standalone' && (
+        <>
         <button
           onClick={() => {
             startTransition(async () => {
@@ -173,6 +174,42 @@ export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploym
         >
           Blob Storage konfigurieren
         </button>
+        <button
+          onClick={() => {
+            const markPaid = databasePlanIntent !== 'paid_requested';
+            startTransition(async () => {
+              const result = await setDatabasePlanIntentAction(tenantId, markPaid ? 'paid_requested' : 'free');
+              if (result.success) {
+                toast.success(markPaid ? 'Paid-Datenbank als Bedarf vorgemerkt' : 'Planung auf Neon Free zurückgesetzt');
+                router.refresh();
+              } else toast.error(result.error);
+            });
+          }}
+          disabled={pending}
+          className={`w-full crm-btn ${databasePlanIntent === 'paid_requested' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+        >
+          {databasePlanIntent === 'paid_requested' ? 'Paid-DB-Vormerkung entfernen' : 'Paid-DB als Bedarf vormerken'}
+        </button>
+        <p className="px-1 text-xs leading-5 text-slate-500">Die Vormerkung ändert keinen Tarif und erzeugt keine Kosten. Sie kennzeichnet den Tenant für eine später separat abrechenbare Datenbank.</p>
+        {!databaseRoleName?.startsWith('flamingo_app_') && (
+          <button
+            onClick={() => {
+              if (!confirm('Runtime-Datenbankzugriff jetzt auf eine eingeschränkte Rolle umstellen? Das Standalone-Projekt wird dabei neu deployed.')) return;
+              startTransition(async () => {
+                const result = await hardenStandaloneDatabaseRoleAction(tenantId);
+                if (result.success) {
+                  toast.success(result.alreadySecure ? 'Datenbankzugriff ist bereits abgesichert' : 'Datenbankzugriff wurde abgesichert');
+                  router.refresh();
+                } else toast.error(result.error);
+              });
+            }}
+            disabled={pending}
+            className="w-full crm-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+          >
+            Runtime-Datenbankzugriff absichern
+          </button>
+        )}
+        </>
       )}
       {(deploymentMode === 'shared' || deploymentMode === 'lead_shared') && (
         <button

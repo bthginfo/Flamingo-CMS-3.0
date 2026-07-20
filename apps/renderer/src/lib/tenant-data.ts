@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/db';
 import { navigation, footer, globalSettings, seoGlobal, seoPage, seoItem, tenants } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
+import { unstable_cache } from 'next/cache';
 import { normalizeContactFormFields, type ContactFormFieldDefinition } from '@/lib/contact-form';
 
 export type NavItem = { label: string; href: string; type?: string };
@@ -14,6 +15,13 @@ export type ContactData = { phone?: string; email?: string; address?: string; wh
 export type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
 export type LocalSeoService = { name: string; description?: string; url?: string };
 export type LocalSeoData = { businessType?: string; priceRange?: string; serviceArea?: string; googleBusinessUrl?: string; sameAs?: string[]; latitude?: number; longitude?: number; ratingValue?: number; ratingCount?: number; services?: LocalSeoService[] };
+
+function cachedTenantRead<T>(tenantId: string, key: string, read: () => Promise<T>): Promise<T> {
+  return unstable_cache(read, ['public-tenant-data', key, tenantId], {
+    revalidate: 60,
+    tags: [`tenant-${tenantId}`],
+  })();
+}
 
 function isPlaceholderCompanyName(value?: string): boolean {
   const normalized = (value || '').trim().toLowerCase();
@@ -33,23 +41,28 @@ function normalizeI18nConfig(config?: { locales?: string | null; defaultLocale?:
 }
 
 export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
-  const db = getDb();
-  const [t] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
-  return { industry: t?.industry ?? 'tradesman', activeStyle: 'classic' };
+  return cachedTenantRead(tenantId, 'style', async () => {
+    const db = getDb();
+    const [t] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+    return { industry: t?.industry ?? 'tradesman', activeStyle: 'classic' };
+  });
 }
 
 export async function getTenantI18n(tenantId: string): Promise<{ enabled: boolean; locales: string[]; defaultLocale: string }> {
-  const db = getDb();
-  const [t] = await db.select({ enabled: tenants.i18nEnabled, locales: tenants.i18nLocales, defaultLocale: tenants.i18nDefaultLocale }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
-  const i18n = normalizeI18nConfig({ locales: t?.locales, defaultLocale: t?.defaultLocale });
-  return {
-    enabled: t?.enabled ?? false,
-    locales: i18n.locales,
-    defaultLocale: i18n.defaultLocale,
-  };
+  return cachedTenantRead(tenantId, 'i18n', async () => {
+    const db = getDb();
+    const [t] = await db.select({ enabled: tenants.i18nEnabled, locales: tenants.i18nLocales, defaultLocale: tenants.i18nDefaultLocale }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+    const i18n = normalizeI18nConfig({ locales: t?.locales, defaultLocale: t?.defaultLocale });
+    return {
+      enabled: t?.enabled ?? false,
+      locales: i18n.locales,
+      defaultLocale: i18n.defaultLocale,
+    };
+  });
 }
 
 export async function getTenantNav(tenantId: string, locale?: string): Promise<{ items: NavItem[]; cta: NavCta | null; topBar: TopBarConfig }> {
+  return cachedTenantRead(tenantId, `navigation-${locale || 'default'}`, async () => {
   const db = getDb();
   const [nav] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
   let items = nav?.items as any;
@@ -79,9 +92,11 @@ export async function getTenantNav(tenantId: string, locale?: string): Promise<{
     cta: cta?.label ? cta : null,
     topBar,
   };
+  });
 }
 
 export async function getTenantFooter(tenantId: string, locale?: string): Promise<FooterData | null> {
+  return cachedTenantRead(tenantId, `footer-${locale || 'default'}`, async () => {
   const db = getDb();
   const [f] = await db.select().from(footer).where(eq(footer.tenantId, tenantId)).limit(1);
   if (!f) return null;
@@ -104,12 +119,16 @@ export async function getTenantFooter(tenantId: string, locale?: string): Promis
     cta = cta._default ?? null;
   }
   return { columns: columns as FooterColumn[], legalLinks: legalLinks as { label: string; href: string }[], cta: cta as { label: string; href: string } | null };
+  });
 }
 
 export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; openingHours: OpeningHoursRow[]; socialLinks: SocialLinks; design: Record<string, string>; formFields: ContactFormFieldDefinition[] }> {
+  return cachedTenantRead(tenantId, 'brand', async () => {
   const db = getDb();
-  const [s] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  const [tenant] = await db.select({ name: tenants.name }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  const [[s], [tenant]] = await Promise.all([
+    db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1),
+    db.select({ name: tenants.name }).from(tenants).where(eq(tenants.id, tenantId)).limit(1),
+  ]);
   const brand = { ...(((s?.brand as BrandData) || {}) as BrandData) };
   if (tenant?.name && isPlaceholderCompanyName(brand.companyName)) {
     brand.companyName = tenant.name;
@@ -122,6 +141,7 @@ export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandDa
     design: (s?.design as Record<string, string>) || {},
     formFields: normalizeContactFormFields(s?.formFields),
   };
+  });
 }
 
 export type SeoGlobalData = {
@@ -143,6 +163,7 @@ export type SeoPageData = {
 };
 
 export async function getTenantSeoGlobal(tenantId: string): Promise<SeoGlobalData | null> {
+  return cachedTenantRead(tenantId, 'seo-global', async () => {
   const db = getDb();
   const [row] = await db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, tenantId)).limit(1);
   if (!row) return null;
@@ -155,9 +176,11 @@ export async function getTenantSeoGlobal(tenantId: string): Promise<SeoGlobalDat
     locale: row.locale,
     robots: row.robots,
   };
+  });
 }
 
 export async function getTenantSeoPage(tenantId: string, pageId: string): Promise<SeoPageData | null> {
+  return cachedTenantRead(tenantId, `seo-page-${pageId}`, async () => {
   const db = getDb();
   const [row] = await db.select().from(seoPage).where(and(eq(seoPage.tenantId, tenantId), eq(seoPage.pageId, pageId))).limit(1);
   if (!row) return null;
@@ -168,9 +191,11 @@ export async function getTenantSeoPage(tenantId: string, pageId: string): Promis
     canonical: row.canonical,
     noindex: row.noindex,
   };
+  });
 }
 
 export async function getTenantSeoItem(tenantId: string, itemId: string): Promise<SeoPageData | null> {
+  return cachedTenantRead(tenantId, `seo-item-${itemId}`, async () => {
   const db = getDb();
   const [row] = await db.select().from(seoItem).where(and(eq(seoItem.tenantId, tenantId), eq(seoItem.collectionItemId, itemId))).limit(1);
   if (!row) return null;
@@ -181,4 +206,5 @@ export async function getTenantSeoItem(tenantId: string, itemId: string): Promis
     canonical: row.canonical,
     noindex: row.noindex,
   };
+  });
 }

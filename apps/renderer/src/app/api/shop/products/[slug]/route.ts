@@ -2,24 +2,17 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '@/lib/db';
 import { products, productVariants, variantOptions, productCategories } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/snapshot';
+import { parsePublicTenantId, resolvePublicTenantId } from '@/lib/public-tenant';
 import { isShopActive } from '@/lib/shop-pages';
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function resolveExplicitTenant(queryTenantId: string | null) {
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (!queryTenantId || !UUID_RE.test(queryTenantId)) return null;
-  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
-  return queryTenantId;
-}
+const CACHE_HEADERS = { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' };
 
 function resolveTenantFromReferer(request: NextRequest) {
   const referer = request.headers.get('referer');
   if (!referer) return null;
   try {
     const refererUrl = new URL(referer);
-    return resolveExplicitTenant(refererUrl.searchParams.get('tenant'));
+    return parsePublicTenantId(refererUrl.searchParams.get('tenant'));
   } catch {
     return null;
   }
@@ -31,7 +24,7 @@ export async function GET(
 ) {
   const { slug } = await params;
   const queryTenantId = req.nextUrl.searchParams.get('tenantId');
-  const tenantId = resolveExplicitTenant(queryTenantId) || resolveTenantFromReferer(req) || await resolveTenant();
+  const tenantId = await resolvePublicTenantId(queryTenantId || resolveTenantFromReferer(req));
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
@@ -88,5 +81,5 @@ export async function GET(
       values: option.values ?? [],
       sortOrder: option.sortOrder,
     })),
-  });
+  }, { headers: CACHE_HEADERS });
 }

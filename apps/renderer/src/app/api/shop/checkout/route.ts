@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { orders, products, productVariants, shopSettings, customers, orderStatusHistory, coupons, shippingMethods, shippingZones } from '@flamingo/db';
 import { eq, and, sql, ne } from 'drizzle-orm';
-import { isDemoTenant, resolveTenant } from '@/lib/snapshot';
+import { isDemoTenant } from '@/lib/snapshot';
+import { resolvePublicTenantId } from '@/lib/public-tenant';
 import { sendOrderEmails } from '@/lib/shop-email';
 import {
   claimPublicFlowRequest,
@@ -30,15 +31,6 @@ import {
 } from '@/lib/renderer-contact-security';
 import { revealShopSecrets } from '@/lib/secret-storage';
 import { isShopActive } from '@/lib/shop-pages';
-
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function resolveExplicitTenant(queryTenantId: unknown) {
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (typeof queryTenantId !== 'string' || !UUID_RE.test(queryTenantId)) return null;
-  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
-  return queryTenantId;
-}
 
 // Tax rate resolution is provided by lib/tax (DB-backed tax_rates table
 // with per-class defaults). The local fallback below is kept inline only as
@@ -443,7 +435,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
   }
-  const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
+  const tenantId = await resolvePublicTenantId(body.tenantId);
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 

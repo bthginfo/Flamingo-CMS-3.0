@@ -1,22 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { and, asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
-import { resolveTenant } from '@/lib/snapshot';
+import { resolvePublicTenantId } from '@/lib/public-tenant';
 import { getOrCreateBookingSettings, hasBookingAddon } from '@/lib/booking-core';
 import { bookingResources, bookingServices } from '@flamingo/db';
 
-function resolveExplicitTenant(value: string | null) {
-  if (!value || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) return null;
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (fixedTenantId) return value === fixedTenantId ? value : null;
-  return value;
-}
+const CACHE_HEADERS = { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' };
 
 export async function GET(req: NextRequest) {
-  const tenantId = resolveExplicitTenant(req.nextUrl.searchParams.get('tenantId')) || await resolveTenant();
+  const tenantId = await resolvePublicTenantId(req.nextUrl.searchParams.get('tenantId'));
   if (!tenantId) return NextResponse.json({ enabled: false }, { status: 404 });
   const enabled = await hasBookingAddon(tenantId);
-  if (!enabled) return NextResponse.json({ enabled: false });
+  if (!enabled) return NextResponse.json({ enabled: false }, { headers: CACHE_HEADERS });
 
   const db = getDb();
   const settings = await getOrCreateBookingSettings(tenantId);
@@ -39,7 +34,7 @@ export async function GET(req: NextRequest) {
     intervalMinutes: settings.intervalMinutes,
     services,
     resources,
-  });
+  }, { headers: CACHE_HEADERS });
 }
 
 async function selectBookingServicesCompat(tenantId: string) {

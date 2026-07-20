@@ -2,7 +2,7 @@
  * Tenant provisioning: creates all necessary DB records for a new tenant.
  */
 import { getDb } from './db';
-import { createDb, migrateDatabase, tenants, tenantDomains, tenantDatabaseConnections, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
+import { createDb, createRuntimeDatabaseRole, migrateDatabase, tenants, tenantDomains, tenantDatabaseConnections, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
 import { hashPassword } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
@@ -91,7 +91,9 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   }
 
   // 1. Create tenant
-  const deploymentMode = input.deploymentMode || 'shared';
+  // Real customer tenants are isolated by default. Shared infrastructure is
+  // an explicit choice reserved for lead and demo sites.
+  const deploymentMode = input.deploymentMode || 'standalone';
   const [tenant] = await db.insert(tenants).values({
     name: input.name,
     slug: input.slug,
@@ -110,8 +112,10 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   try {
     if (deploymentMode === 'standalone') {
       neonProject = await createNeonTenantProject(input.slug);
-      await registerTenantDatabase({ tenantId, ...neonProject });
       await migrateDatabase(neonProject.directConnectionUri);
+      const runtime = await createRuntimeDatabaseRole(neonProject.directConnectionUri);
+      neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
+      await registerTenantDatabase({ tenantId, ...neonProject });
       dataDb = createDb(neonProject.pooledConnectionUri);
       await dataDb.insert(tenants).values({ ...tenant, deploymentMode: 'standalone', status: 'provisioning' });
     }

@@ -46,7 +46,7 @@ export default function NewTenantPage() {
     phone: '',
     email: '',
     address: '',
-    deploymentMode: 'shared' as 'shared' | 'lead_shared' | 'standalone',
+    deploymentMode: 'standalone' as 'shared' | 'lead_shared' | 'standalone',
     activateShop: false,
   });
 
@@ -223,7 +223,7 @@ export default function NewTenantPage() {
             >
               <Server size={20} className={form.deploymentMode === 'shared' ? 'text-indigo-600' : 'text-slate-400'} />
               <p className="font-semibold mt-2 text-sm">Shared Renderer</p>
-              <p className="text-xs text-slate-500 mt-1">Läuft auf dem gemeinsamen Renderer-Projekt. Ideal für Demos und kleine Kunden.</p>
+              <p className="text-xs text-slate-500 mt-1">Gemeinsame Infrastruktur ausschließlich für Demos und Leads.</p>
             </button>
             <button
               type="button"
@@ -235,10 +235,18 @@ export default function NewTenantPage() {
               }`}
             >
               <Cloud size={20} className={form.deploymentMode === 'standalone' ? 'text-indigo-600' : 'text-slate-400'} />
-              <p className="font-semibold mt-2 text-sm">Standalone Projekt</p>
-              <p className="text-xs text-slate-500 mt-1">Eigenes Vercel-Projekt mit dedizierter Infrastruktur. Für produktive Kunden.</p>
+              <div className="mt-2 flex items-center gap-2">
+                <p className="font-semibold text-sm">Standalone Projekt</p>
+                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">Neon Free</span>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">Eigenes Vercel-Projekt und eigene Neon-Datenbank. Standard für produktive Kunden; kein kostenpflichtiger DB-Tarif.</p>
             </button>
           </div>
+          {form.deploymentMode === 'standalone' && (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs leading-5 text-emerald-800">
+              <strong>Tarif: Neon Free.</strong> Standalone bedeutet Isolation, nicht kostenpflichtig. Neon-Tarife gelten in der aktuellen Anbindung organisationsweit und werden deshalb nicht automatisch pro Kunde umgestellt.
+            </div>
+          )}
         </div>
 
         {/* Submit */}

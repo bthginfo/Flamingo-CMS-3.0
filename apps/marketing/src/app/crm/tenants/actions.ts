@@ -2,13 +2,13 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { BILLING_ADDON_KEY, createDb, migrateDatabase, tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, type Industry } from '@flamingo/db';
+import { BILLING_ADDON_KEY, createDb, createRuntimeDatabaseRole, migrateDatabase, tenants, tenantDatabaseConnections, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, type Industry } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { addDomainToRenderer, addDomainToProject, removeDomainFromProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject } from '@/lib/vercel';
+import { addDomainToRenderer, addDomainToProject, removeDomainFromProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject, setStandaloneDatabaseConnection } from '@/lib/vercel';
 import { requireCrmAdmin } from '@/lib/session';
 import { createNeonTenantProject, deleteNeonProject } from '@/lib/neon';
-import { getTenantDataDb, getTenantDatabaseRecord, markTenantDatabaseActive, mirrorTenantControlFields, registerTenantDatabase, removeTenantDatabaseRecord } from '@/lib/tenant-data-db';
+import { getRequiredStandaloneDatabase, getTenantDataDb, getTenantDatabaseRecord, markTenantDatabaseActive, mirrorTenantControlFields, registerTenantDatabase, removeTenantDatabaseRecord, updateTenantRuntimeDatabaseConnection } from '@/lib/tenant-data-db';
 import { copyTenantData, purgeSharedTenantData, verifyTenantDataCopy } from '@/lib/tenant-data-migration';
 
 export async function createTenantAction(input: ProvisionInput) {
@@ -89,8 +89,10 @@ export async function convertSharedToStandaloneAction(tenantId: string) {
   try {
     await db.update(tenants).set({ status: 'provisioning', updatedAt: new Date() }).where(eq(tenants.id, tenantId));
     neonProject = await createNeonTenantProject(tenant.slug);
-    await registerTenantDatabase({ tenantId, ...neonProject });
     await migrateDatabase(neonProject.directConnectionUri);
+    const runtime = await createRuntimeDatabaseRole(neonProject.directConnectionUri);
+    neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
+    await registerTenantDatabase({ tenantId, ...neonProject });
     const targetDb = createDb(neonProject.pooledConnectionUri);
     await copyTenantData(db, targetDb, tenantId);
 
@@ -151,6 +153,43 @@ export async function convertSharedToStandaloneAction(tenantId: string) {
       await db.update(tenants).set({ status: tenant.status, deploymentMode: tenant.deploymentMode, isLead: tenant.isLead, vercelProjectId: tenant.vercelProjectId, updatedAt: new Date() }).where(eq(tenants.id, tenantId));
     }
     return { success: false as const, error: err instanceof Error ? err.message : 'Standalone-Umzug fehlgeschlagen' };
+  }
+}
+
+export async function setDatabasePlanIntentAction(tenantId: string, intent: 'free' | 'paid_requested') {
+  await requireCrmAdmin();
+  const db = getDb();
+  const [record] = await db.select({ tenantId: tenantDatabaseConnections.tenantId })
+    .from(tenantDatabaseConnections)
+    .where(eq(tenantDatabaseConnections.tenantId, tenantId))
+    .limit(1);
+  if (!record) return { success: false as const, error: 'Keine Standalone-Datenbank registriert.' };
+  await db.update(tenantDatabaseConnections)
+    .set({ billingPlanIntent: intent, updatedAt: new Date() })
+    .where(eq(tenantDatabaseConnections.tenantId, tenantId));
+  revalidatePath(`/crm/tenants/${tenantId}`);
+  revalidatePath('/crm/tenants');
+  return { success: true as const };
+}
+
+export async function hardenStandaloneDatabaseRoleAction(tenantId: string) {
+  await requireCrmAdmin();
+  try {
+    const db = getDb();
+    const [tenant] = await db.select({ slug: tenants.slug, deploymentMode: tenants.deploymentMode, vercelProjectId: tenants.vercelProjectId })
+      .from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+    if (!tenant || tenant.deploymentMode !== 'standalone' || !tenant.vercelProjectId) {
+      return { success: false as const, error: 'Kein vollständiges Standalone-Projekt gefunden.' };
+    }
+    const standalone = await getRequiredStandaloneDatabase(tenantId);
+    if (standalone.record.roleName.startsWith('flamingo_app_')) return { success: true as const, alreadySecure: true };
+    const runtime = await createRuntimeDatabaseRole(standalone.directConnectionUri);
+    await setStandaloneDatabaseConnection(tenant.vercelProjectId, tenant.slug, tenantId, runtime.connectionUri);
+    await updateTenantRuntimeDatabaseConnection(tenantId, runtime);
+    revalidatePath(`/crm/tenants/${tenantId}`);
+    return { success: true as const, alreadySecure: false };
+  } catch (error) {
+    return { success: false as const, error: error instanceof Error ? error.message : 'Datenbankrolle konnte nicht abgesichert werden.' };
   }
 }
 

@@ -2,7 +2,7 @@ import { Client, neon, neonConfig, Pool } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { drizzle as drizzleWebSocket } from 'drizzle-orm/neon-serverless';
 import { migrate } from 'drizzle-orm/neon-serverless/migrator';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import ws from 'ws';
@@ -15,7 +15,49 @@ export function createDb(databaseUrl: string) {
 
 export type Database = ReturnType<typeof createDb>;
 
-export const DATABASE_SCHEMA_VERSION = 22;
+export const DATABASE_SCHEMA_VERSION = 23;
+
+const RUNTIME_DATABASE_ROLE_PREFIX = 'flamingo_app';
+
+/**
+ * Create a least-privilege login for the renderer after owner-led migrations.
+ * The returned URI can read/write application data but cannot own or alter the
+ * schema. The original owner URI remains available only to the control plane.
+ */
+export async function createRuntimeDatabaseRole(ownerDatabaseUrl: string) {
+  const password = randomBytes(32).toString('hex');
+  const roleName = `${RUNTIME_DATABASE_ROLE_PREFIX}_${randomBytes(4).toString('hex')}`;
+  const client = new Client({ connectionString: ownerDatabaseUrl });
+  await client.connect();
+  try {
+    const databaseResult = await client.query<{ database_name: string }>('SELECT current_database() AS database_name');
+    const databaseName = databaseResult.rows[0]?.database_name;
+    if (!databaseName || !/^[a-zA-Z0-9_-]+$/.test(databaseName)) throw new Error('Der Datenbankname ist für die Runtime-Rolle ungültig.');
+    await client.query(`
+      DO $role$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${roleName}') THEN
+          CREATE ROLE ${roleName} LOGIN;
+        END IF;
+      END
+      $role$;
+      ALTER ROLE ${roleName} WITH LOGIN PASSWORD '${password}' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+      GRANT CONNECT ON DATABASE "${databaseName}" TO ${roleName};
+      GRANT USAGE ON SCHEMA public TO ${roleName};
+      GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO ${roleName};
+      GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO ${roleName};
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ${roleName};
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO ${roleName};
+    `);
+  } finally {
+    await client.end();
+  }
+
+  const runtimeUrl = new URL(ownerDatabaseUrl);
+  runtimeUrl.username = roleName;
+  runtimeUrl.password = password;
+  return { roleName, connectionUri: runtimeUrl.toString() };
+}
 
 function resolveMigrationsFolder(explicit?: string) {
   const candidates = [

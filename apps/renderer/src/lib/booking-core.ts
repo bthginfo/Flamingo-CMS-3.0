@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { bookingAvailabilityRules, bookingBlackouts, bookingCalendarBlocks, bookingRequests, bookingResources, bookingSettings, tenantAddons } from '@flamingo/db';
 import { and, eq, gt, lt, ne, type SQL } from 'drizzle-orm';
 import { getTouchedZonedWeekdays, getZonedTime, getZonedWeekday, normalizeTimezone, zonedDateTimeToUtc, zonedDayEndToUtc, zonedDayStartToUtc } from '@/lib/booking-time';
+import { unstable_cache } from 'next/cache';
 
 export const BOOKING_ADDON_KEY = 'booking';
 
@@ -18,13 +19,15 @@ export type BookingMode = 'request' | 'instant';
 export type BookingTimeModel = 'time_slot' | 'full_day' | 'date_range';
 
 export async function hasBookingAddon(tenantId: string): Promise<boolean> {
-  const db = getDb();
-  const [addon] = await db
-    .select({ active: tenantAddons.active })
-    .from(tenantAddons)
-    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, BOOKING_ADDON_KEY)))
-    .limit(1);
-  return addon?.active === true;
+  return unstable_cache(async () => {
+    const db = getDb();
+    const [addon] = await db
+      .select({ active: tenantAddons.active })
+      .from(tenantAddons)
+      .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, BOOKING_ADDON_KEY)))
+      .limit(1);
+    return addon?.active === true;
+  }, ['public-booking-entitlement', tenantId], { revalidate: 30, tags: [`tenant-${tenantId}`] })();
 }
 
 export async function requireBookingAddon(tenantId: string) {

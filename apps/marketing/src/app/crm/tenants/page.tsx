@@ -1,10 +1,11 @@
 import { getDb } from '@/lib/db';
-import { tenants, tenantDomains } from '@flamingo/db';
+import { tenants, tenantDatabaseConnections, tenantDomains } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Building2, Plus, ArrowRight, Globe } from 'lucide-react';
 import { TenantAccordion } from './tenant-accordion';
 import { requireCrmAdmin } from '@/lib/session';
+import { getNeonOrganizationPlan } from '@/lib/neon';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,9 +13,21 @@ export default async function TenantsPage() {
   await requireCrmAdmin();
   const db = getDb();
   const tenantList = await db.select().from(tenants).orderBy(tenants.createdAt);
-  const domains = await db.select().from(tenantDomains);
+  const [domains, databaseConnections] = await Promise.all([
+    db.select().from(tenantDomains),
+    db.select({ tenantId: tenantDatabaseConnections.tenantId, billingPlanIntent: tenantDatabaseConnections.billingPlanIntent }).from(tenantDatabaseConnections)
+      .catch(error => {
+        if (/billing_plan_intent|column .* does not exist/i.test(error instanceof Error ? error.message : String(error))) return [];
+        throw error;
+      }),
+  ]);
+  const neonPlan = tenantList.some(tenant => tenant.deploymentMode === 'standalone')
+    ? await getNeonOrganizationPlan().catch(() => null)
+    : null;
+  const neonPlanLabel = neonPlan ? neonPlan.charAt(0).toUpperCase() + neonPlan.slice(1) : 'unbekannt';
 
   const domainMap = new Map<string, string[]>();
+  const databasePlanMap = new Map(databaseConnections.map(connection => [connection.tenantId, connection.billingPlanIntent]));
   for (const d of domains) {
     const list = domainMap.get(d.tenantId) || [];
     list.push(d.domain);
@@ -40,6 +53,10 @@ export default async function TenantsPage() {
                 <span className="font-mono">{t.slug}</span>
                 <span className="hidden sm:inline">·</span>
                 <span className="capitalize">{t.industry}</span>
+                {t.deploymentMode === 'standalone' && <span className={neonPlan === 'free' ? 'crm-badge-green' : 'crm-badge-amber'}>Standalone · Neon {neonPlanLabel}</span>}
+                {databasePlanMap.get(t.id) === 'paid_requested' && <span className="crm-badge-amber">Paid-DB vorgemerkt</span>}
+                {t.deploymentMode === 'lead_shared' && <span className="crm-badge-amber">Lead-Shared</span>}
+                {t.deploymentMode === 'shared' && <span className="crm-badge-slate">Demo-Shared</span>}
               </div>
               {tDomains.length > 0 && (
                 <div className="flex items-center gap-1.5 mt-1 text-xs text-indigo-600">

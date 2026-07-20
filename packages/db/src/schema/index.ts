@@ -48,7 +48,7 @@ export const tenants = pgTable('tenants', {
   status: tenantStatusEnum('status').notNull().default('active'),
   isDemo: boolean('is_demo').notNull().default(false),
   isLead: boolean('is_lead').notNull().default(false),
-  deploymentMode: deploymentModeEnum('deployment_mode').notNull().default('shared'),
+  deploymentMode: deploymentModeEnum('deployment_mode').notNull().default('standalone'),
   vercelProjectId: varchar('vercel_project_id', { length: 255 }),
   // i18n
   i18nEnabled: boolean('i18n_enabled').notNull().default(false),
@@ -85,6 +85,7 @@ export const tenantDatabaseConnections = pgTable('tenant_database_connections', 
   region: varchar('region', { length: 80 }),
   databaseName: varchar('database_name', { length: 100 }).notNull().default('flamingo'),
   roleName: varchar('role_name', { length: 100 }).notNull().default('flamingo_owner'),
+  billingPlanIntent: varchar('billing_plan_intent', { length: 20 }).notNull().default('free'),
   connectionUriEncrypted: text('connection_uri_encrypted').notNull(),
   directConnectionUriEncrypted: text('direct_connection_uri_encrypted').notNull(),
   status: varchar('status', { length: 20 }).notNull().default('provisioning'),
@@ -96,6 +97,7 @@ export const tenantDatabaseConnections = pgTable('tenant_database_connections', 
   uniqueIndex('tenant_database_connections_project_idx').on(t.projectId),
   index('tenant_database_connections_status_idx').on(t.status),
   check('tenant_database_connections_status_check', sql`${t.status} IN ('provisioning', 'active', 'migration_failed', 'deleting')`),
+  check('tenant_database_connections_plan_intent_check', sql`${t.billingPlanIntent} IN ('free', 'paid_requested', 'external_paid')`),
 ]);
 
 // ─── 3. admin_secrets ─────────────────────────────────────────────────

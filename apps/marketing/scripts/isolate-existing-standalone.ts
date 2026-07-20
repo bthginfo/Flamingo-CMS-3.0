@@ -1,4 +1,4 @@
-import { createDb, migrateDatabase, tenants } from '@flamingo/db';
+import { createDb, createRuntimeDatabaseRole, migrateDatabase, tenants } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { getDb } from '../src/lib/db';
 import { createNeonTenantProject, deleteNeonProject } from '../src/lib/neon';
@@ -30,8 +30,10 @@ let neonProject: Awaited<ReturnType<typeof createNeonTenantProject>> | undefined
 let connectionSwitched = false;
 try {
   neonProject = await createNeonTenantProject(tenant.slug);
-  await registerTenantDatabase({ tenantId, ...neonProject });
   await migrateDatabase(neonProject.directConnectionUri);
+  const runtime = await createRuntimeDatabaseRole(neonProject.directConnectionUri);
+  neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
+  await registerTenantDatabase({ tenantId, ...neonProject });
   const targetDb = createDb(neonProject.pooledConnectionUri);
   const result = await copyTenantData(controlDb, targetDb, tenantId);
   await targetDb.update(tenants).set({

@@ -2,23 +2,38 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { coupons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { resolveTenant } from '@/lib/snapshot';
+import { resolvePublicTenantId } from '@/lib/public-tenant';
 import { couponEffect } from '@/lib/shop-totals';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { isShopActive } from '@/lib/shop-pages';
+import {
+  isTrustedRendererContactOrigin,
+  readBoundedRendererContactJson,
+  RendererContactBodyInvalidError,
+  RendererContactBodyTooLargeError,
+} from '@/lib/renderer-contact-security';
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function resolveExplicitTenant(queryTenantId: unknown) {
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (typeof queryTenantId !== 'string' || !UUID_RE.test(queryTenantId)) return null;
-  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
-  return queryTenantId;
-}
+const MAX_COUPON_REQUEST_BYTES = 8 * 1024;
 
 export async function POST(req: NextRequest) {
-  const { code, subtotalCents, tenantId: bodyTenantId } = await req.json();
-  const tenantId = resolveExplicitTenant(bodyTenantId) || await resolveTenant();
+  if (req.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase() !== 'application/json') {
+    return NextResponse.json({ error: 'Content-Type wird nicht unterstützt.' }, { status: 415 });
+  }
+  if (!isTrustedRendererContactOrigin(req)) return NextResponse.json({ error: 'Ungültiger Request-Ursprung.' }, { status: 403 });
+  let body: Record<string, unknown>;
+  try {
+    const parsed = await readBoundedRendererContactJson(req, MAX_COUPON_REQUEST_BYTES);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new RendererContactBodyInvalidError();
+    body = parsed as Record<string, unknown>;
+  } catch (error) {
+    if (error instanceof RendererContactBodyTooLargeError) return NextResponse.json({ error: 'Anfrage zu groß.' }, { status: 413 });
+    if (error instanceof RendererContactBodyInvalidError) return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
+    throw error;
+  }
+  const code = typeof body.code === 'string' ? body.code.trim().toUpperCase().slice(0, 50) : '';
+  const subtotalCents = Number.isInteger(body.subtotalCents) ? Math.max(Number(body.subtotalCents), 0) : 0;
+  const bodyTenantId = body.tenantId;
+  const tenantId = await resolvePublicTenantId(bodyTenantId);
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   if (!await isShopActive(tenantId)) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
   if (!code) return NextResponse.json({ error: 'Code required' }, { status: 400 });
@@ -34,7 +49,7 @@ export async function POST(req: NextRequest) {
 
   const db = getDb();
   const [coupon] = await db.select().from(coupons)
-    .where(and(eq(coupons.tenantId, tenantId), eq(coupons.code, code.toUpperCase()), eq(coupons.active, true)))
+    .where(and(eq(coupons.tenantId, tenantId), eq(coupons.code, code), eq(coupons.active, true)))
     .limit(1);
 
   if (!coupon) return NextResponse.json({ error: 'Ungültiger Gutscheincode' }, { status: 404 });
