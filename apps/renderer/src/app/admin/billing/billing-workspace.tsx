@@ -611,6 +611,7 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
   return <section>
     <ViewHeader eyebrow="Grundlage jeder Rechnung" title="Rechnungseinstellungen" description="Was hier steht, wird beim Festschreiben als unveränderbarer Absender-Schnappschuss übernommen." />
     <div className="mb-6 flex flex-wrap gap-2">{checks.map(check => <span key={check.label} className={`inline-flex min-h-9 items-center gap-2 rounded-xl px-3 text-xs font-semibold ring-1 ring-inset ${check.ready ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-amber-50 text-amber-800 ring-amber-200'}`}>{check.ready ? <Check className="size-3.5" /> : <AlertTriangle className="size-3.5" />}{check.label}</span>)}</div>
+    <SettingsPdfPreview form={form} />
     <form onSubmit={submit} className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="self-start rounded-2xl border border-zinc-200 bg-white p-2 xl:sticky xl:top-5">{([['identity', 'Unternehmen', Building2], ['numbers', 'Nummernkreise', ReceiptText], ['payment', 'Steuer & Bank', Landmark], ['texts', 'Texte & Versand', Mail]] as const).map(item => { const Icon = item[2]; return <button key={item[0]} type="button" onClick={() => setSection(item[0])} className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-semibold transition ${section === item[0] ? 'bg-zinc-950 text-white' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'}`}><Icon className={`size-4 ${section === item[0] ? 'text-blue-300' : 'text-zinc-400'}`} />{item[1]}<ChevronRight className="ml-auto size-4 opacity-40" /></button>; })}</aside>
       <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-7">
@@ -618,6 +619,66 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
         <div className="mt-8 flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between"><p className="max-w-lg text-xs leading-5 text-zinc-500">Technisch für eine nachvollziehbare, unveränderbare Belegablage ausgelegt. Betriebliche Abläufe und steuerliche Prüfung bleiben in Ihrer Verantwortung.</p><button disabled={isPending} className="admin-btn-primary min-h-11 shrink-0">{isPending ? 'Wird gespeichert …' : 'Einstellungen speichern'}</button></div>
       </div>
     </form>
+  </section>;
+}
+
+function SettingsPdfPreview({ form }: { form: SettingsForm }) {
+  const today = new Date();
+  const dueDate = new Date(today);
+  dueDate.setDate(today.getDate() + Math.max(0, form.defaultPaymentTermDays || 14));
+  const previewForm: DraftForm = {
+    customerId: 'preview-customer',
+    issueDate: today.toISOString().slice(0, 10),
+    serviceDateFrom: today.toISOString().slice(0, 10),
+    serviceDateTo: today.toISOString().slice(0, 10),
+    dueDate: dueDate.toISOString().slice(0, 10),
+    buyerReference: 'DEMO-2026',
+    purchaseOrderReference: '',
+    introText: form.defaultIntroText || 'Vielen Dank für Ihren Auftrag. Nachfolgend erhalten Sie eine Beispielrechnung zur Prüfung Ihres Layouts.',
+    closingText: form.defaultClosingText || 'Bitte überweisen Sie den Rechnungsbetrag fristgerecht unter Angabe der Rechnungsnummer.',
+    notes: '',
+    taxMode: form.smallBusiness ? 'small_business' : 'standard',
+    taxExemptionReason: form.smallBusiness ? form.smallBusinessNotice : '',
+    discountType: 'percent',
+    discountValue: 0,
+    cashDiscountBasisPoints: form.defaultCashDiscountBasisPoints,
+    cashDiscountDays: form.defaultCashDiscountDays,
+    paymentLinkUrl: form.paymentLinkBaseUrl ? `${form.paymentLinkBaseUrl.replace(/\/$/, '')}/demo-rechnung` : '',
+    quoteValidUntil: '',
+    lines: [
+      { position: 1, name: 'Strategie-Workshop', description: 'Analyse, Zielbild und konkrete Handlungsempfehlungen für das Projekt.', quantity: 1, unitCode: 'LS', unitLabel: 'Pauschal', unitPriceNetCents: 89000, discountBasisPoints: 0, discountType: 'percent', discountValue: 0, taxRateBasisPoints: 1900 },
+      { position: 2, name: 'Umsetzung & Feinschliff', description: 'Design-Anpassungen, Qualitätssicherung und Übergabe.', quantity: 6, unitCode: 'HUR', unitLabel: 'Std.', unitPriceNetCents: 9500, discountBasisPoints: 0, discountType: 'percent', discountValue: 0, taxRateBasisPoints: 1900 },
+    ],
+  };
+  const previewCustomer = {
+    id: 'preview-customer',
+    name: 'Max Mustermann',
+    companyName: 'Mustermann GmbH',
+    defaultBillingAddress: { street: 'Musterstraße 12', zip: '80331', city: 'München', country: 'DE' },
+  } as Customer;
+  const previewSettings = {
+    countryCode: form.countryCode,
+    logoUrl: form.logoUrl,
+    logoDisplay: form.logoDisplay,
+    companyName: form.companyName || 'Ihr Unternehmen',
+    street: form.street || 'Ihre Straße 1',
+    postalCode: form.postalCode || '12345',
+    city: form.city || 'Ihr Ort',
+    email: form.email || 'rechnung@example.de',
+    website: form.website,
+    accountHolder: form.accountHolder || form.companyName,
+    iban: form.iban,
+    taxNumber: form.taxNumber,
+    vatId: form.vatId,
+    defaultFooter: form.defaultFooter,
+  } as WorkspaceData['settings'];
+  const totals = calculateDraftTotals(previewForm.lines, previewForm.discountType, previewForm.discountValue, previewForm.taxMode);
+  return <section className="mb-6 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-zinc-50 p-4 shadow-sm sm:p-5">
+    <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div><p className="text-xs font-bold uppercase tracking-[.14em] text-blue-700">PDF-Vorschau</p><h3 className="mt-1 text-lg font-semibold tracking-tight text-zinc-950">So wirkt Ihre Rechnung</h3><p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-500">Live-Preview mit Beispielkunde und Dummy-Positionen. Firmenangaben, Logo, Bank, Steuertexte und Kopfmarke kommen aus den Einstellungen.</p></div>
+      <span className="inline-flex w-fit items-center rounded-full bg-white px-3 py-1 text-xs font-semibold text-zinc-500 ring-1 ring-zinc-200">Nicht gespeichert · nur Vorschau</span>
+    </div>
+    <div className="mx-auto max-w-[430px]"><InvoicePaper settings={previewSettings} form={previewForm} customer={previewCustomer} totals={totals} documentType="invoice" /></div>
   </section>;
 }
 
