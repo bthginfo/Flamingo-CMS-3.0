@@ -1016,22 +1016,57 @@ html {
 
   .cms-accordion--cards {
     display: grid;
-    gap: 0.95rem;
+    gap: clamp(0.95rem, 1.5vw, 1.25rem);
   }
 
   .cms-accordion--cards .cms-accordion-item {
+    position: relative;
     overflow: hidden;
-    border: 1px solid var(--token-card-border);
-    border-radius: var(--token-card-radius);
-    background: var(--token-card-bg);
-    box-shadow: var(--token-card-shadow);
-    transition: border-color 220ms ease, box-shadow 220ms ease;
+    isolation: isolate;
+    border: 1px solid color-mix(in srgb, var(--token-card-border) 82%, transparent);
+    border-radius: max(var(--token-card-radius), 1.15rem);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg) 98%, white), var(--token-card-bg));
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.78) inset,
+      0 14px 34px color-mix(in srgb, var(--token-shadow) 42%, transparent);
+    transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease, background 220ms ease;
+  }
+
+  .cms-accordion--cards .cms-accordion-item::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--token-accent);
+    opacity: 0;
+    transform: scaleY(0.3);
+    transform-origin: center;
+    transition: opacity 220ms ease, transform 220ms ease;
+    z-index: 1;
+  }
+
+  .cms-accordion--cards .cms-accordion-item:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--token-accent) 30%, var(--token-card-border));
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.82) inset,
+      0 18px 42px color-mix(in srgb, var(--token-shadow) 54%, transparent);
   }
 
   .cms-accordion--cards .cms-accordion-item[open] {
-    border-color: color-mix(in srgb, var(--token-accent) 45%, var(--token-card-border));
-    box-shadow: 0 14px 38px var(--token-shadow);
-    background: color-mix(in srgb, var(--token-card-bg) 94%, var(--token-accent));
+    border-color: color-mix(in srgb, var(--token-accent) 46%, var(--token-card-border));
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 22px 52px color-mix(in srgb, var(--token-shadow) 68%, transparent);
+    background:
+      radial-gradient(circle at 96% 0%, color-mix(in srgb, var(--token-accent) 12%, transparent), transparent 34%),
+      linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg) 96%, white), color-mix(in srgb, var(--token-card-bg) 96%, var(--token-accent)));
+  }
+
+  .cms-accordion--cards .cms-accordion-item[open]::before {
+    opacity: 1;
+    transform: scaleY(1);
   }
 
   .cms-accordion--divided {
@@ -1058,7 +1093,7 @@ html {
     min-height: 4rem;
     align-items: center;
     gap: 0.8rem;
-    padding: 1.05rem 1.2rem;
+    padding: 1.15rem 1.28rem;
     color: var(--token-card-heading);
     font-size: clamp(0.98rem, 1.4vw, 1.075rem);
     font-weight: 650;
@@ -1080,11 +1115,18 @@ html {
   }
 
   .cms-accordion-index {
-    color: var(--token-muted);
+    display: inline-grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    place-items: center;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--token-accent) 8%, transparent);
+    color: color-mix(in srgb, var(--token-card-heading) 58%, var(--token-muted));
     font-size: 0.6875rem;
     font-variant-numeric: tabular-nums;
     font-weight: 750;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
+    transition: background 220ms ease, color 220ms ease;
   }
 
   .cms-accordion-question {
@@ -1102,13 +1144,25 @@ html {
   }
 
   .cms-accordion-chevron {
+    display: inline-grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--token-accent) 8%, transparent);
     flex: none;
     color: var(--token-icon);
-    transition: transform 220ms ease;
+    transition: transform 220ms ease, background 220ms ease, color 220ms ease;
   }
 
   .cms-accordion-item[open] .cms-accordion-chevron {
     transform: rotate(180deg);
+  }
+
+  .cms-accordion-item[open] .cms-accordion-index,
+  .cms-accordion-item[open] .cms-accordion-chevron {
+    background: color-mix(in srgb, var(--token-accent) 15%, transparent);
+    color: color-mix(in srgb, var(--token-accent) 78%, var(--token-card-heading));
   }
 
   .cms-accordion-content {
@@ -1122,7 +1176,7 @@ html {
 
   .cms-accordion-answer {
     max-width: 68ch;
-    padding: 0 1.25rem 1.35rem 4.25rem;
+    padding: 0 1.4rem 1.45rem 4.75rem;
     color: var(--token-card-body);
     font-size: 0.9375rem;
     line-height: 1.75;
@@ -1135,7 +1189,7 @@ html {
 
   @media (max-width: 639px) {
     .cms-accordion--cards {
-      gap: 0.75rem;
+      gap: 0.8rem;
     }
 
     .cms-accordion-trigger {
@@ -1146,7 +1200,7 @@ html {
 
     .cms-accordion-answer {
       padding-right: 1rem;
-      padding-left: 3.4rem;
+      padding-left: 3.65rem;
     }
 
     .cms-accordion--minimal .cms-accordion-answer {
