@@ -234,9 +234,35 @@ async function ensureBillingSettings(tenantId: string) {
   const db = getDb();
   const [tenant] = await db.select({ name: tenants.name }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
   await db.insert(billingSettings).values({ tenantId, companyName: tenant?.name || null }).onConflictDoNothing({ target: billingSettings.tenantId });
-  const [settings] = await db.select().from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
+  let [settings] = await db.select().from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1).catch(async (error: unknown) => {
+    if (!isMissingBillingLogoDisplayColumn(error)) throw error;
+    await ensureBillingLogoDisplayColumn();
+    return db.select().from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
+  });
   if (!settings) throw new Error('Rechnungseinstellungen konnten nicht angelegt werden.');
   return settings;
+}
+
+function isMissingBillingLogoDisplayColumn(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /logo_display|column .* does not exist/i.test(message);
+}
+
+async function ensureBillingLogoDisplayColumn() {
+  const db = getDb();
+  await db.execute(sql`ALTER TABLE "billing_settings" ADD COLUMN IF NOT EXISTS "logo_display" varchar(20) DEFAULT 'logo_and_name' NOT NULL`);
+  await db.execute(sql`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'billing_settings_logo_display_check'
+      ) THEN
+        ALTER TABLE "billing_settings"
+          ADD CONSTRAINT "billing_settings_logo_display_check"
+          CHECK ("logo_display" IN ('logo_and_name', 'logo_only', 'name_only'));
+      END IF;
+    END $$;
+  `);
 }
 
 export async function getBillingWorkspaceData() {
