@@ -71,6 +71,14 @@ const LOCALE_PATTERN = /^[a-z]{2}$/;
  */
 async function tryResolveCollectionItemRoute(slug: string[] | undefined) {
   const requestedSlug = slug || [];
+
+  // Only locale-prefixed collection routes can reach this catch-all. Bail out
+  // before any tenant/database work for every ordinary page and random probe.
+  const couldBeCollectionRoute = requestedSlug.length >= 3
+    && requestedSlug.length <= 5
+    && requestedSlug.some((segment, index) => segment === 'c' && index <= 2);
+  if (!couldBeCollectionRoute) return null;
+
   const tenantId = await resolveTenant(requestedSlug[0]);
   if (!tenantId) return null;
 
@@ -78,8 +86,12 @@ async function tryResolveCollectionItemRoute(slug: string[] | undefined) {
   let linkPrefix = '';
 
   // Strip optional shared-renderer tenant slug prefix.
-  const db = getDb();
-  const [tenant] = await db.select({ slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  const fixedTenantId = process.env.FIXED_TENANT_ID?.trim();
+  let tenant: { slug: string } | undefined;
+  if (!fixedTenantId) {
+    const db = getDb();
+    [tenant] = await db.select({ slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  }
   if (tenant?.slug && pathSegments[0] === tenant.slug) {
     linkPrefix = `/${tenant.slug}`;
     pathSegments = pathSegments.slice(1);
@@ -122,7 +134,7 @@ async function resolvePageData(slug?: string[]) {
   // Shared renderer tenant URLs can use /:tenantSlug/... without a custom domain.
   // If the first segment belongs to the resolved tenant, it is routing context,
   // not the CMS page slug.
-  if (pageSlug.length > 0) {
+  if (pageSlug.length > 0 && !process.env.FIXED_TENANT_ID?.trim()) {
     const db = getDb();
     const [tenant] = await db.select({ slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
     if (tenant?.slug && pageSlug[0] === tenant.slug) {

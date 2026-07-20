@@ -183,6 +183,7 @@ export async function createStandaloneProject(slug: string, tenantId: string, da
     // Tenant deployments must never share signing or configuration-encryption
     // keys. A compromise is then contained to one renderer project.
     { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
+    { key: 'RENDERER_RATE_LIMIT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
     { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
     { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
   ];

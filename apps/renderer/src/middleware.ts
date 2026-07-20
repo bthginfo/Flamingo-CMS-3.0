@@ -2,8 +2,26 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getSessionCookieName } from '@flamingo/auth/cookie';
 
+// Reject common exploit scans at the edge. The public catch-all otherwise
+// resolves a tenant and snapshot for every random WordPress/PHP probe, which
+// wastes database transfer even though Flamingo does not serve those paths.
+const EXPLOIT_SCAN_PATH = /(?:^|\/)(?:\.env(?:\.|$)|\.git(?:\/|$)|wp-admin(?:\/|$)|wp-content(?:\/|$)|wp-includes(?:\/|$)|xmlrpc\.php$|wp-login\.php$|vendor\/phpunit(?:\/|$)|[^/]+\.php$)/i;
+
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+
+  if (EXPLOIT_SCAN_PATH.test(pathname)) {
+    return new NextResponse(null, {
+      status: 404,
+      headers: { 'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800' },
+    });
+  }
+
+  // The broader matcher is only needed for the cheap exploit-scan rejection.
+  // Normal public pages must continue to the renderer without admin auth.
+  if (!pathname.startsWith('/admin') && pathname !== '/live-preview') {
+    return NextResponse.next();
+  }
 
   // Allow login page, demo-login and API routes
   if (pathname === '/admin/login' || pathname === '/admin/demo-login' || pathname.startsWith('/api/')) {
@@ -60,5 +78,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/live-preview'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)'],
 };

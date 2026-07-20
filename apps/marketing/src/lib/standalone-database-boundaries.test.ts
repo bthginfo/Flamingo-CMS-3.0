@@ -14,7 +14,7 @@ test('standalone Vercel projects receive an explicit tenant database and keep au
   );
   assert.match(createProject, /databaseUrl: string/);
   assert.doesNotMatch(createProject, /process\.env\.DATABASE_URL/);
-  for (const key of ['ADMIN_JWT_SECRET', 'CONFIG_ENCRYPTION_KEY', 'PREVIEW_SECRET']) {
+  for (const key of ['ADMIN_JWT_SECRET', 'RENDERER_RATE_LIMIT_SECRET', 'CONFIG_ENCRYPTION_KEY', 'PREVIEW_SECRET']) {
     assert.match(createProject, new RegExp(`key: '${key}'[\\s\\S]{0,180}replaceExisting: false`));
   }
 });
