@@ -15,7 +15,7 @@ export function createDb(databaseUrl: string) {
 
 export type Database = ReturnType<typeof createDb>;
 
-export const DATABASE_SCHEMA_VERSION = 23;
+export const DATABASE_SCHEMA_VERSION = 24;
 
 const RUNTIME_DATABASE_ROLE_PREFIX = 'flamingo_app';
 
