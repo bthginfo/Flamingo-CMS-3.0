@@ -50,9 +50,9 @@ const nullableUrl = (max: number) => z.string().trim().max(max).optional().nulla
     const url = new URL(normalized);
     return url.toString();
   } catch {
-    return value;
+    return value.trim() || null;
   }
-}).pipe(z.string().url().max(max).nullable());
+});
 const addressSchema = z.object({
   street: z.string().trim().min(1).max(255),
   addressLine2: nullableText(255),

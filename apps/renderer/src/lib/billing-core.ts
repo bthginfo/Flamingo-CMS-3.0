@@ -463,19 +463,14 @@ export async function renderBillingPdf(input: {
     drawPageFooter();
   };
   newPage();
-  const logoDisplay = input.seller.logoDisplay || 'logo_and_name';
-  const showLogo = Boolean(logo) && logoDisplay !== 'name_only';
-  const showName = logoDisplay !== 'logo_only' || !logo;
+  const showLogo = Boolean(logo);
   if (showLogo && logo) {
-    const maxLogoWidth = showName ? 94 : 150;
+    const maxLogoWidth = 150;
     const maxLogoHeight = 52;
     const scale = Math.min(maxLogoWidth / logo.width, maxLogoHeight / logo.height);
     const width = logo.width * scale;
     const height = logo.height * scale;
     page!.drawImage(logo, { x: margin, y: 778 - height, width, height });
-    if (showName) drawWrappedText(page!, bold, input.seller.companyName, { x: margin + width + 14, y: 770, size: 13, maxWidth: 165, lineHeight: 15, color: ink, maxLines: 3 });
-  } else {
-    drawWrappedText(page!, bold, input.seller.companyName, { x: margin, y: 770, size: 17, maxWidth: 260, lineHeight: 19, color: ink, maxLines: 3 });
   }
   page!.drawText(title.toUpperCase(), { x: 338, y: 770, font: bold, size: title.length > 17 ? 14 : 19, color: ink });
   page!.drawText(input.document.documentNumber, { x: 360, y: 750, font: regular, size: 10, color: accent });
