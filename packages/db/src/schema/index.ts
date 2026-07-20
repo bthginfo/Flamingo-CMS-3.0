@@ -1011,6 +1011,7 @@ export const billingSettings = pgTable('billing_settings', {
   registerNumber: varchar('register_number', { length: 100 }),
   managingDirector: varchar('managing_director', { length: 255 }),
   logoUrl: varchar('logo_url', { length: 1000 }),
+  logoDisplay: varchar('logo_display', { length: 20 }).notNull().default('logo_and_name'),
   bankName: varchar('bank_name', { length: 160 }),
   accountHolder: varchar('account_holder', { length: 255 }),
   iban: varchar('iban', { length: 50 }),
@@ -1053,6 +1054,7 @@ export const billingSettings = pgTable('billing_settings', {
   check('billing_settings_discount_check', sql`${t.defaultCashDiscountBasisPoints} BETWEEN 0 AND 10000 AND ${t.defaultCashDiscountDays} BETWEEN 0 AND 365`),
   check('billing_settings_reminder_check', sql`${t.defaultReminderDays} BETWEEN 1 AND 365 AND ${t.defaultReminderFeeCents} >= 0`),
   check('billing_settings_sequence_reset_check', sql`${t.sequenceReset} IN ('never', 'year', 'month')`),
+  check('billing_settings_logo_display_check', sql`${t.logoDisplay} IN ('logo_and_name', 'logo_only', 'name_only')`),
 ]);
 
 export const billingServices = pgTable('billing_services', {

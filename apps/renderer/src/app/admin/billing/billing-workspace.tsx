@@ -19,7 +19,7 @@ import {
   finalizeBillingDocumentAction, getBillingDocumentAction, getBillingWorkspaceData,
   recordBillingPaymentAction, reverseBillingPaymentAction, runBillingRecurringScheduleAction,
   saveBillingCustomerAction, saveBillingDraftAction, saveBillingRecurringScheduleAction,
-  saveBillingServiceAction, saveBillingSettingsAction, saveCustomerCustomFieldAction,
+  saveBillingLogoSettingsAction, saveBillingServiceAction, saveBillingSettingsAction, saveCustomerCustomFieldAction,
   sendBillingDocumentAction, setBillingRecurringScheduleStatusAction, updateBillingQuoteStatusAction,
 } from './actions';
 import { BILLING_JURISDICTIONS, getBillingJurisdiction, type BillingCountryCode, type BillingTaxRate } from '@/lib/billing-jurisdictions';
@@ -32,6 +32,7 @@ type CustomField = WorkspaceData['customFields'][number];
 type RecurringSchedule = WorkspaceData['recurringSchedules'][number];
 type DocumentDetail = Awaited<ReturnType<typeof getBillingDocumentAction>>;
 type View = 'overview' | 'invoices' | 'customers' | 'services' | 'recurring' | 'settings';
+type BillingLogoDisplay = 'logo_and_name' | 'logo_only' | 'name_only';
 
 const VIEWS: Array<{ id: View; label: string; icon: typeof FileText }> = [
   { id: 'overview', label: 'Überblick', icon: ListChecks },
@@ -549,7 +550,7 @@ function ServiceDialog({ open, countryCode, onClose, onSaved }: { open: Service 
 
 type SettingsForm = {
   companyName: string; legalForm: string; street: string; postalCode: string; city: string; countryCode: string; email: string; phone: string; website: string;
-  taxNumber: string; vatId: string; registerCourt: string; registerNumber: string; managingDirector: string; logoUrl: string;
+  taxNumber: string; vatId: string; registerCourt: string; registerNumber: string; managingDirector: string; logoUrl: string; logoDisplay: BillingLogoDisplay;
   bankName: string; accountHolder: string; iban: string; bic: string; invoicePrefix: string; cancellationPrefix: string; quotePrefix: string; creditPrefix: string;
   invoiceNumberFormat: string; cancellationNumberFormat: string; quoteNumberFormat: string; creditNumberFormat: string; sequenceReset: 'never' | 'year' | 'month';
   nextInvoiceNumber: number; nextCancellationNumber: number; nextQuoteNumber: number; nextCreditNumber: number;
@@ -561,7 +562,7 @@ function settingsForm(data: WorkspaceData): SettingsForm {
   const s = data.settings;
   return {
     companyName: s.companyName || '', legalForm: s.legalForm || '', street: s.street || '', postalCode: s.postalCode || '', city: s.city || '', countryCode: s.countryCode || 'DE', email: s.email || '', phone: s.phone || '', website: s.website || '',
-    taxNumber: s.taxNumber || '', vatId: s.vatId || '', registerCourt: s.registerCourt || '', registerNumber: s.registerNumber || '', managingDirector: s.managingDirector || '', logoUrl: s.logoUrl || '', bankName: s.bankName || '', accountHolder: s.accountHolder || '', iban: s.iban || '', bic: s.bic || '',
+    taxNumber: s.taxNumber || '', vatId: s.vatId || '', registerCourt: s.registerCourt || '', registerNumber: s.registerNumber || '', managingDirector: s.managingDirector || '', logoUrl: s.logoUrl || '', logoDisplay: (s.logoDisplay as BillingLogoDisplay) || 'logo_and_name', bankName: s.bankName || '', accountHolder: s.accountHolder || '', iban: s.iban || '', bic: s.bic || '',
     invoicePrefix: s.invoicePrefix, cancellationPrefix: s.cancellationPrefix, quotePrefix: s.quotePrefix, creditPrefix: s.creditPrefix,
     invoiceNumberFormat: s.invoiceNumberFormat, cancellationNumberFormat: s.cancellationNumberFormat, quoteNumberFormat: s.quoteNumberFormat, creditNumberFormat: s.creditNumberFormat,
     sequenceReset: s.sequenceReset as SettingsForm['sequenceReset'], nextInvoiceNumber: s.nextInvoiceNumber, nextCancellationNumber: s.nextCancellationNumber, nextQuoteNumber: s.nextQuoteNumber, nextCreditNumber: s.nextCreditNumber,
@@ -577,6 +578,14 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
   const [isPending, startTransition] = useTransition();
   useEffect(() => setForm(settingsForm(data)), [data]);
   function patch(value: Partial<SettingsForm>) { setForm(current => ({ ...current, ...value })); }
+  function saveLogoSettings(value: Partial<Pick<SettingsForm, 'logoUrl' | 'logoDisplay'>>) {
+    const next = { logoUrl: value.logoUrl ?? form.logoUrl, logoDisplay: value.logoDisplay ?? form.logoDisplay };
+    patch(next);
+    startTransition(async () => {
+      try { await saveBillingLogoSettingsAction(next); onSaved('Rechnungslogo gespeichert'); }
+      catch (error) { toast.error('Rechnungslogo konnte nicht gespeichert werden', { description: errorMessage(error) }); }
+    });
+  }
   function submit(event: FormEvent) {
     event.preventDefault();
     const numberError = numberFormatError(form.invoiceNumberFormat)
@@ -605,19 +614,39 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
     <form onSubmit={submit} className="grid gap-6 xl:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="self-start rounded-2xl border border-zinc-200 bg-white p-2 xl:sticky xl:top-5">{([['identity', 'Unternehmen', Building2], ['numbers', 'Nummernkreise', ReceiptText], ['payment', 'Steuer & Bank', Landmark], ['texts', 'Texte & Versand', Mail]] as const).map(item => { const Icon = item[2]; return <button key={item[0]} type="button" onClick={() => setSection(item[0])} className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-semibold transition ${section === item[0] ? 'bg-zinc-950 text-white' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'}`}><Icon className={`size-4 ${section === item[0] ? 'text-blue-300' : 'text-zinc-400'}`} />{item[1]}<ChevronRight className="ml-auto size-4 opacity-40" /></button>; })}</aside>
       <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-7">
-        {section === 'identity' ? <SettingsIdentity form={form} patch={patch} /> : section === 'numbers' ? <NumberDesigner form={form} patch={patch} /> : section === 'payment' ? <SettingsPayment form={form} patch={patch} /> : <SettingsTexts form={form} patch={patch} />}
+        {section === 'identity' ? <SettingsIdentity form={form} patch={patch} onLogoSettingsChange={saveLogoSettings} /> : section === 'numbers' ? <NumberDesigner form={form} patch={patch} /> : section === 'payment' ? <SettingsPayment form={form} patch={patch} /> : <SettingsTexts form={form} patch={patch} />}
         <div className="mt-8 flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between"><p className="max-w-lg text-xs leading-5 text-zinc-500">Technisch für eine nachvollziehbare, unveränderbare Belegablage ausgelegt. Betriebliche Abläufe und steuerliche Prüfung bleiben in Ihrer Verantwortung.</p><button disabled={isPending} className="admin-btn-primary min-h-11 shrink-0">{isPending ? 'Wird gespeichert …' : 'Einstellungen speichern'}</button></div>
       </div>
     </form>
   </section>;
 }
 
-function SettingsIdentity({ form, patch }: { form: SettingsForm; patch: (value: Partial<SettingsForm>) => void }) {
+function SettingsIdentity({ form, patch, onLogoSettingsChange }: { form: SettingsForm; patch: (value: Partial<SettingsForm>) => void; onLogoSettingsChange: (value: Partial<Pick<SettingsForm, 'logoUrl' | 'logoDisplay'>>) => void }) {
   const jurisdiction = getBillingJurisdiction(form.countryCode);
+  const logoModes: Array<{ value: BillingLogoDisplay; label: string; hint: string }> = [
+    { value: 'logo_and_name', label: 'Logo + Firmenname', hint: 'Empfohlen: klare Marke, Name bleibt direkt sichtbar.' },
+    { value: 'logo_only', label: 'Nur Logo', hint: 'Gut bei Logos mit lesbarem Firmennamen.' },
+    { value: 'name_only', label: 'Nur Firmenname', hint: 'Sicher, wenn kein gutes Rechnungslogo vorhanden ist.' },
+  ];
   return <div className="space-y-6"><SectionHeading title="Unternehmensdaten" text="Diese Angaben erscheinen als Absender auf PDF und E-Rechnung." />
     <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4"><Field label="Sitz des Unternehmens" required hint="Steuertarife, Bezeichnungen, Aufbewahrungszeit und E-Rechnungsformat richten sich danach."><select value={form.countryCode} onChange={event => { const code = event.target.value as BillingCountryCode; patch({ countryCode: code, smallBusinessNotice: BILLING_JURISDICTIONS[code].smallBusinessNotice }); }} className="admin-input bg-white"><option value="DE">Deutschland</option><option value="AT">Österreich</option></select></Field><p className="mt-3 text-xs font-medium text-blue-800">Aktives Profil: {jurisdiction.taxRates.map(rate => rate.label).join(' · ')} · {jurisdiction.eInvoiceLabel}</p></div>
     <div className="grid gap-4 sm:grid-cols-2"><Field label="Unternehmensname" required><input required value={form.companyName} onChange={event => patch({ companyName: event.target.value })} className="admin-input" /></Field><Field label="Rechtsform"><input value={form.legalForm} onChange={event => patch({ legalForm: event.target.value })} className="admin-input" placeholder="z. B. GmbH" /></Field><Field label="Straße und Hausnummer" required><input required value={form.street} onChange={event => patch({ street: event.target.value })} className="admin-input" /></Field><div className="grid grid-cols-[110px_1fr] gap-3"><Field label="PLZ" required><input required value={form.postalCode} onChange={event => patch({ postalCode: event.target.value })} className="admin-input" /></Field><Field label="Ort" required><input required value={form.city} onChange={event => patch({ city: event.target.value })} className="admin-input" /></Field></div><Field label="E-Mail" required><input required type="email" value={form.email} onChange={event => patch({ email: event.target.value })} className="admin-input" /></Field><Field label="Telefon"><input value={form.phone} onChange={event => patch({ phone: event.target.value })} className="admin-input" /></Field><Field label="Website"><input type="url" value={form.website} onChange={event => patch({ website: event.target.value })} className="admin-input" /></Field><Field label="Geschäftsführung"><input value={form.managingDirector} onChange={event => patch({ managingDirector: event.target.value })} className="admin-input" /></Field><Field label={jurisdiction.registerCourtLabel}><input value={form.registerCourt} onChange={event => patch({ registerCourt: event.target.value })} className="admin-input" /></Field><Field label={jurisdiction.registerNumberLabel}><input value={form.registerNumber} onChange={event => patch({ registerNumber: event.target.value })} className="admin-input" /></Field></div>
-    <div className="border-t border-zinc-100 pt-6"><ImageUploadField label="Rechnungslogo" value={form.logoUrl} onChange={logoUrl => patch({ logoUrl })} /></div>
+    <div className="border-t border-zinc-100 pt-6">
+      <SectionHeading title="Rechnungslogo" text="Wird im Rechnungskopf in eine feste Fläche eingepasst. Breite, quadratische und hochkante Logos bleiben sichtbar, ohne den Beleg zu sprengen." />
+      <div className="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <ImageUploadField label="Logo-Datei" value={form.logoUrl} onChange={logoUrl => onLogoSettingsChange({ logoUrl })} />
+        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[.12em] text-zinc-400">Vorschau Kopfmarke</p>
+          <div className="mt-3 flex h-24 items-center rounded-xl border border-zinc-200 bg-white px-4">
+            {form.logoUrl && form.logoDisplay !== 'name_only' ? <img src={form.logoUrl} alt="" className="max-h-16 max-w-[58%] object-contain object-left" /> : null}
+            {form.logoDisplay !== 'logo_only' || !form.logoUrl ? <div className={`${form.logoUrl && form.logoDisplay !== 'name_only' ? 'ml-3 border-l border-zinc-200 pl-3' : ''} min-w-0`}><p className="truncate text-sm font-bold text-zinc-950">{form.companyName || 'Ihr Unternehmen'}</p><p className="mt-1 text-[11px] font-medium text-zinc-400">Rechnungskopf</p></div> : null}
+          </div>
+        </div>
+      </div>
+      <Field label="Darstellung im Rechnungskopf" hint="Rechtlich zählt, dass Absenderdaten und Pflichtangaben auf der Rechnung stehen. Diese Auswahl steuert nur die visuelle Kopfmarke.">
+        <div className="grid gap-2 md:grid-cols-3">{logoModes.map(mode => <button key={mode.value} type="button" onClick={() => onLogoSettingsChange({ logoDisplay: mode.value })} className={`min-h-24 rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${form.logoDisplay === mode.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-zinc-200 bg-white hover:border-zinc-300'}`}><span className="block text-sm font-semibold text-zinc-950">{mode.label}</span><span className="mt-1 block text-xs leading-5 text-zinc-500">{mode.hint}</span></button>)}</div>
+      </Field>
+    </div>
   </div>;
 }
 
@@ -832,8 +861,11 @@ function InvoicePaper({ settings, form, customer, totals, documentType }: { sett
   const hiddenLineCount = Math.max(0, form.lines.length - 7);
   const documentMeta = DOCUMENT_TYPES[documentType] || DOCUMENT_TYPES.invoice;
   const jurisdiction = getBillingJurisdiction(settings.countryCode);
+  const logoDisplay = ((settings.logoDisplay as BillingLogoDisplay | undefined) || 'logo_and_name');
+  const showLogo = Boolean(settings.logoUrl) && logoDisplay !== 'name_only';
+  const showName = logoDisplay !== 'logo_only' || !settings.logoUrl;
   return <article className="mx-auto flex aspect-[210/297] w-full flex-col overflow-hidden rounded-[3px] border border-stone-200 bg-[#fffdfa] px-[7%] py-[7%] text-[clamp(8px,1vw,12px)] leading-relaxed text-slate-700 shadow-[0_18px_55px_-25px_rgba(15,23,42,.35)]">
-    <header className="flex min-h-[12%] items-start justify-between border-b border-slate-200 pb-[4%]">{settings.logoUrl ? <img src={settings.logoUrl} alt="" className="max-h-12 max-w-[34%] object-contain object-left" /> : <div><p className="text-[1.2em] font-bold tracking-tight text-slate-950">{settings.companyName || 'Ihr Unternehmen'}</p><p className="mt-1 text-[.8em] text-slate-400">{documentMeta.label.toUpperCase()}</p></div>}<div className="text-right text-[.82em] leading-[1.6]"><strong className="text-slate-900">{settings.companyName || 'Firmendaten ergänzen'}</strong><br />{settings.street}<br />{settings.postalCode} {settings.city}<br />{jurisdiction.name}</div></header>
+    <header className="flex min-h-[12%] items-start justify-between gap-[6%] border-b border-slate-200 pb-[4%]"><div className="flex max-w-[48%] items-center gap-3">{showLogo ? <span className="flex h-14 w-28 shrink-0 items-center justify-start"><img src={settings.logoUrl || ''} alt="" className="max-h-full max-w-full object-contain object-left" /></span> : null}{showName ? <div className="min-w-0"><p className="truncate text-[1.2em] font-bold tracking-tight text-slate-950">{settings.companyName || 'Ihr Unternehmen'}</p><p className="mt-1 text-[.8em] text-slate-400">{documentMeta.label.toUpperCase()}</p></div> : null}</div><div className="text-right text-[.82em] leading-[1.6]"><strong className="text-slate-900">{settings.companyName || 'Firmendaten ergänzen'}</strong><br />{settings.street}<br />{settings.postalCode} {settings.city}<br />{jurisdiction.name}</div></header>
     <div className="grid min-h-[24%] grid-cols-[1.2fr_.8fr] gap-[8%] pt-[5%]"><div><p className="mb-3 border-b border-slate-300 pb-1 text-[.7em] text-slate-400">{settings.companyName} · {settings.street} · {settings.postalCode} {settings.city}</p><p className="font-semibold text-slate-950">{customerName(customer)}</p><p>{address.street || 'Rechnungsanschrift'}</p>{address.addressLine2 ? <p>{address.addressLine2}</p> : null}<p>{address.zip} {address.city}</p></div><dl className="grid grid-cols-[1fr_auto] content-start gap-x-4 gap-y-1 text-[.83em]"><dt className="text-slate-400">Rechnung</dt><dd className="font-mono text-slate-700">wird vergeben</dd><dt className="text-slate-400">Datum</dt><dd>{shortDate(form.issueDate)}</dd><dt className="text-slate-400">Leistung</dt><dd>{shortDate(form.serviceDateFrom)}</dd><dt className="text-slate-400">Fällig</dt><dd>{shortDate(form.dueDate)}</dd></dl></div>
     <div className="min-h-[10%] pt-[3%]"><h2 className="text-[1.5em] font-bold tracking-tight text-slate-950">{documentMeta.label}</h2>{form.introText ? <p className="mt-2 max-w-[85%] text-[.88em]">{form.introText}</p> : null}</div>
     <table className="mt-[3%] w-full table-fixed border-collapse text-[.78em]"><thead><tr className="border-b border-slate-400 text-left text-[.85em] uppercase tracking-[.08em] text-slate-400"><th className="w-[8%] py-2">Pos.</th><th className="w-[47%] py-2">Leistung</th><th className="w-[13%] py-2 text-right">Menge</th><th className="w-[16%] py-2 text-right">Preis</th><th className="w-[16%] py-2 text-right">Summe</th></tr></thead><tbody>{form.lines.length ? <>{form.lines.slice(0, 7).map((line, index) => <tr key={index} className="border-b border-slate-100 align-top"><td className="py-2 font-mono text-slate-400">{index + 1}</td><td className="py-2 pr-2"><strong className="font-semibold text-slate-800">{line.name || 'Neue Position'}</strong>{line.description ? <span className="mt-0.5 block line-clamp-2 text-[.88em] text-slate-500">{line.description}</span> : null}</td><td className="py-2 text-right">{line.quantity} {line.unitLabel}</td><td className="py-2 text-right">{money(line.unitPriceNetCents)}</td><td className="py-2 text-right font-semibold text-slate-800">{money(lineNet(line))}</td></tr>)}{hiddenLineCount ? <tr><td colSpan={5} className="border-b border-slate-100 py-2 text-center font-semibold text-blue-700">+ {hiddenLineCount} weitere {hiddenLineCount === 1 ? 'Position' : 'Positionen'} auf Folgeseiten</td></tr> : null}</> : <tr><td colSpan={5} className="py-8 text-center text-slate-400">Positionen hinzufügen</td></tr>}</tbody></table>

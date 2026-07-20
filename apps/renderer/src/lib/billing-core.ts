@@ -24,6 +24,7 @@ export type BillingSellerSnapshot = BillingAddress & {
   registerNumber?: string;
   managingDirector?: string;
   logoUrl?: string;
+  logoDisplay?: 'logo_and_name' | 'logo_only' | 'name_only';
   bankName?: string;
   accountHolder?: string;
   iban?: string;
@@ -441,10 +442,20 @@ export async function renderBillingPdf(input: {
     page.drawText(input.document.documentNumber, { x: 452, y: 28, font: regular, size: 7, color: muted });
   };
   newPage();
-  if (logo) {
-    const scale = Math.min(130 / logo.width, 48 / logo.height);
-    page!.drawImage(logo, { x: margin, y: 748, width: logo.width * scale, height: logo.height * scale });
-  } else page!.drawText(input.seller.companyName, { x: margin, y: 770, font: bold, size: 17, color: ink });
+  const logoDisplay = input.seller.logoDisplay || 'logo_and_name';
+  const showLogo = Boolean(logo) && logoDisplay !== 'name_only';
+  const showName = logoDisplay !== 'logo_only' || !logo;
+  if (showLogo && logo) {
+    const maxLogoWidth = showName ? 94 : 150;
+    const maxLogoHeight = 52;
+    const scale = Math.min(maxLogoWidth / logo.width, maxLogoHeight / logo.height);
+    const width = logo.width * scale;
+    const height = logo.height * scale;
+    page!.drawImage(logo, { x: margin, y: 778 - height, width, height });
+    if (showName) page!.drawText(input.seller.companyName, { x: margin + width + 14, y: 770, font: bold, size: 14, color: ink });
+  } else {
+    page!.drawText(input.seller.companyName, { x: margin, y: 770, font: bold, size: 17, color: ink });
+  }
   page!.drawText(title.toUpperCase(), { x: 338, y: 770, font: bold, size: title.length > 17 ? 14 : 19, color: ink });
   page!.drawText(input.document.documentNumber, { x: 360, y: 750, font: regular, size: 10, color: accent });
   page!.drawLine({ start: { x: margin, y: 722 }, end: { x: 547, y: 722 }, thickness: 1, color: pale });

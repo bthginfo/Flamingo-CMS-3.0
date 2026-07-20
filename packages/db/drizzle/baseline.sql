@@ -278,6 +278,7 @@ CREATE TABLE "billing_settings" (
 	"register_number" varchar(100),
 	"managing_director" varchar(255),
 	"logo_url" varchar(1000),
+	"logo_display" varchar(20) DEFAULT 'logo_and_name' NOT NULL,
 	"bank_name" varchar(160),
 	"account_holder" varchar(255),
 	"iban" varchar(50),
@@ -317,7 +318,8 @@ CREATE TABLE "billing_settings" (
 	CONSTRAINT "billing_settings_counters_check" CHECK ("billing_settings"."next_invoice_number" > 0 AND "billing_settings"."next_cancellation_number" > 0 AND "billing_settings"."next_quote_number" > 0 AND "billing_settings"."next_credit_number" > 0 AND "billing_settings"."next_customer_number" > 0),
 	CONSTRAINT "billing_settings_discount_check" CHECK ("billing_settings"."default_cash_discount_basis_points" BETWEEN 0 AND 10000 AND "billing_settings"."default_cash_discount_days" BETWEEN 0 AND 365),
 	CONSTRAINT "billing_settings_reminder_check" CHECK ("billing_settings"."default_reminder_days" BETWEEN 1 AND 365 AND "billing_settings"."default_reminder_fee_cents" >= 0),
-	CONSTRAINT "billing_settings_sequence_reset_check" CHECK ("billing_settings"."sequence_reset" IN ('never', 'year', 'month'))
+	CONSTRAINT "billing_settings_sequence_reset_check" CHECK ("billing_settings"."sequence_reset" IN ('never', 'year', 'month')),
+	CONSTRAINT "billing_settings_logo_display_check" CHECK ("billing_settings"."logo_display" IN ('logo_and_name', 'logo_only', 'name_only'))
 );
 
 CREATE TABLE "booking_availability_rules" (

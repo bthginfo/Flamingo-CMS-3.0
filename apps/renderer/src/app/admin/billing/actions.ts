@@ -67,6 +67,7 @@ const settingsSchema = z.object({
   registerNumber: nullableText(100),
   managingDirector: nullableText(255),
   logoUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().transform(value => value || null),
+  logoDisplay: z.enum(['logo_and_name', 'logo_only', 'name_only']).default('logo_and_name'),
   bankName: nullableText(160),
   accountHolder: nullableText(255),
   iban: nullableText(50),
@@ -114,6 +115,11 @@ const settingsSchema = z.object({
     }
   }
   if (!value.taxNumber && !value.vatId) context.addIssue({ code: 'custom', path: ['taxNumber'], message: 'Steuernummer oder USt-IdNr. angeben.' });
+});
+
+const logoSettingsSchema = z.object({
+  logoUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().transform(value => value || null),
+  logoDisplay: z.enum(['logo_and_name', 'logo_only', 'name_only']).default('logo_and_name'),
 });
 
 const customerSchema = z.object({
@@ -292,6 +298,15 @@ export async function saveBillingSettingsAction(input: unknown) {
   )) {
     throw new Error('Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.');
   }
+  await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+  revalidatePath('/admin/billing');
+  return { success: true as const };
+}
+
+export async function saveBillingLogoSettingsAction(input: unknown) {
+  const tenantId = await requireBillingTenant();
+  const value = logoSettingsSchema.parse(input);
+  const db = getDb();
   await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
   revalidatePath('/admin/billing');
   return { success: true as const };
@@ -504,6 +519,7 @@ function sellerSnapshot(settings: typeof billingSettings.$inferSelect): BillingS
     city: settings.city || '', countryCode: settings.countryCode, email: settings.email || '', phone: settings.phone || undefined, website: settings.website || undefined,
     taxNumber: settings.taxNumber || undefined, vatId: settings.vatId || undefined, registerCourt: settings.registerCourt || undefined,
     registerNumber: settings.registerNumber || undefined, managingDirector: settings.managingDirector || undefined, logoUrl: settings.logoUrl || undefined,
+    logoDisplay: (settings.logoDisplay as BillingSellerSnapshot['logoDisplay']) || 'logo_and_name',
     bankName: settings.bankName || undefined, accountHolder: settings.accountHolder || undefined, iban: settings.iban || undefined, bic: settings.bic || undefined,
     footer: settings.defaultFooter || undefined, smallBusiness: settings.smallBusiness, smallBusinessNotice: settings.smallBusinessNotice,
   };

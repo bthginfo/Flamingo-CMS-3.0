@@ -169,6 +169,13 @@
       "when": 1784678400000,
       "tag": "0023_standalone_free_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1784764800000,
+      "tag": "0024_billing_logo_display",
+      "breakpoints": true
     }
   ]
 }
