@@ -106,7 +106,7 @@ const settingsSchema = z.object({
   defaultClosingText: nullableText(5000),
   defaultFooter: nullableText(2000),
   smallBusiness: z.boolean(),
-  smallBusinessNotice: z.string().trim().min(3).max(1000),
+  smallBusinessNotice: z.string().trim().max(1000).optional().nullable().transform(value => value || ''),
   senderName: nullableText(255),
 }).superRefine((value, context) => {
   for (const [path, format] of [
@@ -125,6 +125,9 @@ const settingsSchema = z.object({
     }
   }
   if (!value.taxNumber && !value.vatId) context.addIssue({ code: 'custom', path: ['taxNumber'], message: 'Steuernummer oder USt-IdNr. angeben.' });
+  if (value.smallBusiness && value.smallBusinessNotice.length < 3) {
+    context.addIssue({ code: 'custom', path: ['smallBusinessNotice'], message: 'Hinweis zur Kleinunternehmerregelung angeben.' });
+  }
 });
 
 const logoSettingsSchema = z.object({
@@ -258,6 +261,25 @@ function isMissingBillingLogoDisplayColumn(error: unknown) {
   return /logo_display|column .* does not exist/i.test(message);
 }
 
+function actionErrorMessage(error: unknown) {
+  if (error instanceof z.ZodError) {
+    return error.issues.map(issue => issue.message).filter(Boolean).slice(0, 3).join(' · ') || 'Bitte prüfen Sie die Eingaben.';
+  }
+  if (!(error instanceof Error)) return 'Die Aktion konnte nicht abgeschlossen werden.';
+  if (/relation .* does not exist|column .* does not exist|database schema|schema/i.test(error.message)) {
+    return 'Die Datenbank dieses Tenants ist noch nicht vollständig migriert.';
+  }
+  return error.message || 'Die Aktion konnte nicht abgeschlossen werden.';
+}
+
+function logBillingActionError(scope: string, error: unknown) {
+  if (error instanceof Error && /relation .* does not exist|column .* does not exist|database schema|schema/i.test(error.message)) {
+    console.error(`[Billing] ${scope} failed: tenant database schema is incomplete`, error);
+    return;
+  }
+  console.error(`[Billing] ${scope} failed`, error);
+}
+
 async function selectBillingSettingsWithoutLogoDisplay(tenantId: string) {
   const [settings] = await getDb().select({
     id: billingSettings.id, tenantId: billingSettings.tenantId, companyName: billingSettings.companyName, legalForm: billingSettings.legalForm,
@@ -319,45 +341,55 @@ export async function getBillingDocumentAction(documentId: string) {
 
 export async function saveBillingSettingsAction(input: unknown) {
   const tenantId = await requireBillingTenant();
-  const value = settingsSchema.parse(input);
-  const db = getDb();
-  const [current] = await db.select({
-    nextInvoiceNumber: billingSettings.nextInvoiceNumber,
-    nextCancellationNumber: billingSettings.nextCancellationNumber,
-    nextQuoteNumber: billingSettings.nextQuoteNumber,
-    nextCreditNumber: billingSettings.nextCreditNumber,
-  })
-    .from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
-  if (!current) throw new Error('Rechnungseinstellungen wurden nicht gefunden.');
-  const [issued] = await db.select({ id: billingDocuments.id }).from(billingDocuments)
-    .where(and(eq(billingDocuments.tenantId, tenantId), ne(billingDocuments.status, 'draft'))).limit(1);
-  if (issued && (
-    value.nextInvoiceNumber < current.nextInvoiceNumber
-    || value.nextCancellationNumber < current.nextCancellationNumber
-    || value.nextQuoteNumber < current.nextQuoteNumber
-    || value.nextCreditNumber < current.nextCreditNumber
-  )) {
-    throw new Error('Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.');
+  try {
+    const value = settingsSchema.parse(input);
+    const db = getDb();
+    const [current] = await db.select({
+      nextInvoiceNumber: billingSettings.nextInvoiceNumber,
+      nextCancellationNumber: billingSettings.nextCancellationNumber,
+      nextQuoteNumber: billingSettings.nextQuoteNumber,
+      nextCreditNumber: billingSettings.nextCreditNumber,
+    })
+      .from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
+    if (!current) return { success: false as const, error: 'Rechnungseinstellungen wurden nicht gefunden.' };
+    const [issued] = await db.select({ id: billingDocuments.id }).from(billingDocuments)
+      .where(and(eq(billingDocuments.tenantId, tenantId), ne(billingDocuments.status, 'draft'))).limit(1);
+    if (issued && (
+      value.nextInvoiceNumber < current.nextInvoiceNumber
+      || value.nextCancellationNumber < current.nextCancellationNumber
+      || value.nextQuoteNumber < current.nextQuoteNumber
+      || value.nextCreditNumber < current.nextCreditNumber
+    )) {
+      return { success: false as const, error: 'Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.' };
+    }
+    await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+      if (!isMissingBillingLogoDisplayColumn(error)) throw error;
+      const { logoDisplay: _logoDisplay, ...compatibleValue } = value;
+      await db.update(billingSettings).set({ ...compatibleValue, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+    });
+    revalidatePath('/admin/billing');
+    return { success: true as const };
+  } catch (error) {
+    logBillingActionError('settings save', error);
+    return { success: false as const, error: actionErrorMessage(error) };
   }
-  await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
-    if (!isMissingBillingLogoDisplayColumn(error)) throw error;
-    const { logoDisplay: _logoDisplay, ...compatibleValue } = value;
-    await db.update(billingSettings).set({ ...compatibleValue, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
-  });
-  revalidatePath('/admin/billing');
-  return { success: true as const };
 }
 
 export async function saveBillingLogoSettingsAction(input: unknown) {
   const tenantId = await requireBillingTenant();
-  const value = logoSettingsSchema.parse(input);
-  const db = getDb();
-  await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
-    if (!isMissingBillingLogoDisplayColumn(error)) throw error;
-    await db.update(billingSettings).set({ logoUrl: value.logoUrl, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
-  });
-  revalidatePath('/admin/billing');
-  return { success: true as const };
+  try {
+    const value = logoSettingsSchema.parse(input);
+    const db = getDb();
+    await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+      if (!isMissingBillingLogoDisplayColumn(error)) throw error;
+      await db.update(billingSettings).set({ logoUrl: value.logoUrl, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+    });
+    revalidatePath('/admin/billing');
+    return { success: true as const };
+  } catch (error) {
+    logBillingActionError('logo settings save', error);
+    return { success: false as const, error: actionErrorMessage(error) };
+  }
 }
 
 function fieldKey(label: string) {

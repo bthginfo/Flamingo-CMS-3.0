@@ -582,7 +582,11 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
     const next = { logoUrl: value.logoUrl ?? form.logoUrl, logoDisplay: value.logoDisplay ?? form.logoDisplay };
     patch(next);
     startTransition(async () => {
-      try { await saveBillingLogoSettingsAction(next); onSaved('Rechnungslogo gespeichert'); }
+      try {
+        const result = await saveBillingLogoSettingsAction(next);
+        if (!result.success) throw new Error(result.error);
+        onSaved('Rechnungslogo gespeichert');
+      }
       catch (error) { toast.error('Rechnungslogo konnte nicht gespeichert werden', { description: errorMessage(error) }); }
     });
   }
@@ -598,7 +602,11 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
       || numberResetError(form.creditNumberFormat, form.sequenceReset);
     if (numberError) { toast.error(numberError); setSection('numbers'); return; }
     startTransition(async () => {
-      try { await saveBillingSettingsAction({ ...form, currency: 'EUR' }); onSaved('Rechnungseinstellungen gespeichert'); }
+      try {
+        const result = await saveBillingSettingsAction({ ...form, currency: 'EUR' });
+        if (!result.success) throw new Error(result.error);
+        onSaved('Rechnungseinstellungen gespeichert');
+      }
       catch (error) { toast.error('Einstellungen konnten nicht gespeichert werden', { description: errorMessage(error) }); }
     });
   }
@@ -696,9 +704,9 @@ function SettingsIdentity({ form, patch, onLogoSettingsChange }: { form: Setting
         <ImageUploadField label="Logo-Datei" value={form.logoUrl} onChange={logoUrl => onLogoSettingsChange({ logoUrl })} />
         <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
           <p className="text-xs font-semibold uppercase tracking-[.12em] text-zinc-400">Vorschau Kopfmarke</p>
-          <div className="mt-3 flex h-24 items-center rounded-xl border border-zinc-200 bg-white px-4">
-            {form.logoUrl ? <img src={form.logoUrl} alt="" className="max-h-16 max-w-[70%] object-contain object-left" /> : <p className="text-sm font-semibold text-zinc-500">Kein Logo gesetzt</p>}
-            <p className="ml-3 border-l border-zinc-200 pl-3 text-[11px] font-semibold uppercase tracking-[.12em] text-zinc-400">Rechnungskopf</p>
+          <div className="mt-3 flex min-h-24 flex-col items-start justify-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3">
+            {form.logoUrl ? <img src={form.logoUrl} alt="" className="max-h-14 max-w-full object-contain object-left" /> : <p className="text-sm font-semibold text-zinc-500">Kein Logo gesetzt</p>}
+            <p className="w-full border-t border-zinc-200 pt-2 text-[10px] font-semibold uppercase tracking-[.1em] text-zinc-400">Rechnungskopf</p>
           </div>
           <p className="mt-3 text-xs leading-5 text-zinc-500">Der Firmenname steht auf Rechnungen immer rechts in den Absenderdaten. Links wird nur das Logo gezeigt.</p></div></div></div>
   </div>;
