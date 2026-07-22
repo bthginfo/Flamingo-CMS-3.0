@@ -117,6 +117,10 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       const segments: string[] = [leafPath];
       let cursor: HTMLElement | null = el;
       while (cursor && cursor !== rootEl && cursor !== sectionEl) {
+        const linkPath = cursor.getAttribute('data-edit-link');
+        if (linkPath && leafPath !== linkPath && !leafPath.startsWith(`${linkPath}.`)) {
+          segments.unshift(linkPath);
+        }
         const collection = cursor.getAttribute('data-edit-collection');
         const indexAttr = cursor.getAttribute('data-edit-index');
         if (collection && indexAttr !== null && /^\d+$/.test(indexAttr)) {
@@ -255,7 +259,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ['data-edit-path', 'data-edit-rich', 'data-edit-collection', 'data-edit-index'],
+      attributeFilter: ['data-edit-path', 'data-edit-rich', 'data-edit-link', 'data-edit-collection', 'data-edit-index'],
     });
 
     return () => {

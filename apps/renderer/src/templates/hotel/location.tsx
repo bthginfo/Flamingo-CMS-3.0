@@ -30,13 +30,19 @@ export function LocationSection({ data, styleVariant }: SectionProps) {
 }
 
 type Props = {
-  phone?: string; email?: string;
-  headline: string; subline: string; badgeText: string; addressText: string;
-  mapEmbedUrl: string; image: string; transportItems: TransportItem[];
-  nearbyItems: NearbyItem[]; routeCta: { label?: string; href?: string };
+  phone?: string;
+  email?: string;
+  headline: string;
+  subline: string;
+  badgeText: string;
+  addressText: string;
+  mapEmbedUrl: string;
+  image: string;
+  transportItems: TransportItem[];
+  nearbyItems: NearbyItem[];
+  routeCta: { label?: string; href?: string };
 };
 
-/* --- CLASSIC --- */
 function LocationClassic({ headline, subline, badgeText, addressText, phone, email, mapEmbedUrl, image, transportItems, nearbyItems, routeCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
@@ -46,8 +52,14 @@ function LocationClassic({ headline, subline, badgeText, addressText, phone, ema
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {addressText && <p className="text-[color:var(--token-muted)]">{addressText}</p>}
-        {(phone || email) && <p className="mt-1 text-sm text-[color:var(--token-muted)]">{phone && <a href={`tel:${phone.replace(/\s+/g, '')}`} className="hover:underline">{phone}</a>}{phone && email && ' · '}{email && <a href={`mailto:${email}`} className="hover:underline">{email}</a>}</p>}
+        {addressText && <p className="text-[color:var(--token-muted)]" data-edit-path="addressText">{addressText}</p>}
+        {(phone || email) && (
+          <p className="mt-1 text-sm text-[color:var(--token-muted)]">
+            {phone && <a href={`tel:${phone.replace(/\s+/g, '')}`} className="hover:underline" data-edit-path="phone">{phone}</a>}
+            {phone && email && ' · '}
+            {email && <a href={`mailto:${email}`} className="hover:underline" data-edit-path="email">{email}</a>}
+          </p>
+        )}
         <div className="mt-6 grid gap-3">
           {transportItems.map((item, index) => (
             <motion.div key={`${item.label || 'item'}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="transportItems" data-edit-index={index}>
@@ -70,7 +82,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, phone, ema
             <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-4 shadow-md" data-edit-collection="nearbyItems" data-edit-index={index}>
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-              {item.distanceLabel && <p className="text-xs text-[color:var(--token-muted)]">{item.distanceLabel}</p>}
+              {item.distanceLabel && <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="distanceLabel">{item.distanceLabel}</p>}
               {item.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </motion.article>
           ))}
@@ -79,4 +91,3 @@ function LocationClassic({ headline, subline, badgeText, addressText, phone, ema
     </div>
   );
 }
-

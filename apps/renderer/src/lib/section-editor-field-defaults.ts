@@ -34,7 +34,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     }
   },
   "contact": {
-    "address": "",
     "badgeText": "",
     "formFields": [],
     "introText": "",
@@ -159,10 +158,12 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "text": ""
   },
   "shopProductGrid": {
+    "_isSectionPreview": "",
     "tenantId": ""
   },
   "shopProductDetail": {
     "_slug": "",
+    "catalogPath": "",
     "tenantId": ""
   },
   "shopCart": {
@@ -640,12 +641,10 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "bgPosition": ""
   },
   "contactForm": {
-    "address": "",
     "badgeText": "",
     "formEnabled": false,
     "formFields": [],
     "headline": "",
-    "infoCards": [],
     "introText": "",
     "mapEmbedUrl": "",
     "showMap": false,

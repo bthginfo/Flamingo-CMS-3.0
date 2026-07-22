@@ -56,7 +56,7 @@ export function CafeHeroSection({ data }: Props) {
             </span>
           )}
           {openingHint && (
-            <span className="mb-4 block text-sm font-medium tracking-wide text-[var(--token-on-dark-body)]">{openingHint}</span>
+            <span className="mb-4 block text-sm font-medium tracking-wide text-[var(--token-on-dark-body)]" data-edit-path="openingHint">{openingHint}</span>
           )}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] leading-tight" data-edit-path="headline"><WordReveal text={headline} /></h1>
           {subline && (
@@ -78,8 +78,8 @@ export function CafeHeroSection({ data }: Props) {
           </div>
           {trustItems.length > 0 && (
             <div className="mt-8 flex flex-wrap gap-3 text-sm text-[color:var(--token-on-dark-muted)]">
-              {trustItems.map((item) => (
-                <span key={item} className="rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur" style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}>{item}</span>
+              {trustItems.map((item, index) => (
+                <span key={`${item}-${index}`} className="rounded-full bg-[color:color-mix(in_srgb,#000000_44%,transparent)] px-4 py-2 backdrop-blur" style={trustStripColor ? { backgroundColor: trustStripColor } : undefined} data-edit-path={`trustItems.${index}`}>{item}</span>
               ))}
             </div>
           )}

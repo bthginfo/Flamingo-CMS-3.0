@@ -71,6 +71,10 @@ function parseImports(indexSource: string) {
       imports.set(alias || imported, match[2]);
     }
   }
+  const dynamicRegex = /const\s+([A-Z][A-Za-z0-9]+)\s*=\s*dynamic\(\s*\(\)\s*=>\s*import\('([^']+)'\)/g;
+  for (const match of indexSource.matchAll(dynamicRegex)) {
+    imports.set(match[1], match[2]);
+  }
   return imports;
 }
 

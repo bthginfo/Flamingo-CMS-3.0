@@ -26,8 +26,8 @@ export function BookingCtaSection({ data }: Props) {
         {hints.length > 0 && (
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.15 }} className="flex flex-wrap justify-center gap-x-6 gap-y-2.5 mt-7 text-sm text-[color:var(--token-on-dark-muted)]">
             {hints.map((h, i) => (
-              <span key={i} className="flex items-center gap-2" data-edit-collection="hints" data-edit-index={i}>
-                <Check size={15} className="text-[color:var(--token-check)]" />{h}
+              <span key={i} className="flex items-center gap-2">
+                <Check size={15} className="text-[color:var(--token-check)]" /><span data-edit-path={`hints.${i}`}>{h}</span>
               </span>
             ))}
           </motion.div>

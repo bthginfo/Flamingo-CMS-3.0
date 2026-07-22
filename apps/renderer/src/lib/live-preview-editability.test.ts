@@ -12,7 +12,9 @@ test('live preview direct editing rescans dynamic section states and resolves sa
 
   assert.match(client, /new MutationObserver\(scan\)/, 'dynamic content mounted by tabs, accordions and advanced scenes must become editable without toggling edit mode');
   assert.match(client, /attributeFilter:\s*\[[\s\S]*?data-edit-collection[\s\S]*?data-edit-index[\s\S]*?\]/, 'path-relevant attribute changes must trigger a rescan');
+  assert.match(client, /attributeFilter:\s*\[[\s\S]*?data-edit-link[\s\S]*?\]/, 'link path marker changes must trigger a rescan');
   assert.match(client, /let cursor: HTMLElement \| null = el;/, 'text path builder must include collection markers placed on the editable element itself');
+  assert.match(client, /const linkPath = cursor\.getAttribute\('data-edit-link'\);[\s\S]*?segments\.unshift\(linkPath\);/, 'CTA labels inside data-edit-link elements must write to e.g. primaryCta.label, not a top-level label field');
   assert.match(overlays, /let cursor: HTMLElement \| null = el;/, 'image/link/icon path builder must include collection markers placed on the target element itself');
 });
 
