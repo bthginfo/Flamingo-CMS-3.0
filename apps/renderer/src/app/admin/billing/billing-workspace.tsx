@@ -131,6 +131,84 @@ function documentLabel(document: DocumentRow) {
   return document.documentNumber || type.draft;
 }
 
+type ReadinessItem = { label: string; detail: string; ready: boolean; view?: View; href?: string; blocking?: boolean };
+
+function customerBillingAddress(customer: Customer | undefined) {
+  return (customer?.defaultBillingAddress || {}) as { street?: string; addressLine2?: string; zip?: string; city?: string; country?: string };
+}
+
+function customerReadiness(customer: Customer | undefined) {
+  const issues: string[] = [];
+  const address = customerBillingAddress(customer);
+  if (!customer) issues.push('Kunde auswählen');
+  if (customer && !(customer.name || customer.companyName)) issues.push('Kundenname fehlt');
+  if (customer && !customer.email) issues.push('E-Mail fehlt');
+  if (customer && !(address.street && address.zip && address.city && address.country)) issues.push('vollständige Rechnungsadresse fehlt');
+  return { ready: issues.length === 0, issues };
+}
+
+function billingReadinessItems(data: WorkspaceData): ReadinessItem[] {
+  const settings = data.settings;
+  const sequenceReset = (settings.sequenceReset || 'never') as SettingsForm['sequenceReset'];
+  const numberFormats = [settings.invoiceNumberFormat, settings.cancellationNumberFormat, settings.quoteNumberFormat, settings.creditNumberFormat];
+  const numbersReady = numberFormats.every(format => !numberFormatError(format) && !numberResetError(format, sequenceReset));
+  const invoiceReadyCustomers = data.customers.filter(customer => customerReadiness(customer).ready).length;
+  return [
+    {
+      label: 'Absenderdaten',
+      detail: settings.companyName && settings.street && settings.postalCode && settings.city && settings.countryCode && settings.email ? 'Name, Adresse und E-Mail sind gepflegt.' : 'Unternehmensdaten vervollständigen.',
+      ready: Boolean(settings.companyName && settings.street && settings.postalCode && settings.city && settings.countryCode && settings.email),
+      view: 'settings',
+      blocking: true,
+    },
+    {
+      label: 'Steuerangabe',
+      detail: settings.taxNumber || settings.vatId ? 'Steuernummer oder USt-IdNr. ist vorhanden.' : 'Für das Festschreiben fehlt noch Steuer-ID.',
+      ready: Boolean(settings.taxNumber || settings.vatId),
+      view: 'settings',
+      blocking: true,
+    },
+    {
+      label: 'Nummernkreise',
+      detail: numbersReady ? 'Rechnungen, Angebote und Korrekturen haben gültige Formate.' : 'Ein Nummernformat braucht Aufmerksamkeit.',
+      ready: numbersReady,
+      view: 'settings',
+      blocking: true,
+    },
+    {
+      label: 'Bankdaten',
+      detail: settings.accountHolder && settings.iban ? 'Bankdaten erscheinen in Vorschau und PDF-Footer.' : 'Nicht blockierend, aber wichtig für Zahlungseingänge.',
+      ready: Boolean(settings.accountHolder && settings.iban),
+      view: 'settings',
+    },
+    {
+      label: 'Kunden',
+      detail: invoiceReadyCustomers ? `${invoiceReadyCustomers} ${invoiceReadyCustomers === 1 ? 'Kunde ist' : 'Kunden sind'} rechnungsfähig.` : data.customers.length ? 'Kunden sind angelegt, aber noch nicht rechnungsfähig.' : 'Noch keinen Kunden angelegt.',
+      ready: invoiceReadyCustomers > 0,
+      view: 'customers',
+      blocking: true,
+    },
+    {
+      label: 'Leistungskatalog',
+      detail: data.services.length ? `${data.services.length} wiederverwendbare ${data.services.length === 1 ? 'Leistung' : 'Leistungen'} gepflegt.` : 'Optional, spart aber Zeit bei jeder Rechnung.',
+      ready: data.services.length > 0,
+      view: 'services',
+    },
+    {
+      label: 'Serien',
+      detail: data.recurringSchedules.some(item => item.status === 'active') ? 'Mindestens eine aktive Serienvorlage läuft.' : 'Optional für wiederkehrende Rechnungen.',
+      ready: data.recurringSchedules.some(item => item.status === 'active'),
+      view: 'recurring',
+    },
+    {
+      label: 'Versand',
+      detail: 'SMTP wird beim Senden geprüft. Mail-Server separat unter Admin → Mail testen.',
+      ready: Boolean(settings.email),
+      href: '/admin/mail',
+    },
+  ];
+}
+
 export function BillingWorkspace({ initialData }: { initialData: WorkspaceData }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -232,13 +310,8 @@ function NewDocumentMenu({ disabled, onCreate, compact = false }: { disabled?: b
 }
 
 function Overview({ data, onCreateDraft, onNavigate }: { data: WorkspaceData; onCreateDraft: (customerId?: string) => Promise<void>; onNavigate: (view: View, document?: string) => void }) {
-  const settings = data.settings;
-  const readiness = [
-    { label: 'Firmendaten', ready: Boolean(settings.companyName && settings.street && settings.postalCode && settings.city && settings.countryCode && settings.email && (settings.taxNumber || settings.vatId)), view: 'settings' as View },
-    { label: 'Nummernkreis', ready: Boolean(settings.invoiceNumberFormat && settings.invoicePrefix), view: 'settings' as View },
-    { label: 'Bankverbindung', ready: Boolean(settings.iban && settings.accountHolder), view: 'settings' as View },
-    { label: 'Erster Kunde', ready: data.customers.length > 0, view: 'customers' as View },
-  ];
+  const readiness = billingReadinessItems(data);
+  const blockingOpen = readiness.filter(item => item.blocking && !item.ready);
   const receivableTypes = ['invoice', 'advance_invoice', 'partial_invoice', 'final_invoice'];
   const openDocuments = data.documents.filter(item => receivableTypes.includes(item.documentType) && !['draft', 'paid', 'cancelled'].includes(item.status));
   const overdue = openDocuments.filter(item => isOverdue(item.dueDate));
@@ -249,15 +322,17 @@ function Overview({ data, onCreateDraft, onNavigate }: { data: WorkspaceData; on
   return <div className="space-y-8">
     <section aria-labelledby="readiness-title" className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
       <div className="flex flex-col gap-2 border-b border-zinc-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div><h2 id="readiness-title" className="font-semibold text-zinc-950">Bereit für die erste Rechnung?</h2><p className="mt-1 text-xs text-zinc-500">Diese vier Grundlagen verhindern Rückfragen beim Festschreiben.</p></div>
-        <span className="text-xs font-semibold text-zinc-500">{readiness.filter(item => item.ready).length} von 4 erledigt</span>
+        <div><h2 id="readiness-title" className="font-semibold text-zinc-950">Modul-Check</h2><p className="mt-1 text-xs text-zinc-500">Zeigt, ob das Rechnungsmodul produktionsbereit ist. Blocker stoppen erst beim Festschreiben, nicht beim Pflegen.</p></div>
+        <span className={`inline-flex min-h-8 w-fit items-center rounded-full px-3 text-xs font-semibold ${blockingOpen.length ? 'bg-amber-50 text-amber-800 ring-1 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'}`}>{blockingOpen.length ? `${blockingOpen.length} Blocker offen` : 'Bereit zum Festschreiben'}</span>
       </div>
       <div className="grid sm:grid-cols-2 xl:grid-cols-4">
-        {readiness.map((item, index) => <button key={item.label} type="button" onClick={() => onNavigate(item.view)} className={`group flex min-h-20 items-center gap-3 px-5 text-left transition hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset ${index ? 'border-t border-zinc-100 sm:border-l sm:border-t-0' : ''} ${index === 2 ? 'sm:border-t xl:border-t-0' : ''}`}>
-          <span className={`grid size-8 shrink-0 place-items-center rounded-full ${item.ready ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>{item.ready ? <Check className="size-4" /> : <span className="text-xs font-bold">{index + 1}</span>}</span>
-          <span><span className="block text-sm font-semibold text-zinc-800">{item.label}</span><span className={`text-xs ${item.ready ? 'text-emerald-700' : 'text-amber-700'}`}>{item.ready ? 'Erledigt' : 'Noch einrichten'}</span></span>
-          <ChevronRight className="ml-auto size-4 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500" />
-        </button>)}
+        {readiness.map((item, index) => {
+          const content = <><span className={`grid size-8 shrink-0 place-items-center rounded-full ${item.ready ? 'bg-emerald-50 text-emerald-700' : item.blocking ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700'}`}>{item.ready ? <Check className="size-4" /> : item.blocking ? <AlertTriangle className="size-4" /> : <span className="text-xs font-bold">{index + 1}</span>}</span>
+            <span className="min-w-0"><span className="flex items-center gap-2 text-sm font-semibold text-zinc-800">{item.label}{item.blocking && !item.ready ? <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[.08em] text-rose-700">Blocker</span> : null}</span><span className={`mt-0.5 block text-xs leading-5 ${item.ready ? 'text-emerald-700' : item.blocking ? 'text-rose-700' : 'text-amber-700'}`}>{item.detail}</span></span>
+            <ChevronRight className="ml-auto size-4 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500" /></>;
+          const className = `group flex min-h-[92px] items-center gap-3 px-5 py-4 text-left transition hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset ${index ? 'border-t border-zinc-100 sm:border-l sm:border-t-0' : ''} ${index % 2 === 0 && index > 0 ? 'sm:border-l-0 xl:border-l' : ''} ${index > 3 ? 'xl:border-t' : ''}`;
+          return item.href ? <Link key={item.label} href={item.href} className={className}>{content}</Link> : <button key={item.label} type="button" onClick={() => item.view ? onNavigate(item.view) : undefined} className={className}>{content}</button>;
+        })}
       </div>
     </section>
 
@@ -336,14 +411,29 @@ function CustomersView({ data, onEdit, onCreateInvoice }: { data: WorkspaceData;
     <ViewHeader eyebrow="Stammdaten" title="Kunden" description="Kontaktdaten, Rechnungsanschriften und eigene Zusatzfelder zentral pflegen." action={<button onClick={() => onEdit('new')} className="admin-btn-primary min-h-11"><Plus className="size-4" /> Kunde anlegen</button>} />
     <SearchField value={query} onChange={setQuery} placeholder="Name, E-Mail oder Kundennummer suchen …" />
     {filtered.length ? <div className="mt-4 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-      {filtered.map((customer, index) => <article key={customer.id} className={`flex flex-col gap-4 p-5 sm:flex-row sm:items-center ${index ? 'border-t border-zinc-100' : ''}`}>
-        <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-zinc-100 text-zinc-600">{customer.customerType === 'company' ? <Building2 className="size-5" /> : <UserRound className="size-5" />}</div>
-        <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="truncate font-semibold text-zinc-950">{customerName(customer)}</h3>{customer.customerNumber ? <span className="font-mono text-[11px] text-zinc-400">{customer.customerNumber}</span> : null}</div><p className="mt-1 truncate text-sm text-zinc-500">{customer.email}{customer.phone ? ` · ${customer.phone}` : ''}</p></div>
-        <div className="flex gap-2"><button onClick={() => void onCreateInvoice(customer.id)} className="admin-btn-secondary min-h-11"><FilePlus2 className="size-4" /> Rechnung</button><button onClick={() => onEdit(customer)} className="grid size-11 place-items-center rounded-xl border border-zinc-200 text-zinc-600 hover:bg-zinc-50" aria-label={`${customerName(customer)} bearbeiten`}><Pencil className="size-4" /></button></div>
-      </article>)}
+      {filtered.map((customer, index) => {
+        const readiness = customerReadiness(customer);
+        return <article key={customer.id} className={`flex flex-col gap-4 p-5 sm:flex-row sm:items-center ${index ? 'border-t border-zinc-100' : ''}`}>
+          <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-zinc-100 text-zinc-600">{customer.customerType === 'company' ? <Building2 className="size-5" /> : <UserRound className="size-5" />}</div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2"><h3 className="truncate font-semibold text-zinc-950">{customerName(customer)}</h3>{customer.customerNumber ? <span className="font-mono text-[11px] text-zinc-400">{customer.customerNumber}</span> : null}<CustomerReadinessPill customer={customer} /></div>
+            <p className="mt-1 truncate text-sm text-zinc-500">{customer.email || 'E-Mail fehlt'}{customer.phone ? ` · ${customer.phone}` : ''}</p>
+            {readiness.ready ? null : <p className="mt-1 text-xs font-medium text-amber-700">{readiness.issues.join(' · ')}</p>}
+          </div>
+          <div className="flex gap-2"><button onClick={() => void onCreateInvoice(customer.id)} className="admin-btn-secondary min-h-11"><FilePlus2 className="size-4" /> Rechnung</button><button onClick={() => onEdit(customer)} className="grid size-11 place-items-center rounded-xl border border-zinc-200 text-zinc-600 hover:bg-zinc-50" aria-label={`${customerName(customer)} bearbeiten`}><Pencil className="size-4" /></button></div>
+        </article>;
+      })}
     </div> : <div className="mt-4"><EmptyState icon={UsersRound} title={query ? 'Kein Kunde gefunden' : 'Noch keine Kunden'} text={query ? 'Versuchen Sie einen anderen Suchbegriff.' : 'Legen Sie den ersten Kunden mit Rechnungsanschrift an.'} action={!query ? <button onClick={() => onEdit('new')} className="admin-btn-primary min-h-11"><Plus className="size-4" /> Ersten Kunden anlegen</button> : undefined} /></div>}
     <CustomFieldsSection fields={data.customFields} />
   </section>;
+}
+
+function CustomerReadinessPill({ customer }: { customer: Customer }) {
+  const readiness = customerReadiness(customer);
+  return <span className={`inline-flex min-h-6 items-center gap-1 rounded-full px-2 text-[11px] font-semibold ring-1 ring-inset ${readiness.ready ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-amber-50 text-amber-800 ring-amber-200'}`}>
+    {readiness.ready ? <Check className="size-3" /> : <AlertTriangle className="size-3" />}
+    {readiness.ready ? 'Rechnungsfähig' : 'Unvollständig'}
+  </span>;
 }
 
 function ServicesView({ services, onEdit }: { services: Service[]; onEdit: (service: Service | 'new') => void }) {
@@ -399,7 +489,7 @@ function RecurringDialog({ open, data, onClose, onSaved }: { open: RecurringSche
   function addService() { const service = data.services.find(item => item.id === serviceChoice); if (!service) return; patch({ lines: [...form.lines, { serviceId: service.id, position: form.lines.length + 1, name: service.name, description: service.description || '', quantity: 1, unitCode: service.unitCode, unitLabel: service.unitLabel, unitPriceNetCents: service.unitPriceNetCents, discountBasisPoints: 0, discountType: 'percent', discountValue: 0, taxRateBasisPoints: form.taxMode === 'standard' ? service.taxRateBasisPoints : 0 }] }); setServiceChoice(''); }
   function submit(event: FormEvent) { event.preventDefault(); startTransition(async () => { try { const start = new Date(`${form.nextRunAt}T12:00:00`); requireActionSuccess(await saveBillingRecurringScheduleAction({ id: existing?.id, name: form.name, customerId: form.customerId, status: existing?.status || 'active', intervalCount: form.intervalCount, intervalUnit: form.intervalUnit, startAt: existing?.startAt || start, nextRunAt: start, endAt: form.endAt ? new Date(`${form.endAt}T12:00:00`) : null, deliveryMode: form.deliveryMode, recipient: form.deliveryMode === 'finalize_send' ? form.recipient : null, template: { documentType: form.documentType, introText: data.settings.defaultIntroText, closingText: data.settings.defaultClosingText, notes: null, buyerReference: null, purchaseOrderReference: null, taxMode: form.taxMode, taxExemptionReason: form.taxExemptionReason || null, discountType: form.discountType, discountValue: form.discountValue, cashDiscountBasisPoints: form.cashDiscountBasisPoints, cashDiscountDays: form.cashDiscountDays, paymentLinkUrl: form.paymentLinkUrl || null, servicePeriodDays: form.servicePeriodDays, lines: form.lines.map((line, index) => ({ ...line, position: index + 1 })) } })); onSaved(); } catch (error) { toast.error('Serie konnte nicht gespeichert werden', { description: errorMessage(error) }); } }); }
   return <Dialog open={Boolean(open)} onClose={onClose} title={existing ? 'Serienvorlage bearbeiten' : 'Wiederkehrende Rechnung anlegen'} description="Zeitplan, Inhalt und Automationsgrad bleiben jederzeit kontrollierbar." size="xl"><form onSubmit={submit} className="space-y-6"><div className="grid gap-4 sm:grid-cols-2"><Field label="Name der Serie" required><input required value={form.name} onChange={event => patch({ name: event.target.value })} className="admin-input" placeholder="z. B. Monatliche Wartung" /></Field><Field label="Kunde" required><select required value={form.customerId} onChange={event => patch({ customerId: event.target.value, recipient: data.customers.find(item => item.id === event.target.value)?.email || form.recipient })} className="admin-input"><option value="">Kunde auswählen …</option>{data.customers.map(customer => <option key={customer.id} value={customer.id}>{customerName(customer)}</option>)}</select></Field></div><div className="grid gap-4 sm:grid-cols-4"><Field label="Alle"><input type="number" min="1" max="120" value={form.intervalCount} onChange={event => patch({ intervalCount: Number(event.target.value) })} className="admin-input" /></Field><Field label="Einheit"><select value={form.intervalUnit} onChange={event => patch({ intervalUnit: event.target.value as typeof form.intervalUnit })} className="admin-input"><option value="month">Monat(e)</option><option value="week">Woche(n)</option><option value="year">Jahr(e)</option><option value="day">Tag(e)</option></select></Field><Field label="Nächster Lauf" required><input required type="date" value={form.nextRunAt} onChange={event => patch({ nextRunAt: event.target.value })} className="admin-input" /></Field><Field label="Ende (optional)"><input type="date" value={form.endAt} onChange={event => patch({ endAt: event.target.value })} className="admin-input" /></Field></div><div className="grid gap-4 sm:grid-cols-2"><Field label="Belegart"><select value={form.documentType} onChange={event => patch({ documentType: event.target.value as typeof form.documentType })} className="admin-input"><option value="invoice">Rechnung</option><option value="advance_invoice">Anzahlungsrechnung</option><option value="partial_invoice">Abschlagsrechnung</option><option value="final_invoice">Schlussrechnung</option></select></Field><Field label="Automationsgrad"><select value={form.deliveryMode} onChange={event => patch({ deliveryMode: event.target.value as typeof form.deliveryMode })} className="admin-input"><option value="draft">Entwurf erzeugen (empfohlen)</option><option value="finalize">Automatisch festschreiben</option><option value="finalize_send">Festschreiben und versenden</option></select></Field></div>{form.deliveryMode === 'finalize_send' ? <Field label="Empfänger-E-Mail" required><input required type="email" value={form.recipient} onChange={event => patch({ recipient: event.target.value })} className="admin-input" /></Field> : null}<div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950"><strong>{form.deliveryMode === 'draft' ? 'Sicherer Standard:' : 'Verbindliche Automation:'}</strong> {form.deliveryMode === 'draft' ? 'Der Lauf erzeugt einen prüfbaren Entwurf ohne Rechnungsnummer.' : 'Jeder Lauf erzeugt einen unveränderbaren Beleg mit fortlaufender Nummer.'}</div>
-    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5"><h3 className="text-sm font-semibold text-zinc-950">Regeln für jeden Lauf</h3><div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Steuerfall"><select value={form.taxMode} onChange={event => { const taxMode = event.target.value as typeof form.taxMode; patch({ taxMode, lines: form.lines.map(line => ({ ...line, taxRateBasisPoints: taxMode === 'standard' ? (line.taxRateBasisPoints || jurisdiction.defaultTaxRateBasisPoints) : 0 })) }); }} className="admin-input bg-white"><option value="standard">Regulär</option><option value="small_business">Kleinunternehmer</option><option value="reverse_charge">Reverse Charge</option><option value="intra_eu">Innergemeinschaftlich</option><option value="exempt">Steuerbefreit</option></select></Field><Field label="Leistungszeitraum"><div className="relative"><input type="number" min="0" max="3660" value={form.servicePeriodDays} onChange={event => patch({ servicePeriodDays: Number(event.target.value) })} className="admin-input bg-white pr-16 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Tage rückw.</span></div></Field><Field label="Gesamtrabatt"><div className="grid grid-cols-[1fr_100px] gap-2"><select value={form.discountType} onChange={event => patch({ discountType: event.target.value as typeof form.discountType, discountValue: 0 })} className="admin-input bg-white"><option value="percent">%</option><option value="fixed">€</option></select><input type="number" min="0" step="0.01" value={(form.discountValue / 100).toFixed(2)} onChange={event => patch({ discountValue: Math.round(Number(event.target.value) * 100) })} className="admin-input bg-white text-right" /></div></Field></div>{!['standard', 'small_business'].includes(form.taxMode) ? <div className="mt-4"><Field label="Rechtlicher Steuerhinweis" required><textarea required value={form.taxExemptionReason} onChange={event => patch({ taxExemptionReason: event.target.value })} className="admin-input min-h-20 bg-white" /></Field></div> : null}<div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Skonto"><div className="relative"><input type="number" min="0" max="100" step="0.01" value={form.cashDiscountBasisPoints / 100} onChange={event => patch({ cashDiscountBasisPoints: Math.round(Number(event.target.value) * 100) })} className="admin-input bg-white pr-10 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">%</span></div></Field><Field label="Skontofrist"><input type="number" min="0" max="365" value={form.cashDiscountDays} onChange={event => patch({ cashDiscountDays: Number(event.target.value) })} className="admin-input bg-white text-right" /></Field><Field label="Zahlungslink"><input type="url" value={form.paymentLinkUrl} onChange={event => patch({ paymentLinkUrl: event.target.value })} className="admin-input bg-white" placeholder="https://…" /></Field></div></div>
+    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5"><h3 className="text-sm font-semibold text-zinc-950">Regeln für jeden Lauf</h3><div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Steuerfall"><select value={form.taxMode} onChange={event => { const taxMode = event.target.value as typeof form.taxMode; patch({ taxMode, lines: form.lines.map(line => ({ ...line, taxRateBasisPoints: taxMode === 'standard' ? (line.taxRateBasisPoints || jurisdiction.defaultTaxRateBasisPoints) : 0 })) }); }} className="admin-input bg-white"><option value="standard">Regulär</option><option value="small_business">Kleinunternehmer</option><option value="reverse_charge">Reverse Charge</option><option value="intra_eu">Innergemeinschaftlich</option><option value="exempt">Steuerbefreit</option></select></Field><Field label="Leistungszeitraum"><div className="relative"><input type="number" min="0" max="3660" value={form.servicePeriodDays} onChange={event => patch({ servicePeriodDays: Number(event.target.value) })} className="admin-input bg-white pr-16 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Tage rückw.</span></div></Field><Field label="Gesamtrabatt"><div className="grid grid-cols-[1fr_100px] gap-2"><select value={form.discountType} onChange={event => patch({ discountType: event.target.value as typeof form.discountType, discountValue: 0 })} className="admin-input bg-white"><option value="percent">%</option><option value="fixed">€</option></select><input type="number" min="0" step="0.01" value={(form.discountValue / 100).toFixed(2)} onChange={event => patch({ discountValue: Math.round(Number(event.target.value) * 100) })} className="admin-input bg-white text-right" /></div></Field></div>{!['standard', 'small_business'].includes(form.taxMode) ? <div className="mt-4"><Field label="Rechtlicher Steuerhinweis" required><textarea required value={form.taxExemptionReason} onChange={event => patch({ taxExemptionReason: event.target.value })} className="admin-input min-h-20 bg-white" /></Field></div> : null}<div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Skonto"><div className="relative"><input type="number" min="0" max="100" step="0.01" value={form.cashDiscountBasisPoints / 100} onChange={event => patch({ cashDiscountBasisPoints: Math.round(Number(event.target.value) * 100) })} className="admin-input bg-white pr-10 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">%</span></div></Field><Field label="Skontofrist"><input type="number" min="0" max="365" value={form.cashDiscountDays} onChange={event => patch({ cashDiscountDays: Number(event.target.value) })} className="admin-input bg-white text-right" /></Field><Field label="Zahlungslink"><input type="text" inputMode="url" value={form.paymentLinkUrl} onChange={event => patch({ paymentLinkUrl: event.target.value })} className="admin-input bg-white" placeholder="https://…" /></Field></div></div>
     <div><h3 className="text-sm font-semibold text-zinc-950">Positionen</h3><div className="mt-3 flex gap-2"><select value={serviceChoice} onChange={event => setServiceChoice(event.target.value)} className="admin-input"><option value="">Leistung auswählen …</option>{data.services.map(service => <option key={service.id} value={service.id}>{service.name} · {money(service.unitPriceNetCents)}</option>)}</select><button type="button" disabled={!serviceChoice} onClick={addService} className="admin-btn-secondary min-h-11 disabled:opacity-40">Hinzufügen</button></div><div className="mt-3 space-y-2">{form.lines.map((line, index) => <LineEditor key={`${line.serviceId}-${index}`} line={line} index={index} taxRates={jurisdiction.taxRates} taxMode={form.taxMode} onChange={value => patch({ lines: form.lines.map((item, itemIndex) => itemIndex === index ? { ...item, ...value } : item) })} onRemove={() => patch({ lines: form.lines.filter((_, itemIndex) => itemIndex !== index) })} />)}</div></div><DialogActions onCancel={onClose} pending={isPending} submitLabel="Serie speichern" /></form></Dialog>;
 }
 
@@ -895,6 +985,26 @@ function draftForm(detail: DocumentDetail): DraftForm {
   };
 }
 
+function draftFinalizeReadiness(data: WorkspaceData, customer: Customer | undefined, form: DraftForm, documentType: keyof typeof DOCUMENT_TYPES): ReadinessItem[] {
+  const customerCheck = customerReadiness(customer);
+  const settings = data.settings;
+  const senderReady = Boolean(settings.companyName && settings.street && settings.postalCode && settings.city && settings.countryCode && settings.email);
+  const datesReady = Boolean(form.issueDate && form.serviceDateFrom && form.dueDate && (documentType !== 'quote' || form.quoteValidUntil));
+  const linesReady = Boolean(form.lines.length && form.lines.every(line => line.name.trim() && line.quantity > 0 && line.unitPriceNetCents >= 0));
+  const taxReady = !['standard', 'small_business'].includes(form.taxMode) && !form.taxExemptionReason.trim() ? false : true;
+  const cashDiscountReady = !(form.cashDiscountBasisPoints > 0 && form.cashDiscountDays < 1);
+  return [
+    { label: 'Kunde', detail: customer ? customerName(customer) : 'Kunde auswählen.', ready: Boolean(customer), blocking: true },
+    { label: 'Kundenadresse', detail: customer ? (customerCheck.ready ? 'Name, E-Mail und Rechnungsadresse sind vollständig.' : customerCheck.issues.join(' · ')) : 'Nach Kundenauswahl prüfbar.', ready: customerCheck.ready, blocking: true },
+    { label: 'Absender', detail: senderReady ? 'Firmendaten sind vollständig.' : 'Unternehmensdaten, Adresse oder E-Mail fehlen.', ready: senderReady, blocking: true },
+    { label: 'Steuerangabe', detail: settings.taxNumber || settings.vatId ? 'Steuernummer oder USt-IdNr. ist gepflegt.' : 'Steuernummer oder USt-IdNr. fehlt.', ready: Boolean(settings.taxNumber || settings.vatId), blocking: true },
+    { label: 'Datum', detail: datesReady ? 'Datumsfelder sind vollständig.' : 'Rechnungs-, Leistungs-, Fälligkeits- oder Angebotsdatum prüfen.', ready: datesReady, blocking: true },
+    { label: 'Positionen', detail: linesReady ? `${form.lines.length} ${form.lines.length === 1 ? 'Position ist' : 'Positionen sind'} bereit.` : 'Mindestens eine gültige Position mit Name, Menge und Preis.', ready: linesReady, blocking: true },
+    { label: 'Steuerfall', detail: taxReady ? 'Steuerfall ist plausibel.' : 'Rechtlicher Hinweis für diesen Steuerfall fehlt.', ready: taxReady, blocking: true },
+    { label: 'Skonto', detail: cashDiscountReady ? 'Skonto ist plausibel.' : 'Skontofrist fehlt.', ready: cashDiscountReady, blocking: true },
+  ];
+}
+
 function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: DocumentDetail; data: WorkspaceData; onBack: () => void; onRefresh: (message?: string) => void; onReload: (detail: DocumentDetail) => void }) {
   const [form, setForm] = useState<DraftForm>(() => draftForm(detail));
   const [showPreview, setShowPreview] = useState(false);
@@ -906,6 +1016,8 @@ function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: 
   const documentMeta = DOCUMENT_TYPES[documentType] || DOCUMENT_TYPES.invoice;
   const jurisdiction = getBillingJurisdiction(data.settings.countryCode);
   const totals = useMemo(() => calculateDraftTotals(form.lines, form.discountType, form.discountValue, form.taxMode), [form.lines, form.discountType, form.discountValue, form.taxMode]);
+  const finalizeChecks = useMemo(() => draftFinalizeReadiness(data, customer, form, documentType), [data, customer, form, documentType]);
+  const finalizeBlocker = finalizeChecks.find(item => item.blocking && !item.ready);
   function patch(value: Partial<DraftForm>) { setForm(current => ({ ...current, ...value })); }
   function updateLine(index: number, value: Partial<DraftLine>) { setForm(current => ({ ...current, lines: current.lines.map((line, lineIndex) => lineIndex === index ? { ...line, ...value } : line) })); }
   function addBlankLine() { patch({ lines: [...form.lines, { position: form.lines.length + 1, name: '', description: '', quantity: 1, unitCode: 'C62', unitLabel: 'Stück', unitPriceNetCents: 0, discountBasisPoints: 0, discountType: 'percent', discountValue: 0, taxRateBasisPoints: form.taxMode === 'standard' ? jurisdiction.defaultTaxRateBasisPoints : 0 }] }); }
@@ -924,13 +1036,18 @@ function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: 
     if (documentType === 'quote' && !form.quoteValidUntil) return 'Bitte geben Sie an, bis wann das Angebot gültig ist.';
     return '';
   }
+  function validateFinalize() {
+    const validation = validate();
+    if (validation) return validation;
+    return finalizeBlocker?.detail || '';
+  }
   async function save(silent = false) {
     const validation = validate(); if (validation) { toast.error(validation); return false; }
     try { requireActionSuccess(await saveBillingDraftAction(payload())); const fresh = await getBillingDocumentAction(detail.document.id); onReload(fresh); if (!silent) toast.success('Entwurf gespeichert'); onRefresh(); return true; }
     catch (saveError) { toast.error('Entwurf konnte nicht gespeichert werden', { description: errorMessage(saveError) }); return false; }
   }
   function submit(event: FormEvent) { event.preventDefault(); startTransition(async () => { await save(); }); }
-  function finalize() { startTransition(async () => { if (!(await save(true))) return; try { const result = requireActionSuccess(await finalizeBillingDocumentAction(detail.document.id)); toast.success(`${documentMeta.label} ${result.documentNumber} ${documentType === 'quote' ? 'ausgestellt' : 'festgeschrieben'}`); setFinalizeOpen(false); onRefresh(); const fresh = await getBillingDocumentAction(detail.document.id); onReload(fresh); } catch (finalizeError) { toast.error(`${documentMeta.label} konnte nicht abgeschlossen werden`, { description: errorMessage(finalizeError) }); } }); }
+  function finalize() { startTransition(async () => { const validation = validateFinalize(); if (validation) { toast.error('Noch nicht bereit zum Festschreiben', { description: validation }); return; } if (!(await save(true))) return; try { const result = requireActionSuccess(await finalizeBillingDocumentAction(detail.document.id)); toast.success(`${documentMeta.label} ${result.documentNumber} ${documentType === 'quote' ? 'ausgestellt' : 'festgeschrieben'}`); setFinalizeOpen(false); onRefresh(); const fresh = await getBillingDocumentAction(detail.document.id); onReload(fresh); } catch (finalizeError) { toast.error(`${documentMeta.label} konnte nicht abgeschlossen werden`, { description: errorMessage(finalizeError) }); } }); }
   function removeDraft() { if (!window.confirm('Diesen Entwurf endgültig löschen?')) return; startTransition(async () => { try { requireActionSuccess(await deleteBillingDraftAction(detail.document.id)); toast.success('Entwurf gelöscht'); onRefresh(); onBack(); } catch (deleteError) { toast.error('Entwurf konnte nicht gelöscht werden', { description: errorMessage(deleteError) }); } }); }
 
   return <div>
@@ -949,18 +1066,34 @@ function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: 
           <div className="grid gap-4 sm:grid-cols-3"><Field label="Gesamtrabatt"><select value={form.discountType} onChange={event => patch({ discountType: event.target.value as 'percent' | 'fixed', discountValue: 0 })} className="admin-input"><option value="percent">Prozentual</option><option value="fixed">Fester Betrag</option></select></Field><Field label={form.discountType === 'percent' ? 'Rabatt in %' : 'Rabatt in €'}><input type="number" min="0" max={form.discountType === 'percent' ? 100 : undefined} step="0.01" value={(form.discountValue / 100).toFixed(2)} onChange={event => patch({ discountValue: Math.round(Number(event.target.value) * 100) })} className="admin-input text-right" /></Field><Field label="Steuerfall"><select value={form.taxMode} onChange={event => { const taxMode = event.target.value as DraftForm['taxMode']; patch({ taxMode, taxExemptionReason: taxMode === 'standard' || taxMode === 'small_business' ? '' : form.taxExemptionReason, lines: form.lines.map(line => ({ ...line, taxRateBasisPoints: taxMode === 'standard' ? (line.taxRateBasisPoints || jurisdiction.defaultTaxRateBasisPoints) : 0 })) }); }} className="admin-input"><option value="standard">Regulär steuerpflichtig</option><option value="small_business">Kleinunternehmer</option><option value="reverse_charge">Reverse Charge</option><option value="intra_eu">Innergemeinschaftlich</option><option value="exempt">Steuerbefreit</option></select></Field></div>
           {!['standard', 'small_business'].includes(form.taxMode) ? <div className="mt-4"><Field label="Rechtlicher Steuerhinweis" required><textarea required value={form.taxExemptionReason} onChange={event => patch({ taxExemptionReason: event.target.value })} className="admin-input min-h-20 resize-y" placeholder="Rechtsgrundlage bzw. Hinweis für den Empfänger" /></Field></div> : null}
           {documentType !== 'quote' ? <div className="mt-4 grid gap-4 sm:grid-cols-2"><Field label="Skonto"><div className="relative"><input type="number" min="0" max="100" step="0.01" value={form.cashDiscountBasisPoints / 100} onChange={event => patch({ cashDiscountBasisPoints: Math.round(Number(event.target.value) * 100) })} className="admin-input pr-10 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">%</span></div></Field><Field label="Skontofrist"><div className="relative"><input type="number" min="0" max="365" value={form.cashDiscountDays} onChange={event => patch({ cashDiscountDays: Number(event.target.value) })} className="admin-input pr-14 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Tage</span></div></Field></div> : null}
-          <div className="mt-4"><Field label="Zahlungslink" hint="Optional. Erscheint im PDF und im sicheren Kundenlink."><input type="url" value={form.paymentLinkUrl} onChange={event => patch({ paymentLinkUrl: event.target.value })} className="admin-input" placeholder="https://…" /></Field></div>
+          <div className="mt-4"><Field label="Zahlungslink" hint="Optional. Erscheint im PDF und im sicheren Kundenlink."><input type="text" inputMode="url" value={form.paymentLinkUrl} onChange={event => patch({ paymentLinkUrl: event.target.value })} className="admin-input" placeholder="https://…" /></Field></div>
         </ComposerSection>
         <ComposerSection number="5" title="Texte" done><Field label="Einleitung"><textarea value={form.introText} onChange={event => patch({ introText: event.target.value })} className="admin-input min-h-24 resize-y" /></Field><div className="mt-4"><Field label="Abschlusstext"><textarea value={form.closingText} onChange={event => patch({ closingText: event.target.value })} className="admin-input min-h-24 resize-y" /></Field></div><div className="mt-4"><Field label="Interne Notiz" hint={`Nicht auf ${documentType === 'quote' ? 'dem Angebot' : 'der Rechnung'} sichtbar.`}><textarea value={form.notes} onChange={event => patch({ notes: event.target.value })} className="admin-input min-h-20 resize-y" /></Field></div></ComposerSection>
-        <div className="sticky bottom-0 z-10 -mx-1 flex flex-col gap-3 border-t border-zinc-200 bg-admin-bg/95 px-1 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-end"><button type="submit" disabled={isPending} className="admin-btn-secondary min-h-11">{isPending ? 'Wird gespeichert …' : 'Entwurf speichern'}</button><button type="button" disabled={isPending} onClick={() => { const validation = validate(); if (validation) toast.error(validation); else setFinalizeOpen(true); }} className="admin-btn-primary min-h-11"><FileCheck2 className="size-4" /> {documentType === 'quote' ? 'Angebot ausstellen' : 'Festschreiben'}</button></div>
+        <div className="sticky bottom-0 z-10 -mx-1 flex flex-col gap-3 border-t border-zinc-200 bg-admin-bg/95 px-1 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-end"><button type="submit" disabled={isPending} className="admin-btn-secondary min-h-11">{isPending ? 'Wird gespeichert …' : 'Entwurf speichern'}</button><button type="button" disabled={isPending} onClick={() => { const validation = validateFinalize(); if (validation) toast.error('Noch nicht bereit zum Festschreiben', { description: validation }); else setFinalizeOpen(true); }} className="admin-btn-primary min-h-11"><FileCheck2 className="size-4" /> {documentType === 'quote' ? 'Angebot ausstellen' : 'Festschreiben'}</button></div>
       </div>
-      <div className={`${showPreview ? '' : 'hidden lg:block'} lg:sticky lg:top-5`}><div className="mb-2 flex items-center justify-between"><span className="text-xs font-semibold uppercase tracking-[.12em] text-zinc-400">Live-Vorschau</span><span className="text-xs text-zinc-400">Entwurf · noch änderbar</span></div><InvoicePaper settings={data.settings} form={form} customer={customer} totals={totals} documentType={documentType} /></div>
+      <div className={`${showPreview ? '' : 'hidden lg:block'} space-y-4 lg:sticky lg:top-5`}><ComposerReadinessCard items={finalizeChecks} /><div><div className="mb-2 flex items-center justify-between"><span className="text-xs font-semibold uppercase tracking-[.12em] text-zinc-400">Live-Vorschau</span><span className="text-xs text-zinc-400">Entwurf · noch änderbar</span></div><InvoicePaper settings={data.settings} form={form} customer={customer} totals={totals} documentType={documentType} /></div></div>
     </form>
     <Dialog open={finalizeOpen} onClose={() => setFinalizeOpen(false)} title={`${documentMeta.label} ${documentType === 'quote' ? 'ausstellen' : 'festschreiben'}?`} description="Dieser Schritt schützt den Beleg vor nachträglichen Änderungen.">
       <div className="rounded-xl border border-amber-200 bg-amber-50 p-4"><div className="flex gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-amber-700" /><div><p className="text-sm font-semibold text-amber-950">Danach ist der Inhalt unveränderbar.</p><ul className="mt-2 space-y-1 text-sm leading-6 text-amber-900"><li>• Die nächste fortlaufende Rechnungsnummer wird vergeben.</li><li>• Inhalte und Beträge können nicht mehr bearbeitet werden.</li><li>• Eine Korrektur ist nur durch eine Stornorechnung möglich.</li></ul></div></div></div>
       <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><button type="button" onClick={() => setFinalizeOpen(false)} className="admin-btn-secondary min-h-11">Noch einmal prüfen</button><button type="button" disabled={isPending} onClick={finalize} className="admin-btn-primary min-h-11">{isPending ? 'Wird verarbeitet …' : documentType === 'quote' ? 'Verbindlich ausstellen' : 'Verbindlich festschreiben'}</button></div>
     </Dialog>
   </div>;
+}
+
+function ComposerReadinessCard({ items }: { items: ReadinessItem[] }) {
+  const open = items.filter(item => !item.ready);
+  return <section className={`rounded-2xl border p-4 shadow-sm ${open.length ? 'border-amber-200 bg-amber-50/70' : 'border-emerald-200 bg-emerald-50/70'}`}>
+    <div className="flex items-start justify-between gap-3">
+      <div><p className="text-xs font-bold uppercase tracking-[.14em] text-zinc-500">Dokument-Check</p><h3 className="mt-1 text-sm font-semibold text-zinc-950">{open.length ? `${open.length} Punkt${open.length === 1 ? '' : 'e'} offen` : 'Bereit zum Festschreiben'}</h3></div>
+      <span className={`grid size-9 shrink-0 place-items-center rounded-full ${open.length ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-700'}`}>{open.length ? <AlertTriangle className="size-4" /> : <Check className="size-4" />}</span>
+    </div>
+    <div className="mt-4 grid gap-2">
+      {items.map(item => <div key={item.label} className="flex gap-2 rounded-xl bg-white/80 px-3 py-2 ring-1 ring-inset ring-black/5">
+        <span className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-full ${item.ready ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-800'}`}>{item.ready ? <Check className="size-3" /> : <AlertTriangle className="size-3" />}</span>
+        <span className="min-w-0"><span className="block text-xs font-semibold text-zinc-900">{item.label}</span><span className={`mt-0.5 block text-[11px] leading-4 ${item.ready ? 'text-zinc-500' : 'text-amber-800'}`}>{item.detail}</span></span>
+      </div>)}
+    </div>
+  </section>;
 }
 
 function ComposerSection({ number, title, done, children }: { number: string; title: string; done: boolean; children: ReactNode }) {
