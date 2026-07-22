@@ -40,6 +40,7 @@ import {
   type BillingSellerSnapshot,
   type BillingTaxMode,
 } from '@/lib/billing-core';
+import { readBillingPdfArtifact, readBillingXmlArtifact, storeBillingArtifact } from '@/lib/billing-artifacts';
 import { getBillingJurisdiction, normalizeBillingCountryCode } from '@/lib/billing-jurisdictions';
 
 const nullableText = (max: number) => z.string().trim().max(max).optional().nullable().transform(value => value || null);
@@ -430,7 +431,7 @@ export async function getBillingDocumentAction(documentId: string) {
     db.select().from(billingReminders).where(and(eq(billingReminders.documentId, documentId), eq(billingReminders.tenantId, tenantId))).orderBy(desc(billingReminders.createdAt)),
     db.select().from(billingDocumentEvents).where(and(eq(billingDocumentEvents.documentId, documentId), eq(billingDocumentEvents.tenantId, tenantId))).orderBy(desc(billingDocumentEvents.createdAt)).limit(100),
   ]);
-  return { document: { ...document, pdfBase64: undefined, xmlContent: undefined }, items, payments, reminders, events };
+  return { document: { ...document, pdfBase64: undefined, xmlContent: undefined, pdfBlobUrl: undefined, xmlBlobUrl: undefined }, items, payments, reminders, events };
 }
 
 export async function saveBillingSettingsAction(input: unknown) {
@@ -942,11 +943,19 @@ async function finalizeBillingDocumentForTenant(tenantId: string, id: string) {
   retentionUntil.setUTCFullYear(retentionUntil.getUTCFullYear() + getBillingJurisdiction(settings.countryCode).retentionYears);
   const finalizedAt = new Date();
   const finalizedStatus = type === 'quote' ? 'issued' : 'finalized';
+  const [pdfBlobUrl, xmlBlobUrl] = await Promise.all([
+    storeBillingArtifact({ tenantId, documentId, documentNumber, kind: 'pdf', content: pdf }),
+    storeBillingArtifact({ tenantId, documentId, documentNumber, kind: 'xml', content: xml }),
+  ]);
   const [finalized] = await db.update(billingDocuments).set({
     documentNumber, sellerSnapshot: seller, customerSnapshot: buyer, paymentSnapshot: { bankName: seller.bankName, accountHolder: seller.accountHolder, iban: seller.iban, bic: seller.bic, paymentLinkUrl: document.paymentLinkUrl, cashDiscountBasisPoints: document.cashDiscountBasisPoints, cashDiscountDays: document.cashDiscountDays },
     subtotalNetCents: totals.subtotalNetCents, taxCents: totals.taxCents, totalGrossCents: totals.totalGrossCents, taxBreakdown: totals.taxBreakdown,
     discountCents: totals.documentDiscountCents,
-    pdfBase64: Buffer.from(pdf).toString('base64'), xmlContent: xml, pdfSha256, xmlSha256, documentSha256,
+    pdfBase64: pdfBlobUrl ? null : Buffer.from(pdf).toString('base64'),
+    xmlContent: xmlBlobUrl ? null : xml,
+    pdfBlobUrl,
+    xmlBlobUrl,
+    pdfSha256, xmlSha256, documentSha256,
     finalizedAt, retentionUntil, status: finalizedStatus, updatedAt: finalizedAt,
   }).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.status, 'draft'))).returning({ id: billingDocuments.id });
   if (finalized) await appendEvent(tenantId, documentId, type === 'quote' ? 'issued' : 'finalized', { documentNumber, documentSha256, pdfSha256, xmlSha256, retentionUntil: retentionUntil.toISOString() });
@@ -982,8 +991,13 @@ async function sendBillingDocumentForTenant(tenantId: string, id: string, recipi
   const idempotencyKey = idempotencyInput ? z.string().uuid().parse(idempotencyInput) : randomUUID();
   const db = getDb();
   const [document] = await db.select().from(billingDocuments).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
-  if (!document?.documentNumber || !document.pdfBase64 || !document.documentSha256 || document.status === 'draft') throw new Error('Das Dokument muss zuerst festgeschrieben werden.');
+  if (!document?.documentNumber || !document.documentSha256 || document.status === 'draft') throw new Error('Das Dokument muss zuerst festgeschrieben werden.');
   if (document.status === 'cancelled') throw new Error('Eine stornierte Rechnung kann nicht erneut versendet werden. Bitte die Stornorechnung senden.');
+  const [pdfBuffer, xmlArtifact] = await Promise.all([
+    readBillingPdfArtifact({ blobUrl: document.pdfBlobUrl, base64: document.pdfBase64 }),
+    readBillingXmlArtifact({ blobUrl: document.xmlBlobUrl, text: document.xmlContent }),
+  ]);
+  if (!pdfBuffer) throw new Error('Das Dokument muss zuerst festgeschrieben werden.');
   const requestHash = sha256(JSON.stringify({ documentId, recipient, documentSha256: document.documentSha256 }));
   const [claimed] = await db.insert(billingDeliveryAttempts).values({ idempotencyKey, tenantId, documentId, recipient, requestHash }).onConflictDoNothing({ target: billingDeliveryAttempts.idempotencyKey }).returning({ idempotencyKey: billingDeliveryAttempts.idempotencyKey });
   if (!claimed) {
@@ -1002,10 +1016,10 @@ async function sendBillingDocumentForTenant(tenantId: string, id: string, recipi
   const from = senderName ? `"${senderName}" <${smtp.from}>` : smtp.from;
   const label = documentMailLabel(document.documentType);
   const jurisdiction = getBillingJurisdiction(settings.countryCode);
-  const attachmentDescription = document.xmlContent ? ` als PDF und ${jurisdiction.eInvoiceLabel}` : ' als PDF';
+  const attachmentDescription = xmlArtifact ? ` als PDF und ${jurisdiction.eInvoiceLabel}` : ' als PDF';
   const attachments = [
-    { filename: `${document.documentNumber}.pdf`, content: Buffer.from(document.pdfBase64, 'base64'), contentType: 'application/pdf' },
-    ...(document.xmlContent ? [{ filename: `${document.documentNumber}-${settings.countryCode === 'AT' ? 'ubl' : 'xrechnung'}.xml`, content: Buffer.from(document.xmlContent, 'utf8'), contentType: 'application/xml' }] : []),
+    { filename: `${document.documentNumber}.pdf`, content: pdfBuffer, contentType: 'application/pdf' },
+    ...(xmlArtifact ? [{ filename: `${document.documentNumber}-${settings.countryCode === 'AT' ? 'ubl' : 'xrechnung'}.xml`, content: Buffer.from(xmlArtifact, 'utf8'), contentType: 'application/xml' }] : []),
   ];
   const subject = `${label} ${document.documentNumber}`;
   try {
@@ -1467,7 +1481,9 @@ export async function sendBillingReminderAction(id: string) {
       db.select().from(billingDocuments).where(and(eq(billingDocuments.id, reminder.documentId), eq(billingDocuments.tenantId, tenantId))).limit(1).then(rows => rows[0]),
       ensureBillingSettings(tenantId),
     ]);
-    if (!document?.pdfBase64 || !document.documentNumber) return { success: false as const, error: 'Die zugehörige Rechnung ist nicht verfügbar.' };
+    if (!document?.documentNumber) return { success: false as const, error: 'Die zugehörige Rechnung ist nicht verfügbar.' };
+    const pdfBuffer = await readBillingPdfArtifact({ blobUrl: document.pdfBlobUrl, base64: document.pdfBase64 });
+    if (!pdfBuffer) return { success: false as const, error: 'Die zugehörige Rechnung ist nicht verfügbar.' };
     const smtp = await getEffectiveSmtp(tenantId);
     if (!smtp) return { success: false as const, error: 'Kein sicherer Mail-Server ist eingerichtet.' };
     const senderName = (settings.senderName || settings.companyName || '').replace(/[\r\n"<>]/g, '').trim().slice(0, 160);
@@ -1476,7 +1492,7 @@ export async function sendBillingReminderAction(id: string) {
       from, to: reminder.recipient, subject: `${reminder.level}. Zahlungserinnerung zu ${document.documentNumber}`,
       text: `${reminder.message}\n\nOffener Rechnungsbetrag: ${((document.totalGrossCents - document.amountPaidCents) / 100).toFixed(2)} EUR\nNeue Frist: ${reminder.dueDate.toLocaleDateString('de-DE')}`,
       html: `<p>${escapeHtml(reminder.message).replace(/\n/g, '<br>')}</p><p><strong>Offener Rechnungsbetrag:</strong> ${((document.totalGrossCents - document.amountPaidCents) / 100).toFixed(2)} EUR<br><strong>Neue Frist:</strong> ${reminder.dueDate.toLocaleDateString('de-DE')}</p>`,
-      attachments: [{ filename: `${document.documentNumber}.pdf`, content: Buffer.from(document.pdfBase64, 'base64'), contentType: 'application/pdf' }],
+      attachments: [{ filename: `${document.documentNumber}.pdf`, content: pdfBuffer, contentType: 'application/pdf' }],
       messageId: `<billing-reminder-${reminderId}@flamingomedia.online>`,
     });
     const sentAt = new Date();

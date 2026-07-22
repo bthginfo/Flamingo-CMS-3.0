@@ -76,6 +76,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const largeFiles = assets.filter(asset => asset.size > 600 * 1024).length;
   const unknownDimensions = assets.filter(asset => !asset.width || !asset.height).length;
   const cleanAssets = assets.filter(asset => getMediaWarnings(asset).length === 0).length;
+  const totalSize = assets.reduce((sum, asset) => sum + Math.max(0, asset.size || 0), 0);
+  const visibleSize = visibleAssets.reduce((sum, asset) => sum + Math.max(0, asset.size || 0), 0);
 
   const rememberDimensions = useCallback((asset: MediaAsset, dimensions: { width: number; height: number }) => {
     if (!dimensions.width || !dimensions.height) return;
@@ -239,10 +241,15 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   return (
     <div className="space-y-6">
       {/* Alt-text info */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <div className="admin-card p-4">
           <p className="text-xs text-zinc-500">Bilder</p>
           <p className="mt-1 text-2xl font-bold text-zinc-900">{assets.length}</p>
+        </div>
+        <div className="admin-card p-4">
+          <p className="text-xs text-zinc-500">Speicher</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">{formatSize(totalSize)}</p>
+          {activeFolder ? <p className="mt-1 text-[11px] text-zinc-400">{formatSize(visibleSize)} in diesem Ordner</p> : <p className="mt-1 text-[11px] text-zinc-400">nach Optimierung</p>}
         </div>
         <div className="admin-card p-4">
           <p className="text-xs text-zinc-500">Ohne Alt-Text</p>
@@ -261,7 +268,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
 
       {/* Alt-text info */}
       <div className="admin-card p-4 bg-blue-50 border-blue-200">
-        <p className="text-sm text-blue-800"><strong>Tipp:</strong> Hinterlegen Sie für jedes Bild einen Alt-Text (Bildbeschreibung). Dieser wird automatisch für SEO und Barrierefreiheit verwendet, wenn das Bild auf Ihrer Website eingesetzt wird. Klicken Sie auf das <Pencil size={12} className="inline" />-Icon oder wählen Sie ein Bild aus, um den Alt-Text zu bearbeiten.</p>
+        <p className="text-sm text-blue-800"><strong>Tipp:</strong> Bilder werden beim Upload automatisch auf WebP und max. 1920px optimiert. Hinterlegen Sie zusätzlich für jedes Bild einen Alt-Text; er wird für SEO und Barrierefreiheit verwendet. Klicken Sie auf das <Pencil size={12} className="inline" />-Icon oder wählen Sie ein Bild aus, um den Alt-Text zu bearbeiten.</p>
       </div>
 
       {/* Folder navigation */}

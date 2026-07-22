@@ -86,12 +86,19 @@ test('billing entitlement uses one shared key and truthful active/locked admin s
 
 test('billing finalization is immutable, numbered atomically and delivered with PDF plus XML', () => {
   const actions = read('../app/admin/billing/actions.ts');
+  const artifacts = read('../lib/billing-artifacts.ts');
   const migration = read('../../../../packages/db/drizzle/0021_billing_customer_management.sql');
   const operationsMigration = read('../../../../packages/db/drizzle/0022_billing_operations_suite.sql');
+  const artifactMigration = read('../../../../packages/db/drizzle/0025_billing_artifact_blob_storage.sql');
   assert.match(actions, /WITH locked_document AS MATERIALIZED/);
   assert.match(actions, /settings\.sequence_period IS NULL AND \$\{type\} = 'invoice' THEN settings\.next_invoice_number/);
   assert.match(actions, /const finalizedStatus = type === 'quote' \? 'issued' : 'finalized'/);
   assert.match(actions, /status: finalizedStatus/);
+  assert.match(actions, /storeBillingArtifact\(\{ tenantId, documentId, documentNumber, kind: 'pdf'/);
+  assert.match(actions, /pdfBase64: pdfBlobUrl \? null : Buffer\.from\(pdf\)\.toString\('base64'\)/);
+  assert.match(actions, /readBillingPdfArtifact\(\{ blobUrl: document\.pdfBlobUrl, base64: document\.pdfBase64 \}\)/);
+  assert.match(artifacts, /isTrustedBlobUrl/);
+  assert.match(artifacts, /\.public\.blob\.vercel-storage\.com/);
   assert.match(actions, /attachments: \[/);
   assert.match(actions, /application\/pdf/);
   assert.match(actions, /application\/xml/);
@@ -99,6 +106,8 @@ test('billing finalization is immutable, numbered atomically and delivered with 
   assert.match(migration, /Billing audit events are append-only/);
   assert.match(operationsMigration, /billing_recurring_runs_schedule_time_idx/);
   assert.match(operationsMigration, /Billing payment entries are append-only/);
+  assert.match(artifactMigration, /pdf_blob_url/);
+  assert.match(artifactMigration, /xml_blob_url/);
 });
 
 test('billing automation and customer shares fail closed and remain tenant scoped', () => {
@@ -112,5 +121,6 @@ test('billing automation and customer shares fail closed and remain tenant scope
   assert.match(cron, /request\.headers\.get\('authorization'\)/);
   assert.match(portal, /sha256\(token\)/);
   assert.match(portalPdf, /sha256\(token\)/);
+  assert.match(portalPdf, /readBillingPdfArtifact/);
   assert.match(portalPdf, /private, no-store/);
 });

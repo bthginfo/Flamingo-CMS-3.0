@@ -4,6 +4,7 @@ import { billingDocuments, tenantAddons } from '@flamingo/db';
 import { getDb } from '@/lib/db';
 import { getWritableSession } from '@/lib/session';
 import { BILLING_ADDON_KEY } from '@/lib/billing-constants';
+import { readBillingXmlArtifact } from '@/lib/billing-artifacts';
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getWritableSession();
@@ -12,11 +13,13 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   const db = getDb();
   const [[addon], [document]] = await Promise.all([
     db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, BILLING_ADDON_KEY))).limit(1),
-    db.select({ number: billingDocuments.documentNumber, xml: billingDocuments.xmlContent }).from(billingDocuments).where(and(eq(billingDocuments.id, id), eq(billingDocuments.tenantId, session.tenantId))).limit(1),
+    db.select({ number: billingDocuments.documentNumber, xml: billingDocuments.xmlContent, xmlBlobUrl: billingDocuments.xmlBlobUrl }).from(billingDocuments).where(and(eq(billingDocuments.id, id), eq(billingDocuments.tenantId, session.tenantId))).limit(1),
   ]);
-  if (!addon?.active || !document?.xml || !document.number) return new NextResponse('Not found', { status: 404 });
+  if (!addon?.active || !document?.number) return new NextResponse('Not found', { status: 404 });
+  const xml = await readBillingXmlArtifact({ blobUrl: document.xmlBlobUrl, text: document.xml });
+  if (!xml) return new NextResponse('Not found', { status: 404 });
   const safeNumber = document.number.replace(/[^a-z0-9_.-]+/gi, '-');
-  return new NextResponse(document.xml, {
+  return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
       'Content-Disposition': `attachment; filename="${safeNumber}-xrechnung.xml"`,

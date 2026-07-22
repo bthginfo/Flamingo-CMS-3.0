@@ -140,7 +140,10 @@ test('admin media uploads stay optimized and avoid blob probe bursts', () => {
   const uploadField = source('../components/image-upload-field.tsx');
   const picker = source('../components/image-picker.tsx');
   const mediaActions = source('../app/admin/media-actions.ts');
+  const mediaLibrary = source('../app/admin/media/media-library.tsx');
   const uploadRoute = source('../app/api/upload/route.ts');
+  const fontUploadRoute = source('../app/api/upload/font/route.ts');
+  const brandForm = source('../app/admin/brand/brand-form.tsx');
   const aiUpload = source('../app/api/v1/content/upload/route.ts');
   const dataEditor = source('../app/admin/pages/[id]/section-data-editor.tsx');
   const nextConfig = source('../../next.config.js');
@@ -155,9 +158,16 @@ test('admin media uploads stay optimized and avoid blob probe bursts', () => {
   assert.match(mediaActions, /MEDIA_LIBRARY_LIMIT = 500/);
   assert.match(mediaActions, /\.limit\(MEDIA_LIBRARY_LIMIT\)/);
   assert.doesNotMatch(mediaActions, /method:\s*'HEAD'/);
+  assert.match(mediaLibrary, /const totalSize = assets\.reduce/);
+  assert.match(mediaLibrary, /Bilder werden beim Upload automatisch auf WebP/);
   assert.match(uploadRoute, /MAX_OPTIMIZED_UPLOAD_BYTES = 5 \* 1024 \* 1024/);
   assert.match(uploadRoute, /CONTENT_HASHED_MEDIA_PATH/);
   assert.match(uploadRoute, /Invalid upload pathname/);
+  assert.match(fontUploadRoute, /getWritableSession\(\)/);
+  assert.match(fontUploadRoute, /FONT_PATH/);
+  assert.match(fontUploadRoute, /maximumSizeInBytes: MAX_FONT_UPLOAD_BYTES/);
+  assert.match(brandForm, /MAX_CUSTOM_FONT_BYTES = 1536 \* 1024/);
+  assert.match(brandForm, /handleUploadUrl: '\/api\/upload\/font'/);
   assert.match(aiUpload, /MAX_SIZE = 5 \* 1024 \* 1024/);
   assert.match(nextConfig, /minimumCacheTTL:\s*86400/);
   assert.match(nextConfig, /formats:\s*\['image\/webp'\]/);

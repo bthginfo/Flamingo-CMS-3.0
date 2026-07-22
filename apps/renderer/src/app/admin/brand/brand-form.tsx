@@ -17,6 +17,20 @@ const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
   ...GOOGLE_FONT_FAMILIES.map((font) => ({ value: font, label: font })),
 ];
+const MAX_CUSTOM_FONT_BYTES = 1536 * 1024;
+const CUSTOM_FONT_ACCEPT = '.woff2,.woff,.ttf,.otf';
+
+function fontUploadPath(filename: string) {
+  const cleaned = filename.toLowerCase().replace(/[^a-z0-9_.-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 120);
+  return `fonts/${cleaned || 'custom-font.woff2'}`;
+}
+
+function validateCustomFont(file: File) {
+  const extension = file.name.match(/\.(woff2|woff|ttf|otf)$/i)?.[1]?.toLowerCase();
+  if (!extension) return 'Bitte eine WOFF2-, WOFF-, TTF- oder OTF-Datei wählen.';
+  if (file.size > MAX_CUSTOM_FONT_BYTES) return 'Die Schriftdatei ist zu groß. Bitte WOFF2 verwenden oder unter 1,5 MB bleiben.';
+  return null;
+}
 
 export function BrandForm({ initial, industry, activeStyle }: { initial: BrandData; industry: string; activeStyle: string }) {
   const router = useRouter();
@@ -592,11 +606,17 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
             <div className="flex items-center gap-2">
               <label className="text-xs text-blue-600 hover:underline cursor-pointer">
                 Eigene Schrift hochladen
-                <input type="file" accept=".woff2,.woff,.ttf,.otf" className="hidden" onChange={async (e) => {
+                <input type="file" accept={CUSTOM_FONT_ACCEPT} className="hidden" onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
+                  const validationError = validateCustomFont(file);
+                  if (validationError) {
+                    toast.error(validationError);
+                    e.target.value = '';
+                    return;
+                  }
                   const { upload } = await import('@vercel/blob/client');
-                  const blob = await upload(file.name, file, { access: 'public', handleUploadUrl: '/api/upload' });
+                  const blob = await upload(fontUploadPath(file.name), file, { access: 'public', handleUploadUrl: '/api/upload/font' });
                   const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
                   setForm(f => ({ ...f, customHeadingFontUrl: blob.url, customHeadingFontName: fontName, headingFont: '' }));
                 }} />
@@ -605,6 +625,7 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
                 <button type="button" onClick={() => setForm(f => ({ ...f, customHeadingFontUrl: '', customHeadingFontName: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕ Entfernen</button>
               )}
             </div>
+            <p className="text-[11px] leading-4 text-zinc-400">Empfohlen: WOFF2, maximal 1,5 MB. Große TTF/OTF-Dateien verschlechtern Ladezeit und Free-Tier-Verbrauch.</p>
             {(form.headingFont || form.customHeadingFontUrl) && (
               <p className="mt-1 text-lg" style={{ fontFamily: form.customHeadingFontUrl ? `"${form.customHeadingFontName}"` : `"${form.headingFont}", sans-serif` }}>
                 Vorschau: Überschrift
@@ -623,11 +644,17 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
             <div className="flex items-center gap-2">
               <label className="text-xs text-blue-600 hover:underline cursor-pointer">
                 Eigene Schrift hochladen
-                <input type="file" accept=".woff2,.woff,.ttf,.otf" className="hidden" onChange={async (e) => {
+                <input type="file" accept={CUSTOM_FONT_ACCEPT} className="hidden" onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
+                  const validationError = validateCustomFont(file);
+                  if (validationError) {
+                    toast.error(validationError);
+                    e.target.value = '';
+                    return;
+                  }
                   const { upload } = await import('@vercel/blob/client');
-                  const blob = await upload(file.name, file, { access: 'public', handleUploadUrl: '/api/upload' });
+                  const blob = await upload(fontUploadPath(file.name), file, { access: 'public', handleUploadUrl: '/api/upload/font' });
                   const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
                   setForm(f => ({ ...f, customBodyFontUrl: blob.url, customBodyFontName: fontName, bodyFont: '' }));
                 }} />
@@ -636,6 +663,7 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
                 <button type="button" onClick={() => setForm(f => ({ ...f, customBodyFontUrl: '', customBodyFontName: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕ Entfernen</button>
               )}
             </div>
+            <p className="text-[11px] leading-4 text-zinc-400">Empfohlen: WOFF2, maximal 1,5 MB. Wenn möglich Google-Font-Auswahl nutzen.</p>
             {(form.bodyFont || form.customBodyFontUrl) && (
               <p className="mt-1 text-sm" style={{ fontFamily: form.customBodyFontUrl ? `"${form.customBodyFontName}"` : `"${form.bodyFont}", sans-serif` }}>
                 Vorschau: Dies ist ein Beispieltext für die Fließtext-Schrift.
