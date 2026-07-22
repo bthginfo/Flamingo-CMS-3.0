@@ -124,11 +124,97 @@ const settingsSchema = z.object({
       context.addIssue({ code: 'custom', path: [path], message: 'Bei monatlichem Neustart müssen Jahr und Monat im Format stehen.' });
     }
   }
-  if (!value.taxNumber && !value.vatId) context.addIssue({ code: 'custom', path: ['taxNumber'], message: 'Steuernummer oder USt-IdNr. angeben.' });
   if (value.smallBusiness && value.smallBusinessNotice.length < 3) {
     context.addIssue({ code: 'custom', path: ['smallBusinessNotice'], message: 'Hinweis zur Kleinunternehmerregelung angeben.' });
   }
 });
+
+const settingsIdentitySchema = z.object({
+  companyName: z.string().trim().min(1).max(255),
+  legalForm: nullableText(120),
+  street: z.string().trim().min(1).max(255),
+  postalCode: z.string().trim().min(1).max(30),
+  city: z.string().trim().min(1).max(120),
+  countryCode: z.enum(['DE', 'AT']),
+  email: z.string().trim().email().max(255),
+  phone: nullableText(80),
+  website: nullableUrl(500),
+  registerCourt: nullableText(160),
+  registerNumber: nullableText(100),
+  managingDirector: nullableText(255),
+  logoUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().transform(value => value || null),
+  logoDisplay: z.enum(['logo_and_name', 'logo_only', 'name_only']).default('logo_and_name'),
+});
+
+const settingsNumbersSchema = z.object({
+  invoicePrefix: z.string().trim().min(1).max(20),
+  cancellationPrefix: z.string().trim().min(1).max(20),
+  quotePrefix: z.string().trim().min(1).max(20),
+  creditPrefix: z.string().trim().min(1).max(20),
+  invoiceNumberFormat: z.string().trim().min(3).max(120),
+  cancellationNumberFormat: z.string().trim().min(3).max(120),
+  quoteNumberFormat: z.string().trim().min(3).max(120),
+  creditNumberFormat: z.string().trim().min(3).max(120),
+  sequenceReset: z.enum(['never', 'year', 'month']),
+  nextInvoiceNumber: z.coerce.number().int().min(1).max(999_999_999),
+  nextCancellationNumber: z.coerce.number().int().min(1).max(999_999_999),
+  nextQuoteNumber: z.coerce.number().int().min(1).max(999_999_999),
+  nextCreditNumber: z.coerce.number().int().min(1).max(999_999_999),
+}).superRefine((value, context) => {
+  for (const [path, format] of [
+    ['invoiceNumberFormat', value.invoiceNumberFormat],
+    ['cancellationNumberFormat', value.cancellationNumberFormat],
+    ['quoteNumberFormat', value.quoteNumberFormat],
+    ['creditNumberFormat', value.creditNumberFormat],
+  ] as const) {
+    const formatError = validateNumberFormat(format);
+    if (formatError) context.addIssue({ code: 'custom', path: [path], message: formatError });
+    if (value.sequenceReset === 'year' && !/\{YYYY\}|\{YY\}/.test(format)) {
+      context.addIssue({ code: 'custom', path: [path], message: 'Bei jährlichem Neustart muss das Jahr im Format stehen.' });
+    }
+    if (value.sequenceReset === 'month' && (!/\{YYYY\}|\{YY\}/.test(format) || !format.includes('{MM}'))) {
+      context.addIssue({ code: 'custom', path: [path], message: 'Bei monatlichem Neustart müssen Jahr und Monat im Format stehen.' });
+    }
+  }
+});
+
+const settingsPaymentSchema = z.object({
+  taxNumber: nullableText(100),
+  vatId: nullableText(100),
+  bankName: nullableText(160),
+  accountHolder: nullableText(255),
+  iban: nullableText(50),
+  bic: nullableText(30),
+  smallBusiness: z.boolean(),
+  smallBusinessNotice: z.string().trim().max(1000).optional().nullable().transform(value => value || ''),
+  defaultCashDiscountBasisPoints: z.coerce.number().int().min(0).max(10_000),
+  defaultCashDiscountDays: z.coerce.number().int().min(0).max(365),
+  defaultReminderDays: z.coerce.number().int().min(1).max(365),
+  defaultReminderFeeCents: z.coerce.number().int().min(0).max(10_000_000),
+}).superRefine((value, context) => {
+  if (value.smallBusiness && value.smallBusinessNotice.length < 3) {
+    context.addIssue({ code: 'custom', path: ['smallBusinessNotice'], message: 'Hinweis zur Kleinunternehmerregelung angeben.' });
+  }
+  if (value.defaultCashDiscountBasisPoints > 0 && value.defaultCashDiscountDays < 1) {
+    context.addIssue({ code: 'custom', path: ['defaultCashDiscountDays'], message: 'Für Skonto ist eine Frist erforderlich.' });
+  }
+});
+
+const settingsTextsSchema = z.object({
+  defaultPaymentTermDays: z.coerce.number().int().min(0).max(365),
+  senderName: nullableText(255),
+  defaultIntroText: nullableText(5000),
+  defaultClosingText: nullableText(5000),
+  defaultFooter: nullableText(2000),
+  paymentLinkBaseUrl: nullableUrl(1000),
+});
+
+const settingsSectionSchema = z.discriminatedUnion('section', [
+  z.object({ section: z.literal('identity'), data: settingsIdentitySchema }),
+  z.object({ section: z.literal('numbers'), data: settingsNumbersSchema }),
+  z.object({ section: z.literal('payment'), data: settingsPaymentSchema }),
+  z.object({ section: z.literal('texts'), data: settingsTextsSchema }),
+]);
 
 const logoSettingsSchema = z.object({
   logoUrl: z.union([z.literal(''), z.string().trim().url().max(1000)]).optional().transform(value => value || null),
@@ -371,6 +457,44 @@ export async function saveBillingSettingsAction(input: unknown) {
     return { success: true as const };
   } catch (error) {
     logBillingActionError('settings save', error);
+    return { success: false as const, error: actionErrorMessage(error) };
+  }
+}
+
+export async function saveBillingSettingsSectionAction(input: unknown) {
+  const tenantId = await requireBillingTenant();
+  try {
+    const value = settingsSectionSchema.parse(input);
+    const db = getDb();
+    if (value.section === 'numbers') {
+      const [current] = await db.select({
+        nextInvoiceNumber: billingSettings.nextInvoiceNumber,
+        nextCancellationNumber: billingSettings.nextCancellationNumber,
+        nextQuoteNumber: billingSettings.nextQuoteNumber,
+        nextCreditNumber: billingSettings.nextCreditNumber,
+      })
+        .from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1);
+      if (!current) return { success: false as const, error: 'Rechnungseinstellungen wurden nicht gefunden.' };
+      const [issued] = await db.select({ id: billingDocuments.id }).from(billingDocuments)
+        .where(and(eq(billingDocuments.tenantId, tenantId), ne(billingDocuments.status, 'draft'))).limit(1);
+      if (issued && (
+        value.data.nextInvoiceNumber < current.nextInvoiceNumber
+        || value.data.nextCancellationNumber < current.nextCancellationNumber
+        || value.data.nextQuoteNumber < current.nextQuoteNumber
+        || value.data.nextCreditNumber < current.nextCreditNumber
+      )) {
+        return { success: false as const, error: 'Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.' };
+      }
+    }
+    await db.update(billingSettings).set({ ...value.data, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+      if (!isMissingBillingLogoDisplayColumn(error) || value.section !== 'identity') throw error;
+      const { logoDisplay: _logoDisplay, ...compatibleValue } = value.data;
+      await db.update(billingSettings).set({ ...compatibleValue, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+    });
+    revalidatePath('/admin/billing');
+    return { success: true as const };
+  } catch (error) {
+    logBillingActionError('settings section save', error);
     return { success: false as const, error: actionErrorMessage(error) };
   }
 }

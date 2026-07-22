@@ -19,7 +19,7 @@ import {
   finalizeBillingDocumentAction, getBillingDocumentAction, getBillingWorkspaceData,
   recordBillingPaymentAction, reverseBillingPaymentAction, runBillingRecurringScheduleAction,
   saveBillingCustomerAction, saveBillingDraftAction, saveBillingRecurringScheduleAction,
-  saveBillingLogoSettingsAction, saveBillingServiceAction, saveBillingSettingsAction, saveCustomerCustomFieldAction,
+  saveBillingLogoSettingsAction, saveBillingServiceAction, saveBillingSettingsSectionAction, saveCustomerCustomFieldAction,
   sendBillingDocumentAction, setBillingRecurringScheduleStatusAction, updateBillingQuoteStatusAction,
 } from './actions';
 import { BILLING_JURISDICTIONS, getBillingJurisdiction, type BillingCountryCode, type BillingTaxRate } from '@/lib/billing-jurisdictions';
@@ -33,6 +33,7 @@ type RecurringSchedule = WorkspaceData['recurringSchedules'][number];
 type DocumentDetail = Awaited<ReturnType<typeof getBillingDocumentAction>>;
 type View = 'overview' | 'invoices' | 'customers' | 'services' | 'recurring' | 'settings';
 type BillingLogoDisplay = 'logo_and_name' | 'logo_only' | 'name_only';
+type SettingsSection = 'identity' | 'numbers' | 'payment' | 'texts';
 
 const VIEWS: Array<{ id: View; label: string; icon: typeof FileText }> = [
   { id: 'overview', label: 'Überblick', icon: ListChecks },
@@ -78,6 +79,13 @@ const NUMBER_PRESETS = [
   { value: '{PREFIX}-{NNNN}', label: 'Präfix · Nummer', example: 'RE-0042' },
   { value: '{YY}{MM}-{NNNN}', label: 'Kurzjahr + Monat · Nummer', example: '2607-0042' },
 ] as const;
+
+const SETTINGS_SECTION_LABELS: Record<SettingsSection, string> = {
+  identity: 'Unternehmensdaten',
+  numbers: 'Nummernkreise',
+  payment: 'Steuer & Bank',
+  texts: 'Texte & Versand',
+};
 
 function money(cents: number | null | undefined) {
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format((cents || 0) / 100);
@@ -572,9 +580,71 @@ function settingsForm(data: WorkspaceData): SettingsForm {
   };
 }
 
+function settingsSectionPayload(section: SettingsSection, form: SettingsForm) {
+  if (section === 'identity') {
+    return {
+      companyName: form.companyName,
+      legalForm: form.legalForm,
+      street: form.street,
+      postalCode: form.postalCode,
+      city: form.city,
+      countryCode: form.countryCode,
+      email: form.email,
+      phone: form.phone,
+      website: form.website,
+      registerCourt: form.registerCourt,
+      registerNumber: form.registerNumber,
+      managingDirector: form.managingDirector,
+      logoUrl: form.logoUrl,
+      logoDisplay: form.logoDisplay,
+    };
+  }
+  if (section === 'numbers') {
+    return {
+      invoicePrefix: form.invoicePrefix,
+      cancellationPrefix: form.cancellationPrefix,
+      quotePrefix: form.quotePrefix,
+      creditPrefix: form.creditPrefix,
+      invoiceNumberFormat: form.invoiceNumberFormat,
+      cancellationNumberFormat: form.cancellationNumberFormat,
+      quoteNumberFormat: form.quoteNumberFormat,
+      creditNumberFormat: form.creditNumberFormat,
+      sequenceReset: form.sequenceReset,
+      nextInvoiceNumber: form.nextInvoiceNumber,
+      nextCancellationNumber: form.nextCancellationNumber,
+      nextQuoteNumber: form.nextQuoteNumber,
+      nextCreditNumber: form.nextCreditNumber,
+    };
+  }
+  if (section === 'payment') {
+    return {
+      taxNumber: form.taxNumber,
+      vatId: form.vatId,
+      bankName: form.bankName,
+      accountHolder: form.accountHolder,
+      iban: form.iban,
+      bic: form.bic,
+      smallBusiness: form.smallBusiness,
+      smallBusinessNotice: form.smallBusinessNotice,
+      defaultCashDiscountBasisPoints: form.defaultCashDiscountBasisPoints,
+      defaultCashDiscountDays: form.defaultCashDiscountDays,
+      defaultReminderDays: form.defaultReminderDays,
+      defaultReminderFeeCents: form.defaultReminderFeeCents,
+    };
+  }
+  return {
+    defaultPaymentTermDays: form.defaultPaymentTermDays,
+    senderName: form.senderName,
+    defaultIntroText: form.defaultIntroText,
+    defaultClosingText: form.defaultClosingText,
+    defaultFooter: form.defaultFooter,
+    paymentLinkBaseUrl: form.paymentLinkBaseUrl,
+  };
+}
+
 function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (message?: string) => void }) {
   const [form, setForm] = useState<SettingsForm>(() => settingsForm(data));
-  const [section, setSection] = useState<'identity' | 'numbers' | 'payment' | 'texts'>('identity');
+  const [section, setSection] = useState<SettingsSection>('identity');
   const [isPending, startTransition] = useTransition();
   useEffect(() => setForm(settingsForm(data)), [data]);
   function patch(value: Partial<SettingsForm>) { setForm(current => ({ ...current, ...value })); }
@@ -592,20 +662,22 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
   }
   function submit(event: FormEvent) {
     event.preventDefault();
-    const numberError = numberFormatError(form.invoiceNumberFormat)
-      || numberFormatError(form.cancellationNumberFormat)
-      || numberFormatError(form.quoteNumberFormat)
-      || numberFormatError(form.creditNumberFormat)
-      || numberResetError(form.invoiceNumberFormat, form.sequenceReset)
-      || numberResetError(form.cancellationNumberFormat, form.sequenceReset)
-      || numberResetError(form.quoteNumberFormat, form.sequenceReset)
-      || numberResetError(form.creditNumberFormat, form.sequenceReset);
-    if (numberError) { toast.error(numberError); setSection('numbers'); return; }
+    if (section === 'numbers') {
+      const numberError = numberFormatError(form.invoiceNumberFormat)
+        || numberFormatError(form.cancellationNumberFormat)
+        || numberFormatError(form.quoteNumberFormat)
+        || numberFormatError(form.creditNumberFormat)
+        || numberResetError(form.invoiceNumberFormat, form.sequenceReset)
+        || numberResetError(form.cancellationNumberFormat, form.sequenceReset)
+        || numberResetError(form.quoteNumberFormat, form.sequenceReset)
+        || numberResetError(form.creditNumberFormat, form.sequenceReset);
+      if (numberError) { toast.error(numberError); return; }
+    }
     startTransition(async () => {
       try {
-        const result = await saveBillingSettingsAction({ ...form, currency: 'EUR' });
+        const result = await saveBillingSettingsSectionAction({ section, data: settingsSectionPayload(section, form) });
         if (!result.success) throw new Error(result.error);
-        onSaved('Rechnungseinstellungen gespeichert');
+        onSaved(`${SETTINGS_SECTION_LABELS[section]} gespeichert`);
       }
       catch (error) { toast.error('Einstellungen konnten nicht gespeichert werden', { description: errorMessage(error) }); }
     });
@@ -624,7 +696,7 @@ function SettingsView({ data, onSaved }: { data: WorkspaceData; onSaved: (messag
       <aside className="self-start rounded-2xl border border-zinc-200 bg-white p-2 xl:sticky xl:top-5">{([['identity', 'Unternehmen', Building2], ['numbers', 'Nummernkreise', ReceiptText], ['payment', 'Steuer & Bank', Landmark], ['texts', 'Texte & Versand', Mail]] as const).map(item => { const Icon = item[2]; return <button key={item[0]} type="button" onClick={() => setSection(item[0])} className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-semibold transition ${section === item[0] ? 'bg-zinc-950 text-white' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'}`}><Icon className={`size-4 ${section === item[0] ? 'text-blue-300' : 'text-zinc-400'}`} />{item[1]}<ChevronRight className="ml-auto size-4 opacity-40" /></button>; })}</aside>
       <div className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-7">
         {section === 'identity' ? <SettingsIdentity form={form} patch={patch} onLogoSettingsChange={saveLogoSettings} /> : section === 'numbers' ? <NumberDesigner form={form} patch={patch} /> : section === 'payment' ? <SettingsPayment form={form} patch={patch} /> : <SettingsTexts form={form} patch={patch} />}
-        <div className="mt-8 flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between"><p className="max-w-lg text-xs leading-5 text-zinc-500">Technisch für eine nachvollziehbare, unveränderbare Belegablage ausgelegt. Betriebliche Abläufe und steuerliche Prüfung bleiben in Ihrer Verantwortung.</p><button disabled={isPending} className="admin-btn-primary min-h-11 shrink-0">{isPending ? 'Wird gespeichert …' : 'Einstellungen speichern'}</button></div>
+        <div className="mt-8 flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between"><p className="max-w-lg text-xs leading-5 text-zinc-500">Speichert nur diese Gruppe. Offene Pflichtangaben in anderen Tabs blockieren diesen Schritt nicht; beim Festschreiben einer Rechnung bleibt die Vollständigkeitsprüfung aktiv.</p><button disabled={isPending} className="admin-btn-primary min-h-11 shrink-0">{isPending ? 'Wird gespeichert …' : `${SETTINGS_SECTION_LABELS[section]} speichern`}</button></div>
       </div>
     </form>
   </section>;
@@ -772,7 +844,7 @@ function SettingsTexts({ form, patch }: { form: SettingsForm; patch: (value: Par
     <Field label="Einleitung"><textarea value={form.defaultIntroText} onChange={event => patch({ defaultIntroText: event.target.value })} className="admin-input min-h-24 resize-y" placeholder="Vielen Dank für Ihren Auftrag. Wir berechnen folgende Leistungen:" /></Field>
     <Field label="Abschlusstext"><textarea value={form.defaultClosingText} onChange={event => patch({ defaultClosingText: event.target.value })} className="admin-input min-h-24 resize-y" placeholder="Bitte überweisen Sie den Rechnungsbetrag bis zum angegebenen Fälligkeitsdatum." /></Field>
     <Field label="Fußzeile"><textarea value={form.defaultFooter} onChange={event => patch({ defaultFooter: event.target.value })} className="admin-input min-h-24 resize-y" placeholder="Register, Geschäftsführung oder weitere Pflichtangaben" /></Field>
-    <Field label="Standard-Zahlungslink" hint="Optionaler HTTPS-Link zu Ihrer Zahlungsseite. Er kann im einzelnen Entwurf überschrieben werden."><input type="url" value={form.paymentLinkBaseUrl} onChange={event => patch({ paymentLinkBaseUrl: event.target.value })} className="admin-input" placeholder="https://pay.example.com/…" /></Field>
+    <Field label="Standard-Zahlungslink" hint="Optionaler HTTPS-Link zu Ihrer Zahlungsseite. Er kann im einzelnen Entwurf überschrieben werden."><input type="text" inputMode="url" value={form.paymentLinkBaseUrl} onChange={event => patch({ paymentLinkBaseUrl: event.target.value })} className="admin-input" placeholder="https://pay.example.com/…" /></Field>
     <div className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4"><Mail className="mt-0.5 size-5 shrink-0 text-zinc-500" /><p className="text-sm leading-6 text-zinc-600">Dokumente werden über den unter <Link href="/admin/mail" className="font-semibold text-blue-700 underline decoration-blue-200 underline-offset-2">Mail-Server</Link> eingerichteten SMTP-Zugang versendet. Rechnungen enthalten PDF und {jurisdiction.eInvoiceLabel}; Angebote nur das PDF.</p></div>
   </div>;
 }
