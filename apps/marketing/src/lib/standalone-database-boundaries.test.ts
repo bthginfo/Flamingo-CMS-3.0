@@ -19,6 +19,18 @@ test('standalone Vercel projects receive an explicit tenant database and keep au
   }
 });
 
+test('standalone renderer projects inherit platform SMTP from CRM provisioning env', () => {
+  const vercel = source('./vercel.ts');
+  assert.match(vercel, /function buildForwardedPlatformSmtpEnvVars/);
+  assert.match(vercel, /process\.env\.PLATFORM_SMTP_HOST \|\| process\.env\.SMTP_HOST/);
+  assert.match(vercel, /process\.env\.PLATFORM_SMTP_PASS \|\| process\.env\.SMTP_PASS/);
+  for (const key of ['PLATFORM_SMTP_HOST', 'PLATFORM_SMTP_PORT', 'PLATFORM_SMTP_USER', 'PLATFORM_SMTP_PASS', 'PLATFORM_SMTP_FROM']) {
+    assert.match(vercel, new RegExp(`key: '${key}'[\\s\\S]{0,180}replaceExisting: true`));
+  }
+  assert.match(vercel, /createStandaloneProject[\s\S]*\.\.\.buildForwardedPlatformSmtpEnvVars\(\)/);
+  assert.match(vercel, /setStandaloneDatabaseConnection[\s\S]*\.\.\.buildForwardedPlatformSmtpEnvVars\(\)/);
+});
+
 test('standalone provisioning creates, migrates and registers a dedicated Neon database', () => {
   const provisioning = source('./provisioning.ts');
   assert.match(provisioning, /createNeonTenantProject\(input\.slug\)/);

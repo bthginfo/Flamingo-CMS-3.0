@@ -96,6 +96,23 @@ type ProjectEnvironmentVariable = {
   type: 'encrypted' | 'plain';
 };
 
+function buildForwardedPlatformSmtpEnvVars(): Array<ProjectEnvironmentVariable & { replaceExisting: boolean }> {
+  const host = process.env.PLATFORM_SMTP_HOST || process.env.SMTP_HOST;
+  const port = process.env.PLATFORM_SMTP_PORT || process.env.SMTP_PORT || '587';
+  const user = process.env.PLATFORM_SMTP_USER || process.env.SMTP_USER;
+  const pass = process.env.PLATFORM_SMTP_PASS || process.env.SMTP_PASS;
+  const from = process.env.PLATFORM_SMTP_FROM || process.env.SMTP_FROM || user;
+  if (!host || !user || !pass || !from) return [];
+  const target = ['production', 'preview'];
+  return [
+    { key: 'PLATFORM_SMTP_HOST', value: host, target, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_PORT', value: port, target, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_USER', value: user, target, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_PASS', value: pass, target, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_FROM', value: from, target, type: 'encrypted', replaceExisting: true },
+  ];
+}
+
 async function configureProjectEnvironment(
   projectId: string,
   variables: Array<ProjectEnvironmentVariable & { replaceExisting: boolean }>,
@@ -186,6 +203,7 @@ export async function createStandaloneProject(slug: string, tenantId: string, da
     { key: 'RENDERER_RATE_LIMIT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
     { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
     { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
+    ...buildForwardedPlatformSmtpEnvVars(),
   ];
   await configureProjectEnvironment(projectId, envVars);
 
@@ -260,6 +278,7 @@ export async function setStandaloneDatabaseConnection(projectId: string, slug: s
   await configureProjectEnvironment(projectId, [
     { key: 'DATABASE_URL', value: databaseUrl, target: ['production', 'preview'], type: 'encrypted', replaceExisting: true },
     { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain', replaceExisting: true },
+    ...buildForwardedPlatformSmtpEnvVars(),
   ]);
   const deployment = await triggerProjectDeployment(`flamingo-${slug}`);
   if (!deployment.id) throw new Error('Der Datenbank-Cutover wurde nicht deployed. Die bisherige Verbindung bleibt aktiv.');
