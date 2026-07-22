@@ -1117,6 +1117,8 @@ export const billingDocuments = pgTable('billing_documents', {
   lastReminderAt: timestamp('last_reminder_at', { withTimezone: true }),
   pdfBase64: text('pdf_base64'),
   xmlContent: text('xml_content'),
+  pdfBlobUrl: text('pdf_blob_url'),
+  xmlBlobUrl: text('xml_blob_url'),
   pdfSha256: varchar('pdf_sha256', { length: 64 }),
   xmlSha256: varchar('xml_sha256', { length: 64 }),
   documentSha256: varchar('document_sha256', { length: 64 }),
