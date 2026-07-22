@@ -171,10 +171,10 @@ export function EditOverlays({
 // ── helpers ────────────────────────────────────────────────────────────────
 
 function buildPath(el: HTMLElement, sectionRoot: HTMLElement, leaf: string): string {
-  // Walk up to sectionRoot collecting collection/index markers, like
+  // Walk from the element up to sectionRoot collecting collection/index markers, like
   // client.tsx does for data-edit-path.
   const segments: string[] = [leaf];
-  let cursor: HTMLElement | null = el.parentElement;
+  let cursor: HTMLElement | null = el;
   while (cursor && cursor !== sectionRoot) {
     const coll = cursor.getAttribute('data-edit-collection');
     const idx = cursor.getAttribute('data-edit-index');

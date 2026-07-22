@@ -112,8 +112,8 @@ export function MaterialAtelierSection({ data }: Props) {
                     >
                       <span className="font-mono text-[10px] tracking-[.14em] text-[color:var(--token-muted)]">{String(index + 1).padStart(2, '0')}</span>
                       <span className="min-w-0">
-                        {item.kicker && <span className="block truncate text-[9px] font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{item.kicker}</span>}
-                        <span className="mt-0.5 block hyphens-auto text-base font-bold leading-tight text-[color:var(--token-heading)]">{item.title}</span>
+                        {item.kicker && <span className="block truncate text-[9px] font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{item.kicker}</span>}
+                        <span className="mt-0.5 block hyphens-auto text-base font-bold leading-tight text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</span>
                         {isActive && <span className="mt-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.12em] text-[color:var(--token-muted)]"><Check size={11} className="text-[color:var(--token-check)]" /> Ausgewählt</span>}
                       </span>
                       <ChevronRight aria-hidden="true" className={`transition ${isActive ? 'translate-x-0 text-[color:var(--token-accent)]' : '-translate-x-1 text-[color:var(--token-muted)] group-hover:translate-x-0'}`} size={17} />
@@ -122,7 +122,7 @@ export function MaterialAtelierSection({ data }: Props) {
                 );
               })}
             </ol>
-            <div className="border-t border-[var(--token-divider)] p-6">
+            <div className="border-t border-[var(--token-divider)] p-6" data-edit-collection="items" data-edit-index={active}>
               {selected.text && <p className="text-sm leading-6 text-[color:var(--token-body)]" data-edit-path="text">{plain(selected.text)}</p>}
               {Array.isArray(selected.meta) && selected.meta.length > 0 && <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-bold uppercase tracking-[.12em] text-[color:var(--token-muted)]">{selected.meta.slice(0, 5).map((entry, index) => <li key={`${entry}-${index}`}>{entry}</li>)}</ul>}
             </div>

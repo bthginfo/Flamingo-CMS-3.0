@@ -55,14 +55,14 @@ export function TransformationSequenceSection({ data }: Props) {
         <div className="sticky top-0 grid h-[100svh] grid-cols-[1.15fr_.85fr] overflow-hidden">
           <div className="relative overflow-hidden bg-[var(--token-section-bg-alt)]">
             <AnimatePresence mode="sync" initial={false}>
-              <motion.div key={activeIndex} initial={{ opacity: 0, clipPath: 'inset(0 100% 0 0)' }} animate={{ opacity: 1, clipPath: 'inset(0 0% 0 0)' }} exit={{ opacity: 0, clipPath: 'inset(0 0 0 100%)' }} transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }} className="absolute inset-0">
+              <motion.div key={activeIndex} initial={{ opacity: 0, clipPath: 'inset(0 100% 0 0)' }} animate={{ opacity: 1, clipPath: 'inset(0 0% 0 0)' }} exit={{ opacity: 0, clipPath: 'inset(0 0 0 100%)' }} transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }} className="absolute inset-0" data-edit-collection="states" data-edit-index={activeIndex}>
                 {active.image ? <img src={active.image} alt="" className="h-full w-full object-cover" loading="lazy" data-edit-image="image" /> : <div className="h-full bg-[radial-gradient(circle_at_35%_35%,var(--token-accent),transparent_32%),linear-gradient(140deg,var(--token-section-bg-alt),var(--token-section-bg))]" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-transparent to-transparent" />
               </motion.div>
             </AnimatePresence>
             <div className="absolute inset-x-8 bottom-8 z-10 flex items-end justify-between text-white" data-color-context="dark">
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted)]">Transformation</span>
-              {active.metricValue && <div className="text-right"><strong className="block text-4xl font-black text-[color:var(--token-on-dark-heading)]">{active.metricValue}</strong><span className="text-xs text-[color:var(--token-on-dark-muted)]">{active.metricLabel}</span></div>}
+              {active.metricValue && <div className="text-right" data-edit-collection="states" data-edit-index={activeIndex}><strong className="block text-4xl font-black text-[color:var(--token-stat-value)]" data-edit-path="metricValue">{active.metricValue}</strong><span className="text-xs text-[color:var(--token-on-dark-muted)]" data-edit-path="metricLabel">{active.metricLabel}</span></div>}
             </div>
           </div>
 
@@ -79,7 +79,7 @@ export function TransformationSequenceSection({ data }: Props) {
                   <p className="text-xs font-bold uppercase tracking-[0.22em] text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{active.kicker || `Phase ${String(activeIndex + 1).padStart(2, '0')}`}</p>
                   <h3 className="mt-3 text-4xl font-black leading-[0.95] tracking-[-0.04em] text-[color:var(--token-heading)] lg:text-6xl" data-edit-path="title">{active.title}</h3>
                   {active.text && <p className="mt-5 max-w-xl text-lg leading-8 text-[color:var(--token-body)]" data-edit-path="text">{plain(active.text)}</p>}
-                  {cta.label && activeIndex === states.length - 1 && <a href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="cta.label">{cta.label}</span><ArrowRight size={16} /></a>}
+                  {cta.label && activeIndex === states.length - 1 && <a href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)]" data-edit-link="cta"><span data-edit-path="cta.label">{cta.label}</span><ArrowRight size={16} /></a>}
                 </motion.article>
               </AnimatePresence>
             </div>

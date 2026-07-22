@@ -69,7 +69,7 @@ export function InfiniteCanvasSection({ data }: Props) {
             {headline && <h2 className="text-4xl font-black leading-[0.92] tracking-[-0.055em] text-[color:var(--token-heading)] md:text-6xl lg:text-7xl" data-edit-path="headline">{headline}</h2>}
             {subline && <p className="mt-5 max-w-2xl text-base leading-7 text-[color:var(--token-muted)] md:text-lg" data-edit-path="subline">{subline}</p>}
           </div>
-          <button type="button" onClick={openExplorer} className="inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-[var(--token-btn-bg)] px-5 text-sm font-bold text-[color:var(--token-btn-text)] shadow-lg transition hover:-translate-y-0.5"><Maximize2 size={17} />{ctaLabel}</button>
+          <button type="button" onClick={openExplorer} className="inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-[var(--token-btn-bg)] px-5 text-sm font-bold text-[color:var(--token-btn-text)] shadow-lg transition hover:-translate-y-0.5"><Maximize2 size={17} /><span data-edit-path="ctaLabel">{ctaLabel}</span></button>
         </div>
 
         <button type="button" onClick={openExplorer} className="group relative mt-10 block h-[28rem] w-full overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-section-bg-alt)] text-left shadow-[0_28px_90px_var(--token-shadow)] md:h-[62vh] md:min-h-[30rem]" aria-label={ctaLabel}>

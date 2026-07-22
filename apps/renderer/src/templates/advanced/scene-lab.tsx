@@ -33,10 +33,13 @@ export function SceneLabSection({ data }: Props) {
     return [groupId, found >= 0 ? found : 0];
   })));
 
-  const selectedChoices = useMemo(() => groups.map((group, index) => {
+  const selectedEntries = useMemo(() => groups.map((group, index) => {
     const groupId = group.id || `group-${index}`;
-    return group.choices[selections[groupId] ?? 0];
-  }).filter(Boolean), [groups, selections]);
+    const choiceIndex = selections[groupId] ?? 0;
+    const choice = group.choices[choiceIndex];
+    return choice ? { group, groupIndex: index, choice, choiceIndex } : null;
+  }).filter(Boolean) as Array<{ group: Group; groupIndex: number; choice: Choice; choiceIndex: number }>, [groups, selections]);
+  const selectedChoices = selectedEntries.map((entry) => entry.choice);
 
   if (!baseImage || !groups.length) return null;
   const currentGroup = groups[Math.min(activeGroup, groups.length - 1)];
@@ -55,8 +58,8 @@ export function SceneLabSection({ data }: Props) {
           <div className="relative isolate overflow-hidden bg-[var(--token-section-bg-alt)]" style={{ aspectRatio }}>
             <img src={baseImage} alt="Konfigurierbare Ausgangsszene" className="absolute inset-0 h-full w-full object-cover" data-edit-image="baseImage" />
             <AnimatePresence initial={false}>
-              {selectedChoices.map((choice, index) => choice?.image && (
-                <motion.img key={`${index}-${choice.image}`} src={choice.image} alt="" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.32 }} className="pointer-events-none absolute inset-0 h-full w-full object-cover" loading="lazy" data-edit-image="image" />
+              {selectedEntries.map(({ groupIndex, choice, choiceIndex }) => choice?.image && (
+                <motion.img key={`${groupIndex}-${choiceIndex}-${choice.image}`} src={choice.image} alt="" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.32 }} className="pointer-events-none absolute inset-0 h-full w-full object-cover" loading="lazy" data-edit-collection="groups" data-edit-index={groupIndex} data-edit-image={`choices.${choiceIndex}.image`} />
               ))}
             </AnimatePresence>
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10" />
@@ -70,21 +73,21 @@ export function SceneLabSection({ data }: Props) {
               ))}
             </div>
 
-            <div className="py-6">
+            <div className="py-6" data-edit-collection="groups" data-edit-index={activeGroup}>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]">{String(activeGroup + 1).padStart(2, '0')} / {String(groups.length).padStart(2, '0')}</p>
-              <h3 className="mt-2 text-2xl font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-collection="groups" data-edit-index={activeGroup} data-edit-path="label">{currentGroup.label}</h3>
+              <h3 className="mt-2 text-2xl font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{currentGroup.label}</h3>
               {currentGroup.description && <p className="mt-2 text-sm leading-6 text-[color:var(--token-card-muted,var(--token-muted))]" data-edit-path="description">{plain(currentGroup.description)}</p>}
 
               <div className="mt-5 grid grid-cols-2 gap-2">
                 {currentGroup.choices.map((choice, choiceIndex) => {
                   const selected = (selections[currentGroupId] ?? 0) === choiceIndex;
                   return (
-                    <button key={choiceKey(choice, choiceIndex)} type="button" onClick={() => setSelections((current) => ({ ...current, [currentGroupId]: choiceIndex }))} className={`relative min-h-20 rounded-xl border p-3 text-left transition ${selected ? 'border-[var(--token-accent)] bg-[var(--token-section-bg-alt)] shadow-sm' : 'border-[var(--token-card-border)] hover:border-[var(--token-accent)]'}`} data-edit-collection="groups" data-edit-index={activeGroup}>
+                    <button key={choiceKey(choice, choiceIndex)} type="button" onClick={() => setSelections((current) => ({ ...current, [currentGroupId]: choiceIndex }))} className={`relative min-h-20 rounded-xl border p-3 text-left transition ${selected ? 'border-[var(--token-accent)] bg-[var(--token-section-bg-alt)] shadow-sm' : 'border-[var(--token-card-border)] hover:border-[var(--token-accent)]'}`} data-edit-collection="choices" data-edit-index={choiceIndex}>
                       <span className="flex items-center gap-2">
                         <span className="h-5 w-5 shrink-0 rounded-full border border-black/10" style={{ background: choice.swatch || 'var(--token-section-bg-alt)' }} />
-                        <span className="text-sm font-bold text-[color:var(--token-card-heading,var(--token-heading))]">{choice.label}</span>
+                        <span className="text-sm font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{choice.label}</span>
                       </span>
-                      {choice.priceLabel && <span className="mt-2 block text-xs text-[color:var(--token-card-muted,var(--token-muted))]">{choice.priceLabel}</span>}
+                      {choice.priceLabel && <span className="mt-2 block text-xs text-[color:var(--token-price)]" data-edit-path="priceLabel">{choice.priceLabel}</span>}
                       {selected && <span className="absolute right-2 top-2 grid h-5 w-5 place-items-center rounded-full bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]"><Check size={12} className="text-[color:var(--token-check)]" /></span>}
                     </button>
                   );
@@ -95,7 +98,7 @@ export function SceneLabSection({ data }: Props) {
             <div className="mt-auto border-t border-[var(--token-divider)] pt-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--token-muted)]">Ihre Auswahl</p>
               <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--token-card-heading,var(--token-heading))]">{selectedChoices.map((choice) => choice.label).join(' · ')}</p>
-              {cta.label && <a href={cta.href || '#'} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="cta.label">{cta.label}</span><ArrowRight size={16} /></a>}
+              {cta.label && <a href={cta.href || '#'} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)]" data-edit-link="cta"><span data-edit-path="cta.label">{cta.label}</span><ArrowRight size={16} /></a>}
             </div>
           </div>
         </div>

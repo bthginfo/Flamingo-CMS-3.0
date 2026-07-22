@@ -97,11 +97,11 @@ export function DualWaveSection({ data }: Props) {
             </div>
 
             <div className="relative z-10">
-              <motion.div key={activeIndex} initial={{ opacity: 0, scale: 0.94, rotate: -1.5 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.42 }} className="relative mx-auto aspect-[4/5] max-h-[58vh] overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_30px_90px_var(--token-shadow)]" data-card>
+              <motion.div key={activeIndex} initial={{ opacity: 0, scale: 0.94, rotate: -1.5 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.42 }} className="relative mx-auto aspect-[4/5] max-h-[58vh] overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_30px_90px_var(--token-shadow)]" data-card data-edit-collection="items" data-edit-index={activeIndex}>
                 {active.image ? <img src={active.image} alt="" className="h-full w-full object-cover" loading="lazy" data-edit-image="image" /> : <div className="h-full w-full bg-[radial-gradient(circle_at_30%_20%,var(--token-accent),transparent_58%),var(--token-section-bg-alt)] opacity-70" />}
                 <div className="absolute inset-x-3 bottom-3 rounded-[calc(var(--token-card-radius)*.72)] border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_90%,transparent)] p-5 shadow-[0_20px_60px_var(--token-shadow)] backdrop-blur-xl">
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-[color:var(--token-card-muted,var(--token-muted))]">{String(activeIndex + 1).padStart(2, '0')}</p>
-                  <h3 className="mt-2 text-2xl font-black text-[color:var(--token-card-heading,var(--token-heading))]">{getTitle(active)}</h3>
+                  <h3 className="mt-2 text-2xl font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{getTitle(active)}</h3>
                   {active.text && <p className="mt-2 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(active.text)}</p>}
                   {active.href && <a href={active.href} className="mt-4 inline-flex items-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-3.5 py-2 text-sm font-bold text-[color:var(--token-btn-text)]">Entdecken <ArrowUpRight size={15} /></a>}
                 </div>

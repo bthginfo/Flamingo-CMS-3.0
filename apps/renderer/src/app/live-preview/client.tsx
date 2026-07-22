@@ -90,20 +90,22 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
     if (!editMode) return;
     const root = mainRef.current;
     if (!root) return;
+    const rootEl: HTMLElement = root;
 
-    const editables = Array.from(root.querySelectorAll<HTMLElement>('[data-edit-path], [data-edit-rich]'));
-    const cleanups: Array<() => void> = [];
+    const cleanups = new Map<HTMLElement, () => void>();
+    const boundPaths = new WeakMap<HTMLElement, string>();
 
-    editables.forEach((el) => {
+    function resolveEditable(el: HTMLElement): { sectionId: string; sectionEl: HTMLElement; path: string; isRich: boolean } | null {
       const richAttr = el.getAttribute('data-edit-rich');
       const isRich = richAttr !== null;
       const leafPath = isRich ? richAttr : el.getAttribute('data-edit-path');
-      if (!leafPath) return;
+      if (!leafPath) return null;
       const sectionEl = el.closest<HTMLElement>('[data-section-id]');
+      if (!sectionEl) return null;
       const sectionId = sectionEl?.getAttribute('data-section-id');
-      if (!sectionId) return;
+      if (!sectionId) return null;
 
-      // Build a compound path by walking parents that carry loop markers
+      // Build a compound path by walking the element + parents that carry loop markers
       // (data-edit-collection / data-edit-index). For nested loops the
       // outer pair appears first in the resulting path, e.g.
       //   <div data-edit-collection="courses" data-edit-index={2}>
@@ -113,8 +115,8 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       //   </div>
       // …yields path "courses.2.items.0.title".
       const segments: string[] = [leafPath];
-      let cursor: HTMLElement | null = el.parentElement;
-      while (cursor && cursor !== root && cursor !== sectionEl) {
+      let cursor: HTMLElement | null = el;
+      while (cursor && cursor !== rootEl && cursor !== sectionEl) {
         const collection = cursor.getAttribute('data-edit-collection');
         const indexAttr = cursor.getAttribute('data-edit-index');
         if (collection && indexAttr !== null && /^\d+$/.test(indexAttr)) {
@@ -123,6 +125,21 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
         cursor = cursor.parentElement;
       }
       const path = segments.join('.');
+      return { sectionId, sectionEl, path, isRich };
+    }
+
+    function detach(el: HTMLElement) {
+      cleanups.get(el)?.();
+      cleanups.delete(el);
+    }
+
+    function attach(el: HTMLElement) {
+      const resolved = resolveEditable(el);
+      if (!resolved) return;
+      const { sectionId, sectionEl, path, isRich } = resolved;
+      if (cleanups.has(el) && boundPaths.get(el) === path) return;
+      detach(el);
+      boundPaths.set(el, path);
 
       const original = isRich ? el.innerHTML : el.innerText;
       el.setAttribute('contenteditable', isRich ? 'true' : 'plaintext-only');
@@ -184,7 +201,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       // their click is swallowed by the disabled <a>.
       const ancestorPreventers: Array<{ el: HTMLElement; fn: (e: Event) => void }> = [];
       let p: HTMLElement | null = el.parentElement;
-      while (p && p !== root && p !== sectionEl) {
+      while (p && p !== rootEl && p !== sectionEl) {
         if (p.tagName === 'A' || p.tagName === 'BUTTON') {
           const fn = (e: Event) => {
             const t = e.target as HTMLElement;
@@ -204,7 +221,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       // Silence the swallow ref so TS doesn't warn it's unused.
       void swallow; void prevent;
 
-      cleanups.push(() => {
+      cleanups.set(el, () => {
         el.removeAttribute('contenteditable');
         el.removeAttribute('spellcheck');
         el.removeAttribute('data-editable-active');
@@ -222,9 +239,30 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
         el.removeEventListener('keydown', onKey);
         ancestorPreventers.forEach(({ el: anc, fn }) => anc.removeEventListener('click', fn, true));
       });
+    }
+
+    function scan() {
+      const current = new Set(Array.from(rootEl.querySelectorAll<HTMLElement>('[data-edit-path], [data-edit-rich]')));
+      current.forEach(attach);
+      Array.from(cleanups.keys()).forEach((el) => {
+        if (!current.has(el) || !rootEl.contains(el)) detach(el);
+      });
+    }
+
+    scan();
+    const observer = new MutationObserver(scan);
+    observer.observe(rootEl, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['data-edit-path', 'data-edit-rich', 'data-edit-collection', 'data-edit-index'],
     });
 
-    return () => { cleanups.forEach(fn => fn()); };
+    return () => {
+      observer.disconnect();
+      cleanups.forEach(fn => fn());
+      cleanups.clear();
+    };
     // Re-run when sections change so newly rendered editable elements get
     // hooked up; depending on `sections` covers field edits + reorders.
   }, [editMode, sections]);

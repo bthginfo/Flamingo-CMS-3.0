@@ -68,7 +68,7 @@ export function CinematicChaptersSection({ data }: Props) {
       <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${Math.max(320, chapters.length * 86)}vh` }}>
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <AnimatePresence mode="sync" initial={false}>
-            <motion.div key={activeIndex} initial={transitionInitial} animate={{ opacity: 1, y: 0, scale: 1 }} exit={transitionExit} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} className="absolute inset-0">
+            <motion.div key={activeIndex} initial={transitionInitial} animate={{ opacity: 1, y: 0, scale: 1 }} exit={transitionExit} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} className="absolute inset-0" data-edit-collection="chapters" data-edit-index={activeIndex}>
               {active.image ? <img src={active.image} alt="" className="h-full w-full object-cover" loading={activeIndex === 0 ? 'eager' : 'lazy'} data-edit-image="image" /> : <div className="h-full bg-[radial-gradient(circle_at_70%_25%,var(--token-accent),transparent_34%),linear-gradient(135deg,var(--token-section-bg-alt),var(--token-section-bg)_70%)]" />}
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.9)_0%,rgba(0,0,0,.58)_45%,rgba(0,0,0,.18)_100%)]" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25" />
