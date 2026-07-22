@@ -57,7 +57,7 @@ export function MaterialAtelierSection({ data }: Props) {
           badge={String(data.badge || '')}
           headline={String(data.headline || '')}
           subline={String(data.subline || '')}
-          aside={<p className="mt-5 text-[10px] font-bold uppercase tracking-[.22em] text-[color:var(--token-eyebrow,var(--token-accent))] lg:text-right">{items.length} Positionen · kuratiert</p>}
+          aside={<p className="mt-5 text-[10px] font-bold uppercase tracking-[.22em] text-[color:var(--token-eyebrow)] lg:text-right">{items.length} Positionen · kuratiert</p>}
         />
 
         <div className="mt-10 hidden min-h-[36rem] grid-cols-[minmax(0,1.55fr)_minmax(21rem,.72fr)] border-y border-[var(--token-divider)] lg:grid">
@@ -87,7 +87,7 @@ export function MaterialAtelierSection({ data }: Props) {
                     {selected.kicker && <p className="text-[10px] font-bold uppercase tracking-[.24em] text-[color:var(--token-on-dark-muted)]" data-edit-path="kicker">{selected.kicker}</p>}
                     <h3 className="mt-2 max-w-3xl hyphens-auto text-[clamp(2rem,4vw,4.7rem)] font-black leading-[.92] tracking-[-.055em] text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{selected.title}</h3>
                   </div>
-                  {selectedHref && <a href={selectedHref} className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-[var(--token-button-radius)] border border-[var(--token-on-dark-muted)] px-4 text-xs font-bold text-[color:var(--token-on-dark-heading)] transition hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-on-dark-heading)]">Entdecken <ArrowUpRight size={15} /></a>}
+                  {selectedHref && <a href={selectedHref} className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-[var(--token-button-radius)] border border-[var(--token-divider)] px-4 text-xs font-bold text-[color:var(--token-on-dark-heading)] transition hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-on-dark-heading)]">Entdecken <ArrowUpRight size={15} /></a>}
                 </figcaption>
               </motion.figure>
             </AnimatePresence>
@@ -112,9 +112,9 @@ export function MaterialAtelierSection({ data }: Props) {
                     >
                       <span className="font-mono text-[10px] tracking-[.14em] text-[color:var(--token-muted)]">{String(index + 1).padStart(2, '0')}</span>
                       <span className="min-w-0">
-                        {item.kicker && <span className="block truncate text-[9px] font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow,var(--token-accent))]">{item.kicker}</span>}
+                        {item.kicker && <span className="block truncate text-[9px] font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{item.kicker}</span>}
                         <span className="mt-0.5 block hyphens-auto text-base font-bold leading-tight text-[color:var(--token-heading)]">{item.title}</span>
-                        {isActive && <span className="mt-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.12em] text-[color:var(--token-muted)]"><Check size={11} /> Ausgewählt</span>}
+                        {isActive && <span className="mt-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.12em] text-[color:var(--token-muted)]"><Check size={11} className="text-[color:var(--token-check)]" /> Ausgewählt</span>}
                       </span>
                       <ChevronRight aria-hidden="true" className={`transition ${isActive ? 'translate-x-0 text-[color:var(--token-accent)]' : '-translate-x-1 text-[color:var(--token-muted)] group-hover:translate-x-0'}`} size={17} />
                     </button>
@@ -139,13 +139,13 @@ export function MaterialAtelierSection({ data }: Props) {
                   <span className="absolute left-4 top-4 bg-[var(--token-card-bg)] px-2 py-1 font-mono text-[10px] tracking-[.15em] text-[color:var(--token-card-heading,var(--token-heading))]">{String(index + 1).padStart(2, '0')}</span>
                 </div>
                 <div className="p-5">
-                  {item.kicker && <p className="text-[9px] font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow,var(--token-accent))]" data-edit-path="kicker">{item.kicker}</p>}
+                  {item.kicker && <p className="text-[9px] font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{item.kicker}</p>}
                   <h3 className="mt-2 hyphens-auto text-2xl font-black leading-[1.02] tracking-[-.035em] text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{item.title}</h3>
                   {item.text && <p className="mt-3 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(item.text)}</p>}
                   {Array.isArray(item.meta) && item.meta.length > 0 && (
                     <ul aria-label="Merkmale" className="mt-4 flex flex-wrap gap-2">
                       {item.meta.slice(0, 5).map((entry, metaIndex) => (
-                        <li key={`${entry}-${metaIndex}`} className="rounded-[var(--token-button-radius)] border border-[var(--token-card-border,var(--token-divider))] bg-[var(--token-section-bg-alt)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.1em] text-[color:var(--token-card-muted,var(--token-muted))]">
+                        <li key={`${entry}-${metaIndex}`} className="rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[var(--token-section-bg-alt)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.1em] text-[color:var(--token-card-muted,var(--token-muted))]">
                           {entry}
                         </li>
                       ))}
