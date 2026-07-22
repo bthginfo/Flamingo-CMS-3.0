@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import type { Invoice } from '@e-invoice-eu/core';
 import { PDFDocument, rgb, StandardFonts, type PDFFont, type PDFPage } from 'pdf-lib';
 import { getBillingJurisdiction } from './billing-jurisdictions';
+import { billingPaymentInstruction } from './billing-payment-instructions';
+export { billingBankInstruction, billingPaymentInstruction } from './billing-payment-instructions';
 export { BILLING_ADDON_KEY } from './billing-constants';
 
 export type BillingAddress = {
@@ -568,8 +570,8 @@ export async function renderBillingPdf(input: {
   const cashDiscount = input.document.cashDiscountBasisPoints && input.document.cashDiscountDays
     ? `${input.document.cashDiscountBasisPoints / 100} % Skonto bei Zahlung innerhalb von ${input.document.cashDiscountDays} Tagen.`
     : undefined;
-  const paymentLinkNote = input.document.paymentLinkUrl && !input.document.closingText?.includes(input.document.paymentLinkUrl) ? `Online bezahlen: ${input.document.paymentLinkUrl}` : undefined;
-  const notes = [input.document.closingText, cashDiscount, exemptionReason, paymentLinkNote].filter(Boolean) as string[];
+  const paymentInstruction = billingPaymentInstruction(input.document, input.seller);
+  const notes = [input.document.closingText, paymentInstruction, cashDiscount, exemptionReason].filter(Boolean) as string[];
   for (const note of notes) for (const line of wrap(regular, note, 8, 499)) { page!.drawText(line, { x: margin, y, font: regular, size: 8, color: muted }); y -= 11; }
   return new Uint8Array(await pdf.save({ useObjectStreams: false }));
 }

@@ -399,7 +399,7 @@ export async function getBillingWorkspaceData() {
   const tenantId = await requireBillingTenant(false);
   const db = getDb();
   const settings = await ensureBillingSettings(tenantId);
-  const [customerRows, fieldRows, serviceRows, documentRows, recurringRows] = await Promise.all([
+  const [customerRows, fieldRows, serviceRows, documentRows, recurringRows, smtpReady] = await Promise.all([
     db.select().from(customers).where(and(eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).orderBy(asc(customers.name)),
     db.select().from(customerCustomFieldDefinitions).where(and(eq(customerCustomFieldDefinitions.tenantId, tenantId), eq(customerCustomFieldDefinitions.active, true))).orderBy(asc(customerCustomFieldDefinitions.sortOrder)),
     db.select().from(billingServices).where(and(eq(billingServices.tenantId, tenantId), eq(billingServices.active, true))).orderBy(asc(billingServices.name)),
@@ -414,8 +414,9 @@ export async function getBillingWorkspaceData() {
       quoteValidUntil: billingDocuments.quoteValidUntil, recurringScheduleId: billingDocuments.recurringScheduleId, createdAt: billingDocuments.createdAt,
     }).from(billingDocuments).where(eq(billingDocuments.tenantId, tenantId)).orderBy(desc(billingDocuments.createdAt)).limit(500),
     db.select().from(billingRecurringSchedules).where(eq(billingRecurringSchedules.tenantId, tenantId)).orderBy(asc(billingRecurringSchedules.nextRunAt)),
+    getEffectiveSmtp(tenantId).then(Boolean).catch(() => false),
   ]);
-  return { settings, customers: customerRows, customFields: fieldRows, services: serviceRows, documents: documentRows, recurringSchedules: recurringRows };
+  return { settings, customers: customerRows, customFields: fieldRows, services: serviceRows, documents: documentRows, recurringSchedules: recurringRows, smtpReady };
 }
 
 export async function getBillingDocumentAction(documentId: string) {

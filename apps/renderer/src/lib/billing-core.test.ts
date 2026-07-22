@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  billingPaymentInstruction,
   calculateBillingTotals,
   formatDocumentNumber,
   generateXRechnung,
@@ -75,6 +76,25 @@ test('non-standard tax modes suppress VAT while retaining the net amount', () =>
     assert.equal(totals.taxCents, 0);
     assert.equal(totals.totalGrossCents, 70_000);
   }
+});
+
+test('payment instruction adds bank transfer details without duplicating explicit payment text', () => {
+  assert.match(
+    billingPaymentInstruction({ closingText: 'Vielen Dank für Ihren Auftrag.', paymentLinkUrl: undefined }, seller),
+    /IBAN: DE02120300000000202051/,
+  );
+  assert.equal(
+    billingPaymentInstruction({ closingText: 'Bitte überweisen Sie auf die genannte IBAN.', paymentLinkUrl: undefined }, seller),
+    '',
+  );
+  assert.equal(
+    billingPaymentInstruction({ closingText: 'Der Rechnungsbetrag wird bar beglichen.', paymentLinkUrl: undefined }, seller),
+    '',
+  );
+  assert.match(
+    billingPaymentInstruction({ closingText: '', paymentLinkUrl: 'https://pay.example/re-1' }, seller),
+    /https:\/\/pay\.example\/re-1/,
+  );
 });
 
 test('Austrian UBL uses the local seller profile without XRechnung customization', async () => {

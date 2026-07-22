@@ -23,6 +23,7 @@ import {
   sendBillingDocumentAction, setBillingRecurringScheduleStatusAction, updateBillingQuoteStatusAction,
 } from './actions';
 import { BILLING_JURISDICTIONS, getBillingJurisdiction, type BillingCountryCode, type BillingTaxRate } from '@/lib/billing-jurisdictions';
+import { billingBankInstruction, billingPaymentInstruction } from '@/lib/billing-payment-instructions';
 
 type WorkspaceData = Awaited<ReturnType<typeof getBillingWorkspaceData>>;
 type Customer = WorkspaceData['customers'][number];
@@ -106,15 +107,7 @@ function netCentsFromGross(grossCents: number, taxRateBasisPoints: number) {
 }
 
 function bankInstruction(settings: WorkspaceData['settings']) {
-  const bankParts = [
-    settings.accountHolder ? `Kontoinhaber: ${settings.accountHolder}` : '',
-    settings.iban ? `IBAN: ${settings.iban}` : '',
-    settings.bic ? `BIC: ${settings.bic}` : '',
-    settings.bankName ? `Bank: ${settings.bankName}` : '',
-  ].filter(Boolean);
-  return bankParts.length
-    ? `Bitte überweisen Sie den Rechnungsbetrag fristgerecht unter Angabe der Rechnungsnummer auf folgendes Konto: ${bankParts.join(' · ')}.`
-    : 'Bitte überweisen Sie den Rechnungsbetrag fristgerecht unter Angabe der Rechnungsnummer auf das in der Rechnung angegebene Konto.';
+  return billingBankInstruction(settings) || 'Bitte überweisen Sie den Rechnungsbetrag fristgerecht unter Angabe der Rechnungsnummer. Bankverbindung bitte in den Rechnungseinstellungen ergänzen.';
 }
 
 function paymentInstructionText(mode: PaymentInstructionMode, settings: WorkspaceData['settings'], paymentLinkUrl: string, customText = '') {
@@ -244,8 +237,8 @@ function billingReadinessItems(data: WorkspaceData): ReadinessItem[] {
     },
     {
       label: 'Versand',
-      detail: 'SMTP wird beim Senden geprüft. Mail-Server separat unter Admin → Mail testen.',
-      ready: Boolean(settings.email),
+      detail: data.smtpReady ? 'Sicherer Mail-Server ist erreichbar.' : 'Kein sicherer Mail-Server aktiv. Unter Admin → Mail einrichten oder Flamingo-SMTP als Plattform-Secret setzen.',
+      ready: data.smtpReady,
       href: '/admin/mail',
     },
   ];
@@ -1283,6 +1276,7 @@ function InvoicePaper({ settings, form, customer, totals, documentType }: { sett
   const documentMeta = DOCUMENT_TYPES[documentType] || DOCUMENT_TYPES.invoice;
   const jurisdiction = getBillingJurisdiction(settings.countryCode);
   const showLogo = Boolean(settings.logoUrl);
+  const paymentInstruction = billingPaymentInstruction(form, settings);
   const footerItems = [
     settings.email || 'E-Mail ergänzen',
     settings.website || 'Website ergänzen',
@@ -1298,7 +1292,7 @@ function InvoicePaper({ settings, form, customer, totals, documentType }: { sett
     <div className="pt-[2%]"><h2 className="text-[1.5em] font-bold tracking-tight text-slate-950">{documentMeta.label}</h2>{form.introText ? <p className="mt-3 max-w-[92%] text-[.88em] leading-[1.7]">{form.introText}</p> : null}</div>
     <table className="mt-[5%] w-full table-fixed border-collapse text-[.76em]"><thead><tr className="border-b border-slate-400 text-left text-[.85em] uppercase tracking-[.08em] text-slate-400"><th className="w-[8%] py-2.5">Pos.</th><th className="w-[47%] py-2.5">Leistung</th><th className="w-[13%] py-2.5 text-right">Menge</th><th className="w-[16%] py-2.5 text-right">Preis</th><th className="w-[16%] py-2.5 text-right">Summe</th></tr></thead><tbody>{form.lines.length ? <>{form.lines.slice(0, 7).map((line, index) => <tr key={index} className="border-b border-slate-100 align-top"><td className="py-2.5 font-mono text-slate-400">{index + 1}</td><td className="py-2.5 pr-2"><strong className="font-semibold text-slate-800">{line.name || 'Neue Position'}</strong>{line.description ? <span className="mt-1 block line-clamp-2 text-[.86em] leading-[1.55] text-slate-500">{line.description}</span> : null}</td><td className="py-2.5 text-right">{line.quantity} {line.unitLabel}</td><td className="py-2.5 text-right">{money(line.unitPriceNetCents)}</td><td className="py-2.5 text-right font-semibold text-slate-800">{money(lineNet(line))}</td></tr>)}{hiddenLineCount ? <tr><td colSpan={5} className="border-b border-slate-100 py-2.5 text-center font-semibold text-blue-700">+ {hiddenLineCount} weitere {hiddenLineCount === 1 ? 'Position' : 'Positionen'} auf Folgeseiten</td></tr> : null}</> : <tr><td colSpan={5} className="py-8 text-center text-slate-400">Positionen hinzufügen</td></tr>}</tbody></table>
     <div className="ml-auto mt-[4%] w-[42%] space-y-1.5 text-[.82em]">{totals.discount > 0 ? <><TotalRow label="Zwischensumme" value={money(totals.beforeDiscount)} /><TotalRow label="Rabatt" value={`− ${money(totals.discount)}`} /></> : null}<TotalRow label="Netto" value={money(totals.net)} /><TotalRow label="Umsatzsteuer" value={money(totals.tax)} /><div className="mt-3 flex justify-between border-t-2 border-slate-800 pt-3 text-[1.15em] font-bold text-slate-950"><span>Gesamt</span><span>{money(totals.gross)}</span></div></div>
-    <div className="mt-[4%] text-[.76em]">{form.closingText ? <p>{form.closingText}</p> : null}{form.taxMode !== 'standard' ? <p className="mt-1 font-medium">{form.taxExemptionReason || (form.taxMode === 'small_business' ? jurisdiction.smallBusinessNotice : '')}</p> : null}{form.cashDiscountBasisPoints > 0 ? <p className="mt-1">{form.cashDiscountBasisPoints / 100} % Skonto bei Zahlung innerhalb von {form.cashDiscountDays} Tagen.</p> : null}{form.paymentLinkUrl && !form.closingText.includes(form.paymentLinkUrl) ? <p className="mt-1 text-blue-700">Zahlungslink: {form.paymentLinkUrl}</p> : null}</div>
+    <div className="mt-[4%] text-[.76em]">{form.closingText ? <p>{form.closingText}</p> : null}{paymentInstruction ? <p className="mt-1">{paymentInstruction}</p> : null}{form.taxMode !== 'standard' ? <p className="mt-1 font-medium">{form.taxExemptionReason || (form.taxMode === 'small_business' ? jurisdiction.smallBusinessNotice : '')}</p> : null}{form.cashDiscountBasisPoints > 0 ? <p className="mt-1">{form.cashDiscountBasisPoints / 100} % Skonto bei Zahlung innerhalb von {form.cashDiscountDays} Tagen.</p> : null}</div>
     <footer className="mt-auto shrink-0 border-t border-slate-200 pt-[2%] text-[.52em] leading-[1.25] text-slate-400">
       <div className="flex flex-wrap gap-x-2 gap-y-0.5 break-words">{footerItems.map((item, index) => <span key={`${item}-${index}`} className={item.includes('ergänzen') ? 'max-w-full text-amber-600/80' : 'max-w-full'}>{item}</span>)}</div>
       {settings.defaultFooter ? <p className="mt-0.5 line-clamp-1 break-words border-t border-slate-100 pt-0.5">{settings.defaultFooter}</p> : null}
@@ -1355,7 +1349,7 @@ function FinalDocument({ detail, data, onBack, onOpenDocument, onRefresh }: { de
   ].filter(item => item.value);
   return <div>
     <div className="mb-6 flex flex-col gap-5 border-b border-zinc-200 pb-5 xl:flex-row xl:items-end xl:justify-between"><div><button type="button" onClick={onBack} className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-zinc-500 hover:text-zinc-900"><ArrowLeft className="size-4" /> Dokumente</button><div className="mt-2 flex flex-wrap items-center gap-3"><h2 className="font-mono text-2xl font-bold tracking-tight text-zinc-950">{document.documentNumber}</h2><StatusPill status={document.status} /></div><p className="mt-1 text-sm text-zinc-500">{documentMeta.label} · {shortDate(document.issueDate)} · {money(document.totalGrossCents)}</p></div>
-      <div className="flex flex-wrap gap-2"><a href={`${pdfUrl}?download=1`} className="admin-btn-secondary min-h-11"><Download className="size-4" /> PDF</a>{!isQuote ? <a href={xmlUrl} className="admin-btn-secondary min-h-11"><FileText className="size-4" /> {jurisdiction.eInvoiceLabel}</a> : null}<button type="button" disabled={isPending} onClick={createShareLink} className="admin-btn-secondary min-h-11"><Link2 className="size-4" /> Sicher teilen</button>{document.status !== 'cancelled' ? <button onClick={() => setSendOpen(true)} className="admin-btn-primary min-h-11"><Mail className="size-4" /> Versenden</button> : null}</div>
+      <div className="flex flex-wrap gap-2"><a href={`${pdfUrl}?download=1`} className="admin-btn-secondary min-h-11"><Download className="size-4" /> PDF</a>{!isQuote ? <a href={xmlUrl} className="admin-btn-secondary min-h-11"><FileText className="size-4" /> {jurisdiction.eInvoiceLabel}</a> : null}<button type="button" disabled={isPending} onClick={createShareLink} className="admin-btn-secondary min-h-11"><Link2 className="size-4" /> Sicher teilen</button>{document.status !== 'cancelled' ? <button type="button" disabled={!data.smtpReady} title={data.smtpReady ? undefined : 'Kein sicherer Mail-Server aktiv'} onClick={() => setSendOpen(true)} className="admin-btn-primary min-h-11 disabled:cursor-not-allowed disabled:opacity-50"><Mail className="size-4" /> Versenden</button> : null}</div>
     </div>
     <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_310px]">
       <section className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-200"><div className="flex items-center justify-between bg-white px-4 py-3"><div className="flex items-center gap-2 text-sm font-semibold text-zinc-800"><Eye className="size-4 text-blue-600" /> PDF-Vorschau</div><a href={pdfUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold text-blue-700">In neuem Tab öffnen</a></div><iframe src={pdfUrl} title={`PDF-Vorschau ${document.documentNumber}`} className="h-[720px] w-full bg-white" /></section>
@@ -1370,7 +1364,7 @@ function FinalDocument({ detail, data, onBack, onOpenDocument, onRefresh }: { de
       </aside>
     </div>
     <Dialog open={sendOpen} onClose={() => setSendOpen(false)} title={`${documentMeta.label} versenden`} description={isQuote ? 'Das PDF wird sicher über Ihren Mail-Server versendet.' : `PDF und ${jurisdiction.eInvoiceLabel} werden gemeinsam angehängt.`}>
-      <Field label="Empfänger" required><input autoFocus required type="email" value={recipient} onChange={event => setRecipient(event.target.value)} className="admin-input" /></Field><div className="mt-4 flex items-start gap-3 rounded-xl bg-zinc-50 p-4"><Mail className="mt-0.5 size-5 text-zinc-500" /><p className="text-sm leading-6 text-zinc-600">Versand über Ihren sicheren SMTP-Zugang. Bei einem unklaren Serverstatus wird kein automatischer Zweitversand ausgelöst.</p></div><div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><button onClick={() => setSendOpen(false)} className="admin-btn-secondary min-h-11">Abbrechen</button><button disabled={isPending || !recipient} onClick={send} className="admin-btn-primary min-h-11">{isPending ? 'Wird versendet …' : 'Jetzt versenden'}</button></div>
+      <Field label="Empfänger" required><input autoFocus required type="email" value={recipient} onChange={event => setRecipient(event.target.value)} className="admin-input" /></Field><div className={`mt-4 flex items-start gap-3 rounded-xl p-4 ${data.smtpReady ? 'bg-zinc-50' : 'border border-amber-200 bg-amber-50'}`}><Mail className={`mt-0.5 size-5 ${data.smtpReady ? 'text-zinc-500' : 'text-amber-700'}`} /><p className={`text-sm leading-6 ${data.smtpReady ? 'text-zinc-600' : 'text-amber-900'}`}>{data.smtpReady ? 'Versand über Ihren sicheren SMTP-Zugang. Bei einem unklaren Serverstatus wird kein automatischer Zweitversand ausgelöst.' : 'Kein sicherer Mail-Server aktiv. Bitte unter Admin → Mail einen SMTP-Zugang einrichten oder Flamingo-SMTP als Plattform-Secret setzen.'}</p></div><div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><button onClick={() => setSendOpen(false)} className="admin-btn-secondary min-h-11">Abbrechen</button><button disabled={isPending || !recipient || !data.smtpReady} onClick={send} className="admin-btn-primary min-h-11 disabled:cursor-not-allowed disabled:opacity-50">{isPending ? 'Wird versendet …' : data.smtpReady ? 'Jetzt versenden' : 'Mail-Server fehlt'}</button></div>
     </Dialog>
     <Dialog open={paymentOpen} onClose={() => setPaymentOpen(false)} title="Zahlung verbuchen" description={`Noch offen: ${money(outstandingCents)}. Teilzahlungen sind möglich.`}>
       <div className="grid gap-4 sm:grid-cols-2"><Field label="Betrag" required><div className="relative"><input autoFocus required type="text" inputMode="decimal" value={paymentAmount} onFocus={event => event.currentTarget.select()} onChange={event => setPaymentAmount(event.target.value)} onBlur={() => setPaymentAmount(formatScaledDecimal(paymentAmountCents))} className="admin-input pr-10 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">€</span></div></Field><Field label="Zahlungsdatum" required><input required type="date" value={paymentDate} onChange={event => setPaymentDate(event.target.value)} className="admin-input" /></Field><Field label="Zahlungsart"><select value={paymentMethod} onChange={event => setPaymentMethod(event.target.value)} className="admin-input"><option value="bank_transfer">Überweisung</option><option value="cash">Bar</option><option value="card">Karte</option><option value="paypal">PayPal</option><option value="stripe">Stripe</option><option value="other">Sonstige</option></select></Field><Field label="Referenz"><input value={paymentReference} onChange={event => setPaymentReference(event.target.value)} className="admin-input" placeholder="Kontoauszug, Transaktion …" /></Field></div><div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"><button type="button" onClick={() => setPaymentOpen(false)} className="admin-btn-secondary min-h-11">Abbrechen</button><button type="button" disabled={isPending || paymentAmountCents <= 0 || paymentAmountCents > outstandingCents} onClick={recordPayment} className="admin-btn-primary min-h-11">{isPending ? 'Wird verbucht …' : 'Zahlung verbuchen'}</button></div>
