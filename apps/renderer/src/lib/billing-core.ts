@@ -426,6 +426,7 @@ export async function renderBillingPdf(input: {
 }) {
   const pdf = await PDFDocument.create();
   const title = billingDocumentTitle(input.document.documentType);
+  const jurisdiction = getBillingJurisdiction(input.seller.countryCode);
   const taxMode = input.document.taxMode || (input.seller.smallBusiness ? 'small_business' : 'standard');
   const exemptionReason = input.document.taxExemptionReason || (taxMode === 'small_business' ? input.seller.smallBusinessNotice : undefined);
   pdf.setTitle(`${title} ${input.document.documentNumber}`);
@@ -464,6 +465,7 @@ export async function renderBillingPdf(input: {
   };
   newPage();
   const showLogo = Boolean(logo);
+  let titleX = margin;
   if (showLogo && logo) {
     const maxLogoWidth = 150;
     const maxLogoHeight = 52;
@@ -471,9 +473,20 @@ export async function renderBillingPdf(input: {
     const width = logo.width * scale;
     const height = logo.height * scale;
     page!.drawImage(logo, { x: margin, y: 778 - height, width, height });
+    titleX = margin + width + 18;
   }
-  page!.drawText(title.toUpperCase(), { x: 338, y: 770, font: bold, size: title.length > 17 ? 14 : 19, color: ink });
-  page!.drawText(input.document.documentNumber, { x: 360, y: 750, font: regular, size: 10, color: accent });
+  const documentNumberLabel = input.document.documentNumber || 'wird vergeben';
+  page!.drawText(title.toUpperCase(), { x: titleX, y: 770, font: bold, size: title.length > 17 ? 11 : 12, color: muted });
+  page!.drawText(documentNumberLabel, { x: titleX, y: 752, font: regular, size: 9, color: accent });
+  const drawRight = (text: string, textY: number, font: PDFFont, size: number, color = ink) => {
+    page!.drawText(text, { x: 547 - font.widthOfTextAtSize(text, size), y: textY, font, size, color });
+  };
+  [
+    input.seller.companyName,
+    input.seller.street,
+    `${input.seller.postalCode} ${input.seller.city}`,
+    jurisdiction.name,
+  ].filter(Boolean).forEach((line, index) => drawRight(String(line), 770 - index * 13, index === 0 ? bold : regular, index === 0 ? 8.5 : 8, index === 0 ? ink : muted));
   page!.drawLine({ start: { x: margin, y: 722 }, end: { x: 547, y: 722 }, thickness: 1, color: pale });
 
   y = 690;
@@ -503,19 +516,19 @@ export async function renderBillingPdf(input: {
   }
 
   const drawTableHeader = () => {
-    page!.drawRectangle({ x: margin, y: y - 5, width: 499, height: 24, color: pale });
+    page!.drawRectangle({ x: margin, y: y - 6, width: 499, height: 26, color: pale });
     page!.drawText('Pos.', { x: 56, y: y + 3, font: bold, size: 8, color: muted });
     page!.drawText('Leistung', { x: 92, y: y + 3, font: bold, size: 8, color: muted });
     page!.drawText('Menge', { x: 340, y: y + 3, font: bold, size: 8, color: muted });
     page!.drawText('Einzel', { x: 400, y: y + 3, font: bold, size: 8, color: muted });
     page!.drawText('Gesamt', { x: 486, y: y + 3, font: bold, size: 8, color: muted });
-    y -= 25;
+    y -= 34;
   };
   drawTableHeader();
   for (const line of input.totals.normalizedLines) {
     const descriptions = line.description ? wrap(regular, line.description, 7.5, 225).slice(0, 2) : [];
-    const rowHeight = Math.max(30, 20 + descriptions.length * 10);
-    if (y - rowHeight < 155) { newPage(); y = 770; drawTableHeader(); }
+    const rowHeight = Math.max(38, 24 + descriptions.length * 12);
+    if (y - rowHeight < 170) { newPage(); y = 770; drawTableHeader(); }
     page!.drawText(String(line.position), { x: 58, y, font: regular, size: 8.5, color: ink });
     page!.drawText(line.name.slice(0, 46), { x: 92, y, font: bold, size: 8.5, color: ink });
     descriptions.forEach((description, index) => page!.drawText(description, { x: 92, y: y - 12 - index * 9, font: regular, size: 7.5, color: muted }));
@@ -527,10 +540,11 @@ export async function renderBillingPdf(input: {
     page!.drawText(formatMoney(line.unitPriceNetCents), { x: 400, y, font: regular, size: 8, color: ink });
     page!.drawText(formatMoney(line.lineNetCents), { x: 486, y, font: bold, size: 8, color: ink });
     y -= rowHeight;
-    page!.drawLine({ start: { x: margin, y: y + 7 }, end: { x: 547, y: y + 7 }, thickness: 0.5, color: pale });
+    page!.drawLine({ start: { x: margin, y: y + 12 }, end: { x: 547, y: y + 12 }, thickness: 0.5, color: pale });
+    y -= 6;
   }
-  if (y < 205) { newPage(); y = 770; }
-  y -= 8;
+  if (y < 225) { newPage(); y = 770; }
+  y -= 12;
   const totalX = 390;
   const drawTotal = (label: string, value: string, strong = false) => {
     page!.drawText(label, { x: totalX, y, font: strong ? bold : regular, size: strong ? 10 : 8.5, color: strong ? ink : muted });
@@ -543,14 +557,15 @@ export async function renderBillingPdf(input: {
   }
   drawTotal('Netto', formatMoney(input.totals.subtotalNetCents));
   input.totals.taxBreakdown.forEach(group => drawTotal(`${group.rateBasisPoints / 100} % USt.`, formatMoney(group.taxCents)));
-  page!.drawLine({ start: { x: totalX, y: y + 8 }, end: { x: 547, y: y + 8 }, thickness: 1.5, color: accent });
+  page!.drawLine({ start: { x: totalX, y: y + 13 }, end: { x: 547, y: y + 13 }, thickness: 1.2, color: accent });
   drawTotal('Gesamt', formatMoney(input.totals.totalGrossCents), true);
 
   y = Math.min(y - 8, 125);
   const cashDiscount = input.document.cashDiscountBasisPoints && input.document.cashDiscountDays
     ? `${input.document.cashDiscountBasisPoints / 100} % Skonto bei Zahlung innerhalb von ${input.document.cashDiscountDays} Tagen.`
     : undefined;
-  const notes = [input.document.closingText, cashDiscount, exemptionReason, input.document.paymentLinkUrl ? `Online bezahlen: ${input.document.paymentLinkUrl}` : undefined].filter(Boolean) as string[];
+  const paymentLinkNote = input.document.paymentLinkUrl && !input.document.closingText?.includes(input.document.paymentLinkUrl) ? `Online bezahlen: ${input.document.paymentLinkUrl}` : undefined;
+  const notes = [input.document.closingText, cashDiscount, exemptionReason, paymentLinkNote].filter(Boolean) as string[];
   for (const note of notes) for (const line of wrap(regular, note, 8, 499)) { page!.drawText(line, { x: margin, y, font: regular, size: 8, color: muted }); y -= 11; }
   return new Uint8Array(await pdf.save({ useObjectStreams: false }));
 }
