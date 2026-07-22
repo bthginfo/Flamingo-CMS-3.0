@@ -8,6 +8,10 @@ import { toast } from 'sonner';
 import NextImage from 'next/image';
 
 const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
+export const MAX_SOURCE_IMAGE_BYTES = 25 * 1024 * 1024;
+export const MAX_OPTIMIZED_IMAGE_BYTES = 5 * 1024 * 1024;
+export const DEFAULT_UPLOAD_MAX_EDGE = 1920;
+export const DEFAULT_UPLOAD_QUALITY = 0.84;
 
 function normalizeExtension(ext: string): string {
   if (!ext) return '';
@@ -38,14 +42,23 @@ function getImageQualityHint(value: string, hasPositionControl: boolean) {
   return 'Tipp: Setze den Fokuspunkt auf das wichtigste Motiv, damit Zuschnitt auf Mobil und Desktop sauber wirkt.';
 }
 
-/** Resize image to maxWidth and convert to WebP. Returns original if already small. */
-export async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
-  if (file.size < 200 * 1024) return file; // Skip if under 200KB
+function createObjectUrl(file: File) {
+  return URL.createObjectURL(file);
+}
 
+/** Resize image to max edge and convert to WebP. Returns original only when already small enough. */
+export async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
   return new Promise((resolve) => {
     const img = new Image();
+    const objectUrl = createObjectUrl(file);
     img.onload = () => {
-      const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+      URL.revokeObjectURL(objectUrl);
+      const largestEdge = Math.max(img.width, img.height);
+      const scale = largestEdge > maxWidth ? maxWidth / largestEdge : 1;
+      if (scale === 1 && file.size < 200 * 1024 && file.type === 'image/webp') {
+        resolve(file);
+        return;
+      }
       const w = Math.round(img.width * scale);
       const h = Math.round(img.height * scale);
       const canvas = document.createElement('canvas');
@@ -65,16 +78,21 @@ export async function resizeImage(file: File, maxWidth: number, quality: number)
         quality
       );
     };
-    img.onerror = () => resolve(file);
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(file);
+    };
+    img.src = objectUrl;
   });
 }
 
 /** Generate a tiny blur placeholder (data URL) for LQIP. */
-async function generateBlurDataUrl(file: File): Promise<string | undefined> {
+export async function generateBlurDataUrl(file: File): Promise<string | undefined> {
   return new Promise((resolve) => {
     const img = new Image();
+    const objectUrl = createObjectUrl(file);
     img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
       const size = 16;
       const aspect = img.height / img.width;
       const w = size;
@@ -86,8 +104,11 @@ async function generateBlurDataUrl(file: File): Promise<string | undefined> {
       ctx.drawImage(img, 0, 0, w, h);
       resolve(canvas.toDataURL('image/webp', 0.2));
     };
-    img.onerror = () => resolve(undefined);
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(undefined);
+    };
+    img.src = objectUrl;
   });
 }
 
@@ -226,14 +247,21 @@ export function ImageUploadField({
       toast.error('SVG-Dateien sind aus Sicherheitsgründen nicht als Upload erlaubt. Bitte PNG, WebP, JPG, GIF oder AVIF verwenden.');
       return;
     }
+    if (file.size > MAX_SOURCE_IMAGE_BYTES) {
+      toast.error('Bild ist zu groß. Bitte maximal 25 MB hochladen.');
+      return;
+    }
     setUploading(true);
     try {
       // Resize image client-side if too large (max 1920px wide, quality 0.85)
       const [optimized, blurDataUrl] = await Promise.all([
-        resizeImage(file, 1920, 0.85),
+        resizeImage(file, DEFAULT_UPLOAD_MAX_EDGE, DEFAULT_UPLOAD_QUALITY),
         generateBlurDataUrl(file),
       ]);
-      const uploadName = file.name.replace(/\.[^.]+$/, '.webp');
+      if (optimized.size > MAX_OPTIMIZED_IMAGE_BYTES) {
+        toast.error('Bild bleibt nach Optimierung zu groß. Bitte ein kleineres Motiv verwenden.');
+        return;
+      }
       const uploadPath = await buildDeterministicUploadPath(optimized, '.webp');
       const blob = await upload(uploadPath, optimized, {
         access: 'public',

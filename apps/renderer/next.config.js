@@ -27,6 +27,8 @@ const nextConfig = {
     : undefined,
   transpilePackages: ['@flamingo/db', '@flamingo/schemas', '@flamingo/auth'],
   images: {
+    formats: ['image/webp'],
+    minimumCacheTTL: 86400,
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
     ],

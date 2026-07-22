@@ -3,8 +3,10 @@ import { getSession } from '@/lib/session';
 import {
   bookingAvailabilityRules,
   bookingCalendarBlocks,
+  billingSettings,
   bookingServices,
   bookingSettings,
+  customers,
   pages,
   pageSections,
   products,
@@ -13,7 +15,7 @@ import {
   tenantAddons,
   tenants,
 } from '@flamingo/db';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { FunctionsClient } from './functions-client';
 import { BILLING_ADDON_KEY } from '@/lib/billing-constants';
 
@@ -28,6 +30,7 @@ export default async function FunctionsPage() {
   let premiumState = {
     booking: { used: false, ready: false },
     shop: { used: false, ready: false },
+    billing: { ready: false, setupIssue: false },
   };
   if (session?.tenantId) {
     const db = getDb();
@@ -105,6 +108,7 @@ export default async function FunctionsPage() {
       const shippingReady = Boolean(shopConfig?.pickupEnabled) || shippingMethodRows.some(method => method.active);
 
       premiumState = {
+        ...premiumState,
         booking: {
           used: bookingUsed,
           ready: bookingServiceRows.length > 0 && bookingAvailabilityReady && bookingNotificationReady,
@@ -114,6 +118,40 @@ export default async function FunctionsPage() {
           ready: productRows.some(product => !product.isDigital && (!product.trackStock || product.stock > 0)) && paymentReady && companyReady && shippingReady,
         },
       };
+    }
+
+    if (billingEnabled) {
+      try {
+        const [settingsRows, customerRows] = await Promise.all([
+          db.select({
+            companyName: billingSettings.companyName,
+            street: billingSettings.street,
+            postalCode: billingSettings.postalCode,
+            city: billingSettings.city,
+            countryCode: billingSettings.countryCode,
+            email: billingSettings.email,
+            taxNumber: billingSettings.taxNumber,
+            vatId: billingSettings.vatId,
+            invoiceNumberFormat: billingSettings.invoiceNumberFormat,
+            quoteNumberFormat: billingSettings.quoteNumberFormat,
+            cancellationNumberFormat: billingSettings.cancellationNumberFormat,
+            creditNumberFormat: billingSettings.creditNumberFormat,
+          }).from(billingSettings).where(eq(billingSettings.tenantId, session.tenantId)).limit(1),
+          db.select({ id: customers.id }).from(customers)
+            .where(and(eq(customers.tenantId, session.tenantId), isNull(customers.archivedAt))).limit(1),
+        ]);
+        const settings = settingsRows[0];
+        const senderReady = Boolean(settings?.companyName && settings.street && settings.postalCode && settings.city && settings.countryCode && settings.email);
+        const taxReady = Boolean(settings?.taxNumber || settings?.vatId);
+        const numbersReady = Boolean(settings?.invoiceNumberFormat && settings.quoteNumberFormat && settings.cancellationNumberFormat && settings.creditNumberFormat);
+        premiumState.billing = {
+          ready: senderReady && taxReady && numbersReady && customerRows.length > 0,
+          setupIssue: false,
+        };
+      } catch (error) {
+        console.error('[FunctionsPage] billing readiness unavailable', error instanceof Error ? error.message : error);
+        premiumState.billing = { ready: false, setupIssue: true };
+      }
     }
   }
   return <FunctionsClient i18nEnabled={i18nEnabled} bookingEnabled={bookingEnabled} bookingRequested={bookingRequested} shopEnabled={shopEnabled} billingEnabled={billingEnabled} featureUsage={featureUsage} premiumState={premiumState} />;

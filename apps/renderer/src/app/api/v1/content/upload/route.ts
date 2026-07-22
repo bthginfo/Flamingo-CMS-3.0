@@ -8,7 +8,7 @@ import { createHash, randomUUID } from 'crypto';
 import { and, eq } from 'drizzle-orm';
 import { detectImageMime } from '@/lib/image-magic';
 
-const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_SIZE = 5 * 1024 * 1024; // optimized image payload max
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
 const EXT_TO_MIME: Record<string, string> = {
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png',
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     const contentType = req.headers.get('content-type') || '';
     const declaredLength = Number(req.headers.get('content-length') || 0);
     if (declaredLength > MAX_SIZE + 2 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 413 });
+      return NextResponse.json({ error: 'File too large. Max 5MB after optimization.' }, { status: 413 });
     }
 
     // Handle multipart form data
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
       const mime = resolveMime(file.type, file.name);
       if (!mime) return NextResponse.json({ error: `File type not allowed. Got "${file.type}" for "${file.name}". Allowed: ${ALLOWED_TYPES.join(', ')}` }, { status: 400 });
-      if (file.size > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 400 });
+      if (file.size > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 5MB after optimization.' }, { status: 400 });
 
       const fileBytes = await file.arrayBuffer();
       if (detectImageMime(fileBytes) !== mime) {
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
     if (!mime) return NextResponse.json({ error: `File type not allowed. Got "${rawType}" for "${filename}". Allowed: ${ALLOWED_TYPES.join(', ')}` }, { status: 400 });
 
     const body = await req.arrayBuffer();
-    if (body.byteLength > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 400 });
+    if (body.byteLength > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 5MB after optimization.' }, { status: 400 });
     if (body.byteLength === 0) return NextResponse.json({ error: 'Empty file body' }, { status: 400 });
     if (detectImageMime(body) !== mime) {
       return NextResponse.json({ error: 'File content does not match the declared image type.' }, { status: 400 });

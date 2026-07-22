@@ -96,26 +96,56 @@ type ProjectEnvironmentVariable = {
   type: 'encrypted' | 'plain';
 };
 
-function buildForwardedPlatformSmtpEnvVars(): Array<ProjectEnvironmentVariable & { replaceExisting: boolean }> {
+type UpsertableProjectEnvironmentVariable = ProjectEnvironmentVariable & { replaceExisting: boolean };
+
+const RENDERER_ENV_TARGETS = ['production', 'preview'];
+
+function optionalEnvVar(
+  key: string,
+  value: string | undefined,
+  type: ProjectEnvironmentVariable['type'] = 'encrypted',
+): UpsertableProjectEnvironmentVariable[] {
+  if (!value || value.startsWith('__PLACEHOLDER')) return [];
+  return [{ key, value, target: RENDERER_ENV_TARGETS, type, replaceExisting: true }];
+}
+
+function getStandaloneProjectName(slug: string) {
+  return `flamingo-${slug}`;
+}
+
+function getStandaloneProjectUrl(slug: string) {
+  return `https://${getStandaloneProjectName(slug)}.vercel.app`;
+}
+
+function buildForwardedPlatformSmtpEnvVars(): UpsertableProjectEnvironmentVariable[] {
   const host = process.env.PLATFORM_SMTP_HOST || process.env.SMTP_HOST;
   const port = process.env.PLATFORM_SMTP_PORT || process.env.SMTP_PORT || '587';
   const user = process.env.PLATFORM_SMTP_USER || process.env.SMTP_USER;
   const pass = process.env.PLATFORM_SMTP_PASS || process.env.SMTP_PASS;
   const from = process.env.PLATFORM_SMTP_FROM || process.env.SMTP_FROM || user;
   if (!host || !user || !pass || !from) return [];
-  const target = ['production', 'preview'];
   return [
-    { key: 'PLATFORM_SMTP_HOST', value: host, target, type: 'encrypted', replaceExisting: true },
-    { key: 'PLATFORM_SMTP_PORT', value: port, target, type: 'encrypted', replaceExisting: true },
-    { key: 'PLATFORM_SMTP_USER', value: user, target, type: 'encrypted', replaceExisting: true },
-    { key: 'PLATFORM_SMTP_PASS', value: pass, target, type: 'encrypted', replaceExisting: true },
-    { key: 'PLATFORM_SMTP_FROM', value: from, target, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_HOST', value: host, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_PORT', value: port, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_USER', value: user, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_PASS', value: pass, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+    { key: 'PLATFORM_SMTP_FROM', value: from, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+  ];
+}
+
+function buildForwardedRendererRuntimeEnvVars(slug: string): UpsertableProjectEnvironmentVariable[] {
+  return [
+    ...optionalEnvVar('SITE_URL', getStandaloneProjectUrl(slug), 'plain'),
+    ...optionalEnvVar('REVALIDATE_SECRET', process.env.REVALIDATE_SECRET),
+    ...optionalEnvVar('CRON_SECRET', process.env.CRON_SECRET),
+    ...optionalEnvVar('DEMO_IG_FALLBACK_SLUG', process.env.DEMO_IG_FALLBACK_SLUG, 'plain'),
+    ...buildForwardedPlatformSmtpEnvVars(),
   ];
 }
 
 async function configureProjectEnvironment(
   projectId: string,
-  variables: Array<ProjectEnvironmentVariable & { replaceExisting: boolean }>,
+  variables: UpsertableProjectEnvironmentVariable[],
 ) {
   const current = await vercelFetch(`/v9/projects/${projectId}/env`) as { envs?: Array<{ id: string; key: string }> };
   const byKey = new Map((current.envs || []).map(variable => [variable.key, variable]));
@@ -158,7 +188,8 @@ export async function waitForVercelDeploymentReady(deploymentId: string, timeout
 }
 
 export async function createStandaloneProject(slug: string, tenantId: string, databaseUrl: string): Promise<{ projectId: string; projectUrl: string; blobConnected: boolean; projectCreated: boolean; deploymentId: string }> {
-  const projectName = `flamingo-${slug}`;
+  const projectName = getStandaloneProjectName(slug);
+  const projectUrl = getStandaloneProjectUrl(slug);
 
   // Validate required env vars upfront
   if (!process.env.VERCEL_TOKEN) throw new Error('VERCEL_TOKEN ist nicht gesetzt. Bitte in den Vercel-Umgebungsvariablen konfigurieren.');
@@ -194,16 +225,16 @@ export async function createStandaloneProject(slug: string, tenantId: string, da
 
   const projectId = project.id as string;
 
-  const envVars: Array<ProjectEnvironmentVariable & { replaceExisting: boolean }> = [
-    { key: 'DATABASE_URL', value: databaseUrl, target: ['production', 'preview'], type: 'encrypted', replaceExisting: true },
-    { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain', replaceExisting: true },
+  const envVars: UpsertableProjectEnvironmentVariable[] = [
+    { key: 'DATABASE_URL', value: databaseUrl, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+    { key: 'FIXED_TENANT_ID', value: tenantId, target: RENDERER_ENV_TARGETS, type: 'plain', replaceExisting: true },
     // Tenant deployments must never share signing or configuration-encryption
     // keys. A compromise is then contained to one renderer project.
-    { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
-    { key: 'RENDERER_RATE_LIMIT_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
-    { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
-    { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: ['production', 'preview'], type: 'encrypted', replaceExisting: false },
-    ...buildForwardedPlatformSmtpEnvVars(),
+    { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+    { key: 'RENDERER_RATE_LIMIT_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+    { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+    { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+    ...buildForwardedRendererRuntimeEnvVars(slug),
   ];
   await configureProjectEnvironment(projectId, envVars);
 
@@ -269,18 +300,18 @@ export async function createStandaloneProject(slug: string, tenantId: string, da
   if (!deploymentId) throw new Error('Vercel hat keine Production-Deployment-ID zurückgegeben.');
   await waitForVercelDeploymentReady(deploymentId);
 
-  return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app`, blobConnected, projectCreated, deploymentId };
+  return { projectId: projectId as string, projectUrl, blobConnected, projectCreated, deploymentId };
 }
 
 /** Switches an existing standalone renderer between databases without rotating its auth secrets. */
 export async function setStandaloneDatabaseConnection(projectId: string, slug: string, tenantId: string, databaseUrl: string) {
   if (!databaseUrl?.startsWith('postgres')) throw new Error('Eine gültige Datenbankverbindung fehlt.');
   await configureProjectEnvironment(projectId, [
-    { key: 'DATABASE_URL', value: databaseUrl, target: ['production', 'preview'], type: 'encrypted', replaceExisting: true },
-    { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain', replaceExisting: true },
-    ...buildForwardedPlatformSmtpEnvVars(),
+    { key: 'DATABASE_URL', value: databaseUrl, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+    { key: 'FIXED_TENANT_ID', value: tenantId, target: RENDERER_ENV_TARGETS, type: 'plain', replaceExisting: true },
+    ...buildForwardedRendererRuntimeEnvVars(slug),
   ]);
-  const deployment = await triggerProjectDeployment(`flamingo-${slug}`);
+  const deployment = await triggerProjectDeployment(getStandaloneProjectName(slug));
   if (!deployment.id) throw new Error('Der Datenbank-Cutover wurde nicht deployed. Die bisherige Verbindung bleibt aktiv.');
   await waitForVercelDeploymentReady(deployment.id);
 }

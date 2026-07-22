@@ -19,16 +19,36 @@ test('standalone Vercel projects receive an explicit tenant database and keep au
   }
 });
 
-test('standalone renderer projects inherit platform SMTP from CRM provisioning env', () => {
+test('standalone renderer projects inherit safe runtime env from CRM provisioning env', () => {
   const vercel = source('./vercel.ts');
+  assert.match(vercel, /function buildForwardedRendererRuntimeEnvVars/);
   assert.match(vercel, /function buildForwardedPlatformSmtpEnvVars/);
   assert.match(vercel, /process\.env\.PLATFORM_SMTP_HOST \|\| process\.env\.SMTP_HOST/);
   assert.match(vercel, /process\.env\.PLATFORM_SMTP_PASS \|\| process\.env\.SMTP_PASS/);
   for (const key of ['PLATFORM_SMTP_HOST', 'PLATFORM_SMTP_PORT', 'PLATFORM_SMTP_USER', 'PLATFORM_SMTP_PASS', 'PLATFORM_SMTP_FROM']) {
     assert.match(vercel, new RegExp(`key: '${key}'[\\s\\S]{0,180}replaceExisting: true`));
   }
-  assert.match(vercel, /createStandaloneProject[\s\S]*\.\.\.buildForwardedPlatformSmtpEnvVars\(\)/);
-  assert.match(vercel, /setStandaloneDatabaseConnection[\s\S]*\.\.\.buildForwardedPlatformSmtpEnvVars\(\)/);
+  for (const key of ['SITE_URL', 'REVALIDATE_SECRET', 'CRON_SECRET']) {
+    assert.match(vercel, new RegExp(`'${key}'`));
+  }
+  assert.match(vercel, /createStandaloneProject[\s\S]*\.\.\.buildForwardedRendererRuntimeEnvVars\(slug\)/);
+  assert.match(vercel, /setStandaloneDatabaseConnection[\s\S]*\.\.\.buildForwardedRendererRuntimeEnvVars\(slug\)/);
+  assert.doesNotMatch(vercel, /MASTER_ADMIN_PASSWORD/);
+  assert.doesNotMatch(vercel, /PLATFORM_ADMIN_TENANT_IDS/);
+  assert.doesNotMatch(vercel, /META_APP_SECRET/);
+});
+
+test('standalone runtime env backfill updates existing Vercel variables without logging secret values', () => {
+  const script = source('../../../../scripts/add-platform-smtp-envs.ts');
+  assert.match(script, /function buildPlatformSmtpEnvVars/);
+  assert.match(script, /function upsertEnvVar/);
+  assert.match(script, /'PATCH'/);
+  assert.match(script, /SITE_URL/);
+  assert.match(script, /tenantProjectUrl\(tenant\.slug\)/);
+  assert.match(script, /PLATFORM_SMTP_PASS/);
+  assert.doesNotMatch(script, /console\.(?:log|error)\([^)]*env\.value/);
+  assert.doesNotMatch(script, /MASTER_ADMIN_PASSWORD/);
+  assert.doesNotMatch(script, /PLATFORM_ADMIN_TENANT_IDS/);
 });
 
 test('standalone provisioning creates, migrates and registers a dedicated Neon database', () => {

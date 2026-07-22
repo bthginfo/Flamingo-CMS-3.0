@@ -52,7 +52,7 @@ test('billing routes and mutations enforce tenant session and paid entitlement',
   assert.match(actions, /eq\(tenantAddons\.addonKey, BILLING_ADDON_KEY\)/);
   assert.match(actions, /eq\(billingDocuments\.tenantId, tenantId\)/);
   for (const route of [pdf, xml]) {
-    assert.match(route, /getSession\(\)/);
+    assert.match(route, /getWritableSession\(\)/);
     assert.match(route, /eq\(billingDocuments\.tenantId, session\.tenantId\)/);
     assert.match(route, /Cache-Control': 'private, no-store/);
   }
@@ -72,8 +72,10 @@ test('billing entitlement uses one shared key and truthful active/locked admin s
   assert.match(crmUi, /toast\.error/);
   assert.match(crmUi, /Belegarchive bleiben vollständig erhalten/);
   assert.match(functionsPage, /addon\.key === BILLING_ADDON_KEY/);
-  assert.match(functionsClient, /billingEnabled \? \(/);
-  assert.match(functionsClient, /href="\/admin\/billing"/);
+  assert.match(functionsClient, /billingPresentation = billingEnabled/);
+  assert.match(functionsClient, /href:\s*'\/admin\/billing'/);
+  assert.match(functionsClient, /href=\{billingPresentation\?\.href \|\| '\/admin\/billing'\}/);
+  assert.match(functionsClient, /Einrichtung offen/);
   assert.match(functionsClient, /Modul anfragen/);
   assert.doesNotMatch(functionsClient, /label="Verfügbar"|status: 'Verfügbar'/);
   assert.match(functionsClient, /label="Premium"/);

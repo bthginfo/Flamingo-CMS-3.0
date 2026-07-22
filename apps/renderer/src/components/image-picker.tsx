@@ -6,7 +6,15 @@ import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/me
 import { toast } from 'sonner';
 import { ImageIcon, Upload, X, Loader2, FolderOpen } from 'lucide-react';
 import Image from 'next/image';
-import { buildDeterministicUploadPath } from '@/components/image-upload-field';
+import {
+  buildDeterministicUploadPath,
+  DEFAULT_UPLOAD_MAX_EDGE,
+  DEFAULT_UPLOAD_QUALITY,
+  generateBlurDataUrl,
+  MAX_OPTIMIZED_IMAGE_BYTES,
+  MAX_SOURCE_IMAGE_BYTES,
+  resizeImage,
+} from '@/components/image-upload-field';
 
 type Props = {
   value: string;
@@ -30,19 +38,36 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
       toast.error('Nur Bilddateien erlaubt');
       return;
     }
+    if (file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')) {
+      toast.error('SVG-Dateien sind aus Sicherheitsgründen nicht als Upload erlaubt.');
+      return;
+    }
+    if (file.size > MAX_SOURCE_IMAGE_BYTES) {
+      toast.error('Bild ist zu groß. Bitte maximal 25 MB hochladen.');
+      return;
+    }
     setUploading(true);
     try {
-      const uploadPath = await buildDeterministicUploadPath(file);
-      const blob = await upload(uploadPath, file, {
+      const [optimized, blurDataUrl] = await Promise.all([
+        resizeImage(file, DEFAULT_UPLOAD_MAX_EDGE, DEFAULT_UPLOAD_QUALITY),
+        generateBlurDataUrl(file),
+      ]);
+      if (optimized.size > MAX_OPTIMIZED_IMAGE_BYTES) {
+        toast.error('Bild bleibt nach Optimierung zu groß. Bitte ein kleineres Motiv verwenden.');
+        return;
+      }
+      const uploadPath = await buildDeterministicUploadPath(optimized, '.webp');
+      const blob = await upload(uploadPath, optimized, {
         access: 'public',
         handleUploadUrl: '/api/upload',
       });
       await saveMediaRecord({
         blobUrl: blob.url,
         pathname: blob.pathname,
-        filename: file.name,
-        mimeType: file.type,
-        size: file.size,
+        filename: optimized.name,
+        mimeType: optimized.type || 'image/webp',
+        size: optimized.size,
+        blurDataUrl,
       });
       onChange(blob.url);
       toast.success('Bild hochgeladen');

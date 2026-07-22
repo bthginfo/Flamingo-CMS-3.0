@@ -7,10 +7,12 @@ import { eq, and, desc, inArray, ne } from 'drizzle-orm';
 import { del } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 
+const MEDIA_LIBRARY_LIMIT = 500;
+
 async function requireTenant() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
-  return session.tenantId;
+  return session;
 }
 
 async function requireWritableTenant() {
@@ -49,29 +51,15 @@ function normalizeMediaUrl(blobUrl: string, pathname: string, filename: string) 
   return '';
 }
 
-async function probeMediaUrl(url: string): Promise<'ok' | 'missing' | 'unknown'> {
-  try {
-    const response = await fetch(url, {
-      method: 'HEAD',
-      redirect: 'follow',
-      cache: 'no-store',
-      signal: AbortSignal.timeout(2500),
-    });
-    if (response.ok) return 'ok';
-    if (response.status === 404 || response.status === 410) return 'missing';
-    return 'unknown';
-  } catch {
-    return 'unknown';
-  }
-}
-
 export async function getMediaAssets(): Promise<MediaAsset[]> {
-  const tenantId = await requireTenant();
-  const canWrite = Boolean(await getWritableSession());
+  const session = await requireTenant();
+  const tenantId = session.tenantId;
+  const canWrite = session.role !== 'demo';
   const db = getDb();
   let rows = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.tenantId, tenantId))
-    .orderBy(desc(mediaAssets.createdAt));
+    .orderBy(desc(mediaAssets.createdAt))
+    .limit(MEDIA_LIBRARY_LIMIT);
 
   // Self-heal duplicate rows for the same blob URL (the upload webhook and the
   // client's saveMediaRecord used to race each other into two inserts). Keep
@@ -128,28 +116,10 @@ export async function getMediaAssets(): Promise<MediaAsset[]> {
     })
     .filter((asset): asset is MediaAsset => Boolean(asset));
 
-  if (!normalizedAssets.length) return normalizedAssets;
-
-  const probeResults = await Promise.all(
-    normalizedAssets.map(async (asset) => ({
-      asset,
-      state: await probeMediaUrl(asset.blobUrl),
-    })),
-  );
-
-  const staleIds = probeResults
-    .filter((entry) => entry.state === 'missing')
-    .map((entry) => entry.asset.id);
-
-  if (canWrite && staleIds.length) {
-    await db.delete(mediaAssets)
-      .where(and(eq(mediaAssets.tenantId, tenantId), inArray(mediaAssets.id, staleIds)));
-    revalidatePath('/admin/media');
-  }
-
-  return probeResults
-    .filter((entry) => entry.state !== 'missing')
-    .map((entry) => entry.asset);
+  // Do not HEAD-probe every blob when the library opens. On tenants with many
+  // assets that creates a burst of Blob traffic and slow admin UX. The picker
+  // already removes stale rows lazily via the thumbnail onError handler.
+  return normalizedAssets;
 }
 
 export async function saveMediaRecord(data: {

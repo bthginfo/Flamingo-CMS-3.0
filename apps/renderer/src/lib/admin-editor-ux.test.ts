@@ -136,6 +136,33 @@ test('section focus and media dialog keyboard contracts remain wired', () => {
   assert.match(media, /aria-modal="true"/);
 });
 
+test('admin media uploads stay optimized and avoid blob probe bursts', () => {
+  const uploadField = source('../components/image-upload-field.tsx');
+  const picker = source('../components/image-picker.tsx');
+  const mediaActions = source('../app/admin/media-actions.ts');
+  const uploadRoute = source('../app/api/upload/route.ts');
+  const aiUpload = source('../app/api/v1/content/upload/route.ts');
+  const dataEditor = source('../app/admin/pages/[id]/section-data-editor.tsx');
+  const nextConfig = source('../../next.config.js');
+
+  assert.match(uploadField, /MAX_SOURCE_IMAGE_BYTES = 25 \* 1024 \* 1024/);
+  assert.match(uploadField, /MAX_OPTIMIZED_IMAGE_BYTES = 5 \* 1024 \* 1024/);
+  assert.match(uploadField, /DEFAULT_UPLOAD_MAX_EDGE = 1920/);
+  assert.match(uploadField, /largestEdge/);
+  assert.match(picker, /resizeImage\(file, DEFAULT_UPLOAD_MAX_EDGE, DEFAULT_UPLOAD_QUALITY\)/);
+  assert.match(picker, /buildDeterministicUploadPath\(optimized, '\.webp'\)/);
+  assert.match(dataEditor, /buildDeterministicUploadPath\(optimized, '\.webp'\)/);
+  assert.match(mediaActions, /MEDIA_LIBRARY_LIMIT = 500/);
+  assert.match(mediaActions, /\.limit\(MEDIA_LIBRARY_LIMIT\)/);
+  assert.doesNotMatch(mediaActions, /method:\s*'HEAD'/);
+  assert.match(uploadRoute, /MAX_OPTIMIZED_UPLOAD_BYTES = 5 \* 1024 \* 1024/);
+  assert.match(uploadRoute, /CONTENT_HASHED_MEDIA_PATH/);
+  assert.match(uploadRoute, /Invalid upload pathname/);
+  assert.match(aiUpload, /MAX_SIZE = 5 \* 1024 \* 1024/);
+  assert.match(nextConfig, /minimumCacheTTL:\s*86400/);
+  assert.match(nextConfig, /formats:\s*\['image\/webp'\]/);
+});
+
 test('opening an embedded shop section never redirects out of the page editor', () => {
   const shopActions = source('../app/admin/shop/actions.ts');
   const dataEditor = source('../app/admin/pages/[id]/section-data-editor.tsx');

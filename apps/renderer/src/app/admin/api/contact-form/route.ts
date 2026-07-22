@@ -4,6 +4,14 @@ import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { normalizeContactFormFields, validateContactAutoResponse, validateContactFormFields } from '@/lib/contact-form';
+import {
+  isTrustedRendererContactOrigin,
+  readBoundedRendererContactJson,
+  RendererContactBodyInvalidError,
+  RendererContactBodyTooLargeError,
+} from '@/lib/renderer-contact-security';
+
+const CONTACT_FORM_SETTINGS_MAX_BYTES = 64 * 1024;
 
 async function requireTenant() {
   const session = await getSession();
@@ -29,7 +37,7 @@ export async function GET() {
     return NextResponse.json({
       formFields: normalizeContactFormFields(settings?.formFields),
       autoResponse: settings?.autoResponse ?? null,
-    });
+    }, { headers: { 'Cache-Control': 'no-store' } });
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -44,7 +52,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    if (req.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase() !== 'application/json') {
+      return NextResponse.json({ error: 'Content-Type wird nicht unterstützt.' }, { status: 415 });
+    }
+    if (!isTrustedRendererContactOrigin(req)) {
+      return NextResponse.json({ error: 'Ungültiger Request-Ursprung.' }, { status: 403 });
+    }
+    const body = await readBoundedRendererContactJson(req, CONTACT_FORM_SETTINGS_MAX_BYTES);
     const { formFields, autoResponse } = body as { formFields?: unknown; autoResponse?: unknown };
     const validatedFields = validateContactFormFields(formFields);
     if (!validatedFields.success) {
@@ -72,7 +86,9 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    if (error instanceof RendererContactBodyTooLargeError) return NextResponse.json({ error: 'Die Anfrage ist zu groß.' }, { status: 413 });
+    if (error instanceof RendererContactBodyInvalidError) return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
     return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 });
   }
 }

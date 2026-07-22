@@ -23,6 +23,9 @@ test('sensitive admin routes reject demo sessions and stay tenant scoped', () =>
 test('invoice documents and Instagram mutations require a writable admin session', () => {
   const invoice = source('../app/api/shop/invoice/[orderId]/route.ts');
   const creditNote = source('../app/api/shop/credit-note/[orderId]/route.ts');
+  const billingPdf = source('../app/api/billing/documents/[id]/pdf/route.ts');
+  const billingXml = source('../app/api/billing/documents/[id]/xrechnung/route.ts');
+  const billingExport = source('../app/admin/api/billing/export/route.ts');
   const instagramRoutes = [
     '../app/api/auth/instagram/login/route.ts',
     '../app/api/auth/instagram/sync/route.ts',
@@ -30,7 +33,7 @@ test('invoice documents and Instagram mutations require a writable admin session
     '../app/api/auth/instagram/status/route.ts',
   ].map(source);
 
-  for (const documentRoute of [invoice, creditNote]) {
+  for (const documentRoute of [invoice, creditNote, billingPdf, billingXml, billingExport]) {
     assert.match(documentRoute, /getWritableSession\(\)/);
     assert.doesNotMatch(documentRoute, /resolveTenant\(\)/);
     assert.match(documentRoute, /private, no-store/);

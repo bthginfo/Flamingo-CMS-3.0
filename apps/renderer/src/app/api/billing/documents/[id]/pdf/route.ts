@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { billingDocuments, tenantAddons } from '@flamingo/db';
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 import { BILLING_ADDON_KEY } from '@/lib/billing-constants';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) return new NextResponse('Not found', { status: 404 });
   const { id } = await params;
   const db = getDb();

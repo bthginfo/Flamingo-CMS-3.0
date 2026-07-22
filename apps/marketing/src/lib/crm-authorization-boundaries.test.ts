@@ -34,3 +34,15 @@ test('CRM pages with direct database reads require an authenticated admin', () =
     assert.match(source(path), /await requireCrmAdmin\(\);/);
   }
 });
+
+test('CRM blob upload authenticates and validates origin before parsing request bodies', () => {
+  const route = source('../app/crm/api/upload/route.ts');
+  const session = route.indexOf('verifyCrmSession()');
+  const origin = route.indexOf('isTrustedRequestOrigin(request)');
+  const parse = route.indexOf('readJsonRequestBody(request');
+  const handle = route.indexOf('handleUpload({');
+
+  assert.ok(session >= 0 && origin > session && parse > origin && handle > parse);
+  assert.doesNotMatch(route.slice(0, handle), /request\.json\(\)/);
+  assert.match(route, /MAX_OPTIMIZED_UPLOAD_BYTES = 5 \* 1024 \* 1024/);
+});

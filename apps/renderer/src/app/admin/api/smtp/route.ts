@@ -4,8 +4,16 @@ import { getWritableSession } from '@/lib/session';
 import { globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { protectStoredSecret } from '@/lib/secret-storage';
+import { getPlatformSmtp } from '@/lib/smtp';
+import {
+  isTrustedRendererContactOrigin,
+  readBoundedRendererContactJson,
+  RendererContactBodyInvalidError,
+  RendererContactBodyTooLargeError,
+} from '@/lib/renderer-contact-security';
 
 type StoredSmtp = { host?: string; port?: number; user?: string; pass?: string; from?: string };
+const SMTP_SETTINGS_MAX_BYTES = 16 * 1024;
 
 async function requireTenant() {
   const session = await getWritableSession();
@@ -17,7 +25,10 @@ export async function GET() {
   try {
     const tenantId = await requireTenant();
     const db = getDb();
-    const [settings] = await db.select({ smtp: globalSettings.smtp }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+    const [[settings], platformSmtp] = await Promise.all([
+      db.select({ smtp: globalSettings.smtp }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1),
+      getPlatformSmtp().catch(() => null),
+    ]);
     const smtp = settings?.smtp as StoredSmtp | null;
     return NextResponse.json({
       smtp: smtp ? {
@@ -28,7 +39,9 @@ export async function GET() {
         from: smtp.from || '',
       } : null,
       hasPassword: Boolean(smtp?.pass),
-    });
+      platformSmtpReady: Boolean(platformSmtp),
+      platformSmtpFrom: platformSmtp?.from || null,
+    }, { headers: { 'Cache-Control': 'no-store' } });
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -43,7 +56,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    if (req.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase() !== 'application/json') {
+      return NextResponse.json({ error: 'Content-Type wird nicht unterstützt.' }, { status: 415 });
+    }
+    if (!isTrustedRendererContactOrigin(req)) {
+      return NextResponse.json({ error: 'Ungültiger Request-Ursprung.' }, { status: 403 });
+    }
+    const body = await readBoundedRendererContactJson(req, SMTP_SETTINGS_MAX_BYTES) as Record<string, unknown>;
     const host = typeof body.host === 'string' ? body.host.trim() : '';
     const port = Number(body.port) || 587;
     const user = typeof body.user === 'string' ? body.user.trim() : '';
@@ -69,7 +88,9 @@ export async function POST(req: NextRequest) {
     const smtp = hasVisibleConfig && storedPass ? { host, port, user, pass: storedPass, from } : null;
     await db.update(globalSettings).set({ smtp, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    if (error instanceof RendererContactBodyTooLargeError) return NextResponse.json({ error: 'Die Anfrage ist zu groß.' }, { status: 413 });
+    if (error instanceof RendererContactBodyInvalidError) return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
     return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 });
   }
 }

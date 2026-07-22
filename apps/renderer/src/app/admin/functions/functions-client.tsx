@@ -32,6 +32,7 @@ type FeatureUsage = {
 type PremiumState = {
   booking: { used: boolean; ready: boolean };
   shop: { used: boolean; ready: boolean };
+  billing: { ready: boolean; setupIssue: boolean };
 };
 
 type FeatureCardProps = {
@@ -143,6 +144,31 @@ export function FunctionsClient({
 
   const bookingPresentation = getPremiumPresentation({ enabled: bookingEnabled, requested: bookingRequested, ...premiumState.booking }, 'Booking');
   const shopPresentation = getPremiumPresentation({ enabled: shopEnabled, requested: false, ...premiumState.shop }, 'Shop');
+  const billingPresentation = billingEnabled
+    ? premiumState.billing.setupIssue
+      ? {
+        href: '/admin/billing',
+        action: 'Setup prüfen',
+        status: 'Einrichtung prüfen',
+        tone: 'attention' as const,
+        note: 'Das Modul ist freigeschaltet, aber Datenbank oder Grundeinstellungen sind noch nicht vollständig.',
+      }
+      : premiumState.billing.ready
+        ? {
+          href: '/admin/billing',
+          action: 'Rechnungen verwalten',
+          status: 'Einsatzbereit',
+          tone: 'active' as const,
+          note: 'Grundeinstellungen und mindestens ein Kunde sind vorhanden.',
+        }
+        : {
+          href: '/admin/billing',
+          action: 'Jetzt einrichten',
+          status: 'Einrichtung offen',
+          tone: 'attention' as const,
+          note: 'Unternehmensdaten, Steuerangabe, Nummernkreise und mindestens ein Kunde fehlen noch teilweise.',
+        }
+    : null;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -237,11 +263,11 @@ export function FunctionsClient({
             <FeatureCard
               title="Rechnungen & Kunden"
               description="Angebote, Rechnungen, Kunden, Serienläufe, Zahlungen und Mahnungen in einem ruhigen Arbeitsbereich."
-              note="Mit Rabatten, DE/AT-E-Rechnung, sicherem Versand und nachvollziehbaren Korrekturen."
-              href="/admin/billing"
-              action="Rechnungen verwalten"
-              status="Aktiv"
-              statusTone="active"
+              note={billingPresentation?.note}
+              href={billingPresentation?.href || '/admin/billing'}
+              action={billingPresentation?.action || 'Rechnungen verwalten'}
+              status={billingPresentation?.status || 'Aktiv'}
+              statusTone={billingPresentation?.tone || 'active'}
               icon={ReceiptText}
               iconTone="bg-blue-50 text-blue-700 ring-blue-100"
             />

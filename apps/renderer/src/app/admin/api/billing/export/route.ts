@@ -2,7 +2,7 @@ import { and, eq, ne } from 'drizzle-orm';
 import { billingDocuments, customers, tenantAddons } from '@flamingo/db';
 import { BILLING_ADDON_KEY } from '@/lib/billing-constants';
 import { getDb } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getWritableSession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,7 @@ function iso(value: Date | null) {
 }
 
 export async function GET() {
-  const session = await getSession();
+  const session = await getWritableSession();
   if (!session) return Response.json({ error: 'Nicht angemeldet' }, { status: 401 });
   const db = getDb();
   const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)

@@ -1,12 +1,47 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
-import { NextRequest, NextResponse } from 'next/server';
-import { getWritableSession } from '@/lib/session';
-import { getDb } from '@/lib/db';
 import { mediaAssets } from '@flamingo/db';
 import { and, eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { getDb } from '@/lib/db';
+import {
+  isTrustedRendererContactOrigin,
+  readBoundedRendererContactJson,
+  RendererContactBodyInvalidError,
+  RendererContactBodyTooLargeError,
+} from '@/lib/renderer-contact-security';
+import { getWritableSession } from '@/lib/session';
+
+const UPLOAD_REQUEST_MAX_BYTES = 32 * 1024;
+const MAX_OPTIMIZED_UPLOAD_BYTES = 5 * 1024 * 1024;
+const CONTENT_HASHED_MEDIA_PATH = /^media\/[a-f0-9]{64}\.webp$/i;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
+  const session = await getWritableSession();
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized — admin session required' }, { status: 401 });
+  }
+
+  if (!isTrustedRendererContactOrigin(request)) {
+    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 });
+  }
+
+  const contentType = request.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase();
+  if (contentType !== 'application/json') {
+    return NextResponse.json({ error: 'Unsupported content type' }, { status: 415 });
+  }
+
+  let body: HandleUploadBody;
+  try {
+    body = await readBoundedRendererContactJson(request, UPLOAD_REQUEST_MAX_BYTES) as HandleUploadBody;
+  } catch (error) {
+    if (error instanceof RendererContactBodyTooLargeError) {
+      return NextResponse.json({ error: 'Upload request too large' }, { status: 413 });
+    }
+    if (error instanceof RendererContactBodyInvalidError) {
+      return NextResponse.json({ error: 'Invalid upload request' }, { status: 400 });
+    }
+    throw error;
+  }
 
   if (!process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN.startsWith('__PLACEHOLDER')) {
     return NextResponse.json({ error: 'Blob storage not configured (BLOB_READ_WRITE_TOKEN missing or placeholder). Please set a valid token in Vercel project settings.' }, { status: 500 });
@@ -18,39 +53,32 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       request,
       token: process.env.BLOB_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async (pathname) => {
-        // A valid admin session is ALWAYS required. FIXED_TENANT_ID only scopes
-        // single-tenant deployments — treating it as an auth fallback would let
-        // anonymous visitors mint upload tokens on those deployments.
-        const session = await getWritableSession();
-        if (!session) throw new Error('Unauthorized — admin session required');
+        // A valid admin session is always required. FIXED_TENANT_ID only scopes
+        // single-tenant deployments and must never act as an auth fallback.
         const tenantId = session.tenantId || process.env.FIXED_TENANT_ID;
         if (!tenantId) throw new Error('Unauthorized — no tenant resolved');
+        if (!CONTENT_HASHED_MEDIA_PATH.test(pathname)) throw new Error('Invalid upload pathname');
 
-        // Random suffix + no overwrite: the blob store is shared across ALL
-        // tenants, and clients choose the pathname (brand upload even sends the
-        // raw filename). Without the suffix, two tenants uploading "logo.png"
-        // would silently overwrite each other's asset — including maliciously.
+        // Random suffix + no overwrite: the blob store is shared across all
+        // tenants, and clients choose the pathname. Without the suffix, two
+        // tenants uploading "logo.png" could overwrite each other's assets.
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'],
-          maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
+          maximumSizeInBytes: MAX_OPTIMIZED_UPLOAD_BYTES,
           addRandomSuffix: true,
           allowOverwrite: false,
           tokenPayload: JSON.stringify({ tenantId }),
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Persist asset to media_assets so it appears in the CMS library even
-        // when never referenced from a section. Replaces the previous "lazy
-        // scan" approach which produced orphan blobs and never recorded size.
         try {
           const payload = tokenPayload ? JSON.parse(tokenPayload) as { tenantId?: string } : {};
           const tenantId = payload.tenantId;
           if (!tenantId) return;
+
           // The admin client records the upload itself via saveMediaRecord
-          // (with real size/dimensions/folder) right after upload() resolves.
-          // This callback fires concurrently and used to race that write into
-          // a duplicate library row. Give the client a head start — this path
-          // only needs to catch uploads whose client never reported back.
+          // right after upload() resolves. This delayed fallback only catches
+          // uploads whose client never reported back.
           await new Promise((resolve) => setTimeout(resolve, 5000));
           const filename = (blob.pathname.split('/').pop() || 'upload').slice(0, 255);
           const db = getDb();
