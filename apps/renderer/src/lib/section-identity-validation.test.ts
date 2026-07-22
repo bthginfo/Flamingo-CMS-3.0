@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { validateSectionIdentity, validateSections } from './api-utils';
+import { normalizeSectionData, validateSectionIdentity, validateSections } from './api-utils';
 
 test('API accepts a matching optional section identity', () => {
   assert.equal(validateSectionIdentity({
@@ -37,4 +37,24 @@ test('API fails closed for addon sections and accepts them with capability conte
   assert.equal(validateSections([{ type: 'shopCart', data: {} }], 'ecommerce', { hasShop: true }), null);
   assert.match(validateSections([{ type: 'bookingWidget', data: {} }], 'hotel') || '', /requires the active booking addon/);
   assert.equal(validateSections([{ type: 'bookingWidget', data: {} }], 'hotel', { hasBooking: true }), null);
+});
+
+test('API normalizes common weak-model section data aliases before validation', () => {
+  const serviceData = normalizeSectionData('servicesGrid', {
+    title: 'Leistungen',
+    subtitle: 'Was wir konkret anbieten',
+    cards: [{ title: 'Beratung', text: 'Klärt Ziele, Ablauf und nächste Schritte.' }],
+  });
+  assert.equal(serviceData.headline, 'Leistungen');
+  assert.equal(serviceData.subline, 'Was wir konkret anbieten');
+  assert.deepEqual(serviceData.manualCards, [{ title: 'Beratung', text: 'Klärt Ziele, Ablauf und nächste Schritte.' }]);
+  assert.equal(validateSections([{ type: 'servicesGrid', data: serviceData }], 'tradesman'), null);
+
+  const faqData = normalizeSectionData('faq', {
+    title: 'Häufige Fragen',
+    faqs: [{ title: 'Wie startet ein Projekt?', text: 'Mit einem kurzen Erstgespräch und klarer Bedarfsaufnahme.' }],
+  });
+  assert.equal(faqData.headline, 'Häufige Fragen');
+  assert.deepEqual(faqData.items, [{ title: 'Wie startet ein Projekt?', text: 'Mit einem kurzen Erstgespräch und klarer Bedarfsaufnahme.', question: 'Wie startet ein Projekt?', answer: 'Mit einem kurzen Erstgespräch und klarer Bedarfsaufnahme.' }]);
+  assert.equal(validateSections([{ type: 'faq', data: faqData }], 'tradesman'), null);
 });

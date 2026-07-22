@@ -24,7 +24,9 @@ describe('AI agent guidance', () => {
     assert.deepEqual(contract.stateMachine.map(step => step.state), [
       'DISCOVER', 'FOUNDATION', 'CONTENT', 'VERIFY', 'PUBLISH',
     ]);
+    assert.deepEqual(contract.agentRunbook.writeOrder.slice(0, 3), ['profile-preflight', 'plan-preflight', 'brand']);
     assert.equal(contract.requestRules.pageEnvelope.upsert, true);
+    assert.equal(contract.requestBodies.page.body.upsert, true);
     assert.equal(contract.currentState.bookingEnabled, true);
   });
 
@@ -38,6 +40,8 @@ describe('AI agent guidance', () => {
 
   it('keeps the short prompt focused on deterministic contracts', () => {
     const prompt = buildAiAgentPrompt('Beispiel GmbH', 'tradesman');
+    assert.match(prompt, /agentContract\.agentRunbook\.writeOrder/);
+    assert.match(prompt, /agentContract\.requestBodies/);
     assert.match(prompt, /agentContract\.stateMachine/);
     assert.match(prompt, /POST \/api\/v1\/content\/validate/);
     assert.match(prompt, /upsert=true/);
@@ -53,6 +57,8 @@ describe('AI agent guidance', () => {
     assert.equal(contract.weakModelWorkflow.fieldBudgets.metaTitle.max, 70);
     assert.match(contract.weakModelWorkflow.examples.headline.bad, /Willkommen/);
     assert.deepEqual(contract.weakModelWorkflow.validationContract.preflight.body.mode, 'plan');
+    assert.equal(contract.agentRunbook.pageWriting.batchSize, 1);
+    assert.deepEqual(contract.agentRunbook.commonFieldAliasesHandledByApi.manualCards, ['cards', 'items', 'services']);
   });
 
   it('only exposes valid Advanced examples and their asset constraints', () => {

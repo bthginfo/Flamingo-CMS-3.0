@@ -87,6 +87,151 @@ function sectionType(entry: SectionCatalogEntry): string | null {
   return entry.type || entry.id || null;
 }
 
+const AGENT_REQUEST_BODIES = {
+  brand: {
+    method: 'PUT',
+    path: '/api/v1/content/brand',
+    body: {
+      companyName: '<verified business name>',
+      tagline: '<specific outcome, not a slogan>',
+      primaryColor: '#123456',
+      accentColor: '#D8A24A',
+      logoUrl: '<uploaded-or-existing-url, optional>',
+      headingFont: 'Inter',
+      bodyFont: 'Inter',
+    },
+  },
+  contact: {
+    method: 'PUT',
+    path: '/api/v1/content/contact',
+    body: {
+      email: '<verified email>',
+      phone: '<verified phone>',
+      address: '<verified street, postal code, city>',
+      whatsappEnabled: false,
+    },
+  },
+  design: {
+    method: 'PUT',
+    path: '/api/v1/content/design',
+    body: {
+      sectionBg: '#FFFFFF',
+      cardBg: '#FFFFFF',
+      heading: '#111827',
+      body: '#374151',
+      muted: '#6B7280',
+      btnBg: '#111827',
+      btnText: '#FFFFFF',
+      badgeBg: '#F3F4F6',
+      badgeText: '#111827',
+      radius: '1rem',
+    },
+  },
+  navigation: {
+    method: 'PUT',
+    path: '/api/v1/content/navigation',
+    body: {
+      items: [{ label: 'Startseite', href: '/' }, { label: 'Kontakt', href: '/kontakt' }],
+      cta: { label: '<specific action>', href: '/kontakt' },
+    },
+  },
+  footer: {
+    method: 'PUT',
+    path: '/api/v1/content/footer',
+    body: {
+      columns: [
+        { title: 'Angebot', items: [{ text: '<real page label>', href: '/leistungen' }] },
+        { title: 'Kontakt', items: [{ text: 'Kontakt', href: '/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '/impressum' }, { label: 'Datenschutz', href: '/datenschutz' }],
+      cta: { label: '<specific action>', href: '/kontakt' },
+    },
+  },
+  seoGlobal: {
+    method: 'PUT',
+    path: '/api/v1/content/seo',
+    body: {
+      titleTemplate: '%s | <Brand>',
+      defaultTitle: '<Brand + city/region>',
+      defaultDescription: '<70-170 chars; concrete offer and region>',
+      locale: 'de_DE',
+    },
+  },
+  page: {
+    method: 'POST',
+    path: '/api/v1/content/pages',
+    body: {
+      slug: 'startseite',
+      title: 'Startseite',
+      upsert: true,
+      sections: [{
+        type: '<availableSectionTypes only>',
+        data: '<exact sectionDataSchemas[type] shape>',
+        styleOverrides: '<optional exact sectionStyleContracts[type].colorFields keys>',
+      }],
+    },
+  },
+  pageSeo: {
+    method: 'PUT',
+    path: '/api/v1/content/seo/:pageId',
+    body: { metaTitle: '<20-70 chars>', metaDescription: '<70-170 chars; unique>' },
+  },
+  validatePlan: {
+    method: 'POST',
+    path: '/api/v1/content/validate',
+    body: { mode: 'plan', siteProfile: '<approved profile>', pages: '<complete planned pages>', navigation: '<planned nav>', footer: '<planned footer>' },
+  },
+  validateStored: { method: 'GET', path: '/api/v1/content/validate' },
+  publish: { method: 'POST', path: '/api/v1/content/publish', body: {} },
+} as const;
+
+const AGENT_AUTOPILOT_RUNBOOK = {
+  persona: 'Careful deterministic CMS writer. Prefer valid, specific, verified content over creative breadth.',
+  firstMove: 'Read agentContract completely, then POST /api/v1/content/validate with mode="profile" or mode="plan" before any content write.',
+  writeOrder: [
+    'profile-preflight',
+    'plan-preflight',
+    'brand',
+    'contact',
+    'design',
+    'seoGlobal',
+    'collections',
+    'collectionItems',
+    'pages',
+    'pageSeo',
+    'navigation',
+    'footer',
+    'stored-validate',
+    'repair',
+    'publish',
+  ],
+  hardStops: [
+    'If a fact is unknown, put it in siteProfile.facts.unknowns and do not state it publicly.',
+    'If POST /validate returns valid=false, do not write pages yet.',
+    'If GET /validate returns readyToPublish=false, do not publish.',
+    'If an endpoint returns 400, change only the named location; never retry the same body.',
+  ],
+  repairLoop: {
+    maxUnchangedRetries: 0,
+    rule: 'Sort issues by severity, group by location, patch the smallest field/object that satisfies repair.acceptance.',
+    afterPatch: 'Run GET /api/v1/content/validate again and continue until readyToPublish=true.',
+  },
+  pageWriting: {
+    batchSize: 1,
+    rule: 'Write one page per request with upsert=true. Inspect the response id before writing page SEO or links to that page.',
+    fallback: 'If a premium/advanced section cannot be filled with real assets, replace it with a simpler available section instead of inventing media.',
+  },
+  commonFieldAliasesHandledByApi: {
+    headline: ['title', 'heading'],
+    subline: ['subtitle', 'description'],
+    primaryCta: ['cta', 'button', 'primaryButton'],
+    manualCards: ['cards', 'items', 'services'],
+    steps: ['items'],
+    faqItems: ['faqs', 'questions'],
+    images: ['items'],
+  },
+} as const;
+
 export function buildAiAgentContract(input: {
   tenantName: string;
   industry: string;
@@ -155,6 +300,8 @@ export function buildAiAgentContract(input: {
     protocolVersion: '1.1',
     objective: `Build a complete, credible ${input.industry} website for ${input.tenantName}. Replace every sample value with verified business-specific content.`,
     currentState: { existingPages: input.existingPages, shopEnabled: input.hasShop, bookingEnabled: input.hasBooking },
+    agentRunbook: AGENT_AUTOPILOT_RUNBOOK,
+    requestBodies: AGENT_REQUEST_BODIES,
     stateMachine: [
       { state: 'DISCOVER', action: 'Read this response completely. Reuse existing page IDs/slugs. Never guess section fields.' },
       { state: 'FOUNDATION', action: 'Write brand, contact, design, navigation, footer, opening hours and global SEO.' },
@@ -324,5 +471,5 @@ export function buildAiAgentContract(input: {
 }
 
 export function buildAiAgentPrompt(tenantName: string, industry: string): string {
-  return `Create a complete ${industry} website for ${tenantName}. First fill agentContract.weakModelWorkflow.siteProfileIntake, then plan all pages with pagePlanContract and preflight them via POST /api/v1/content/validate. Follow agentContract.stateMachine in order. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Replace examples with verified German business content. Repair only named issue locations. Publish only with readyToPublish=true and no color warnings.`;
+  return `Create a complete ${industry} website for ${tenantName}. Follow agentContract.stateMachine in order, then agentContract.agentRunbook.writeOrder, and use agentContract.requestBodies as payload templates. First fill agentContract.weakModelWorkflow.siteProfileIntake, then plan all pages with pagePlanContract and preflight them via POST /api/v1/content/validate. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Replace examples with verified German business content. Repair only named issue locations. Publish only with readyToPublish=true and no color warnings.`;
 }

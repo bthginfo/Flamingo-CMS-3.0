@@ -187,8 +187,12 @@ export function validateSections(
       typeof s.definitionKey === 'string' ? s.definitionKey : null,
     );
     if (styleErr) return styleErr;
-    // Section-specific validation
-    const data = s.data || {};
+    // Section-specific validation uses alias-normalized data so weak-model
+    // aliases like "title" -> "headline" or "cards" -> "manualCards" don't
+    // fail before the write path can canonicalize them. Do not sanitize here:
+    // validation examples may include data URLs that are valid for shape
+    // checking but should still be stripped by the actual write path.
+    const data = normalizeSectionData(s.type, (s.data || {}) as Record<string, unknown>, { sanitize: false });
     const err = validateSectionData(s.type, data, i);
     if (err) return err;
   }
@@ -267,16 +271,101 @@ function validateSectionData(type: string, data: Record<string, unknown>, idx: n
  * Normalize section data to use canonical field names.
  * Fixes common AI mistakes like using "services" instead of "manualCards".
  */
-export function normalizeSectionData(type: string, data: Record<string, unknown>): Record<string, unknown> {
-  const d = sanitizeValue({ ...data }) as Record<string, unknown>;
-  if (type === 'servicesGrid') {
-    if (Array.isArray(d.services) && !Array.isArray(d.manualCards)) {
-      d.manualCards = d.services;
-      delete d.services;
-    }
+export function normalizeSectionData(
+  type: string,
+  data: Record<string, unknown>,
+  options: { sanitize?: boolean } = {},
+): Record<string, unknown> {
+  const d = (options.sanitize === false ? { ...data } : sanitizeValue({ ...data })) as Record<string, unknown>;
+  applyCommonCopyAliases(d);
+  applyCommonCtaAliases(d);
+
+  if (isHeroType(type)) {
+    copyAlias(d, 'bgImage', ['backgroundImage', 'image', 'imageUrl']);
+    copyAlias(d, 'badgeText', ['badge', 'eyebrow', 'kicker']);
+  }
+
+  if (type === 'textImage' || type === 'featureShowcase' || type === 'floorPlanOverview') {
+    copyAlias(d, 'text', ['content', 'body', 'description']);
+    copyAlias(d, 'image', ['imageUrl', 'src']);
+  }
+
+  if (type === 'servicesGrid' || type === 'programGrid') {
+    copyAlias(d, 'manualCards', ['cards', 'items', 'services']);
     if (!d.source) d.source = 'manual';
   }
+
+  if (type === 'processSteps') copyAlias(d, 'steps', ['items']);
+  if (type === 'timeline' || type === 'courseSchedule') copyAlias(d, 'entries', ['items', 'steps']);
+  if (type === 'testimonials' || type === 'testimonialMarquee') copyAlias(d, 'items', ['testimonials', 'reviews', 'cards']);
+  if (type === 'faq' || type === 'faqContactSplit') {
+    copyAlias(d, 'items', ['faqs', 'questions']);
+    if (Array.isArray(d.items)) d.items = d.items.map(normalizeQuestionAnswerItem);
+  }
+  if (type === 'galleryGrid' || type === 'galleryPro' || type === 'galleryMoodboard') {
+    copyAlias(d, 'images', ['items', 'gallery']);
+    if (Array.isArray(d.images)) d.images = d.images.map(normalizeImageItem);
+  }
+  if (type === 'logoMarquee' || type === 'logoCloud') {
+    copyAlias(d, 'logos', ['items', 'images']);
+    if (Array.isArray(d.logos)) d.logos = d.logos.map(normalizeLogoItem);
+  }
+  if (type === 'contact') copyAlias(d, 'introText', ['text', 'description', 'subline']);
   return d;
+}
+
+function isHeroType(type: string) {
+  return type === 'hero' || type === 'collectionHero' || type.startsWith('hero');
+}
+
+function copyAlias(target: Record<string, unknown>, canonical: string, aliases: string[]) {
+  if (target[canonical] !== undefined && target[canonical] !== null && target[canonical] !== '') return;
+  for (const alias of aliases) {
+    const value = target[alias];
+    if (value === undefined || value === null || value === '') continue;
+    target[canonical] = value;
+    return;
+  }
+}
+
+function applyCommonCopyAliases(data: Record<string, unknown>) {
+  copyAlias(data, 'headline', ['title', 'heading']);
+  copyAlias(data, 'subline', ['subtitle', 'description']);
+}
+
+function applyCommonCtaAliases(data: Record<string, unknown>) {
+  copyAlias(data, 'primaryCta', ['cta', 'button', 'primaryButton']);
+  copyAlias(data, 'secondaryCta', ['secondaryButton']);
+  if (data.primaryCta === undefined && (typeof data.ctaLabel === 'string' || typeof data.ctaHref === 'string')) {
+    data.primaryCta = {
+      label: typeof data.ctaLabel === 'string' ? data.ctaLabel : 'Kontakt aufnehmen',
+      href: typeof data.ctaHref === 'string' ? data.ctaHref : '/kontakt',
+    };
+  }
+}
+
+function normalizeQuestionAnswerItem(item: unknown) {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
+  const normalized = { ...(item as Record<string, unknown>) };
+  copyAlias(normalized, 'question', ['q', 'title', 'headline']);
+  copyAlias(normalized, 'answer', ['a', 'text', 'body', 'description']);
+  return normalized;
+}
+
+function normalizeImageItem(item: unknown) {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
+  const normalized = { ...(item as Record<string, unknown>) };
+  copyAlias(normalized, 'src', ['image', 'url', 'imageUrl']);
+  copyAlias(normalized, 'alt', ['imageAlt', 'description']);
+  return normalized;
+}
+
+function normalizeLogoItem(item: unknown) {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
+  const normalized = { ...(item as Record<string, unknown>) };
+  copyAlias(normalized, 'src', ['image', 'url', 'imageUrl', 'logoUrl']);
+  copyAlias(normalized, 'alt', ['name', 'label', 'title']);
+  return normalized;
 }
 
 /** Nearest allowed key by edit distance — powers "Did you mean …?" hints. */

@@ -464,6 +464,7 @@ export async function renderBillingPdf(input: {
     drawPageFooter();
   };
   newPage();
+  const headerY = 786;
   const showLogo = Boolean(logo);
   let titleX = margin;
   if (showLogo && logo) {
@@ -472,12 +473,11 @@ export async function renderBillingPdf(input: {
     const scale = Math.min(maxLogoWidth / logo.width, maxLogoHeight / logo.height);
     const width = logo.width * scale;
     const height = logo.height * scale;
-    page!.drawImage(logo, { x: margin, y: 778 - height, width, height });
+    page!.drawImage(logo, { x: margin, y: headerY - height + 2, width, height });
     titleX = margin + width + 18;
   }
   const documentNumberLabel = input.document.documentNumber || 'wird vergeben';
-  page!.drawText(title.toUpperCase(), { x: titleX, y: 770, font: bold, size: title.length > 17 ? 11 : 12, color: muted });
-  page!.drawText(documentNumberLabel, { x: titleX, y: 752, font: regular, size: 9, color: accent });
+  page!.drawText(title.toUpperCase(), { x: titleX, y: headerY, font: regular, size: 8, color: muted });
   const drawRight = (text: string, textY: number, font: PDFFont, size: number, color = ink) => {
     page!.drawText(text, { x: 547 - font.widthOfTextAtSize(text, size), y: textY, font, size, color });
   };
@@ -486,7 +486,7 @@ export async function renderBillingPdf(input: {
     input.seller.street,
     `${input.seller.postalCode} ${input.seller.city}`,
     jurisdiction.name,
-  ].filter(Boolean).forEach((line, index) => drawRight(String(line), 770 - index * 13, index === 0 ? bold : regular, index === 0 ? 8.5 : 8, index === 0 ? ink : muted));
+  ].filter(Boolean).forEach((line, index) => drawRight(String(line), headerY - index * 13, index === 0 ? bold : regular, index === 0 ? 8.5 : 8, index === 0 ? ink : muted));
   page!.drawLine({ start: { x: margin, y: 722 }, end: { x: 547, y: 722 }, thickness: 1, color: pale });
 
   y = 690;
@@ -494,34 +494,38 @@ export async function renderBillingPdf(input: {
   if (sender) y = drawWrappedText(page!, regular, sender, { x: margin, y, size: 7, maxWidth: 245, color: muted, maxLines: 2 }) - 10;
   page!.drawText(input.customer.displayName, { x: margin, y, font: bold, size: 11, color: ink }); y -= 15;
   page!.drawText(input.customer.street, { x: margin, y, font: regular, size: 10, color: ink }); y -= 14;
-  page!.drawText(`${input.customer.postalCode} ${input.customer.city} · ${input.customer.countryCode}`, { x: margin, y, font: regular, size: 10, color: ink });
+  page!.drawText(`${input.customer.postalCode} ${input.customer.city}`, { x: margin, y, font: regular, size: 10, color: ink });
 
   const metaX = 358;
   let metaY = 690;
   const meta = [
-    ['Rechnungsdatum', formatDate(input.document.issueDate)],
-    ['Leistungsdatum', input.document.serviceDateTo ? `${formatDate(input.document.serviceDateFrom)} – ${formatDate(input.document.serviceDateTo)}` : formatDate(input.document.serviceDateFrom)],
-    ['Fällig am', formatDate(input.document.dueDate)],
-    ['Kundennummer', input.customer.customerNumber || '—'],
+    [title, documentNumberLabel],
+    ['Datum', formatDate(input.document.issueDate)],
+    ['Leistung', input.document.serviceDateTo ? `${formatDate(input.document.serviceDateFrom)} – ${formatDate(input.document.serviceDateTo)}` : formatDate(input.document.serviceDateFrom)],
+    ['Fällig', formatDate(input.document.dueDate)],
   ];
   for (const [label, value] of meta) {
     page!.drawText(label, { x: metaX, y: metaY, font: regular, size: 8, color: muted });
-    page!.drawText(value, { x: metaX + 78, y: metaY, font: bold, size: 8, color: ink });
+    page!.drawText(value, { x: metaX + 78, y: metaY, font: regular, size: 8, color: ink });
     metaY -= 17;
   }
-  y = 565;
+  y = 555;
+  page!.drawText(title, { x: margin, y, font: bold, size: 18, color: ink });
+  y -= 36;
   if (input.document.introText) {
     for (const line of wrap(regular, input.document.introText, 9, 499)) { page!.drawText(line, { x: margin, y, font: regular, size: 9, color: ink }); y -= 13; }
-    y -= 24;
+    y -= 32;
+  } else {
+    y -= 20;
   }
 
   const drawTableHeader = () => {
-    page!.drawRectangle({ x: margin, y: y - 6, width: 499, height: 26, color: pale });
     page!.drawText('Pos.', { x: 56, y: y + 3, font: bold, size: 8, color: muted });
     page!.drawText('Leistung', { x: 92, y: y + 3, font: bold, size: 8, color: muted });
     page!.drawText('Menge', { x: 340, y: y + 3, font: bold, size: 8, color: muted });
-    page!.drawText('Einzel', { x: 400, y: y + 3, font: bold, size: 8, color: muted });
+    page!.drawText('Preis', { x: 400, y: y + 3, font: bold, size: 8, color: muted });
     page!.drawText('Gesamt', { x: 486, y: y + 3, font: bold, size: 8, color: muted });
+    page!.drawLine({ start: { x: margin, y: y - 12 }, end: { x: 547, y: y - 12 }, thickness: 0.6, color: muted });
     y -= 34;
   };
   drawTableHeader();
@@ -557,7 +561,7 @@ export async function renderBillingPdf(input: {
   }
   drawTotal('Netto', formatMoney(input.totals.subtotalNetCents));
   input.totals.taxBreakdown.forEach(group => drawTotal(`${group.rateBasisPoints / 100} % USt.`, formatMoney(group.taxCents)));
-  page!.drawLine({ start: { x: totalX, y: y + 13 }, end: { x: 547, y: y + 13 }, thickness: 1.2, color: accent });
+  page!.drawLine({ start: { x: totalX, y: y + 13 }, end: { x: 547, y: y + 13 }, thickness: 1.2, color: ink });
   drawTotal('Gesamt', formatMoney(input.totals.totalGrossCents), true);
 
   y = Math.min(y - 8, 125);
