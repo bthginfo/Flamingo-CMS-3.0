@@ -2,12 +2,12 @@
  * Tenant provisioning: creates all necessary DB records for a new tenant.
  */
 import { getDb } from './db';
-import { createDb, createRuntimeDatabaseRole, migrateDatabase, tenants, tenantDomains, tenantDatabaseConnections, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
+import { createDb, migrateDatabase, tenants, tenantDomains, tenantDatabaseConnections, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
 import { hashPassword } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 import { addDomainToRenderer, createStandaloneProject, addDomainToProject, deleteVercelProject } from './vercel';
-import { createNeonTenantProject, deleteNeonProject, type NeonTenantProject } from './neon';
+import { createNeonRuntimeDatabaseRole, createNeonTenantProject, deleteNeonProject, findNeonTenantProject, type NeonTenantProject } from './neon';
 import { markTenantDatabaseActive, registerTenantDatabase } from './tenant-data-db';
 
 export type ProvisionInput = {
@@ -83,7 +83,11 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       const [databaseRecord] = await db.select().from(tenantDatabaseConnections)
         .where(eq(tenantDatabaseConnections.tenantId, existing.id)).limit(1);
       if (existing.vercelProjectId) await deleteVercelProject(existing.vercelProjectId).catch(error => console.warn('Interrupted Vercel cleanup failed:', error));
-      if (databaseRecord?.projectId) await deleteNeonProject(databaseRecord.projectId).catch(error => console.warn('Interrupted Neon cleanup failed:', error));
+      const orphanNeonProjectId = databaseRecord?.projectId || (await findNeonTenantProject(existing.slug).catch(error => {
+        console.warn('Interrupted Neon lookup failed:', error);
+        return null;
+      }))?.projectId;
+      if (orphanNeonProjectId) await deleteNeonProject(orphanNeonProjectId).catch(error => console.warn('Interrupted Neon cleanup failed:', error));
       await db.delete(tenants).where(eq(tenants.id, existing.id));
     } else {
       throw new Error(`Ein Tenant mit dem Slug "${input.slug}" existiert bereits.`);
@@ -113,7 +117,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     if (deploymentMode === 'standalone') {
       neonProject = await createNeonTenantProject(input.slug);
       await migrateDatabase(neonProject.directConnectionUri);
-      const runtime = await createRuntimeDatabaseRole(neonProject.directConnectionUri);
+      const runtime = await createNeonRuntimeDatabaseRole(neonProject);
       neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
       await registerTenantDatabase({ tenantId, ...neonProject });
       dataDb = createDb(neonProject.pooledConnectionUri);
@@ -223,7 +227,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
   if (deploymentMode === 'standalone') {
     if (!neonProject) throw new Error('Die dedizierte Neon-Datenbank wurde nicht angelegt.');
-    const standaloneResult = await createStandaloneProject(input.slug, tenantId, neonProject.pooledConnectionUri);
+    const standaloneResult = await createStandaloneProject(input.slug, tenantId, neonProject.pooledConnectionUri, { waitForDeployment: false });
     vercelProjectId = standaloneResult.projectId;
     if (!standaloneResult.blobConnected) standaloneWarning = 'Blob Storage konnte nicht automatisch verbunden werden. Bitte im CRM konfigurieren.';
     // Persist early so an interrupted retry can clean up the Vercel project.

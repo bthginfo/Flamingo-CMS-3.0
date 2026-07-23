@@ -2,12 +2,12 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { BILLING_ADDON_KEY, createDb, createRuntimeDatabaseRole, migrateDatabase, tenants, tenantDatabaseConnections, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, type Industry } from '@flamingo/db';
+import { BILLING_ADDON_KEY, createDb, migrateDatabase, tenants, tenantDatabaseConnections, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, type Industry } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, addDomainToProject, removeDomainFromProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject, setStandaloneDatabaseConnection } from '@/lib/vercel';
 import { requireCrmAdmin } from '@/lib/session';
-import { createNeonTenantProject, deleteNeonProject } from '@/lib/neon';
+import { createNeonRuntimeDatabaseRole, createNeonTenantProject, deleteNeonProject, getNeonTenantProjectById } from '@/lib/neon';
 import { getRequiredStandaloneDatabase, getTenantDataDb, getTenantDatabaseRecord, markTenantDatabaseActive, mirrorTenantControlFields, registerTenantDatabase, removeTenantDatabaseRecord, updateTenantRuntimeDatabaseConnection } from '@/lib/tenant-data-db';
 import { copyTenantData, purgeSharedTenantData, verifyTenantDataCopy } from '@/lib/tenant-data-migration';
 
@@ -90,7 +90,7 @@ export async function convertSharedToStandaloneAction(tenantId: string) {
     await db.update(tenants).set({ status: 'provisioning', updatedAt: new Date() }).where(eq(tenants.id, tenantId));
     neonProject = await createNeonTenantProject(tenant.slug);
     await migrateDatabase(neonProject.directConnectionUri);
-    const runtime = await createRuntimeDatabaseRole(neonProject.directConnectionUri);
+    const runtime = await createNeonRuntimeDatabaseRole(neonProject);
     neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
     await registerTenantDatabase({ tenantId, ...neonProject });
     const targetDb = createDb(neonProject.pooledConnectionUri);
@@ -183,7 +183,12 @@ export async function hardenStandaloneDatabaseRoleAction(tenantId: string) {
     }
     const standalone = await getRequiredStandaloneDatabase(tenantId);
     if (standalone.record.roleName.startsWith('flamingo_app_')) return { success: true as const, alreadySecure: true };
-    const runtime = await createRuntimeDatabaseRole(standalone.directConnectionUri);
+    const neonProject = await getNeonTenantProjectById(standalone.record.projectId, {
+      databaseName: standalone.record.databaseName,
+      roleName: standalone.record.roleName,
+      region: standalone.record.region,
+    });
+    const runtime = await createNeonRuntimeDatabaseRole({ ...neonProject, directConnectionUri: standalone.directConnectionUri });
     await setStandaloneDatabaseConnection(tenant.vercelProjectId, tenant.slug, tenantId, runtime.connectionUri);
     await updateTenantRuntimeDatabaseConnection(tenantId, runtime);
     revalidatePath(`/crm/tenants/${tenantId}`);

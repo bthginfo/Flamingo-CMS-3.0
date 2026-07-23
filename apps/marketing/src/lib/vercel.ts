@@ -187,7 +187,12 @@ export async function waitForVercelDeploymentReady(deploymentId: string, timeout
   throw new Error('Das Standalone-Deployment wurde nicht rechtzeitig bereit. Die Quelldaten wurden nicht gelöscht.');
 }
 
-export async function createStandaloneProject(slug: string, tenantId: string, databaseUrl: string): Promise<{ projectId: string; projectUrl: string; blobConnected: boolean; projectCreated: boolean; deploymentId: string }> {
+export async function createStandaloneProject(
+  slug: string,
+  tenantId: string,
+  databaseUrl: string,
+  options: { waitForDeployment?: boolean } = {},
+): Promise<{ projectId: string; projectUrl: string; blobConnected: boolean; projectCreated: boolean; deploymentId: string }> {
   const projectName = getStandaloneProjectName(slug);
   const projectUrl = getStandaloneProjectUrl(slug);
 
@@ -299,7 +304,7 @@ export async function createStandaloneProject(slug: string, tenantId: string, da
     deploymentId = deployment.id || '';
   } else throw new Error('GITHUB_REPO_NUMERIC_ID muss für ein verifiziertes, vollautomatisches Production-Deployment gesetzt sein.');
   if (!deploymentId) throw new Error('Vercel hat keine Production-Deployment-ID zurückgegeben.');
-  await waitForVercelDeploymentReady(deploymentId);
+  if (options.waitForDeployment !== false) await waitForVercelDeploymentReady(deploymentId);
 
   return { projectId: projectId as string, projectUrl, blobConnected, projectCreated, deploymentId };
   } catch (error) {

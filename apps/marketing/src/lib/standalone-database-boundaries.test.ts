@@ -56,8 +56,8 @@ test('standalone provisioning creates, migrates and registers a dedicated Neon d
   assert.match(provisioning, /createNeonTenantProject\(input\.slug\)/);
   assert.match(provisioning, /registerTenantDatabase\(\{ tenantId, \.\.\.neonProject \}\)/);
   assert.match(provisioning, /migrateDatabase\(neonProject\.directConnectionUri\)/);
-  assert.match(provisioning, /createRuntimeDatabaseRole\(neonProject\.directConnectionUri\)/);
-  assert.match(provisioning, /createStandaloneProject\(input\.slug, tenantId, neonProject\.pooledConnectionUri\)/);
+  assert.match(provisioning, /createNeonRuntimeDatabaseRole\(neonProject\)/);
+  assert.match(provisioning, /createStandaloneProject\(input\.slug, tenantId, neonProject\.pooledConnectionUri, \{ waitForDeployment: false \}\)/);
 });
 
 test('standalone Vercel provisioning cleans up freshly created projects on late failures', () => {

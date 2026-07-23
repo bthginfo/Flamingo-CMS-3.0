@@ -19,6 +19,43 @@ export const DATABASE_SCHEMA_VERSION = 25;
 
 const RUNTIME_DATABASE_ROLE_PREFIX = 'flamingo_app';
 
+function assertSafeIdentifier(value: string, label: string) {
+  if (!/^[a-zA-Z_][a-zA-Z0-9_]{0,62}$/.test(value)) {
+    throw new Error(`${label} ist kein gültiger PostgreSQL-Identifier.`);
+  }
+}
+
+function quoteIdentifier(value: string) {
+  if (!/^[a-zA-Z0-9_-]+$/.test(value)) throw new Error('Identifier enthält unzulässige Zeichen.');
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
+function quoteLiteral(value: string) {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+export async function grantRuntimeDatabasePrivileges(ownerDatabaseUrl: string, roleName: string) {
+  assertSafeIdentifier(roleName, 'Runtime-Rolle');
+  const client = new Client({ connectionString: ownerDatabaseUrl });
+  await client.connect();
+  try {
+    const databaseResult = await client.query<{ database_name: string }>('SELECT current_database() AS database_name');
+    const databaseName = databaseResult.rows[0]?.database_name;
+    if (!databaseName || !/^[a-zA-Z0-9_-]+$/.test(databaseName)) throw new Error('Der Datenbankname ist für die Runtime-Rolle ungültig.');
+    const role = quoteIdentifier(roleName);
+    await client.query(`
+      GRANT CONNECT ON DATABASE ${quoteIdentifier(databaseName)} TO ${role};
+      GRANT USAGE ON SCHEMA public TO ${role};
+      GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO ${role};
+      GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO ${role};
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ${role};
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO ${role};
+    `);
+  } finally {
+    await client.end();
+  }
+}
+
 /**
  * Create a least-privilege login for the renderer after owner-led migrations.
  * The returned URI can read/write application data but cannot own or alter the
@@ -36,22 +73,18 @@ export async function createRuntimeDatabaseRole(ownerDatabaseUrl: string) {
     await client.query(`
       DO $role$
       BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${roleName}') THEN
-          CREATE ROLE ${roleName} LOGIN;
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = ${quoteLiteral(roleName)}) THEN
+          CREATE ROLE ${quoteIdentifier(roleName)} LOGIN;
         END IF;
       END
       $role$;
-      ALTER ROLE ${roleName} WITH LOGIN PASSWORD '${password}' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
-      GRANT CONNECT ON DATABASE "${databaseName}" TO ${roleName};
-      GRANT USAGE ON SCHEMA public TO ${roleName};
-      GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO ${roleName};
-      GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO ${roleName};
-      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ${roleName};
-      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO ${roleName};
+      ALTER ROLE ${quoteIdentifier(roleName)} WITH LOGIN PASSWORD ${quoteLiteral(password)} NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
     `);
   } finally {
     await client.end();
   }
+
+  await grantRuntimeDatabasePrivileges(ownerDatabaseUrl, roleName);
 
   const runtimeUrl = new URL(ownerDatabaseUrl);
   runtimeUrl.username = roleName;

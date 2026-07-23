@@ -1,3 +1,6 @@
+import { grantRuntimeDatabasePrivileges } from '@flamingo/db';
+import { randomBytes } from 'node:crypto';
+
 const NEON_API = 'https://console.neon.tech/api/v2';
 
 type NeonOperation = { id?: string; status?: string; error?: string };
@@ -8,9 +11,21 @@ type NeonCreateResponse = {
   roles?: Array<{ name?: string }>;
   operations?: NeonOperation[];
 };
+type NeonProjectListResponse = {
+  projects?: Array<{ id?: string; name?: string; region_id?: string; created_at?: string; updated_at?: string }>;
+};
+type NeonProjectResponse = {
+  project?: { id?: string; name?: string; region_id?: string; default_branch_id?: string };
+};
+type NeonBranchResponse = {
+  branches?: Array<{ id?: string; name?: string; primary?: boolean; default?: boolean }>;
+};
+type NeonDatabaseResponse = { databases?: Array<{ name?: string }> };
+type NeonRoleResponse = { roles?: Array<{ name?: string }> };
 
 export type NeonTenantProject = {
   projectId: string;
+  branchId: string;
   region: string | null;
   databaseName: string;
   roleName: string;
@@ -83,6 +98,85 @@ async function connectionUri(projectId: string, databaseName: string, roleName: 
   return uri;
 }
 
+async function resolveNeonTenantProject(projectId: string, preferred?: { databaseName?: string; roleName?: string; region?: string | null }): Promise<NeonTenantProject> {
+  const [project, branches] = await Promise.all([
+    neonFetch<NeonProjectResponse>(`/projects/${encodeURIComponent(projectId)}`),
+    neonFetch<NeonBranchResponse>(`/projects/${encodeURIComponent(projectId)}/branches`),
+  ]);
+  const branchId = project.project?.default_branch_id
+    || branches.branches?.find(branch => branch.primary || branch.default)?.id
+    || branches.branches?.[0]?.id;
+  if (!branchId) throw new Error('Neon hat keinen Branch für das Tenant-Projekt zurückgegeben.');
+
+  const [databases, roles] = await Promise.all([
+    neonFetch<NeonDatabaseResponse>(`/projects/${encodeURIComponent(projectId)}/branches/${encodeURIComponent(branchId)}/databases`),
+    neonFetch<NeonRoleResponse>(`/projects/${encodeURIComponent(projectId)}/branches/${encodeURIComponent(branchId)}/roles`),
+  ]);
+  const databaseName = preferred?.databaseName || databases.databases?.find(database => database.name === 'flamingo')?.name || databases.databases?.[0]?.name;
+  const roleName = preferred?.roleName || roles.roles?.find(role => role.name === 'flamingo_owner')?.name || roles.roles?.[0]?.name;
+  if (!databaseName || !roleName) throw new Error('Neon-Projekt ist unvollständig: Datenbank oder Owner-Rolle fehlt.');
+
+  const [pooledConnectionUri, directConnectionUri] = await Promise.all([
+    connectionUri(projectId, databaseName, roleName, true, branchId),
+    connectionUri(projectId, databaseName, roleName, false, branchId),
+  ]);
+  return {
+    projectId,
+    branchId,
+    region: preferred?.region ?? project.project?.region_id ?? null,
+    databaseName,
+    roleName,
+    pooledConnectionUri,
+    directConnectionUri,
+  };
+}
+
+export async function findNeonTenantProject(slug: string): Promise<NeonTenantProject | null> {
+  const name = projectName(slug);
+  const list = await neonFetch<NeonProjectListResponse>('/projects?limit=100');
+  const matches = (list.projects || [])
+    .filter(project => project.id && project.name === name)
+    .sort((a, b) => Date.parse(b.updated_at || b.created_at || '') - Date.parse(a.updated_at || a.created_at || ''));
+  const project = matches[0];
+  if (!project?.id) return null;
+  return resolveNeonTenantProject(project.id, { region: project.region_id || null });
+}
+
+export async function getNeonTenantProjectById(projectId: string, preferred?: { databaseName?: string; roleName?: string; region?: string | null }) {
+  return resolveNeonTenantProject(projectId, preferred);
+}
+
+export async function createNeonRuntimeDatabaseRole(project: Pick<NeonTenantProject, 'projectId' | 'branchId' | 'databaseName' | 'directConnectionUri'>) {
+  const roleName = `flamingo_app_${randomBytes(4).toString('hex')}`;
+  const created = await neonFetch<{ role?: { name?: string }; operations?: NeonOperation[] }>(
+    `/projects/${encodeURIComponent(project.projectId)}/branches/${encodeURIComponent(project.branchId)}/roles`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ role: { name: roleName } }),
+    },
+  );
+  await waitForOperations(project.projectId, created.operations);
+  const effectiveRole = created.role?.name || roleName;
+  const passwordResponse = await neonFetch<{ password?: string; role?: { password?: string } }>(
+    `/projects/${encodeURIComponent(project.projectId)}/branches/${encodeURIComponent(project.branchId)}/roles/${encodeURIComponent(effectiveRole)}/reveal_password`,
+  );
+  const password = passwordResponse.password || passwordResponse.role?.password;
+
+  await grantRuntimeDatabasePrivileges(project.directConnectionUri, effectiveRole);
+
+  let runtimeConnectionUri = await connectionUri(project.projectId, project.databaseName, effectiveRole, true, project.branchId);
+  if (password) {
+    const url = new URL(runtimeConnectionUri);
+    if (!url.password) {
+      url.username = effectiveRole;
+      url.password = password;
+      runtimeConnectionUri = url.toString();
+    }
+  }
+  if (!runtimeConnectionUri.startsWith('postgres')) throw new Error('Neon hat keine gültige Runtime-Datenbankverbindung zurückgegeben.');
+  return { roleName: effectiveRole, connectionUri: runtimeConnectionUri };
+}
+
 export async function createNeonTenantProject(slug: string): Promise<NeonTenantProject> {
   const databaseName = 'flamingo';
   const roleName = 'flamingo_owner';
@@ -111,13 +205,14 @@ export async function createNeonTenantProject(slug: string): Promise<NeonTenantP
   if (!projectId) throw new Error('Neon hat keine Project-ID zurückgegeben.');
   await waitForOperations(projectId, created.operations);
   const branchId = created.branch?.id || created.project?.default_branch_id;
+  if (!branchId) throw new Error('Neon hat keine Branch-ID zurückgegeben.');
   const effectiveDatabase = created.databases?.[0]?.name || databaseName;
   const effectiveRole = created.roles?.[0]?.name || roleName;
   const [pooledConnectionUri, directConnectionUri] = await Promise.all([
     connectionUri(projectId, effectiveDatabase, effectiveRole, true, branchId),
     connectionUri(projectId, effectiveDatabase, effectiveRole, false, branchId),
   ]);
-  return { projectId, region: created.project?.region_id || region, databaseName: effectiveDatabase, roleName: effectiveRole, pooledConnectionUri, directConnectionUri };
+  return { projectId, branchId, region: created.project?.region_id || region, databaseName: effectiveDatabase, roleName: effectiveRole, pooledConnectionUri, directConnectionUri };
 }
 
 export async function deleteNeonProject(projectId: string) {
