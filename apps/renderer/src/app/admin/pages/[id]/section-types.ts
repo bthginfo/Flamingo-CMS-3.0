@@ -125,6 +125,12 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'materialAtelier', label: 'Material Atelier', description: 'Große Bildbühne mit präzisem, indexiertem Material- oder Leistungsledger', category: 'Advanced', setupLevel: 'guided', setupHint: 'Empfohlen: 3–8 Positionen mit starkem Bild, kurzem Titel und optionalen Meta-Angaben.', serviceAvailable: true },
 ];
 
+SHARED_SECTION_TYPES.push(
+  { type: 'verticalReelShowcase', label: 'Vertical Reel Showcase', description: 'Hochformat-Videos und Reels als premium Mobile-first Medienbuehne', category: 'Advanced', setupLevel: 'guided', setupHint: 'Empfohlen: 2-5 Reels im Format 9:16 mit kurzen Titeln und Kontext.', serviceAvailable: true },
+  { type: 'aiWorkflowReel', label: 'AI Workflow Reel', description: 'Ein prominentes Hochformat-Video erklaert einen modernen Produktions- oder KI-Workflow', category: 'Advanced', setupLevel: 'guided', setupHint: 'Benoetigt ein Hochformat-Video und 3-6 konkrete Prozessphasen.', serviceAvailable: true },
+  { type: 'cameraExplodeScroll', label: 'Camera Explode Scroll', description: 'Performance-sichere 2.5D-Kamera-Explosion mit scrollgefuehrten Ebenen', category: 'Advanced', setupLevel: 'guided', setupHint: 'Keine 3D-Datei noetig; 4-6 Teile mit kurzen Erklaerungen genuegen.', serviceAvailable: true },
+);
+
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'hero', label: 'Hero', description: 'Hauptbanner der Seite' },
   { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },

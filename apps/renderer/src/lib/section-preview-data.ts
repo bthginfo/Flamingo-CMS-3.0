@@ -8,6 +8,44 @@ const SCENE_LAYER_BLACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/20
 const SCENE_LAYER_BRASS = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%23b08d57" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%23b08d57" stop-opacity=".3"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%23b08d57" stroke-width="8" stroke-opacity=".24"/%3E%3C/svg%3E';
 
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  verticalReelShowcase: {
+    badge: 'Reel Portfolio',
+    headline: 'Kurze Filme, die sofort Haltung zeigen.',
+    subline: 'Hochformat-Clips werden nicht eingebettet, sondern als eigenständige Markenbühne inszeniert.',
+    aspectRatio: '9/16',
+    reels: [
+      { eyebrow: '01 · Campaign', title: 'Ein Motiv, viele Kanäle.', text: 'Das Reel erklärt Idee, Set und Output in wenigen Sekunden.', poster: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=900&q=85', meta: 'Hero Reel', ctaLabel: 'Case ansehen', ctaHref: '#' },
+      { eyebrow: '02 · Social', title: 'Vertikal gedacht.', text: 'Für Reels, Ads und Landingpages bleibt das Format bewusst 9:16.', poster: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=900&q=85', meta: '9:16' },
+      { eyebrow: '03 · Detail', title: 'Produktion sichtbar machen.', text: 'Behind-the-scenes, Ergebnis und Kontext bleiben in einer Section.', poster: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&q=85', meta: 'BTS' },
+    ],
+    cta: { label: 'Reel-Serie planen', href: '#kontakt' },
+  },
+  aiWorkflowReel: {
+    badge: 'AI Production Workflow',
+    headline: 'Vom Prompt zur Kampagne – ohne dass es nach Template aussieht.',
+    subline: 'Die Section zeigt, wie Strategie, Produktion, KI und Postproduktion nachvollziehbar ineinandergreifen.',
+    media: { poster: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=900&q=85', caption: 'Ein vertikales Reel als erzählerischer Anker.' },
+    steps: [
+      { kicker: '01 · Brief', title: 'Ziel und Einsatzkanäle klären.', text: 'Vor dem ersten Bild steht fest, wo der Content verkaufen, erklären oder Vertrauen aufbauen soll.' },
+      { kicker: '02 · Shoot', title: 'Material bewusst produzieren.', text: 'Fotos und Videos werden so geplant, dass daraus Landingpage, Ads und Social Assets entstehen können.' },
+      { kicker: '03 · AI Layer', title: 'KI erweitert den Möglichkeitsraum.', text: 'Varianten, Hintergründe oder Kompositionen entstehen kontrolliert aus dem vorhandenen Markenmaterial.' },
+      { kicker: '04 · Output', title: 'Ein Set für Website, Social und Sales.', text: 'Der finale Content ist kanalbereit und bleibt visuell aus einem Guss.' },
+    ],
+    cta: { label: 'Workflow besprechen', href: '#kontakt' },
+  },
+  cameraExplodeScroll: {
+    badge: 'Disassembled Process',
+    headline: 'Eine Produktion besteht aus mehr als einem Klick.',
+    subline: 'Die Kamera zerlegt sich in die Ebenen, die aus Bildmaterial einen markenfähigen Auftritt machen.',
+    parts: [
+      { id: 'body', label: 'Brand Body', text: 'Positionierung, Look und Zielgruppe geben dem Bild seine Richtung.', offsetX: -96, offsetY: -18, color: '#f4efe4' },
+      { id: 'lens', label: 'Lens', text: 'Fokus, Perspektive und Motivführung entscheiden über Wirkung.', offsetX: 0, offsetY: -104, color: '#111111' },
+      { id: 'sensor', label: 'AI Sensor', text: 'KI-Workflows erweitern Varianten, ohne die visuelle Kontrolle zu verlieren.', offsetX: 105, offsetY: -12, color: '#d4142a' },
+      { id: 'light', label: 'Light', text: 'Licht macht Charakter, Tiefe und Wertigkeit sichtbar.', offsetX: -82, offsetY: 88, color: '#ffffff' },
+      { id: 'output', label: 'Output', text: 'Aus einem Set entstehen Assets für Website, Reels, Ads und Pitch.', offsetX: 92, offsetY: 82, color: '#c7ff4a' },
+    ],
+    cta: { label: 'Produktion anfragen', href: '#kontakt' },
+  },
   dualWave: {
     badge: 'Leistungsspektrum',
     headline: 'Kompetenz, die sich nicht in ein Raster pressen lässt.',

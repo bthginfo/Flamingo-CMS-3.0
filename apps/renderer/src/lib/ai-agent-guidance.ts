@@ -28,6 +28,9 @@ const ADVANCED_SECTION_TYPES = [
   'dayToNight',
   'livingBlueprint',
   'editorialCardMorph',
+  'verticalReelShowcase',
+  'aiWorkflowReel',
+  'cameraExplodeScroll',
 ] as const;
 
 const SECTION_EXAMPLES: Record<string, Record<string, unknown>> = {
@@ -456,6 +459,9 @@ export function buildAiAgentContract(input: {
         dayToNight: '2–4 chronological scenes with time, label, title and image. Reusing one image with sanitized tints is valid.',
         livingBlueprint: '3–8 stable ordered nodes. Choose a layout preset; never provide SVG connections or coordinates.',
         editorialCardMorph: '3–8 image-led cases with concise copy and at most 4 facts each. Existing collection injection may supply items.',
+        verticalReelShowcase: '2–5 vertical reels. Preserve 9:16 unless source assets are another known aspect. Use direct HTTPS video URLs or poster fallbacks; every reel needs a title and short context.',
+        aiWorkflowReel: 'One vertical workflow video or poster plus 3–6 concrete production phases. Explain the real workflow plainly; do not invent automation claims, awards or unverifiable AI capabilities.',
+        cameraExplodeScroll: '4–6 camera/production parts with concise labels, explanations and safe offsets between -180 and 180. Do not provide 3D models, SVG paths, scripts or coordinates outside parts.',
       },
       examples: Object.fromEntries(
         ADVANCED_SECTION_TYPES

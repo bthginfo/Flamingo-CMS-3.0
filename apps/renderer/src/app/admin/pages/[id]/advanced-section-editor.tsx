@@ -12,6 +12,9 @@ type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (da
 type UploadedImage = { src: string; alt: string };
 
 const META: Record<string, { label: string; description: string; requirements: string[] }> = {
+  verticalReelShowcase: { label: 'Vertical Reel Showcase', description: 'Hochformat-Videos werden als starke, mobile-first Medienbühne inszeniert.', requirements: ['2–5 Reels im Format 9:16', 'kurze Titel und Kontext je Reel', 'Posterbild empfohlen'] },
+  aiWorkflowReel: { label: 'AI Workflow Reel', description: 'Ein Reel erklärt den Produktions- oder KI-Workflow; daneben stehen klare Prozessphasen.', requirements: ['ein Hochformat-Video', '3–6 konkrete Phasen', 'keine erfundenen Leistungsversprechen'] },
+  cameraExplodeScroll: { label: 'Camera Explode Scroll', description: 'Eine performante 2.5D-Kamera zerlegt sich beim Scrollen in erklärbare Ebenen.', requirements: ['4–6 Teile', 'kurze Erklärtexte', 'keine schwere 3D-Datei nötig'] },
   dualWave: { label: 'Dual Wave', description: 'Eine Liste steuert beide Typografie-Wellen und das zentrale Fokusbild.', requirements: ['6–12 kurze Begriffe', 'möglichst ein Bild pro Begriff', 'keine doppelte Pflege der Wellen'] },
   cinematicChapters: { label: 'Cinematic Chapters', description: 'Eine geführte Geschichte aus wenigen, klaren Kapiteln.', requirements: ['3–6 Kapitel', 'einheitliche Bildsprache', 'kurze Texte statt langer Absätze'] },
   transformationSequence: { label: 'Transformation Sequence', description: 'Zeigt eine nachvollziehbare Entwicklung vom Ausgangspunkt zum Ergebnis.', requirements: ['3–6 Zustände', 'gleiche Perspektive empfohlen', 'Kennzahlen nur mit belastbarer Grundlage'] },
@@ -202,6 +205,9 @@ export function AdvancedSectionEditor(props: EditorProps) {
     case 'livingBlueprint': return <LivingBlueprintEditor {...props} />;
     case 'editorialCardMorph': return <EditorialCardMorphEditor {...props} />;
     case 'materialAtelier': return <MaterialAtelierEditor {...props} />;
+    case 'verticalReelShowcase': return <VerticalReelShowcaseEditor {...props} />;
+    case 'aiWorkflowReel': return <AiWorkflowReelEditor {...props} />;
+    case 'cameraExplodeScroll': return <CameraExplodeScrollEditor {...props} />;
     default: return null;
   }
 }
@@ -297,6 +303,79 @@ function SceneLabEditor({ data, onChange }: EditorProps) {
 
 function CommonAdvancedFields({ value, onPatch }: { value: { badge: string; headline: string; subline: string }; onPatch: (patch: Partial<typeof value>) => void }) {
   return <EditorGroup title="1. Aussage" description="Dieser Einstieg rahmt die Experience und bleibt auf kleinen Geräten sichtbar."><TextField label="Dachzeile" value={value.badge} onChange={(badge) => onPatch({ badge })} /><TextField label="Überschrift" value={value.headline} onChange={(headline) => onPatch({ headline })} /><TextField label="Unterzeile" value={value.subline} onChange={(subline) => onPatch({ subline })} multiline /></EditorGroup>;
+}
+
+type ReelShowcaseItem = { eyebrow: string; title: string; text: string; videoSrc: string; poster: string; meta: string; ctaLabel: string; ctaHref: string; autoplay: boolean };
+function VerticalReelShowcaseEditor({ data, onChange }: EditorProps) {
+  const incoming = Array.isArray(data.reels) ? data.reels as Array<Partial<ReelShowcaseItem>> : [];
+  const [value, setValue] = useState({
+    badge: String(data.badge || ''),
+    headline: String(data.headline || ''),
+    subline: String(data.subline || ''),
+    aspectRatio: String(data.aspectRatio || '9/16'),
+    cta: (data.cta as { label: string; href: string }) || { label: '', href: '' },
+    reels: incoming.map((item) => ({ eyebrow: item.eyebrow || '', title: item.title || '', text: item.text || '', videoSrc: item.videoSrc || '', poster: item.poster || '', meta: item.meta || '', ctaLabel: item.ctaLabel || '', ctaHref: item.ctaHref || '', autoplay: Boolean(item.autoplay) })),
+  });
+  useReport(value, onChange);
+  const update = (index: number, patch: Partial<ReelShowcaseItem>) => setValue((current) => ({ ...current, reels: current.reels.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item) }));
+  return <AdvancedFrame type="verticalReelShowcase" checks={[{ label: 'Headline', ok: Boolean(value.headline.trim()) }, { label: '2-5 Reels', ok: value.reels.length >= 2 && value.reels.length <= 5 }, { label: 'Video oder Poster je Reel', ok: value.reels.length > 0 && value.reels.every((item) => item.videoSrc || item.poster) }, { label: 'Titel je Reel', ok: value.reels.length > 0 && value.reels.every((item) => item.title.trim()) }]}>
+    <CommonAdvancedFields value={value} onPatch={(patch) => setValue({ ...value, ...patch })} />
+    <EditorGroup title="2. Reels" description="Hochformat bleibt automatisch erhalten. Video-URLs aus Blob/Mediathek einfuegen.">
+      {value.reels.map((item, index) => <ItemPanel key={index} image={item.poster} label={`${index + 1} · ${item.title || item.eyebrow || 'Neues Reel'}`}>
+        <div className="mb-3 flex justify-end"><ReorderButtons index={index} length={value.reels.length} onMove={(from, to) => setValue({ ...value, reels: moveItem(value.reels, from, to) })} onRemove={() => setValue({ ...value, reels: value.reels.filter((_, itemIndex) => itemIndex !== index) })} /></div>
+        <TextField label="Video-URL" value={item.videoSrc} onChange={(videoSrc) => update(index, { videoSrc })} placeholder="https://...mp4" />
+        <div className="mt-3"><ImageUploadField label="Posterbild / Fallback" value={item.poster} onChange={(poster) => update(index, { poster })} /></div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2"><TextField label="Dachzeile" value={item.eyebrow} onChange={(eyebrow) => update(index, { eyebrow })} /><TextField label="Titel" value={item.title} onChange={(title) => update(index, { title })} /><TextField label="Meta" value={item.meta} onChange={(meta) => update(index, { meta })} /><TextField label="Button-Text" value={item.ctaLabel} onChange={(ctaLabel) => update(index, { ctaLabel })} /></div>
+        <div className="mt-3"><TextField label="Kurztext" value={item.text} onChange={(text) => update(index, { text })} multiline /></div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2"><DetailLinkField label="Button-Link" value={item.ctaHref} onChange={(ctaHref) => update(index, { ctaHref })} /><label className="mt-6 flex items-center gap-2 text-xs font-semibold text-zinc-700"><input type="checkbox" checked={item.autoplay} onChange={(event) => update(index, { autoplay: event.target.checked })} className="h-4 w-4 rounded border-zinc-300 accent-violet-600" />Muted Autoplay</label></div>
+      </ItemPanel>)}
+      <button type="button" disabled={value.reels.length >= 5} onClick={() => setValue({ ...value, reels: [...value.reels, { eyebrow: '', title: '', text: '', videoSrc: '', poster: '', meta: '', ctaLabel: '', ctaHref: '', autoplay: false }] })} className="text-sm font-semibold text-violet-700 disabled:opacity-40">+ Reel hinzufuegen</button>
+    </EditorGroup>
+    <EditorGroup title="3. Darstellung"><SelectField label="Format" value={value.aspectRatio} onChange={(aspectRatio) => setValue({ ...value, aspectRatio })} options={[{ value: '9/16', label: '9:16 Reel' }, { value: '4/5', label: '4:5 Social' }, { value: '1/1', label: 'Quadrat' }, { value: '16/9', label: '16:9' }]} /><ButtonField label="Abschluss-Button" value={value.cta} onChange={(cta) => setValue({ ...value, cta })} /></EditorGroup>
+  </AdvancedFrame>;
+}
+
+type WorkflowStep = { kicker: string; title: string; text: string; proof: string };
+function AiWorkflowReelEditor({ data, onChange }: EditorProps) {
+  const incoming = Array.isArray(data.steps) ? data.steps as Array<Partial<WorkflowStep>> : [];
+  const media = (data.media && typeof data.media === 'object' ? data.media : {}) as Record<string, unknown>;
+  const [value, setValue] = useState({
+    badge: String(data.badge || ''),
+    headline: String(data.headline || ''),
+    subline: String(data.subline || ''),
+    media: { videoSrc: String(media.videoSrc || data.videoSrc || ''), poster: String(media.poster || data.poster || ''), caption: String(media.caption || data.caption || '') },
+    cta: (data.cta as { label: string; href: string }) || { label: '', href: '' },
+    steps: incoming.map((item) => ({ kicker: item.kicker || '', title: item.title || '', text: item.text || '', proof: item.proof || '' })),
+  });
+  useReport(value, onChange);
+  const updateStep = (index: number, patch: Partial<WorkflowStep>) => setValue((current) => ({ ...current, steps: current.steps.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item) }));
+  return <AdvancedFrame type="aiWorkflowReel" checks={[{ label: 'Headline', ok: Boolean(value.headline.trim()) }, { label: 'Video oder Poster', ok: Boolean(value.media.videoSrc || value.media.poster) }, { label: '3-6 Phasen', ok: value.steps.length >= 3 && value.steps.length <= 6 }, { label: 'Phasen benannt', ok: value.steps.length > 0 && value.steps.every((item) => item.title.trim()) }]}>
+    <CommonAdvancedFields value={value} onPatch={(patch) => setValue({ ...value, ...patch })} />
+    <EditorGroup title="2. Workflow-Reel"><TextField label="Video-URL" value={value.media.videoSrc} onChange={(videoSrc) => setValue({ ...value, media: { ...value.media, videoSrc } })} placeholder="https://...mp4" /><div className="mt-3"><ImageUploadField label="Posterbild / Fallback" value={value.media.poster} onChange={(poster) => setValue({ ...value, media: { ...value.media, poster } })} /></div><div className="mt-3"><TextField label="Caption im Video" value={value.media.caption} onChange={(caption) => setValue({ ...value, media: { ...value.media, caption } })} multiline /></div></EditorGroup>
+    <EditorGroup title="3. Phasen" description="Konkrete Schritte statt generischer Claims.">{value.steps.map((step, index) => <ItemPanel key={index} label={`${index + 1} · ${step.title || 'Neue Phase'}`}><div className="mb-3 flex justify-end"><ReorderButtons index={index} length={value.steps.length} onMove={(from, to) => setValue({ ...value, steps: moveItem(value.steps, from, to) })} onRemove={() => setValue({ ...value, steps: value.steps.filter((_, itemIndex) => itemIndex !== index) })} /></div><div className="grid gap-3 sm:grid-cols-2"><TextField label="Dachzeile" value={step.kicker} onChange={(kicker) => updateStep(index, { kicker })} /><TextField label="Titel" value={step.title} onChange={(title) => updateStep(index, { title })} /></div><div className="mt-3"><TextField label="Erklaerung" value={step.text} onChange={(text) => updateStep(index, { text })} multiline /></div><div className="mt-3"><TextField label="Proof / Hinweis" value={step.proof} onChange={(proof) => updateStep(index, { proof })} /></div></ItemPanel>)}<button type="button" disabled={value.steps.length >= 6} onClick={() => setValue({ ...value, steps: [...value.steps, { kicker: '', title: '', text: '', proof: '' }] })} className="text-sm font-semibold text-violet-700 disabled:opacity-40">+ Phase hinzufuegen</button></EditorGroup>
+    <EditorGroup title="4. Abschluss"><ButtonField label="Button" value={value.cta} onChange={(cta) => setValue({ ...value, cta })} /></EditorGroup>
+  </AdvancedFrame>;
+}
+
+type CameraPartEditorItem = { id: string; label: string; text: string; offsetX: number; offsetY: number; color: string };
+function CameraExplodeScrollEditor({ data, onChange }: EditorProps) {
+  const incoming = Array.isArray(data.parts) ? data.parts as Array<Partial<CameraPartEditorItem>> : [];
+  const [value, setValue] = useState({
+    badge: String(data.badge || ''),
+    headline: String(data.headline || ''),
+    subline: String(data.subline || ''),
+    brandImage: String(data.brandImage || ''),
+    cta: (data.cta as { label: string; href: string }) || { label: '', href: '' },
+    parts: incoming.map((item, index) => ({ id: item.id || makeId('part'), label: item.label || '', text: item.text || '', offsetX: Number(item.offsetX ?? (index - 2) * 48), offsetY: Number(item.offsetY ?? (index % 2 ? 72 : -72)), color: item.color || '#f5f1e8' })),
+  });
+  useReport(value, onChange);
+  const update = (index: number, patch: Partial<CameraPartEditorItem>) => setValue((current) => ({ ...current, parts: current.parts.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item) }));
+  return <AdvancedFrame type="cameraExplodeScroll" checks={[{ label: 'Headline', ok: Boolean(value.headline.trim()) }, { label: '4-6 Teile', ok: value.parts.length >= 4 && value.parts.length <= 6 }, { label: 'Teile benannt', ok: value.parts.length > 0 && value.parts.every((item) => item.label.trim()) }, { label: 'Erklaerungen gesetzt', ok: value.parts.length > 0 && value.parts.every((item) => item.text.trim()) }]}>
+    <CommonAdvancedFields value={value} onPatch={(patch) => setValue({ ...value, ...patch })} />
+    <EditorGroup title="2. Brandbild optional" description="Wird als kleine Brand-Kachel neben der Kamera eingesetzt, nicht als Logo."><ImageUploadField label="Brandbild" value={value.brandImage} onChange={(brandImage) => setValue({ ...value, brandImage })} /></EditorGroup>
+    <EditorGroup title="3. Kamera-Teile" description="X/Y bestimmen, wohin sich ein Teil beim Scrollen bewegt.">{value.parts.map((part, index) => <ItemPanel key={part.id} label={`${index + 1} · ${part.label || 'Neues Teil'}`}><div className="mb-3 flex justify-end"><ReorderButtons index={index} length={value.parts.length} onMove={(from, to) => setValue({ ...value, parts: moveItem(value.parts, from, to) })} onRemove={() => setValue({ ...value, parts: value.parts.filter((_, itemIndex) => itemIndex !== index) })} /></div><div className="grid gap-3 sm:grid-cols-2"><TextField label="Label" value={part.label} onChange={(label) => update(index, { label })} /><label className="block text-sm"><span className="text-xs font-semibold text-zinc-700">Farbe</span><input type="color" value={part.color} onChange={(event) => update(index, { color: event.target.value })} className="mt-1 h-10 w-full rounded-lg border border-zinc-200 bg-white p-1" /></label><TextField label="Offset X" value={String(part.offsetX)} onChange={(offsetX) => update(index, { offsetX: Number(offsetX) || 0 })} /><TextField label="Offset Y" value={String(part.offsetY)} onChange={(offsetY) => update(index, { offsetY: Number(offsetY) || 0 })} /></div><div className="mt-3"><TextField label="Erklaerung" value={part.text} onChange={(text) => update(index, { text })} multiline /></div></ItemPanel>)}<button type="button" disabled={value.parts.length >= 6} onClick={() => setValue({ ...value, parts: [...value.parts, { id: makeId('part'), label: '', text: '', offsetX: 72, offsetY: -72, color: '#f5f1e8' }] })} className="text-sm font-semibold text-violet-700 disabled:opacity-40">+ Teil hinzufuegen</button></EditorGroup>
+    <EditorGroup title="4. Abschluss"><ButtonField label="Button" value={value.cta} onChange={(cta) => setValue({ ...value, cta })} /></EditorGroup>
+  </AdvancedFrame>;
 }
 
 type KineticStatement = { id: string; prefix: string; highlight: string; suffix: string; text: string; image: string };

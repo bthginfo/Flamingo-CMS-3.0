@@ -231,6 +231,12 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
           requireString('headline'); requireArray('nodes', 3, 'Use 3–8 ordered nodes with stable ids; do not provide coordinates.'); requireArrayMax('nodes', 8); break;
         case 'editorialCardMorph':
           requireString('headline'); requireArray('items', 3, 'Use 3–8 image-led cases with concise copy.'); requireArrayMax('items', 8); break;
+        case 'verticalReelShowcase':
+          requireString('headline'); requireArray('reels', 2, 'Use 2-5 vertical reels. Every reel needs { title, videoSrc? or poster?, text? }.'); requireArrayMax('reels', 5); break;
+        case 'aiWorkflowReel':
+          requireString('headline'); requireArray('steps', 3, 'Use 3-6 concrete workflow phases. Every phase needs { title, text }.'); requireArrayMax('steps', 6); break;
+        case 'cameraExplodeScroll':
+          requireString('headline'); requireArray('parts', 4, 'Use 4-6 camera or production parts with { label, text, offsetX, offsetY }.'); requireArrayMax('parts', 6); break;
       }
 
       if (s.styleOverrides && typeof s.styleOverrides === 'object') {

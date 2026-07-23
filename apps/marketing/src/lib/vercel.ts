@@ -225,6 +225,7 @@ export async function createStandaloneProject(slug: string, tenantId: string, da
 
   const projectId = project.id as string;
 
+  try {
   const envVars: UpsertableProjectEnvironmentVariable[] = [
     { key: 'DATABASE_URL', value: databaseUrl, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
     { key: 'FIXED_TENANT_ID', value: tenantId, target: RENDERER_ENV_TARGETS, type: 'plain', replaceExisting: true },
@@ -301,6 +302,12 @@ export async function createStandaloneProject(slug: string, tenantId: string, da
   await waitForVercelDeploymentReady(deploymentId);
 
   return { projectId: projectId as string, projectUrl, blobConnected, projectCreated, deploymentId };
+  } catch (error) {
+    if (projectCreated) {
+      await deleteVercelProject(projectId).catch(cleanupError => console.error('Standalone Vercel rollback failed:', cleanupError));
+    }
+    throw error;
+  }
 }
 
 /** Switches an existing standalone renderer between databases without rotating its auth secrets. */

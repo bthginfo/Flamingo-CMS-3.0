@@ -60,6 +60,17 @@ test('standalone provisioning creates, migrates and registers a dedicated Neon d
   assert.match(provisioning, /createStandaloneProject\(input\.slug, tenantId, neonProject\.pooledConnectionUri\)/);
 });
 
+test('standalone Vercel provisioning cleans up freshly created projects on late failures', () => {
+  const vercel = source('./vercel.ts');
+  const createProject = vercel.slice(
+    vercel.indexOf('export async function createStandaloneProject'),
+    vercel.indexOf('/** Configure Blob storage'),
+  );
+  assert.match(createProject, /try \{\s*const envVars/);
+  assert.match(createProject, /catch \(error\)[\s\S]*if \(projectCreated\)[\s\S]*deleteVercelProject\(projectId\)/);
+  assert.match(createProject, /throw error/);
+});
+
 test('new customer tenants default to isolated Neon Free infrastructure', () => {
   const provisioning = source('./provisioning.ts');
   const newTenantPage = source('../app/crm/tenants/new/page.tsx');

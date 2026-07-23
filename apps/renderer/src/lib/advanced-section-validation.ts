@@ -19,6 +19,9 @@ const ADVANCED_TYPES = new Set([
   'livingBlueprint',
   'editorialCardMorph',
   'materialAtelier',
+  'verticalReelShowcase',
+  'aiWorkflowReel',
+  'cameraExplodeScroll',
 ]);
 
 function isFilled(value: unknown): value is string {
@@ -215,6 +218,32 @@ export function validateAdvancedSectionData(
       if (!item || !isFilled(item.title)) add(`items[${index}].title`, 'Every atelier position needs a title.', 'Add one concise material, service or collection title.');
       if (!item || !isFilled(item.image)) add(`items[${index}].image`, 'Every atelier position needs an image.', 'Add one strong representative image.');
       if (Array.isArray(item?.meta) && item.meta.length > 5) add(`items[${index}].meta`, 'An atelier position may contain at most 5 meta labels.', 'Keep only the five most useful specifications.');
+    });
+  }
+  if (type === 'verticalReelShowcase') {
+    const reels = requireRange('reels', 2, 5);
+    reels?.forEach((reel, index) => {
+      if (!reel || !isFilled(reel.title)) add(`reels[${index}].title`, 'Every reel needs a title.', 'Add a short title that explains the reel.');
+      if (!reel || (!isFilled(reel.videoSrc) && !isFilled(reel.poster))) add(`reels[${index}].videoSrc`, 'Every reel needs a video URL or poster image.', 'Add a public HTTPS video URL; use a poster as fallback.');
+    });
+  }
+  if (type === 'aiWorkflowReel') {
+    const media = data.media && typeof data.media === 'object' ? data.media as Record<string, unknown> : data;
+    if (!isFilled(media.videoSrc) && !isFilled(media.poster)) add('media.videoSrc', 'The workflow needs a video URL or poster image.', 'Add a public HTTPS reel URL or a poster fallback.');
+    const steps = requireRange('steps', 3, 6);
+    steps?.forEach((step, index) => {
+      if (!step || !isFilled(step.title)) add(`steps[${index}].title`, 'Every workflow phase needs a title.', 'Name the concrete production phase.');
+      if (!step || !isFilled(step.text)) add(`steps[${index}].text`, 'Every workflow phase needs explanatory copy.', 'Explain what happens in this phase without generic claims.');
+    });
+  }
+  if (type === 'cameraExplodeScroll') {
+    const parts = requireRange('parts', 4, 6);
+    parts?.forEach((part, index) => {
+      if (!part || !isFilled(part.label)) add(`parts[${index}].label`, 'Every camera part needs a label.', 'Name the camera or production layer.');
+      if (!part || !isFilled(part.text)) add(`parts[${index}].text`, 'Every camera part needs explanatory copy.', 'Explain the role of this layer in one concise sentence.');
+      for (const key of ['offsetX', 'offsetY'] as const) {
+        if (typeof part?.[key] !== 'number' || Number(part[key]) < -180 || Number(part[key]) > 180) add(`parts[${index}].${key}`, `${key} must be a number from -180 to 180.`, `Set ${key} as a safe pixel offset for the exploded view.`);
+      }
     });
   }
 

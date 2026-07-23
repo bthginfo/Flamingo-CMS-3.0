@@ -262,6 +262,9 @@ const DayToNightSection = dynamic(() => import('./advanced/day-to-night').then((
 const LivingBlueprintSection = dynamic(() => import('./advanced/living-blueprint').then((module) => module.LivingBlueprintSection)) as TemplateComponent;
 const EditorialCardMorphSection = dynamic(() => import('./advanced/editorial-card-morph').then((module) => module.EditorialCardMorphSection)) as TemplateComponent;
 const MaterialAtelierSection = dynamic(() => import('./advanced/material-atelier').then((module) => module.MaterialAtelierSection)) as TemplateComponent;
+const VerticalReelShowcaseSection = dynamic(() => import('./advanced/vertical-reel-showcase').then((module) => module.VerticalReelShowcaseSection)) as TemplateComponent;
+const AiWorkflowReelSection = dynamic(() => import('./advanced/ai-workflow-reel').then((module) => module.AiWorkflowReelSection)) as TemplateComponent;
+const CameraExplodeScrollSection = dynamic(() => import('./advanced/camera-explode-scroll').then((module) => module.CameraExplodeScrollSection)) as TemplateComponent;
 
 /**
  * Explicitly preserves the former ALL_TEMPLATES last-write-wins behavior.
@@ -839,6 +842,9 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   livingBlueprint: LivingBlueprintSection,
   editorialCardMorph: EditorialCardMorphSection,
   materialAtelier: MaterialAtelierSection,
+  verticalReelShowcase: VerticalReelShowcaseSection,
+  aiWorkflowReel: AiWorkflowReelSection,
+  cameraExplodeScroll: CameraExplodeScrollSection,
   productShowcase: ProductShowcaseSection,
   categoryMosaic: CategoryMosaicSection,
   brandShowroom: BrandShowroomSection,

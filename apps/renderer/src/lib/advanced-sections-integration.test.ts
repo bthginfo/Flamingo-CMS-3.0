@@ -24,6 +24,9 @@ const ADVANCED_TYPES = [
   'livingBlueprint',
   'editorialCardMorph',
   'materialAtelier',
+  'verticalReelShowcase',
+  'aiWorkflowReel',
+  'cameraExplodeScroll',
 ] as const;
 
 test('advanced experiences are wired across picker, renderer, schemas, previews and colors', () => {
@@ -70,6 +73,18 @@ test('advanced API validation returns actionable nested paths', () => {
   assert.match(
     validateSections([{ type: 'guidedChoice', data: { headline: 'Find it', mode: 'branch', questions: [{ id: 'q1', label: 'Start', answers: [{ id: 'a1', label: 'Loop', nextQuestionId: 'q1' }, { id: 'a2', label: 'Loop too', nextQuestionId: 'q1' }] }, { id: 'q2', label: 'Lost', answers: [{ id: 'a3', label: 'A', resultId: 'r1' }, { id: 'a4', label: 'B', resultId: 'r2' }] }], results: [{ id: 'r1', title: 'One' }, { id: 'r2', title: 'Two' }] } }], 'tradesman') || '',
     /cycle/,
+  );
+  assert.match(
+    validateSections([{ type: 'verticalReelShowcase', data: { headline: 'Reels', reels: [{ title: 'One' }] } }], 'tradesman') || '',
+    /2â€“5 items|2–5 items/,
+  );
+  assert.match(
+    validateSections([{ type: 'aiWorkflowReel', data: { headline: 'Workflow', media: {}, steps: [{ title: 'Brief', text: 'Start' }, { title: 'Shoot', text: 'Set' }, { title: 'Output' }] } }], 'tradesman') || '',
+    /media\.videoSrc/,
+  );
+  assert.match(
+    validateSections([{ type: 'cameraExplodeScroll', data: { headline: 'Camera', parts: [{ label: 'Lens', text: 'Focus', offsetX: 999, offsetY: 0 }, { label: 'Body', text: 'Brand', offsetX: 0, offsetY: 0 }, { label: 'Sensor', text: 'AI', offsetX: 0, offsetY: 0 }, { label: 'Light', text: 'Mood', offsetX: 0, offsetY: 0 }] } }], 'tradesman') || '',
+    /offsetX/,
   );
 });
 
