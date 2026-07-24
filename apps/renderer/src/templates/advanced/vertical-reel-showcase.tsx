@@ -99,7 +99,7 @@ export function VerticalReelShowcaseSection({ data }: Props) {
             {rest.length < 2 && (
               <div className="flex min-h-64 flex-col justify-between rounded-[var(--token-card-radius)] border border-dashed border-[var(--token-card-border)] bg-[var(--token-section-bg-alt)] p-6">
                 <Film className="text-[color:var(--token-accent)]" />
-                <p className="max-w-xs text-sm leading-6 text-[color:var(--token-muted)]">Weitere Reels können jederzeit ergänzt werden. Hochformat bleibt automatisch erhalten.</p>
+                <p className="max-w-xs text-sm leading-6 text-[color:var(--token-muted)]">Hochformat bleibt im Originalformat sichtbar und direkt als Referenz erlebbar.</p>
               </div>
             )}
           </div>
