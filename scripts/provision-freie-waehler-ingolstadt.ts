@@ -602,9 +602,10 @@ function personBio(page: ScrapedPage, role: string): string {
     .replace(/\bFW Ingolstadt e\.V\.\b/gi, ' ')
     .replace(/\bKontaktdaten\b/gi, ' ')
     .replace(/\s*E-Mail:\s*\S+@\S+\s*/gi, ' ')
+    .replace(/\bSie wollen Mitglied\b[\s\S]*$/i, ' ')
     .replace(/\bMitglied werden\b[\s\S]*$/i, ' ');
   bio = cleanText(bio, 180);
-  return bio.length > 24 ? bio : cleanText((page.excerpt || '').replace(/\bMitglied werden\b[\s\S]*$/i, ' '), 180);
+  return bio.length > 24 ? bio : cleanText((page.excerpt || '').replace(/\bSie wollen Mitglied\b[\s\S]*$/i, ' ').replace(/\bMitglied werden\b[\s\S]*$/i, ' '), 180);
 }
 
 function isPersonPage(page: ScrapedPage): boolean {
@@ -646,7 +647,7 @@ function extractPeople(pages: ScrapedPage[]): CollectionDef {
     })
     .slice(0, 60)
     .map((page, index) => {
-      const role = cleanText(page.text.split('\n').find((line) => /vorsitz|stadtrat|bezirks|kreis|mitglied|referent|fraktion/i.test(line) && !/mitglied werden|mitgliedsantrag|kontaktdaten/i.test(line)) || '', 110);
+      const role = cleanText(page.text.split('\n').find((line) => /vorsitz|stadtrat|bezirks|kreis|mitglied|referent|fraktion/i.test(line) && !/sie wollen mitglied|mitglied werden|mitgliedsantrag|kontaktdaten|e-mail/i.test(line)) || '', 110);
       const slug = stableSlug(page.title, used);
       return {
         slug,
@@ -1055,7 +1056,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         heroSection({
           eyebrow: 'Stadtratsfraktion',
           headline: 'Anträge und Arbeit im Stadtrat.',
-          text: textFromPage(fraktion, 'Informationen aus der Stadtratsfraktion und eine Übersicht der Anträge.', 280),
+          text: 'Stadtratsarbeit, Anträge und Stadtteilthemen an einem Ort: sachlich gebündelt, nachvollziehbar sortiert und schnell auffindbar.',
           layout: 'campaignBleed',
           imagePrimary: FW_HERO,
           imageFit: 'contain',
@@ -1071,7 +1072,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             headline: 'Arbeit nachvollziehbar machen.',
             subline: 'Fraktion, Anträge und Stadtteilthemen sind auf einer Seite gebündelt.',
             cards: [
-              { title: 'Stadtratsfraktion', text: textFromPage(fraktion, 'Informationen aus der Stadtratsfraktion und aktuelle Anträge.', 180), icon: 'Landmark' },
+              { title: 'Stadtratsfraktion', text: 'Ansprechpartner, Arbeitsschwerpunkte und kommunalpolitische Initiativen der Fraktion.', icon: 'Landmark' },
               { title: 'Bezirksausschüsse', text: textFromPage(bza, 'Kommunale Themen entstehen in den Stadtteilen. Die Bezirksausschüsse sind dafür ein wichtiger Ort.', 180), icon: 'Map' },
               { title: 'Antragsarchiv', text: `${antraege.items.length} Anträge und Stadtratsseiten chronologisch sortiert.`, icon: 'FileText', href: '#antraege' },
             ],
