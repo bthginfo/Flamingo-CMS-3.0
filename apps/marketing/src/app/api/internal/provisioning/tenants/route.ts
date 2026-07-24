@@ -3,7 +3,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { tenants } from '@flamingo/db';
 import { getDb } from '@/lib/db';
-import { findNeonTenantProject } from '@/lib/neon';
+import { findNeonTenantProject, findNeonTenantProjectByConnectionUri } from '@/lib/neon';
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { markTenantDatabaseActive, registerTenantDatabase } from '@/lib/tenant-data-db';
 
@@ -104,7 +104,8 @@ export async function PATCH(request: NextRequest) {
         continue;
       }
 
-      const neonProject = await findNeonTenantProject(slug);
+      const neonProject = await findNeonTenantProject(slug)
+        || await findNeonTenantProjectByConnectionUri(databaseUrl);
       if (!neonProject) {
         results.push({ slug, success: false, error: 'Neon-Projekt nicht gefunden.' });
         continue;

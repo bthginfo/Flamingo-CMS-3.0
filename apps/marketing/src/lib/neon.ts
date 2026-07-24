@@ -22,6 +22,9 @@ type NeonBranchResponse = {
 };
 type NeonDatabaseResponse = { databases?: Array<{ name?: string }> };
 type NeonRoleResponse = { roles?: Array<{ name?: string }> };
+type NeonEndpointResponse = {
+  endpoints?: Array<{ id?: string; branch_id?: string; host?: string; proxy_host?: string }>;
+};
 
 export type NeonTenantProject = {
   projectId: string;
@@ -140,6 +143,57 @@ export async function findNeonTenantProject(slug: string): Promise<NeonTenantPro
   const project = matches[0];
   if (!project?.id) return null;
   return resolveNeonTenantProject(project.id, { region: project.region_id || null });
+}
+
+function endpointIdFromConnectionUri(databaseUrl: string) {
+  try {
+    const host = new URL(databaseUrl).hostname;
+    const endpointLabel = host.split('.')[0] || '';
+    return endpointLabel.replace(/-pooler$/, '');
+  } catch {
+    return '';
+  }
+}
+
+function databaseNameFromConnectionUri(databaseUrl: string) {
+  try {
+    const pathname = new URL(databaseUrl).pathname.replace(/^\/+/, '').trim();
+    return pathname ? decodeURIComponent(pathname) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function roleNameFromConnectionUri(databaseUrl: string) {
+  try {
+    const username = new URL(databaseUrl).username;
+    return username ? decodeURIComponent(username) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function findNeonTenantProjectByConnectionUri(databaseUrl: string): Promise<NeonTenantProject | null> {
+  const endpointId = endpointIdFromConnectionUri(databaseUrl);
+  if (!endpointId.startsWith('ep-')) return null;
+
+  const list = await neonFetch<NeonProjectListResponse>('/projects?limit=100');
+  const projects = (list.projects || [])
+    .filter(project => project.id)
+    .sort((a, b) => Date.parse(b.updated_at || b.created_at || '') - Date.parse(a.updated_at || a.created_at || ''));
+
+  for (const project of projects) {
+    const endpoints = await neonFetch<NeonEndpointResponse>(`/projects/${encodeURIComponent(project.id!)}/endpoints`);
+    const match = endpoints.endpoints?.find(endpoint => endpoint.id === endpointId);
+    if (!match) continue;
+    return resolveNeonTenantProject(project.id!, {
+      region: project.region_id || null,
+      databaseName: databaseNameFromConnectionUri(databaseUrl),
+      roleName: roleNameFromConnectionUri(databaseUrl),
+    });
+  }
+
+  return null;
 }
 
 export async function getNeonTenantProjectById(projectId: string, preferred?: { databaseName?: string; roleName?: string; region?: string | null }) {
