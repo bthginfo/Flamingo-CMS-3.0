@@ -92,11 +92,19 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
           <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-10">
             {footer.columns
               .filter((col) => !(contact && col.title?.toLowerCase() === 'kontakt'))
-              .map((col, i) => (
+              .map((col, i) => {
+                const rawLinks = (col.items || (col as unknown as { links?: { label?: string; text?: string; href?: string }[] }).links || []) as Array<{ label?: string; text?: string; href?: string }>;
+                const links = rawLinks
+                  .map((item) => ({
+                    text: item.text || item.label || '',
+                    href: item.href,
+                  }))
+                  .filter((item) => item.text);
+                return (
               <div key={i}>
                 <h3 className="font-display mb-5 text-sm font-semibold uppercase tracking-wider text-[color:var(--brand-footer-text)]">{col.title}</h3>
                 <ul className="space-y-3">
-                  {(col.items || []).map((item, j) => (
+                  {links.map((item, j) => (
                     <li key={j}>
                       {item.href ? (
                         <Link href={prefixInternalHref(item.href, linkPrefix) as string} className="inline-block text-sm transition-all duration-200 hover:translate-x-0.5">
@@ -109,7 +117,8 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
                   ))}
                 </ul>
               </div>
-            ))}
+                );
+              })}
           </div>
         </div>
 

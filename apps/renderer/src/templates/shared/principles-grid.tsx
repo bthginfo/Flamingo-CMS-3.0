@@ -21,7 +21,7 @@ export function PrinciplesGridSection({ data }: Props) {
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.18),transparent_32%,rgba(255,255,255,0.10))]" />
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="max-w-4xl">
-          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--token-badge-border)] bg-[var(--token-badge-bg)] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-badge-text)]"><Sparkles size={14} /><span data-edit-path="badge">{badge}</span></div>}
+          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg,rgba(255,255,255,0.12))] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-badge-text,var(--token-heading))]"><Sparkles size={14} /><span data-edit-path="badge">{badge}</span></div>}
           {headline && <h2 className="text-4xl font-black leading-none text-[color:var(--token-heading)] md:text-6xl lg:text-7xl" data-edit-path="headline">{headline}</h2>}
           {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
         </div>
@@ -36,10 +36,10 @@ export function PrinciplesGridSection({ data }: Props) {
               transition={{ delay: index * 0.05 }}
               className="min-h-[280px] rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-8 py-10"
              data-edit-collection="principles" data-edit-index={index}>
-              <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-card-badge-bg)] text-sm font-black text-[color:var(--token-card-badge-text)]">
+              <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-card-badge-bg,var(--token-badge-bg,rgba(255,255,255,0.12)))] text-sm font-black text-[color:var(--token-card-badge-text,var(--token-badge-text,var(--token-heading)))]">
                 {String(index + 1).padStart(2, '0')}
               </div>
-              {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{item.eyebrow}</div>}
+              {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-eyebrow,var(--token-accent,var(--token-heading)))]" data-edit-path="eyebrow">{item.eyebrow}</div>}
               {item.title && <h3 className="text-2xl font-black leading-tight text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{item.title}</h3>}
               {item.text && <p className="mt-4 text-sm leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(item.text)}</p>}
             </motion.article>

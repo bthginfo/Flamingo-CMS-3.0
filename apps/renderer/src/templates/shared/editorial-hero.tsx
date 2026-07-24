@@ -14,7 +14,48 @@ export function EditorialHeroSection({ data }: Props) {
   const primaryCta = (data.primaryCta as Cta) || {};
   const secondaryCta = (data.secondaryCta as Cta) || {};
   const hint = (data.hint as string) || '';
+  const layout = ((data.layout as string) || (data.variant as string) || '').trim();
+  const imageFit = ((data.imageFit as string) || '').trim();
+  const isCampaignBleed = layout === 'campaignBleed' || layout === 'fullBleedImage';
   if (!headline) return null;
+
+  if (isCampaignBleed && imagePrimary) {
+    return (
+      <div className="relative isolate overflow-hidden bg-[var(--token-section-bg)]">
+        <div className="mx-auto grid max-w-[1500px] items-stretch lg:min-h-[720px] lg:grid-cols-[minmax(25rem,0.62fr)_minmax(0,1fr)]">
+          <div className="relative z-10 flex items-center px-5 py-16 sm:px-8 md:py-24 lg:px-14 xl:px-20">
+            <div className="max-w-2xl rounded-[2rem] border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg)_88%,transparent)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 lg:p-10">
+              <PremiumSectionHeader
+                eyebrow={eyebrow}
+                headline={<WordReveal text={headline} />}
+                subline={text}
+                eyebrowPath="eyebrow"
+                sublinePath="text"
+                size="display"
+                titleAs="h1"
+                className="!mb-0 [&_.cms-section-title]:text-[clamp(3rem,7vw,5.8rem)]"
+              />
+              <ActionGroup className="mt-8">
+                <ActionLink action={primaryCta} editKey="primaryCta" />
+                <ActionLink action={secondaryCta} editKey="secondaryCta" tone="secondary" showArrow={false} />
+              </ActionGroup>
+              {hint && <p className="mt-5 max-w-xl text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="hint">{hint}</p>}
+            </div>
+          </div>
+          <div className="relative flex min-h-[320px] items-end justify-center bg-[var(--token-section-bg-alt)] px-4 pt-4 md:min-h-[520px] lg:min-h-0 lg:px-8 lg:pt-8">
+            <img
+              data-edit-image="imagePrimary"
+              src={imagePrimary}
+              alt={headline}
+              loading="eager"
+              fetchPriority="high"
+              className="h-full max-h-[700px] w-full object-contain object-bottom"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-5 pb-16 pt-20 sm:px-6 md:pb-24 md:pt-28 lg:pb-28 lg:pt-32">
@@ -40,8 +81,8 @@ export function EditorialHeroSection({ data }: Props) {
 
         {imagePrimary && (
           <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
-            <MediaFrame className="aspect-[4/5] rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] shadow-[0_24px_70px_var(--token-shadow)]">
-              <img data-edit-image="imagePrimary" src={imagePrimary} alt={headline} loading="eager" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" />
+            <MediaFrame className="aspect-[4/5] rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_var(--token-shadow)]">
+              <img data-edit-image="imagePrimary" src={imagePrimary} alt={headline} loading="eager" fetchPriority="high" className={`absolute inset-0 h-full w-full ${imageFit === 'contain' ? 'object-contain p-4' : 'object-cover'}`} />
             </MediaFrame>
             {imageSecondary && (
               <MediaFrame className="absolute -bottom-8 -left-8 hidden aspect-square w-[42%] rounded-[var(--token-card-radius)] border-[6px] border-[var(--token-section-bg)] shadow-[0_18px_48px_var(--token-shadow)] md:block">
