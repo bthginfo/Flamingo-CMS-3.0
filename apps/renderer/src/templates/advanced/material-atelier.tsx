@@ -60,8 +60,8 @@ export function MaterialAtelierSection({ data }: Props) {
           aside={<p className="mt-5 text-[10px] font-bold uppercase tracking-[.22em] text-[color:var(--token-eyebrow)] lg:text-right">{items.length} Positionen · kuratiert</p>}
         />
 
-        <div className="mt-10 hidden min-h-[36rem] grid-cols-[minmax(0,1.55fr)_minmax(21rem,.72fr)] border-y border-[var(--token-divider)] lg:grid">
-          <div className="relative min-h-[36rem] overflow-hidden bg-[var(--token-section-bg-alt)]">
+        <div className="mt-10 hidden min-h-[36rem] grid-cols-[minmax(0,1.48fr)_minmax(24rem,.82fr)] gap-6 lg:grid">
+          <div className="relative min-h-[36rem] overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-divider)] bg-[var(--token-section-bg-alt)]">
             <AnimatePresence initial={false} mode="wait">
               <motion.figure
                 key={itemKey(selected, active)}
@@ -93,8 +93,8 @@ export function MaterialAtelierSection({ data }: Props) {
             </AnimatePresence>
           </div>
 
-          <div className="border-l border-[var(--token-divider)]">
-            <ol aria-label="Atelier-Auswahl" className="divide-y divide-[var(--token-divider)]">
+          <div className="min-w-0">
+            <ol aria-label="Atelier-Auswahl" className="space-y-3">
               {items.map((item, index) => {
                 const isActive = active === index;
                 return (
@@ -106,24 +106,24 @@ export function MaterialAtelierSection({ data }: Props) {
                       onMouseEnter={() => setActive(index)}
                       aria-pressed={isActive}
                       aria-current={isActive ? 'true' : undefined}
-                      className={`group grid min-h-[4.85rem] w-full grid-cols-[2.5rem_minmax(0,1fr)_1.75rem] items-center gap-3 px-5 py-4 text-left transition focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--token-accent)] ${isActive ? 'bg-[var(--token-card-bg)]' : 'hover:bg-[var(--token-section-bg-alt)]'}`}
+                      className={`group grid min-h-[5.65rem] w-full grid-cols-[2.75rem_minmax(0,1fr)_2rem] items-center gap-4 rounded-[calc(var(--token-button-radius)*.82)] border px-5 py-5 text-left shadow-[0_14px_42px_rgba(0,0,0,.18)] transition focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${isActive ? 'border-[var(--token-accent)] bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow-[0_18px_54px_rgba(0,0,0,.28)]' : 'border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-btn-bg)_88%,var(--token-card-bg))] text-[color:var(--token-btn-text)] hover:-translate-y-0.5 hover:bg-[var(--token-btn-bg)]'}`}
                       data-edit-collection="items"
                       data-edit-index={index}
                     >
-                      <span className="font-mono text-[10px] tracking-[.14em] text-[color:var(--token-muted)]">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="font-mono text-[10px] tracking-[.14em] opacity-70">{String(index + 1).padStart(2, '0')}</span>
                       <span className="min-w-0">
-                        {item.kicker && <span className="block truncate text-[9px] font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{item.kicker}</span>}
-                        <span className="mt-0.5 block hyphens-auto text-base font-bold leading-tight text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</span>
-                        {isActive && <span className="mt-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.12em] text-[color:var(--token-muted)]"><Check size={11} className="text-[color:var(--token-check)]" /> Ausgewählt</span>}
+                        {item.kicker && <span className={`block text-[9px] font-black uppercase tracking-[.22em] ${isActive ? 'text-inherit opacity-65' : 'text-[color:var(--token-accent)]'}`} data-edit-path="kicker">{item.kicker}</span>}
+                        <span className="mt-1 block hyphens-auto text-lg font-black leading-[1.08] text-inherit [overflow-wrap:anywhere]" data-edit-path="title">{item.title}</span>
+                        {isActive && <span className="mt-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[.13em] text-inherit opacity-75"><Check size={12} /> Ausgewählt</span>}
                       </span>
-                      <ChevronRight aria-hidden="true" className={`transition ${isActive ? 'translate-x-0 text-[color:var(--token-accent)]' : '-translate-x-1 text-[color:var(--token-muted)] group-hover:translate-x-0'}`} size={17} />
+                      <ChevronRight aria-hidden="true" className={`transition ${isActive ? 'translate-x-0 text-inherit' : '-translate-x-1 text-inherit opacity-55 group-hover:translate-x-0 group-hover:opacity-90'}`} size={18} />
                     </button>
                   </li>
                 );
               })}
             </ol>
-            <div className="border-t border-[var(--token-divider)] p-6" data-edit-collection="items" data-edit-index={active}>
-              {selected.text && <p className="text-sm leading-6 text-[color:var(--token-body)]" data-edit-path="text">{plain(selected.text)}</p>}
+            <div className="mt-6 rounded-[var(--token-card-radius)] border border-[var(--token-divider)] bg-[color-mix(in_srgb,var(--token-section-bg-alt)_82%,transparent)] p-6" data-edit-collection="items" data-edit-index={active}>
+              {selected.text && <p className="text-base leading-7 text-[color:var(--token-body)]" data-edit-path="text">{plain(selected.text)}</p>}
               {Array.isArray(selected.meta) && selected.meta.length > 0 && <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-bold uppercase tracking-[.12em] text-[color:var(--token-muted)]">{selected.meta.slice(0, 5).map((entry, index) => <li key={`${entry}-${index}`}>{entry}</li>)}</ul>}
             </div>
           </div>

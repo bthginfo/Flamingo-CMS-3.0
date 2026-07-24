@@ -66,7 +66,7 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
         {reel.title && <h3 className="max-w-sm text-2xl font-black leading-none tracking-[-.045em] text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{reel.title}</h3>}
         {reel.text && <p className="mt-3 max-w-sm text-sm leading-6 text-[color:var(--token-on-dark-body)]" data-edit-path="text">{plain(reel.text)}</p>}
         {href && ctaLabel && (
-          <a href={href} className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-black transition hover:-translate-y-0.5" data-edit-link="ctaHref">
+          <a href={href} className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-4 py-2 text-xs font-black text-[color:var(--token-btn-text)] shadow-lg transition hover:-translate-y-0.5" data-edit-link="ctaHref">
             <span data-edit-path="ctaLabel">{ctaLabel}</span>
             <ArrowUpRight size={14} />
           </a>

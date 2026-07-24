@@ -90,8 +90,8 @@ export function ActionLink({
       href={href}
       className={cn('cms-button', `cms-button--${tone}`, className)}
     >
-      <span data-edit-path="label">{action.label}</span>
-      {showArrow && <ArrowRight aria-hidden="true" size={17} className="cms-button-icon" />}
+      <span className="text-inherit" data-edit-path="label">{action.label}</span>
+      {showArrow && <ArrowRight aria-hidden="true" size={17} className="cms-button-icon text-inherit" />}
     </a>
   );
 }

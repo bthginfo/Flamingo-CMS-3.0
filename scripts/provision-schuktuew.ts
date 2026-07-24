@@ -24,7 +24,19 @@ type AssetKey =
   | 'eiszeitSpread'
   | 'golfFrame'
   | 'converseFrame'
-  | 'ingolstadtBook';
+  | 'ingolstadtBook'
+  | 'archiveStill01'
+  | 'archiveStill02'
+  | 'archiveStill03'
+  | 'archiveStill04'
+  | 'aboutPortrait01'
+  | 'aboutPortrait02'
+  | 'aboutPortrait03'
+  | 'aboutStill01'
+  | 'eiszeitDetail01'
+  | 'eiszeitDetail02'
+  | 'portfolioStill01'
+  | 'portfolioStill02';
 
 type AssetSpec = {
   source: string;
@@ -35,6 +47,29 @@ type AssetSpec = {
 };
 
 type UploadedAssets = Record<AssetKey, string>;
+type GalleryImportItem = {
+  image: string;
+  alt: string;
+  title: string;
+  caption?: string;
+  category: string;
+  href: string;
+  featured?: boolean;
+};
+type ImportedProject = {
+  slug: string;
+  title: string;
+  priority: number;
+  sourceUrl: string;
+  category: string;
+  description: string;
+  image: string;
+  gallery: string[];
+};
+type BuildExtras = {
+  importedProjects?: ImportedProject[];
+  galleryItems?: GalleryImportItem[];
+};
 type PageConfig = {
   slug: string;
   title: string;
@@ -55,6 +90,14 @@ const SLUG = 'schuktuew';
 const PROJECT_NAME = `flamingo-${SLUG}`;
 const PREVIEW_URL = `https://${PROJECT_NAME}.vercel.app`;
 const VERCEL_ENV_PROJECT = process.env.VERCEL_ENV_PROJECT || 'flamingo-cms-3-0';
+const ORIGINAL_SITEMAP_URL = 'https://www.schuktuew.com/pages-sitemap.xml';
+const ORIGINAL_PAGE_SKIP = new Set(['', 'contact-3', 'blog', 'info', 'press', 'imprint']);
+const KNOWN_NON_PROJECT_MEDIA_IDS = new Set([
+  '74d7fc_b8b5511660f44ed6bcddd0baba92a192~mv2',
+]);
+const MAX_ORIGINAL_PROJECTS = Number(process.env.SCHUKTUEW_MAX_ORIGINAL_PROJECTS || '80');
+const MAX_IMAGES_PER_PROJECT = Number(process.env.SCHUKTUEW_MAX_IMAGES_PER_PROJECT || '28');
+const MAX_CANVAS_ITEMS = Number(process.env.SCHUKTUEW_MAX_CANVAS_ITEMS || '64');
 
 const LOCAL_ASSETS = {
   brandBox: 'C:/Users/vonin-ju/AppData/Local/Temp/codex-clipboard-e93ce390-ba23-47f5-be25-11f7029c7db0.png',
@@ -146,6 +189,78 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     filename: 'schuktuew-buch-ingolstadt.png',
     contentType: 'image/png',
     alt: 'Buch Ingolstadt Projektmotiv',
+  },
+  archiveStill01: {
+    source: 'https://static.wixstatic.com/media/74d7fc_06a70cad48304b1fa78225570a667be8~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_06a70cad48304b1fa78225570a667be8~mv2.jpg',
+    filename: 'schuktuew-archive-still-01.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Portfolio-Motiv aus dem Schuktuew Archiv',
+  },
+  archiveStill02: {
+    source: 'https://static.wixstatic.com/media/74d7fc_6349f6b1c253419e906ca3f32ab2db8e~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_6349f6b1c253419e906ca3f32ab2db8e~mv2.jpg',
+    filename: 'schuktuew-archive-still-02.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Fotografisches Portfolio-Motiv von Alexander Schuktuew',
+  },
+  archiveStill03: {
+    source: 'https://static.wixstatic.com/media/74d7fc_879034e59a604956af32fad136f10c63~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_879034e59a604956af32fad136f10c63~mv2.jpg',
+    filename: 'schuktuew-archive-still-03.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Portfolio-Fotografie aus dem Schuktuew Archiv',
+  },
+  archiveStill04: {
+    source: 'https://static.wixstatic.com/media/74d7fc_a3fa53e97c8e44b6ae2f9bdef3bd059c~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_a3fa53e97c8e44b6ae2f9bdef3bd059c~mv2.jpg',
+    filename: 'schuktuew-archive-still-04.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Editoriales Portfolio-Motiv von Alexander Schuktuew',
+  },
+  aboutPortrait01: {
+    source: 'https://static.wixstatic.com/media/74d7fc_54e9d6588957403f94cdff1c758c7f1c~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_54e9d6588957403f94cdff1c758c7f1c~mv2.jpg',
+    filename: 'schuktuew-about-portrait-01.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Portraitmotiv von Alexander Schuktuew',
+  },
+  aboutPortrait02: {
+    source: 'https://static.wixstatic.com/media/74d7fc_666cf08f881a4489a910caa78e30a222~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_666cf08f881a4489a910caa78e30a222~mv2.jpg',
+    filename: 'schuktuew-about-portrait-02.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Portraitarbeit aus dem Schuktuew Archiv',
+  },
+  aboutPortrait03: {
+    source: 'https://static.wixstatic.com/media/74d7fc_4d2f073ec19c4c5498191cf84a071129~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_4d2f073ec19c4c5498191cf84a071129~mv2.jpg',
+    filename: 'schuktuew-about-portrait-03.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Dokumentarisches Portraitmotiv von Alexander Schuktuew',
+  },
+  aboutStill01: {
+    source: 'https://static.wixstatic.com/media/74d7fc_d7da0eba7ca8419ca37f3c0f961e7fae~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_d7da0eba7ca8419ca37f3c0f961e7fae~mv2.jpg',
+    filename: 'schuktuew-about-still-01.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Fotografisches Motiv aus der Über-mich-Seite',
+  },
+  eiszeitDetail01: {
+    source: 'https://static.wixstatic.com/media/74d7fc_5eae085b0ef946179ab2646810799825~mv2.png/v1/fit/w_1800,h_1400,q_86,enc_avif,quality_auto/74d7fc_5eae085b0ef946179ab2646810799825~mv2.png',
+    filename: 'schuktuew-eiszeit-detail-01.png',
+    contentType: 'image/png',
+    alt: 'EISZEIT Buchdetail',
+  },
+  eiszeitDetail02: {
+    source: 'https://static.wixstatic.com/media/74d7fc_cb8c3da211c443f4a571c78eb8c9d020~mv2.png/v1/fit/w_1600,h_1800,q_86,enc_avif,quality_auto/74d7fc_cb8c3da211c443f4a571c78eb8c9d020~mv2.png',
+    filename: 'schuktuew-eiszeit-detail-02.png',
+    contentType: 'image/png',
+    alt: 'EISZEIT Portraitdetail',
+  },
+  portfolioStill01: {
+    source: 'https://static.wixstatic.com/media/74d7fc_0fe69929ff2744a2a7195e4d0c2065a4~mv2.png/v1/fit/w_1600,h_1200,q_86,enc_avif,quality_auto/74d7fc_0fe69929ff2744a2a7195e4d0c2065a4~mv2.png',
+    filename: 'schuktuew-portfolio-still-01.png',
+    contentType: 'image/png',
+    alt: 'Portfolioarbeit von Alexander Schuktuew',
+  },
+  portfolioStill02: {
+    source: 'https://static.wixstatic.com/media/74d7fc_22f89a923b38480db2f965cfb28d06cd~mv2.jpg/v1/fit/w_1600,h_1200,q_86,enc_avif,quality_auto/74d7fc_22f89a923b38480db2f965cfb28d06cd~mv2.jpg',
+    filename: 'schuktuew-portfolio-still-02.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Weiteres Portfolio-Motiv aus dem Schuktuew Archiv',
   },
 };
 
@@ -241,6 +356,195 @@ async function uploadAssets(dataDb: Database, tenantId: string): Promise<Uploade
   return output;
 }
 
+function decodeHtml(value: string) {
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\\u002F/g, '/');
+}
+
+function slugFromUrl(url: string) {
+  try {
+    return new URL(url).pathname.replace(/^\/+|\/+$/g, '').trim();
+  } catch {
+    return '';
+  }
+}
+
+function titleFromSlug(slug: string) {
+  const special: Record<string, string> = {
+    'clients-selection': 'Clients Selection',
+    'rosa-hirn': 'Rosa Hirn',
+    'zu-tisch-mit': 'Zu Tisch mit',
+    'wedding-hochzeitsfotografie': 'Wedding / Hochzeitsfotografie',
+    'eiszeitercingolstadteishockey': 'EISZEIT ERC Ingolstadt',
+    'kajan-luc': 'Kajan & Luc',
+    'efs-recruiting-campaign': 'EFS Recruiting Campaign',
+    'tennis-player-elio-sayeed': 'Tennis Player Elio Sayeed',
+    'new-book': 'New Book',
+    selfportraits: 'Selfportraits',
+    'snc-recs': 'SNC RECS',
+    prrrrr: 'PRRRRR',
+    'buch-ingolstadt': 'Buch Ingolstadt',
+    'levi-s-skateboarding': "Levi's Skateboarding",
+    'gutman-gladiators-hockey': 'Gutman Gladiators Hockey',
+    'athlete-sofie-nixdorf': 'Athlete Sofie Nixdorf',
+    'xx-ww-33': 'XX WW 33',
+    'eps-51': 'EPS 51',
+    'golf-1': 'Golf',
+    'juliane-pittermann': 'Juliane Pittermann',
+  };
+  if (special[slug]) return special[slug];
+  return slug
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.length <= 3 ? part.toUpperCase() : `${part[0]?.toUpperCase() || ''}${part.slice(1)}`)
+    .join(' ');
+}
+
+function categoryFromSlug(slug: string) {
+  if (/(golf|tennis|soccer|skate|boulder|hockey|athlete|sport|gladiators)/i.test(slug)) return 'Sport';
+  if (/(portrait|selfportrait|juliane|kajan|personal)/i.test(slug)) return 'Portrait';
+  if (/(wedding|hochzeit)/i.test(slug)) return 'Wedding';
+  if (/(commercial|converse|client|efs|recruiting|candy|liquid|blackworks)/i.test(slug)) return 'Commercial';
+  if (/(book|buch|eiszeit|ingolstadt)/i.test(slug)) return 'Buchprojekt';
+  if (/(film|recs|zenit|konnekte|rosa|tisch|prrrrr|eps|xx)/i.test(slug)) return 'Freie Arbeit';
+  return 'Portfolio';
+}
+
+function extractMeta(html: string, key: string) {
+  const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const propertyFirst = new RegExp(`<meta[^>]+(?:property|name)=["']${escaped}["'][^>]+content=["']([^"']+)["'][^>]*>`, 'i');
+  const contentFirst = new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${escaped}["'][^>]*>`, 'i');
+  return decodeHtml(propertyFirst.exec(html)?.[1] || contentFirst.exec(html)?.[1] || '').trim();
+}
+
+function cleanOriginalTitle(value: string, slug: string) {
+  const title = decodeHtml(value)
+    .replace(/\s+[|–-]\s+Alexander\s+Schuktuew.*$/i, '')
+    .replace(/\s+[|–-]\s+Schuktuew.*$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return title && !/^home$/i.test(title) ? title : titleFromSlug(slug);
+}
+
+function mediaIdFromUrl(url: string) {
+  const decoded = decodeURIComponent(url);
+  return decoded.match(/74d7fc_[^~\/]+~mv2/i)?.[0] || '';
+}
+
+function mediaScore(url: string) {
+  const decoded = decodeURIComponent(url);
+  const width = Number(decoded.match(/(?:^|[,_/])w_(\d+)/i)?.[1] || 0);
+  const height = Number(decoded.match(/(?:^|[,_/])h_(\d+)/i)?.[1] || 0);
+  return { width, height, score: (width || 900) * (height || 900) };
+}
+
+function normaliseWixImageUrl(url: string) {
+  return decodeHtml(url)
+    .replace(/\\\//g, '/')
+    .replace(/%7E/gi, '~')
+    .replace(/,\s*enc_auto/gi, '')
+    .trim();
+}
+
+function extractWixImages(html: string) {
+  const source = decodeHtml(html);
+  const raw = new Set<string>();
+  const direct = source.match(/https:\/\/static\.wixstatic\.com\/media\/[^"'<>\\\s)]+/g) || [];
+  for (const url of direct) raw.add(normaliseWixImageUrl(url));
+  const escaped = source.match(/https:\\\/\\\/static\.wixstatic\.com\\\/media\\\/[^"'<>\\\s)]+/g) || [];
+  for (const url of escaped) raw.add(normaliseWixImageUrl(url));
+
+  const bestById = new Map<string, string>();
+  for (const url of raw) {
+    if (!/\.(?:jpe?g|png|webp)(?:[/?#]|$)/i.test(url)) continue;
+    const id = mediaIdFromUrl(url);
+    if (!id || KNOWN_NON_PROJECT_MEDIA_IDS.has(id)) continue;
+    if (/(favicon|icon|button|social|instagram|facebook|twitter|youtube|logo|signatur)/i.test(url)) continue;
+    const size = mediaScore(url);
+    if ((size.width && size.width < 360) || (size.height && size.height < 240)) continue;
+    const previous = bestById.get(id);
+    if (!previous || mediaScore(previous).score < size.score) bestById.set(id, url);
+  }
+  return Array.from(bestById.values());
+}
+
+async function fetchWithUserAgent(url: string) {
+  const response = await fetch(url, {
+    cache: 'no-store',
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; FlamingoCMS/1.0; +https://www.flamingomedia.online)',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    },
+  });
+  if (!response.ok) throw new Error(`Originalseite konnte nicht gelesen werden: ${url} (${response.status})`);
+  return response.text();
+}
+
+async function importOriginalProjectGalleries(): Promise<{ importedProjects: ImportedProject[]; galleryItems: GalleryImportItem[] }> {
+  const sitemapXml = await fetchWithUserAgent(ORIGINAL_SITEMAP_URL);
+  const locs = Array.from(sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((match) => decodeHtml(match[1] || '').trim()).filter(Boolean);
+  const projectUrls = locs
+    .map((url) => ({ url, slug: slugFromUrl(url) }))
+    .filter((entry) => entry.slug && !ORIGINAL_PAGE_SKIP.has(entry.slug))
+    .slice(0, MAX_ORIGINAL_PROJECTS);
+
+  const importedProjects: ImportedProject[] = [];
+  const galleryItems: GalleryImportItem[] = [];
+  let priority = 100;
+  const seenCanvasImages = new Set<string>();
+
+  for (const { url, slug } of projectUrls) {
+    try {
+      const html = await fetchWithUserAgent(url);
+      const images = extractWixImages(html).slice(0, MAX_IMAGES_PER_PROJECT);
+      if (!images.length) continue;
+      const title = cleanOriginalTitle(extractMeta(html, 'og:title') || extractMeta(html, 'twitter:title'), slug);
+      const description = (extractMeta(html, 'description') || extractMeta(html, 'og:description') || '')
+        .replace(/\s+/g, ' ')
+        .replace(/^Alexander Schuktuew\s*[-|–]\s*/i, '')
+        .trim();
+      const category = categoryFromSlug(slug);
+      const project: ImportedProject = {
+        slug,
+        title,
+        priority,
+        sourceUrl: url,
+        category,
+        description,
+        image: images[0],
+        gallery: images,
+      };
+      importedProjects.push(project);
+      priority += 10;
+
+      for (const [index, image] of images.entries()) {
+        if (seenCanvasImages.has(image) || galleryItems.length >= MAX_CANVAS_ITEMS) continue;
+        seenCanvasImages.add(image);
+        galleryItems.push({
+          image,
+          alt: `${title} ${index + 1}`,
+          title,
+          caption: description,
+          category,
+          href: `/c/projekte/${slug}`,
+          featured: index === 0 && galleryItems.length % 9 === 0,
+        });
+      }
+      console.log(`Originalgalerie importiert: ${slug} (${images.length} Bilder)`);
+      await new Promise((resolve) => setTimeout(resolve, 180));
+    } catch (error) {
+      console.warn(`Originalgalerie übersprungen: ${slug} (${error instanceof Error ? error.message : String(error)})`);
+    }
+  }
+
+  return { importedProjects, galleryItems };
+}
+
 function sectionIdentity(type: string) {
   return { definitionKey: `${type}.advanced.v1`, schemaVersion: 1 };
 }
@@ -250,7 +554,7 @@ function regularSectionIdentity(type: string) {
   return sectionIdentity(type);
 }
 
-function buildSite(assets: UploadedAssets) {
+function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
   const brand = {
     companyName: 'Studio Alexander Schuktuew',
     tagline: 'Visual Solutions · Multidisciplinary Media Production',
@@ -396,7 +700,7 @@ function buildSite(assets: UploadedAssets) {
       priority: 50,
       data: {
         category: 'Commercial',
-        description: 'Archivierte Commercial-Arbeit aus dem bestehenden Portfolio.',
+        description: 'Commercial-Arbeit aus dem Portfolio.',
         image: assets.converseFrame,
         sourceUrl: 'https://www.schuktuew.com/converse',
       },
@@ -407,22 +711,58 @@ function buildSite(assets: UploadedAssets) {
       priority: 60,
       data: {
         category: 'Buchprojekt',
-        description: 'Freies fotografisches Projekt aus dem bestehenden Portfolio.',
+        description: 'Freies fotografisches Projekt aus dem Portfolio.',
         image: assets.ingolstadtBook,
         sourceUrl: 'https://www.schuktuew.com/buch-ingolstadt',
       },
     },
   ];
 
-  const portfolioItems = projects.map((project) => ({
-    image: project.data.image,
-    alt: project.title,
-    title: project.title,
-    caption: project.data.description,
-    category: project.data.category,
-    href: `/c/projekte/${project.slug}`,
-    featured: ['business-branding', 'eiszeit-erc-ingolstadt'].includes(project.slug),
-  }));
+  const existingSourceUrls = new Set(projects.map((project) => project.data.sourceUrl).filter(Boolean));
+  const importedProjects = (extras.importedProjects || [])
+    .filter((project) => project.image && project.gallery.length > 0 && !existingSourceUrls.has(project.sourceUrl))
+    .map((project) => ({
+      slug: project.slug,
+      title: project.title,
+      priority: project.priority,
+      data: {
+        category: project.category,
+        description: project.description,
+        image: project.image,
+        gallery: project.gallery,
+        sourceUrl: project.sourceUrl,
+      },
+    }));
+  const allProjects = [...projects, ...importedProjects];
+  const seenPortfolioImages = new Set<string>();
+  const portfolioItems = [
+    ...allProjects.map((project) => ({
+      image: project.data.image,
+      alt: project.title,
+      title: project.title,
+      caption: project.data.description,
+      category: project.data.category,
+      href: `/c/projekte/${project.slug}`,
+      featured: ['business-branding', 'eiszeit-erc-ingolstadt'].includes(project.slug),
+    })),
+    ...(extras.galleryItems || []),
+    { image: assets.archiveStill01, alt: 'Portfolio-Motiv', title: 'Archivmotiv', caption: '', category: 'Archiv', featured: true },
+    { image: assets.archiveStill02, alt: 'Portfolio-Motiv', title: 'Archivmotiv', caption: '', category: 'Archiv' },
+    { image: assets.archiveStill03, alt: 'Portfolio-Motiv', title: 'Archivmotiv', caption: '', category: 'Editorial' },
+    { image: assets.archiveStill04, alt: 'Portfolio-Motiv', title: 'Archivmotiv', caption: '', category: 'Archiv' },
+    { image: assets.aboutPortrait01, alt: 'Portraitmotiv', title: 'Portrait', caption: '', category: 'Portrait', featured: true },
+    { image: assets.aboutPortrait02, alt: 'Portraitmotiv', title: 'Portrait', caption: '', category: 'Portrait' },
+    { image: assets.aboutPortrait03, alt: 'Dokumentarisches Portrait', title: 'Portrait', caption: '', category: 'Portrait' },
+    { image: assets.aboutStill01, alt: 'Fotografisches Motiv', title: 'Still', caption: '', category: 'Archiv' },
+    { image: assets.eiszeitDetail01, alt: 'EISZEIT Buchdetail', title: 'EISZEIT', caption: '', category: 'Buchprojekt', featured: true },
+    { image: assets.eiszeitDetail02, alt: 'EISZEIT Portraitdetail', title: 'EISZEIT', caption: '', category: 'Buchprojekt' },
+    { image: assets.portfolioStill01, alt: 'Portfolioarbeit', title: 'Portfolio', caption: '', category: 'Archiv' },
+    { image: assets.portfolioStill02, alt: 'Portfolioarbeit', title: 'Portfolio', caption: '', category: 'Archiv' },
+  ].filter((item) => {
+    if (!item.image || seenPortfolioImages.has(item.image)) return false;
+    seenPortfolioImages.add(item.image);
+    return true;
+  }).slice(0, MAX_CANVAS_ITEMS);
 
   const pages: PageConfig[] = [
     {
@@ -454,7 +794,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Positionierung',
             headline: 'Kein Standardbild. Ein visueller Auftritt.',
-            subline: 'Die alte Seite sagt es klar: Ein Auftritt entscheidet in Sekunden. Diese Section verdichtet den Claim in eine scrollbare Markenlogik.',
+            subline: 'Ein Auftritt entscheidet in Sekunden. Für Unternehmen, Marken und Persönlichkeiten entstehen Bilder, die Haltung, Vertrauen und Charakter sichtbar machen.',
             preset: 'editorial',
             statements: [
               { prefix: 'Keine', highlight: 'Headshots', suffix: 'von der Stange.', text: 'Sondern gezielt entwickelte Markenbilder, die Autorität, Selbstbewusstsein und Individualität sichtbar machen.', image: assets.businessCampaign },
@@ -468,17 +808,17 @@ function buildSite(assets: UploadedAssets) {
           type: 'aiWorkflowReel',
           data: {
             badge: 'AI Production System',
-            headline: 'Ein Creator-Workflow statt Agentur-Pingpong.',
-            subline: 'Das prominente Reel zeigt den Ansatz: Konzept, Bildwelt, Film, Schnitt und Varianten werden kompakter gedacht – ohne den Markenanspruch zu verlieren.',
+            headline: 'Foto, Film und Content aus einer Hand.',
+            subline: 'Konzept, Bildwelt, Shooting, Schnitt und Formatadaption greifen ineinander. So entsteht Content, der zur Marke passt und schneller einsatzbereit ist.',
             media: {
               videoSrc: assets.agencyReel,
-              poster: assets.brandBox,
-              caption: 'AI-gestützte Produktion für Content, Kampagnen und Social Assets.',
+              poster: assets.businessCampaign,
+              caption: 'Produktion für Content, Kampagnen und Social Assets.',
             },
             steps: [
               { kicker: '01 · Direction', title: 'Visuelle Positionierung', text: 'Werte, Zielgruppe und Haltung werden in Moodboard, Licht, Look und Bildsprache übersetzt.', proof: 'Branding-Beratung & Moodboard' },
               { kicker: '02 · Production', title: 'Foto & Film aus einer Hand', text: 'Shooting im Studio oder on location, mit klarer Führung bei Posing, Ausdruck und Licht.', proof: 'Studio oder On-Location' },
-              { kicker: '03 · AI Workflow', title: 'Varianten schneller testen', text: 'AI hilft bei Varianten, Formaten und Content-Adaptionen. Die kreative Entscheidung bleibt bewusst geführt.', proof: 'Reels, Ads, Website, Social' },
+              { kicker: '03 · Workflow', title: 'Formate schneller ableiten', text: 'Varianten, Zuschnitte und Content-Adaptionen werden früh mitgedacht. Die Bildsprache bleibt bewusst geführt.', proof: 'Reels, Ads, Website, Social' },
               { kicker: '04 · Output', title: 'Fertige Assets für echte Kanäle', text: 'Aus der Produktion entstehen Motive für Website, Kampagne, Recruiting, Personal Branding und Social Media.', proof: 'Kampagnenfähig' },
             ],
             cta: { label: 'Workflow besprechen', href: '/kontakt' },
@@ -489,12 +829,12 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Behind the System',
             headline: 'Was aus einer Kamera herauskommt, wird vorher konstruiert.',
-            subline: 'Eine performante 2.5D-Scroll-Inszenierung: kein schweres 3D, aber die Idee einer auseinandergebauten Kamera als Storytelling für Workflow, Licht, Bildsprache und Output.',
+            subline: 'Ein starkes Bild entsteht aus Entscheidungen: Haltung, Licht, Motivführung, Nachbearbeitung und kanalreife Übergabe.',
             brandImage: assets.brandBox,
             parts: [
               { id: 'body', label: 'Brand Body', text: 'Markenkern, Haltung und Kontext bestimmen den Look.', offsetX: -128, offsetY: -20, color: '#f4eee3' },
               { id: 'lens', label: 'Lens', text: 'Das Motiv wird fokussiert, nicht nur aufgenommen.', offsetX: 0, offsetY: -118, color: '#080808' },
-              { id: 'sensor', label: 'AI Sensor', text: 'AI-Workflow, Varianten und Kanalformate werden früh eingeplant.', offsetX: 122, offsetY: -8, color: '#d11224' },
+              { id: 'sensor', label: 'Sensor', text: 'Look, Retusche und Kanalformate werden früh eingeplant.', offsetX: 122, offsetY: -8, color: '#d11224' },
               { id: 'light', label: 'Light', text: 'Licht trennt normales Bild von Kampagnenwirkung.', offsetX: -84, offsetY: 96, color: '#ffffff' },
               { id: 'output', label: 'Output', text: 'Website, Ads, Social, Editorial und Sales bekommen konsistente Assets.', offsetX: 104, offsetY: 96, color: '#c7ff4a' },
             ],
@@ -506,7 +846,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Arbeitsfelder',
             headline: 'Von Portrait bis Buchprojekt.',
-            subline: 'Eine kuratierte Übersicht der bestehenden Inhalte – weniger Wiederholung, mehr klare Storyline.',
+            subline: 'Die wichtigsten Linien aus Portrait, Business, Sport, Commercial und Buchprojekten.',
             preset: 'editorial',
             items: [
               { id: 'business', kicker: 'Business', title: 'Branding & Kampagne', text: 'Starke Bildwelten für Kommunikation, Marketing und Employer Branding.', image: assets.businessCampaign, href: '/portfolio', meta: ['Branding', 'Campaign', 'Employer Branding'] },
@@ -524,12 +864,11 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Reels & Motion',
             headline: 'Hochformat bleibt Hochformat.',
-            subline: 'Die Videos werden in 9:16 gezeigt, ohne sie in horizontale Websiteflächen zu pressen.',
+            subline: 'Reels und Motion bleiben im vertikalen Format sichtbar und können direkt als Referenz wirken.',
             aspectRatio: '9/16',
             reels: [
-              { eyebrow: 'AI Workflow', title: 'Agentur-Alternative', text: 'Prominentes Reel zum neuen Produktionsansatz.', videoSrc: assets.agencyReel, poster: assets.brandBox, meta: 'Hero Reel', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
+              { eyebrow: 'Production', title: 'Alles aus einer Hand', text: 'Foto, Film, Schnitt und Content-Varianten für Markenauftritte.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: '9:16', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
               { eyebrow: 'Golf', title: 'Sport in Bewegung', text: 'Golf-Reel als eigener Sport-/Commercial-Kontext.', videoSrc: assets.golfReel, poster: assets.golfFrame, meta: 'Sport Reel', ctaLabel: 'Sport ansehen', ctaHref: '/portfolio' },
-              { eyebrow: 'Identity', title: 'Brandgrafik', text: 'Brand Asset als visueller Anker der neuen Seite.', poster: assets.brandBox, meta: 'Creative Studio' },
             ],
             cta: { label: 'Produktion planen', href: '/kontakt' },
           },
@@ -550,7 +889,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Portfolio',
             headline: 'Arbeiten als Kapitel, nicht als Bilderstapel.',
-            intro: 'Die bestehende Seite hatte viele Einzelgalerien. Hier werden die wichtigsten Linien in einer klaren Dramaturgie zusammengeführt.',
+            intro: 'Portrait, Business, Sport, Commercial und Buchprojekte werden als klare Kapitel geführt.',
             transition: 'depth',
             chapters: [
               { kicker: 'Branding', title: 'Auftritt, der gewinnt.', text: 'Business- und Kampagnenbilder für Unternehmen, Marken und Persönlichkeiten.', image: assets.businessCampaign, ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
@@ -565,7 +904,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Work Map',
             headline: 'Zieh dich durch die Bildwelt.',
-            subline: 'Der Canvas bleibt kuratiert, kann später aber per Bulk-Upload mit weiteren Arbeiten ergänzt werden.',
+            subline: 'Eine offene Bildlandkarte aus Portfolio, Portraits, Sport, Commercial und Buchprojekten.',
             ctaLabel: 'Canvas öffnen',
             items: portfolioItems,
           },
@@ -575,9 +914,9 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Cases',
             headline: 'Ausgewählte Linien.',
-            subline: 'Wiederverwendbare Case-Struktur für spätere Kunden: Bild, Kontext, Kategorie und Link.',
+            subline: 'Jede Linie zeigt Kontext, Bildsprache und Einsatzfeld auf einen Blick.',
             layout: 'rail',
-            items: projects.map((project) => ({
+            items: allProjects.slice(0, 24).map((project) => ({
               id: project.slug,
               kicker: project.data.category,
               title: project.title,
@@ -605,12 +944,12 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Workflow',
             headline: 'Von Markenidee zu kanalreifen Assets.',
-            subline: 'AI ist hier kein Selbstzweck. Sie beschleunigt Varianten und Formatadaption, während Bildsprache, Führung und finale Entscheidung bewusst gestaltet bleiben.',
-            media: { videoSrc: assets.agencyReel, poster: assets.brandBox, caption: 'Ein Workflow für Foto, Film, Reels, Website und Kampagne.' },
+            subline: 'Bildsprache, Führung und finale Entscheidung bleiben klar gestaltet. Varianten und Formate werden so vorbereitet, dass sie für Website, Social und Kampagne funktionieren.',
+            media: { videoSrc: assets.agencyReel, poster: assets.businessCampaign, caption: 'Foto, Film, Reels, Website und Kampagne aus einem konsistenten Look.' },
             steps: [
               { kicker: 'Analyse', title: 'Marke lesen', text: 'Ziel, Haltung und Kontext werden vor dem Shooting geklärt.', proof: 'Moodboard statt Zufall' },
               { kicker: 'Produktion', title: 'Shooting führen', text: 'Licht, Ausdruck, Outfit und Location werden präzise geführt.', proof: 'Studio oder on location' },
-              { kicker: 'Post', title: 'Look entwickeln', text: 'Retusche, Grading und AI-gestützte Varianten werden konsistent angelegt.', proof: 'Ein Look, viele Formate' },
+              { kicker: 'Post', title: 'Look entwickeln', text: 'Retusche, Grading und Varianten werden konsistent angelegt.', proof: 'Ein Look, viele Formate' },
               { kicker: 'Distribution', title: 'Ausliefern', text: 'Website, Social, Ads und Sales bekommen passende Formate.', proof: 'Output-ready' },
             ],
             cta: { label: 'Workflow anfragen', href: '/kontakt' },
@@ -621,12 +960,12 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Scroll Model',
             headline: 'Die Produktion wird zerlegt, damit das Ergebnis kontrollierbar wird.',
-            subline: 'Diese Section ist bewusst wiederverwendbar: Produkt, Kamera, Maschine oder Prozess können später als 2.5D-Exploded-View erzählt werden.',
+            subline: 'Von Briefing bis Übergabe: Jeder Teil der Produktion zahlt auf Wirkung, Wiedererkennbarkeit und Verwendbarkeit ein.',
             brandImage: assets.brandBox,
             parts: [
               { id: 'brief', label: 'Brief', text: 'Ziel und Kanäle klären.', offsetX: -132, offsetY: -22, color: '#f4eee3' },
               { id: 'lens', label: 'Look', text: 'Bildsprache und Licht definieren.', offsetX: 0, offsetY: -124, color: '#070707' },
-              { id: 'ai', label: 'AI', text: 'Varianten, Formate und Tempo.', offsetX: 124, offsetY: -10, color: '#d11224' },
+              { id: 'sensor', label: 'Sensor', text: 'Varianten, Formate und Tempo.', offsetX: 124, offsetY: -10, color: '#d11224' },
               { id: 'shoot', label: 'Shoot', text: 'Produktion mit klarer Führung.', offsetX: -94, offsetY: 102, color: '#ffffff' },
               { id: 'asset', label: 'Assets', text: 'Kanalreife Übergabe.', offsetX: 106, offsetY: 98, color: '#c7ff4a' },
             ],
@@ -662,7 +1001,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Werdegang',
             headline: 'Visual Journalism, Berlin, eigene Projekte.',
-            subline: 'Der Inhalt folgt der bestehenden Über-mich-Seite, aber in klareren Stationen.',
+            subline: 'Ausbildung, Assistenz, Portraitarbeit und freie Projekte prägen den fotografischen Blick.',
             pathPreset: 'flow',
             items: [
               { id: 'visual-journalism', title: 'Visual Journalism', text: 'Ausbildung im Bereich Visual Journalism an der Hochschule Hannover – dokumentarische Fotografie und erzählerischer Blick.', image: assets.studioWide },
@@ -678,7 +1017,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badge: 'Arbeitsweise',
             headline: 'Menschen nicht als Rollen, sondern als Persönlichkeiten.',
-            subline: 'Verdichtung aus der bestehenden Bio.',
+            subline: 'Portraits entstehen aus Konzentration, Vertrauen und einem präzisen Blick für den richtigen Moment.',
             statements: [
               { prefix: 'Dokumentarische', highlight: 'Genauigkeit', suffix: '', text: 'Der Blick bleibt präzise und beobachtend.', image: assets.studioWide },
               { prefix: 'Reduzierte', highlight: 'Bildsprache', suffix: '', text: 'Weniger Ablenkung, mehr Charakter.', image: assets.portraitStudy },
@@ -703,7 +1042,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badgeText: 'Kontakt',
             headline: 'Lass uns deinen visuellen Auftritt planen.',
-            introText: 'Schreibe kurz, worum es geht: Business, Personal Branding, Sport, Editorial, AI Workflow oder ein freies Projekt.',
+            introText: 'Schreibe kurz, worum es geht: Business, Personal Branding, Sport, Editorial, Content-Produktion oder ein freies Projekt.',
             formEnabled: true,
             submitLabel: 'Anfrage senden',
             infoCards: [
@@ -714,21 +1053,8 @@ function buildSite(assets: UploadedAssets) {
             formFields: [
               { name: 'name', label: 'Name', type: 'text', required: true, halfWidth: true },
               { name: 'email', label: 'E-Mail', type: 'email', required: true, halfWidth: true },
-              { name: 'project', label: 'Projektart', type: 'select', required: true, options: ['Business Branding', 'Personal Branding', 'Portrait', 'Sport/Golf', 'AI Workflow', 'Editorial/Freies Projekt'] },
+              { name: 'project', label: 'Projektart', type: 'select', required: true, options: ['Business Branding', 'Personal Branding', 'Portrait', 'Sport/Golf', 'Content-Produktion', 'Editorial/Freies Projekt'] },
               { name: 'message', label: 'Kurzbeschreibung', type: 'textarea', required: true },
-            ],
-          },
-        },
-        {
-          type: 'verticalReelShowcase',
-          data: {
-            badge: 'Referenzformate',
-            headline: 'Sag nicht nur, was du brauchst. Zeig das Format.',
-            subline: 'Die Reels bleiben als Hochformat-Referenzen direkt im Kontaktkontext sichtbar.',
-            aspectRatio: '9/16',
-            reels: [
-              { eyebrow: 'AI', title: 'Workflow Reel', videoSrc: assets.agencyReel, poster: assets.brandBox, meta: '9:16' },
-              { eyebrow: 'Golf', title: 'Sport Reel', videoSrc: assets.golfReel, poster: assets.golfFrame, meta: '9:16' },
             ],
           },
         },
@@ -744,7 +1070,7 @@ function buildSite(assets: UploadedAssets) {
           data: {
             badgeText: 'Impressum',
             headline: 'Studio Alexander Schuktuew',
-            introText: 'Angaben gemäß bestehender Kontaktinformationen der Originalseite.',
+            introText: 'Kontaktinformationen und Pflichtangaben.',
             formEnabled: false,
             infoCards: [
               { icon: 'mail', label: 'E-Mail', value: 'contact@schuktuew.com' },
@@ -821,12 +1147,13 @@ function buildSite(assets: UploadedAssets) {
             { key: 'category', label: 'Kategorie', type: 'text' },
             { key: 'description', label: 'Beschreibung', type: 'textarea' },
             { key: 'image', label: 'Bild', type: 'image' },
+            { key: 'gallery', label: 'Projektgalerie', type: 'image-list' },
             { key: 'video', label: 'Video', type: 'url' },
             { key: 'sourceUrl', label: 'Originalquelle', type: 'url' },
           ],
         },
         settings: { detailSectionType: 'collectionHero' },
-        items: projects,
+        items: allProjects,
       },
     ],
     pages,
@@ -1065,7 +1392,8 @@ async function main() {
 
   const dataDb = await getSchuktuewDataDb(tenantId);
   const uploadedAssets = await uploadAssets(dataDb, tenantId);
-  const site = buildSite(uploadedAssets);
+  const originalImport = await importOriginalProjectGalleries();
+  const site = buildSite(uploadedAssets, originalImport);
   const seeded = await seedTenant(dataDb, tenantId, site);
   const controlDb = getDb();
   await controlDb.update(schema.tenants).set({ name: 'Alexander Schuktuew', industry: 'photography', status: 'active', isDemo: false, isLead: false, updatedAt: new Date() }).where(eq(schema.tenants.id, tenantId));
