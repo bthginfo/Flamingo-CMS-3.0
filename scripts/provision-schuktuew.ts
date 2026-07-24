@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { createDb, type Database } from '@flamingo/db';
 import * as schema from '../packages/db/src/schema';
 import { provisionTenant } from '../apps/marketing/src/lib/provisioning';
 import { getDb } from '../apps/marketing/src/lib/db';
@@ -205,7 +206,7 @@ async function readAsset(spec: AssetSpec) {
   return { body, contentType: spec.contentType || response.headers.get('content-type')?.split(';')[0] || mimeFromFilename(spec.filename) };
 }
 
-async function uploadAssets(dataDb: ReturnType<typeof getDb>, tenantId: string): Promise<UploadedAssets> {
+async function uploadAssets(dataDb: Database, tenantId: string): Promise<UploadedAssets> {
   const output = {} as UploadedAssets;
   for (const [key, spec] of Object.entries(ASSETS) as Array<[AssetKey, AssetSpec]>) {
     const { body, contentType } = await readAsset(spec);
@@ -865,7 +866,16 @@ async function getOrProvisionTenant() {
   return { tenantId: result.tenantId, reused: false, result };
 }
 
-async function seedTenant(dataDb: ReturnType<typeof getDb>, tenantId: string, site: ReturnType<typeof buildSite>) {
+async function getSchuktuewDataDb(tenantId: string) {
+  const explicitUrl = process.env.SCHUKTUEW_DATABASE_URL?.trim();
+  if (explicitUrl) {
+    if (!explicitUrl.startsWith('postgres')) throw new Error('SCHUKTUEW_DATABASE_URL ist keine gültige Postgres-URL.');
+    return createDb(explicitUrl);
+  }
+  return getTenantDataDb(tenantId);
+}
+
+async function seedTenant(dataDb: Database, tenantId: string, site: ReturnType<typeof buildSite>) {
   await dataDb.delete(schema.publishedSnapshots).where(eq(schema.publishedSnapshots.tenantId, tenantId));
   await dataDb.delete(schema.seoItem).where(eq(schema.seoItem.tenantId, tenantId));
   await dataDb.delete(schema.seoPage).where(eq(schema.seoPage.tenantId, tenantId));
@@ -1038,20 +1048,22 @@ async function main() {
   }
 
   await loadVercelProjectEnv();
-  requireEnv([
+  const requiredEnv = [
     'VERCEL_TOKEN',
     'DATABASE_URL',
-    'CRM_CONFIG_ENCRYPTION_KEY',
-    'NEON_API_KEY',
     'GITHUB_REPO_ID',
     'GITHUB_REPO_NUMERIC_ID',
     'BLOB_READ_WRITE_TOKEN',
-  ]);
+  ];
+  if (!process.env.SCHUKTUEW_DATABASE_URL?.trim()) {
+    requiredEnv.push('CRM_CONFIG_ENCRYPTION_KEY', 'NEON_API_KEY');
+  }
+  requireEnv(requiredEnv);
 
   const { tenantId, reused, result } = await getOrProvisionTenant();
   console.log(reused ? `Tenant reused: ${tenantId}` : `Tenant provisioniert: ${tenantId}`);
 
-  const dataDb = await getTenantDataDb(tenantId);
+  const dataDb = await getSchuktuewDataDb(tenantId);
   const uploadedAssets = await uploadAssets(dataDb, tenantId);
   const site = buildSite(uploadedAssets);
   const seeded = await seedTenant(dataDb, tenantId, site);
