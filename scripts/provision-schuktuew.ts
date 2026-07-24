@@ -54,6 +54,7 @@ type GalleryImportItem = {
   caption?: string;
   category: string;
   href: string;
+  sourceUrl?: string;
   featured?: boolean;
 };
 type ImportedProject = {
@@ -532,6 +533,7 @@ async function importOriginalProjectGalleries(): Promise<{ importedProjects: Imp
           caption: description,
           category,
           href: `/c/projekte/${slug}`,
+          sourceUrl: url,
           featured: index === 0 && galleryItems.length % 9 === 0,
         });
       }
@@ -718,7 +720,14 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
     },
   ];
 
-  const existingSourceUrls = new Set(projects.map((project) => project.data.sourceUrl).filter(Boolean));
+  const canonicalSlugBySourceUrl = new Map(projects.map((project) => [project.data.sourceUrl, project.slug]).filter(([sourceUrl]) => Boolean(sourceUrl)));
+  const importedBySourceUrl = new Map((extras.importedProjects || []).map((project) => [project.sourceUrl, project]));
+  const curatedProjects = projects.map((project) => {
+    const imported = importedBySourceUrl.get(project.data.sourceUrl);
+    const gallery = imported?.gallery?.length ? imported.gallery : [project.data.image].filter(Boolean);
+    return { ...project, data: { ...project.data, gallery } };
+  });
+  const existingSourceUrls = new Set(canonicalSlugBySourceUrl.keys());
   const importedProjects = (extras.importedProjects || [])
     .filter((project) => project.image && project.gallery.length > 0 && !existingSourceUrls.has(project.sourceUrl))
     .map((project) => ({
@@ -733,7 +742,11 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         sourceUrl: project.sourceUrl,
       },
     }));
-  const allProjects = [...projects, ...importedProjects];
+  const allProjects = [...curatedProjects, ...importedProjects];
+  const importedGalleryItems = (extras.galleryItems || []).map((item) => {
+    const canonicalSlug = item.sourceUrl ? canonicalSlugBySourceUrl.get(item.sourceUrl) : null;
+    return canonicalSlug ? { ...item, href: `/c/projekte/${canonicalSlug}` } : item;
+  });
   const seenPortfolioImages = new Set<string>();
   const portfolioItems = [
     ...allProjects.map((project) => ({
@@ -745,7 +758,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       href: `/c/projekte/${project.slug}`,
       featured: ['business-branding', 'eiszeit-erc-ingolstadt'].includes(project.slug),
     })),
-    ...(extras.galleryItems || []),
+    ...importedGalleryItems,
     { image: assets.archiveStill01, alt: 'Portfolio-Motiv', title: 'Archivmotiv', caption: '', category: 'Archiv', featured: true },
     { image: assets.archiveStill02, alt: 'Portfolio-Motiv', title: 'Archivmotiv', caption: '', category: 'Archiv' },
     { image: assets.archiveStill03, alt: 'Portfolio-Motiv', title: 'Archivmotiv', caption: '', category: 'Editorial' },
