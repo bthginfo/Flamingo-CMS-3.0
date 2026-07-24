@@ -834,7 +834,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
   const curatedProjects = projects.map((project) => {
     const imported = importedBySourceUrl.get(project.data.sourceUrl);
     const fallbackGallery = curatedGalleryFallbacks[project.slug] || [];
-    const gallery = imported?.gallery?.length ? imported.gallery : fallbackGallery.length ? fallbackGallery : [project.data.image].filter(Boolean);
+    const gallery = Array.from(new Set([...(imported?.gallery || []), ...fallbackGallery, project.data.image].filter(Boolean)));
     return { ...project, data: { ...project.data, image: gallery[0] || project.data.image, gallery, originalText: imported?.originalText, contentLead: imported?.originalText || project.data.description } };
   });
   const existingSourceUrls = new Set(canonicalSlugBySourceUrl.keys());
