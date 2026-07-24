@@ -67,6 +67,28 @@ function databaseRoleName(databaseUrl: string, fallback: string) {
   return fallback;
 }
 
+function externalNeonConnection(databaseUrl: string) {
+  try {
+    const url = new URL(databaseUrl);
+    const hostname = url.hostname.toLowerCase();
+    if (!hostname.endsWith('.neon.tech')) return null;
+    const endpointId = (hostname.split('.')[0] || '').replace(/-pooler$/, '');
+    if (!endpointId.startsWith('ep-')) return null;
+    const databaseName = decodeURIComponent(url.pathname.replace(/^\/+/, '').trim()) || 'neondb';
+    const roleName = databaseRoleName(databaseUrl, 'external_runtime');
+    return {
+      projectId: `external:${endpointId}`,
+      region: hostname.replace(/^[^.]+\./, '') || null,
+      databaseName,
+      roleName,
+      pooledConnectionUri: databaseUrl,
+      directConnectionUri: databaseUrl,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(request: NextRequest) {
   if (!isAuthorized(request)) return json(401, { success: false, error: 'Unauthorized' });
   try {
@@ -105,7 +127,8 @@ export async function PATCH(request: NextRequest) {
       }
 
       const neonProject = await findNeonTenantProject(slug)
-        || await findNeonTenantProjectByConnectionUri(databaseUrl);
+        || await findNeonTenantProjectByConnectionUri(databaseUrl)
+        || externalNeonConnection(databaseUrl);
       if (!neonProject) {
         results.push({ slug, success: false, error: 'Neon-Projekt nicht gefunden.' });
         continue;
@@ -121,7 +144,7 @@ export async function PATCH(request: NextRequest) {
         directConnectionUri: neonProject.directConnectionUri,
       });
       await markTenantDatabaseActive(tenant.id);
-      results.push({ slug, success: true, projectId: neonProject.projectId });
+      results.push({ slug, success: true, projectId: neonProject.projectId, external: neonProject.projectId.startsWith('external:') });
     }
 
     return json(200, { success: results.every(result => result.success), results });
