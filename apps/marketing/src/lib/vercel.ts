@@ -133,10 +133,18 @@ function buildForwardedPlatformSmtpEnvVars(): UpsertableProjectEnvironmentVariab
   ];
 }
 
+function buildRendererRevalidateEnvVar(): UpsertableProjectEnvironmentVariable[] {
+  const forwarded = process.env.REVALIDATE_SECRET;
+  const value = forwarded && !forwarded.startsWith('__PLACEHOLDER')
+    ? forwarded
+    : randomBytes(32).toString('base64url');
+  return [{ key: 'REVALIDATE_SECRET', value, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false }];
+}
+
 function buildForwardedRendererRuntimeEnvVars(slug: string): UpsertableProjectEnvironmentVariable[] {
   return [
     ...optionalEnvVar('SITE_URL', getStandaloneProjectUrl(slug), 'plain'),
-    ...optionalEnvVar('REVALIDATE_SECRET', process.env.REVALIDATE_SECRET),
+    ...buildRendererRevalidateEnvVar(),
     ...optionalEnvVar('CRON_SECRET', process.env.CRON_SECRET),
     ...optionalEnvVar('DEMO_IG_FALLBACK_SLUG', process.env.DEMO_IG_FALLBACK_SLUG, 'plain'),
     ...buildForwardedPlatformSmtpEnvVars(),
@@ -163,6 +171,17 @@ async function configureProjectEnvironment(
       continue;
     }
     await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [variable]);
+  }
+}
+
+async function disableProjectSsoProtection(projectId: string) {
+  try {
+    // Tenant preview domains are customer-facing in this product. Team-level
+    // Vercel Authentication defaults can otherwise make *.vercel.app URLs
+    // return SSO/403 until a custom domain is attached.
+    await vercelFetch(`/v9/projects/${projectId}`, 'PATCH', { ssoProtection: null });
+  } catch (err) {
+    console.warn('Could not disable Vercel Authentication for tenant project:', (err as Error).message);
   }
 }
 
@@ -231,18 +250,19 @@ export async function createStandaloneProject(
   const projectId = project.id as string;
 
   try {
-  const envVars: UpsertableProjectEnvironmentVariable[] = [
-    { key: 'DATABASE_URL', value: databaseUrl, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
-    { key: 'FIXED_TENANT_ID', value: tenantId, target: RENDERER_ENV_TARGETS, type: 'plain', replaceExisting: true },
-    // Tenant deployments must never share signing or configuration-encryption
-    // keys. A compromise is then contained to one renderer project.
-    { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
-    { key: 'RENDERER_RATE_LIMIT_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
-    { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
-    { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
-    ...buildForwardedRendererRuntimeEnvVars(slug),
-  ];
-  await configureProjectEnvironment(projectId, envVars);
+    const envVars: UpsertableProjectEnvironmentVariable[] = [
+      { key: 'DATABASE_URL', value: databaseUrl, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
+      { key: 'FIXED_TENANT_ID', value: tenantId, target: RENDERER_ENV_TARGETS, type: 'plain', replaceExisting: true },
+      // Tenant deployments must never share signing or configuration-encryption
+      // keys. A compromise is then contained to one renderer project.
+      { key: 'ADMIN_JWT_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+      { key: 'RENDERER_RATE_LIMIT_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+      { key: 'CONFIG_ENCRYPTION_KEY', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+      { key: 'PREVIEW_SECRET', value: randomBytes(32).toString('base64url'), target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: false },
+      ...buildForwardedRendererRuntimeEnvVars(slug),
+    ];
+    await disableProjectSsoProtection(projectId);
+    await configureProjectEnvironment(projectId, envVars);
 
   // Connect shared Blob store to the new project (provides BLOB_READ_WRITE_TOKEN automatically)
   const blobStoreId = process.env.VERCEL_BLOB_STORE_ID;
@@ -318,6 +338,7 @@ export async function createStandaloneProject(
 /** Switches an existing standalone renderer between databases without rotating its auth secrets. */
 export async function setStandaloneDatabaseConnection(projectId: string, slug: string, tenantId: string, databaseUrl: string) {
   if (!databaseUrl?.startsWith('postgres')) throw new Error('Eine gültige Datenbankverbindung fehlt.');
+  await disableProjectSsoProtection(projectId);
   await configureProjectEnvironment(projectId, [
     { key: 'DATABASE_URL', value: databaseUrl, target: RENDERER_ENV_TARGETS, type: 'encrypted', replaceExisting: true },
     { key: 'FIXED_TENANT_ID', value: tenantId, target: RENDERER_ENV_TARGETS, type: 'plain', replaceExisting: true },

@@ -136,6 +136,13 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
 
   const item = col.items.find(i => i.slug === slug);
   if (!item) notFound();
+  const detailCollections = snapshot.collections.map(c => ({
+    ...c,
+    // Detail pages only need the current item for nested collection-aware
+    // sections. Passing every item of every collection can inflate large
+    // news archives into multi-megabyte RSC payloads.
+    items: c.key === col.key ? [item] : [],
+  }));
 
   const shopEnabled = await isShopActive(tenantId);
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
@@ -158,7 +165,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
       {fontAssets.hasBodyFont && <style>{'[data-style] { font-family: var(--custom-body-font) !important; }'}</style>}
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} topBar={navData.topBar} linkPrefix={linkPrefix} i18n={i18n.enabled ? { locales: i18n.locales, currentLocale: activeLocale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
       <main>
-        <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} globalFormFields={formFields} />
+        <CollectionDetail item={item} collection={col} collections={detailCollections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} globalFormFields={formFields} />
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} shopEnabled={shopEnabled} />
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}

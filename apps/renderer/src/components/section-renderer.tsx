@@ -460,11 +460,15 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     const key = (section.data.collectionKey as string) || '';
     const col = collections.find(c => c.key === key);
     if (col) {
+      const limitRaw = Number(section.data.limit || section.data.maxItems || 0);
+      const renderedItems = Number.isFinite(limitRaw) && limitRaw > 0
+        ? col.items.slice(0, Math.floor(limitRaw))
+        : col.items;
       section = {
         ...section,
         data: {
           ...section.data,
-          items: col.items.map(item => ({
+          items: renderedItems.map(item => ({
             title: item.title,
             slug: item.slug,
             image: extractItemImage(item),
