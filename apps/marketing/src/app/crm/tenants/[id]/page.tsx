@@ -43,6 +43,14 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
   const brand = settings[0]?.brand as Record<string, unknown> | undefined;
   const design = settings[0]?.design as Record<string, unknown> | undefined;
+  const standaloneBadge = (() => {
+    if (tenant.deploymentMode !== 'standalone') return null;
+    if (!databaseRecord) return { label: 'Standalone · DB fehlt', className: 'crm-badge-amber' };
+    if (databaseRecord.status === 'migration_failed') return { label: 'Standalone · Migration offen', className: 'crm-badge-red' };
+    if (databaseRecord.status !== 'active') return { label: `Standalone · DB ${databaseRecord.status}`, className: 'crm-badge-amber' };
+    if (databaseRecord.projectId?.startsWith('external:')) return { label: 'Standalone · Neon extern', className: 'crm-badge-green' };
+    return { label: `Standalone · ${neonPlan ? `Neon ${neonPlanLabel}` : 'DB aktiv'}`, className: neonPlan === 'free' || !neonPlan ? 'crm-badge-green' : 'crm-badge-amber' };
+  })();
 
   return (
     <div>
@@ -64,7 +72,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <IndustrySelect tenantId={tenant.id} currentIndustry={tenant.industry} />
               <span className="hidden sm:inline">·</span>
               <span className={tenant.status === 'active' ? 'crm-badge-green' : tenant.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{tenant.status}</span>
-              {tenant.deploymentMode === 'standalone' && <span className="crm-badge-amber">Standalone · Neon {neonPlanLabel}</span>}
+              {standaloneBadge && <span className={standaloneBadge.className}>{standaloneBadge.label}</span>}
               {tenant.deploymentMode === 'lead_shared' && <span className="crm-badge-amber">Lead-Shared</span>}
             </div>
           </div>

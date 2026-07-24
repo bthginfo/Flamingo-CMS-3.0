@@ -15,7 +15,12 @@ export default async function TenantsPage() {
   const tenantList = await db.select().from(tenants).orderBy(tenants.createdAt);
   const [domains, databaseConnections] = await Promise.all([
     db.select().from(tenantDomains),
-    db.select({ tenantId: tenantDatabaseConnections.tenantId, billingPlanIntent: tenantDatabaseConnections.billingPlanIntent }).from(tenantDatabaseConnections)
+    db.select({
+      tenantId: tenantDatabaseConnections.tenantId,
+      billingPlanIntent: tenantDatabaseConnections.billingPlanIntent,
+      status: tenantDatabaseConnections.status,
+      projectId: tenantDatabaseConnections.projectId,
+    }).from(tenantDatabaseConnections)
       .catch(error => {
         if (/billing_plan_intent|column .* does not exist/i.test(error instanceof Error ? error.message : String(error))) return [];
         throw error;
@@ -27,7 +32,7 @@ export default async function TenantsPage() {
   const neonPlanLabel = neonPlan ? neonPlan.charAt(0).toUpperCase() + neonPlan.slice(1) : 'unbekannt';
 
   const domainMap = new Map<string, string[]>();
-  const databasePlanMap = new Map(databaseConnections.map(connection => [connection.tenantId, connection.billingPlanIntent]));
+  const databaseConnectionMap = new Map(databaseConnections.map(connection => [connection.tenantId, connection]));
   for (const d of domains) {
     const list = domainMap.get(d.tenantId) || [];
     list.push(d.domain);
@@ -40,6 +45,15 @@ export default async function TenantsPage() {
 
   function TenantCard({ t }: { t: typeof tenantList[number] }) {
     const tDomains = domainMap.get(t.id) || [];
+    const databaseConnection = databaseConnectionMap.get(t.id);
+    const standaloneBadge = (() => {
+      if (t.deploymentMode !== 'standalone') return null;
+      if (!databaseConnection) return { label: 'Standalone · DB fehlt', className: 'crm-badge-amber' };
+      if (databaseConnection.status === 'migration_failed') return { label: 'Standalone · Migration offen', className: 'crm-badge-red' };
+      if (databaseConnection.status !== 'active') return { label: `Standalone · DB ${databaseConnection.status}`, className: 'crm-badge-amber' };
+      if (databaseConnection.projectId?.startsWith('external:')) return { label: 'Standalone · Neon extern', className: 'crm-badge-green' };
+      return { label: `Standalone · ${neonPlan ? `Neon ${neonPlanLabel}` : 'DB aktiv'}`, className: neonPlan === 'free' || !neonPlan ? 'crm-badge-green' : 'crm-badge-amber' };
+    })();
     return (
       <Link href={`/crm/tenants/${t.id}`} className="crm-card p-4 sm:p-5 hover:border-indigo-300 hover:shadow-sm transition-all group block">
         <div className="flex items-start sm:items-center justify-between gap-3">
@@ -53,8 +67,8 @@ export default async function TenantsPage() {
                 <span className="font-mono">{t.slug}</span>
                 <span className="hidden sm:inline">·</span>
                 <span className="capitalize">{t.industry}</span>
-                {t.deploymentMode === 'standalone' && <span className={neonPlan === 'free' ? 'crm-badge-green' : 'crm-badge-amber'}>Standalone · Neon {neonPlanLabel}</span>}
-                {databasePlanMap.get(t.id) === 'paid_requested' && <span className="crm-badge-amber">Paid-DB vorgemerkt</span>}
+                {standaloneBadge && <span className={standaloneBadge.className}>{standaloneBadge.label}</span>}
+                {databaseConnection?.billingPlanIntent === 'paid_requested' && <span className="crm-badge-amber">Paid-DB vorgemerkt</span>}
                 {t.deploymentMode === 'lead_shared' && <span className="crm-badge-amber">Lead-Shared</span>}
                 {t.deploymentMode === 'shared' && <span className="crm-badge-slate">Demo-Shared</span>}
               </div>
