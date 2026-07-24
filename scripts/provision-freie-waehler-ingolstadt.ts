@@ -923,7 +923,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badge: 'Programm',
             headline: 'Themen klar geordnet.',
-            subline: 'Das Wahlprogramm wird als kuratierte Themenübersicht dargestellt, nicht als alter HTML-Dump.',
+            subline: 'Finanzen, Stadtentwicklung, Mobilität und Transparenz als klare Themenfelder für Ingolstadt.',
             principles: [
               { eyebrow: '01', title: 'Haushalt & Verantwortung', text: 'Solide Finanzen schaffen Spielraum für Familien, Sicherheit, Bildung und Gesundheit.' },
               { eyebrow: '02', title: 'Stadtentwicklung', text: 'Ingolstadt soll sich nachvollziehbar, bezahlbar und lebenswert weiterentwickeln.' },
