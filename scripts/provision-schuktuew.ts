@@ -807,10 +807,35 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
 
   const canonicalSlugBySourceUrl = new Map(projects.map((project) => [project.data.sourceUrl, project.slug]).filter(([sourceUrl]) => Boolean(sourceUrl)));
   const importedBySourceUrl = new Map((extras.importedProjects || []).map((project) => [project.sourceUrl, project]));
+  function galleryFromImported(predicate: (project: ImportedProject) => boolean, limit = 24) {
+    const seen = new Set<string>();
+    const images: string[] = [];
+    for (const project of extras.importedProjects || []) {
+      if (!predicate(project)) continue;
+      for (const image of project.gallery || []) {
+        if (!image || seen.has(image)) continue;
+        seen.add(image);
+        images.push(image);
+        if (images.length >= limit) return images;
+      }
+    }
+    return images;
+  }
+  const curatedGalleryFallbacks: Record<string, string[]> = {
+    'business-branding': galleryFromImported((project) => (
+      ['commercial', 'efs-recruiting-campaign', 'clients-selection', 'konnekte', 'blackworks'].includes(project.slug)
+      || project.category === 'Commercial'
+    )),
+    'personal-branding': galleryFromImported((project) => (
+      ['personal', 'portraits', 'selfportraits', 'kajan-luc', 'juliane-pittermann'].includes(project.slug)
+      || project.category === 'Portrait'
+    )),
+  };
   const curatedProjects = projects.map((project) => {
     const imported = importedBySourceUrl.get(project.data.sourceUrl);
-    const gallery = imported?.gallery?.length ? imported.gallery : [project.data.image].filter(Boolean);
-    return { ...project, data: { ...project.data, gallery, originalText: imported?.originalText, contentLead: imported?.originalText || project.data.description } };
+    const fallbackGallery = curatedGalleryFallbacks[project.slug] || [];
+    const gallery = imported?.gallery?.length ? imported.gallery : fallbackGallery.length ? fallbackGallery : [project.data.image].filter(Boolean);
+    return { ...project, data: { ...project.data, image: gallery[0] || project.data.image, gallery, originalText: imported?.originalText, contentLead: imported?.originalText || project.data.description } };
   });
   const existingSourceUrls = new Set(canonicalSlugBySourceUrl.keys());
   const importedProjects = (extras.importedProjects || [])
