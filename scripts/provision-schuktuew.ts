@@ -64,6 +64,7 @@ type ImportedProject = {
   sourceUrl: string;
   category: string;
   description: string;
+  originalText?: string;
   image: string;
   gallery: string[];
 };
@@ -85,6 +86,21 @@ type PageConfig = {
     styleOverrides?: Record<string, unknown>;
   }>;
 };
+type SchuktuewProject = {
+  slug: string;
+  title: string;
+  priority: number;
+  data: Record<string, unknown> & {
+    category?: string;
+    description?: string;
+    image?: string;
+    gallery?: string[];
+    video?: string;
+    sourceUrl?: string;
+    contentLead?: string;
+    originalText?: string;
+  };
+};
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const SLUG = 'schuktuew';
@@ -98,7 +114,7 @@ const KNOWN_NON_PROJECT_MEDIA_IDS = new Set([
 ]);
 const MAX_ORIGINAL_PROJECTS = Number(process.env.SCHUKTUEW_MAX_ORIGINAL_PROJECTS || '80');
 const MAX_IMAGES_PER_PROJECT = Number(process.env.SCHUKTUEW_MAX_IMAGES_PER_PROJECT || '28');
-const MAX_CANVAS_ITEMS = Number(process.env.SCHUKTUEW_MAX_CANVAS_ITEMS || '64');
+const MAX_CANVAS_ITEMS = Number(process.env.SCHUKTUEW_MAX_CANVAS_ITEMS || '40');
 
 const LOCAL_ASSETS = {
   brandBox: 'C:/Users/vonin-ju/AppData/Local/Temp/codex-clipboard-e93ce390-ba23-47f5-be25-11f7029c7db0.png',
@@ -358,13 +374,31 @@ async function uploadAssets(dataDb: Database, tenantId: string): Promise<Uploade
 }
 
 function decodeHtml(value: string) {
-  return value
+  const decoded = value
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&auml;/gi, 'ä')
+    .replace(/&ouml;/gi, 'ö')
+    .replace(/&uuml;/gi, 'ü')
+    .replace(/&Auml;/g, 'Ä')
+    .replace(/&Ouml;/g, 'Ö')
+    .replace(/&Uuml;/g, 'Ü')
+    .replace(/&szlig;/gi, 'ß')
+    .replace(/&ndash;|&#8211;/gi, '–')
+    .replace(/&mdash;|&#8212;/gi, '—')
     .replace(/\\u002F/g, '/');
+  return decoded.includes('&') ? decoded
+    .replace(/&auml;/gi, 'ä')
+    .replace(/&ouml;/gi, 'ö')
+    .replace(/&uuml;/gi, 'ü')
+    .replace(/&Auml;/g, 'Ä')
+    .replace(/&Ouml;/g, 'Ö')
+    .replace(/&Uuml;/g, 'Ü')
+    .replace(/&szlig;/gi, 'ß') : decoded;
 }
 
 function slugFromUrl(url: string) {
@@ -421,6 +455,39 @@ function extractMeta(html: string, key: string) {
   const propertyFirst = new RegExp(`<meta[^>]+(?:property|name)=["']${escaped}["'][^>]+content=["']([^"']+)["'][^>]*>`, 'i');
   const contentFirst = new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${escaped}["'][^>]*>`, 'i');
   return decodeHtml(propertyFirst.exec(html)?.[1] || contentFirst.exec(html)?.[1] || '').trim();
+}
+
+function stripVisibleText(value: string) {
+  return decodeHtml(value)
+    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function isUsefulOriginalText(text: string) {
+  if (text.length < 45 || text.length > 620) return false;
+  if (/https?:\/\/|wix|parastorage|cookie|login|account|Use tab|top of page|Mehr$/i.test(text)) return false;
+  if (/^(Kontakt|Portfolio|Imprint|Instagram|Facebook|PORTRAIT|SPORT|GOLF|CONVERSE|über mich)$/i.test(text)) return false;
+  if ((text.match(/[{}[\]]/g) || []).length > 2) return false;
+  if (!/[.!?]|Saison|Seiten|STÜCKZAHL|Auftrag|Serie|Portrait|Commercial|Fotograf/i.test(text)) return false;
+  return true;
+}
+
+function extractOriginalText(html: string) {
+  const body = html
+    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ');
+  const candidates: string[] = [];
+  for (const match of body.matchAll(/<(?:p|h[1-6]|span|div)[^>]*>([\s\S]{0,1600}?)<\/(?:p|h[1-6]|span|div)>/gi)) {
+    const text = stripVisibleText(match[1] || '');
+    if (!isUsefulOriginalText(text)) continue;
+    if (candidates.some((existing) => existing === text || existing.includes(text) || text.includes(existing))) continue;
+    candidates.push(text);
+    if (candidates.length >= 5) break;
+  }
+  return candidates.join('\n\n');
 }
 
 function cleanOriginalTitle(value: string, slug: string) {
@@ -509,6 +576,7 @@ async function importOriginalProjectGalleries(): Promise<{ importedProjects: Imp
         .replace(/\s+/g, ' ')
         .replace(/^Alexander Schuktuew\s*[-|–]\s*/i, '')
         .trim();
+      const originalText = extractOriginalText(html);
       const category = categoryFromSlug(slug);
       const project: ImportedProject = {
         slug,
@@ -516,7 +584,8 @@ async function importOriginalProjectGalleries(): Promise<{ importedProjects: Imp
         priority,
         sourceUrl: url,
         category,
-        description,
+        description: originalText || description,
+        originalText,
         image: images[0],
         gallery: images,
       };
@@ -555,6 +624,22 @@ function regularSectionIdentity(type: string) {
   if (['editorialHero', 'contact', 'faq', 'ctaBand'].includes(type)) return { definitionKey: `${type}.photography.v1`, schemaVersion: 1 };
   return sectionIdentity(type);
 }
+
+const DARK_SECTION_STYLE = {
+  '--token-section-bg': '#050505',
+  '--token-section-bg-alt': '#0c0c0c',
+  '--token-card-bg': '#101010',
+  '--token-card-border': 'rgba(244,238,227,0.16)',
+  '--token-heading': '#f7f2e8',
+  '--token-body': '#ded6ca',
+  '--token-muted': '#a79f95',
+  '--token-card-heading': '#f7f2e8',
+  '--token-card-body': '#ded6ca',
+  '--token-card-muted': '#a79f95',
+  '--token-accent': '#d11224',
+  '--token-btn-bg': '#f4eee3',
+  '--token-btn-text': '#080808',
+};
 
 function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
   const brand = {
@@ -725,7 +810,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
   const curatedProjects = projects.map((project) => {
     const imported = importedBySourceUrl.get(project.data.sourceUrl);
     const gallery = imported?.gallery?.length ? imported.gallery : [project.data.image].filter(Boolean);
-    return { ...project, data: { ...project.data, gallery } };
+    return { ...project, data: { ...project.data, gallery, originalText: imported?.originalText, contentLead: imported?.originalText || project.data.description } };
   });
   const existingSourceUrls = new Set(canonicalSlugBySourceUrl.keys());
   const importedProjects = (extras.importedProjects || [])
@@ -737,12 +822,214 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       data: {
         category: project.category,
         description: project.description,
+        contentLead: project.originalText || project.description,
+        originalText: project.originalText,
         image: project.image,
         gallery: project.gallery,
         sourceUrl: project.sourceUrl,
       },
     }));
-  const allProjects = [...curatedProjects, ...importedProjects];
+
+  const projectStories: Record<string, {
+    lead: string;
+    facts: Array<{ label: string; value: string }>;
+    angles: Array<{ title: string; text: string; icon: string }>;
+  }> = {
+    'business-branding': {
+      lead: 'Business- und Kampagnenbilder für Unternehmen, Marken und Persönlichkeiten. Der Fokus liegt auf Haltung, Klarheit und wiederverwendbaren Motiven für Website, Social, Recruiting und Kommunikation.',
+      facts: [
+        { label: 'Einsatz', value: 'Website · Kampagne · Recruiting' },
+        { label: 'Region', value: 'Ingolstadt · München' },
+        { label: 'Output', value: 'Portraits · Stills · Social Assets' },
+      ],
+      angles: [
+        { title: 'Positionierung', text: 'Vor dem Shooting wird geklärt, wofür die Marke stehen soll und welche Motive dafür tragen.', icon: 'Sparkles' },
+        { title: 'Bildführung', text: 'Licht, Ausdruck, Raum und Details werden so geführt, dass aus Einzelbildern ein nutzbares Set entsteht.', icon: 'Aperture' },
+        { title: 'Verwendung', text: 'Die Motive funktionieren für Website, Kampagne, Social Media und Vertrieb, ohne den Look zu verlieren.', icon: 'Layers' },
+      ],
+    },
+    'personal-branding': {
+      lead: 'Portraits für Menschen, die sichtbar werden wollen, ohne beliebig zu wirken. Die Bildsprache bleibt reduziert, direkt und auf Persönlichkeit konzentriert.',
+      facts: [
+        { label: 'Fokus', value: 'Portrait · Personal Branding' },
+        { label: 'Look', value: 'klar · ruhig · charakterstark' },
+        { label: 'Einsatz', value: 'Website · Presse · Social' },
+      ],
+      angles: [
+        { title: 'Ausdruck', text: 'Der Mensch steht im Mittelpunkt; Haltung und Präsenz sind wichtiger als Inszenierung.', icon: 'UserRound' },
+        { title: 'Reduktion', text: 'Ruhige Kompositionen, klare Flächen und präzise Details machen die Bilder länger nutzbar.', icon: 'Focus' },
+        { title: 'Vertrauen', text: 'Ein gutes Portrait zeigt Nähe, ohne künstlich zu wirken.', icon: 'ShieldCheck' },
+      ],
+    },
+    'sport-golf': {
+      lead: 'Sportmotive und Reels im Kontext von Tempo, Konzentration und Präzision. Das Material bleibt im richtigen Format nutzbar – besonders für Social, Kampagne und Sponsoring.',
+      facts: [
+        { label: 'Format', value: 'Foto · Reel · Kampagne' },
+        { label: 'Kontext', value: 'Golf · Sport · Bewegung' },
+        { label: 'Output', value: '9:16 · Website · Social' },
+      ],
+      angles: [
+        { title: 'Bewegung', text: 'Timing, Rhythmus und Blickführung sind entscheidend, damit Sportbilder Spannung behalten.', icon: 'Activity' },
+        { title: 'Präzision', text: 'Ausschnitt, Moment und Licht werden so geführt, dass Dynamik kontrolliert bleibt.', icon: 'Target' },
+        { title: 'Kanäle', text: 'Aus der Produktion entstehen Motive und Clips für mehrere Einsatzorte.', icon: 'Film' },
+      ],
+    },
+    'eiszeit-erc-ingolstadt': {
+      lead: 'Im Auftrag des ERC Ingolstadt begleitete Alexander Schuktuew Team, Umfeld und Leben um den Sport in der Saison 23/24 – mit Blick hinter die Kulissen des 1.-Liga-Betriebs.',
+      facts: [
+        { label: 'Auftrag', value: 'ERC Ingolstadt' },
+        { label: 'Saison', value: '23/24' },
+        { label: 'Veröffentlichung', value: 'April 2024' },
+        { label: 'Umfang', value: '240 Seiten · 2.000 Stück' },
+      ],
+      angles: [
+        { title: 'Nähe', text: 'Die Arbeit zeigt nicht nur Spielmomente, sondern auch Umfeld, Vorbereitung und Atmosphäre.', icon: 'Eye' },
+        { title: 'Dokumentation', text: 'Ein Saisonblick mit journalistischer Ruhe und Nähe zum Geschehen.', icon: 'BookOpen' },
+        { title: 'Buchform', text: 'Die Bildserie wurde als umfangreiches Buchprojekt veröffentlicht.', icon: 'Library' },
+      ],
+    },
+    converse: {
+      lead: 'Serie zur Präsentation eines neuen Modells des ikonischen CONVERSE-Schuhs; gezeigt im Berliner Flagshipstore in Mitte.',
+      facts: [
+        { label: 'Marke', value: 'CONVERSE' },
+        { label: 'Kontext', value: 'Flagshipstore Berlin-Mitte' },
+        { label: 'Format', value: 'Commercial Serie' },
+      ],
+      angles: [
+        { title: 'Kampagnenlook', text: 'Das Produkt wird nicht isoliert, sondern über Haltung, Umgebung und Stimmung erzählt.', icon: 'BadgeCheck' },
+        { title: 'Serie', text: 'Mehrere Motive bauen einen konsistenten visuellen Kontext auf.', icon: 'Images' },
+        { title: 'Ort', text: 'Der Berliner Flagshipstore wird Teil der Bildwirkung.', icon: 'MapPin' },
+      ],
+    },
+    'buch-ingolstadt': {
+      lead: 'Freies fotografisches Buchprojekt aus Ingolstadt. Die Arbeit verbindet dokumentarischen Blick, urbane Motive und persönliche Perspektive.',
+      facts: [
+        { label: 'Format', value: 'Buchprojekt' },
+        { label: 'Ort', value: 'Ingolstadt' },
+        { label: 'Ansatz', value: 'dokumentarisch · frei' },
+      ],
+      angles: [
+        { title: 'Ort', text: 'Ingolstadt wird als Bildraum betrachtet, nicht nur als Kulisse.', icon: 'Map' },
+        { title: 'Serie', text: 'Ein Buchprojekt lebt von Rhythmus, Wiederholung und Brüchen zwischen den Motiven.', icon: 'BookOpen' },
+        { title: 'Blick', text: 'Der dokumentarische Ansatz macht Alltägliches sichtbar.', icon: 'Camera' },
+      ],
+    },
+  };
+
+  function storyForProject(project: SchuktuewProject) {
+    const fromMap = projectStories[project.slug];
+    if (fromMap) return fromMap;
+    const category = String(project.data.category || 'Projekt');
+    const description = String(project.data.description || '').trim();
+    const lead = description || `Ausgewähltes Projekt aus dem Bereich ${category}. Die Galerie übernimmt Bildmaterial der bestehenden Website und macht das Projekt als eigene Detailseite sichtbar.`;
+    return {
+      lead,
+      facts: [
+        { label: 'Bereich', value: category },
+        { label: 'Quelle', value: 'Originalprojekt übernommen' },
+        { label: 'Material', value: `${project.data.gallery?.length || 1} Bilder` },
+      ],
+      angles: [
+        { title: 'Kontext', text: lead, icon: 'Layers' },
+        { title: 'Bildwelt', text: 'Die Galerie zeigt die visuelle Linie des Projekts mit Originalmotiven.', icon: 'Images' },
+        { title: 'Einsatz', text: 'Die Detailseite bleibt als Case, Referenz und Portfolio-Einstieg nutzbar.', icon: 'ArrowUpRight' },
+      ],
+    };
+  }
+
+  function galleryForProject(project: SchuktuewProject) {
+    const gallery = Array.isArray(project.data.gallery) ? project.data.gallery.filter(Boolean) : [];
+    return gallery.length ? gallery : [project.data.image].filter(Boolean) as string[];
+  }
+
+  function projectSection(
+    project: SchuktuewProject,
+    type: string,
+    index: number,
+    data: Record<string, unknown>,
+    container: 'default' | 'wide' | 'full' = 'default',
+    spacingTop = 'l',
+    spacingBottom = 'l',
+  ) {
+    return {
+      id: `${project.slug}-${String(index).padStart(2, '0')}-${type}`,
+      type,
+      ...regularSectionIdentity(type),
+      visible: true,
+      locked: false,
+      data,
+      container,
+      spacingTop,
+      spacingBottom,
+      styleOverrides: DARK_SECTION_STYLE,
+    };
+  }
+
+  function sectionsForProject(project: SchuktuewProject) {
+    const story = storyForProject(project);
+    const gallery = galleryForProject(project);
+    const category = String(project.data.category || 'Projekt');
+    return [
+      projectSection(project, 'collectionHero', 1, {
+        category,
+        headline: project.title,
+        subline: story.lead,
+        bgImage: project.data.image,
+        overlayColor: '#050505',
+        overlayOpacity: 0.66,
+        primaryCta: { label: 'Projekt anfragen', href: '/kontakt' },
+        secondaryCta: { label: 'Zurück zum Portfolio', href: '/portfolio' },
+      }, 'full', 'none', 'none'),
+      projectSection(project, 'statsCounter', 2, {
+        badge: 'Fakten',
+        headline: 'Projekt auf einen Blick.',
+        subline: 'Die wichtigsten Eckdaten aus dem übernommenen Projektkontext.',
+        stats: story.facts.map((fact) => ({ value: fact.value, label: fact.label })),
+      }, 'default', 'l', 'l'),
+      projectSection(project, 'spotlightCards', 3, {
+        badge: 'Projektprofil',
+        headline: 'Kontext, Look und Einsatz.',
+        subline: story.lead,
+        cards: story.angles,
+      }, 'default', 'xl', 'l'),
+      projectSection(project, 'galleryPro', 4, {
+        badge: 'Galerie',
+        headline: `${project.title} in Bildern`,
+        subline: 'Auswahl aus der übernommenen Originalgalerie.',
+        images: gallery.slice(0, 28).map((src, imageIndex) => ({
+          src,
+          alt: `${project.title} ${imageIndex + 1}`,
+          category,
+          caption: imageIndex === 0 ? story.lead : '',
+        })),
+      }, 'wide', 'l', 'xl'),
+      projectSection(project, 'ctaBand', 5, {
+        badgeText: 'Ähnliches Projekt',
+        headline: 'Eine starke Bildwelt planen?',
+        subline: 'Kurz Projektziel, Einsatzkanäle und Timing senden.',
+        ctaPrimary: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'ArrowRight' },
+        ctaSecondary: { label: 'Portfolio ansehen', href: '/portfolio' },
+      }, 'default', 'l', 'xl'),
+    ];
+  }
+
+  function enrichProject(project: SchuktuewProject) {
+    const story = storyForProject(project);
+    const gallery = galleryForProject(project);
+    return {
+      ...project,
+      data: {
+        ...project.data,
+        description: String(project.data.description || story.lead),
+        contentLead: story.lead,
+        facts: story.facts,
+        gallery,
+        sections: sectionsForProject({ ...project, data: { ...project.data, gallery, description: String(project.data.description || story.lead) } }),
+      },
+    };
+  }
+
+  const allProjects = [...curatedProjects, ...importedProjects].map((project) => enrichProject(project as SchuktuewProject));
   const importedGalleryItems = (extras.galleryItems || []).map((item) => {
     const canonicalSlug = item.sourceUrl ? canonicalSlugBySourceUrl.get(item.sourceUrl) : null;
     return canonicalSlug ? { ...item, href: `/c/projekte/${canonicalSlug}` } : item;
@@ -845,11 +1132,12 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             subline: 'Ein starkes Bild entsteht aus Entscheidungen: Haltung, Licht, Motivführung, Nachbearbeitung und kanalreife Übergabe.',
             brandImage: assets.brandBox,
             parts: [
-              { id: 'body', label: 'Brand Body', text: 'Markenkern, Haltung und Kontext bestimmen den Look.', offsetX: -128, offsetY: -20, color: '#f4eee3' },
-              { id: 'lens', label: 'Lens', text: 'Das Motiv wird fokussiert, nicht nur aufgenommen.', offsetX: 0, offsetY: -118, color: '#080808' },
-              { id: 'sensor', label: 'Sensor', text: 'Look, Retusche und Kanalformate werden früh eingeplant.', offsetX: 122, offsetY: -8, color: '#d11224' },
-              { id: 'light', label: 'Light', text: 'Licht trennt normales Bild von Kampagnenwirkung.', offsetX: -84, offsetY: 96, color: '#ffffff' },
-              { id: 'output', label: 'Output', text: 'Website, Ads, Social, Editorial und Sales bekommen konsistente Assets.', offsetX: 104, offsetY: 96, color: '#c7ff4a' },
+              { id: 'body', label: 'Body', text: 'Gehäuse, Griff und Haltung der Marke.', offsetX: -150, offsetY: 0, color: '#151515' },
+              { id: 'lens', label: 'Lens', text: 'Fokus, Nähe und Perspektive.', offsetX: 8, offsetY: -132, color: '#070707' },
+              { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 86, offsetY: -68, color: '#050505' },
+              { id: 'sensor', label: 'Sensor', text: 'Look, Farbe und Detailtiefe.', offsetX: 156, offsetY: 8, color: '#d11224' },
+              { id: 'display', label: 'Display', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -126, offsetY: 124, color: '#f4eee3' },
+              { id: 'assets', label: 'Assets', text: 'Website, Social, Kampagne und Print.', offsetX: 138, offsetY: 124, color: '#c7ff4a' },
             ],
             cta: { label: 'System ansehen', href: '/ai-workflows' },
           },
@@ -876,8 +1164,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'verticalReelShowcase',
           data: {
             badge: 'Reels & Motion',
-            headline: 'Hochformat bleibt Hochformat.',
-            subline: 'Reels und Motion bleiben im vertikalen Format sichtbar und können direkt als Referenz wirken.',
+            headline: 'Reels, Sport und Kampagne im Originalformat.',
+            subline: 'Hochformat-Arbeiten bleiben als echte Referenzen sichtbar – mit Kontext zu Produktion, Einsatz und Motiv.',
             aspectRatio: '9/16',
             reels: [
               { eyebrow: 'Production', title: 'Alles aus einer Hand', text: 'Foto, Film, Schnitt und Content-Varianten für Markenauftritte.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: '9:16', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
@@ -919,6 +1207,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             headline: 'Zieh dich durch die Bildwelt.',
             subline: 'Eine offene Bildlandkarte aus Portfolio, Portraits, Sport, Commercial und Buchprojekten.',
             ctaLabel: 'Canvas öffnen',
+            maxExplorerItems: 40,
             items: portfolioItems,
           },
         },
@@ -927,7 +1216,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: 'Cases',
             headline: 'Ausgewählte Linien.',
-            subline: 'Jede Linie zeigt Kontext, Bildsprache und Einsatzfeld auf einen Blick.',
+            subline: 'Ausgewählte Projekte mit direktem Weg zur Detailseite und Galerie.',
             layout: 'rail',
             items: allProjects.slice(0, 24).map((project) => ({
               id: project.slug,
@@ -976,11 +1265,12 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             subline: 'Von Briefing bis Übergabe: Jeder Teil der Produktion zahlt auf Wirkung, Wiedererkennbarkeit und Verwendbarkeit ein.',
             brandImage: assets.brandBox,
             parts: [
-              { id: 'brief', label: 'Brief', text: 'Ziel und Kanäle klären.', offsetX: -132, offsetY: -22, color: '#f4eee3' },
-              { id: 'lens', label: 'Look', text: 'Bildsprache und Licht definieren.', offsetX: 0, offsetY: -124, color: '#070707' },
-              { id: 'sensor', label: 'Sensor', text: 'Varianten, Formate und Tempo.', offsetX: 124, offsetY: -10, color: '#d11224' },
-              { id: 'shoot', label: 'Shoot', text: 'Produktion mit klarer Führung.', offsetX: -94, offsetY: 102, color: '#ffffff' },
-              { id: 'asset', label: 'Assets', text: 'Kanalreife Übergabe.', offsetX: 106, offsetY: 98, color: '#c7ff4a' },
+              { id: 'body', label: 'Brief', text: 'Ziel, Marke und Kanäle klären.', offsetX: -150, offsetY: 0, color: '#151515' },
+              { id: 'lens', label: 'Look', text: 'Bildsprache, Licht und Perspektive.', offsetX: 8, offsetY: -132, color: '#070707' },
+              { id: 'shutter', label: 'Shoot', text: 'Produktion mit klarer Führung.', offsetX: 86, offsetY: -68, color: '#050505' },
+              { id: 'sensor', label: 'Post', text: 'Retusche, Grading und Varianten.', offsetX: 156, offsetY: 8, color: '#d11224' },
+              { id: 'display', label: 'Review', text: 'Auswahl und Freigabe kontrolliert.', offsetX: -126, offsetY: 124, color: '#f4eee3' },
+              { id: 'assets', label: 'Assets', text: 'Kanalreife Übergabe.', offsetX: 138, offsetY: 124, color: '#c7ff4a' },
             ],
             cta: { label: 'Mit Alex sprechen', href: '/kontakt' },
           },
@@ -1159,6 +1449,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           fields: [
             { key: 'category', label: 'Kategorie', type: 'text' },
             { key: 'description', label: 'Beschreibung', type: 'textarea' },
+            { key: 'contentLead', label: 'Projekttext', type: 'textarea' },
             { key: 'image', label: 'Bild', type: 'image' },
             { key: 'gallery', label: 'Projektgalerie', type: 'image-list' },
             { key: 'video', label: 'Video', type: 'url' },

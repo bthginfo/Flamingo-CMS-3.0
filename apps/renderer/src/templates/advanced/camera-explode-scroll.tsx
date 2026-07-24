@@ -20,19 +20,22 @@ type CameraPart = {
 type Props = { data: Record<string, unknown> };
 
 const FALLBACK_PARTS: CameraPart[] = [
-  { id: 'body', label: 'Body', text: 'Kameragehäuse, Griff und Haltung.', offsetX: -150, offsetY: 4, color: '#f5f1e8' },
-  { id: 'lens', label: 'Lens', text: 'Fokus, Blickrichtung und optische Tiefe.', offsetX: 6, offsetY: -128, color: '#111111' },
-  { id: 'sensor', label: 'Sensor', text: 'Bilddaten, Look und Varianten.', offsetX: 152, offsetY: -6, color: '#d11224' },
-  { id: 'light', label: 'Light', text: 'Lichtführung, Schatten und Atmosphäre.', offsetX: -118, offsetY: 132, color: '#ffffff' },
-  { id: 'output', label: 'Output', text: 'Finale Assets für Website, Social und Kampagne.', offsetX: 132, offsetY: 132, color: '#c7ff4a' },
+  { id: 'body', label: 'Body', text: 'Gehäuse, Griff und Haltung.', offsetX: -150, offsetY: 0, color: '#151515' },
+  { id: 'lens', label: 'Lens', text: 'Fokus, Blickrichtung und optische Tiefe.', offsetX: 8, offsetY: -132, color: '#111111' },
+  { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 86, offsetY: -68, color: '#050505' },
+  { id: 'sensor', label: 'Sensor', text: 'Bilddaten, Look und Varianten.', offsetX: 156, offsetY: 8, color: '#d11224' },
+  { id: 'display', label: 'Display', text: 'Kontrolle, Auswahl und Bildführung.', offsetX: -126, offsetY: 124, color: '#f4eee3' },
+  { id: 'assets', label: 'Assets', text: 'Finale Dateien für Website, Social und Kampagne.', offsetX: 138, offsetY: 124, color: '#c7ff4a' },
 ];
 
 function partKind(part: CameraPart, index: number) {
   const value = `${part.id || ''} ${part.label || ''}`.toLowerCase();
   if (value.includes('lens') || value.includes('look') || value.includes('fokus')) return 'lens';
+  if (value.includes('shutter') || value.includes('aperture') || value.includes('verschluss') || value.includes('moment')) return 'shutter';
   if (value.includes('sensor') || value.includes('ai') || value.includes('chip')) return 'sensor';
-  if (value.includes('light') || value.includes('shoot') || value.includes('flash')) return 'light';
-  if (value.includes('output') || value.includes('asset') || value.includes('film')) return 'output';
+  if (value.includes('display') || value.includes('screen') || value.includes('monitor') || value.includes('kontrolle')) return 'display';
+  if (value.includes('light') || value.includes('shoot') || value.includes('flash') || value.includes('licht')) return 'light';
+  if (value.includes('output') || value.includes('asset') || value.includes('card') || value.includes('speicher') || value.includes('film')) return 'output';
   return index === 0 ? 'body' : 'plate';
 }
 
@@ -40,9 +43,9 @@ function layerMotion(part: CameraPart, kind: string, index: number, progress: Mo
   return {
     x: useTransform(progress, [0, 1], [0, Number(part.offsetX ?? 0) * 1.18]),
     y: useTransform(progress, [0, 1], [0, Number(part.offsetY ?? 0) * 1.06]),
-    z: useTransform(progress, [0, 1], [0, kind === 'lens' ? 175 : kind === 'sensor' ? -105 : kind === 'light' ? 90 : kind === 'output' ? 125 : -34]),
-    rotateX: useTransform(progress, [0, 1], [0, kind === 'lens' ? -8 : kind === 'light' ? 16 : kind === 'output' ? -12 : 0]),
-    rotateY: useTransform(progress, [0, 1], [0, kind === 'body' ? -12 : kind === 'sensor' ? 18 : kind === 'output' ? 22 : (index - 2) * 5]),
+    z: useTransform(progress, [0, 1], [0, kind === 'lens' ? 190 : kind === 'shutter' ? 118 : kind === 'sensor' ? -95 : kind === 'display' ? -145 : kind === 'light' ? 90 : kind === 'output' ? 125 : -34]),
+    rotateX: useTransform(progress, [0, 1], [0, kind === 'lens' ? -8 : kind === 'shutter' ? 10 : kind === 'display' ? 14 : kind === 'light' ? 16 : kind === 'output' ? -12 : 0]),
+    rotateY: useTransform(progress, [0, 1], [0, kind === 'body' ? -12 : kind === 'shutter' ? 15 : kind === 'sensor' ? 18 : kind === 'display' ? -18 : kind === 'output' ? 22 : (index - 2) * 5]),
     rotateZ: useTransform(progress, [0, 1], [0, kind === 'light' ? -8 : kind === 'output' ? 7 : (index - 2) * 2]),
   };
 }
@@ -87,6 +90,28 @@ function CameraLayer({ part, index, progress }: { part: CameraPart; index: numbe
     );
   }
 
+  if (kind === 'shutter') {
+    return (
+      <motion.div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-[1.6rem] border border-white/14 bg-[#050505] shadow-[0_34px_86px_rgba(0,0,0,.55)]" style={baseStyle} data-edit-collection="parts" data-edit-index={index}>
+        <div className="absolute inset-5 rounded-[1.15rem] border border-white/10 bg-[conic-gradient(from_20deg,#0a0a0a_0_12%,#303030_12%_24%,#050505_24%_38%,#3a3a3a_38%_50%,#080808_50%_66%,#2c2c2c_66%_80%,#070707_80%_100%)]" />
+        <div className="absolute inset-[3.35rem] rounded-full border border-white/15 bg-[radial-gradient(circle,#121212_0_42%,#000_43%_100%)] shadow-[inset_0_0_28px_rgba(255,255,255,.08)]" />
+        <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 rounded-full border border-white/12 bg-black/50 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-white/78 backdrop-blur" data-edit-path="label">{part.label}</span>
+      </motion.div>
+    );
+  }
+
+  if (kind === 'display') {
+    return (
+      <motion.div className="absolute left-1/2 top-1/2 h-36 w-56 -translate-x-1/2 -translate-y-1/2 rounded-[1.3rem] border border-black/20 shadow-[0_30px_78px_rgba(0,0,0,.5)]" style={{ ...baseStyle, background: color }} data-edit-collection="parts" data-edit-index={index}>
+        <div className="absolute inset-4 rounded-xl bg-[linear-gradient(135deg,#161616,#030303)] ring-1 ring-black/35">
+          <div className="absolute left-3 top-3 h-2 w-12 rounded-full bg-white/20" />
+          <div className="absolute bottom-3 right-3 h-9 w-14 rounded-lg border border-white/15 bg-white/8" />
+        </div>
+        <span className="absolute inset-x-0 bottom-4 text-center text-[10px] font-black uppercase tracking-[.22em] text-black/70" data-edit-path="label">{part.label}</span>
+      </motion.div>
+    );
+  }
+
   if (kind === 'light') {
     return (
       <motion.div className="absolute left-1/2 top-1/2 h-28 w-48 -translate-x-1/2 -translate-y-1/2 rounded-[1.15rem] border border-black/10 shadow-[0_26px_70px_rgba(0,0,0,.44)]" style={{ ...baseStyle, background: color }} data-edit-collection="parts" data-edit-index={index}>
@@ -113,9 +138,11 @@ function CameraLayer({ part, index, progress }: { part: CameraPart; index: numbe
       data-edit-index={index}
     >
       <div className="absolute -top-11 left-16 h-12 w-24 rounded-t-[1.2rem] border border-white/12 bg-black/80 shadow-xl" />
+      <div className="absolute -top-7 right-20 h-7 w-16 rounded-t-lg bg-black/85 shadow-xl" />
       <div className="absolute right-8 top-9 h-32 w-20 rounded-2xl bg-black/25 shadow-[inset_14px_0_28px_rgba(0,0,0,.22)]" />
-      <div className="absolute left-10 top-8 h-10 w-24 rounded-full bg-black/16" />
-      <div className="absolute inset-5 rounded-[1.8rem] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,.16),transparent_35%)]" />
+      <div className="absolute left-10 top-8 h-10 w-24 rounded-full bg-white/10 ring-1 ring-white/12" />
+      <div className="absolute left-44 top-8 h-20 w-20 rounded-full border border-white/16 bg-black/55 shadow-[inset_0_0_22px_rgba(255,255,255,.08)]" />
+      <div className="absolute inset-5 rounded-[1.8rem] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,.11),transparent_35%),radial-gradient(circle_at_68%_52%,rgba(0,0,0,.5),transparent_20%)]" />
       <span className="absolute bottom-7 left-9 rounded-full bg-black/55 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-white/82 backdrop-blur" data-edit-path="label">{part.label}</span>
     </motion.div>
   );
@@ -172,7 +199,7 @@ export function CameraExplodeScrollSection({ data }: Props) {
         <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(28rem,.78fr)_minmax(34rem,1.22fr)] lg:gap-12 lg:px-14">
           <div className="relative z-20 flex min-w-0 flex-col justify-between" data-color-context="dark">
             <CameraStickyIntro data={data} />
-            <div className="grid gap-3 pb-8">{parts.slice(0, 5).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
+            <div className="grid gap-3 pb-8">{parts.slice(0, 6).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
           </div>
           <div className="relative grid min-h-0 place-items-center">
             <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,.16),transparent_38%),radial-gradient(circle_at_80%_20%,color-mix(in_srgb,var(--token-accent)_32%,transparent),transparent_30%)]" />

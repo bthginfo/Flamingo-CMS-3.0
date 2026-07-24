@@ -28,8 +28,15 @@ function halton(index: number, base: number) {
   return result;
 }
 
+function clampNumber(value: number, min: number, max: number) {
+  if (!Number.isFinite(value)) return min;
+  return Math.max(min, Math.min(max, value));
+}
+
 export function InfiniteCanvasSection({ data }: Props) {
   const items = Array.isArray(data.items) ? (data.items as CanvasItem[]).filter((item) => item?.image) : [];
+  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 40), 12, 60);
+  const explorerItems = items.slice(0, maxExplorerItems);
   const badge = (data.badge as string) || '';
   const headline = (data.headline as string) || '';
   const subline = plain((data.subline as string) || '');
@@ -81,7 +88,7 @@ export function InfiniteCanvasSection({ data }: Props) {
             ];
             return (
               <motion.figure key={`${item.image}-${index}`} whileHover={{ scale: 1.035, zIndex: 5 }} className={`absolute overflow-hidden rounded-[calc(var(--token-card-radius)*.72)] border border-white/30 bg-[var(--token-card-bg)] shadow-2xl ${positions[index]}`} data-edit-collection="items" data-edit-index={index}>
-                <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" loading="lazy" data-edit-image="image" />
+                <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" loading="lazy" decoding="async" data-edit-image="image" />
                 {item.title && <figcaption className="truncate px-3 py-2 text-xs font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{item.title}</figcaption>}
               </motion.figure>
             );
@@ -89,12 +96,12 @@ export function InfiniteCanvasSection({ data }: Props) {
           <span className="absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/30 bg-black/60 px-4 py-2 text-xs font-bold text-white backdrop-blur"><Move size={14} /> Öffnen, ziehen und entdecken</span>
         </button>
       </div>
-      {mounted && open && createPortal(<CanvasExplorer items={items} headline={headline} onClose={() => setOpen(false)} />, document.body)}
+      {mounted && open && createPortal(<CanvasExplorer items={explorerItems} totalItems={items.length} headline={headline} onClose={() => setOpen(false)} />, document.body)}
     </section>
   );
 }
 
-function CanvasExplorer({ items, headline, onClose }: { items: CanvasItem[]; headline: string; onClose: () => void }) {
+function CanvasExplorer({ items, totalItems, headline, onClose }: { items: CanvasItem[]; totalItems: number; headline: string; onClose: () => void }) {
   const reduceMotion = useReducedMotion();
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(0.9);
@@ -169,13 +176,16 @@ function CanvasExplorer({ items, headline, onClose }: { items: CanvasItem[]; hea
         <div className="absolute left-1/2 top-1/2 h-0 w-0 will-change-transform" style={{ transform: `scale(${zoom})`, transition: reduceMotion || isDragging ? undefined : 'transform 180ms ease-out' }}>
           {nodes.map(({ item, key, x, y, width }) => (
             <figure key={key} className="absolute overflow-hidden rounded-2xl border border-white/12 bg-[#12151d] shadow-[0_24px_70px_rgba(0,0,0,.45)]" style={{ left: wrap(x * zoom + pan.x, tileWidth * zoom) / zoom, top: wrap(y * zoom + pan.y, tileHeight * zoom) / zoom, width, transform: 'translate(-50%,-50%)' }}>
-              <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" draggable={false} loading="lazy" />
+              <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" draggable={false} loading="lazy" decoding="async" />
               {(item.title || item.caption) && <figcaption className="p-3"><div className="flex items-start justify-between gap-3"><div><strong className="block text-sm">{item.title}</strong>{item.caption && <span className="mt-1 block text-xs leading-5 text-white/55">{plain(item.caption)}</span>}</div>{item.href && <a href={item.href} className="pointer-events-auto grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 hover:bg-white hover:text-black" aria-label={`${item.title || 'Eintrag'} öffnen`}><ArrowUpRight size={14} /></a>}</div></figcaption>}
             </figure>
           ))}
         </div>
       </div>
-      <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/45 px-4 py-2 text-xs text-white/65 backdrop-blur"><Move className="mr-2 inline" size={13} />Ziehen zum Bewegen · Mausrad zum Zoomen</div>
+      <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/45 px-4 py-2 text-xs text-white/65 backdrop-blur">
+        <Move className="mr-2 inline" size={13} />Ziehen zum Bewegen · Mausrad zum Zoomen
+        {totalItems > items.length ? <span className="ml-2 text-white/45">· {items.length} von {totalItems} Bildern geladen</span> : null}
+      </div>
     </div>
   );
 }
