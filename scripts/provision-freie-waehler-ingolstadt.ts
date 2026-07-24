@@ -634,6 +634,56 @@ function isPersonPage(page: ScrapedPage): boolean {
   return nameParts.some((part) => /^[A-ZÄÖÜ][a-zäöüß]+/.test(part));
 }
 
+function curatedPersonProfile(name: string): { role: string; bio: string } | null {
+  const profiles: Record<string, { role: string; bio: string }> = {
+    'lisa-stachel': {
+      role: 'Stadträtin',
+      bio: 'Mitglied in Ausschüssen rund um Kultur, Bildung, Sport, Stadtwerke und städtische Infrastruktur.',
+    },
+    'hans-stachel': {
+      role: 'Fraktionsvorsitzender · Vorsitzender FW Ingolstadt e.V.',
+      bio: 'Vorsitzender der Freien Wähler Ingolstadt und Ansprechpartner für Stadtratsarbeit und Fraktion.',
+    },
+    'stefan-koenig': {
+      role: 'Stadtrat',
+      bio: 'Engagiert in Ausschüssen für Stadtentwicklung, Bau, Telekommunikation und städtische Beteiligungen.',
+    },
+    'herbert-boell': {
+      role: 'stellv. Vorsitzender',
+      bio: 'Stellvertretender Vorsitzender der Freien Wähler Ingolstadt e.V.',
+    },
+    'angela-mayr': {
+      role: 'stellv. Vorsitzende',
+      bio: 'Stellvertretende Vorsitzende der Freien Wähler Ingolstadt e.V.',
+    },
+    'jakob-roessler': {
+      role: 'Schriftführer',
+      bio: 'Schriftführer der Freien Wähler Ingolstadt e.V.',
+    },
+    'klaus-huber-nischler': {
+      role: 'Kassier / Schatzmeister',
+      bio: 'Verantwortlich für Kasse und Finanzen der Freien Wähler Ingolstadt e.V.',
+    },
+    'petra-flauger': {
+      role: 'Vorsitzende der Kreisvereinigung Ingolstadt',
+      bio: 'Vorsitzende der Kreisvereinigung Ingolstadt.',
+    },
+    'franz-appel': {
+      role: 'stellv. Vorsitzender der Kreisvereinigung',
+      bio: 'Stellvertretender Vorsitzender der Kreisvereinigung Ingolstadt.',
+    },
+    'wolfgang-baumann': {
+      role: 'stellv. Vorsitzender der Kreisvereinigung',
+      bio: 'Stellvertretender Vorsitzender der Kreisvereinigung Ingolstadt.',
+    },
+    'markus-reichhart': {
+      role: 'Stadtrat · stellv. Fraktionsvorsitzender',
+      bio: 'Stellvertretender Fraktionsvorsitzender mit Schwerpunkten in Finanzen, Personal und städtischen Beteiligungen.',
+    },
+  };
+  return profiles[personKey(name)] || null;
+}
+
 function extractPeople(pages: ScrapedPage[]): CollectionDef {
   const peoplePages = pages.filter(isPersonPage);
   const used = new Set<string>();
@@ -648,6 +698,7 @@ function extractPeople(pages: ScrapedPage[]): CollectionDef {
     .slice(0, 60)
     .map((page, index) => {
       const role = cleanText(page.text.split('\n').find((line) => /vorsitz|stadtrat|bezirks|kreis|mitglied|referent|fraktion/i.test(line) && !/sie wollen mitglied|mitglied werden|mitgliedsantrag|kontaktdaten|e-mail/i.test(line)) || '', 110);
+      const curated = curatedPersonProfile(page.title);
       const slug = stableSlug(page.title, used);
       return {
         slug,
@@ -655,8 +706,8 @@ function extractPeople(pages: ScrapedPage[]): CollectionDef {
         priority: index,
         data: {
           name: page.title,
-          role: role || 'Freie Wähler Ingolstadt',
-          bio: personBio(page, role),
+          role: curated?.role || role || 'Freie Wähler Ingolstadt',
+          bio: curated?.bio || personBio(page, role),
           image: contentImage(page.image) || '',
           content: page.content,
           sourceUrl: page.url,
@@ -930,6 +981,8 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             showDate: true,
             showExcerpt: true,
             showSortControls: true,
+            showSearch: true,
+            searchPlaceholder: 'Meldungen durchsuchen',
             paginate: true,
             itemsPerPage: 12,
             sortBy: 'date-desc',
@@ -1093,6 +1146,8 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             showDate: true,
             showExcerpt: true,
             showSortControls: true,
+            showSearch: true,
+            searchPlaceholder: 'Anträge und Stadtratsthemen durchsuchen',
             paginate: true,
             itemsPerPage: 12,
             sortBy: 'date-desc',

@@ -1,4 +1,5 @@
 import { WordReveal } from '@/components/ui/fx';
+import type { CSSProperties } from 'react';
 import { ActionGroup, ActionLink, MediaFrame, PremiumSectionHeader } from './section-primitives';
 
 type Cta = { label?: string; href?: string };
@@ -17,6 +18,13 @@ export function EditorialHeroSection({ data }: Props) {
   const layout = ((data.layout as string) || (data.variant as string) || '').trim();
   const imageFit = ((data.imageFit as string) || '').trim();
   const isCampaignBleed = layout === 'campaignBleed' || layout === 'fullBleedImage';
+  const campaignCardStyle = {
+    '--token-heading': 'var(--token-card-heading, #0f172a)',
+    '--token-body': 'var(--token-card-body, #475569)',
+    '--token-muted': 'var(--token-card-muted, #64748b)',
+    '--token-eyebrow': 'var(--token-card-muted, #64748b)',
+    color: 'var(--token-card-body, #475569)',
+  } as CSSProperties;
   if (!headline) return null;
 
   if (isCampaignBleed && imagePrimary) {
@@ -24,7 +32,10 @@ export function EditorialHeroSection({ data }: Props) {
       <div className="relative isolate overflow-hidden bg-[var(--token-section-bg)]">
         <div className="mx-auto grid max-w-[1540px] items-center lg:min-h-[620px] lg:grid-cols-[minmax(30rem,0.72fr)_minmax(0,1fr)]">
           <div className="relative z-10 flex items-center px-5 py-14 sm:px-8 md:py-20 lg:px-14 xl:px-20">
-            <div className="max-w-2xl rounded-[2rem] border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg)_88%,transparent)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 lg:p-10">
+            <div
+              className="max-w-2xl rounded-[2rem] border border-[var(--token-card-border)] bg-[var(--token-card-bg,#ffffff)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 lg:p-10"
+              style={campaignCardStyle}
+            >
               <PremiumSectionHeader
                 eyebrow={eyebrow}
                 headline={<WordReveal text={headline} />}

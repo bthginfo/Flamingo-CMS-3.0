@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUpDown, Calendar, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { plain } from '@/lib/strip-html';
 
@@ -37,6 +37,10 @@ function sortItems(items: CollectionItem[], sortBy: SortOption): CollectionItem[
   });
 }
 
+function searchText(item: CollectionItem): string {
+  return plain(`${item.title || ''} ${item.excerpt || ''} ${item.date || ''}`).toLocaleLowerCase('de-DE');
+}
+
 const SORT_LABELS: Record<SortOption, string> = {
   'date-desc': 'Neueste zuerst',
   'date-asc': 'Älteste zuerst',
@@ -59,10 +63,23 @@ export function CollectionListSection({ data }: Props) {
   const paginate = data.paginate === true || data.pagination === true;
   const itemsPerPageRaw = Number(data.itemsPerPage || data.pageSize || 12);
   const itemsPerPage = Number.isFinite(itemsPerPageRaw) && itemsPerPageRaw > 0 ? Math.floor(itemsPerPageRaw) : 12;
+  const showSearch = data.showSearch === true || (paginate && items.length > itemsPerPage);
 
   const [sortBy, setSortBy] = useState<SortOption>(defaultSort);
+  const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
-  const sorted = useMemo(() => sortItems(items, sortBy), [items, sortBy]);
+
+  const filtered = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase('de-DE');
+    if (!normalizedQuery) return items;
+    const terms = normalizedQuery.split(/\s+/).filter(Boolean);
+    return items.filter((item) => {
+      const haystack = searchText(item);
+      return terms.every((term) => haystack.includes(term));
+    });
+  }, [items, query]);
+
+  const sorted = useMemo(() => sortItems(filtered, sortBy), [filtered, sortBy]);
   const pageCount = paginate ? Math.max(1, Math.ceil(sorted.length / itemsPerPage)) : 1;
   const pageStart = paginate ? (page - 1) * itemsPerPage : 0;
   const visibleItems = paginate ? sorted.slice(pageStart, pageStart + itemsPerPage) : sorted;
@@ -74,7 +91,7 @@ export function CollectionListSection({ data }: Props) {
 
   useEffect(() => {
     setPage(1);
-  }, [sortBy, items.length, itemsPerPage]);
+  }, [sortBy, query, items.length, itemsPerPage]);
 
   useEffect(() => {
     if (page > pageCount) setPage(pageCount);
@@ -91,32 +108,47 @@ export function CollectionListSection({ data }: Props) {
         </div>
       )}
 
-      {((showSortControls && items.length > 1) || (paginate && pageCount > 1)) && (
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          {paginate && pageCount > 1 ? (
-            <p className="text-sm text-[color:var(--token-muted)]">
-              Seite {page} von {pageCount} · {sorted.length} Einträge
-            </p>
+      {((showSearch && items.length > 1) || (showSortControls && items.length > 1) || (paginate && pageCount > 1)) && (
+        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          {showSearch && items.length > 1 ? (
+            <label className="relative block w-full max-w-xl">
+              <span className="sr-only">Einträge durchsuchen</span>
+              <Search aria-hidden="true" size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--token-muted)]" />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                type="search"
+                placeholder={(data.searchPlaceholder as string) || 'Suche nach Titel oder Inhalt'}
+                className="h-11 w-full rounded-full border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] pl-10 pr-4 text-sm text-[color:var(--token-heading)] outline-none transition focus:border-[var(--token-accent)] focus:ring-2 focus:ring-[color:color-mix(in_srgb,var(--token-accent)_18%,transparent)]"
+              />
+            </label>
           ) : <span />}
-          {showSortControls && items.length > 1 && (
-            <div className="inline-flex items-center gap-2 text-sm">
-              <ArrowUpDown size={14} className="text-[color:var(--token-body)]" />
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value as SortOption)}
-                className="rounded-lg border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              >
-                {Object.entries(SORT_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+            {paginate ? (
+              <p className="text-sm text-[color:var(--token-muted)]">
+                Seite {page} von {pageCount} · {sorted.length}{query ? ` von ${items.length}` : ''} Einträge
+              </p>
+            ) : <span />}
+            {showSortControls && items.length > 1 && (
+              <div className="inline-flex items-center gap-2 text-sm">
+                <ArrowUpDown size={14} className="text-[color:var(--token-body)]" />
+                <select
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value as SortOption)}
+                  className="rounded-lg border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                >
+                  {Object.entries(SORT_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {sorted.length === 0 ? (
-        <p className="py-12 text-center text-[color:var(--token-card-body,var(--token-body))]">Noch keine Einträge vorhanden.</p>
+        <p className="py-12 text-center text-[color:var(--token-card-body,var(--token-body))]">{query ? 'Keine Einträge für diese Suche gefunden.' : 'Noch keine Einträge vorhanden.'}</p>
       ) : (
         <div className={`grid grid-cols-1 ${gridCols} gap-6`}>
           {visibleItems.map((item, i) => {
@@ -139,6 +171,8 @@ export function CollectionListSection({ data }: Props) {
                       data-edit-image="image"
                       src={item.image}
                       alt={item.title}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
@@ -177,15 +211,15 @@ export function CollectionListSection({ data }: Props) {
           <div className="hidden items-center gap-1 sm:flex">
             {pageNumbers[0] > 1 && <span className="px-2 text-sm text-[color:var(--token-muted)]">…</span>}
             {pageNumbers.map((pageNumber) => (
-                <button
-                  key={pageNumber}
-                  type="button"
-                  onClick={() => setPage(pageNumber)}
-                  aria-current={page === pageNumber ? 'page' : undefined}
-                  className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition hover:bg-[color:color-mix(in_srgb,var(--token-accent)_10%,transparent)] aria-[current=page]:bg-[var(--token-btn-bg)] aria-[current=page]:text-[color:var(--token-btn-text)]"
-                >
-                  {pageNumber}
-                </button>
+              <button
+                key={pageNumber}
+                type="button"
+                onClick={() => setPage(pageNumber)}
+                aria-current={page === pageNumber ? 'page' : undefined}
+                className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition hover:bg-[color:color-mix(in_srgb,var(--token-accent)_10%,transparent)] aria-[current=page]:bg-[var(--token-btn-bg)] aria-[current=page]:text-[color:var(--token-btn-text)]"
+              >
+                {pageNumber}
+              </button>
             ))}
             {pageNumbers[pageNumbers.length - 1] < pageCount && <span className="px-2 text-sm text-[color:var(--token-muted)]">…</span>}
           </div>

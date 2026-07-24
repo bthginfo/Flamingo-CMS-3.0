@@ -2530,6 +2530,8 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
     showDate: data.showDate !== false,
     showExcerpt: data.showExcerpt !== false,
     showSortControls: data.showSortControls !== false,
+    showSearch: data.showSearch === true,
+    searchPlaceholder: (data.searchPlaceholder as string) || '',
   });
   useReport(d, onChange);
 
@@ -2575,7 +2577,14 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
           <input type="checkbox" checked={d.showSortControls} onChange={() => setD({ ...d, showSortControls: !d.showSortControls })} />
           Sortier-Dropdown anzeigen
         </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={d.showSearch} onChange={() => setD({ ...d, showSearch: !d.showSearch })} />
+          Suche anzeigen
+        </label>
       </div>
+      {d.showSearch && (
+        <Field label="Suchfeld-Platzhalter" value={d.searchPlaceholder} onChange={(v) => setD({ ...d, searchPlaceholder: v })} placeholder="z.B. Meldungen durchsuchen" />
+      )}
       <p className="text-xs text-gray-400">Die Items werden automatisch aus der verknüpften Collection geladen. Bilder werden aus der Hero-Section der Items gezogen.</p>
     </div>
   );
