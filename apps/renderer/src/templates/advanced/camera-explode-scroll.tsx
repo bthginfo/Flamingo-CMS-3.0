@@ -131,6 +131,26 @@ function PartCopy({ part, index }: { part: CameraPart; index: number }) {
   );
 }
 
+function CameraStickyIntro({ data }: Props) {
+  const badge = visibleText(String(data.badge || ''));
+  const headline = visibleText(String(data.headline || ''));
+  const subline = visibleText(String(data.subline || ''));
+  return (
+    <div className="max-w-[34rem]">
+      {badge && <p className="section-badge mb-5 w-fit" data-edit-path="badge">{badge}</p>}
+      {headline && (
+        <h2
+          className="text-[clamp(2.15rem,4.4vw,4.8rem)] font-black leading-[.9] tracking-[-.055em] text-[color:var(--token-heading)] [overflow-wrap:normal]"
+          data-edit-path="headline"
+        >
+          {headline}
+        </h2>
+      )}
+      {subline && <p className="mt-6 max-w-md text-base leading-7 text-[color:var(--token-muted)]" data-edit-path="subline">{plain(subline)}</p>}
+    </div>
+  );
+}
+
 export function CameraExplodeScrollSection({ data }: Props) {
   const ref = useRef<HTMLElement>(null);
   const parts = Array.isArray(data.parts) && (data.parts as CameraPart[]).length ? (data.parts as CameraPart[]).filter((part) => part?.label) : FALLBACK_PARTS;
@@ -149,9 +169,9 @@ export function CameraExplodeScrollSection({ data }: Props) {
         <AdvancedLink cta={cta} className="mt-8" />
       </section>
       <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${Math.max(260, parts.length * 50)}vh` }}>
-        <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(0,.74fr)_minmax(28rem,1.26fr)] lg:gap-12 lg:px-14">
+        <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(28rem,.78fr)_minmax(34rem,1.22fr)] lg:gap-12 lg:px-14">
           <div className="relative z-20 flex min-w-0 flex-col justify-between" data-color-context="dark">
-            <AdvancedIntro compact badge={String(data.badge || '')} headline={String(data.headline || '')} subline={String(data.subline || '')} />
+            <CameraStickyIntro data={data} />
             <div className="grid gap-3 pb-8">{parts.slice(0, 5).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
           </div>
           <div className="relative grid min-h-0 place-items-center">
