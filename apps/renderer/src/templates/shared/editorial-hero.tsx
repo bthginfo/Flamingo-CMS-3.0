@@ -22,8 +22,8 @@ export function EditorialHeroSection({ data }: Props) {
   if (isCampaignBleed && imagePrimary) {
     return (
       <div className="relative isolate overflow-hidden bg-[var(--token-section-bg)]">
-        <div className="mx-auto grid max-w-[1500px] items-stretch lg:min-h-[720px] lg:grid-cols-[minmax(25rem,0.62fr)_minmax(0,1fr)]">
-          <div className="relative z-10 flex items-center px-5 py-16 sm:px-8 md:py-24 lg:px-14 xl:px-20">
+        <div className="mx-auto grid max-w-[1540px] items-center lg:min-h-[620px] lg:grid-cols-[minmax(30rem,0.72fr)_minmax(0,1fr)]">
+          <div className="relative z-10 flex items-center px-5 py-14 sm:px-8 md:py-20 lg:px-14 xl:px-20">
             <div className="max-w-2xl rounded-[2rem] border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg)_88%,transparent)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 lg:p-10">
               <PremiumSectionHeader
                 eyebrow={eyebrow}
@@ -33,7 +33,7 @@ export function EditorialHeroSection({ data }: Props) {
                 sublinePath="text"
                 size="display"
                 titleAs="h1"
-                className="!mb-0 [&_.cms-section-title]:text-[clamp(3rem,7vw,5.8rem)]"
+                className="!mb-0 [&_.cms-section-title]:text-[clamp(2.9rem,5.4vw,5.6rem)]"
               />
               <ActionGroup className="mt-8">
                 <ActionLink action={primaryCta} editKey="primaryCta" />
@@ -42,15 +42,17 @@ export function EditorialHeroSection({ data }: Props) {
               {hint && <p className="mt-5 max-w-xl text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="hint">{hint}</p>}
             </div>
           </div>
-          <div className="relative flex min-h-[320px] items-end justify-center bg-[var(--token-section-bg-alt)] px-4 pt-4 md:min-h-[520px] lg:min-h-0 lg:px-8 lg:pt-8">
-            <img
-              data-edit-image="imagePrimary"
-              src={imagePrimary}
-              alt={headline}
-              loading="eager"
-              fetchPriority="high"
-              className="h-full max-h-[700px] w-full object-contain object-bottom"
-            />
+          <div className="relative flex min-h-[260px] items-center justify-center bg-[var(--token-section-bg-alt)] px-4 py-8 md:min-h-[420px] lg:min-h-0 lg:px-8 lg:py-12">
+            <div className="relative w-full max-w-[980px] overflow-hidden rounded-[2rem] border border-[var(--token-card-border)] bg-white shadow-[0_24px_70px_var(--token-shadow)]">
+              <img
+                data-edit-image="imagePrimary"
+                src={imagePrimary}
+                alt={headline}
+                loading="eager"
+                fetchPriority="high"
+                className={imageFit === 'contain' ? 'block h-auto max-h-[620px] w-full object-contain' : 'block aspect-[16/9] h-auto w-full object-cover'}
+              />
+            </div>
           </div>
         </div>
       </div>

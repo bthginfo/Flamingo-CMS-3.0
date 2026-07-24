@@ -162,7 +162,13 @@ function absoluteUrl(raw: string | undefined): string | undefined {
 
 function isBrandOrLogoImage(url: string | undefined): boolean {
   const value = (url || '').toLowerCase();
-  return !value || value.includes('/assets/img/fw-logo') || value.includes('logo_quadratisch') || value.includes('freiewaehler-logo') || value.includes('freie-waehler-social');
+  return !value
+    || value.includes('/assets/img/fw-logo')
+    || value.includes('/assets/img/icon-')
+    || value.endsWith('.svg')
+    || value.includes('logo_quadratisch')
+    || value.includes('freiewaehler-logo')
+    || value.includes('freie-waehler-social');
 }
 
 function contentImage(url: string | undefined): string | undefined {
@@ -269,18 +275,43 @@ function firstMatch(html: string, regex: RegExp): string {
 function extractFirstImage(html: string): string | undefined {
   const newsBlock = firstMatch(html, /<div[^>]+class="[^"]*news-1st-image[^"]*"[^>]*>([\s\S]*?)<div class="clearfix">/i);
   const source = newsBlock || html;
-  const srcset = firstMatch(source, /srcset="([^"]+)"/i);
-  if (srcset) {
-    const candidates = srcset
-      .split(',')
-      .map((part) => part.trim().split(/\s+/)[0])
-      .filter(Boolean);
-    const last = candidates[candidates.length - 1];
-    const url = contentImage(absoluteUrl(last));
-    if (url) return url;
+  const candidates: string[] = [];
+
+  for (const img of source.matchAll(/<img\b[^>]*>/gi)) {
+    const tag = img[0];
+    const srcset = firstMatch(tag, /srcset="([^"]+)"/i);
+    if (srcset) {
+      const srcsetCandidates = srcset
+        .split(',')
+        .map((part) => part.trim().split(/\s+/)[0])
+        .filter(Boolean);
+      candidates.push(...srcsetCandidates.reverse());
+    }
+
+    const dataSrc = firstMatch(tag, /\bdata-src="([^"]+)"/i);
+    if (dataSrc) candidates.push(dataSrc);
+
+    const src = firstMatch(tag, /\bsrc="([^"]+)"/i);
+    if (src) candidates.push(src);
   }
-  const src = firstMatch(source, /<img[^>]+src="([^"]+)"/i);
-  return contentImage(absoluteUrl(src));
+
+  const preferred = candidates
+    .map((candidate) => contentImage(absoluteUrl(candidate)))
+    .filter((url): url is string => Boolean(url))
+    .sort((a, b) => {
+      const score = (url: string) => {
+        const value = url.toLowerCase();
+        let result = 0;
+        if (value.includes('/fileadmin/')) result += 10;
+        if (value.includes('/_processed_/')) result += 8;
+        if (/stachel|koenig|könig|mayr|boell|böll|roessler|rößler|kandidat/i.test(value)) result += 6;
+        if (value.includes('slider_wahl')) result -= 2;
+        return result;
+      };
+      return score(b) - score(a);
+    });
+
+  return preferred[0];
 }
 
 function extractDate(html: string): Date | undefined {
@@ -541,11 +572,36 @@ function makeListItems(items: CollectionDef['items'], limit = 9999) {
   }));
 }
 
+function personKey(name: string): string {
+  const roleWords = new Set([
+    '1',
+    'fraktionsvorsitzender',
+    'vorsitzender',
+    'vorsitzende',
+    'stadtrat',
+    'stellvertretender',
+    'stellvertretende',
+    'schriftfuehrerin',
+    'mitgliederverwaltung',
+    'kassier',
+    'schatzmeister',
+  ]);
+  const parts = slugify(name).split('-').filter((part) => part && !roleWords.has(part));
+  return parts.slice(0, 3).join('-') || slugify(name);
+}
+
 function extractPeople(pages: ScrapedPage[]): CollectionDef {
   const peoplePages = pages.filter((page) => PERSON_PATH_HINTS.some((hint) => page.slug.includes(hint)) && !page.slug.includes('antraege'));
   const used = new Set<string>();
+  const seenPeople = new Set<string>();
   const people = peoplePages
     .filter((page) => page.title && page.title.length < 100 && !['Vorstand', 'Fraktion', 'Kreisvereinigung'].includes(page.title))
+    .filter((page) => {
+      const key = personKey(page.title);
+      if (seenPeople.has(key)) return false;
+      seenPeople.add(key);
+      return true;
+    })
     .slice(0, 60)
     .map((page, index) => {
       const role = cleanText(page.text.split('\n').find((line) => /vorsitz|stadtrat|bezirks|kreis|mitglied|referent|fraktion/i.test(line)) || '', 110);
@@ -716,6 +772,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           headline: 'Für Ingolstadt. Sachlich. Bürgernah. Unabhängig.',
           text: 'Wir engagieren uns ehrenamtlich für Ingolstadt — sachorientiert, unabhängig und nah an den Themen der Bürgerinnen und Bürger.',
           layout: 'campaignBleed',
+          imageFit: 'contain',
           imagePrimary: FW_HERO,
           primaryCta: { label: 'Aktuelles lesen', href: '/aktuelles' },
           secondaryCta: { label: 'Mitmachen', href: '/mitmachen' },
@@ -851,6 +908,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           eyebrow: 'Kommunalwahl 2026',
           headline: 'Unser Wahlprogramm',
           text: textFromPage(wahlprogramm, 'Ziele und Themen der Freien Wähler Ingolstadt.', 280),
+          layout: 'campaignBleed',
           imagePrimary: FW_HERO,
           imageFit: 'contain',
           primaryCta: { label: 'Kandidaten ansehen', href: '/menschen' },
@@ -904,6 +962,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           eyebrow: 'Vorstand & Fraktion',
           headline: 'Menschen, die Verantwortung übernehmen.',
           text: 'Eine Übersicht über Vorstand, Fraktion und weitere Ansprechpartnerinnen und Ansprechpartner.',
+          layout: 'campaignBleed',
           imagePrimary: FW_HERO,
           imageFit: 'contain',
           primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
@@ -955,6 +1014,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           eyebrow: 'Stadtratsfraktion',
           headline: 'Anträge und Arbeit im Stadtrat.',
           text: textFromPage(fraktion, 'Informationen aus der Stadtratsfraktion und eine Übersicht der Anträge.', 280),
+          layout: 'campaignBleed',
           imagePrimary: FW_HERO,
           imageFit: 'contain',
           primaryCta: { label: 'Alle Anträge', href: '#antraege' },
@@ -1011,6 +1071,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           eyebrow: 'Mitmachen',
           headline: 'Ingolstadt mitgestalten.',
           text: textFromPage(mitglied, 'Wer sich politisch vor Ort einbringen möchte, kann Mitglied der Freien Wähler Ingolstadt werden oder die Arbeit unterstützen.', 300),
+          layout: 'campaignBleed',
           imagePrimary: FW_HERO,
           imageFit: 'contain',
           primaryCta: { label: 'Mitgliedsantrag öffnen', href: MEMBER_PDF },
