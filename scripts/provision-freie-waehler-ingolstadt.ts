@@ -598,16 +598,46 @@ function personBio(page: ScrapedPage, role: string): string {
   let bio = page.excerpt || '';
   if (page.title) bio = bio.replace(new RegExp(`^\\s*${escapeRegExp(page.title)}\\s*`, 'i'), '');
   if (role) bio = bio.replace(new RegExp(`^\\s*${escapeRegExp(role)}\\s*`, 'i'), '');
+  bio = bio
+    .replace(/\bFW Ingolstadt e\.V\.\b/gi, ' ')
+    .replace(/\bKontaktdaten\b/gi, ' ')
+    .replace(/\s*E-Mail:\s*\S+@\S+\s*/gi, ' ')
+    .replace(/\bMitglied werden\b[\s\S]*$/i, ' ');
   bio = cleanText(bio, 180);
-  return bio.length > 24 ? bio : cleanText(page.excerpt, 180);
+  return bio.length > 24 ? bio : cleanText((page.excerpt || '').replace(/\bMitglied werden\b[\s\S]*$/i, ' '), 180);
+}
+
+function isPersonPage(page: ScrapedPage): boolean {
+  const slug = page.slug.toLowerCase();
+  const title = page.title.trim();
+  const excludedSlugHints = [
+    'newsletter',
+    'interview',
+    'mitglied-werden',
+    'mitgliedsantrag',
+    'veranstaltungen',
+    'termine',
+    'bezirksausschuesse',
+    'antraege',
+    'aktuelles',
+    'wahlprogramm',
+    'unterstuetzer',
+  ];
+  if (excludedSlugHints.some((hint) => slug.includes(hint))) return false;
+  if (!PERSON_PATH_HINTS.some((hint) => slug.includes(hint)) || slug.includes('antraege')) return false;
+  if (!title || title.length >= 100) return false;
+  if (['Vorstand', 'Fraktion', 'Kreisvereinigung'].includes(title)) return false;
+  if (/freie\s+w[aä]hler|newsletter|interview|mitglied\s+werden|stadtratsfraktion|kreisvereinigung|vorstand|fraktion|termine/i.test(title)) return false;
+  const nameParts = title.split(/\s+/).filter(Boolean);
+  if (nameParts.length < 2 || nameParts.length > 5) return false;
+  return nameParts.some((part) => /^[A-ZÄÖÜ][a-zäöüß]+/.test(part));
 }
 
 function extractPeople(pages: ScrapedPage[]): CollectionDef {
-  const peoplePages = pages.filter((page) => PERSON_PATH_HINTS.some((hint) => page.slug.includes(hint)) && !page.slug.includes('antraege'));
+  const peoplePages = pages.filter(isPersonPage);
   const used = new Set<string>();
   const seenPeople = new Set<string>();
   const people = peoplePages
-    .filter((page) => page.title && page.title.length < 100 && !['Vorstand', 'Fraktion', 'Kreisvereinigung'].includes(page.title))
     .filter((page) => {
       const key = personKey(page.title);
       if (seenPeople.has(key)) return false;
@@ -616,7 +646,7 @@ function extractPeople(pages: ScrapedPage[]): CollectionDef {
     })
     .slice(0, 60)
     .map((page, index) => {
-      const role = cleanText(page.text.split('\n').find((line) => /vorsitz|stadtrat|bezirks|kreis|mitglied|referent|fraktion/i.test(line)) || '', 110);
+      const role = cleanText(page.text.split('\n').find((line) => /vorsitz|stadtrat|bezirks|kreis|mitglied|referent|fraktion/i.test(line) && !/mitglied werden|mitgliedsantrag|kontaktdaten/i.test(line)) || '', 110);
       const slug = stableSlug(page.title, used);
       return {
         slug,
