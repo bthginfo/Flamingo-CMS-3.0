@@ -590,6 +590,18 @@ function personKey(name: string): string {
   return parts.slice(0, 3).join('-') || slugify(name);
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function personBio(page: ScrapedPage, role: string): string {
+  let bio = page.excerpt || '';
+  if (page.title) bio = bio.replace(new RegExp(`^\\s*${escapeRegExp(page.title)}\\s*`, 'i'), '');
+  if (role) bio = bio.replace(new RegExp(`^\\s*${escapeRegExp(role)}\\s*`, 'i'), '');
+  bio = cleanText(bio, 180);
+  return bio.length > 24 ? bio : cleanText(page.excerpt, 180);
+}
+
 function extractPeople(pages: ScrapedPage[]): CollectionDef {
   const peoplePages = pages.filter((page) => PERSON_PATH_HINTS.some((hint) => page.slug.includes(hint)) && !page.slug.includes('antraege'));
   const used = new Set<string>();
@@ -613,7 +625,7 @@ function extractPeople(pages: ScrapedPage[]): CollectionDef {
         data: {
           name: page.title,
           role: role || 'Freie Wähler Ingolstadt',
-          bio: page.excerpt,
+          bio: personBio(page, role),
           image: contentImage(page.image) || '',
           content: page.content,
           sourceUrl: page.url,
