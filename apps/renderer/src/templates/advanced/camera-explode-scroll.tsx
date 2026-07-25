@@ -257,6 +257,14 @@ function useProgressRef(progress: MotionValue<number>) {
   return progressRef;
 }
 
+function cleanCameraBadge(value: unknown) {
+  const badge = visibleText(String(value || ''));
+  if (/^3d\s+camera\s+system$/i.test(badge)) return 'Exploded View';
+  if (/^glb\s+exploded\s+view$/i.test(badge)) return 'Exploded View';
+  if (/^3d\s+exploded\s+camera$/i.test(badge)) return '3D Kamera';
+  return badge;
+}
+
 function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; modelUrl: string; progress: MotionValue<number> }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -391,7 +399,7 @@ function PartCopy({ part, index, compact = false }: { part: CameraPart; index: n
 }
 
 function CameraStickyIntro({ data }: Props) {
-  const badge = visibleText(String(data.badge || ''));
+  const badge = cleanCameraBadge(data.badge);
   const headline = visibleText(String(data.headline || ''));
   const subline = visibleText(String(data.subline || ''));
   return (
@@ -430,9 +438,10 @@ function StaticCameraVisual({ brandImage }: { brandImage: string }) {
 }
 
 function StaticCameraFallback({ data, parts, brandImage, cta }: { data: Record<string, unknown>; parts: CameraPart[]; brandImage: string; cta: AdvancedCta }) {
+  const badge = cleanCameraBadge(data.badge);
   return (
     <section className="bg-[var(--token-section-bg)] px-5 py-16 md:hidden">
-      <AdvancedIntro badge={String(data.badge || '')} headline={String(data.headline || '')} subline={String(data.subline || '')} compact />
+      <AdvancedIntro badge={badge} headline={String(data.headline || '')} subline={String(data.subline || '')} compact />
       <div className="mt-8 rounded-[calc(var(--token-card-radius)*1.25)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-5">
         <StaticCameraVisual brandImage={brandImage} />
       </div>
