@@ -45,6 +45,7 @@ export function EditorialHeroSection({ data }: Props) {
             />
           </div>
           <div
+            data-card
             className="relative z-10 mx-auto -mt-10 w-[calc(100%-1.5rem)] max-w-4xl rounded-[1.75rem] border border-[var(--token-card-border)] bg-[var(--token-card-bg,#ffffff)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 md:-mt-16 md:p-10"
             style={campaignCardStyle}
           >
@@ -75,6 +76,7 @@ export function EditorialHeroSection({ data }: Props) {
         <div className="mx-auto grid max-w-[1620px] items-center lg:min-h-[620px] lg:grid-cols-[minmax(28rem,0.62fr)_minmax(0,1fr)]">
           <div className="relative z-10 flex items-center px-5 py-14 sm:px-8 md:py-20 lg:px-12 xl:px-16">
             <div
+              data-card
               className="w-full max-w-2xl rounded-[2rem] border border-[var(--token-card-border)] bg-[var(--token-card-bg,#ffffff)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 lg:p-10"
               style={campaignCardStyle}
             >

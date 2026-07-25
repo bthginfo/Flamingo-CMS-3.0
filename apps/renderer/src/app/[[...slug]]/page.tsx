@@ -459,6 +459,12 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   if (brand.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li { color: ${brand.bodyTextColor} !important; }`);
   if (brand.mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${brand.mutedTextColor} !important; }`);
   if (brand.linkColor) importantOverrides.push(`[data-style] main a:not([data-edit-link]):not(.cms-button):not([class*="cms-button"]):not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${brand.linkColor} !important; }`);
+  importantOverrides.push(`[data-style] main [data-card] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-card-heading, var(--token-heading)) !important; }`);
+  importantOverrides.push(`[data-style] main [data-card] :where(p,li,.cms-section-subtitle) { color: var(--token-card-body, var(--token-body)) !important; }`);
+  importantOverrides.push(`[data-style] main [data-card] :where(.section-badge,.eyebrow) { color: var(--token-eyebrow, var(--token-card-muted, var(--token-muted))) !important; }`);
+  importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-on-dark-heading, #fff) !important; }`);
+  importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(p,li,.cms-section-subtitle) { color: var(--token-on-dark-body, rgba(255,255,255,.78)) !important; }`);
+  importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(.section-badge,.eyebrow) { color: var(--token-eyebrow, var(--token-on-dark-muted, rgba(255,255,255,.62))) !important; }`);
 
   return (
     <div data-style={tenantStyle.activeStyle} className="overflow-x-clip" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
