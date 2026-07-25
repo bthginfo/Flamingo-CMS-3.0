@@ -15,6 +15,7 @@ export function PrinciplesGridSection({ data }: Props) {
   const principles = ((data.principles as Principle[]) || []).filter(item => item.title || item.text);
   const cta = (data.cta as Cta) || {};
   if (!principles.length && !headline) return null;
+  const isNumericEyebrow = (value?: string) => /^\s*\d{1,2}\s*$/.test(value || '');
 
   return (
     <section className="relative overflow-hidden bg-[var(--token-section-bg)] py-24 md:py-32">
@@ -39,7 +40,7 @@ export function PrinciplesGridSection({ data }: Props) {
               <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-card-badge-bg,var(--token-badge-bg,rgba(255,255,255,0.12)))] text-sm font-black text-[color:var(--token-card-badge-text,var(--token-badge-text,var(--token-heading)))]">
                 {String(index + 1).padStart(2, '0')}
               </div>
-              {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-eyebrow,var(--token-accent,var(--token-heading)))]" data-edit-path="eyebrow">{item.eyebrow}</div>}
+              {item.eyebrow && !isNumericEyebrow(item.eyebrow) && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--token-eyebrow,var(--token-accent,var(--token-heading)))]" data-edit-path="eyebrow">{item.eyebrow}</div>}
               {item.title && <h3 className="text-2xl font-black leading-tight text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{item.title}</h3>}
               {item.text && <p className="mt-4 text-sm leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(item.text)}</p>}
             </motion.article>

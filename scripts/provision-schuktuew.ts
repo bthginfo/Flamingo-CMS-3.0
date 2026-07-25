@@ -114,7 +114,7 @@ const KNOWN_NON_PROJECT_MEDIA_IDS = new Set([
 ]);
 const MAX_ORIGINAL_PROJECTS = Number(process.env.SCHUKTUEW_MAX_ORIGINAL_PROJECTS || '80');
 const MAX_IMAGES_PER_PROJECT = Number(process.env.SCHUKTUEW_MAX_IMAGES_PER_PROJECT || '28');
-const MAX_CANVAS_ITEMS = Number(process.env.SCHUKTUEW_MAX_CANVAS_ITEMS || '40');
+const MAX_CANVAS_ITEMS = Number(process.env.SCHUKTUEW_MAX_CANVAS_ITEMS || '28');
 
 const LOCAL_ASSETS = {
   brandBox: 'C:/Users/vonin-ju/AppData/Local/Temp/codex-clipboard-e93ce390-ba23-47f5-be25-11f7029c7db0.png',
@@ -946,18 +946,25 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
     if (fromMap) return fromMap;
     const category = String(project.data.category || 'Projekt');
     const description = String(project.data.description || '').trim();
-    const lead = description || `Ausgewähltes Projekt aus dem Bereich ${category}. Die Galerie übernimmt Bildmaterial der bestehenden Website und macht das Projekt als eigene Detailseite sichtbar.`;
+    const fragments = String(project.data.originalText || project.data.contentLead || description || '')
+      .split(/\n{1,}/)
+      .map((entry) => entry.replace(/\s+/g, ' ').trim())
+      .filter((entry) => entry.length > 24)
+      .slice(0, 3);
+    const lead = fragments[0] || description || `Projekt aus dem Bereich ${category}: Bildserie, Stil und Einsatz werden als Case gebündelt.`;
+    const second = fragments[1] || 'Die Motive zeigen die visuelle Linie der Serie und machen den Charakter des Projekts schnell erfassbar.';
+    const third = fragments[2] || 'Die Detailseite sammelt Bildauswahl, Kontext und Kontaktweg für ähnliche Anfragen.';
     return {
       lead,
       facts: [
         { label: 'Bereich', value: category },
-        { label: 'Quelle', value: 'Originalprojekt übernommen' },
-        { label: 'Material', value: `${project.data.gallery?.length || 1} Bilder` },
+        { label: 'Umfang', value: `${project.data.gallery?.length || 1} Bilder` },
+        { label: 'Einsatz', value: 'Portfolio · Website · Anfrage' },
       ],
       angles: [
-        { title: 'Kontext', text: lead, icon: 'Layers' },
-        { title: 'Bildwelt', text: 'Die Galerie zeigt die visuelle Linie des Projekts mit Originalmotiven.', icon: 'Images' },
-        { title: 'Einsatz', text: 'Die Detailseite bleibt als Case, Referenz und Portfolio-Einstieg nutzbar.', icon: 'ArrowUpRight' },
+        { title: 'Bildidee', text: lead, icon: 'Layers' },
+        { title: 'Motive', text: second, icon: 'Images' },
+        { title: 'Einsatz', text: third, icon: 'ArrowUpRight' },
       ],
     };
   }
@@ -1008,24 +1015,24 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       projectSection(project, 'statsCounter', 2, {
         badge: 'Fakten',
         headline: 'Projekt auf einen Blick.',
-        subline: 'Die wichtigsten Eckdaten aus dem übernommenen Projektkontext.',
+        subline: 'Bereich, Umfang und Einsatz der Arbeit.',
         stats: story.facts.map((fact) => ({ value: fact.value, label: fact.label })),
       }, 'default', 'l', 'l'),
       projectSection(project, 'spotlightCards', 3, {
         badge: 'Projektprofil',
-        headline: 'Kontext, Look und Einsatz.',
+        headline: 'Was die Serie ausmacht.',
         subline: story.lead,
         cards: story.angles,
       }, 'default', 'xl', 'l'),
       projectSection(project, 'galleryPro', 4, {
         badge: 'Galerie',
         headline: `${project.title} in Bildern`,
-        subline: 'Auswahl aus der übernommenen Originalgalerie.',
+        subline: 'Auswahl aus der Projektgalerie.',
         images: gallery.slice(0, 28).map((src, imageIndex) => ({
           src,
           alt: `${project.title} ${imageIndex + 1}`,
           category,
-          caption: imageIndex === 0 ? story.lead : '',
+          caption: imageIndex === 0 ? `${category} · ${project.title}` : '',
         })),
       }, 'wide', 'l', 'xl'),
       projectSection(project, 'ctaBand', 5, {
@@ -1134,7 +1141,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: 'AI Production System',
             headline: 'Foto, Film und Content aus einer Hand.',
-            subline: 'Konzept, Bildwelt, Shooting, Schnitt und Formatadaption greifen ineinander. So entsteht Content, der zur Marke passt und schneller einsatzbereit ist.',
+            subline: 'Konzept, Bildwelt, Shooting, Schnitt und Formatadaption greifen ineinander. So entsteht ein konsistenter visueller Auftritt für Website, Social und Kampagne.',
             media: {
               videoSrc: assets.agencyReel,
               poster: assets.businessCampaign,
@@ -1143,26 +1150,26 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             steps: [
               { kicker: '01 · Direction', title: 'Visuelle Positionierung', text: 'Werte, Zielgruppe und Haltung werden in Moodboard, Licht, Look und Bildsprache übersetzt.', proof: 'Branding-Beratung & Moodboard' },
               { kicker: '02 · Production', title: 'Foto & Film aus einer Hand', text: 'Shooting im Studio oder on location, mit klarer Führung bei Posing, Ausdruck und Licht.', proof: 'Studio oder On-Location' },
-              { kicker: '03 · Workflow', title: 'Formate schneller ableiten', text: 'Varianten, Zuschnitte und Content-Adaptionen werden früh mitgedacht. Die Bildsprache bleibt bewusst geführt.', proof: 'Reels, Ads, Website, Social' },
+              { kicker: '03 · Formate', title: 'Varianten ableiten', text: 'Zuschnitte, Reels, Webmotive und Kampagnenbilder werden früh mitgedacht.', proof: 'Reels, Ads, Website, Social' },
               { kicker: '04 · Output', title: 'Fertige Assets für echte Kanäle', text: 'Aus der Produktion entstehen Motive für Website, Kampagne, Recruiting, Personal Branding und Social Media.', proof: 'Kampagnenfähig' },
             ],
-            cta: { label: 'Workflow besprechen', href: '/kontakt' },
+            cta: { label: 'Produktion besprechen', href: '/kontakt' },
           },
         },
         {
           type: 'cameraExplodeScroll',
           data: {
-            badge: 'Behind the System',
-            headline: 'Was aus einer Kamera herauskommt, wird vorher konstruiert.',
-            subline: 'Ein starkes Bild entsteht aus Entscheidungen: Haltung, Licht, Motivführung, Nachbearbeitung und kanalreife Übergabe.',
+            badge: '3D Camera System',
+            headline: 'Die Kamera zerlegt sich. Der Blick wird klarer.',
+            subline: 'Objektiv, Sensor, Verschluss, Display und Dateien trennen sich beim Scrollen – als Bild für den Weg vom Motiv zur fertigen Serie.',
             brandImage: assets.brandBox,
             parts: [
-              { id: 'body', label: 'Body', text: 'Gehäuse, Griff und Haltung der Marke.', offsetX: -150, offsetY: 0, color: '#151515' },
-              { id: 'lens', label: 'Lens', text: 'Fokus, Nähe und Perspektive.', offsetX: 8, offsetY: -132, color: '#070707' },
-              { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 86, offsetY: -68, color: '#050505' },
-              { id: 'sensor', label: 'Sensor', text: 'Look, Farbe und Detailtiefe.', offsetX: 156, offsetY: 8, color: '#d11224' },
-              { id: 'display', label: 'Display', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -126, offsetY: 124, color: '#f4eee3' },
-              { id: 'assets', label: 'Assets', text: 'Website, Social, Kampagne und Print.', offsetX: 138, offsetY: 124, color: '#c7ff4a' },
+              { id: 'body', label: 'Body', text: 'Haltung, Marke und Kontext.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'lens', label: 'Lens', text: 'Fokus, Nähe und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+              { id: 'sensor', label: 'Sensor', text: 'Look, Farbe und Detailtiefe.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+              { id: 'display', label: 'Display', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+              { id: 'files', label: 'Files', text: 'Website, Social, Kampagne und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
             cta: { label: 'System ansehen', href: '/ai-workflows' },
           },
@@ -1189,12 +1196,12 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'verticalReelShowcase',
           data: {
             badge: 'Reels & Motion',
-            headline: 'Reels, Sport und Kampagne im Originalformat.',
-            subline: 'Hochformat-Arbeiten bleiben als echte Referenzen sichtbar – mit Kontext zu Produktion, Einsatz und Motiv.',
+            headline: 'Reels in dem Format, in dem sie wirken.',
+            subline: 'Die Hochformat-Clips bleiben bewusst vertikal: einmal Produktion aus einer Hand, einmal Golf als Sportreferenz.',
             aspectRatio: '9/16',
             reels: [
-              { eyebrow: 'Production', title: 'Alles aus einer Hand', text: 'Foto, Film, Schnitt und Content-Varianten für Markenauftritte.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: '9:16', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
-              { eyebrow: 'Golf', title: 'Sport in Bewegung', text: 'Golf-Reel als eigener Sport-/Commercial-Kontext.', videoSrc: assets.golfReel, poster: assets.golfFrame, meta: 'Sport Reel', ctaLabel: 'Sport ansehen', ctaHref: '/portfolio' },
+              { eyebrow: 'Production', title: 'Alles aus einer Hand', text: 'Konzept, Foto, Film, Schnitt und Content-Varianten für Markenauftritte.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: '9:16', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
+              { eyebrow: 'Golf', title: 'Sport in Bewegung', text: 'Golf, Bewegung, Timing und Schnitt als vertikale Referenz.', videoSrc: assets.golfReel, poster: assets.golfFrame, meta: 'Sport Reel', ctaLabel: 'Sport ansehen', ctaHref: '/portfolio' },
             ],
             cta: { label: 'Produktion planen', href: '/kontakt' },
           },
@@ -1232,7 +1239,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             headline: 'Zieh dich durch die Bildwelt.',
             subline: 'Eine offene Bildlandkarte aus Portfolio, Portraits, Sport, Commercial und Buchprojekten.',
             ctaLabel: 'Canvas öffnen',
-            maxExplorerItems: 40,
+            maxExplorerItems: 28,
             items: portfolioItems,
           },
         },
@@ -1269,33 +1276,34 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'aiWorkflowReel',
           data: {
-            badge: 'Workflow',
-            headline: 'Von Markenidee zu kanalreifen Assets.',
-            subline: 'Bildsprache, Führung und finale Entscheidung bleiben klar gestaltet. Varianten und Formate werden so vorbereitet, dass sie für Website, Social und Kampagne funktionieren.',
-            media: { videoSrc: assets.agencyReel, poster: assets.businessCampaign, caption: 'Foto, Film, Reels, Website und Kampagne aus einem konsistenten Look.' },
+            badge: 'AI Production',
+            headline: 'Vom Briefing zur fertigen Bildstrecke.',
+            subline: 'Alexander verbindet Planung, Shooting, Schnitt und Varianten so, dass Website, Social und Kampagne denselben Look behalten.',
+            media: { videoSrc: assets.agencyReel, poster: assets.businessCampaign, caption: 'Ein Produktionsablauf für Foto, Film, Reels und Kampagnenmotive.' },
             steps: [
-              { kicker: 'Analyse', title: 'Marke lesen', text: 'Ziel, Haltung und Kontext werden vor dem Shooting geklärt.', proof: 'Moodboard statt Zufall' },
-              { kicker: 'Produktion', title: 'Shooting führen', text: 'Licht, Ausdruck, Outfit und Location werden präzise geführt.', proof: 'Studio oder on location' },
-              { kicker: 'Post', title: 'Look entwickeln', text: 'Retusche, Grading und Varianten werden konsistent angelegt.', proof: 'Ein Look, viele Formate' },
-              { kicker: 'Distribution', title: 'Ausliefern', text: 'Website, Social, Ads und Sales bekommen passende Formate.', proof: 'Output-ready' },
+              { kicker: 'Briefing', title: 'Ziel klären', text: 'Marke, Zielgruppe, Einsatzkanäle und gewünschte Wirkung werden vor der Produktion festgelegt.', proof: 'Richtung vor Shooting' },
+              { kicker: 'Look', title: 'Bildsprache entwickeln', text: 'Licht, Farbe, Perspektive und Referenzen ergeben einen klaren visuellen Rahmen.', proof: 'Moodboard und Shotlist' },
+              { kicker: 'Produktion', title: 'Shooting führen', text: 'Ausdruck, Setting und Timing werden so geführt, dass genügend Material für mehrere Kanäle entsteht.', proof: 'Foto und Film' },
+              { kicker: 'Postproduktion', title: 'Serie veredeln', text: 'Auswahl, Retusche, Grading und Schnitt werden auf denselben Look gebracht.', proof: 'Konsistente Strecke' },
+              { kicker: 'Übergabe', title: 'Formate liefern', text: 'Website, Social, Kampagne und Präsentation bekommen passende Dateien und Zuschnitte.', proof: 'Web · Social · Print' },
             ],
-            cta: { label: 'Workflow anfragen', href: '/kontakt' },
+            cta: { label: 'Produktion anfragen', href: '/kontakt' },
           },
         },
         {
           type: 'cameraExplodeScroll',
           data: {
-            badge: 'Scroll Model',
-            headline: 'Die Produktion wird zerlegt, damit das Ergebnis kontrollierbar wird.',
-            subline: 'Von Briefing bis Übergabe: Jeder Teil der Produktion zahlt auf Wirkung, Wiedererkennbarkeit und Verwendbarkeit ein.',
+            badge: '3D Camera System',
+            headline: 'Eine Kamera. Viele Entscheidungen.',
+            subline: 'Beim Scrollen trennen sich die Bauteile: Fokus, Licht, Sensor, Kontrolle und Dateien werden als einzelne Entscheidungen sichtbar.',
             brandImage: assets.brandBox,
             parts: [
-              { id: 'body', label: 'Brief', text: 'Ziel, Marke und Kanäle klären.', offsetX: -150, offsetY: 0, color: '#151515' },
-              { id: 'lens', label: 'Look', text: 'Bildsprache, Licht und Perspektive.', offsetX: 8, offsetY: -132, color: '#070707' },
-              { id: 'shutter', label: 'Shoot', text: 'Produktion mit klarer Führung.', offsetX: 86, offsetY: -68, color: '#050505' },
-              { id: 'sensor', label: 'Post', text: 'Retusche, Grading und Varianten.', offsetX: 156, offsetY: 8, color: '#d11224' },
-              { id: 'display', label: 'Review', text: 'Auswahl und Freigabe kontrolliert.', offsetX: -126, offsetY: 124, color: '#f4eee3' },
-              { id: 'assets', label: 'Assets', text: 'Kanalreife Übergabe.', offsetX: 138, offsetY: 124, color: '#c7ff4a' },
+              { id: 'body', label: 'Briefing', text: 'Ziel, Marke und Kanäle klären.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'lens', label: 'Look', text: 'Bildsprache, Licht und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'shutter', label: 'Shooting', text: 'Produktion mit klarer Führung.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+              { id: 'sensor', label: 'Post', text: 'Retusche, Grading und Varianten.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+              { id: 'display', label: 'Review', text: 'Auswahl und Freigabe kontrolliert.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+              { id: 'files', label: 'Files', text: 'Kanalreife Übergabe.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
             cta: { label: 'Mit Alex sprechen', href: '/kontakt' },
           },
@@ -1325,20 +1333,36 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           },
         },
         {
-          type: 'signaturePath',
+          type: 'spotlightCards',
           data: {
             badge: 'Werdegang',
-            headline: 'Visual Journalism, Berlin, eigene Projekte.',
-            subline: 'Ausbildung, Assistenz, Portraitarbeit und freie Projekte prägen den fotografischen Blick.',
-            pathPreset: 'flow',
-            items: [
-              { id: 'visual-journalism', title: 'Visual Journalism', text: 'Ausbildung im Bereich Visual Journalism an der Hochschule Hannover – dokumentarische Fotografie und erzählerischer Blick.', image: assets.studioWide },
-              { id: 'berlin', title: 'Assistenz bei Oliver Mark', text: 'Zeit in Berlin als Assistent bei Oliver Mark, einem prägenden Portraitfotografen im deutschsprachigen Raum.', image: assets.portraitStudy },
-              { id: 'portraits', title: 'Portrait als Präsenz', text: 'Ein starkes Portrait entsteht nicht durch Technik allein, sondern durch Präsenz, Ruhe und den richtigen Moment.', image: assets.personalBranding },
-              { id: 'projects', title: 'Bücher & Ausstellungen', text: 'Eigene fotografische Projekte in Buchform und Ausstellungskontext, unter anderem in Ingolstadt.', image: assets.ingolstadtBook },
+            headline: 'Visual Journalism, Portrait und freie Projekte.',
+            subline: 'Der Blick kommt aus dokumentarischer Fotografie, Portraitarbeit und eigenen Buch- und Ausstellungsprojekten.',
+            cards: [
+              { title: 'Visual Journalism', text: 'Ausbildung im Bereich Visual Journalism an der Hochschule Hannover – mit Fokus auf dokumentarische Fotografie und erzählerischen Blick.', icon: 'BookOpen' },
+              { title: 'Portraitarbeit', text: 'Assistenzzeit in Berlin und die Arbeit mit Menschen prägen den ruhigen, direkten Portraitstil.', icon: 'Camera' },
+              { title: 'Freie Projekte', text: 'Bücher und Ausstellungen schaffen Raum für Serien, Recherche und persönliche Perspektive.', icon: 'Images' },
+              { title: 'Region', text: 'Das Studio arbeitet aus dem Raum Ingolstadt und München für Unternehmen, Editorial und freie Arbeiten.', icon: 'MapPin' },
             ],
             cta: { label: 'Anfrage senden', href: '/kontakt' },
           },
+        },
+        {
+          type: 'galleryPro',
+          data: {
+            badge: 'Bildsprache',
+            headline: 'Portraits, Stills und dokumentarische Motive.',
+            subline: 'Auswahl aus Portrait, Studio, Buch- und freien Arbeiten.',
+            images: [
+              { src: assets.studioWide, alt: 'Studioarbeit Alexander Schuktuew', category: 'Studio', caption: 'Studio und dokumentarischer Blick.' },
+              { src: assets.portraitStudy, alt: 'Portraitarbeit Alexander Schuktuew', category: 'Portrait', caption: 'Portrait als reduzierte Präsenz.' },
+              { src: assets.personalBranding, alt: 'Personal Branding Portrait', category: 'Portrait', caption: 'Bildsprache für Persönlichkeit und Marke.' },
+              { src: assets.ingolstadtBook, alt: 'Buchprojekt Ingolstadt', category: 'Buchprojekt', caption: 'Freie fotografische Arbeit.' },
+              { src: assets.aboutPortrait01, alt: 'Portraitmotiv', category: 'Portrait', caption: '' },
+              { src: assets.aboutStill01, alt: 'Fotografisches Motiv', category: 'Archiv', caption: '' },
+            ],
+          },
+          container: 'wide',
         },
         {
           type: 'kineticIdentity',

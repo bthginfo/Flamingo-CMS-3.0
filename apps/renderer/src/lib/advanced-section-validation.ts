@@ -237,12 +237,15 @@ export function validateAdvancedSectionData(
     });
   }
   if (type === 'cameraExplodeScroll') {
-    const parts = requireRange('parts', 4, 6);
+    const modelUrl = typeof data.modelUrl === 'string' ? data.modelUrl.trim() : '';
+    if (modelUrl && !/^https:\/\/.+\.(glb|gltf)(\?|#|$)/i.test(modelUrl)) add('modelUrl', '3D model must be a public HTTPS .glb or .gltf URL.', 'Upload a GLB/GLTF file to media/blob storage or leave this empty for the built-in 3D camera.');
+    const parts = requireRange('parts', 4, 7);
     parts?.forEach((part, index) => {
       if (!part || !isFilled(part.label)) add(`parts[${index}].label`, 'Every camera part needs a label.', 'Name the camera or production layer.');
       if (!part || !isFilled(part.text)) add(`parts[${index}].text`, 'Every camera part needs explanatory copy.', 'Explain the role of this layer in one concise sentence.');
-      for (const key of ['offsetX', 'offsetY'] as const) {
-        if (typeof part?.[key] !== 'number' || Number(part[key]) < -180 || Number(part[key]) > 180) add(`parts[${index}].${key}`, `${key} must be a number from -180 to 180.`, `Set ${key} as a safe pixel offset for the exploded view.`);
+      for (const key of ['offsetX', 'offsetY', 'offsetZ'] as const) {
+        if (part?.[key] === undefined && key === 'offsetZ') continue;
+        if (typeof part?.[key] !== 'number' || Number(part[key]) < -260 || Number(part[key]) > 260) add(`parts[${index}].${key}`, `${key} must be a number from -260 to 260.`, `Set ${key} as a safe offset for the exploded view.`);
       }
     });
   }

@@ -1,8 +1,8 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
-import { Aperture, ArrowUpRight } from 'lucide-react';
-import { useRef } from 'react';
+import { useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { Aperture, ArrowUpRight, Box, Cuboid, Eye, Layers3, ScanLine, View } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
 import { visibleText } from '@/lib/visible-content';
@@ -14,146 +14,351 @@ type CameraPart = {
   text?: string;
   offsetX?: number;
   offsetY?: number;
+  offsetZ?: number;
   color?: string;
 };
 
 type Props = { data: Record<string, unknown> };
+type ThreeModule = typeof import('three');
+type ExplodeNode = {
+  object: import('three').Object3D;
+  start: import('three').Vector3;
+  end: import('three').Vector3;
+  startRotation: import('three').Euler;
+  endRotation: import('three').Euler;
+};
 
 const FALLBACK_PARTS: CameraPart[] = [
-  { id: 'body', label: 'Body', text: 'Gehäuse, Griff und Haltung.', offsetX: -150, offsetY: 0, color: '#151515' },
-  { id: 'lens', label: 'Lens', text: 'Fokus, Blickrichtung und optische Tiefe.', offsetX: 8, offsetY: -132, color: '#111111' },
-  { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 86, offsetY: -68, color: '#050505' },
-  { id: 'sensor', label: 'Sensor', text: 'Bilddaten, Look und Varianten.', offsetX: 156, offsetY: 8, color: '#d11224' },
-  { id: 'display', label: 'Display', text: 'Kontrolle, Auswahl und Bildführung.', offsetX: -126, offsetY: 124, color: '#f4eee3' },
-  { id: 'assets', label: 'Assets', text: 'Finale Dateien für Website, Social und Kampagne.', offsetX: 138, offsetY: 124, color: '#c7ff4a' },
+  { id: 'body', label: 'Body', text: 'Gehäuse, Griff und Kamerahaltung.', offsetX: -160, offsetY: 0, offsetZ: -40, color: '#151515' },
+  { id: 'lens', label: 'Lens', text: 'Fokus, Nähe und optische Tiefe.', offsetX: 160, offsetY: -40, offsetZ: 150, color: '#050505' },
+  { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 80, offsetY: -140, offsetZ: 70, color: '#d11224' },
+  { id: 'sensor', label: 'Sensor', text: 'Bilddaten, Look und Detailtiefe.', offsetX: 170, offsetY: 60, offsetZ: -120, color: '#1b2430' },
+  { id: 'display', label: 'Display', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -135, offsetY: 130, offsetZ: -130, color: '#f4eee3' },
+  { id: 'output', label: 'Files', text: 'Finale Assets für Website, Social und Kampagne.', offsetX: 135, offsetY: 140, offsetZ: 130, color: '#c7ff4a' },
 ];
 
-function partKind(part: CameraPart, index: number) {
-  const value = `${part.id || ''} ${part.label || ''}`.toLowerCase();
-  if (value.includes('lens') || value.includes('look') || value.includes('fokus')) return 'lens';
-  if (value.includes('shutter') || value.includes('aperture') || value.includes('verschluss') || value.includes('moment')) return 'shutter';
-  if (value.includes('sensor') || value.includes('ai') || value.includes('chip')) return 'sensor';
-  if (value.includes('display') || value.includes('screen') || value.includes('monitor') || value.includes('kontrolle')) return 'display';
-  if (value.includes('light') || value.includes('shoot') || value.includes('flash') || value.includes('licht')) return 'light';
-  if (value.includes('output') || value.includes('asset') || value.includes('card') || value.includes('speicher') || value.includes('film')) return 'output';
-  return index === 0 ? 'body' : 'plate';
+const PART_ICONS = [Cuboid, Aperture, Eye, ScanLine, View, Box, Layers3];
+
+function clampOffset(value: unknown, fallback: number) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return fallback;
+  return Math.max(-260, Math.min(260, numeric));
 }
 
-function layerMotion(part: CameraPart, kind: string, index: number, progress: MotionValue<number>) {
-  return {
-    x: useTransform(progress, [0, 1], [0, Number(part.offsetX ?? 0) * 1.18]),
-    y: useTransform(progress, [0, 1], [0, Number(part.offsetY ?? 0) * 1.06]),
-    z: useTransform(progress, [0, 1], [0, kind === 'lens' ? 190 : kind === 'shutter' ? 118 : kind === 'sensor' ? -95 : kind === 'display' ? -145 : kind === 'light' ? 90 : kind === 'output' ? 125 : -34]),
-    rotateX: useTransform(progress, [0, 1], [0, kind === 'lens' ? -8 : kind === 'shutter' ? 10 : kind === 'display' ? 14 : kind === 'light' ? 16 : kind === 'output' ? -12 : 0]),
-    rotateY: useTransform(progress, [0, 1], [0, kind === 'body' ? -12 : kind === 'shutter' ? 15 : kind === 'sensor' ? 18 : kind === 'display' ? -18 : kind === 'output' ? 22 : (index - 2) * 5]),
-    rotateZ: useTransform(progress, [0, 1], [0, kind === 'light' ? -8 : kind === 'output' ? 7 : (index - 2) * 2]),
-  };
+function normalizedParts(value: unknown) {
+  const parts = Array.isArray(value) ? (value as CameraPart[]).filter((part) => visibleText(part?.label || '')) : [];
+  return (parts.length ? parts : FALLBACK_PARTS).slice(0, 7).map((part, index) => ({
+    ...FALLBACK_PARTS[index % FALLBACK_PARTS.length],
+    ...part,
+    label: visibleText(part.label || FALLBACK_PARTS[index % FALLBACK_PARTS.length].label || `Part ${index + 1}`),
+    text: visibleText(part.text || FALLBACK_PARTS[index % FALLBACK_PARTS.length].text || ''),
+    offsetX: clampOffset(part.offsetX, FALLBACK_PARTS[index % FALLBACK_PARTS.length].offsetX || 0),
+    offsetY: clampOffset(part.offsetY, FALLBACK_PARTS[index % FALLBACK_PARTS.length].offsetY || 0),
+    offsetZ: clampOffset(part.offsetZ, FALLBACK_PARTS[index % FALLBACK_PARTS.length].offsetZ || 0),
+  }));
 }
 
-function CameraLayer({ part, index, progress }: { part: CameraPart; index: number; progress: MotionValue<number> }) {
-  const reduceMotion = useReducedMotion();
-  const kind = partKind(part, index);
-  const layer = layerMotion(part, kind, index, progress);
-  const color = part.color || '#f5f1e8';
-  const baseStyle = {
-    x: reduceMotion ? 0 : layer.x,
-    y: reduceMotion ? 0 : layer.y,
-    z: reduceMotion ? 0 : layer.z,
-    rotateX: reduceMotion ? 0 : layer.rotateX,
-    rotateY: reduceMotion ? 0 : layer.rotateY,
-    rotateZ: reduceMotion ? 0 : layer.rotateZ,
-    zIndex: 30 + index,
-    transformStyle: 'preserve-3d' as const,
-  };
+function isLikelyModelUrl(url: string) {
+  return /\.(glb|gltf)(\?|#|$)/i.test(url);
+}
 
-  if (kind === 'lens') {
-    return (
-      <motion.div className="absolute left-1/2 top-1/2 h-60 w-60 -translate-x-1/2 -translate-y-1/2 rounded-full" style={baseStyle} data-edit-collection="parts" data-edit-index={index}>
-        <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_180deg,#050505,#454545,#070707,#1b1b1b,#050505)] shadow-[0_38px_96px_rgba(0,0,0,.62)] ring-1 ring-white/15" />
-        <div className="absolute inset-7 rounded-full border border-white/10 bg-[radial-gradient(circle_at_34%_28%,rgba(255,255,255,.45),transparent_18%),radial-gradient(circle,#222_0_27%,#050505_28%_58%,#343434_59%_64%,#080808_65%)] shadow-[inset_0_0_44px_rgba(255,255,255,.08)]" />
-        <div className="absolute inset-[4.15rem] grid place-items-center rounded-full bg-[radial-gradient(circle_at_40%_35%,#748091_0_10%,#1b2430_11%_45%,#050505_46%)] ring-[14px] ring-black/80">
-          <Aperture className="text-white/75" size={30} />
-        </div>
-        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 rounded-full border border-white/12 bg-black/50 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-white/78 backdrop-blur" data-edit-path="label">{part.label}</span>
-      </motion.div>
+function makeMaterial(THREE: ThreeModule, color: string, metalness = 0.45, roughness = 0.34) {
+  return new THREE.MeshStandardMaterial({
+    color,
+    metalness,
+    roughness,
+    envMapIntensity: 0.7,
+  });
+}
+
+function addBox(THREE: ThreeModule, group: import('three').Group, size: [number, number, number], position: [number, number, number], color: string, radiusLabel?: string) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), makeMaterial(THREE, color));
+  mesh.position.set(...position);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.userData.radiusLabel = radiusLabel;
+  group.add(mesh);
+  return mesh;
+}
+
+function addCylinder(THREE: ThreeModule, group: import('three').Group, radiusTop: number, radiusBottom: number, depth: number, position: [number, number, number], color: string) {
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radiusTop, radiusBottom, depth, 64), makeMaterial(THREE, color, 0.62, 0.24));
+  mesh.rotation.x = Math.PI / 2;
+  mesh.position.set(...position);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+function makeGeneratedCamera(THREE: ThreeModule, parts: CameraPart[]): ExplodeNode[] {
+  const nodes: ExplodeNode[] = [];
+  const materialGraphite = '#202020';
+  const materialSoft = '#f4eee3';
+  const materialRed = '#d11224';
+  const materialLime = '#c7ff4a';
+
+  function createPart(name: string, partIndex: number, build: (group: import('three').Group) => void, fallback: [number, number, number]) {
+    const group = new THREE.Group();
+    group.name = name;
+    build(group);
+    const part = parts[partIndex] || FALLBACK_PARTS[partIndex % FALLBACK_PARTS.length];
+    const start = new THREE.Vector3(0, 0, 0);
+    const end = new THREE.Vector3(
+      (Number(part.offsetX) || fallback[0] * 100) / 88,
+      -(Number(part.offsetY) || fallback[1] * 100) / 88,
+      (Number(part.offsetZ) || fallback[2] * 100) / 78,
     );
+    const startRotation = new THREE.Euler(0, 0, 0);
+    const endRotation = new THREE.Euler((partIndex % 2 ? -0.12 : 0.12), (partIndex - 2) * 0.1, (partIndex % 3 - 1) * 0.08);
+    nodes.push({ object: group, start, end, startRotation, endRotation });
+    return group;
   }
 
-  if (kind === 'sensor') {
-    return (
-      <motion.div className="absolute left-1/2 top-1/2 h-40 w-52 -translate-x-1/2 -translate-y-1/2 rounded-[1.25rem] border border-white/15 shadow-[0_34px_86px_rgba(0,0,0,.5)]" style={{ ...baseStyle, background: color }} data-edit-collection="parts" data-edit-index={index}>
-        <div className="absolute inset-5 rounded-xl border border-black/30 bg-[linear-gradient(135deg,rgba(255,255,255,.18),transparent_38%),radial-gradient(circle_at_65%_42%,rgba(255,255,255,.22),transparent_28%),rgba(0,0,0,.2)]" />
-        <div aria-hidden="true" className="absolute -left-4 top-1/2 h-16 w-4 -translate-y-1/2 rounded-l bg-black/40" />
-        <div aria-hidden="true" className="absolute -right-4 top-1/2 h-16 w-4 -translate-y-1/2 rounded-r bg-black/40" />
-        <span className="absolute inset-x-0 bottom-4 text-center text-[10px] font-black uppercase tracking-[.22em] text-white/84" data-edit-path="label">{part.label}</span>
-      </motion.div>
-    );
-  }
+  createPart('camera-body', 0, (group) => {
+    addBox(THREE, group, [4.25, 2.45, 0.82], [0, 0, 0], materialGraphite);
+    addBox(THREE, group, [0.86, 2.18, 1.02], [1.98, -0.1, 0.1], '#111111');
+    addBox(THREE, group, [0.75, 0.52, 0.36], [-1.16, 1.36, 0.1], materialGraphite);
+    addBox(THREE, group, [1.05, 0.34, 0.42], [0.2, 1.32, 0.1], '#030303');
+    addBox(THREE, group, [0.72, 0.2, 0.5], [1.15, 1.37, 0.12], materialRed);
+  }, [-1.6, 0, -0.45]);
 
-  if (kind === 'shutter') {
-    return (
-      <motion.div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-[1.6rem] border border-white/14 bg-[#050505] shadow-[0_34px_86px_rgba(0,0,0,.55)]" style={baseStyle} data-edit-collection="parts" data-edit-index={index}>
-        <div className="absolute inset-5 rounded-[1.15rem] border border-white/10 bg-[conic-gradient(from_20deg,#0a0a0a_0_12%,#303030_12%_24%,#050505_24%_38%,#3a3a3a_38%_50%,#080808_50%_66%,#2c2c2c_66%_80%,#070707_80%_100%)]" />
-        <div className="absolute inset-[3.35rem] rounded-full border border-white/15 bg-[radial-gradient(circle,#121212_0_42%,#000_43%_100%)] shadow-[inset_0_0_28px_rgba(255,255,255,.08)]" />
-        <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 rounded-full border border-white/12 bg-black/50 px-3 py-1 text-[10px] font-black uppercase tracking-[.18em] text-white/78 backdrop-blur" data-edit-path="label">{part.label}</span>
-      </motion.div>
-    );
-  }
+  createPart('lens-barrel', 1, (group) => {
+    addCylinder(THREE, group, 1.05, 1.05, 0.8, [0, 0, 0.72], '#070707');
+    addCylinder(THREE, group, 0.86, 0.92, 0.55, [0, 0, 1.36], '#1b1b1b');
+    addCylinder(THREE, group, 0.66, 0.72, 0.28, [0, 0, 1.83], '#050505');
+    addCylinder(THREE, group, 0.48, 0.48, 0.04, [0, 0, 2.0], '#101827');
+    addCylinder(THREE, group, 0.28, 0.28, 0.025, [0, 0, 2.04], '#2f4158');
+  }, [1.65, -0.35, 1.35]);
 
-  if (kind === 'display') {
-    return (
-      <motion.div className="absolute left-1/2 top-1/2 h-36 w-56 -translate-x-1/2 -translate-y-1/2 rounded-[1.3rem] border border-black/20 shadow-[0_30px_78px_rgba(0,0,0,.5)]" style={{ ...baseStyle, background: color }} data-edit-collection="parts" data-edit-index={index}>
-        <div className="absolute inset-4 rounded-xl bg-[linear-gradient(135deg,#161616,#030303)] ring-1 ring-black/35">
-          <div className="absolute left-3 top-3 h-2 w-12 rounded-full bg-white/20" />
-          <div className="absolute bottom-3 right-3 h-9 w-14 rounded-lg border border-white/15 bg-white/8" />
-        </div>
-        <span className="absolute inset-x-0 bottom-4 text-center text-[10px] font-black uppercase tracking-[.22em] text-black/70" data-edit-path="label">{part.label}</span>
-      </motion.div>
-    );
-  }
+  createPart('aperture-stack', 2, (group) => {
+    addCylinder(THREE, group, 0.7, 0.7, 0.08, [0, 0, 0.12], '#050505');
+    for (let i = 0; i < 7; i += 1) {
+      const blade = addBox(THREE, group, [0.58, 0.12, 0.035], [0, 0, 0.17], '#2a2a2a');
+      blade.rotation.z = (Math.PI * 2 * i) / 7;
+      blade.position.x = Math.cos(blade.rotation.z) * 0.18;
+      blade.position.y = Math.sin(blade.rotation.z) * 0.18;
+    }
+  }, [0.8, -1.45, 0.9]);
 
-  if (kind === 'light') {
-    return (
-      <motion.div className="absolute left-1/2 top-1/2 h-28 w-48 -translate-x-1/2 -translate-y-1/2 rounded-[1.15rem] border border-black/10 shadow-[0_26px_70px_rgba(0,0,0,.44)]" style={{ ...baseStyle, background: color }} data-edit-collection="parts" data-edit-index={index}>
-        <div className="absolute inset-3 rounded-xl bg-[repeating-linear-gradient(90deg,rgba(0,0,0,.16)_0_1px,transparent_1px_9px),linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.1))]" />
-        <span className="absolute inset-x-0 bottom-4 text-center text-[10px] font-black uppercase tracking-[.22em] text-black/68" data-edit-path="label">{part.label}</span>
-      </motion.div>
-    );
-  }
+  createPart('sensor-plane', 3, (group) => {
+    addBox(THREE, group, [1.5, 1.08, 0.08], [0, 0, -0.58], '#182132');
+    addBox(THREE, group, [1.08, 0.72, 0.1], [0, 0, -0.52], '#364a61');
+    for (let i = 0; i < 9; i += 1) {
+      addBox(THREE, group, [0.05, 0.92, 0.115], [-0.48 + i * 0.12, 0, -0.45], '#607085');
+    }
+  }, [1.75, 0.65, -1.4]);
 
-  if (kind === 'output') {
-    return (
-      <motion.div className="absolute left-1/2 top-1/2 h-36 w-52 -translate-x-1/2 -translate-y-1/2 rounded-[1.35rem] border border-black/10 shadow-[0_28px_80px_rgba(0,0,0,.48)]" style={{ ...baseStyle, background: color }} data-edit-collection="parts" data-edit-index={index}>
-        <div className="absolute inset-3 rounded-2xl bg-[linear-gradient(135deg,rgba(255,255,255,.7),transparent_38%),repeating-linear-gradient(0deg,rgba(0,0,0,.2)_0_1px,transparent_1px_12px)] opacity-70" />
-        <span className="absolute inset-x-0 bottom-5 text-center text-[10px] font-black uppercase tracking-[.22em] text-black/72" data-edit-path="label">{part.label}</span>
-      </motion.div>
-    );
+  createPart('rear-display', 4, (group) => {
+    addBox(THREE, group, [2.0, 1.38, 0.12], [-0.55, -0.05, -0.72], materialSoft);
+    addBox(THREE, group, [1.55, 0.9, 0.14], [-0.55, -0.05, -0.65], '#050505');
+    addBox(THREE, group, [0.42, 0.22, 0.16], [0.78, 0.48, -0.62], '#262626');
+  }, [-1.45, 1.25, -1.35]);
+
+  createPart('top-controls', 5, (group) => {
+    addCylinder(THREE, group, 0.36, 0.36, 0.2, [0.94, 1.48, 0.14], materialRed);
+    addCylinder(THREE, group, 0.42, 0.42, 0.22, [-0.96, 1.46, 0.12], '#0b0b0b');
+    addBox(THREE, group, [0.7, 0.28, 0.46], [0, 1.54, 0.12], '#111111');
+  }, [1.25, -1.35, 0.75]);
+
+  createPart('output-cards', 6, (group) => {
+    addBox(THREE, group, [1.1, 0.72, 0.05], [-0.28, -1.05, 0.62], materialLime);
+    addBox(THREE, group, [0.88, 0.58, 0.055], [0.62, -1.22, 0.82], materialSoft);
+    addBox(THREE, group, [0.64, 0.42, 0.06], [1.18, -0.8, 1.02], materialRed);
+  }, [1.5, 1.48, 1.5]);
+
+  return nodes;
+}
+
+async function loadModelNodes(THREE: ThreeModule, modelUrl: string, parts: CameraPart[]): Promise<ExplodeNode[] | null> {
+  if (!modelUrl) return null;
+  try {
+    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+    const gltf = await new GLTFLoader().loadAsync(modelUrl);
+    const sourceScene = gltf.scene;
+    sourceScene.updateWorldMatrix(true, true);
+    const meshes: import('three').Mesh[] = [];
+    sourceScene.traverse((object) => {
+      const maybeMesh = object as import('three').Mesh & { isMesh?: boolean };
+      if (maybeMesh.isMesh) meshes.push(maybeMesh);
+    });
+    if (!meshes.length) return null;
+    const box = new THREE.Box3().setFromObject(sourceScene);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const scale = 4 / Math.max(size.x || 1, size.y || 1, size.z || 1);
+    return meshes.slice(0, Math.max(4, Math.min(meshes.length, 18))).map((mesh, index) => {
+      const geometry = mesh.geometry.clone();
+      const material = Array.isArray(mesh.material) ? mesh.material.map((entry) => entry.clone()) : mesh.material.clone();
+      const clone = new THREE.Mesh(geometry, material);
+      const world = new THREE.Vector3();
+      const rotation = new THREE.Quaternion();
+      const meshScale = new THREE.Vector3();
+      mesh.matrixWorld.decompose(world, rotation, meshScale);
+      clone.position.copy(world.sub(center).multiplyScalar(scale));
+      clone.quaternion.copy(rotation);
+      clone.scale.copy(meshScale.multiplyScalar(scale));
+      clone.castShadow = true;
+      clone.receiveShadow = true;
+      const part = parts[index % parts.length] || FALLBACK_PARTS[index % FALLBACK_PARTS.length];
+      const direction = clone.position.clone().normalize();
+      if (direction.lengthSq() < 0.1) direction.set((index % 3) - 1, index % 2 ? 0.6 : -0.4, 0.8);
+      const start = clone.position.clone();
+      const end = start.clone().add(new THREE.Vector3(
+        (Number(part.offsetX) || direction.x * 160) / 90,
+        -(Number(part.offsetY) || direction.y * 160) / 90,
+        (Number(part.offsetZ) || direction.z * 160) / 80,
+      ));
+      return {
+        object: clone,
+        start,
+        end,
+        startRotation: clone.rotation.clone(),
+        endRotation: new THREE.Euler(clone.rotation.x + 0.08, clone.rotation.y + 0.18, clone.rotation.z + (index % 2 ? -0.12 : 0.12)),
+      };
+    });
+  } catch {
+    return null;
   }
+}
+
+function useProgressRef(progress: MotionValue<number>) {
+  const progressRef = useRef(0);
+  useEffect(() => progress.on('change', (value) => { progressRef.current = value; }), [progress]);
+  return progressRef;
+}
+
+function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; modelUrl: string; progress: MotionValue<number> }) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const progressRef = useProgressRef(progress);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'fallback'>('loading');
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const wrap = wrapRef.current;
+    if (!canvas || !wrap) return undefined;
+    const canvasElement = canvas;
+    const wrapElement = wrap;
+    let disposed = false;
+    let frame = 0;
+    let renderer: import('three').WebGLRenderer | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+    const cleanup: Array<() => void> = [];
+
+    async function setup() {
+      const THREE = await import('three');
+      if (disposed) return;
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x070707, 0.055);
+      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+      camera.position.set(0, 0.25, 9.2);
+      renderer = new THREE.WebGLRenderer({ canvas: canvasElement, alpha: true, antialias: true, powerPreference: 'high-performance' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      const root = new THREE.Group();
+      root.rotation.x = -0.08;
+      root.rotation.y = -0.28;
+      scene.add(root);
+
+      const ambient = new THREE.AmbientLight(0xffffff, 1.2);
+      scene.add(ambient);
+      const key = new THREE.DirectionalLight(0xffffff, 2.4);
+      key.position.set(4, 5, 7);
+      key.castShadow = true;
+      scene.add(key);
+      const rim = new THREE.PointLight(0xd11224, 24, 12);
+      rim.position.set(-4, 1.8, 4);
+      scene.add(rim);
+      const lime = new THREE.PointLight(0xc7ff4a, 8, 10);
+      lime.position.set(3, -2, 3);
+      scene.add(lime);
+
+      const nodes = await loadModelNodes(THREE, modelUrl, parts) || makeGeneratedCamera(THREE, parts);
+      if (disposed) return;
+      nodes.forEach((node) => root.add(node.object));
+      setStatus('ready');
+
+      const resize = () => {
+        if (!renderer) return;
+        const rect = wrapElement.getBoundingClientRect();
+        const width = Math.max(320, Math.round(rect.width));
+        const height = Math.max(320, Math.round(rect.height));
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      };
+      resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(wrapElement);
+      resize();
+
+      const animate = () => {
+        if (!renderer) return;
+        const p = Math.max(0, Math.min(1, progressRef.current));
+        const eased = 1 - Math.pow(1 - p, 3);
+        root.rotation.y = -0.32 + eased * 0.56;
+        root.rotation.x = -0.08 + Math.sin(eased * Math.PI) * 0.08;
+        nodes.forEach((node, index) => {
+          node.object.position.lerpVectors(node.start, node.end, eased);
+          node.object.rotation.x = node.startRotation.x + (node.endRotation.x - node.startRotation.x) * eased;
+          node.object.rotation.y = node.startRotation.y + (node.endRotation.y - node.startRotation.y) * eased;
+          node.object.rotation.z = node.startRotation.z + (node.endRotation.z - node.startRotation.z) * eased;
+          node.object.visible = index < 16 || p > 0.2;
+        });
+        renderer.render(scene, camera);
+        frame = window.requestAnimationFrame(animate);
+      };
+      animate();
+
+      cleanup.push(() => {
+        window.cancelAnimationFrame(frame);
+        resizeObserver?.disconnect();
+        nodes.forEach((node) => {
+          node.object.traverse((object) => {
+            const mesh = object as import('three').Mesh;
+            if (mesh.geometry && typeof mesh.geometry.dispose === 'function') mesh.geometry.dispose();
+            if (mesh.material) {
+              const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+              materials.forEach((material) => material?.dispose?.());
+            }
+          });
+        });
+        renderer?.dispose();
+      });
+    }
+
+    setup().catch(() => setStatus('fallback'));
+    return () => {
+      disposed = true;
+      cleanup.forEach((fn) => fn());
+    };
+  }, [modelUrl, parts, progressRef]);
 
   return (
-    <motion.div
-      className="absolute left-1/2 top-1/2 h-56 w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-[2.3rem] border border-white/14 shadow-[0_42px_120px_rgba(0,0,0,.58)]"
-      style={{ ...baseStyle, background: `linear-gradient(135deg, color-mix(in srgb, ${color} 88%, white), ${color})` }}
-      data-edit-collection="parts"
-      data-edit-index={index}
-    >
-      <div className="absolute -top-11 left-16 h-12 w-24 rounded-t-[1.2rem] border border-white/12 bg-black/80 shadow-xl" />
-      <div className="absolute -top-7 right-20 h-7 w-16 rounded-t-lg bg-black/85 shadow-xl" />
-      <div className="absolute right-8 top-9 h-32 w-20 rounded-2xl bg-black/25 shadow-[inset_14px_0_28px_rgba(0,0,0,.22)]" />
-      <div className="absolute left-10 top-8 h-10 w-24 rounded-full bg-white/10 ring-1 ring-white/12" />
-      <div className="absolute left-44 top-8 h-20 w-20 rounded-full border border-white/16 bg-black/55 shadow-[inset_0_0_22px_rgba(255,255,255,.08)]" />
-      <div className="absolute inset-5 rounded-[1.8rem] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,.11),transparent_35%),radial-gradient(circle_at_68%_52%,rgba(0,0,0,.5),transparent_20%)]" />
-      <span className="absolute bottom-7 left-9 rounded-full bg-black/55 px-3 py-1 text-[10px] font-black uppercase tracking-[.2em] text-white/82 backdrop-blur" data-edit-path="label">{part.label}</span>
-    </motion.div>
+    <div ref={wrapRef} className="relative h-full min-h-[34rem] w-full">
+      <canvas ref={canvasRef} className="h-full w-full" aria-label="3D Exploded View einer Kamera" />
+      {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-white/50">3D Kamera lädt</div>}
+      {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-white/50">3D nicht verfügbar</div>}
+    </div>
   );
 }
 
-function PartCopy({ part, index }: { part: CameraPart; index: number }) {
+function PartCopy({ part, index, compact = false }: { part: CameraPart; index: number; compact?: boolean }) {
+  const Icon = PART_ICONS[index % PART_ICONS.length];
   return (
-    <article className="rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.06] p-4 text-white/86 backdrop-blur" data-card data-color-context="dark" data-edit-collection="parts" data-edit-index={index}>
-      <p className="text-[10px] font-black uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{String(index + 1).padStart(2, '0')}</p>
-      <h3 className="mt-2 text-lg font-black text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{part.label}</h3>
-      {part.text && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-body)]" data-edit-path="text">{plain(part.text)}</p>}
+    <article className={`rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.065] ${compact ? 'p-3' : 'p-4'} text-white/88 backdrop-blur-xl`} data-card data-color-context="dark" data-edit-collection="parts" data-edit-index={index}>
+      <div className="flex items-start gap-3">
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-white text-black"><Icon size={16} /></div>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{String(index + 1).padStart(2, '0')}</p>
+          <h3 className="mt-1 text-base font-black text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{part.label}</h3>
+          {part.text && <p className="mt-1.5 text-xs leading-5 text-[color:var(--token-on-dark-body)]" data-edit-path="text">{plain(part.text)}</p>}
+        </div>
+      </div>
     </article>
   );
 }
@@ -163,11 +368,11 @@ function CameraStickyIntro({ data }: Props) {
   const headline = visibleText(String(data.headline || ''));
   const subline = visibleText(String(data.subline || ''));
   return (
-    <div className="max-w-[34rem]">
+    <div className="max-w-[36rem]">
       {badge && <p className="section-badge mb-5 w-fit" data-edit-path="badge">{badge}</p>}
       {headline && (
         <h2
-          className="text-[clamp(2.15rem,4.4vw,4.8rem)] font-black leading-[.9] tracking-[-.055em] text-[color:var(--token-heading)] [overflow-wrap:normal]"
+          className="text-[clamp(2.25rem,4.4vw,5.2rem)] font-black leading-[.88] tracking-[-.06em] text-[color:var(--token-heading)] [overflow-wrap:normal]"
           data-edit-path="headline"
         >
           {headline}
@@ -178,37 +383,73 @@ function CameraStickyIntro({ data }: Props) {
   );
 }
 
+function StaticCameraVisual({ brandImage }: { brandImage: string }) {
+  return (
+    <div className="relative mx-auto aspect-[4/3] max-w-sm">
+      <div className="absolute left-[13%] top-[31%] h-[37%] w-[66%] rounded-[2.2rem] border border-white/15 bg-[#1b1b1b] shadow-2xl" />
+      <div className="absolute left-[39%] top-[24%] h-[48%] w-[34%] rounded-full bg-black shadow-[0_20px_70px_rgba(0,0,0,.65)] ring-8 ring-white/10" />
+      <div className="absolute left-[48%] top-[37%] h-[20%] w-[14%] rounded-full bg-[#223044]" />
+      <div className="absolute left-[51%] top-[41%] h-[9%] w-[6%] rounded-full bg-white/35" />
+      <div className="absolute left-[24%] top-[25%] h-[12%] w-[20%] rounded-2xl bg-[#111]" />
+      <div className="absolute right-[6%] top-[58%] h-[20%] w-[28%] rounded-2xl bg-[color:var(--token-accent)]" />
+      <div className="absolute left-[18%] top-[65%] h-[18%] w-[30%] rotate-[-7deg] rounded-2xl bg-[#f4eee3]" />
+      {brandImage && <img src={brandImage} alt="" loading="lazy" className="absolute right-0 top-0 h-20 w-20 rounded-2xl border border-white/15 object-cover" data-edit-image="brandImage" />}
+    </div>
+  );
+}
+
+function StaticCameraFallback({ data, parts, brandImage, cta }: { data: Record<string, unknown>; parts: CameraPart[]; brandImage: string; cta: AdvancedCta }) {
+  return (
+    <section className="bg-[var(--token-section-bg)] px-5 py-16 md:hidden">
+      <AdvancedIntro badge={String(data.badge || '')} headline={String(data.headline || '')} subline={String(data.subline || '')} compact />
+      <div className="mt-8 rounded-[calc(var(--token-card-radius)*1.25)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-5">
+        <StaticCameraVisual brandImage={brandImage} />
+      </div>
+      <div className="mt-8 space-y-3">{parts.map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
+      <AdvancedLink cta={cta} className="mt-8" />
+    </section>
+  );
+}
+
 export function CameraExplodeScrollSection({ data }: Props) {
   const ref = useRef<HTMLElement>(null);
-  const parts = Array.isArray(data.parts) && (data.parts as CameraPart[]).length ? (data.parts as CameraPart[]).filter((part) => part?.label) : FALLBACK_PARTS;
+  const reduceMotion = useReducedMotion();
+  const parts = normalizedParts(data.parts);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const progress = useTransform(scrollYProgress, [0.12, 0.75], [0, 1]);
+  const progress = useTransform(scrollYProgress, [0.08, 0.72], [0, 1]);
   const brandImage = safeContentUrl(String(data.brandImage || ''));
+  const modelUrlRaw = safeContentUrl(String(data.modelUrl || data.gltfUrl || data.glbUrl || ''));
+  const modelUrl = isLikelyModelUrl(modelUrlRaw) ? modelUrlRaw : '';
   const cta = data.cta as AdvancedCta;
   const ctaHref = safeContentUrl(cta?.href || '');
   const ctaLabel = visibleText(cta?.label || '');
+
   return (
     <>
-      <section className="advanced-static-fallback bg-[var(--token-section-bg)] px-5 py-16 md:hidden">
-        <AdvancedIntro badge={String(data.badge || '')} headline={String(data.headline || '')} subline={String(data.subline || '')} compact />
-        {brandImage && <img src={brandImage} alt="" loading="lazy" className="mt-8 aspect-square w-full rounded-[var(--token-card-radius)] object-cover" data-edit-image="brandImage" />}
-        <div className="mt-8 space-y-3">{parts.map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
-        <AdvancedLink cta={cta} className="mt-8" />
-      </section>
-      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${Math.max(260, parts.length * 50)}vh` }}>
-        <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(28rem,.78fr)_minmax(34rem,1.22fr)] lg:gap-12 lg:px-14">
+      <StaticCameraFallback data={data} parts={parts} brandImage={brandImage} cta={cta} />
+      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${reduceMotion ? 120 : Math.max(220, parts.length * 42)}vh` }}>
+        <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(25rem,.7fr)_minmax(34rem,1.3fr)] lg:gap-10 lg:px-14">
           <div className="relative z-20 flex min-w-0 flex-col justify-between" data-color-context="dark">
             <CameraStickyIntro data={data} />
-            <div className="grid gap-3 pb-8">{parts.slice(0, 6).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
+            <div className="grid gap-2 pb-6 xl:grid-cols-2">{parts.slice(0, 6).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} compact />)}</div>
           </div>
           <div className="relative grid min-h-0 place-items-center">
-            <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,.16),transparent_38%),radial-gradient(circle_at_80%_20%,color-mix(in_srgb,var(--token-accent)_32%,transparent),transparent_30%)]" />
-            {brandImage && <img src={brandImage} alt="" loading="lazy" className="absolute right-6 top-6 h-28 w-28 rounded-2xl border border-white/15 object-cover opacity-80 shadow-2xl" data-edit-image="brandImage" />}
-            <div className="relative h-[min(74vh,45rem)] w-full max-w-4xl" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
-              <div aria-hidden="true" className="absolute left-1/2 top-1/2 h-[24rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/45 blur-3xl" />
-              {parts.map((part, index) => <CameraLayer key={`${part.label}-${index}`} part={part} index={index} progress={progress} />)}
+            <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_48%_44%,rgba(255,255,255,.18),transparent_38%),radial-gradient(circle_at_86%_18%,color-mix(in_srgb,var(--token-accent)_34%,transparent),transparent_30%)]" />
+            {brandImage && <img src={brandImage} alt="" loading="lazy" decoding="async" className="absolute right-6 top-6 z-20 h-24 w-24 rounded-2xl border border-white/15 object-cover opacity-80 shadow-2xl" data-edit-image="brandImage" />}
+            <div aria-hidden="true" className="absolute left-1/2 top-1/2 h-[28rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/45 blur-3xl" />
+            {reduceMotion ? (
+              <div className="relative grid h-[min(68vh,42rem)] w-full max-w-4xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-8">
+                <StaticCameraVisual brandImage={brandImage} />
+              </div>
+            ) : (
+              <div className="relative h-[min(78vh,48rem)] w-full max-w-5xl">
+                <CameraThreeScene parts={parts} modelUrl={modelUrl} progress={progress} />
+              </div>
+            )}
+            <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-white/12 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/55 backdrop-blur">
+              {modelUrl ? 'GLB Exploded View' : 'Procedural 3D Camera'}
             </div>
-            {ctaHref && ctaLabel && <a href={ctaHref} className="absolute bottom-8 right-8 z-30 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black" data-edit-link="cta"><span data-edit-path="cta.label">{ctaLabel}</span><ArrowUpRight size={16} /></a>}
+            {ctaHref && ctaLabel && <a href={ctaHref} className="absolute bottom-8 right-8 z-30 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-2xl transition hover:-translate-y-0.5" data-edit-link="cta"><span data-edit-path="cta.label">{ctaLabel}</span><ArrowUpRight size={16} /></a>}
           </div>
         </div>
       </section>

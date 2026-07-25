@@ -44,7 +44,7 @@ export function EditorialHeroSection({ data }: Props) {
                 sublinePath="text"
                 size="display"
                 titleAs="h1"
-                className="!mb-0 [&_.cms-section-title]:max-w-[13ch] [&_.cms-section-title]:break-normal [&_.cms-section-title]:text-[clamp(2.45rem,4.2vw,4.35rem)] [&_.cms-section-title]:[overflow-wrap:normal] [&_.cms-section-title]:[word-break:normal]"
+                className="!mb-0 [&_.cms-section-title]:max-w-[18ch] [&_.cms-section-title]:break-normal [&_.cms-section-title]:text-[clamp(2.35rem,4vw,4.2rem)] [&_.cms-section-title]:[overflow-wrap:normal] [&_.cms-section-title]:[word-break:normal]"
               />
               <ActionGroup className="mt-8">
                 <ActionLink action={primaryCta} editKey="primaryCta" />

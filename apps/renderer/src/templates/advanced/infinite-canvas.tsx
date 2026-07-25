@@ -35,7 +35,7 @@ function clampNumber(value: number, min: number, max: number) {
 
 export function InfiniteCanvasSection({ data }: Props) {
   const items = Array.isArray(data.items) ? (data.items as CanvasItem[]).filter((item) => item?.image) : [];
-  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 40), 12, 60);
+  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 28), 12, 36);
   const explorerItems = items.slice(0, maxExplorerItems);
   const badge = (data.badge as string) || '';
   const headline = (data.headline as string) || '';

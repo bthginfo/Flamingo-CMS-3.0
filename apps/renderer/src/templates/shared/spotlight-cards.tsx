@@ -3,11 +3,12 @@
 import { TiltCard } from '@/components/ui/fx';
 
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
 import { ResilientImage } from '@/components/ui/resilient-image';
 
-type Card = { title: string; text?: string; icon?: string; image?: string; href?: string };
+type Card = { title: string; text?: string; icon?: string; image?: string; href?: string; ctaLabel?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function SpotlightCardsSection({ data }: Props) {
@@ -49,6 +50,12 @@ export function SpotlightCardsSection({ data }: Props) {
                 <div>
                 <h3 className="text-xl font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title" data-color-slot="cardHeadingColor">{card.title}</h3>
                 {card.text && <p className="mt-3 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text" data-color-slot="cardBodyColor">{plain(card.text)}</p>}
+                {card.href && (
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-accent)]">
+                    <span data-edit-path="ctaLabel">{card.ctaLabel || 'Mehr erfahren'}</span>
+                    <ArrowRight size={15} />
+                  </span>
+                )}
                 </div>
               </div>
             </motion.article>
