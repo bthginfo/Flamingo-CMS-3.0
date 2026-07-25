@@ -22,6 +22,9 @@ export function EditorialHeroSection({ data }: Props) {
   const isCampaignBleed = layout === 'campaignBleed';
   const isLandscapeContain = ['contain', 'containWide', 'landscape', 'landscapeContain'].includes(imageFit);
   const campaignCardStyle = {
+    '--token-card-heading': '#0f172a',
+    '--token-card-body': '#475569',
+    '--token-card-muted': '#64748b',
     '--token-heading': 'var(--token-card-heading, #0f172a)',
     '--token-body': 'var(--token-card-body, #475569)',
     '--token-muted': 'var(--token-card-muted, #64748b)',
