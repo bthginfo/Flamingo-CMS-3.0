@@ -210,12 +210,12 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         )}
         style={(scrolled || (!isHeroDark)) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
         >
-          <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
-            <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
+          <div className="mx-auto flex h-[72px] max-w-[1480px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+            <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex min-w-0 shrink-0 items-center gap-2 font-display text-xl font-bold tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                 brand.navLogoColor ? (
                   <span
-                    className="inline-block h-9 w-[140px]"
+                    className="inline-block h-9 w-[118px] lg:w-[132px] 2xl:w-[140px]"
                     style={{
                       backgroundColor: (scrolled || (!isHeroDark)) ? brand.navLogoColor : 'white',
                       WebkitMaskImage: `url(${brand.logoUrl})`,
@@ -230,7 +230,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     aria-hidden="true"
                   />
                 ) : (
-                  <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
+                  <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto max-w-[118px] object-contain lg:max-w-[132px] 2xl:max-w-[140px]" />
                 )
               )}
               {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
@@ -238,13 +238,13 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               )}
             </Link>
 
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden min-w-0 flex-1 items-center justify-end gap-4 xl:flex 2xl:gap-6">
               {navItems.map((item, i) => (
                 <Link
                   key={i}
                   href={prefixInternalHref(item.href, linkPrefix) as string}
                   className={cn(
-                    'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-[var(--nav-link-hover)]',
+                    'whitespace-nowrap text-[12px] font-semibold tracking-wide uppercase transition-colors duration-300 hover:text-[var(--nav-link-hover)] 2xl:text-[13px]',
                     (!scrolled && isHeroDark && !brand.navLinkColor) ? 'drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]' : '',
                   )}
                   style={{ color: navLinkColorDesktop, ['--nav-link-hover' as string]: navLinkHoverColor }}
@@ -252,7 +252,9 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   {item.label}
                 </Link>
               ))}
-              <NavCtaButton cta={ctaData} scrolled={scrolled} isHeroDark={isHeroDark} linkPrefix={linkPrefix} />
+              <div className="shrink-0">
+                <NavCtaButton cta={ctaData} scrolled={scrolled} isHeroDark={isHeroDark} linkPrefix={linkPrefix} />
+              </div>
               {i18n && i18n.locales.length > 1 && (
                 <LanguageSwitcher locales={i18n.locales} currentLocale={i18n.currentLocale} defaultLocale={i18n.defaultLocale} style={(i18n.style as 'dropdown' | 'inline') || 'dropdown'} />
               )}
@@ -261,7 +263,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
-              className="md:hidden p-2 rounded-lg transition-colors"
+              className="rounded-lg p-2 transition-colors xl:hidden"
               style={{ color: mobileToggleColor }}
               onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileToggleHoverBg; }}
               onMouseLeave={(event) => { event.currentTarget.style.backgroundColor = 'transparent'; }}
@@ -279,7 +281,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[70] flex flex-col md:hidden"
+              className="fixed inset-0 z-[70] flex flex-col xl:hidden"
               style={{ backgroundColor: mobileNavBg, color: navLinkColorMobile }}
             >
               <div className="flex items-center justify-between h-[72px] px-6 border-b" style={{ borderColor: mobileBorderColor }}>

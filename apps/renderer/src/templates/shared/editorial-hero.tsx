@@ -18,6 +18,7 @@ export function EditorialHeroSection({ data }: Props) {
   const layout = ((data.layout as string) || (data.variant as string) || '').trim();
   const imageFit = ((data.imageFit as string) || '').trim();
   const isCampaignBleed = layout === 'campaignBleed' || layout === 'fullBleedImage';
+  const isLandscapeContain = ['contain', 'containWide', 'landscape', 'landscapeContain'].includes(imageFit);
   const campaignCardStyle = {
     '--token-heading': 'var(--token-card-heading, #0f172a)',
     '--token-body': 'var(--token-card-body, #475569)',
@@ -30,10 +31,10 @@ export function EditorialHeroSection({ data }: Props) {
   if (isCampaignBleed && imagePrimary) {
     return (
       <div className="relative isolate overflow-hidden bg-[var(--token-section-bg)]">
-        <div className="mx-auto grid max-w-[1540px] items-center lg:min-h-[620px] lg:grid-cols-[minmax(30rem,0.72fr)_minmax(0,1fr)]">
-          <div className="relative z-10 flex items-center px-5 py-14 sm:px-8 md:py-20 lg:px-14 xl:px-20">
+        <div className="mx-auto grid max-w-[1620px] items-center lg:min-h-[620px] lg:grid-cols-[minmax(28rem,0.62fr)_minmax(0,1fr)]">
+          <div className="relative z-10 flex items-center px-5 py-14 sm:px-8 md:py-20 lg:px-12 xl:px-16">
             <div
-              className="max-w-2xl rounded-[2rem] border border-[var(--token-card-border)] bg-[var(--token-card-bg,#ffffff)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 lg:p-10"
+              className="w-full max-w-2xl rounded-[2rem] border border-[var(--token-card-border)] bg-[var(--token-card-bg,#ffffff)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 lg:p-10"
               style={campaignCardStyle}
             >
               <PremiumSectionHeader
@@ -44,7 +45,7 @@ export function EditorialHeroSection({ data }: Props) {
                 sublinePath="text"
                 size="display"
                 titleAs="h1"
-                className="!mb-0 [&_.cms-section-title]:max-w-[18ch] [&_.cms-section-title]:break-normal [&_.cms-section-title]:text-[clamp(2.35rem,4vw,4.2rem)] [&_.cms-section-title]:[overflow-wrap:normal] [&_.cms-section-title]:[word-break:normal]"
+                className="!mb-0 [&_.cms-section-title]:max-w-[22ch] [&_.cms-section-title]:break-normal [&_.cms-section-title]:text-[clamp(2.25rem,4vw,4.45rem)] [&_.cms-section-title]:[hyphens:none] [&_.cms-section-title]:[overflow-wrap:normal] [&_.cms-section-title]:[text-wrap:balance] [&_.cms-section-title]:[word-break:normal]"
               />
               <ActionGroup className="mt-8">
                 <ActionLink action={primaryCta} editKey="primaryCta" />
@@ -53,15 +54,15 @@ export function EditorialHeroSection({ data }: Props) {
               {hint && <p className="mt-5 max-w-xl text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="hint">{hint}</p>}
             </div>
           </div>
-          <div className="relative flex min-h-[260px] items-center justify-center bg-[var(--token-section-bg-alt)] px-4 py-8 md:min-h-[420px] lg:min-h-0 lg:px-8 lg:py-12">
-            <div className="relative w-full max-w-[980px] overflow-hidden rounded-[2rem] border border-[var(--token-card-border)] bg-white shadow-[0_24px_70px_var(--token-shadow)]">
+          <div className="relative flex min-h-[260px] items-center justify-center bg-[var(--token-section-bg-alt)] px-4 py-8 md:min-h-[380px] lg:min-h-0 lg:px-7 lg:py-12">
+            <div className={`relative w-full overflow-hidden rounded-[2rem] border border-[var(--token-card-border)] bg-white shadow-[0_24px_70px_var(--token-shadow)] ${isLandscapeContain ? 'max-w-[1120px] aspect-[16/7]' : 'max-w-[980px]'}`}>
               <img
                 data-edit-image="imagePrimary"
                 src={imagePrimary}
                 alt={headline}
                 loading="eager"
                 fetchPriority="high"
-                className={imageFit === 'contain' ? 'block h-auto max-h-[620px] w-full object-contain' : 'block aspect-[16/9] h-auto w-full object-cover'}
+                className={isLandscapeContain ? 'block h-full w-full object-contain' : 'block aspect-[16/9] h-auto w-full object-cover'}
               />
             </div>
           </div>

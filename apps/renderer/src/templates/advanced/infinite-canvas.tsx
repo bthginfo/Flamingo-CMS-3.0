@@ -35,7 +35,7 @@ function clampNumber(value: number, min: number, max: number) {
 
 export function InfiniteCanvasSection({ data }: Props) {
   const items = Array.isArray(data.items) ? (data.items as CanvasItem[]).filter((item) => item?.image) : [];
-  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 28), 12, 36);
+  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 24), 10, 24);
   const explorerItems = items.slice(0, maxExplorerItems);
   const badge = (data.badge as string) || '';
   const headline = (data.headline as string) || '';
@@ -79,7 +79,7 @@ export function InfiniteCanvasSection({ data }: Props) {
           <button type="button" onClick={openExplorer} className="inline-flex min-h-12 w-fit items-center gap-3 rounded-full bg-[var(--token-btn-bg)] px-5 text-sm font-bold text-[color:var(--token-btn-text)] shadow-lg transition hover:-translate-y-0.5"><Maximize2 size={17} /><span data-edit-path="ctaLabel">{ctaLabel}</span></button>
         </div>
 
-        <button type="button" onClick={openExplorer} className="group relative mt-10 block h-[28rem] w-full overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-section-bg-alt)] text-left shadow-[0_28px_90px_var(--token-shadow)] md:h-[62vh] md:min-h-[30rem]" aria-label={ctaLabel}>
+        <button type="button" onClick={openExplorer} className="group relative mt-10 block h-[24rem] w-full overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-section-bg-alt)] text-left shadow-[0_28px_90px_var(--token-shadow)] md:h-[58vh] md:min-h-[28rem]" aria-label={ctaLabel}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--token-card-bg),transparent_70%)] opacity-70" />
           {teaserItems.map((item, index) => {
             const positions = [
@@ -116,7 +116,7 @@ function CanvasExplorer({ items, totalItems, headline, onClose }: { items: Canva
       // without turning the canvas into a rigid grid or collision-heavy stacks.
       const x = (halton(index + 1, 2) - 0.5) * (tileWidth - 320);
       const y = (halton(index + 1, 3) - 0.5) * (tileHeight - 260);
-      output.push({ item, key: `${index}`, x, y, width: item.featured ? 350 : 250 + ((index * 37) % 70) });
+      output.push({ item, key: `${index}`, x, y, width: item.featured ? 320 : 220 + ((index * 37) % 60) });
     });
     return output;
   }, [items, tileHeight, tileWidth]);
@@ -175,7 +175,7 @@ function CanvasExplorer({ items, totalItems, headline, onClose }: { items: Canva
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,.06),transparent_52%)]" />
         <div className="absolute left-1/2 top-1/2 h-0 w-0 will-change-transform" style={{ transform: `scale(${zoom})`, transition: reduceMotion || isDragging ? undefined : 'transform 180ms ease-out' }}>
           {nodes.map(({ item, key, x, y, width }) => (
-            <figure key={key} className="absolute overflow-hidden rounded-2xl border border-white/12 bg-[#12151d] shadow-[0_24px_70px_rgba(0,0,0,.45)]" style={{ left: wrap(x * zoom + pan.x, tileWidth * zoom) / zoom, top: wrap(y * zoom + pan.y, tileHeight * zoom) / zoom, width, transform: 'translate(-50%,-50%)' }}>
+            <figure key={key} className="absolute overflow-hidden rounded-2xl border border-white/12 bg-[#12151d] shadow-[0_18px_48px_rgba(0,0,0,.42)]" style={{ left: wrap(x * zoom + pan.x, tileWidth * zoom) / zoom, top: wrap(y * zoom + pan.y, tileHeight * zoom) / zoom, width, transform: 'translate(-50%,-50%)', contain: 'layout paint' }}>
               <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" draggable={false} loading="lazy" decoding="async" />
               {(item.title || item.caption) && <figcaption className="p-3"><div className="flex items-start justify-between gap-3"><div><strong className="block text-sm">{item.title}</strong>{item.caption && <span className="mt-1 block text-xs leading-5 text-white/55">{plain(item.caption)}</span>}</div>{item.href && <a href={item.href} className="pointer-events-auto grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 hover:bg-white hover:text-black" aria-label={`${item.title || 'Eintrag'} öffnen`}><ArrowUpRight size={14} /></a>}</div></figcaption>}
             </figure>

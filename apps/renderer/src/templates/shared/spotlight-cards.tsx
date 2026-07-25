@@ -39,7 +39,7 @@ export function SpotlightCardsSection({ data }: Props) {
                 event.currentTarget.style.setProperty('--x', `${event.clientX - rect.left}px`);
                 event.currentTarget.style.setProperty('--y', `${event.clientY - rect.top}px`);
               }}
-              className="spotlight-card group relative min-h-[220px] overflow-hidden rounded-[var(--token-card-radius)] border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-2xl"
+              className="spotlight-card group relative min-h-[240px] overflow-hidden rounded-[var(--token-card-radius)] border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-2xl"
               data-color-slot="cardBg borderColor"
               style={{ background: 'var(--token-card-bg)', borderColor: 'var(--token-card-border)' }}
             >
@@ -49,9 +49,9 @@ export function SpotlightCardsSection({ data }: Props) {
                 {card.icon && <span className="flex h-12 w-12 items-center justify-center rounded-full border bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]" data-color-slot="iconColor cardBg accentColor" style={{ borderColor: 'color-mix(in srgb, var(--token-accent) 28%, transparent)' }}><DynamicIcon editPath="icon" name={card.icon} size={24} /></span>}
                 <div>
                 <h3 className="text-xl font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title" data-color-slot="cardHeadingColor">{card.title}</h3>
-                {card.text && <p className="mt-3 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text" data-color-slot="cardBodyColor">{plain(card.text)}</p>}
+                {card.text && <p className="mt-3 line-clamp-5 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text" data-color-slot="cardBodyColor">{plain(card.text)}</p>}
                 {card.href && (
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-accent)]">
+                  <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-accent)_28%,transparent)] px-3 py-2 text-sm font-bold text-[color:var(--token-accent)] transition group-hover:bg-[color:color-mix(in_srgb,var(--token-accent)_10%,transparent)]">
                     <span data-edit-path="ctaLabel">{card.ctaLabel || 'Mehr erfahren'}</span>
                     <ArrowRight size={15} />
                   </span>

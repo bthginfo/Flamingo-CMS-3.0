@@ -1239,7 +1239,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             headline: 'Zieh dich durch die Bildwelt.',
             subline: 'Eine offene Bildlandkarte aus Portfolio, Portraits, Sport, Commercial und Buchprojekten.',
             ctaLabel: 'Canvas öffnen',
-            maxExplorerItems: 28,
+            maxExplorerItems: 24,
             items: portfolioItems,
           },
         },
@@ -1466,6 +1466,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       cta: {
         label: 'Termin buchen',
         href: '/kontakt',
+        buttonColor: '#f4eee3',
+        buttonTextColor: '#080808',
         topBar: {
           enabled: true,
           text: 'Ingolstadt · München · Foto, Film & AI Workflows',

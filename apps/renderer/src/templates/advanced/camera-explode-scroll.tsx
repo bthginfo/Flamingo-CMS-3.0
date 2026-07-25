@@ -91,6 +91,15 @@ function addCylinder(THREE: ThreeModule, group: import('three').Group, radiusTop
   return mesh;
 }
 
+function addTorus(THREE: ThreeModule, group: import('three').Group, radius: number, tube: number, position: [number, number, number], color: string) {
+  const mesh = new THREE.Mesh(new THREE.TorusGeometry(radius, tube, 18, 96), makeMaterial(THREE, color, 0.7, 0.22));
+  mesh.position.set(...position);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
 function makeGeneratedCamera(THREE: ThreeModule, parts: CameraPart[]): ExplodeNode[] {
   const nodes: ExplodeNode[] = [];
   const materialGraphite = '#202020';
@@ -116,19 +125,32 @@ function makeGeneratedCamera(THREE: ThreeModule, parts: CameraPart[]): ExplodeNo
   }
 
   createPart('camera-body', 0, (group) => {
-    addBox(THREE, group, [4.25, 2.45, 0.82], [0, 0, 0], materialGraphite);
-    addBox(THREE, group, [0.86, 2.18, 1.02], [1.98, -0.1, 0.1], '#111111');
-    addBox(THREE, group, [0.75, 0.52, 0.36], [-1.16, 1.36, 0.1], materialGraphite);
-    addBox(THREE, group, [1.05, 0.34, 0.42], [0.2, 1.32, 0.1], '#030303');
-    addBox(THREE, group, [0.72, 0.2, 0.5], [1.15, 1.37, 0.12], materialRed);
+    addBox(THREE, group, [4.55, 2.45, 0.82], [-0.1, 0, 0], materialGraphite);
+    addBox(THREE, group, [0.88, 2.18, 1.12], [2.08, -0.08, 0.12], '#0b0b0b');
+    addBox(THREE, group, [0.35, 1.52, 0.34], [2.62, -0.22, 0.32], '#050505');
+    addBox(THREE, group, [1.02, 0.5, 0.42], [-1.42, 1.36, 0.1], '#161616');
+    addBox(THREE, group, [1.16, 0.34, 0.45], [0.44, 1.35, 0.1], '#030303');
+    addBox(THREE, group, [0.72, 0.2, 0.5], [1.28, 1.39, 0.14], materialRed);
+    const prism = new THREE.Mesh(new THREE.ConeGeometry(0.78, 0.68, 4), makeMaterial(THREE, '#111111', 0.5, 0.32));
+    prism.rotation.z = Math.PI / 4;
+    prism.scale.x = 1.35;
+    prism.position.set(-0.32, 1.5, 0.1);
+    prism.castShadow = true;
+    prism.receiveShadow = true;
+    group.add(prism);
+    addBox(THREE, group, [0.7, 0.12, 0.38], [-0.32, 1.88, 0.1], '#050505');
   }, [-1.6, 0, -0.45]);
 
   createPart('lens-barrel', 1, (group) => {
-    addCylinder(THREE, group, 1.05, 1.05, 0.8, [0, 0, 0.72], '#070707');
-    addCylinder(THREE, group, 0.86, 0.92, 0.55, [0, 0, 1.36], '#1b1b1b');
-    addCylinder(THREE, group, 0.66, 0.72, 0.28, [0, 0, 1.83], '#050505');
-    addCylinder(THREE, group, 0.48, 0.48, 0.04, [0, 0, 2.0], '#101827');
-    addCylinder(THREE, group, 0.28, 0.28, 0.025, [0, 0, 2.04], '#2f4158');
+    addCylinder(THREE, group, 1.08, 1.02, 0.74, [0, 0, 0.68], '#060606');
+    addCylinder(THREE, group, 0.94, 1.0, 0.58, [0, 0, 1.26], '#1b1b1b');
+    addCylinder(THREE, group, 0.78, 0.86, 0.42, [0, 0, 1.78], '#050505');
+    addCylinder(THREE, group, 0.56, 0.56, 0.09, [0, 0, 2.07], '#101827');
+    addCylinder(THREE, group, 0.34, 0.34, 0.04, [0, 0, 2.13], '#2f4158');
+    addTorus(THREE, group, 1.08, 0.05, [0, 0, 0.3], '#2d2d2d');
+    addTorus(THREE, group, 0.98, 0.035, [0, 0, 0.96], '#3a3a3a');
+    addTorus(THREE, group, 0.79, 0.03, [0, 0, 1.58], '#2b2b2b');
+    addTorus(THREE, group, 0.57, 0.024, [0, 0, 2.16], '#677284');
   }, [1.65, -0.35, 1.35]);
 
   createPart('aperture-stack', 2, (group) => {
@@ -142,23 +164,28 @@ function makeGeneratedCamera(THREE: ThreeModule, parts: CameraPart[]): ExplodeNo
   }, [0.8, -1.45, 0.9]);
 
   createPart('sensor-plane', 3, (group) => {
-    addBox(THREE, group, [1.5, 1.08, 0.08], [0, 0, -0.58], '#182132');
-    addBox(THREE, group, [1.08, 0.72, 0.1], [0, 0, -0.52], '#364a61');
-    for (let i = 0; i < 9; i += 1) {
-      addBox(THREE, group, [0.05, 0.92, 0.115], [-0.48 + i * 0.12, 0, -0.45], '#607085');
+    addBox(THREE, group, [1.55, 1.08, 0.08], [0, 0, -0.58], '#111827');
+    addBox(THREE, group, [1.16, 0.78, 0.1], [0, 0, -0.52], '#3d536b');
+    for (let i = 0; i < 8; i += 1) {
+      addBox(THREE, group, [0.04, 0.86, 0.12], [-0.43 + i * 0.12, 0, -0.45], '#728094');
+    }
+    for (let i = 0; i < 5; i += 1) {
+      addBox(THREE, group, [1.0, 0.028, 0.122], [0, -0.31 + i * 0.15, -0.44], '#242f40');
     }
   }, [1.75, 0.65, -1.4]);
 
   createPart('rear-display', 4, (group) => {
-    addBox(THREE, group, [2.0, 1.38, 0.12], [-0.55, -0.05, -0.72], materialSoft);
-    addBox(THREE, group, [1.55, 0.9, 0.14], [-0.55, -0.05, -0.65], '#050505');
-    addBox(THREE, group, [0.42, 0.22, 0.16], [0.78, 0.48, -0.62], '#262626');
+    addBox(THREE, group, [2.16, 1.46, 0.12], [-0.48, -0.05, -0.75], materialSoft);
+    addBox(THREE, group, [1.62, 0.92, 0.14], [-0.6, -0.04, -0.66], '#050505');
+    addBox(THREE, group, [0.42, 0.22, 0.16], [0.84, 0.5, -0.62], '#262626');
+    addBox(THREE, group, [0.26, 0.22, 0.16], [0.84, 0.12, -0.62], '#303030');
   }, [-1.45, 1.25, -1.35]);
 
   createPart('top-controls', 5, (group) => {
-    addCylinder(THREE, group, 0.36, 0.36, 0.2, [0.94, 1.48, 0.14], materialRed);
-    addCylinder(THREE, group, 0.42, 0.42, 0.22, [-0.96, 1.46, 0.12], '#0b0b0b');
-    addBox(THREE, group, [0.7, 0.28, 0.46], [0, 1.54, 0.12], '#111111');
+    addCylinder(THREE, group, 0.38, 0.38, 0.22, [1.08, 1.52, 0.16], materialRed);
+    addCylinder(THREE, group, 0.46, 0.46, 0.24, [-1.08, 1.48, 0.13], '#0b0b0b');
+    addCylinder(THREE, group, 0.26, 0.26, 0.16, [-1.08, 1.48, 0.32], '#2f2f2f');
+    addBox(THREE, group, [0.76, 0.28, 0.46], [0.1, 1.56, 0.12], '#111111');
   }, [1.25, -1.35, 0.75]);
 
   createPart('output-cards', 6, (group) => {
@@ -386,13 +413,17 @@ function CameraStickyIntro({ data }: Props) {
 function StaticCameraVisual({ brandImage }: { brandImage: string }) {
   return (
     <div className="relative mx-auto aspect-[4/3] max-w-sm">
-      <div className="absolute left-[13%] top-[31%] h-[37%] w-[66%] rounded-[2.2rem] border border-white/15 bg-[#1b1b1b] shadow-2xl" />
-      <div className="absolute left-[39%] top-[24%] h-[48%] w-[34%] rounded-full bg-black shadow-[0_20px_70px_rgba(0,0,0,.65)] ring-8 ring-white/10" />
-      <div className="absolute left-[48%] top-[37%] h-[20%] w-[14%] rounded-full bg-[#223044]" />
-      <div className="absolute left-[51%] top-[41%] h-[9%] w-[6%] rounded-full bg-white/35" />
-      <div className="absolute left-[24%] top-[25%] h-[12%] w-[20%] rounded-2xl bg-[#111]" />
-      <div className="absolute right-[6%] top-[58%] h-[20%] w-[28%] rounded-2xl bg-[color:var(--token-accent)]" />
-      <div className="absolute left-[18%] top-[65%] h-[18%] w-[30%] rotate-[-7deg] rounded-2xl bg-[#f4eee3]" />
+      <div className="absolute left-[10%] top-[34%] h-[35%] w-[64%] rounded-[2rem] border border-white/15 bg-[#181818] shadow-2xl" />
+      <div className="absolute left-[27%] top-[25%] h-[18%] w-[23%] rounded-t-[1.2rem] bg-[#101010] shadow-xl" />
+      <div className="absolute left-[69%] top-[37%] h-[28%] w-[14%] rounded-[1.25rem] bg-[#070707] shadow-2xl" />
+      <div className="absolute left-[43%] top-[27%] h-[46%] w-[33%] rounded-full bg-black shadow-[0_20px_70px_rgba(0,0,0,.65)] ring-[10px] ring-white/10" />
+      <div className="absolute left-[47.5%] top-[34%] h-[32%] w-[24%] rounded-full border-[10px] border-[#222] bg-[#050505]" />
+      <div className="absolute left-[53%] top-[43%] h-[15%] w-[11%] rounded-full bg-[#223044]" />
+      <div className="absolute left-[56%] top-[46%] h-[6%] w-[4%] rounded-full bg-white/45" />
+      <div className="absolute left-[16%] top-[27%] h-[9%] w-[19%] rounded-2xl bg-[#0a0a0a]" />
+      <div className="absolute right-[3%] top-[51%] h-[18%] w-[25%] translate-x-6 rounded-2xl border border-white/12 bg-[color:var(--token-accent)] shadow-xl" />
+      <div className="absolute left-[8%] top-[66%] h-[17%] w-[29%] -translate-x-5 rotate-[-8deg] rounded-2xl border border-white/15 bg-[#f4eee3] shadow-xl" />
+      <div className="absolute left-[49%] top-[72%] h-[13%] w-[28%] rotate-[5deg] rounded-2xl bg-[#c7ff4a] shadow-xl" />
       {brandImage && <img src={brandImage} alt="" loading="lazy" className="absolute right-0 top-0 h-20 w-20 rounded-2xl border border-white/15 object-cover" data-edit-image="brandImage" />}
     </div>
   );
@@ -447,7 +478,7 @@ export function CameraExplodeScrollSection({ data }: Props) {
               </div>
             )}
             <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-white/12 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/55 backdrop-blur">
-              {modelUrl ? 'GLB Exploded View' : 'Procedural 3D Camera'}
+              {modelUrl ? 'GLB Exploded View' : '3D Exploded Camera'}
             </div>
             {ctaHref && ctaLabel && <a href={ctaHref} className="absolute bottom-8 right-8 z-30 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-2xl transition hover:-translate-y-0.5" data-edit-link="cta"><span data-edit-path="cta.label">{ctaLabel}</span><ArrowUpRight size={16} /></a>}
           </div>

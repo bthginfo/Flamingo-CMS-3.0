@@ -94,7 +94,7 @@ export function MaterialAtelierSection({ data }: Props) {
           </div>
 
           <div className="min-w-0">
-            <ol aria-label="Atelier-Auswahl" className="space-y-3">
+            <ol aria-label="Atelier-Auswahl" className="space-y-4">
               {items.map((item, index) => {
                 const isActive = active === index;
                 return (
@@ -106,14 +106,14 @@ export function MaterialAtelierSection({ data }: Props) {
                       onMouseEnter={() => setActive(index)}
                       aria-pressed={isActive}
                       aria-current={isActive ? 'true' : undefined}
-                      className={`group grid min-h-[5.65rem] w-full grid-cols-[2.75rem_minmax(0,1fr)_2rem] items-center gap-4 rounded-[calc(var(--token-button-radius)*.82)] border px-5 py-5 text-left shadow-[0_14px_42px_rgba(0,0,0,.18)] transition focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${isActive ? 'border-[var(--token-accent)] bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow-[0_18px_54px_rgba(0,0,0,.28)]' : 'border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-btn-bg)_88%,var(--token-card-bg))] text-[color:var(--token-btn-text)] hover:-translate-y-0.5 hover:bg-[var(--token-btn-bg)]'}`}
+                      className={`group grid min-h-[5.45rem] w-full grid-cols-[2.75rem_minmax(0,1fr)_2rem] items-center gap-4 rounded-[calc(var(--token-button-radius)*.82)] border px-5 py-5 text-left shadow-[0_14px_42px_rgba(0,0,0,.18)] transition focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${isActive ? 'border-[var(--token-accent)] bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow-[0_18px_54px_rgba(0,0,0,.28)]' : 'border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_92%,var(--token-section-bg-alt))] text-[color:var(--token-card-heading,var(--token-heading))] hover:-translate-y-0.5 hover:border-[var(--token-accent)] hover:bg-[color-mix(in_srgb,var(--token-btn-bg)_12%,var(--token-card-bg))]'}`}
                       data-edit-collection="items"
                       data-edit-index={index}
                     >
                       <span className="font-mono text-[10px] tracking-[.14em] opacity-70">{String(index + 1).padStart(2, '0')}</span>
                       <span className="min-w-0">
                         {item.kicker && <span className={`block text-[9px] font-black uppercase tracking-[.22em] ${isActive ? 'text-inherit opacity-65' : 'text-[color:var(--token-accent)]'}`} data-edit-path="kicker">{item.kicker}</span>}
-                        <span className="mt-1 block hyphens-auto text-lg font-black leading-[1.08] text-inherit [overflow-wrap:anywhere]" data-edit-path="title">{item.title}</span>
+                        <span className="mt-1 block hyphens-auto text-lg font-black leading-[1.12] text-inherit [overflow-wrap:normal]" data-edit-path="title">{item.title}</span>
                         {isActive && <span className="mt-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[.13em] text-inherit opacity-75"><Check size={12} /> Ausgewählt</span>}
                       </span>
                       <ChevronRight aria-hidden="true" className={`transition ${isActive ? 'translate-x-0 text-inherit' : '-translate-x-1 text-inherit opacity-55 group-hover:translate-x-0 group-hover:opacity-90'}`} size={18} />
