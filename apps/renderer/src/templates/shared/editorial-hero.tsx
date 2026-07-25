@@ -17,7 +17,8 @@ export function EditorialHeroSection({ data }: Props) {
   const hint = (data.hint as string) || '';
   const layout = ((data.layout as string) || (data.variant as string) || '').trim();
   const imageFit = ((data.imageFit as string) || '').trim();
-  const isCampaignBleed = layout === 'campaignBleed' || layout === 'fullBleedImage';
+  const isFullBleedImage = layout === 'fullBleedImage';
+  const isCampaignBleed = layout === 'campaignBleed';
   const isLandscapeContain = ['contain', 'containWide', 'landscape', 'landscapeContain'].includes(imageFit);
   const campaignCardStyle = {
     '--token-heading': 'var(--token-card-heading, #0f172a)',
@@ -27,6 +28,45 @@ export function EditorialHeroSection({ data }: Props) {
     color: 'var(--token-card-body, #475569)',
   } as CSSProperties;
   if (!headline) return null;
+
+  if (isFullBleedImage && imagePrimary) {
+    return (
+      <div className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-4 pb-14 pt-10 sm:px-6 md:pb-20 md:pt-14 lg:pb-24">
+        <div className="mx-auto max-w-[1580px]">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-[var(--token-card-border)] bg-white shadow-[0_28px_90px_var(--token-shadow)] md:rounded-[2.4rem]">
+            <img
+              data-edit-image="imagePrimary"
+              src={imagePrimary}
+              alt={headline}
+              loading="eager"
+              fetchPriority="high"
+              className="block h-auto w-full object-contain"
+            />
+          </div>
+          <div
+            className="relative z-10 mx-auto -mt-10 w-[calc(100%-1.5rem)] max-w-4xl rounded-[1.75rem] border border-[var(--token-card-border)] bg-[var(--token-card-bg,#ffffff)] p-6 shadow-[0_24px_80px_var(--token-shadow)] backdrop-blur sm:p-8 md:-mt-16 md:p-10"
+            style={campaignCardStyle}
+          >
+            <PremiumSectionHeader
+              eyebrow={eyebrow}
+              headline={<WordReveal text={headline} />}
+              subline={text}
+              eyebrowPath="eyebrow"
+              sublinePath="text"
+              size="display"
+              titleAs="h1"
+              className="!mb-0 [&_.cms-section-title]:max-w-[18ch] [&_.cms-section-title]:break-normal [&_.cms-section-title]:text-[clamp(2.2rem,6vw,5rem)] [&_.cms-section-title]:[hyphens:none] [&_.cms-section-title]:[overflow-wrap:normal] [&_.cms-section-title]:[text-wrap:balance] [&_.cms-section-title]:[word-break:normal]"
+            />
+            <ActionGroup className="mt-8">
+              <ActionLink action={primaryCta} editKey="primaryCta" />
+              <ActionLink action={secondaryCta} editKey="secondaryCta" tone="secondary" showArrow={false} />
+            </ActionGroup>
+            {hint && <p className="mt-5 max-w-xl text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="hint">{hint}</p>}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isCampaignBleed && imagePrimary) {
     return (

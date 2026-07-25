@@ -149,7 +149,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
       >
         {topBarText ? (
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-5 min-w-0">
+            <div className="hidden min-w-0 items-center gap-5 sm:flex">
               {contact.phone && (
                 <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity">
                   <Phone size={12} className="text-brand-accent" />{contact.phone}
@@ -161,8 +161,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 </a>
               )}
             </div>
-            <div className="flex items-center gap-3 min-w-0">
-              <span className="font-medium truncate">{topBarText}</span>
+            <div className="flex min-w-0 flex-1 items-center justify-between gap-3 sm:flex-none sm:justify-start">
+              <span className="min-w-0 truncate font-medium">{topBarText}</span>
               {topBarLinkLabel && topBarLinkHref && (
                 <Link
                   href={prefixInternalHref(topBarLinkHref, linkPrefix) as string}

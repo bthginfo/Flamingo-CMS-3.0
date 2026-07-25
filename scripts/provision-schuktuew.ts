@@ -951,9 +951,9 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       .map((entry) => entry.replace(/\s+/g, ' ').trim())
       .filter((entry) => entry.length > 24)
       .slice(0, 3);
-    const lead = fragments[0] || description || `Projekt aus dem Bereich ${category}: Bildserie, Stil und Einsatz werden als Case gebündelt.`;
+    const lead = fragments[0] || description || `Bildserie aus dem Bereich ${category} mit klarer visueller Linie.`;
     const second = fragments[1] || 'Die Motive zeigen die visuelle Linie der Serie und machen den Charakter des Projekts schnell erfassbar.';
-    const third = fragments[2] || 'Die Detailseite sammelt Bildauswahl, Kontext und Kontaktweg für ähnliche Anfragen.';
+    const third = fragments[2] || 'Die Motive zeigen, wie der Look auf Website, Social und Kampagne wirkt.';
     return {
       lead,
       facts: [
@@ -1161,15 +1161,15 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: '3D Camera System',
             headline: 'Die Kamera zerlegt sich. Der Blick wird klarer.',
-            subline: 'Objektiv, Sensor, Verschluss, Display und Dateien trennen sich beim Scrollen – als Bild für den Weg vom Motiv zur fertigen Serie.',
-            brandImage: assets.brandBox,
+            subline: 'Vom Motiv bis zur fertigen Datei: Fokus, Timing, Kontrolle und Output werden einzeln sichtbar.',
+            brandImage: '',
             parts: [
-              { id: 'body', label: 'Body', text: 'Haltung, Marke und Kontext.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-              { id: 'lens', label: 'Lens', text: 'Fokus, Nähe und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-              { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+              { id: 'body', label: 'Gehäuse', text: 'Body, Griff und Haltung.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'lens', label: 'Objektiv', text: 'Fokus, Nähe und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'shutter', label: 'Verschluss', text: 'Timing, Bewegung und Moment.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
               { id: 'sensor', label: 'Sensor', text: 'Look, Farbe und Detailtiefe.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-              { id: 'display', label: 'Display', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-              { id: 'files', label: 'Files', text: 'Website, Social, Kampagne und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+              { id: 'display', label: 'Monitor', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+              { id: 'files', label: 'Dateien', text: 'Website, Social, Kampagne und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
             cta: { label: 'System ansehen', href: '/ai-workflows' },
           },
@@ -1239,7 +1239,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             headline: 'Zieh dich durch die Bildwelt.',
             subline: 'Eine offene Bildlandkarte aus Portfolio, Portraits, Sport, Commercial und Buchprojekten.',
             ctaLabel: 'Canvas öffnen',
-            maxExplorerItems: 24,
+            maxExplorerItems: 16,
             items: portfolioItems,
           },
         },
@@ -1296,14 +1296,14 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             badge: '3D Camera System',
             headline: 'Eine Kamera. Viele Entscheidungen.',
             subline: 'Beim Scrollen trennen sich die Bauteile: Fokus, Licht, Sensor, Kontrolle und Dateien werden als einzelne Entscheidungen sichtbar.',
-            brandImage: assets.brandBox,
+            brandImage: '',
             parts: [
-              { id: 'body', label: 'Briefing', text: 'Ziel, Marke und Kanäle klären.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-              { id: 'lens', label: 'Look', text: 'Bildsprache, Licht und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-              { id: 'shutter', label: 'Shooting', text: 'Produktion mit klarer Führung.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-              { id: 'sensor', label: 'Post', text: 'Retusche, Grading und Varianten.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-              { id: 'display', label: 'Review', text: 'Auswahl und Freigabe kontrolliert.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-              { id: 'files', label: 'Files', text: 'Kanalreife Übergabe.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+              { id: 'body', label: 'Gehäuse', text: 'Ziel, Marke und Haltung.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'lens', label: 'Objektiv', text: 'Bildsprache, Licht und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'shutter', label: 'Verschluss', text: 'Timing, Bewegung und Moment.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+              { id: 'sensor', label: 'Sensor', text: 'Retusche, Grading und Detailtiefe.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+              { id: 'display', label: 'Monitor', text: 'Auswahl und Freigabe.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+              { id: 'files', label: 'Dateien', text: 'Fertige Formate für Website, Social und Kampagne.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
             cta: { label: 'Mit Alex sprechen', href: '/kontakt' },
           },

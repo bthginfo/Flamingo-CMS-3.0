@@ -35,7 +35,7 @@ function clampNumber(value: number, min: number, max: number) {
 
 export function InfiniteCanvasSection({ data }: Props) {
   const items = Array.isArray(data.items) ? (data.items as CanvasItem[]).filter((item) => item?.image) : [];
-  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 24), 10, 24);
+  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 16), 8, 18);
   const explorerItems = items.slice(0, maxExplorerItems);
   const badge = (data.badge as string) || '';
   const headline = (data.headline as string) || '';
@@ -65,7 +65,7 @@ export function InfiniteCanvasSection({ data }: Props) {
   }, [open]);
 
   if (!items.length) return null;
-  const teaserItems = items.slice(0, 6);
+  const teaserItems = items.slice(0, 5);
 
   return (
     <section className="overflow-hidden bg-[var(--token-section-bg)] px-5 py-16 text-[color:var(--token-body)] md:px-8 md:py-24">

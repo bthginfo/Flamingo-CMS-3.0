@@ -1,4 +1,4 @@
-﻿import { createHash } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { and, desc, eq } from 'drizzle-orm';
 import { createDb, type Database } from '@flamingo/db';
 import * as schema from '../packages/db/src/schema';
@@ -209,7 +209,7 @@ function cleanText(input: string, max = 0): string {
     .replace(/\s+([,.!?;:])/g, '$1')
     .trim();
   if (!max || value.length <= max) return value;
-  return `${value.slice(0, max - 1).replace(/\s+\S*$/, '')}â€¦`;
+  return `${value.slice(0, max - 1).replace(/\s+\S*$/, '')}…`;
 }
 
 function slugify(input: string): string {
@@ -217,7 +217,7 @@ function slugify(input: string): string {
   return decodeHtml(fallback)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
-    .replace(/ÃŸ/g, 'ss')
+    .replace(/ß/g, 'ss')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
@@ -255,7 +255,19 @@ async function fetchText(url: string): Promise<string> {
     },
   });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  return res.text();
+  const bytes = await res.arrayBuffer();
+  const contentType = res.headers.get('content-type') || '';
+  const charset = /charset=([^;\s]+)/i.exec(contentType)?.[1]?.trim().toLowerCase();
+  const decode = (label: string) => {
+    try {
+      return new TextDecoder(label).decode(bytes);
+    } catch {
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+  };
+  if (charset && charset !== 'utf-8' && charset !== 'utf8') return decode(charset);
+  const utf8 = decode('utf-8');
+  return utf8.includes('\uFFFD') ? decode('windows-1252') : utf8;
 }
 
 async function mapConcurrent<T, R>(items: T[], limit: number, fn: (item: T, index: number) => Promise<R>): Promise<R[]> {
@@ -307,7 +319,7 @@ function extractFirstImage(html: string): string | undefined {
         let result = 0;
         if (value.includes('/fileadmin/')) result += 10;
         if (value.includes('/_processed_/')) result += 8;
-        if (/stachel|koenig|kÃ¶nig|mayr|boell|bÃ¶ll|roessler|rÃ¶ÃŸler|kandidat/i.test(value)) result += 6;
+        if (/stachel|koenig|könig|mayr|boell|böll|roessler|rößler|kandidat/i.test(value)) result += 6;
         if (value.includes('slider_wahl')) result -= 2;
         return result;
       };
@@ -446,6 +458,8 @@ function sectionStyle(mode: 'light' | 'soft' | 'dark' = 'light'): Record<string,
       '--token-card-badge-text': '#ffffff',
       '--token-icon': '#f8b334',
       '--token-divider': 'rgba(255,255,255,0.16)',
+      '--token-btn-bg': '#f28c00',
+      '--token-btn-text': '#061532',
     };
   }
   if (mode === 'soft') {
@@ -631,41 +645,41 @@ function isPersonPage(page: ScrapedPage): boolean {
   if (!PERSON_PATH_HINTS.some((hint) => slug.includes(hint)) || slug.includes('antraege')) return false;
   if (!title || title.length >= 100) return false;
   if (['Vorstand', 'Fraktion', 'Kreisvereinigung'].includes(title)) return false;
-  if (/freie\s+w[aÃ¤]hler|newsletter|interview|mitglied\s+werden|stadtratsfraktion|kreisvereinigung|vorstand|fraktion|termine/i.test(title)) return false;
+  if (/freie\s+w[aä]hler|newsletter|interview|mitglied\s+werden|stadtratsfraktion|kreisvereinigung|vorstand|fraktion|termine/i.test(title)) return false;
   const nameParts = title.split(/\s+/).filter(Boolean);
   if (nameParts.length < 2 || nameParts.length > 5) return false;
-  return nameParts.some((part) => /^[A-ZÃ„Ã–Ãœ][a-zÃ¤Ã¶Ã¼ÃŸ]+/.test(part));
+  return nameParts.some((part) => /^[A-ZÄÖÜ][a-zäöüß]+/.test(part));
 }
 
 function curatedPersonProfile(name: string): { role: string; bio: string } | null {
   const profiles: Record<string, { role: string; bio: string }> = {
     'lisa-stachel': {
-      role: 'StadtrÃ¤tin',
-      bio: 'Mitglied in AusschÃ¼ssen rund um Kultur, Bildung, Sport, Stadtwerke und stÃ¤dtische Infrastruktur.',
+      role: 'Stadträtin',
+      bio: 'Mitglied in Ausschüssen rund um Kultur, Bildung, Sport, Stadtwerke und städtische Infrastruktur.',
     },
     'hans-stachel': {
-      role: 'Fraktionsvorsitzender Â· Vorsitzender FW Ingolstadt e.V.',
-      bio: 'Vorsitzender der Freien WÃ¤hler Ingolstadt und Ansprechpartner fÃ¼r Stadtratsarbeit und Fraktion.',
+      role: 'Fraktionsvorsitzender · Vorsitzender FW Ingolstadt e.V.',
+      bio: 'Vorsitzender der Freien Wähler Ingolstadt und Ansprechpartner für Stadtratsarbeit und Fraktion.',
     },
     'stefan-koenig': {
       role: 'Stadtrat',
-      bio: 'Engagiert in AusschÃ¼ssen fÃ¼r Stadtentwicklung, Bau, Telekommunikation und stÃ¤dtische Beteiligungen.',
+      bio: 'Engagiert in Ausschüssen für Stadtentwicklung, Bau, Telekommunikation und städtische Beteiligungen.',
     },
     'herbert-boell': {
       role: 'stellv. Vorsitzender',
-      bio: 'Stellvertretender Vorsitzender der Freien WÃ¤hler Ingolstadt e.V.',
+      bio: 'Stellvertretender Vorsitzender der Freien Wähler Ingolstadt e.V.',
     },
     'angela-mayr': {
       role: 'stellv. Vorsitzende',
-      bio: 'Stellvertretende Vorsitzende der Freien WÃ¤hler Ingolstadt e.V.',
+      bio: 'Stellvertretende Vorsitzende der Freien Wähler Ingolstadt e.V.',
     },
     'jakob-roessler': {
-      role: 'SchriftfÃ¼hrer',
-      bio: 'SchriftfÃ¼hrer der Freien WÃ¤hler Ingolstadt e.V.',
+      role: 'Schriftführer',
+      bio: 'Schriftführer der Freien Wähler Ingolstadt e.V.',
     },
     'klaus-huber-nischler': {
       role: 'Kassier / Schatzmeister',
-      bio: 'Verantwortlich fÃ¼r Kasse und Finanzen der Freien WÃ¤hler Ingolstadt e.V.',
+      bio: 'Verantwortlich für Kasse und Finanzen der Freien Wähler Ingolstadt e.V.',
     },
     'petra-flauger': {
       role: 'Vorsitzende der Kreisvereinigung Ingolstadt',
@@ -680,8 +694,8 @@ function curatedPersonProfile(name: string): { role: string; bio: string } | nul
       bio: 'Stellvertretender Vorsitzender der Kreisvereinigung Ingolstadt.',
     },
     'markus-reichhart': {
-      role: 'Stadtrat Â· stellv. Fraktionsvorsitzender',
-      bio: 'Stellvertretender Fraktionsvorsitzender mit Schwerpunkten in Finanzen, Personal und stÃ¤dtischen Beteiligungen.',
+      role: 'Stadtrat · stellv. Fraktionsvorsitzender',
+      bio: 'Stellvertretender Fraktionsvorsitzender mit Schwerpunkten in Finanzen, Personal und städtischen Beteiligungen.',
     },
   };
   return profiles[personKey(name)] || null;
@@ -709,14 +723,14 @@ function extractPeople(pages: ScrapedPage[]): CollectionDef {
         priority: index,
         data: {
           name: page.title,
-          role: curated?.role || role || 'Freie WÃ¤hler Ingolstadt',
+          role: curated?.role || role || 'Freie Wähler Ingolstadt',
           bio: curated?.bio || personBio(page, role),
           image: contentImage(page.image) || '',
           content: page.content,
           sourceUrl: page.url,
         },
         seo: {
-          metaTitle: cleanText(`${page.title} | Freie WÃ¤hler Ingolstadt`, 68),
+          metaTitle: cleanText(`${page.title} | Freie Wähler Ingolstadt`, 68),
           metaDescription: cleanText(page.excerpt, 160),
           ogImage: contentImage(page.image) || FW_SOCIAL,
           canonical: page.url,
@@ -779,7 +793,7 @@ function infoCardsSection(page: ScrapedPage | undefined, headline = 'Weitere Inf
     if (chunks.length >= 3 && chunks[2].length > 120) break;
   }
   const texts = chunks.length ? chunks.slice(0, 3) : [fallback];
-  const titles = ['Worum es geht', 'Was wichtig ist', 'NÃ¤chster Schritt'];
+  const titles = ['Worum es geht', 'Was wichtig ist', 'Nächster Schritt'];
   const icons = ['FileText', 'MessageCircle', 'ArrowRight'];
   return {
     type: 'spotlightCards',
@@ -833,7 +847,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
   });
 
   const news = buildCollection('news', 'Aktuelles', latestNews, { pageSlug: 'aktuelles', categoryLabel: 'Aktuelles', sortNewestFirst: true });
-  const antraege = buildCollection('antraege', 'AntrÃ¤ge', antragPages, { pageSlug: 'stadtrat', categoryLabel: 'Stadtrat', sortNewestFirst: true });
+  const antraege = buildCollection('antraege', 'Anträge', antragPages, { pageSlug: 'stadtrat', categoryLabel: 'Stadtrat', sortNewestFirst: true });
   const archiv = buildCollection('seitenarchiv', 'Interne Seitenquelle', archivePages, { pageSlug: '', categoryLabel: 'Interne Quelle', sortNewestFirst: false, noindex: true });
   const menschen = extractPeople(contentPages);
 
@@ -861,8 +875,8 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
   }));
 
   const brand = {
-    companyName: 'Freie WÃ¤hler Ingolstadt',
-    tagline: 'UnabhÃ¤ngig. BÃ¼rgernah. Sachorientiert.',
+    companyName: 'Freie Wähler Ingolstadt',
+    tagline: 'Unabhängig. Bürgernah. Sachorientiert.',
     logoUrl: FW_LOGO,
     faviconUrl: FW_LOGO,
     primaryColor: '#f28c00',
@@ -875,7 +889,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
   const contact = {
     email: 'info@fw-ingolstadt.de',
     address: 'Ingolstadt',
-    contactPerson: 'Freie WÃ¤hler Ingolstadt e.V.',
+    contactPerson: 'Freie Wähler Ingolstadt e.V.',
   };
 
   const design = {
@@ -908,22 +922,22 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: '',
       title: 'Startseite',
       seo: {
-        metaTitle: 'Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Freie WÃ¤hler Ingolstadt: unabhÃ¤ngig, bÃ¼rgernah und sachorientiert fÃ¼r Ingolstadt.',
+        metaTitle: 'Freie Wähler Ingolstadt',
+        metaDescription: 'Freie Wähler Ingolstadt: unabhängig, bürgernah und sachorientiert für Ingolstadt.',
         ogImage: FW_HERO,
         canonical: PREVIEW_URL,
       },
       sections: [
         heroSection({
-          eyebrow: 'Freie WÃ¤hler Ingolstadt',
-          headline: 'FÃ¼r Ingolstadt. Sachlich. BÃ¼rgernah. UnabhÃ¤ngig.',
-          text: 'Wir engagieren uns ehrenamtlich fÃ¼r Ingolstadt â€” sachorientiert, unabhÃ¤ngig und nah an den Themen der BÃ¼rgerinnen und BÃ¼rger.',
-          layout: 'campaignBleed',
+          eyebrow: 'Freie Wähler Ingolstadt',
+          headline: 'Für Ingolstadt. Sachlich. Bürgernah. Unabhängig.',
+          text: 'Wir engagieren uns ehrenamtlich für Ingolstadt — sachorientiert, unabhängig und nah an den Themen der Bürgerinnen und Bürger.',
+          layout: 'fullBleedImage',
           imageFit: 'landscapeContain',
           imagePrimary: FW_HERO,
           primaryCta: { label: 'Aktuelles lesen', href: '/aktuelles' },
           secondaryCta: { label: 'Mitmachen', href: '/mitmachen' },
-          hint: 'Kommunalpolitik aus Ingolstadt â€“ ohne Parteizwang, mit Blick auf konkrete LÃ¶sungen.',
+          hint: 'Kommunalpolitik aus Ingolstadt – ohne Parteizwang, mit Blick auf konkrete Lösungen.',
         }, sectionStyle('soft')),
         {
           type: 'principlesGrid',
@@ -934,12 +948,12 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badge: 'Unser Anspruch',
             headline: 'Politik beginnt vor Ort.',
-            subline: 'Die Freien WÃ¤hler Ingolstadt arbeiten kommunal, unabhÃ¤ngig und lÃ¶sungsorientiert.',
+            subline: 'Die Freien Wähler Ingolstadt arbeiten kommunal, unabhängig und lösungsorientiert.',
             principles: [
-              { eyebrow: 'UnabhÃ¤ngig', title: 'Keine Parteiideologie', text: 'Entscheidend ist, was Ingolstadt konkret weiterbringt.' },
-              { eyebrow: 'BÃ¼rgernah', title: 'Nahe an den Themen', text: 'Anliegen aus Stadtteilen, Vereinen und Alltag gehÃ¶ren in den Stadtrat.' },
-              { eyebrow: 'Sachorientiert', title: 'Fakten statt Schlagworte', text: 'AntrÃ¤ge und Entscheidungen sollen nachvollziehbar begrÃ¼ndet sein.' },
-              { eyebrow: 'Ehrenamtlich', title: 'Engagement fÃ¼r die Stadt', text: 'Kommunalpolitik lebt von Menschen, die Verantwortung Ã¼bernehmen.' },
+              { eyebrow: 'Unabhängig', title: 'Keine Parteiideologie', text: 'Entscheidend ist, was Ingolstadt konkret weiterbringt.' },
+              { eyebrow: 'Bürgernah', title: 'Nahe an den Themen', text: 'Anliegen aus Stadtteilen, Vereinen und Alltag gehören in den Stadtrat.' },
+              { eyebrow: 'Sachorientiert', title: 'Fakten statt Schlagworte', text: 'Anträge und Entscheidungen sollen nachvollziehbar begründet sein.' },
+              { eyebrow: 'Ehrenamtlich', title: 'Engagement für die Stadt', text: 'Kommunalpolitik lebt von Menschen, die Verantwortung übernehmen.' },
             ],
             cta: { label: 'Menschen kennenlernen', href: '/menschen' },
           },
@@ -951,7 +965,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           spacingBottom: 'xl',
           data: {
             headline: 'Aktuelles aus Ingolstadt',
-            subline: 'Pressemitteilungen, AntrÃ¤ge und BeitrÃ¤ge aus Verein und Stadtratsfraktion.',
+            subline: 'Pressemitteilungen, Anträge und Beiträge aus Verein und Stadtratsfraktion.',
             collectionKey: 'news',
             collectionBasePath: '/c/news',
             linkHref: '/aktuelles',
@@ -969,11 +983,11 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badge: 'Schwerpunkte',
             headline: 'Die wichtigsten Bereiche',
-            subline: 'Programm, aktuelle Meldungen, Stadtratsarbeit und MÃ¶glichkeiten zum Mitmachen auf einen Blick.',
+            subline: 'Programm, aktuelle Meldungen, Stadtratsarbeit und Möglichkeiten zum Mitmachen auf einen Blick.',
             cards: [
-              { title: 'Themen & Wahlprogramm', text: 'Die politischen Schwerpunkte fÃ¼r Ingolstadt gebÃ¼ndelt und verstÃ¤ndlich.', icon: 'FileText', href: '/wahlprogramm', ctaLabel: 'Programm ansehen' },
-              { title: 'Stadtrat & AntrÃ¤ge', text: 'AntrÃ¤ge, Initiativen und Arbeit der Stadtratsfraktion.', icon: 'Landmark', href: '/stadtrat', ctaLabel: 'Zum Archiv' },
-              { title: 'Organisation', text: 'Vorstand, Fraktion, Kreisvereinigung und BezirksausschÃ¼sse gebÃ¼ndelt.', icon: 'Users', href: '/menschen', ctaLabel: 'Menschen ansehen' },
+              { title: 'Themen & Wahlprogramm', text: 'Die politischen Schwerpunkte für Ingolstadt gebündelt und verständlich.', icon: 'FileText', href: '/wahlprogramm', ctaLabel: 'Programm ansehen' },
+              { title: 'Stadtrat & Anträge', text: 'Anträge, Initiativen und Arbeit der Stadtratsfraktion.', icon: 'Landmark', href: '/stadtrat', ctaLabel: 'Zum Archiv' },
+              { title: 'Organisation', text: 'Vorstand, Fraktion, Kreisvereinigung und Bezirksausschüsse gebündelt.', icon: 'Users', href: '/menschen', ctaLabel: 'Menschen ansehen' },
               { title: 'Mitmachen', text: 'Mitglied werden, Veranstaltungen besuchen oder direkt Kontakt aufnehmen.', icon: 'Handshake', href: '/mitmachen', ctaLabel: 'Mitmachen' },
             ],
           },
@@ -984,7 +998,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           spacingTop: 'l',
           spacingBottom: 'xl',
           data: {
-            headline: 'Menschen hinter den Freien WÃ¤hlern',
+            headline: 'Menschen hinter den Freien Wählern',
             subline: 'Vorstand, Fraktion und Engagierte aus Ingolstadt.',
             members: peopleItems,
           },
@@ -997,7 +1011,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badgeText: 'Mitmachen',
             headline: 'Kommunalpolitik braucht Menschen, die sich einbringen.',
-            subline: 'Wer Ingolstadt mitgestalten mÃ¶chte, findet hier Kontakt, Informationen und den Mitgliedsantrag.',
+            subline: 'Wer Ingolstadt mitgestalten möchte, findet hier Kontakt, Informationen und den Mitgliedsantrag.',
             ctaPrimary: { label: 'Mitmachen', href: '/mitmachen', icon: 'ArrowRight' },
             ctaSecondary: { label: 'Kontakt aufnehmen', href: '/kontakt' },
           },
@@ -1008,16 +1022,16 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: 'aktuelles',
       title: 'Aktuelles',
       seo: {
-        metaTitle: 'Aktuelles | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Aktuelle Meldungen der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Aktuelles | Freie Wähler Ingolstadt',
+        metaDescription: 'Aktuelle Meldungen der Freien Wähler Ingolstadt.',
         ogImage: latestNews[0]?.image || FW_SOCIAL,
       },
       sections: [
         heroSection({
           eyebrow: 'Aktuelles',
-          headline: 'Meldungen, AntrÃ¤ge und Positionen.',
-          text: 'BeitrÃ¤ge und Pressemitteilungen der Freien WÃ¤hler Ingolstadt, sortiert nach Datum.',
-          layout: 'campaignBleed',
+          headline: 'Meldungen, Anträge und Positionen.',
+          text: 'Beiträge und Pressemitteilungen der Freien Wähler Ingolstadt, sortiert nach Datum.',
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Kontakt', href: '/kontakt' },
@@ -1029,7 +1043,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           spacingBottom: 'xl',
           data: {
             headline: 'Alle Meldungen',
-            subline: `${news.items.length} BeitrÃ¤ge aus dem Archiv der Freien WÃ¤hler Ingolstadt.`,
+            subline: `${news.items.length} Beiträge aus dem Archiv der Freien Wähler Ingolstadt.`,
             items: makeListItems(news.items),
             collectionBasePath: '/c/news',
             showImage: false,
@@ -1050,16 +1064,16 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: 'wahlprogramm',
       title: 'Wahlprogramm',
       seo: {
-        metaTitle: 'Wahlprogramm | Freie WÃ¤hler Ingolstadt',
-        metaDescription: cleanText(textFromPage(wahlprogramm, 'Wahlprogramm der Freien WÃ¤hler Ingolstadt.', 160), 160),
+        metaTitle: 'Wahlprogramm | Freie Wähler Ingolstadt',
+        metaDescription: cleanText(textFromPage(wahlprogramm, 'Wahlprogramm der Freien Wähler Ingolstadt.', 160), 160),
         ogImage: wahlprogramm?.image || FW_HERO,
       },
       sections: [
         heroSection({
           eyebrow: 'Kommunalwahl 2026',
           headline: 'Unser Wahlprogramm',
-          text: textFromPage(wahlprogramm, 'Ziele und Themen der Freien WÃ¤hler Ingolstadt.', 280),
-          layout: 'campaignBleed',
+          text: textFromPage(wahlprogramm, 'Ziele und Themen der Freien Wähler Ingolstadt.', 280),
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Kandidaten ansehen', href: '/menschen' },
@@ -1074,11 +1088,11 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badge: 'Programm',
             headline: 'Themen klar geordnet.',
-            subline: 'Finanzen, Stadtentwicklung, MobilitÃ¤t und Transparenz als klare Themenfelder fÃ¼r Ingolstadt.',
+            subline: 'Finanzen, Stadtentwicklung, Mobilität und Transparenz als klare Themenfelder für Ingolstadt.',
             principles: [
-              { eyebrow: 'Finanzen', title: 'Haushalt & Verantwortung', text: 'Solide Finanzen schaffen Spielraum fÃ¼r Familien, Sicherheit, Bildung und Gesundheit.' },
+              { eyebrow: 'Finanzen', title: 'Haushalt & Verantwortung', text: 'Solide Finanzen schaffen Spielraum für Familien, Sicherheit, Bildung und Gesundheit.' },
               { eyebrow: 'Stadt', title: 'Stadtentwicklung', text: 'Ingolstadt soll sich nachvollziehbar, bezahlbar und lebenswert weiterentwickeln.' },
-              { eyebrow: 'Alltag', title: 'MobilitÃ¤t & Alltag', text: 'Entscheidungen mÃ¼ssen im Alltag der BÃ¼rgerinnen und BÃ¼rger funktionieren.' },
+              { eyebrow: 'Alltag', title: 'Mobilität & Alltag', text: 'Entscheidungen müssen im Alltag der Bürgerinnen und Bürger funktionieren.' },
               { eyebrow: 'Offenheit', title: 'Transparenz', text: 'Kommunalpolitik braucht klare Grundlagen, nachvollziehbare Zahlen und offene Kommunikation.' },
             ],
           },
@@ -1092,9 +1106,9 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             badge: 'Kommunalwahl 2026',
             headline: 'Weitere Inhalte zur Wahl',
             cards: [
-              { title: 'Stadtratskandidaten', text: 'Kandidatinnen, Kandidaten und Ansprechpartner der Freien WÃ¤hler Ingolstadt.', icon: 'Users', href: '/menschen', ctaLabel: 'Menschen ansehen' },
+              { title: 'Stadtratskandidaten', text: 'Kandidatinnen, Kandidaten und Ansprechpartner der Freien Wähler Ingolstadt.', icon: 'Users', href: '/menschen', ctaLabel: 'Menschen ansehen' },
               { title: 'Kreisvereinigung', text: 'Organisation, Vorstand und kommunalpolitisches Engagement vor Ort.', icon: 'Building2', href: '/kreisvereinigung', ctaLabel: 'Organisation ansehen' },
-              { title: 'Aktuelle Meldungen', text: 'BeitrÃ¤ge rund um Kommunalpolitik, AntrÃ¤ge und Wahlkampf.', icon: 'Newspaper', href: '/aktuelles', ctaLabel: 'Aktuelles lesen' },
+              { title: 'Aktuelle Meldungen', text: 'Beiträge rund um Kommunalpolitik, Anträge und Wahlkampf.', icon: 'Newspaper', href: '/aktuelles', ctaLabel: 'Aktuelles lesen' },
             ],
           },
         },
@@ -1104,16 +1118,16 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: 'menschen',
       title: 'Menschen',
       seo: {
-        metaTitle: 'Vorstand und Fraktion | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Menschen der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Vorstand und Fraktion | Freie Wähler Ingolstadt',
+        metaDescription: 'Menschen der Freien Wähler Ingolstadt.',
         ogImage: menschen.items[0]?.data.image as string | undefined,
       },
       sections: [
         heroSection({
           eyebrow: 'Vorstand & Fraktion',
-          headline: 'Menschen, die Verantwortung Ã¼bernehmen.',
-          text: 'Eine Ãœbersicht Ã¼ber Vorstand, Fraktion und weitere Ansprechpartnerinnen und Ansprechpartner.',
-          layout: 'campaignBleed',
+          headline: 'Menschen, die Verantwortung übernehmen.',
+          text: 'Eine Übersicht über Vorstand, Fraktion und weitere Ansprechpartnerinnen und Ansprechpartner.',
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
@@ -1142,11 +1156,11 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badge: 'Organisation',
             headline: 'Vor Ort organisiert.',
-            subline: 'Die wichtigsten organisatorischen Bereiche sind gebÃ¼ndelt, statt als einzelne Altseiten ausgespielt.',
+            subline: 'Die wichtigsten organisatorischen Bereiche sind gebündelt, statt als einzelne Altseiten ausgespielt.',
             cards: [
               { title: 'Vorstand', text: 'Der Vorstand koordiniert Verein, Themenarbeit und Ansprechpartner vor Ort.', icon: 'Users', href: '/vorstand', ctaLabel: 'Vorstand ansehen' },
-              { title: 'Kreisvereinigung', text: 'Die Kreisvereinigung bÃ¼ndelt das kommunalpolitische Engagement in Ingolstadt.', icon: 'Building2', href: '/kreisvereinigung', ctaLabel: 'Mehr erfahren' },
-              { title: 'BezirksausschÃ¼sse', text: 'Stadtteilthemen, lokale Anliegen und kommunale Arbeit in den Bezirken.', icon: 'Map', href: '/bezirksausschuesse', ctaLabel: 'AusschÃ¼sse ansehen' },
+              { title: 'Kreisvereinigung', text: 'Die Kreisvereinigung bündelt das kommunalpolitische Engagement in Ingolstadt.', icon: 'Building2', href: '/kreisvereinigung', ctaLabel: 'Mehr erfahren' },
+              { title: 'Bezirksausschüsse', text: 'Stadtteilthemen, lokale Anliegen und kommunale Arbeit in den Bezirken.', icon: 'Map', href: '/bezirksausschuesse', ctaLabel: 'Ausschüsse ansehen' },
             ],
           },
         },
@@ -1156,19 +1170,19 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: 'stadtrat',
       title: 'Stadtrat',
       seo: {
-        metaTitle: 'Stadtrat und AntrÃ¤ge | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Stadtratsfraktion und AntrÃ¤ge der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Stadtrat und Anträge | Freie Wähler Ingolstadt',
+        metaDescription: 'Stadtratsfraktion und Anträge der Freien Wähler Ingolstadt.',
         ogImage: fraktion?.image || FW_SOCIAL,
       },
       sections: [
         heroSection({
           eyebrow: 'Stadtratsfraktion',
-          headline: 'AntrÃ¤ge und Arbeit im Stadtrat.',
-          text: 'Stadtratsarbeit, AntrÃ¤ge und Stadtteilthemen an einem Ort: sachlich gebÃ¼ndelt, nachvollziehbar sortiert und schnell auffindbar.',
-          layout: 'campaignBleed',
+          headline: 'Anträge und Arbeit im Stadtrat.',
+          text: 'Stadtratsarbeit, Anträge und Stadtteilthemen an einem Ort: sachlich gebündelt, nachvollziehbar sortiert und schnell auffindbar.',
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
-          primaryCta: { label: 'Alle AntrÃ¤ge', href: '#antraege' },
+          primaryCta: { label: 'Alle Anträge', href: '#antraege' },
         }, sectionStyle('dark')),
         {
           type: 'spotlightCards',
@@ -1178,11 +1192,11 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badge: 'Stadtrat',
             headline: 'Arbeit nachvollziehbar machen.',
-            subline: 'Fraktion, AntrÃ¤ge und Stadtteilthemen sind auf einer Seite gebÃ¼ndelt.',
+            subline: 'Fraktion, Anträge und Stadtteilthemen sind auf einer Seite gebündelt.',
             cards: [
               { title: 'Stadtratsfraktion', text: 'Ansprechpartner, Arbeitsschwerpunkte und kommunalpolitische Initiativen der Fraktion.', icon: 'Landmark' },
-              { title: 'BezirksausschÃ¼sse', text: textFromPage(bza, 'Kommunale Themen entstehen in den Stadtteilen. Die BezirksausschÃ¼sse sind dafÃ¼r ein wichtiger Ort.', 180), icon: 'Map' },
-              { title: 'Antragsarchiv', text: `${antraege.items.length} AntrÃ¤ge und Stadtratsseiten chronologisch sortiert.`, icon: 'FileText', href: '#antraege' },
+              { title: 'Bezirksausschüsse', text: textFromPage(bza, 'Kommunale Themen entstehen in den Stadtteilen. Die Bezirksausschüsse sind dafür ein wichtiger Ort.', 180), icon: 'Map' },
+              { title: 'Antragsarchiv', text: `${antraege.items.length} Anträge und Stadtratsseiten chronologisch sortiert.`, icon: 'FileText', href: '#antraege' },
             ],
           },
         },
@@ -1193,8 +1207,8 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           spacingBottom: 'xl',
           anchorId: 'antraege',
           data: {
-            headline: 'AntrÃ¤ge aus dem Archiv',
-            subline: `${antraege.items.length} AntrÃ¤ge und Stadtratsseiten aus dem Archiv.`,
+            headline: 'Anträge aus dem Archiv',
+            subline: `${antraege.items.length} Anträge und Stadtratsseiten aus dem Archiv.`,
             items: makeListItems(antraege.items),
             collectionBasePath: '/c/antraege',
             showImage: false,
@@ -1202,7 +1216,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             showExcerpt: true,
             showSortControls: true,
             showSearch: true,
-            searchPlaceholder: 'AntrÃ¤ge und Stadtratsthemen durchsuchen',
+            searchPlaceholder: 'Anträge und Stadtratsthemen durchsuchen',
             paginate: true,
             itemsPerPage: 12,
             sortBy: 'date-desc',
@@ -1215,19 +1229,19 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: 'mitmachen',
       title: 'Mitmachen',
       seo: {
-        metaTitle: 'Mitmachen | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Mitglied werden, Veranstaltungen besuchen oder die Freien WÃ¤hler Ingolstadt unterstÃ¼tzen.',
+        metaTitle: 'Mitmachen | Freie Wähler Ingolstadt',
+        metaDescription: 'Mitglied werden, Veranstaltungen besuchen oder die Freien Wähler Ingolstadt unterstützen.',
         ogImage: mitglied?.image || FW_SOCIAL,
       },
       sections: [
         heroSection({
           eyebrow: 'Mitmachen',
           headline: 'Ingolstadt mitgestalten.',
-          text: textFromPage(mitglied, 'Wer sich politisch vor Ort einbringen mÃ¶chte, kann Mitglied der Freien WÃ¤hler Ingolstadt werden oder die Arbeit unterstÃ¼tzen.', 300),
-          layout: 'campaignBleed',
+          text: textFromPage(mitglied, 'Wer sich politisch vor Ort einbringen möchte, kann Mitglied der Freien Wähler Ingolstadt werden oder die Arbeit unterstützen.', 300),
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
-          primaryCta: { label: 'Mitgliedsantrag Ã¶ffnen', href: MEMBER_PDF },
+          primaryCta: { label: 'Mitgliedsantrag öffnen', href: MEMBER_PDF },
           secondaryCta: { label: 'Kontakt', href: '/kontakt' },
         }, sectionStyle('soft')),
         {
@@ -1240,9 +1254,9 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             headline: 'Drei einfache Wege mitzumachen.',
             subline: 'Mitglied werden, Termine wahrnehmen oder direkt Kontakt aufnehmen.',
             cards: [
-              { title: 'Mitglied werden', text: 'Mitgliedsantrag herunterladen, ausfÃ¼llen und direkt an die Freien WÃ¤hler Ingolstadt senden.', icon: 'Handshake', href: MEMBER_PDF, ctaLabel: 'PDF Ã¶ffnen' },
-              { title: 'Veranstaltungen', text: 'Termine, Treffen und Veranstaltungen der Freien WÃ¤hler Ingolstadt auf einen Blick.', icon: 'Calendar', href: '/veranstaltungen', ctaLabel: 'Termine ansehen' },
-              { title: 'UnterstÃ¼tzen', text: 'Wer Ideen, Fragen oder UnterstÃ¼tzung anbieten mÃ¶chte, kann direkt Kontakt aufnehmen.', icon: 'Heart', href: '/kontakt', ctaLabel: 'Kontakt aufnehmen' },
+              { title: 'Mitglied werden', text: 'Mitgliedsantrag herunterladen, ausfüllen und direkt an die Freien Wähler Ingolstadt senden.', icon: 'Handshake', href: MEMBER_PDF, ctaLabel: 'PDF öffnen' },
+              { title: 'Veranstaltungen', text: 'Termine, Treffen und Veranstaltungen der Freien Wähler Ingolstadt auf einen Blick.', icon: 'Calendar', href: '/veranstaltungen', ctaLabel: 'Termine ansehen' },
+              { title: 'Unterstützen', text: 'Wer Ideen, Fragen oder Unterstützung anbieten möchte, kann direkt Kontakt aufnehmen.', icon: 'Heart', href: '/kontakt', ctaLabel: 'Kontakt aufnehmen' },
             ],
           },
         },
@@ -1252,16 +1266,16 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: 'vorstand',
       title: 'Vorstand',
       seo: {
-        metaTitle: 'Vorstand | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Vorstand und Organisation der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Vorstand | Freie Wähler Ingolstadt',
+        metaDescription: 'Vorstand und Organisation der Freien Wähler Ingolstadt.',
         ogImage: vorstand?.image || FW_SOCIAL,
       },
       sections: [
         heroSection({
           eyebrow: 'Organisation',
-          headline: 'Vorstand der Freien WÃ¤hler Ingolstadt.',
+          headline: 'Vorstand der Freien Wähler Ingolstadt.',
           text: textFromPage(vorstand, 'Der Vorstand koordiniert Verein, Themenarbeit und Ansprechpartner vor Ort.', 280),
-          layout: 'campaignBleed',
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
@@ -1283,15 +1297,15 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             })),
           },
         },
-        infoCardsSection(vorstand, 'Informationen aus der bisherigen Vorstandsseite', 'Der Vorstand koordiniert die Arbeit der Freien WÃ¤hler Ingolstadt.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
+        infoCardsSection(vorstand, 'Informationen aus der bisherigen Vorstandsseite', 'Der Vorstand koordiniert die Arbeit der Freien Wähler Ingolstadt.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
       ],
     },
     {
       slug: 'fraktion',
       title: 'Fraktion',
       seo: {
-        metaTitle: 'Fraktion | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Stadtratsfraktion der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Fraktion | Freie Wähler Ingolstadt',
+        metaDescription: 'Stadtratsfraktion der Freien Wähler Ingolstadt.',
         ogImage: fraktion?.image || FW_SOCIAL,
       },
       sections: [
@@ -1299,10 +1313,10 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           eyebrow: 'Stadtrat',
           headline: 'Stadtratsfraktion und kommunale Arbeit.',
           text: textFromPage(fraktion, 'Informationen zur Stadtratsfraktion, Ansprechpartnern und Arbeit im Stadtrat.', 280),
-          layout: 'campaignBleed',
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
-          primaryCta: { label: 'AntrÃ¤ge ansehen', href: '/stadtrat#antraege' },
+          primaryCta: { label: 'Anträge ansehen', href: '/stadtrat#antraege' },
           secondaryCta: { label: 'Kontakt', href: '/kontakt' },
         }, sectionStyle('dark')),
         {
@@ -1314,29 +1328,29 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             badge: 'Fraktion',
             headline: 'Stadtratsarbeit auf einen Blick.',
             cards: [
-              { title: 'AntrÃ¤ge', text: `${antraege.items.length} AntrÃ¤ge und Stadtratsthemen im Archiv.`, icon: 'FileText', href: '/stadtrat#antraege', ctaLabel: 'Archiv Ã¶ffnen' },
-              { title: 'BezirksausschÃ¼sse', text: 'Stadtteilthemen und lokale Anliegen gehÃ¶ren sichtbar zur Stadtratsarbeit.', icon: 'Map', href: '/bezirksausschuesse', ctaLabel: 'AusschÃ¼sse ansehen' },
-              { title: 'Ansprechpartner', text: 'Fraktion und Vorstand sind Ã¼ber die Personenseite gebÃ¼ndelt auffindbar.', icon: 'Users', href: '/menschen', ctaLabel: 'Menschen ansehen' },
+              { title: 'Anträge', text: `${antraege.items.length} Anträge und Stadtratsthemen im Archiv.`, icon: 'FileText', href: '/stadtrat#antraege', ctaLabel: 'Archiv öffnen' },
+              { title: 'Bezirksausschüsse', text: 'Stadtteilthemen und lokale Anliegen gehören sichtbar zur Stadtratsarbeit.', icon: 'Map', href: '/bezirksausschuesse', ctaLabel: 'Ausschüsse ansehen' },
+              { title: 'Ansprechpartner', text: 'Fraktion und Vorstand sind über die Personenseite gebündelt auffindbar.', icon: 'Users', href: '/menschen', ctaLabel: 'Menschen ansehen' },
             ],
           },
         },
-        infoCardsSection(fraktion, 'Informationen aus der bisherigen Fraktionsseite', 'Informationen zur Stadtratsfraktion der Freien WÃ¤hler Ingolstadt.', { label: 'AntrÃ¤ge Ã¶ffnen', href: '/stadtrat#antraege' }),
+        infoCardsSection(fraktion, 'Informationen aus der bisherigen Fraktionsseite', 'Informationen zur Stadtratsfraktion der Freien Wähler Ingolstadt.', { label: 'Anträge öffnen', href: '/stadtrat#antraege' }),
       ],
     },
     {
       slug: 'bezirksausschuesse',
-      title: 'BezirksausschÃ¼sse',
+      title: 'Bezirksausschüsse',
       seo: {
-        metaTitle: 'BezirksausschÃ¼sse | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'BezirksausschÃ¼sse und Stadtteilthemen der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Bezirksausschüsse | Freie Wähler Ingolstadt',
+        metaDescription: 'Bezirksausschüsse und Stadtteilthemen der Freien Wähler Ingolstadt.',
         ogImage: bza?.image || FW_SOCIAL,
       },
       sections: [
         heroSection({
           eyebrow: 'Stadtteile',
           headline: 'Politik beginnt in den Bezirken.',
-          text: textFromPage(bza, 'Kommunale Themen entstehen in den Stadtteilen. Die BezirksausschÃ¼sse sind dafÃ¼r ein wichtiger Ort.', 300),
-          layout: 'campaignBleed',
+          text: textFromPage(bza, 'Kommunale Themen entstehen in den Stadtteilen. Die Bezirksausschüsse sind dafür ein wichtiger Ort.', 300),
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
@@ -1352,28 +1366,28 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             headline: 'Lokale Anliegen sichtbar machen.',
             cards: [
               { title: 'Stadtteilthemen', text: 'Anliegen aus den Bezirken werden gesammelt, priorisiert und in die politische Arbeit getragen.', icon: 'MapPin', href: '/kontakt', ctaLabel: 'Anliegen senden' },
-              { title: 'Austausch vor Ort', text: 'Kommunalpolitik braucht RÃ¼ckmeldung aus Vereinen, Nachbarschaften und Alltag.', icon: 'MessageCircle', href: '/veranstaltungen', ctaLabel: 'Termine ansehen' },
-              { title: 'Stadtrat', text: 'Themen aus den Bezirken verbinden sich mit AntrÃ¤gen und Entscheidungen im Stadtrat.', icon: 'Landmark', href: '/stadtrat', ctaLabel: 'Zur Stadtratsarbeit' },
+              { title: 'Austausch vor Ort', text: 'Kommunalpolitik braucht Rückmeldung aus Vereinen, Nachbarschaften und Alltag.', icon: 'MessageCircle', href: '/veranstaltungen', ctaLabel: 'Termine ansehen' },
+              { title: 'Stadtrat', text: 'Themen aus den Bezirken verbinden sich mit Anträgen und Entscheidungen im Stadtrat.', icon: 'Landmark', href: '/stadtrat', ctaLabel: 'Zur Stadtratsarbeit' },
             ],
           },
         },
-        infoCardsSection(bza, 'Informationen aus der bisherigen Seite', 'Informationen zu BezirksausschÃ¼ssen und Stadtteilthemen.', { label: 'Anliegen senden', href: '/kontakt' }),
+        infoCardsSection(bza, 'Informationen aus der bisherigen Seite', 'Informationen zu Bezirksausschüssen und Stadtteilthemen.', { label: 'Anliegen senden', href: '/kontakt' }),
       ],
     },
     {
       slug: 'veranstaltungen',
       title: 'Veranstaltungen',
       seo: {
-        metaTitle: 'Veranstaltungen | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Termine und Veranstaltungen der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Veranstaltungen | Freie Wähler Ingolstadt',
+        metaDescription: 'Termine und Veranstaltungen der Freien Wähler Ingolstadt.',
         ogImage: veranstaltungen?.image || FW_SOCIAL,
       },
       sections: [
         heroSection({
           eyebrow: 'Termine',
           headline: 'Veranstaltungen und Austausch.',
-          text: textFromPage(veranstaltungen, 'Termine, Treffen und Veranstaltungen der Freien WÃ¤hler Ingolstadt.', 300),
-          layout: 'campaignBleed',
+          text: textFromPage(veranstaltungen, 'Termine, Treffen und Veranstaltungen der Freien Wähler Ingolstadt.', 300),
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
@@ -1388,29 +1402,29 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             badge: 'Mitmachen',
             headline: 'So bleibst du nah dran.',
             cards: [
-              { title: 'Termine', text: 'Veranstaltungen und Treffen bieten Gelegenheit zum Austausch Ã¼ber Ingolstadt.', icon: 'Calendar', href: '/kontakt', ctaLabel: 'Termin anfragen' },
-              { title: 'Mitglied werden', text: 'Wer dauerhaft mitarbeiten mÃ¶chte, kann den Mitgliedsantrag direkt Ã¶ffnen.', icon: 'Handshake', href: MEMBER_PDF, ctaLabel: 'PDF Ã¶ffnen' },
-              { title: 'Aktuelles', text: 'Meldungen, AntrÃ¤ge und Positionen zeigen, welche Themen gerade relevant sind.', icon: 'Newspaper', href: '/aktuelles', ctaLabel: 'Aktuelles lesen' },
+              { title: 'Termine', text: 'Veranstaltungen und Treffen bieten Gelegenheit zum Austausch über Ingolstadt.', icon: 'Calendar', href: '/kontakt', ctaLabel: 'Termin anfragen' },
+              { title: 'Mitglied werden', text: 'Wer dauerhaft mitarbeiten möchte, kann den Mitgliedsantrag direkt öffnen.', icon: 'Handshake', href: MEMBER_PDF, ctaLabel: 'PDF öffnen' },
+              { title: 'Aktuelles', text: 'Meldungen, Anträge und Positionen zeigen, welche Themen gerade relevant sind.', icon: 'Newspaper', href: '/aktuelles', ctaLabel: 'Aktuelles lesen' },
             ],
           },
         },
-        infoCardsSection(veranstaltungen, 'Informationen aus der bisherigen Veranstaltungsseite', 'Termine und Veranstaltungen der Freien WÃ¤hler Ingolstadt.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
+        infoCardsSection(veranstaltungen, 'Informationen aus der bisherigen Veranstaltungsseite', 'Termine und Veranstaltungen der Freien Wähler Ingolstadt.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
       ],
     },
     {
       slug: 'kreisvereinigung',
       title: 'Kreisvereinigung',
       seo: {
-        metaTitle: 'Kreisvereinigung | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Kreisvereinigung der Freien WÃ¤hler Ingolstadt.',
+        metaTitle: 'Kreisvereinigung | Freie Wähler Ingolstadt',
+        metaDescription: 'Kreisvereinigung der Freien Wähler Ingolstadt.',
         ogImage: kreis?.image || FW_SOCIAL,
       },
       sections: [
         heroSection({
           eyebrow: 'Kreisvereinigung',
-          headline: 'Kommunales Engagement bÃ¼ndeln.',
-          text: textFromPage(kreis, 'Die Kreisvereinigung bÃ¼ndelt das kommunalpolitische Engagement der Freien WÃ¤hler Ingolstadt.', 300),
-          layout: 'campaignBleed',
+          headline: 'Kommunales Engagement bündeln.',
+          text: textFromPage(kreis, 'Die Kreisvereinigung bündelt das kommunalpolitische Engagement der Freien Wähler Ingolstadt.', 300),
+          layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Vorstand ansehen', href: '/vorstand' },
@@ -1426,20 +1440,20 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             headline: 'Verein, Fraktion und Stadtteile verbinden.',
             cards: [
               { title: 'Vorstand', text: 'Koordination von Verein, Mitgliedern und kommunalpolitischer Arbeit.', icon: 'Users', href: '/vorstand', ctaLabel: 'Vorstand ansehen' },
-              { title: 'Fraktion', text: 'Die politische Arbeit im Stadtrat bleibt Ã¼ber AntrÃ¤ge und Themen nachvollziehbar.', icon: 'Landmark', href: '/fraktion', ctaLabel: 'Fraktion ansehen' },
-              { title: 'BezirksausschÃ¼sse', text: 'Stadtteilthemen flieÃŸen in die kommunale Arbeit ein.', icon: 'Map', href: '/bezirksausschuesse', ctaLabel: 'Bezirke ansehen' },
+              { title: 'Fraktion', text: 'Die politische Arbeit im Stadtrat bleibt über Anträge und Themen nachvollziehbar.', icon: 'Landmark', href: '/fraktion', ctaLabel: 'Fraktion ansehen' },
+              { title: 'Bezirksausschüsse', text: 'Stadtteilthemen fließen in die kommunale Arbeit ein.', icon: 'Map', href: '/bezirksausschuesse', ctaLabel: 'Bezirke ansehen' },
             ],
           },
         },
-        infoCardsSection(kreis, 'Informationen aus der bisherigen Kreisvereinigungsseite', 'Informationen zur Kreisvereinigung der Freien WÃ¤hler Ingolstadt.', { label: 'Vorstand ansehen', href: '/vorstand' }),
+        infoCardsSection(kreis, 'Informationen aus der bisherigen Kreisvereinigungsseite', 'Informationen zur Kreisvereinigung der Freien Wähler Ingolstadt.', { label: 'Vorstand ansehen', href: '/vorstand' }),
       ],
     },
     {
       slug: 'kontakt',
       title: 'Kontakt',
       seo: {
-        metaTitle: 'Kontakt | Freie WÃ¤hler Ingolstadt',
-        metaDescription: 'Kontakt zu den Freien WÃ¤hlern Ingolstadt.',
+        metaTitle: 'Kontakt | Freie Wähler Ingolstadt',
+        metaDescription: 'Kontakt zu den Freien Wählern Ingolstadt.',
         ogImage: FW_SOCIAL,
       },
       sections: [
@@ -1451,7 +1465,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badgeText: 'Kontakt',
             headline: 'Kontakt aufnehmen',
-            introText: textFromPage(kontakt, 'Fragen, Hinweise oder Anliegen kÃ¶nnen direkt an die Freien WÃ¤hler Ingolstadt gerichtet werden.', 240),
+            introText: textFromPage(kontakt, 'Fragen, Hinweise oder Anliegen können direkt an die Freien Wähler Ingolstadt gerichtet werden.', 240),
             email: 'info@fw-ingolstadt.de',
             address: 'Ingolstadt',
             formEnabled: true,
@@ -1459,7 +1473,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             infoCards: [
               { icon: 'Mail', label: 'E-Mail', value: 'info@fw-ingolstadt.de' },
               { icon: 'MapPin', label: 'Ort', value: 'Ingolstadt' },
-              { icon: 'FileText', label: 'Mitgliedsantrag', value: 'PDF online verfÃ¼gbar' },
+              { icon: 'FileText', label: 'Mitgliedsantrag', value: 'PDF online verfügbar' },
             ],
           },
         },
@@ -1469,22 +1483,22 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       slug: 'impressum',
       title: 'Impressum',
       type: 'legal',
-      seo: { metaTitle: 'Impressum | Freie WÃ¤hler Ingolstadt', noindex: false },
-      sections: [{ type: 'legalContent', container: 'narrow', spacingTop: 'xl', spacingBottom: 'xl', data: { headline: 'Impressum', content: richContentFromPage(impressum, '<p>Impressum der Freien WÃ¤hler Ingolstadt.</p>') } }],
+      seo: { metaTitle: 'Impressum | Freie Wähler Ingolstadt', noindex: false },
+      sections: [{ type: 'legalContent', container: 'narrow', spacingTop: 'xl', spacingBottom: 'xl', data: { headline: 'Impressum', content: richContentFromPage(impressum, '<p>Impressum der Freien Wähler Ingolstadt.</p>') } }],
     },
     {
       slug: 'datenschutz',
       title: 'Datenschutz',
       type: 'legal',
-      seo: { metaTitle: 'Datenschutz | Freie WÃ¤hler Ingolstadt', noindex: false },
-      sections: [{ type: 'legalContent', container: 'narrow', spacingTop: 'xl', spacingBottom: 'xl', data: { headline: 'Datenschutz', content: richContentFromPage(datenschutz, '<p>Datenschutzhinweise der Freien WÃ¤hler Ingolstadt.</p>') } }],
+      seo: { metaTitle: 'Datenschutz | Freie Wähler Ingolstadt', noindex: false },
+      sections: [{ type: 'legalContent', container: 'narrow', spacingTop: 'xl', spacingBottom: 'xl', data: { headline: 'Datenschutz', content: richContentFromPage(datenschutz, '<p>Datenschutzhinweise der Freien Wähler Ingolstadt.</p>') } }],
     },
     {
       slug: 'transparenzhinweis',
       title: 'Transparenzhinweis',
       type: 'legal',
-      seo: { metaTitle: 'Transparenzhinweis | Freie WÃ¤hler Ingolstadt', noindex: false },
-      sections: [{ type: 'legalContent', container: 'narrow', spacingTop: 'xl', spacingBottom: 'xl', data: { headline: 'Transparenzhinweis', content: richContentFromPage(transparenz, '<p>Transparenzhinweis der Freien WÃ¤hler Ingolstadt.</p>') } }],
+      seo: { metaTitle: 'Transparenzhinweis | Freie Wähler Ingolstadt', noindex: false },
+      sections: [{ type: 'legalContent', container: 'narrow', spacingTop: 'xl', spacingBottom: 'xl', data: { headline: 'Transparenzhinweis', content: richContentFromPage(transparenz, '<p>Transparenzhinweis der Freien Wähler Ingolstadt.</p>') } }],
     },
   ];
 
@@ -1521,8 +1535,8 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
     },
     footer: {
       columns: [
-        { title: 'Inhalte', links: [{ label: 'Aktuelles', href: '/aktuelles' }, { label: 'Wahlprogramm', href: '/wahlprogramm' }, { label: 'Stadtrat & AntrÃ¤ge', href: '/stadtrat' }, { label: 'Veranstaltungen', href: '/veranstaltungen' }] },
-        { title: 'Organisation', links: [{ label: 'Menschen', href: '/menschen' }, { label: 'Vorstand', href: '/vorstand' }, { label: 'Kreisvereinigung', href: '/kreisvereinigung' }, { label: 'BezirksausschÃ¼sse', href: '/bezirksausschuesse' }, { label: 'Kontakt', href: '/kontakt' }] },
+        { title: 'Inhalte', links: [{ label: 'Aktuelles', href: '/aktuelles' }, { label: 'Wahlprogramm', href: '/wahlprogramm' }, { label: 'Stadtrat & Anträge', href: '/stadtrat' }, { label: 'Veranstaltungen', href: '/veranstaltungen' }] },
+        { title: 'Organisation', links: [{ label: 'Menschen', href: '/menschen' }, { label: 'Vorstand', href: '/vorstand' }, { label: 'Kreisvereinigung', href: '/kreisvereinigung' }, { label: 'Bezirksausschüsse', href: '/bezirksausschuesse' }, { label: 'Kontakt', href: '/kontakt' }] },
       ],
       legalLinks: [
         { label: 'Impressum', href: '/impressum' },
@@ -1532,9 +1546,9 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       cta: { label: 'Kontakt', href: '/kontakt' },
     },
     seoGlobal: {
-      defaultTitle: 'Freie WÃ¤hler Ingolstadt',
-      titleTemplate: '%s | Freie WÃ¤hler Ingolstadt',
-      defaultDescription: 'Freie WÃ¤hler Ingolstadt: unabhÃ¤ngig, bÃ¼rgernah und sachorientiert fÃ¼r Ingolstadt.',
+      defaultTitle: 'Freie Wähler Ingolstadt',
+      titleTemplate: '%s | Freie Wähler Ingolstadt',
+      defaultDescription: 'Freie Wähler Ingolstadt: unabhängig, bürgernah und sachorientiert für Ingolstadt.',
       defaultOgImage: FW_SOCIAL,
       canonicalBase: PREVIEW_URL,
       locale: 'de_DE',
@@ -1559,7 +1573,7 @@ async function getExistingTenant(controlDb: Database) {
 
 async function updateTenantRows(controlDb: Database, dataDb: Database, tenantId: string) {
   const setValues = {
-    name: 'Freie WÃ¤hler Ingolstadt',
+    name: 'Freie Wähler Ingolstadt',
     industry: 'verein' as const,
     activeStyle: 'premium-civic',
     status: 'active' as const,

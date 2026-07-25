@@ -29,12 +29,12 @@ type ExplodeNode = {
 };
 
 const FALLBACK_PARTS: CameraPart[] = [
-  { id: 'body', label: 'Body', text: 'Gehäuse, Griff und Kamerahaltung.', offsetX: -160, offsetY: 0, offsetZ: -40, color: '#151515' },
-  { id: 'lens', label: 'Lens', text: 'Fokus, Nähe und optische Tiefe.', offsetX: 160, offsetY: -40, offsetZ: 150, color: '#050505' },
-  { id: 'shutter', label: 'Shutter', text: 'Timing, Bewegung und Moment.', offsetX: 80, offsetY: -140, offsetZ: 70, color: '#d11224' },
+  { id: 'body', label: 'Gehäuse', text: 'Kamerabody, Griff, Prismengehäuse und Haltung.', offsetX: -160, offsetY: 0, offsetZ: -40, color: '#151515' },
+  { id: 'lens', label: 'Objektiv', text: 'Fokus, Brennweite, Nähe und optische Tiefe.', offsetX: 160, offsetY: -40, offsetZ: 150, color: '#050505' },
+  { id: 'shutter', label: 'Verschluss', text: 'Timing, Bewegung und der entscheidende Moment.', offsetX: 80, offsetY: -140, offsetZ: 70, color: '#d11224' },
   { id: 'sensor', label: 'Sensor', text: 'Bilddaten, Look und Detailtiefe.', offsetX: 170, offsetY: 60, offsetZ: -120, color: '#1b2430' },
-  { id: 'display', label: 'Display', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -135, offsetY: 130, offsetZ: -130, color: '#f4eee3' },
-  { id: 'output', label: 'Files', text: 'Finale Assets für Website, Social und Kampagne.', offsetX: 135, offsetY: 140, offsetZ: 130, color: '#c7ff4a' },
+  { id: 'display', label: 'Monitor', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -135, offsetY: 130, offsetZ: -130, color: '#f4eee3' },
+  { id: 'output', label: 'Dateien', text: 'Finale Assets für Website, Social und Kampagne.', offsetX: 135, offsetY: 140, offsetZ: 130, color: '#c7ff4a' },
 ];
 
 const PART_ICONS = [Cuboid, Aperture, Eye, ScanLine, View, Box, Layers3];
