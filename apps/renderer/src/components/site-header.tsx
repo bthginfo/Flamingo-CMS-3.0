@@ -237,6 +237,9 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
                 <span>{brand.companyName || 'Firmenname'}</span>
               )}
+              {(brand.logoDisplay !== 'logoAndName' && brand.logoDisplay !== 'name' && brand.logoUrl) && (
+                <span className="sr-only">{brand.companyName || 'Startseite'}</span>
+              )}
             </Link>
 
             <nav
@@ -298,6 +301,9 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   )}
                   {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
                     <span>{brand.companyName || 'Firmenname'}</span>
+                  )}
+                  {(brand.logoDisplay !== 'logoAndName' && brand.logoDisplay !== 'name' && brand.logoUrl) && (
+                    <span className="sr-only">{brand.companyName || 'Startseite'}</span>
                   )}
                 </Link>
                 <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg transition-colors" style={{ color: navLinkColorMobile }} onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileHoverBg; }} onMouseLeave={(event) => { event.currentTarget.style.backgroundColor = 'transparent'; }}>

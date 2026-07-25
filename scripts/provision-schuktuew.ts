@@ -1162,7 +1162,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'cameraExplodeScroll',
           data: {
-            badge: '3D Camera System',
+            badge: 'Exploded View',
             headline: 'Die Kamera zerlegt sich. Der Blick wird klarer.',
             subline: 'Ein starkes Bild entsteht aus vielen bewussten Entscheidungen: Fokus, Timing, Kontrolle und Output.',
             modelUrl: CAMERA_GLB_URL,
@@ -1297,7 +1297,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'cameraExplodeScroll',
           data: {
-            badge: '3D Camera System',
+            badge: 'Exploded View',
             headline: 'Eine Kamera. Viele Entscheidungen.',
             subline: 'Fokus, Licht, Sensor, Kontrolle und finale Dateien greifen zusammen, bevor ein Motiv veröffentlicht wird.',
             modelUrl: CAMERA_GLB_URL,

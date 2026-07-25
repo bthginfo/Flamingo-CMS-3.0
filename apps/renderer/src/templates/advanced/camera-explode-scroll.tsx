@@ -483,7 +483,7 @@ export function CameraExplodeScrollSection({ data }: Props) {
               </div>
             )}
             <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-white/12 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/55 backdrop-blur">
-              {modelUrl ? 'GLB Exploded View' : '3D Exploded Camera'}
+              {modelUrl ? '3D Kamera' : 'Kamera-System'}
             </div>
             {ctaHref && ctaLabel && <a href={ctaHref} className="absolute bottom-8 right-8 z-30 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-2xl transition hover:-translate-y-0.5" data-edit-link="cta"><span data-edit-path="cta.label">{ctaLabel}</span><ArrowUpRight size={16} /></a>}
           </div>
