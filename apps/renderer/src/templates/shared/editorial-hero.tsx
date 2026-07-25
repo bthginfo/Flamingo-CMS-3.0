@@ -17,6 +17,7 @@ export function EditorialHeroSection({ data }: Props) {
   const hint = (data.hint as string) || '';
   const layout = ((data.layout as string) || (data.variant as string) || '').trim();
   const imageFit = ((data.imageFit as string) || '').trim();
+  const hideImageOnMobile = data.hideImageOnMobile === true || data.mobileImageMode === 'hidden';
   const isFullBleedImage = layout === 'fullBleedImage';
   const isCampaignBleed = layout === 'campaignBleed';
   const isLandscapeContain = ['contain', 'containWide', 'landscape', 'landscapeContain'].includes(imageFit);
@@ -134,7 +135,7 @@ export function EditorialHeroSection({ data }: Props) {
         </div>
 
         {imagePrimary && (
-          <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
+          <div className={`${hideImageOnMobile ? 'hidden md:block ' : ''}relative mx-auto w-full max-w-lg lg:max-w-none`}>
             <MediaFrame className="aspect-[4/5] rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_var(--token-shadow)]">
               <img data-edit-image="imagePrimary" src={imagePrimary} alt={headline} loading="eager" fetchPriority="high" className={`absolute inset-0 h-full w-full ${imageFit === 'contain' ? 'object-contain p-4' : 'object-cover'}`} />
             </MediaFrame>

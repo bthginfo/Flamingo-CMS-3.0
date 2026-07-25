@@ -122,6 +122,8 @@ const LOCAL_ASSETS = {
   golfReel: 'C:/Users/vonin-ju/Downloads/AQNn_ATz6o4QFuhcsAyoZO7tmcsysRQ9FVASQdNuH-e_4vkH7aiBNuRkTD2sGO1tYKSXSKthmsVOttqAf9IlWn0X4KGbR32PuZgETXg.mp4',
 } satisfies Partial<Record<AssetKey, string>>;
 
+const CAMERA_GLB_URL = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/AntiqueCamera/glTF-Binary/AntiqueCamera.glb';
+
 const ASSETS: Record<AssetKey, AssetSpec> = {
   logo: {
     source: 'https://static.wixstatic.com/media/74d7fc_b8b5511660f44ed6bcddd0baba92a192~mv2.png/v1/crop/x_0,y_247,w_7000,h_6827/fill/w_324,h_316,al_c,q_90,enc_avif,quality_auto/signatur_logo_neu_mit_name_ohne%20Hintergrund.png',
@@ -1115,6 +1117,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             text: '<p>Fotografie für Unternehmen, Persönlichkeiten, für dich und dein Branding. Aus Ingolstadt und München entstehen visuelle Auftritte, die klar positionieren statt austauschbar zu wirken.</p>',
             imagePrimary: assets.heroPortrait,
             imageSecondary: assets.brandBox,
+            hideImageOnMobile: true,
             primaryCta: { label: 'Termin buchen', href: '/kontakt' },
             secondaryCta: { label: 'Portfolio ansehen', href: '/portfolio' },
             hint: 'Ingolstadt · München · Visual Solutions',
@@ -1161,7 +1164,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: '3D Camera System',
             headline: 'Die Kamera zerlegt sich. Der Blick wird klarer.',
-            subline: 'Vom Motiv bis zur fertigen Datei: Fokus, Timing, Kontrolle und Output werden einzeln sichtbar.',
+            subline: 'Ein starkes Bild entsteht aus vielen bewussten Entscheidungen: Fokus, Timing, Kontrolle und Output.',
+            modelUrl: CAMERA_GLB_URL,
             brandImage: '',
             parts: [
               { id: 'body', label: 'Gehäuse', text: 'Body, Griff und Haltung.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
@@ -1197,7 +1201,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: 'Reels & Motion',
             headline: 'Reels in dem Format, in dem sie wirken.',
-            subline: 'Die Hochformat-Clips bleiben bewusst vertikal: einmal Produktion aus einer Hand, einmal Golf als Sportreferenz.',
+            subline: 'Vertikale Clips für Kampagnen, Sport und Social Assets in dem Format, in dem sie ausgespielt werden.',
             aspectRatio: '9/16',
             reels: [
               { eyebrow: 'Production', title: 'Alles aus einer Hand', text: 'Konzept, Foto, Film, Schnitt und Content-Varianten für Markenauftritte.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: '9:16', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
@@ -1295,7 +1299,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: '3D Camera System',
             headline: 'Eine Kamera. Viele Entscheidungen.',
-            subline: 'Beim Scrollen trennen sich die Bauteile: Fokus, Licht, Sensor, Kontrolle und Dateien werden als einzelne Entscheidungen sichtbar.',
+            subline: 'Fokus, Licht, Sensor, Kontrolle und finale Dateien greifen zusammen, bevor ein Motiv veröffentlicht wird.',
+            modelUrl: CAMERA_GLB_URL,
             brandImage: '',
             parts: [
               { id: 'body', label: 'Gehäuse', text: 'Ziel, Marke und Haltung.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },

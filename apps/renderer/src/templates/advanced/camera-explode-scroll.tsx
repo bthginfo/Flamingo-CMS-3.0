@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { useInView, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { Aperture, ArrowUpRight, Box, Cuboid, Eye, Layers3, ScanLine, View } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
@@ -445,6 +445,7 @@ function StaticCameraFallback({ data, parts, brandImage, cta }: { data: Record<s
 export function CameraExplodeScrollSection({ data }: Props) {
   const ref = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const shouldLoadScene = useInView(ref, { once: true, margin: '900px 0px 900px 0px' });
   const parts = normalizedParts(data.parts);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const progress = useTransform(scrollYProgress, [0.08, 0.72], [0, 1]);
@@ -472,9 +473,13 @@ export function CameraExplodeScrollSection({ data }: Props) {
               <div className="relative grid h-[min(68vh,42rem)] w-full max-w-4xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-8">
                 <StaticCameraVisual brandImage={brandImage} />
               </div>
-            ) : (
+            ) : shouldLoadScene ? (
               <div className="relative h-[min(78vh,48rem)] w-full max-w-5xl">
                 <CameraThreeScene parts={parts} modelUrl={modelUrl} progress={progress} />
+              </div>
+            ) : (
+              <div className="relative grid h-[min(78vh,48rem)] w-full max-w-5xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-8 text-xs font-black uppercase tracking-[.22em] text-white/45">
+                3D wird geladen
               </div>
             )}
             <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-white/12 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/55 backdrop-blur">

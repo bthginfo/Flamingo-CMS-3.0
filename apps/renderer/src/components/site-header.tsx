@@ -137,6 +137,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const mobileBorderColor = mobileNavIsDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.08)';
   const mobileHoverBg = mobileNavIsDark ? 'rgba(255,255,255,0.08)' : 'rgba(17,24,39,0.06)';
   const mobileBrandColor = brand.navBrandColor || (mobileNavIsDark ? navLinkColorMobile : brand.primaryColor);
+  const denseDesktopNav = navItems.length > 6;
 
   return (
     <>
@@ -238,13 +239,19 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               )}
             </Link>
 
-            <nav className="hidden min-w-0 flex-1 items-center justify-end gap-4 xl:flex 2xl:gap-6">
+            <nav
+              className={cn(
+                'hidden min-w-0 flex-1 items-center justify-end',
+                denseDesktopNav ? '2xl:flex gap-4' : 'xl:flex gap-4 2xl:gap-6',
+              )}
+            >
               {navItems.map((item, i) => (
                 <Link
                   key={i}
                   href={prefixInternalHref(item.href, linkPrefix) as string}
                   className={cn(
-                    'whitespace-nowrap text-[12px] font-semibold tracking-wide uppercase transition-colors duration-300 hover:text-[var(--nav-link-hover)] 2xl:text-[13px]',
+                    'whitespace-nowrap font-semibold tracking-wide uppercase transition-colors duration-300 hover:text-[var(--nav-link-hover)]',
+                    denseDesktopNav ? 'text-[11px]' : 'text-[12px] 2xl:text-[13px]',
                     (!scrolled && isHeroDark && !brand.navLinkColor) ? 'drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]' : '',
                   )}
                   style={{ color: navLinkColorDesktop, ['--nav-link-hover' as string]: navLinkHoverColor }}
@@ -263,7 +270,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
-              className="rounded-lg p-2 transition-colors xl:hidden"
+              className={cn('rounded-lg p-2 transition-colors', denseDesktopNav ? '2xl:hidden' : 'xl:hidden')}
               style={{ color: mobileToggleColor }}
               onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileToggleHoverBg; }}
               onMouseLeave={(event) => { event.currentTarget.style.backgroundColor = 'transparent'; }}
@@ -281,7 +288,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[70] flex flex-col xl:hidden"
+              className={cn('fixed inset-0 z-[70] flex flex-col', denseDesktopNav ? '2xl:hidden' : 'xl:hidden')}
               style={{ backgroundColor: mobileNavBg, color: navLinkColorMobile }}
             >
               <div className="flex items-center justify-between h-[72px] px-6 border-b" style={{ borderColor: mobileBorderColor }}>
