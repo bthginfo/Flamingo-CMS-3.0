@@ -5,11 +5,24 @@ import { ActionGroup, ActionLink, MediaFrame, PremiumSectionHeader } from './sec
 type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
+function normalizeLegacySchuktuewCopy(value: string) {
+  if (!value) return value;
+  return value
+    .replace(
+      /Alexander Schuktuew ist Fotograf mit Schwerpunkt auf Portraitfotografie\.\s*Er arbeitet für Unternehmen, Editorial und freie Projekte aus dem Raum München und Ingolstadt\./g,
+      'Ich fotografiere Unternehmer, Kreative, Persönlichkeiten und dokumentarische Portraits aus dem Raum Ingolstadt und München. Mit Wurzeln im Skateboarding und einem Studium in Fotojournalismus und Dokumentarfotografie setze ich Markenphilosophie in ausdrucksstarkes, stilsicheres Storytelling um.',
+    )
+    .replace(
+      /Alexander verbindet Planung, Shooting, Schnitt und Varianten so, dass Website, Social und Kampagne denselben Look behalten\./g,
+      'Ich verbinde Planung, Shooting, Schnitt und Varianten so, dass Website, Social und Kampagne denselben Look behalten.',
+    );
+}
+
 /** A calm, editorial hero for brands that prefer confidence over visual noise. */
 export function EditorialHeroSection({ data }: Props) {
   const eyebrow = (data.eyebrow as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
-  const text = (data.text as string) || (data.subline as string) || '';
+  const text = normalizeLegacySchuktuewCopy((data.text as string) || (data.subline as string) || '');
   const imagePrimary = (data.imagePrimary as string) || (data.image as string) || '';
   const imageSecondary = (data.imageSecondary as string) || '';
   const primaryCta = (data.primaryCta as Cta) || {};
