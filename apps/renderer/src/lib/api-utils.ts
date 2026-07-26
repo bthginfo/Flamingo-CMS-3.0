@@ -12,6 +12,7 @@ export {
   normalizeStyleOverridesForSection,
   normalizeStyleOverridesForSectionWithIssues,
   normalizeStyleOverridesWithIssues,
+  autoFixStyleOverridesForSectionReadability,
   validateStyleOverridesForApi,
 } from '@/lib/section-style-overrides';
 export type {

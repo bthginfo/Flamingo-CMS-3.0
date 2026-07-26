@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 import {
   validateDesignPayload,
-  autoFixDesignOnDark,
+  autoFixDesignReadable,
   type ColorIssue,
 } from '@/lib/color-validation';
 
@@ -36,7 +36,7 @@ export const PUT = withApiHandler(async (req, auth) => {
   //    mode (white text inherited onto a freshly-set dark background → all
   //    text invisible until the user notices). The fix is reported in the
   //    response so the AI knows what was changed.
-  const { design: fixedBody, applied: autoFixes } = autoFixDesignOnDark(body || {});
+  const { design: fixedBody, applied: autoFixes } = autoFixDesignReadable(body || {});
   const warnings: ColorIssue[] = initialIssues.filter((i) => i.severity !== 'error');
 
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, auth.tenantId));

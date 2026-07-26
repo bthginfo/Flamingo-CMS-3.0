@@ -45,6 +45,13 @@ export type SiteProfile = {
   voice: {
     attributes: string[];
     avoid: string[];
+    /**
+     * Preferred public writing perspective for generated website copy.
+     * - "ich": solo expert / creator brand
+     * - "wir": company, practice, studio, association
+     * - "neutral": only for directories, legal or deliberately institutional copy
+     */
+    perspective?: 'ich' | 'wir' | 'neutral';
   };
   facts: {
     approvedClaims: string[];
@@ -106,6 +113,83 @@ const GENERIC_COPY: Array<{ pattern: RegExp; replacement: string }> = [
   { pattern: /\b(?:hier|jetzt) klicken\b/i, replacement: 'Verwende ein aktionsspezifisches CTA-Label.' },
 ];
 
+const STAGE_DIRECTION_COPY: Array<{ pattern: RegExp; replacement: string }> = [
+  { pattern: /\b(?:diese|die|der)\s+section\b/i, replacement: 'Schreibe echten Website-Text; beschreibe niemals die Section selbst.' },
+  { pattern: /\b(?:hero|feature|prominentes?)\s+reel\b/i, replacement: 'Benenne Inhalt, Nutzen oder Projekt statt interner Medien-Regie.' },
+  { pattern: /\b(?:brand\s*asset|visueller\s+anker|bildwelt|regieanweisung|platzhalter)\b/i, replacement: 'Ersetze interne Design-/Regiebegriffe durch verständliche Kundenkommunikation.' },
+  { pattern: /\bzeigt\s+(?:den|die|das)\s+(?:ansatz|workflow|system|idee|produktion)\b/i, replacement: 'Formuliere die Aussage direkt aus Sicht des Unternehmens.' },
+  { pattern: /\bhier\s+(?:wird|werden|sieht\s+man|zeigen\s+wir)\b/i, replacement: 'Vermeide Meta-Kommentare; schreibe den Inhalt so, wie er veröffentlicht werden soll.' },
+  { pattern: /\b(?:als|dient\s+als)\s+(?:visueller|inhaltlicher)\s+anker\b/i, replacement: 'Beschreibe konkrete Leistung, Haltung oder Ergebnis.' },
+];
+
+const ADVANCED_SECTION_TYPES = new Set([
+  'dualWave',
+  'cinematicChapters',
+  'transformationSequence',
+  'xrayReveal',
+  'sceneLab',
+  'infiniteCanvas',
+  'kineticIdentity',
+  'signaturePath',
+  'layeredAnatomy',
+  'guidedChoice',
+  'dayToNight',
+  'livingBlueprint',
+  'editorialCardMorph',
+  'materialAtelier',
+  'verticalReelShowcase',
+  'aiWorkflowReel',
+  'cameraExplodeScroll',
+]);
+
+const PREMIUM_SECTION_TYPES = new Set([
+  'cinematicHero',
+  'glowHero',
+  'editorialHero',
+  'splitHero',
+  'spotlightCards',
+  'scrollStory',
+  'premiumComparison',
+  'immersiveCtaBanner',
+  'proofWall',
+  'editorialFeatureRail',
+  'serviceTabs',
+  'statsCounter',
+  'ctaSplit',
+  'showcaseStory',
+  'imageAccordion',
+  'smartInquiry',
+  'offerMatcher',
+  'priceCalculator',
+  'timeline',
+  'testimonialWall',
+  'logoCloud',
+]);
+
+const BASIC_DEFAULT_HOMEPAGE_SEQUENCE = [
+  'hero',
+  'uspStrip',
+  'servicesGrid',
+  'processSteps',
+  'testimonials',
+  'faq',
+  'ctaBand',
+];
+
+const BASIC_SECTION_TYPES = new Set([
+  'hero',
+  'collectionHero',
+  'uspStrip',
+  'servicesGrid',
+  'processSteps',
+  'testimonials',
+  'faq',
+  'ctaBand',
+  'textImage',
+  'richText',
+  'contact',
+]);
+
 const GENERIC_TITLES = new Set(['home', 'homepage', 'startseite', 'willkommen', 'website', 'flamingo cms']);
 const IMAGE_KEYS = new Set(['image', 'imageurl', 'imagesrc', 'src', 'coverimage', 'heroimage', 'imageprimary', 'imagesecondary']);
 const ARRAY_MINIMA: Record<string, number> = {
@@ -163,6 +247,54 @@ function normalizedImage(value: string): string {
   } catch {
     return value.split(/[?#]/)[0].trim().toLowerCase();
   }
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function contentSeverity(input: ContentQualityInput): QualitySeverity {
+  // Stored legacy content may already contain weak copy. Plan/API preflight is
+  // strict so new AI-generated pages are stopped before they are written.
+  return input.mode === 'stored' ? 'warning' : 'error';
+}
+
+function writingPerspective(input: ContentQualityInput): 'ich' | 'wir' | 'neutral' | null {
+  const explicit = input.siteProfile?.voice?.perspective;
+  if (explicit) return explicit;
+  const voiceText = normalize([
+    ...(input.siteProfile?.voice?.attributes || []),
+    ...(input.siteProfile?.voice?.avoid || []),
+  ].join(' '));
+  if (/\bich\b|erste person singular|first person singular|solo/.test(voiceText)) return 'ich';
+  if (/\bwir\b|erste person plural|first person plural|team|unternehmen|praxis|agentur|verein/.test(voiceText)) return 'wir';
+  return null;
+}
+
+function isPageOrCollectionPath(path: string): boolean {
+  return path.startsWith('pages') || path.startsWith('collections');
+}
+
+function isHomepageSlug(slug: string): boolean {
+  const normalized = slug.replace(/^\/+|\/+$/g, '');
+  return normalized === '' || normalized === 'startseite' || normalized === 'home';
+}
+
+function isLegalSlug(slug: string): boolean {
+  return ['impressum', 'datenschutz', 'agb', 'widerrufsbelehrung'].includes(slug.replace(/^\/+|\/+$/g, ''));
+}
+
+function sectionTypes(page: PlannedPage): string[] {
+  return Array.isArray(page.sections)
+    ? page.sections
+      .filter(isObjectRecord)
+      .map(section => text(section.type))
+      .filter(Boolean)
+    : [];
+}
+
+function hasPremiumOrAdvanced(types: string[]): boolean {
+  return types.some(type => PREMIUM_SECTION_TYPES.has(type) || ADVANCED_SECTION_TYPES.has(type));
 }
 
 function walk(value: unknown, path: string, visit: (entry: WalkEntry) => void, parent?: Record<string, unknown>, key = ''): void {
@@ -408,6 +540,93 @@ function validatePlanStructure(input: ContentQualityInput, issues: ContentQualit
   }
 }
 
+function validatePlanComposition(input: ContentQualityInput, issues: ContentQualityIssue[]): void {
+  if (input.mode === 'profile' || input.mode === 'stored') return;
+  if (!Array.isArray(input.pages) || input.pages.length === 0) return;
+
+  const allowed = new Set(input.allowedSectionTypes || []);
+  const premiumAvailable = [...allowed].some(type => PREMIUM_SECTION_TYPES.has(type) || ADVANCED_SECTION_TYPES.has(type));
+  const pages = input.pages.filter(isObjectRecord);
+  const homepageIndex = pages.findIndex(page => isHomepageSlug(text(page.slug)));
+  const homepage = homepageIndex >= 0 ? pages[homepageIndex] : null;
+
+  if (homepage) {
+    const types = sectionTypes(homepage);
+    if (premiumAvailable && types.length >= 4 && !hasPremiumOrAdvanced(types)) {
+      issues.push(issue({
+        code: 'composition.homepage_no_premium',
+        severity: 'error',
+        location: `pages[${homepageIndex}].sections`,
+        message: 'Homepage plan uses only basic sections although Premium/Advanced sections are available.',
+        repair: repair(
+          'replace',
+          'Replace at least one generic middle section with a fitting Premium/Advanced section from the experience family, e.g. proofWall, cinematicChapters, editorialCardMorph, materialAtelier, infiniteCanvas, guidedChoice or cameraExplodeScroll.',
+          'Homepage contains at least one Premium/Advanced section with a distinct job and real content/assets.',
+        ),
+      }));
+    }
+
+    const defaultPrefix = BASIC_DEFAULT_HOMEPAGE_SEQUENCE.slice(0, Math.min(types.length, BASIC_DEFAULT_HOMEPAGE_SEQUENCE.length));
+    if (types.length >= 5 && defaultPrefix.every((type, index) => types[index] === type)) {
+      issues.push(issue({
+        code: 'composition.default_homepage_sequence',
+        severity: 'error',
+        location: `pages[${homepageIndex}].sections`,
+        message: 'Homepage repeats the generic starter blueprint and will look like every other AI-generated page.',
+        repair: repair(
+          'replace',
+          'Use a distinct experience-family sequence. Keep the page goal, but change section types and order so the story is specific to this tenant.',
+          'Homepage no longer starts with the default hero → uspStrip → servicesGrid → processSteps sequence.',
+        ),
+      }));
+    }
+
+    let basicRun = 0;
+    for (let index = 0; index < types.length; index += 1) {
+      basicRun = BASIC_SECTION_TYPES.has(types[index]) ? basicRun + 1 : 0;
+      if (basicRun >= 5) {
+        issues.push(issue({
+          code: 'composition.too_many_basic_sections',
+          severity: 'warning',
+          location: `pages[${homepageIndex}].sections[${index}]`,
+          message: 'Five basic sections appear in a row; the page will feel flat.',
+          repair: repair(
+            'replace',
+            'Insert one fitting Premium/Advanced narrative, proof or interaction section into this run.',
+            'No homepage run contains more than four basic sections without a richer section.',
+          ),
+        }));
+        break;
+      }
+    }
+  }
+
+  const seenSequences = new Map<string, string>();
+  for (const page of pages) {
+    const slug = text(page.slug);
+    if (isLegalSlug(slug)) continue;
+    const types = sectionTypes(page);
+    if (types.length < 3) continue;
+    const signature = types.join('>');
+    const firstSlug = seenSequences.get(signature);
+    if (firstSlug) {
+      issues.push(issue({
+        code: 'composition.duplicate_page_sequence',
+        severity: 'warning',
+        location: `pages[${slug}].sections`,
+        message: `Page "${slug}" uses the exact same section sequence as "${firstSlug}".`,
+        repair: repair(
+          'replace',
+          'Change opener, middle proof/story section or closer so this page has its own structure and job.',
+          'No non-legal pages share the exact same section-type sequence.',
+        ),
+      }));
+    } else {
+      seenSequences.set(signature, slug);
+    }
+  }
+}
+
 function validateCopyAndBudgets(input: ContentQualityInput, issues: ContentQualityIssue[]): void {
   const roots: Array<[string, unknown]> = [
     ['brand', input.brand], ['contact', input.contact], ['seoGlobal', input.seoGlobal],
@@ -415,6 +634,16 @@ function validateCopyAndBudgets(input: ContentQualityInput, issues: ContentQuali
     ['collections', input.collections],
   ];
   const seenGeneric = new Set<string>();
+  const strictSeverity = contentSeverity(input);
+  const perspective = writingPerspective(input);
+  const businessNames = [
+    text(input.siteProfile?.identity?.businessName),
+    text(input.siteProfile?.identity?.legalName),
+    text(input.brand?.companyName),
+  ].filter((value, index, arr) => value && arr.indexOf(value) === index);
+  const businessNamePatterns = businessNames
+    .filter(value => value.length >= 4)
+    .map(value => new RegExp(`\\b${escapeRegExp(value)}\\s+(?:ist|arbeitet|bietet|entwickelt|realisiert|fotografiert|begleitet|macht|steht)\\b`, 'i'));
 
   for (const [rootPath, rootValue] of roots) {
     walk(rootValue, rootPath, ({ path, key, value }) => {
@@ -432,6 +661,58 @@ function validateCopyAndBudgets(input: ContentQualityInput, issues: ContentQuali
           message: `Generic copy detected: "${clean.slice(0, 100)}${clean.length > 100 ? '…' : ''}"`,
           repair: repair('replace', generic.replacement, 'Copy names a concrete audience, offer, outcome or proof and contains no generic phrase.'),
         }));
+      }
+
+      if (isPageOrCollectionPath(path)) {
+        for (const stageDirection of STAGE_DIRECTION_COPY) {
+          if (!stageDirection.pattern.test(clean)) continue;
+          const fingerprint = `${path}:${stageDirection.pattern.source}`;
+          if (seenGeneric.has(fingerprint)) continue;
+          seenGeneric.add(fingerprint);
+          issues.push(issue({
+            code: 'copy.stage_direction',
+            severity: strictSeverity,
+            location: path,
+            message: `Internal stage/design direction detected in public copy: "${clean.slice(0, 120)}${clean.length > 120 ? '…' : ''}"`,
+            repair: repair(
+              'replace',
+              stageDirection.replacement,
+              'The field reads like final public website copy and contains no meta-comment about sections, media, layout or intent.',
+            ),
+          }));
+        }
+
+        if (businessNamePatterns.some(pattern => pattern.test(clean))) {
+          issues.push(issue({
+            code: 'copy.third_person_business',
+            severity: strictSeverity,
+            location: path,
+            message: `Business is described from the outside instead of speaking in its own voice: "${clean.slice(0, 120)}${clean.length > 120 ? '…' : ''}"`,
+            repair: repair(
+              'replace',
+              perspective === 'ich'
+                ? 'Rewrite from first-person perspective ("Ich …") using verified facts, not as a biography about the business.'
+                : 'Rewrite from company perspective ("Wir …") using verified facts, not as an outside description of the business.',
+              perspective === 'ich'
+                ? 'Public copy speaks as "ich" where the business introduces its own work.'
+                : 'Public copy speaks as "wir" or directly to the customer where the business introduces its own work.',
+            ),
+          }));
+        }
+
+        if (perspective === 'ich' && /\b(?:er|sie)\s+(?:arbeitet|bietet|entwickelt|realisiert|fotografiert|begleitet|macht|steht)\b/i.test(clean)) {
+          issues.push(issue({
+            code: 'copy.third_person_solo',
+            severity: strictSeverity,
+            location: path,
+            message: `Solo-brand copy uses third person instead of first person: "${clean.slice(0, 120)}${clean.length > 120 ? '…' : ''}"`,
+            repair: repair(
+              'replace',
+              'Rewrite this sentence from first-person perspective and keep only verified facts.',
+              'The sentence speaks as "ich" and contains no third-person biography phrasing.',
+            ),
+          }));
+        }
       }
 
       const lowerKey = key.toLowerCase();
@@ -700,6 +981,7 @@ export function validateContentQuality(input: ContentQualityInput): ContentQuali
   if (normalizedInput.mode !== 'stored') validateProfile(normalizedInput.siteProfile, issues);
   if (normalizedInput.mode !== 'profile') {
     validatePlanStructure(normalizedInput, issues);
+    validatePlanComposition(normalizedInput, issues);
     validateCopyAndBudgets(normalizedInput, issues);
     validateArraysAndImages(normalizedInput, issues);
     validateLinks(normalizedInput, issues);

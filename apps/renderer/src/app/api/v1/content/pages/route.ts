@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection } from '@/lib/api-utils';
+import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection, autoFixStyleOverridesForSectionReadability } from '@/lib/api-utils';
 import { resolveSectionWriteIdentities } from '@/lib/section-write-identity';
 
 export const POST = withApiHandler(async (req, auth) => {
@@ -65,28 +65,37 @@ export const POST = withApiHandler(async (req, auth) => {
   // slug with a 500 — a long-standing pain point for AI agents writing content.
   let sectionValues: Record<string, unknown>[] = [];
   if (hasSections && sections.length > 0) {
-    sectionValues = sections.map((s: any, i: number) => ({
-      id: clash ? crypto.randomUUID() : (s.id || crypto.randomUUID()),
-      tenantId: auth.tenantId,
-      pageId,
-      type: s.type,
-      definitionKey: identityResolution.identities[i].definitionKey,
-      schemaVersion: identityResolution.identities[i].schemaVersion,
-      data: normalizeSectionData(s.type, s.data || {}),
-      variant: s.variant || null,
-      visible: s.visible !== false,
-      container: s.container || 'default',
-      spacingTop: s.spacingTop || 'm',
-      spacingBottom: s.spacingBottom || 'm',
-      anchorId: s.anchorId || null,
-      styleOverrides: normalizeStyleOverridesForSection(
+    sectionValues = sections.map((s: any, i: number) => {
+      const normalizedStyleOverrides = normalizeStyleOverridesForSection(
         s.type,
         s.styleOverrides,
         auth.tenant.industry,
         identityResolution.identities[i].definitionKey,
-      ),
-      sortOrder: i,
-    }));
+      );
+      const { styleOverrides } = autoFixStyleOverridesForSectionReadability(
+        s.type,
+        normalizedStyleOverrides,
+        auth.tenant.industry,
+        identityResolution.identities[i].definitionKey,
+      );
+      return {
+        id: clash ? crypto.randomUUID() : (s.id || crypto.randomUUID()),
+        tenantId: auth.tenantId,
+        pageId,
+        type: s.type,
+        definitionKey: identityResolution.identities[i].definitionKey,
+        schemaVersion: identityResolution.identities[i].schemaVersion,
+        data: normalizeSectionData(s.type, s.data || {}),
+        variant: s.variant || null,
+        visible: s.visible !== false,
+        container: s.container || 'default',
+        spacingTop: s.spacingTop || 'm',
+        spacingBottom: s.spacingBottom || 'm',
+        anchorId: s.anchorId || null,
+        styleOverrides,
+        sortOrder: i,
+      };
+    });
   }
 
   if (clash) {

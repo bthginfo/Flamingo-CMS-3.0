@@ -86,6 +86,83 @@ const SECTION_EXAMPLES: Record<string, Record<string, unknown>> = {
   contact: { headline: 'Persönlich erreichbar', introText: 'Erkläre, wann und wie schnell das Unternehmen antwortet.', formEnabled: true, submitLabel: 'Anfrage senden' },
 };
 
+const EXPERIENCE_FAMILIES = {
+  'local-service-premium': {
+    useWhen: 'Local company, trade, practice, studio or service business with lead generation as primary goal.',
+    voice: 'Usually "wir"; write as the company, not about the company.',
+    homepageFormula: [
+      'premium hero with exact offer + location + next action',
+      'proof/trust section with verified facts',
+      'service/offer section with customer outcomes',
+      'one rich narrative or Advanced section when assets exist',
+      'process or guided choice',
+      'faq/contact conversion',
+    ],
+    recommendedSections: ['cinematicHero', 'glowHero', 'proofWall', 'serviceTabs', 'guidedChoice', 'cinematicChapters', 'materialAtelier', 'smartInquiry', 'immersiveCtaBanner'],
+  },
+  'visual-portfolio': {
+    useWhen: 'Photography, film, design, creator, artist, architecture or other visual work.',
+    voice: 'Usually "ich" for solo experts, "wir" for studios. Never biography-style third person unless explicitly requested.',
+    homepageFormula: [
+      'visual hero with strong point of view',
+      'curated portfolio or reel showcase',
+      'one Advanced visual experience',
+      'services/process explained through outcomes',
+      'selected proof/projects',
+      'direct contact conversion',
+    ],
+    recommendedSections: ['cinematicHero', 'editorialHero', 'verticalReelShowcase', 'infiniteCanvas', 'editorialCardMorph', 'cameraExplodeScroll', 'aiWorkflowReel', 'proofWall', 'ctaSplit'],
+  },
+  'political-news': {
+    useWhen: 'Party, association, public initiative, club or organization with news, people and issues.',
+    voice: 'Usually "wir"; factual, direct, public-facing.',
+    homepageFormula: [
+      'full-width identity or campaign hero',
+      'latest news with search/archive route',
+      'issues/program grouped clearly',
+      'people/team with correct portraits',
+      'participation/contact CTA',
+      'footer with complete organization links',
+    ],
+    recommendedSections: ['editorialHero', 'cinematicHero', 'newsGrid', 'timeline', 'teamShowcase', 'proofWall', 'spotlightCards', 'ctaSplit', 'faq'],
+  },
+  'booking-service': {
+    useWhen: 'Appointments, courses, reservations, rooms, practices or scheduled services.',
+    voice: 'Usually "wir"; reduce uncertainty and explain booking expectations.',
+    homepageFormula: [
+      'benefit hero with booking CTA',
+      'offer/course/room overview',
+      'availability or booking section',
+      'trust/process',
+      'faq about booking and cancellation',
+      'contact fallback',
+    ],
+    recommendedSections: ['glowHero', 'bookingSlotPicker', 'courseSchedule', 'roomGrid', 'guidedChoice', 'proofWall', 'faq', 'contact'],
+  },
+  'commerce-product': {
+    useWhen: 'Shop, products, menus, packages or purchasable offers.',
+    voice: 'Usually "wir"; emphasize fit, value, proof and next buying step.',
+    homepageFormula: [
+      'product/value hero',
+      'curated offer/product grid',
+      'proof/comparison',
+      'process/shipping/payment clarity',
+      'faq',
+      'conversion CTA',
+    ],
+    recommendedSections: ['cinematicHero', 'shopProductGrid', 'premiumComparison', 'priceCalculator', 'proofWall', 'offerMatcher', 'faq', 'ctaBand'],
+  },
+} as const;
+
+const AI_COPY_RULES = [
+  'Write final public website copy only. Never write stage directions, section descriptions, design notes or media notes.',
+  'Write from the business perspective. Use "ich" for solo creator/expert brands when fitting, "wir" for teams/companies/organizations.',
+  'Do not write "Business X ist/arbeitet/bietet..." on public pages unless the field is explicitly an external press bio.',
+  'Every sentence must do at least one useful job: name audience, offer, outcome, proof, process, location, decision help or next action.',
+  'Never use placeholder labels like "Hero Reel", "Brand Asset", "visueller Anker", repeated "Mehr erfahren", "Lorem" or "Hier klicken".',
+  'If a fact is unknown, omit it or put it into siteProfile.facts.unknowns; never fill gaps with plausible-sounding claims.',
+] as const;
+
 function sectionType(entry: SectionCatalogEntry): string | null {
   return entry.type || entry.id || null;
 }
@@ -189,7 +266,7 @@ const AGENT_REQUEST_BODIES = {
 } as const;
 
 const AGENT_AUTOPILOT_RUNBOOK = {
-  persona: 'Careful deterministic CMS writer. Prefer valid, specific, verified content over creative breadth.',
+  persona: 'Senior website strategist and CMS writer. Produce distinct, premium, verified websites; never template-stamp pages.',
   firstMove: 'Read agentContract completely, then POST /api/v1/content/validate with mode="profile" or mode="plan" before any content write.',
   writeOrder: [
     'profile-preflight',
@@ -212,6 +289,8 @@ const AGENT_AUTOPILOT_RUNBOOK = {
     'If a fact is unknown, put it in siteProfile.facts.unknowns and do not state it publicly.',
     'If POST /validate returns valid=false, do not write pages yet.',
     'If GET /validate returns readyToPublish=false, do not publish.',
+    'If any copy sounds like a section note, media note, prompt note or third-person biography, rewrite it before validation.',
+    'If a page has low contrast or missing foreground tokens on a custom background, repair colors before publishing.',
     'If an endpoint returns 400, change only the named location; never retry the same body.',
   ],
   repairLoop: {
@@ -221,7 +300,7 @@ const AGENT_AUTOPILOT_RUNBOOK = {
   },
   pageWriting: {
     batchSize: 1,
-    rule: 'Write one page per request with upsert=true. Inspect the response id before writing page SEO or links to that page.',
+    rule: 'Write one page per request with upsert=true. Inspect the response id before writing page SEO or links to that page. Keep each page sequence distinct.',
     fallback: 'If a premium/advanced section cannot be filled with real assets, replace it with a simpler available section instead of inventing media.',
   },
   commonFieldAliasesHandledByApi: {
@@ -300,8 +379,33 @@ export function buildAiAgentContract(input: {
     : null;
 
   return {
-    protocolVersion: '1.1',
+    protocolVersion: '1.2',
     objective: `Build a complete, credible ${input.industry} website for ${input.tenantName}. Replace every sample value with verified business-specific content.`,
+    missionBrief: {
+      goal: 'Generate a premium, non-generic website that feels tailored to this tenant, its assets and its audience.',
+      copyRules: AI_COPY_RULES,
+      compositionRules: [
+        'Pick one experienceFamily before planning pages and follow its homepageFormula.',
+        'If Premium/Advanced sections are available and real media/assets exist, the homepage must use at least one fitting Premium/Advanced section.',
+        'Do not reuse the default hero → uspStrip → servicesGrid → processSteps → testimonials → faq → ctaBand sequence.',
+        'No two non-legal pages may share the exact same section sequence.',
+        'Use fewer, stronger sections on subpages; do not repeat homepage content with different headlines.',
+      ],
+      colorRules: [
+        'Manual color overrides are allowed, but every text/background pair must pass WCAG AA.',
+        'When setting a local section/card/button/badge background, also set readable foreground tokens unless the inherited tokens are already readable.',
+        'Use /validate before publish; color warnings are blockers.',
+      ],
+    },
+    experienceFamilies: Object.fromEntries(
+      Object.entries(EXPERIENCE_FAMILIES).map(([key, family]) => [
+        key,
+        {
+          ...family,
+          recommendedSections: family.recommendedSections.filter(type => allowed.has(type)),
+        },
+      ]),
+    ),
     currentState: { existingPages: input.existingPages, shopEnabled: input.hasShop, bookingEnabled: input.hasBooking },
     agentRunbook: AGENT_AUTOPILOT_RUNBOOK,
     requestBodies: AGENT_REQUEST_BODIES,
@@ -329,11 +433,14 @@ export function buildAiAgentContract(input: {
     },
     qualityBar: [
       'Never invent awards, reviews, people, prices, addresses or opening hours.',
+      'Write as the business/person, not from an outside narrator perspective.',
+      'No public field may contain stage directions, section labels, design notes or media-production notes.',
       'Headlines communicate a customer outcome, not generic welcome copy.',
       'Every CTA points to an existing route and describes the next action.',
       'Every image is relevant and has meaningful alt text.',
       'Use at least three substantive array items unless reality provides fewer.',
       'Avoid duplicated paragraphs and repeated headlines across sections.',
+      'Homepage must include at least one Premium/Advanced section when available assets make it feasible.',
       'Do not publish while validation reports any error or color warning.',
     ],
     sitemapPolicy,
@@ -408,11 +515,12 @@ export function buildAiAgentContract(input: {
             conversions: ['specific measurable actions'],
           },
           offers: [{ name: 'offer', outcome: 'customer outcome', proof: 'verified proof or omit', ctaLabel: 'specific action', ctaHref: '/existing-route' }],
-          voice: { attributes: ['at least two'], avoid: ['phrases/tones to avoid'] },
+          voice: { attributes: ['at least two'], avoid: ['phrases/tones to avoid'], perspective: 'ich|wir|neutral; choose ich for solo expert/creator brands, wir for companies/teams/organizations' },
           facts: { approvedClaims: ['verified only'], prohibitedClaims: ['must never be stated'], unknowns: ['requires user/source verification'] },
         },
         rules: [
           'Preserve exact spelling of business, people, street, city and region across every endpoint.',
+          'Choose voice.perspective before writing: "ich" for solo creator/expert brands, "wir" for companies/teams/organizations, "neutral" only for legal/archive pages.',
           'Never invent awards, ratings, years, prices, medical/legal claims or opening hours.',
           'If location/identity sources disagree, stop content generation and return the conflict in facts.unknowns.',
         ],
@@ -427,7 +535,10 @@ export function buildAiAgentContract(input: {
           sections: [{ type: 'availableSectionTypes only', definitionKey: 'omit or copy the exact availableSectionTypes entry', schemaVersion: 'omit or copy the exact availableSectionTypes entry', purpose: 'one job', data: 'exact sectionDataSchemas[type] shape', styleOverrides: 'optional exact sectionStyleContracts[type] keys' }],
         },
         rules: [
+          'Select one experienceFamily and state it in the plan before page sections.',
           'Use 7-10 sections on a homepage only when every section has a distinct job; use fewer on subpages.',
+          'When Premium/Advanced sections are available and usable assets exist, the homepage must include at least one fitting Premium/Advanced section.',
+          'Do not use the generic homepage sequence hero, uspStrip, servicesGrid, processSteps, testimonials, faq, ctaBand.',
           'No page may share the exact same opener-middle-closer sequence with another page.',
           'Every CTA resolves to a planned page, collection item, anchor, phone, email or verified external URL.',
           'Every page has unique SEO before any write starts.',
@@ -444,7 +555,7 @@ export function buildAiAgentContract(input: {
     },
     advancedExperienceGuide: {
       available: ADVANCED_SECTION_TYPES.filter(type => allowed.has(type)),
-      selectionRule: 'Use at most one Advanced experience on a normal page, only when it has a distinct storytelling or exploration job and the required media assets are available. A standard section is the correct fallback when assets are missing.',
+      selectionRule: 'Use Advanced sections deliberately, not rarely. Homepage: use one fitting Advanced/Premium experience when the tenant has real assets or a visual/storytelling need. Subpages: use Advanced only when it adds clarity. A standard section is the fallback only when required assets are missing.',
       assetRules: {
         dualWave: '6–12 concise titled entries; one list powers both waves. Prefer at least 4 relevant images.',
         cinematicChapters: '3–6 coherent chapters with one strong landscape image each and short copy.',
@@ -477,5 +588,5 @@ export function buildAiAgentContract(input: {
 }
 
 export function buildAiAgentPrompt(tenantName: string, industry: string): string {
-  return `Create a complete ${industry} website for ${tenantName}. Follow agentContract.stateMachine in order, then agentContract.agentRunbook.writeOrder, and use agentContract.requestBodies as payload templates. First fill agentContract.weakModelWorkflow.siteProfileIntake, then plan all pages with pagePlanContract and preflight them via POST /api/v1/content/validate. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Replace examples with verified German business content. Repair only named issue locations. Publish only with readyToPublish=true and no color warnings.`;
+  return `Create a complete premium ${industry} website for ${tenantName}. Follow agentContract.stateMachine, agentContract.agentRunbook.writeOrder, agentContract.requestBodies and agentContract.missionBrief exactly. Choose one agentContract.experienceFamilies entry before planning. Write final public German copy from the business perspective (ich/wir), never stage directions or section/media notes. Plan distinct pages with at least one fitting Premium/Advanced homepage section when available, then preflight via POST /api/v1/content/validate before writing. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Keep manual color overrides valid: every foreground/background pair must pass /validate. Repair only named issue locations. Publish only with readyToPublish=true and no color warnings.`;
 }

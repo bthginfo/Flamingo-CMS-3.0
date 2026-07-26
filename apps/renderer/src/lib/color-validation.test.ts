@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseColor, contrastRatio, isDarkColor, isValidColorString, validateBrandPayload } from './color-validation';
+import { parseColor, contrastRatio, isDarkColor, isValidColorString, validateBrandPayload, autoFixDesignReadable, validateSectionStyleOverrides } from './color-validation';
 
 test('parseColor accepts hex/rgb/rgba and rejects junk', () => {
   assert.ok(parseColor('#000000'));
@@ -63,4 +63,32 @@ test('brand validation covers every rendered color family', () => {
     'brand.badgeBorder',
     'brand.btnOutlineText',
   ]));
+});
+
+test('design auto-fix derives readable foregrounds without replacing explicit choices', () => {
+  const { design, applied } = autoFixDesignReadable({
+    sectionBg: '#050505',
+    cardBg: '#111827',
+    btnBg: '#f5f5f5',
+    badgeBg: '#1f2937',
+    headingColor: '#eeeeee',
+  });
+  assert.equal(design.headingColor, '#eeeeee');
+  assert.equal(design.bodyColor, '#ffffff');
+  assert.equal(design.cardBodyColor, '#ffffff');
+  assert.equal(design.btnText, '#0f172a');
+  assert.equal(design.badgeText, '#ffffff');
+  assert.ok(applied.includes('bodyColor=#ffffff'));
+  assert.ok(!applied.includes('headingColor=#ffffff'));
+});
+
+test('section contrast validation checks inherited design tokens when overrides are absent', () => {
+  const issues = validateSectionStyleOverrides(0, 'hero', {}, {
+    sectionBg: '#f8fafc',
+    headingColor: '#ffffff',
+    bodyColor: '#ffffff',
+  });
+  const locations = issues.map(issue => issue.location);
+  assert.ok(locations.includes('sections[0].heading on .sectionBg'));
+  assert.ok(locations.includes('sections[0].body on .sectionBg'));
 });

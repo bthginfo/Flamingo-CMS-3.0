@@ -78,6 +78,10 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
   if (settings?.design && typeof settings.design === 'object') {
     colorIssues.push(...validateDesignPayload(settings.design as Record<string, unknown>));
   }
+  const inheritedColorTokens = {
+    ...((settings?.brand && typeof settings.brand === 'object') ? settings.brand as Record<string, unknown> : {}),
+    ...((settings?.design && typeof settings.design === 'object') ? settings.design as Record<string, unknown> : {}),
+  };
 
   // ── Page + section audit ──────────────────────────────────────────────
   const allPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title })
@@ -239,11 +243,14 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
           requireString('headline'); requireArray('parts', 4, 'Use 4-6 camera or production parts with { label, text, offsetX, offsetY }.'); requireArrayMax('parts', 6); break;
       }
 
-      if (s.styleOverrides && typeof s.styleOverrides === 'object') {
-        const issues = validateSectionStyleOverrides(i, s.type, s.styleOverrides as Record<string, unknown>);
-        for (const issue of issues) {
-          colorIssues.push({ ...issue, location: `${p.slug} → ${issue.location ?? `sections[${i}]`}` });
-        }
+      const sectionColorIssues = validateSectionStyleOverrides(
+        i,
+        s.type,
+        (s.styleOverrides && typeof s.styleOverrides === 'object' ? s.styleOverrides : {}) as Record<string, unknown>,
+        inheritedColorTokens,
+      );
+      for (const issue of sectionColorIssues) {
+        colorIssues.push({ ...issue, location: `${p.slug} → ${issue.location ?? `sections[${i}]`}` });
       }
     }
   }

@@ -1,4 +1,4 @@
-import { isValidColorString } from './color-validation';
+import { isValidColorString, readableTextColorForBackground } from './color-validation';
 import {
   COLOR_FIELD_KEYS,
   COLOR_FIELD_BY_CSS_VAR,
@@ -207,6 +207,59 @@ export function normalizeStyleOverridesForSection(
   definitionKey?: string | null,
 ): Record<string, string> | null {
   return normalizeStyleOverridesForSectionWithIssues(sectionType, styleOverrides, industry, 'styleOverrides', definitionKey).styleOverrides;
+}
+
+export function autoFixStyleOverridesForSectionReadability(
+  sectionType: string,
+  styleOverrides: Record<string, string> | null,
+  industry?: string,
+  definitionKey?: string | null,
+): { styleOverrides: Record<string, string> | null; applied: string[] } {
+  if (!styleOverrides || Object.keys(styleOverrides).length === 0) {
+    return { styleOverrides, applied: [] };
+  }
+
+  const allowedFields = new Set(getFieldsForSection(sectionType, industry, definitionKey).map(canonicalColorField));
+  const out = { ...styleOverrides };
+  const applied: string[] = [];
+  const value = (field: ColorFieldKey): string | undefined => {
+    const raw = out[FIELD_DEFS[canonicalColorField(field)].cssVar];
+    return typeof raw === 'string' && raw.trim() ? raw.trim() : undefined;
+  };
+  const setIfMissing = (field: ColorFieldKey, color: string) => {
+    const canonical = canonicalColorField(field);
+    if (!allowedFields.has(canonical)) return;
+    const cssVar = FIELD_DEFS[canonical].cssVar;
+    if (out[cssVar]) return;
+    out[cssVar] = color;
+    applied.push(`${cssVar}=${color}`);
+  };
+
+  const sectionBg = value('sectionBg');
+  const cardBg = value('cardBg');
+  const btnBg = value('btnBg');
+  const badgeBg = value('badgeBg');
+  const sectionCanvas = '#ffffff';
+  const cardCanvas = sectionBg || sectionCanvas;
+
+  if (sectionBg) {
+    setIfMissing('headingColor', readableTextColorForBackground(sectionBg, { canvas: sectionCanvas, large: true, role: 'heading' }));
+    setIfMissing('bodyColor', readableTextColorForBackground(sectionBg, { canvas: sectionCanvas, role: 'body' }));
+    setIfMissing('mutedColor', readableTextColorForBackground(sectionBg, { canvas: sectionCanvas, role: 'muted' }));
+  }
+  if (cardBg) {
+    setIfMissing('cardHeadingColor', readableTextColorForBackground(cardBg, { canvas: cardCanvas, large: true, role: 'heading' }));
+    setIfMissing('cardBodyColor', readableTextColorForBackground(cardBg, { canvas: cardCanvas, role: 'body' }));
+    setIfMissing('cardMutedColor', readableTextColorForBackground(cardBg, { canvas: cardCanvas, role: 'muted' }));
+  }
+  if (btnBg) {
+    setIfMissing('btnText', readableTextColorForBackground(btnBg, { canvas: cardBg || sectionBg || sectionCanvas, role: 'button' }));
+  }
+  if (badgeBg) {
+    setIfMissing('badgeText', readableTextColorForBackground(badgeBg, { canvas: cardBg || sectionBg || sectionCanvas, role: 'badge' }));
+  }
+
+  return { styleOverrides: Object.keys(out).length ? out : null, applied };
 }
 
 export function validateStyleOverridesForApi(

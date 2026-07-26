@@ -136,6 +136,46 @@ export function validateContrastPair(
   };
 }
 
+export function readableTextColorForBackground(
+  bg: string | undefined,
+  opts: { canvas?: string; large?: boolean; role?: 'heading' | 'body' | 'muted' | 'button' | 'badge' } = {},
+): string {
+  if (!bg || !isValidColorString(bg)) return opts.role === 'muted' ? '#334155' : '#0f172a';
+  const canvas = opts.canvas || '#ffffff';
+  const required = opts.large ? WCAG_AA_LARGE : WCAG_AA_NORMAL;
+  const darkPalette = opts.role === 'muted'
+    ? ['#e2e8f0', '#f8fafc', '#ffffff']
+    : ['#ffffff', '#f8fafc', '#e2e8f0'];
+  const lightPalette = opts.role === 'muted'
+    ? ['#334155', '#1f2937', '#0f172a']
+    : ['#0f172a', '#111827', '#020617'];
+  const candidates = isDarkColor(bg)
+    ? [...darkPalette, ...lightPalette]
+    : [...lightPalette, ...darkPalette];
+  let best = candidates[0];
+  let bestRatio = -1;
+  for (const candidate of candidates) {
+    const ratio = contrastRatio(candidate, bg, canvas) ?? 0;
+    if (ratio >= required) return candidate;
+    if (ratio > bestRatio) {
+      best = candidate;
+      bestRatio = ratio;
+    }
+  }
+  return best;
+}
+
+function hasReadableContrast(
+  fg: string | undefined,
+  bg: string | undefined,
+  opts: { canvas?: string; large?: boolean } = {},
+): boolean {
+  if (!fg || !bg || !isValidColorString(fg) || !isValidColorString(bg)) return false;
+  const required = opts.large ? WCAG_AA_LARGE : WCAG_AA_NORMAL;
+  const ratio = contrastRatio(fg, bg, opts.canvas || '#ffffff');
+  return ratio !== null && ratio >= required;
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Brand payload validation
 // ────────────────────────────────────────────────────────────────────────────
@@ -221,6 +261,15 @@ function pickDesignValue(design: Record<string, unknown>, keys: string[]): strin
   return undefined;
 }
 
+function pickInheritedValue(
+  overrides: Record<string, unknown>,
+  overrideKeys: string[],
+  inherited: Record<string, unknown> | undefined,
+  inheritedKeys: string[],
+): string | undefined {
+  return pickFirst(overrides, overrideKeys) || (inherited ? pickDesignValue(inherited, inheritedKeys) : undefined);
+}
+
 export function validateDesignPayload(design: Record<string, unknown>): ColorIssue[] {
   const issues: ColorIssue[] = [];
   for (const f of [...DESIGN_COLOR_FIELDS, ...LEGACY_INTERNAL_DESIGN_COLOR_FIELDS]) {
@@ -295,6 +344,7 @@ const STYLE_OVERRIDE_TEXT_KEYS = new Set([
 export function validateSectionStyleOverrides(
   sectionIdx: number, sectionType: string,
   overrides: Record<string, unknown>,
+  inheritedTokens?: Record<string, unknown>,
 ): ColorIssue[] {
   const issues: ColorIssue[] = [];
   for (const [key, value] of Object.entries(overrides)) {
@@ -314,24 +364,28 @@ export function validateSectionStyleOverrides(
     }
   }
   // Contrast: heading/body over section/card bg
-  const sectionBg = pickFirst(overrides, ['--token-section-bg', '--style-section-bg']);
-  const cardBg    = pickFirst(overrides, ['--token-card-bg', '--style-card-bg']);
-  const heading   = pickFirst(overrides, ['--token-heading', '--style-heading-color']);
-  const body      = pickFirst(overrides, ['--token-body', '--style-body-color']);
-  const cardHeading = pickFirst(overrides, ['--token-card-heading']) || heading;
-  const cardBody = pickFirst(overrides, ['--token-card-body']) || body;
-  const btnBg     = pickFirst(overrides, ['--token-btn-bg', '--style-button-bg', '--brand-btn-bg']);
-  const btnText   = pickFirst(overrides, ['--token-btn-text', '--style-button-text', '--brand-btn-text']);
-  const badgeBg   = pickFirst(overrides, ['--token-badge-bg']);
-  const badgeText = pickFirst(overrides, ['--token-badge-text']);
+  const sectionBg = pickInheritedValue(overrides, ['--token-section-bg', '--style-section-bg'], inheritedTokens, ['sectionBg', 'pageBg']);
+  const cardBg    = pickInheritedValue(overrides, ['--token-card-bg', '--style-card-bg'], inheritedTokens, ['cardBg', 'sectionBg']);
+  const heading   = pickInheritedValue(overrides, ['--token-heading', '--style-heading-color'], inheritedTokens, ['headingColor', 'heading', 'textPrimary', 'onDarkHeading']);
+  const body      = pickInheritedValue(overrides, ['--token-body', '--style-body-color'], inheritedTokens, ['bodyColor', 'body', 'bodyTextColor', 'textSecondary', 'onDarkBody']);
+  const muted     = pickInheritedValue(overrides, ['--token-muted', '--style-text-muted'], inheritedTokens, ['mutedColor', 'muted', 'mutedTextColor', 'textMuted', 'onDarkMuted']);
+  const cardHeading = pickInheritedValue(overrides, ['--token-card-heading'], inheritedTokens, ['cardHeadingColor']) || heading;
+  const cardBody = pickInheritedValue(overrides, ['--token-card-body'], inheritedTokens, ['cardBodyColor']) || body;
+  const cardMuted = pickInheritedValue(overrides, ['--token-card-muted'], inheritedTokens, ['cardMutedColor']) || muted;
+  const btnBg     = pickInheritedValue(overrides, ['--token-btn-bg', '--style-button-bg', '--brand-btn-bg'], inheritedTokens, ['btnBg', 'btnPrimaryBg']);
+  const btnText   = pickInheritedValue(overrides, ['--token-btn-text', '--style-button-text', '--brand-btn-text'], inheritedTokens, ['btnText', 'btnPrimaryText']);
+  const badgeBg   = pickInheritedValue(overrides, ['--token-badge-bg'], inheritedTokens, ['badgeBg']);
+  const badgeText = pickInheritedValue(overrides, ['--token-badge-text'], inheritedTokens, ['badgeText']);
 
   const sectionCanvas = '#ffffff';
   const cardCanvas = sectionBg || sectionCanvas;
   const pairs: Array<[string, string | undefined, string | undefined, { large?: boolean; canvas?: string }]> = [
     [`sections[${sectionIdx}].heading on .sectionBg`, heading, sectionBg, { large: true, canvas: sectionCanvas }],
     [`sections[${sectionIdx}].body on .sectionBg`,    body,    sectionBg, { large: false, canvas: sectionCanvas }],
+    [`sections[${sectionIdx}].muted on .sectionBg`,   muted,   sectionBg, { large: false, canvas: sectionCanvas }],
     [`sections[${sectionIdx}].cardHeading on .cardBg`, cardHeading, cardBg, { large: true, canvas: cardCanvas }],
     [`sections[${sectionIdx}].cardBody on .cardBg`, cardBody, cardBg, { large: false, canvas: cardCanvas }],
+    [`sections[${sectionIdx}].cardMuted on .cardBg`, cardMuted, cardBg, { large: false, canvas: cardCanvas }],
     [`sections[${sectionIdx}].btnText on .btnBg`, btnText, btnBg, { large: false, canvas: cardCanvas }],
     [`sections[${sectionIdx}].badgeText on .badgeBg`, badgeText, badgeBg, { large: false, canvas: cardCanvas }],
   ];
@@ -341,7 +395,7 @@ export function validateSectionStyleOverrides(
   }
 
   // Dark section bg without canonical text tokens.
-  if (sectionBg && isDarkColor(sectionBg)) {
+  if (sectionBg && isDarkColor(sectionBg) && Object.keys(overrides).length > 0) {
     const hasAnyText = heading || body;
     if (!hasAnyText) {
       issues.push({
@@ -369,33 +423,71 @@ function pickFirst(obj: Record<string, unknown>, keys: string[]): string | undef
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * If `design.sectionBg` is dark and canonical text colors are missing, fill them
- * with sensible defaults so AI-generated sites can't produce white-on-white.
+ * If backgrounds are set and canonical foreground colors are missing, fill them
+ * with sensible readable defaults. Existing foreground overrides are preserved:
+ * bad manual choices are reported by validation instead of being silently
+ * replaced.
  * Returns the (possibly modified) design payload + a list of changes applied.
  */
-export function autoFixDesignOnDark(design: Record<string, unknown>): {
+export function autoFixDesignReadable(design: Record<string, unknown>): {
   design: Record<string, unknown>;
   applied: string[];
 } {
   const applied: string[] = [];
   const out = { ...design };
   const sectionBg = pickDesignValue(out, ['sectionBg']);
-  if (sectionBg && isDarkColor(sectionBg)) {
+  const cardBg = pickDesignValue(out, ['cardBg']);
+  const buttonBg = pickDesignValue(out, ['btnBg', 'btnPrimaryBg']);
+  const badgeBg = pickDesignValue(out, ['badgeBg']);
+
+  if (sectionBg) {
+    const heading = readableTextColorForBackground(sectionBg, { large: true, role: 'heading' });
+    const body = readableTextColorForBackground(sectionBg, { role: 'body' });
+    const muted = readableTextColorForBackground(sectionBg, { role: 'muted' });
     if (!pickDesignValue(out, ['headingColor', 'heading', 'textPrimary'])) {
-      out.headingColor = '#ffffff';
-      applied.push('headingColor=#ffffff');
+      out.headingColor = heading;
+      applied.push(`headingColor=${heading}`);
     }
     if (!pickDesignValue(out, ['bodyColor', 'body', 'textSecondary'])) {
-      out.bodyColor = 'rgba(255,255,255,0.85)';
-      applied.push('bodyColor=rgba(255,255,255,0.85)');
+      out.bodyColor = body;
+      applied.push(`bodyColor=${body}`);
     }
     if (!pickDesignValue(out, ['mutedColor', 'muted', 'textMuted'])) {
-      out.mutedColor = 'rgba(255,255,255,0.6)';
-      applied.push('mutedColor=rgba(255,255,255,0.6)');
+      out.mutedColor = muted;
+      applied.push(`mutedColor=${muted}`);
     }
     if (!out.onDarkHeading) out.onDarkHeading = pickDesignValue(out, ['headingColor', 'heading', 'textPrimary']);
     if (!out.onDarkBody) out.onDarkBody = pickDesignValue(out, ['bodyColor', 'body', 'textSecondary']);
     if (!out.onDarkMuted) out.onDarkMuted = pickDesignValue(out, ['mutedColor', 'muted', 'textMuted']);
   }
+  if (cardBg) {
+    const cardHeading = readableTextColorForBackground(cardBg, { canvas: sectionBg || '#ffffff', large: true, role: 'heading' });
+    const cardBody = readableTextColorForBackground(cardBg, { canvas: sectionBg || '#ffffff', role: 'body' });
+    const cardMuted = readableTextColorForBackground(cardBg, { canvas: sectionBg || '#ffffff', role: 'muted' });
+    if (!pickDesignValue(out, ['cardHeadingColor'])) {
+      out.cardHeadingColor = cardHeading;
+      applied.push(`cardHeadingColor=${cardHeading}`);
+    }
+    if (!pickDesignValue(out, ['cardBodyColor'])) {
+      out.cardBodyColor = cardBody;
+      applied.push(`cardBodyColor=${cardBody}`);
+    }
+    if (!pickDesignValue(out, ['cardMutedColor'])) {
+      out.cardMutedColor = cardMuted;
+      applied.push(`cardMutedColor=${cardMuted}`);
+    }
+  }
+  if (buttonBg && !pickDesignValue(out, ['btnText', 'btnPrimaryText'])) {
+    const btnText = readableTextColorForBackground(buttonBg, { canvas: cardBg || sectionBg || '#ffffff', role: 'button' });
+    out.btnText = btnText;
+    applied.push(`btnText=${btnText}`);
+  }
+  if (badgeBg && !pickDesignValue(out, ['badgeText'])) {
+    const badgeText = readableTextColorForBackground(badgeBg, { canvas: cardBg || sectionBg || '#ffffff', role: 'badge' });
+    out.badgeText = badgeText;
+    applied.push(`badgeText=${badgeText}`);
+  }
   return { design: out, applied };
 }
+
+export const autoFixDesignOnDark = autoFixDesignReadable;

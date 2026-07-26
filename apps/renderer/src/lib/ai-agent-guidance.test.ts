@@ -59,6 +59,24 @@ describe('AI agent guidance', () => {
     assert.deepEqual(contract.weakModelWorkflow.validationContract.preflight.body.mode, 'plan');
     assert.equal(contract.agentRunbook.pageWriting.batchSize, 1);
     assert.deepEqual(contract.agentRunbook.commonFieldAliasesHandledByApi.manualCards, ['cards', 'items', 'services']);
+    assert.ok(contract.missionBrief.copyRules.some(rule => /stage directions/i.test(rule)));
+    assert.ok(contract.missionBrief.compositionRules.some(rule => /Premium\/Advanced/.test(rule)));
+  });
+
+  it('exposes curated experience families with only available section recommendations', () => {
+    const visual = buildAiAgentContract({
+      tenantName: 'Studio Beispiel',
+      industry: 'photography',
+      allowedSections: [{ type: 'hero' }, { type: 'cinematicHero' }, { type: 'infiniteCanvas' }, { type: 'cameraExplodeScroll' }],
+      existingPages: [],
+      sectionSchemas: { hero: {}, cinematicHero: {}, infiniteCanvas: {}, cameraExplodeScroll: {} },
+      hasShop: false,
+      hasBooking: false,
+    });
+    const family = visual.experienceFamilies['visual-portfolio'];
+    assert.ok(family.recommendedSections.includes('cinematicHero'));
+    assert.ok(family.recommendedSections.includes('infiniteCanvas'));
+    assert.ok(!family.recommendedSections.includes('verticalReelShowcase'));
   });
 
   it('only exposes valid Advanced examples and their asset constraints', () => {

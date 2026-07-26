@@ -171,4 +171,59 @@ describe('content quality validator', () => {
     assert.ok(codes.has('drift.cross_tenant_phrase'));
     assert.ok(codes.has('drift.cross_tenant_image'));
   });
+
+  it('blocks stage directions and outside-narrator copy during AI plan preflight', () => {
+    const input = validInput();
+    input.siteProfile = {
+      ...profile,
+      identity: { ...profile.identity, businessName: 'Alexander Schuktuew' },
+      voice: { attributes: ['klar', 'persönlich'], avoid: ['dritte Person'], perspective: 'ich' },
+    };
+    input.brand = { companyName: 'Alexander Schuktuew' };
+    input.pages[0].sections[0].data = {
+      headline: 'Menschen konzentriert.',
+      subline: 'Alexander Schuktuew ist Fotograf mit Schwerpunkt Portraitfotografie. Das prominente Reel zeigt den Ansatz.',
+      primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
+    };
+
+    const result = validateContentQuality(input);
+    const codes = new Set(result.issues.map(entry => entry.code));
+    assert.ok(codes.has('copy.stage_direction'));
+    assert.ok(codes.has('copy.third_person_business'));
+    assert.equal(result.valid, false);
+  });
+
+  it('rejects the generic homepage blueprint when richer sections are available', () => {
+    const input = validInput();
+    input.allowedSectionTypes = [
+      'hero', 'uspStrip', 'servicesGrid', 'processSteps', 'testimonials', 'faq', 'ctaBand',
+      'proofWall', 'cinematicChapters',
+    ];
+    input.sectionSchemas = {
+      hero: { fields: { headline: 'string', subline: 'string?' } },
+      uspStrip: { fields: { items: 'array' } },
+      servicesGrid: { fields: { headline: 'string', manualCards: 'array' } },
+      processSteps: { fields: { steps: 'array' } },
+      testimonials: { fields: { headline: 'string', items: 'array' } },
+      faq: { fields: { headline: 'string', items: 'array' } },
+      ctaBand: { fields: { headline: 'string' } },
+      proofWall: { fields: { headline: 'string', items: 'array' } },
+      cinematicChapters: { fields: { headline: 'string', chapters: 'array' } },
+    };
+    input.pages[0].sections = [
+      { type: 'hero', purpose: 'Opener', data: { headline: 'Bäder, die zum Altbau passen', subline: 'Konkrete Planung mit klarer Verantwortung.' } },
+      { type: 'uspStrip', purpose: 'Trust', data: { items: [{ title: 'A', text: 'A' }, { title: 'B', text: 'B' }, { title: 'C', text: 'C' }] } },
+      { type: 'servicesGrid', purpose: 'Leistungen', data: { headline: 'Leistungen', manualCards: [{ title: 'A', text: 'A' }, { title: 'B', text: 'B' }, { title: 'C', text: 'C' }] } },
+      { type: 'processSteps', purpose: 'Ablauf', data: { steps: [{ title: 'A', text: 'A' }, { title: 'B', text: 'B' }, { title: 'C', text: 'C' }] } },
+      { type: 'testimonials', purpose: 'Proof', data: { headline: 'Stimmen', items: [{ quote: 'A', name: 'A' }, { quote: 'B', name: 'B' }, { quote: 'C', name: 'C' }] } },
+      { type: 'faq', purpose: 'Fragen', data: { headline: 'Fragen', items: [{ question: 'A?', answer: 'A' }, { question: 'B?', answer: 'B' }, { question: 'C?', answer: 'C' }] } },
+      { type: 'ctaBand', purpose: 'Kontakt', data: { headline: 'Projekt besprechen' } },
+    ];
+
+    const result = validateContentQuality(input);
+    const codes = new Set(result.issues.map(entry => entry.code));
+    assert.ok(codes.has('composition.homepage_no_premium'));
+    assert.ok(codes.has('composition.default_homepage_sequence'));
+    assert.equal(result.valid, false);
+  });
 });

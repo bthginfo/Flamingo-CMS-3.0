@@ -132,6 +132,10 @@ export async function POST(req: NextRequest) {
     if (settingsRow?.design && typeof settingsRow.design === 'object') {
       colorWarnings.push(...validateDesignPayload(settingsRow.design as Record<string, unknown>));
     }
+    const inheritedColorTokens = {
+      ...((settingsRow?.brand && typeof settingsRow.brand === 'object') ? settingsRow.brand as Record<string, unknown> : {}),
+      ...((settingsRow?.design && typeof settingsRow.design === 'object') ? settingsRow.design as Record<string, unknown> : {}),
+    };
     const allPageIds = allPages.map(p => p.id);
     const allSections = allPageIds.length > 0
       ? await db.select({ pageId: pageSections.pageId, type: pageSections.type, data: pageSections.data, styleOverrides: pageSections.styleOverrides })
@@ -158,7 +162,7 @@ export async function POST(req: NextRequest) {
           warnings.push(`${label}: members/doctors array is empty`);
         // Section-level color/contrast audit
         if (s.styleOverrides && typeof s.styleOverrides === 'object') {
-          const issues = validateSectionStyleOverrides(i, s.type, s.styleOverrides as Record<string, unknown>);
+          const issues = validateSectionStyleOverrides(i, s.type, s.styleOverrides as Record<string, unknown>, inheritedColorTokens);
           for (const issue of issues) {
             // Prefix the existing location with the page name so the AI sees
             // which page each warning belongs to.

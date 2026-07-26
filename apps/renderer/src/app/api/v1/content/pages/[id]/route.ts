@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq, and, asc, inArray } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandlerParams, normalizeSlug, validateSections, validateSectionIdentity, normalizeSectionData, normalizeStyleOverridesForSection, validateStyleOverridesForApi } from '@/lib/api-utils';
+import { withApiHandlerParams, normalizeSlug, validateSections, validateSectionIdentity, normalizeSectionData, normalizeStyleOverridesForSection, autoFixStyleOverridesForSectionReadability, validateStyleOverridesForApi } from '@/lib/api-utils';
 import { resolveSectionWriteIdentities, resolveSectionWriteIdentity } from '@/lib/section-write-identity';
 
 export const GET = withApiHandlerParams(async (_req, auth, params) => {
@@ -63,6 +63,18 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
       const replacements = body.sections.map((s: any, i: number) => {
         const sectionId = crypto.randomUUID();
         newSectionIds.push(sectionId);
+        const normalizedStyleOverrides = normalizeStyleOverridesForSection(
+          s.type,
+          s.styleOverrides,
+          auth.tenant.industry,
+          identityResolution.identities[i].definitionKey,
+        );
+        const { styleOverrides } = autoFixStyleOverridesForSectionReadability(
+          s.type,
+          normalizedStyleOverrides,
+          auth.tenant.industry,
+          identityResolution.identities[i].definitionKey,
+        );
         return {
           id: sectionId,
           tenantId: auth.tenantId,
@@ -77,12 +89,7 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
           spacingTop: s.spacingTop || 'm',
           spacingBottom: s.spacingBottom || 'm',
           anchorId: s.anchorId || null,
-          styleOverrides: normalizeStyleOverridesForSection(
-            s.type,
-            s.styleOverrides,
-            auth.tenant.industry,
-            identityResolution.identities[i].definitionKey,
-          ),
+          styleOverrides,
           sortOrder: i,
         };
       });
@@ -231,10 +238,16 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
       sectionUpdates.definitionKey = identityResolution.identity.definitionKey;
       sectionUpdates.schemaVersion = identityResolution.identity.schemaVersion;
       if (patch.styleOverrides !== undefined) {
-        sectionUpdates.styleOverrides = normalizeStyleOverridesForSection(existing.type, {
+        const normalizedStyleOverrides = normalizeStyleOverridesForSection(existing.type, {
           ...((existing.styleOverrides as Record<string, string> | null) || {}),
           ...(patch.styleOverrides || {}),
         }, auth.tenant.industry, identityResolution.identity.definitionKey);
+        sectionUpdates.styleOverrides = autoFixStyleOverridesForSectionReadability(
+          existing.type,
+          normalizedStyleOverrides,
+          auth.tenant.industry,
+          identityResolution.identity.definitionKey,
+        ).styleOverrides;
       }
       if (Object.keys(sectionUpdates).length === 0) {
         return NextResponse.json({ success: false, code: 'PATCH_SECTION_NO_CHANGES', error: `patchSections[${index}] contains no mutable fields` }, { status: 400 });
