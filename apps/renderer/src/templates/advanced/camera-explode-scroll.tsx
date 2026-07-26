@@ -29,13 +29,28 @@ type ExplodeNode = {
 };
 
 const FALLBACK_PARTS: CameraPart[] = [
-  { id: 'body', label: 'Gehäuse', text: 'Kamerabody, Griff, Prismengehäuse und Haltung.', offsetX: -160, offsetY: 0, offsetZ: -40, color: '#151515' },
-  { id: 'lens', label: 'Objektiv', text: 'Fokus, Brennweite, Nähe und optische Tiefe.', offsetX: 160, offsetY: -40, offsetZ: 150, color: '#050505' },
-  { id: 'shutter', label: 'Verschluss', text: 'Timing, Bewegung und der entscheidende Moment.', offsetX: 80, offsetY: -140, offsetZ: 70, color: '#d11224' },
-  { id: 'sensor', label: 'Sensor', text: 'Bilddaten, Look und Detailtiefe.', offsetX: 170, offsetY: 60, offsetZ: -120, color: '#1b2430' },
-  { id: 'display', label: 'Monitor', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -135, offsetY: 130, offsetZ: -130, color: '#f4eee3' },
-  { id: 'output', label: 'Dateien', text: 'Finale Assets für Website, Social und Kampagne.', offsetX: 135, offsetY: 140, offsetZ: 130, color: '#c7ff4a' },
+  { id: 'briefing', label: 'Briefing', text: 'Ziel, Zielgruppe und Einsatzkanäle geben der Produktion Richtung.', offsetX: -160, offsetY: 0, offsetZ: -40, color: '#151515' },
+  { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Raum werden als klare visuelle Linie geplant.', offsetX: 160, offsetY: -40, offsetZ: 150, color: '#050505' },
+  { id: 'production', label: 'Produktion', text: 'Menschen, Bewegung und Timing werden geführt statt dem Zufall überlassen.', offsetX: 80, offsetY: -140, offsetZ: 70, color: '#d11224' },
+  { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading halten die Serie zusammen.', offsetX: 170, offsetY: 60, offsetZ: -120, color: '#1b2430' },
+  { id: 'approval', label: 'Auswahl', text: 'Die stärksten Motive werden nach Wirkung und Nutzbarkeit kuratiert.', offsetX: -135, offsetY: 130, offsetZ: -130, color: '#f4eee3' },
+  { id: 'output', label: 'Assets', text: 'Fertige Formate für Website, Social, Kampagne, Recruiting und Print.', offsetX: 135, offsetY: 140, offsetZ: 130, color: '#c7ff4a' },
 ];
+
+const SCHUKTUEW_CAMERA_COPY = {
+  badge: 'Visual Production System',
+  headline: 'Aus einem Shooting wird ein kompletter Auftritt.',
+  subline: 'Ich plane Fotografie, Film und KI-Workflows so, dass am Ende nicht nur schöne Bilder entstehen, sondern nutzbare Assets für Website, Social, Kampagne, Recruiting und Print.',
+  parts: [
+    { id: 'briefing', label: 'Briefing', text: 'Ich kläre zuerst Ziel, Zielgruppe, Kanäle und gewünschte Wirkung – damit die Produktion eine Richtung hat.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+    { id: 'visual-language', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als wiedererkennbare visuelle Linie angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+    { id: 'shooting', label: 'Shooting', text: 'Ich führe Menschen, Bewegung und Ausdruck so, dass Portrait, Commercial und Reel-Material zusammenpassen.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich dort, wo sie Varianten, Planung oder Adaptionen besser macht – ohne den Look beliebig werden zu lassen.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+    { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto und Film auf denselben Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+    { id: 'assets', label: 'Übergabe', text: 'Geliefert werden fertige Dateien für Website, Social, Kampagne, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+  ],
+  cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
+};
 
 const PART_ICONS = [Cuboid, Aperture, Eye, ScanLine, View, Box, Layers3];
 
@@ -56,6 +71,17 @@ function normalizedParts(value: unknown) {
     offsetY: clampOffset(part.offsetY, FALLBACK_PARTS[index % FALLBACK_PARTS.length].offsetY || 0),
     offsetZ: clampOffset(part.offsetZ, FALLBACK_PARTS[index % FALLBACK_PARTS.length].offsetZ || 0),
   }));
+}
+
+function shouldUseSchuktuewCameraCopy(data: Record<string, unknown>, parts: CameraPart[]) {
+  const headline = visibleText(String(data.headline || '')).toLowerCase();
+  const cta = data.cta as AdvancedCta | undefined;
+  const ctaLabel = visibleText(cta?.label || '').toLowerCase();
+  const labels = parts.map((part) => visibleText(part.label || '').toLowerCase()).join(' ');
+  const oldHeadline = /kamera zerlegt|blick wird klarer|was leicht wirkt|aus einem motiv wird ein kompletter auftritt/.test(headline);
+  const oldLabels = /gehäuse|gehaeuse|objektiv|verschluss|sensor|monitor|dateien|haltung|perspektive|moment|look|output/.test(labels);
+  const oldCta = /system ansehen|workflow ansehen|mit alex sprechen/.test(ctaLabel);
+  return oldHeadline && oldLabels && oldCta;
 }
 
 function isLikelyModelUrl(url: string) {
@@ -538,23 +564,25 @@ export function CameraExplodeScrollSection({ data }: Props) {
   const ref = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const shouldLoadScene = useInView(ref, { once: true, margin: '900px 0px 900px 0px' });
-  const parts = normalizedParts(data.parts);
+  const rawParts = normalizedParts(data.parts);
+  const displayData = shouldUseSchuktuewCameraCopy(data, rawParts) ? { ...data, ...SCHUKTUEW_CAMERA_COPY } : data;
+  const parts = displayData === data ? rawParts : normalizedParts(SCHUKTUEW_CAMERA_COPY.parts);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const progress = useTransform(scrollYProgress, [0.08, 0.72], [0, 1]);
-  const brandImage = safeContentUrl(String(data.brandImage || ''));
-  const modelUrlRaw = safeContentUrl(String(data.modelUrl || data.gltfUrl || data.glbUrl || ''));
+  const brandImage = safeContentUrl(String(displayData.brandImage || ''));
+  const modelUrlRaw = safeContentUrl(String(displayData.modelUrl || displayData.gltfUrl || displayData.glbUrl || ''));
   const modelUrl = isLikelyModelUrl(modelUrlRaw) && !isBlockedLegacyModelUrl(modelUrlRaw) ? modelUrlRaw : '';
-  const cta = data.cta as AdvancedCta;
+  const cta = displayData.cta as AdvancedCta;
   const ctaHref = safeContentUrl(cta?.href || '');
   const ctaLabel = visibleText(cta?.label || '');
 
   return (
     <>
-      <StaticCameraFallback data={data} parts={parts} brandImage={brandImage} cta={cta} />
+      <StaticCameraFallback data={displayData} parts={parts} brandImage={brandImage} cta={cta} />
       <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${reduceMotion ? 120 : Math.max(220, parts.length * 42)}vh` }}>
         <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(25rem,.7fr)_minmax(34rem,1.3fr)] lg:gap-10 lg:px-14">
           <div className="relative z-20 flex min-w-0 flex-col justify-between" data-color-context="dark">
-            <CameraStickyIntro data={data} />
+            <CameraStickyIntro data={displayData} />
             <div className="grid gap-2 pb-6 xl:grid-cols-2">{parts.slice(0, 6).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} compact />)}</div>
           </div>
           <div className="relative grid min-h-0 place-items-center">

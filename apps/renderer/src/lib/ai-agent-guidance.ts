@@ -461,7 +461,7 @@ export function buildAiAgentContract(input: {
         editorialCardMorph: '3–8 image-led cases with concise copy and at most 4 facts each. Existing collection injection may supply items.',
         verticalReelShowcase: '2–5 vertical reels. Preserve 9:16 unless source assets are another known aspect. Use direct HTTPS video URLs or poster fallbacks; every reel needs a title and short context.',
         aiWorkflowReel: 'One vertical workflow video or poster plus 3–6 concrete production phases. Explain the real workflow plainly; do not invent automation claims, awards or unverifiable AI capabilities.',
-        cameraExplodeScroll: '4–7 camera/production parts with concise labels and safe offsets between -260 and 260. Optional: provide a public HTTPS .glb/.gltf modelUrl. Never provide scripts, raw HTML or custom JS.',
+        cameraExplodeScroll: '4–7 tenant-specific production/value-chain layers with concise labels and safe offsets between -260 and 260. Do not use random literal camera mechanics like Body/Lens/Sensor unless the tenant actually sells camera hardware. For creative/photography tenants prefer layers like Briefing, Bildsprache, Produktion, AI Workflow, Postproduktion, Übergabe/Assets. Optional: provide a public HTTPS .glb/.gltf modelUrl. Never provide scripts, raw HTML or custom JS.',
       },
       examples: Object.fromEntries(
         ADVANCED_SECTION_TYPES
