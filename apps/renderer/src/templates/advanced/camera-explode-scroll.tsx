@@ -75,6 +75,37 @@ function makeMaterial(THREE: ThreeModule, color: string, metalness = 0.45, rough
   });
 }
 
+function makeGlassMaterial(THREE: ThreeModule, color = '#1f3550') {
+  return new THREE.MeshPhysicalMaterial({
+    color,
+    metalness: 0.05,
+    roughness: 0.12,
+    transmission: 0,
+    transparent: false,
+    opacity: 1,
+    clearcoat: 1,
+    clearcoatRoughness: 0.08,
+    envMapIntensity: 1.2,
+  });
+}
+
+function roundedRectShape(THREE: ThreeModule, width: number, height: number, radius: number) {
+  const x = -width / 2;
+  const y = -height / 2;
+  const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+  const shape = new THREE.Shape();
+  shape.moveTo(x + r, y);
+  shape.lineTo(x + width - r, y);
+  shape.quadraticCurveTo(x + width, y, x + width, y + r);
+  shape.lineTo(x + width, y + height - r);
+  shape.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  shape.lineTo(x + r, y + height);
+  shape.quadraticCurveTo(x, y + height, x, y + height - r);
+  shape.lineTo(x, y + r);
+  shape.quadraticCurveTo(x, y, x + r, y);
+  return shape;
+}
+
 function addBox(THREE: ThreeModule, group: import('three').Group, size: [number, number, number], position: [number, number, number], color: string, radiusLabel?: string) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), makeMaterial(THREE, color));
   mesh.position.set(...position);
@@ -85,8 +116,29 @@ function addBox(THREE: ThreeModule, group: import('three').Group, size: [number,
   return mesh;
 }
 
+function addRoundedBox(THREE: ThreeModule, group: import('three').Group, size: [number, number, number], position: [number, number, number], color: string, radius = 0.18, metalness = 0.45, roughness = 0.34) {
+  const geometry = new THREE.ExtrudeGeometry(roundedRectShape(THREE, size[0], size[1], radius), { depth: size[2], bevelEnabled: true, bevelSize: Math.min(radius * 0.25, 0.045), bevelThickness: Math.min(radius * 0.18, 0.035), bevelSegments: 3 });
+  geometry.center();
+  const mesh = new THREE.Mesh(geometry, makeMaterial(THREE, color, metalness, roughness));
+  mesh.position.set(...position);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
 function addCylinder(THREE: ThreeModule, group: import('three').Group, radiusTop: number, radiusBottom: number, depth: number, position: [number, number, number], color: string) {
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radiusTop, radiusBottom, depth, 64), makeMaterial(THREE, color, 0.62, 0.24));
+  mesh.rotation.x = Math.PI / 2;
+  mesh.position.set(...position);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+function addGlassCylinder(THREE: ThreeModule, group: import('three').Group, radius: number, depth: number, position: [number, number, number], color = '#23384f') {
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, depth, 96), makeGlassMaterial(THREE, color));
   mesh.rotation.x = Math.PI / 2;
   mesh.position.set(...position);
   mesh.castShadow = true;
@@ -106,7 +158,6 @@ function addTorus(THREE: ThreeModule, group: import('three').Group, radius: numb
 
 function makeGeneratedCamera(THREE: ThreeModule, parts: CameraPart[]): ExplodeNode[] {
   const nodes: ExplodeNode[] = [];
-  const materialGraphite = '#202020';
   const materialSoft = '#f4eee3';
   const materialRed = '#d11224';
   const materialLime = '#c7ff4a';
@@ -129,47 +180,60 @@ function makeGeneratedCamera(THREE: ThreeModule, parts: CameraPart[]): ExplodeNo
   }
 
   createPart('camera-body', 0, (group) => {
-    addBox(THREE, group, [4.55, 2.45, 0.82], [-0.1, 0, 0], materialGraphite);
-    addBox(THREE, group, [0.88, 2.18, 1.12], [2.08, -0.08, 0.12], '#0b0b0b');
-    addBox(THREE, group, [0.35, 1.52, 0.34], [2.62, -0.22, 0.32], '#050505');
-    addBox(THREE, group, [1.02, 0.5, 0.42], [-1.42, 1.36, 0.1], '#161616');
-    addBox(THREE, group, [1.16, 0.34, 0.45], [0.44, 1.35, 0.1], '#030303');
-    addBox(THREE, group, [0.72, 0.2, 0.5], [1.28, 1.39, 0.14], materialRed);
-    const prism = new THREE.Mesh(new THREE.ConeGeometry(0.78, 0.68, 4), makeMaterial(THREE, '#111111', 0.5, 0.32));
-    prism.rotation.z = Math.PI / 4;
-    prism.scale.x = 1.35;
-    prism.position.set(-0.32, 1.5, 0.1);
-    prism.castShadow = true;
-    prism.receiveShadow = true;
-    group.add(prism);
-    addBox(THREE, group, [0.7, 0.12, 0.38], [-0.32, 1.88, 0.1], '#050505');
+    addRoundedBox(THREE, group, [4.75, 2.55, 0.96], [-0.08, 0, 0], '#262626', 0.26, 0.58, 0.26);
+    addRoundedBox(THREE, group, [4.22, 2.06, 1.0], [-0.26, -0.03, 0.08], '#111111', 0.16, 0.52, 0.28);
+    addRoundedBox(THREE, group, [2.04, 1.42, 0.12], [0.18, -0.02, 0.66], '#050505', 0.2, 0.5, 0.22);
+    addRoundedBox(THREE, group, [0.92, 2.24, 1.28], [2.1, -0.12, 0.18], '#050505', 0.32, 0.55, 0.26);
+    addRoundedBox(THREE, group, [0.42, 1.58, 0.42], [2.66, -0.24, 0.42], '#111111', 0.18, 0.5, 0.32);
+    addRoundedBox(THREE, group, [1.18, 0.48, 0.56], [-1.5, 1.35, 0.12], '#181818', 0.14, 0.5, 0.32);
+    addRoundedBox(THREE, group, [1.2, 0.34, 0.52], [0.46, 1.38, 0.14], '#030303', 0.1, 0.58, 0.3);
+    addRoundedBox(THREE, group, [0.72, 0.2, 0.5], [1.28, 1.42, 0.16], materialRed, 0.09, 0.2, 0.18);
+    addRoundedBox(THREE, group, [0.24, 0.88, 0.18], [-2.18, 0.82, 0.26], '#2b2b2b', 0.08, 0.4, 0.36);
+    addRoundedBox(THREE, group, [0.24, 0.88, 0.18], [-2.18, -0.82, 0.26], '#2b2b2b', 0.08, 0.4, 0.36);
+    addRoundedBox(THREE, group, [1.42, 0.58, 0.72], [-0.38, 1.56, 0.16], '#141414', 0.18, 0.55, 0.26);
+    addRoundedBox(THREE, group, [0.86, 0.24, 0.78], [-0.38, 1.88, 0.2], '#050505', 0.08, 0.6, 0.24);
+    addRoundedBox(THREE, group, [0.58, 0.22, 0.12], [-0.38, 1.34, 0.62], '#23384f', 0.06, 0.08, 0.08);
+    addRoundedBox(THREE, group, [0.78, 0.12, 0.4], [-0.34, 1.96, 0.12], '#050505', 0.04, 0.55, 0.26);
+    addGlassCylinder(THREE, group, 0.46, 0.08, [-0.34, 1.55, 0.53], '#192536');
+    addRoundedBox(THREE, group, [0.36, 0.08, 0.16], [-1.95, 1.12, 0.58], '#737373', 0.03, 0.75, 0.18);
+    addRoundedBox(THREE, group, [0.36, 0.08, 0.16], [1.85, 1.12, 0.58], '#737373', 0.03, 0.75, 0.18);
   }, [-1.6, 0, -0.45]);
 
   createPart('lens-barrel', 1, (group) => {
-    addCylinder(THREE, group, 1.08, 1.02, 0.74, [0, 0, 0.68], '#060606');
-    addCylinder(THREE, group, 0.94, 1.0, 0.58, [0, 0, 1.26], '#1b1b1b');
-    addCylinder(THREE, group, 0.78, 0.86, 0.42, [0, 0, 1.78], '#050505');
-    addCylinder(THREE, group, 0.56, 0.56, 0.09, [0, 0, 2.07], '#101827');
-    addCylinder(THREE, group, 0.34, 0.34, 0.04, [0, 0, 2.13], '#2f4158');
-    addTorus(THREE, group, 1.08, 0.05, [0, 0, 0.3], '#2d2d2d');
-    addTorus(THREE, group, 0.98, 0.035, [0, 0, 0.96], '#3a3a3a');
-    addTorus(THREE, group, 0.79, 0.03, [0, 0, 1.58], '#2b2b2b');
-    addTorus(THREE, group, 0.57, 0.024, [0, 0, 2.16], '#677284');
+    addCylinder(THREE, group, 1.24, 1.24, 0.16, [0, 0, 0.16], '#2c2c2c');
+    addCylinder(THREE, group, 1.18, 1.06, 0.78, [0, 0, 0.62], '#040404');
+    addCylinder(THREE, group, 1.04, 1.12, 0.62, [0, 0, 1.18], '#1a1a1a');
+    addCylinder(THREE, group, 0.92, 1.02, 0.52, [0, 0, 1.72], '#070707');
+    addCylinder(THREE, group, 0.7, 0.84, 0.36, [0, 0, 2.12], '#050505');
+    addCylinder(THREE, group, 0.86, 1.05, 0.22, [0, 0, 2.42], '#030303');
+    addGlassCylinder(THREE, group, 0.56, 0.1, [0, 0, 2.34], '#1b314d');
+    addGlassCylinder(THREE, group, 0.34, 0.05, [0.04, 0.04, 2.54], '#385072');
+    addTorus(THREE, group, 1.18, 0.055, [0, 0, 0.22], '#323232');
+    addTorus(THREE, group, 1.05, 0.038, [0, 0, 0.72], '#545454');
+    addTorus(THREE, group, 1.0, 0.026, [0, 0, 0.94], '#2d2d2d');
+    addTorus(THREE, group, 0.93, 0.03, [0, 0, 1.44], '#3d3d3d');
+    addTorus(THREE, group, 0.72, 0.028, [0, 0, 2.26], '#748096');
+    for (let i = 0; i < 18; i += 1) {
+      const angle = (Math.PI * 2 * i) / 18;
+      const rib = addBox(THREE, group, [0.035, 0.2, 0.06], [Math.cos(angle) * 1.12, Math.sin(angle) * 1.12, 1.02], '#383838');
+      rib.rotation.z = angle;
+    }
   }, [1.65, -0.35, 1.35]);
 
   createPart('aperture-stack', 2, (group) => {
-    addCylinder(THREE, group, 0.7, 0.7, 0.08, [0, 0, 0.12], '#050505');
-    for (let i = 0; i < 7; i += 1) {
-      const blade = addBox(THREE, group, [0.58, 0.12, 0.035], [0, 0, 0.17], '#2a2a2a');
-      blade.rotation.z = (Math.PI * 2 * i) / 7;
+    addCylinder(THREE, group, 0.78, 0.78, 0.08, [0, 0, 0.12], '#050505');
+    addTorus(THREE, group, 0.72, 0.024, [0, 0, 0.18], '#575757');
+    for (let i = 0; i < 9; i += 1) {
+      const blade = addRoundedBox(THREE, group, [0.64, 0.14, 0.035], [0, 0, 0.19], i % 2 ? '#222222' : '#303030', 0.035, 0.35, 0.42);
+      blade.rotation.z = (Math.PI * 2 * i) / 9;
       blade.position.x = Math.cos(blade.rotation.z) * 0.18;
       blade.position.y = Math.sin(blade.rotation.z) * 0.18;
     }
   }, [0.8, -1.45, 0.9]);
 
   createPart('sensor-plane', 3, (group) => {
-    addBox(THREE, group, [1.55, 1.08, 0.08], [0, 0, -0.58], '#111827');
-    addBox(THREE, group, [1.16, 0.78, 0.1], [0, 0, -0.52], '#3d536b');
+    addRoundedBox(THREE, group, [1.7, 1.16, 0.08], [0, 0, -0.58], '#111827', 0.08, 0.42, 0.26);
+    addRoundedBox(THREE, group, [1.24, 0.84, 0.1], [0, 0, -0.52], '#3d536b', 0.06, 0.1, 0.12);
     for (let i = 0; i < 8; i += 1) {
       addBox(THREE, group, [0.04, 0.86, 0.12], [-0.43 + i * 0.12, 0, -0.45], '#728094');
     }
@@ -179,23 +243,29 @@ function makeGeneratedCamera(THREE: ThreeModule, parts: CameraPart[]): ExplodeNo
   }, [1.75, 0.65, -1.4]);
 
   createPart('rear-display', 4, (group) => {
-    addBox(THREE, group, [2.16, 1.46, 0.12], [-0.48, -0.05, -0.75], materialSoft);
-    addBox(THREE, group, [1.62, 0.92, 0.14], [-0.6, -0.04, -0.66], '#050505');
-    addBox(THREE, group, [0.42, 0.22, 0.16], [0.84, 0.5, -0.62], '#262626');
-    addBox(THREE, group, [0.26, 0.22, 0.16], [0.84, 0.12, -0.62], '#303030');
+    addRoundedBox(THREE, group, [2.3, 1.56, 0.14], [-0.48, -0.05, -0.75], materialSoft, 0.16, 0.18, 0.24);
+    addRoundedBox(THREE, group, [1.72, 1.02, 0.16], [-0.62, -0.04, -0.64], '#050505', 0.1, 0.2, 0.12);
+    addRoundedBox(THREE, group, [1.4, 0.68, 0.17], [-0.62, -0.04, -0.54], '#142033', 0.08, 0.05, 0.08);
+    addRoundedBox(THREE, group, [0.42, 0.22, 0.16], [0.86, 0.5, -0.62], '#262626', 0.06, 0.3, 0.36);
+    addRoundedBox(THREE, group, [0.26, 0.22, 0.16], [0.86, 0.12, -0.62], '#303030', 0.05, 0.3, 0.36);
+    addRoundedBox(THREE, group, [0.26, 0.22, 0.16], [0.86, -0.25, -0.62], materialRed, 0.05, 0.2, 0.18);
   }, [-1.45, 1.25, -1.35]);
 
   createPart('top-controls', 5, (group) => {
     addCylinder(THREE, group, 0.38, 0.38, 0.22, [1.08, 1.52, 0.16], materialRed);
-    addCylinder(THREE, group, 0.46, 0.46, 0.24, [-1.08, 1.48, 0.13], '#0b0b0b');
+    addCylinder(THREE, group, 0.5, 0.5, 0.24, [-1.08, 1.48, 0.13], '#0b0b0b');
     addCylinder(THREE, group, 0.26, 0.26, 0.16, [-1.08, 1.48, 0.32], '#2f2f2f');
-    addBox(THREE, group, [0.76, 0.28, 0.46], [0.1, 1.56, 0.12], '#111111');
+    addCylinder(THREE, group, 0.42, 0.42, 0.22, [0.9, 1.5, 0.34], '#171717');
+    addRoundedBox(THREE, group, [0.82, 0.28, 0.48], [0.08, 1.58, 0.12], '#111111', 0.08, 0.45, 0.34);
+    addRoundedBox(THREE, group, [0.62, 0.12, 0.34], [0.08, 1.8, 0.2], '#050505', 0.04, 0.55, 0.28);
   }, [1.25, -1.35, 0.75]);
 
   createPart('output-cards', 6, (group) => {
-    addBox(THREE, group, [1.1, 0.72, 0.05], [-0.28, -1.05, 0.62], materialLime);
-    addBox(THREE, group, [0.88, 0.58, 0.055], [0.62, -1.22, 0.82], materialSoft);
-    addBox(THREE, group, [0.64, 0.42, 0.06], [1.18, -0.8, 1.02], materialRed);
+    addRoundedBox(THREE, group, [1.12, 0.72, 0.055], [-0.28, -1.05, 0.62], materialLime, 0.08, 0.12, 0.18);
+    addRoundedBox(THREE, group, [0.88, 0.58, 0.06], [0.62, -1.22, 0.82], materialSoft, 0.07, 0.12, 0.2);
+    addRoundedBox(THREE, group, [0.64, 0.42, 0.065], [1.18, -0.8, 1.02], materialRed, 0.06, 0.12, 0.18);
+    addRoundedBox(THREE, group, [0.72, 0.06, 0.08], [-0.28, -0.86, 0.68], '#111111', 0.02, 0.2, 0.2);
+    addRoundedBox(THREE, group, [0.56, 0.04, 0.08], [0.62, -1.08, 0.88], '#111111', 0.02, 0.2, 0.2);
   }, [1.5, 1.48, 1.5]);
 
   return nodes;
@@ -292,24 +362,33 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
       if (disposed) return;
       const scene = new THREE.Scene();
       scene.fog = new THREE.FogExp2(0x070707, 0.055);
-      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-      camera.position.set(0, 0.25, 9.2);
+      const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+      camera.position.set(0, 0.25, 11.2);
       renderer = new THREE.WebGLRenderer({ canvas: canvasElement, alpha: true, antialias: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.22;
 
       const root = new THREE.Group();
+      root.scale.setScalar(0.82);
       root.rotation.x = -0.08;
       root.rotation.y = -0.28;
       scene.add(root);
 
-      const ambient = new THREE.AmbientLight(0xffffff, 1.2);
+      const ambient = new THREE.AmbientLight(0xffffff, 1.45);
       scene.add(ambient);
-      const key = new THREE.DirectionalLight(0xffffff, 2.4);
+      const key = new THREE.DirectionalLight(0xffffff, 3.1);
       key.position.set(4, 5, 7);
       key.castShadow = true;
       scene.add(key);
+      const fill = new THREE.DirectionalLight(0xbfd7ff, 1.35);
+      fill.position.set(-5, 2, 4);
+      scene.add(fill);
+      const top = new THREE.PointLight(0xffffff, 18, 14);
+      top.position.set(0, 4, 3);
+      scene.add(top);
       const rim = new THREE.PointLight(0xd11224, 24, 12);
       rim.position.set(-4, 1.8, 4);
       scene.add(rim);
