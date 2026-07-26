@@ -62,6 +62,10 @@ function isLikelyModelUrl(url: string) {
   return /\.(glb|gltf)(\?|#|$)/i.test(url);
 }
 
+function isBlockedLegacyModelUrl(url: string) {
+  return /gltf-sample-models\/.*\/AntiqueCamera/i.test(url) || /AntiqueCamera\.glb/i.test(url);
+}
+
 function makeMaterial(THREE: ThreeModule, color: string, metalness = 0.45, roughness = 0.34) {
   return new THREE.MeshStandardMaterial({
     color,
@@ -460,7 +464,7 @@ export function CameraExplodeScrollSection({ data }: Props) {
   const progress = useTransform(scrollYProgress, [0.08, 0.72], [0, 1]);
   const brandImage = safeContentUrl(String(data.brandImage || ''));
   const modelUrlRaw = safeContentUrl(String(data.modelUrl || data.gltfUrl || data.glbUrl || ''));
-  const modelUrl = isLikelyModelUrl(modelUrlRaw) ? modelUrlRaw : '';
+  const modelUrl = isLikelyModelUrl(modelUrlRaw) && !isBlockedLegacyModelUrl(modelUrlRaw) ? modelUrlRaw : '';
   const cta = data.cta as AdvancedCta;
   const ctaHref = safeContentUrl(cta?.href || '');
   const ctaLabel = visibleText(cta?.label || '');

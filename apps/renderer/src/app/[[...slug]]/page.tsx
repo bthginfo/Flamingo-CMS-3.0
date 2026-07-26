@@ -465,6 +465,9 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   importantOverrides.push(`[data-style] main [data-card] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-card-heading, var(--token-heading)) !important; }`);
   importantOverrides.push(`[data-style] main [data-card] :where(p,li,.cms-section-subtitle) { color: var(--token-card-body, var(--token-body)) !important; }`);
   importantOverrides.push(`[data-style] main [data-card] :where(.section-badge,.eyebrow) { color: var(--token-eyebrow, var(--token-card-muted, var(--token-muted))) !important; }`);
+  importantOverrides.push(`[data-style] main [data-color-context="light"] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-card-heading, #0f172a) !important; }`);
+  importantOverrides.push(`[data-style] main [data-color-context="light"] :where(p,li,.cms-section-subtitle) { color: var(--token-card-body, #475569) !important; }`);
+  importantOverrides.push(`[data-style] main [data-color-context="light"] :where(.section-badge,.eyebrow) { color: var(--token-card-muted, #64748b) !important; }`);
 
   return (
     <div data-style={tenantStyle.activeStyle} className="overflow-x-clip" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>

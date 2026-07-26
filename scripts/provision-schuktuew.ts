@@ -122,8 +122,6 @@ const LOCAL_ASSETS = {
   golfReel: 'C:/Users/vonin-ju/Downloads/AQNn_ATz6o4QFuhcsAyoZO7tmcsysRQ9FVASQdNuH-e_4vkH7aiBNuRkTD2sGO1tYKSXSKthmsVOttqAf9IlWn0X4KGbR32PuZgETXg.mp4',
 } satisfies Partial<Record<AssetKey, string>>;
 
-const CAMERA_GLB_URL = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/AntiqueCamera/glTF-Binary/AntiqueCamera.glb';
-
 const ASSETS: Record<AssetKey, AssetSpec> = {
   logo: {
     source: 'https://static.wixstatic.com/media/74d7fc_b8b5511660f44ed6bcddd0baba92a192~mv2.png/v1/crop/x_0,y_247,w_7000,h_6827/fill/w_324,h_316,al_c,q_90,enc_avif,quality_auto/signatur_logo_neu_mit_name_ohne%20Hintergrund.png',
@@ -863,46 +861,46 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
     angles: Array<{ title: string; text: string; icon: string }>;
   }> = {
     'business-branding': {
-      lead: 'Business- und Kampagnenbilder für Unternehmen, Marken und Persönlichkeiten. Der Fokus liegt auf Haltung, Klarheit und wiederverwendbaren Motiven für Website, Social, Recruiting und Kommunikation.',
+      lead: 'Ich entwickle starke Bildwelten für Kommunikation, Marketing und Employer Branding – klar, hochwertig und strategisch gedacht.',
       facts: [
         { label: 'Einsatz', value: 'Website · Kampagne · Recruiting' },
         { label: 'Region', value: 'Ingolstadt · München' },
         { label: 'Output', value: 'Portraits · Stills · Social Assets' },
       ],
       angles: [
-        { title: 'Positionierung', text: 'Vor dem Shooting wird geklärt, wofür die Marke stehen soll und welche Motive dafür tragen.', icon: 'Sparkles' },
-        { title: 'Bildführung', text: 'Licht, Ausdruck, Raum und Details werden so geführt, dass aus Einzelbildern ein nutzbares Set entsteht.', icon: 'Aperture' },
-        { title: 'Verwendung', text: 'Die Motive funktionieren für Website, Kampagne, Social Media und Vertrieb, ohne den Look zu verlieren.', icon: 'Layers' },
+        { title: 'Positionierung', text: 'Gemeinsam übersetzen wir Werte, Haltung und Identität in Bilder, die wirken, bevor ein Wort gesagt wird.', icon: 'Sparkles' },
+        { title: 'Bildführung', text: 'Outfit, Posing, Ausdruck und Licht werden gezielt geführt, damit die Serie sicher und hochwertig wirkt.', icon: 'Aperture' },
+        { title: 'Verwendung', text: 'Die Motive sind für Website, Kampagne, Social Media und Recruiting vorbereitet, ohne den Look zu verlieren.', icon: 'Layers' },
       ],
     },
     'personal-branding': {
-      lead: 'Portraits für Menschen, die sichtbar werden wollen, ohne beliebig zu wirken. Die Bildsprache bleibt reduziert, direkt und auf Persönlichkeit konzentriert.',
+      lead: 'Ich kreiere Portraits, die zeigen, wer Sie sind – und wofür Sie stehen. Präzise inszeniert, klar geführt und auf den Punkt.',
       facts: [
         { label: 'Fokus', value: 'Portrait · Personal Branding' },
         { label: 'Look', value: 'klar · ruhig · charakterstark' },
         { label: 'Einsatz', value: 'Website · Presse · Social' },
       ],
       angles: [
-        { title: 'Ausdruck', text: 'Der Mensch steht im Mittelpunkt; Haltung und Präsenz sind wichtiger als Inszenierung.', icon: 'UserRound' },
-        { title: 'Reduktion', text: 'Ruhige Kompositionen, klare Flächen und präzise Details machen die Bilder länger nutzbar.', icon: 'Focus' },
-        { title: 'Vertrauen', text: 'Ein gutes Portrait zeigt Nähe, ohne künstlich zu wirken.', icon: 'ShieldCheck' },
+        { title: 'Ausdruck', text: 'Menschen zu fotografieren bedeutet für mich, eine Atmosphäre zu schaffen, in der Vertrauen entsteht.', icon: 'UserRound' },
+        { title: 'Reduktion', text: 'Die Bildsprache bleibt klar, ruhig und direkt, damit Persönlichkeit nicht von Dekoration überdeckt wird.', icon: 'Focus' },
+        { title: 'Vertrauen', text: 'Bilder sollen nicht nur gut aussehen, sondern Position stärken und Entscheidungen beeinflussen.', icon: 'ShieldCheck' },
       ],
     },
     'sport-golf': {
-      lead: 'Sportmotive und Reels im Kontext von Tempo, Konzentration und Präzision. Das Material bleibt im richtigen Format nutzbar – besonders für Social, Kampagne und Sponsoring.',
+      lead: 'Sport, Bewegung und Timing werden so fotografiert und geschnitten, dass aus einem Moment Material für Social, Website und Kampagne entsteht.',
       facts: [
         { label: 'Format', value: 'Foto · Reel · Kampagne' },
         { label: 'Kontext', value: 'Golf · Sport · Bewegung' },
         { label: 'Output', value: '9:16 · Website · Social' },
       ],
       angles: [
-        { title: 'Bewegung', text: 'Timing, Rhythmus und Blickführung sind entscheidend, damit Sportbilder Spannung behalten.', icon: 'Activity' },
+        { title: 'Bewegung', text: 'Timing, Rhythmus und Blickführung entscheiden, ob Sportbilder Spannung behalten.', icon: 'Activity' },
         { title: 'Präzision', text: 'Ausschnitt, Moment und Licht werden so geführt, dass Dynamik kontrolliert bleibt.', icon: 'Target' },
         { title: 'Kanäle', text: 'Aus der Produktion entstehen Motive und Clips für mehrere Einsatzorte.', icon: 'Film' },
       ],
     },
     'eiszeit-erc-ingolstadt': {
-      lead: 'Im Auftrag des ERC Ingolstadt begleitete Alexander Schuktuew Team, Umfeld und Leben um den Sport in der Saison 23/24 – mit Blick hinter die Kulissen des 1.-Liga-Betriebs.',
+      lead: 'Im Auftrag des ERC Ingolstadt begleitete ich das Team und das Leben um den Sport hautnah und durfte hinter die Kulissen des 1.-Liga-Betriebs sehen. Saison 23/24.',
       facts: [
         { label: 'Auftrag', value: 'ERC Ingolstadt' },
         { label: 'Saison', value: '23/24' },
@@ -912,7 +910,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       angles: [
         { title: 'Nähe', text: 'Die Arbeit zeigt nicht nur Spielmomente, sondern auch Umfeld, Vorbereitung und Atmosphäre.', icon: 'Eye' },
         { title: 'Dokumentation', text: 'Ein Saisonblick mit journalistischer Ruhe und Nähe zum Geschehen.', icon: 'BookOpen' },
-        { title: 'Buchform', text: 'Die Bildserie wurde als umfangreiches Buchprojekt veröffentlicht.', icon: 'Library' },
+        { title: 'Buchform', text: 'Veröffentlichung April 2024, Stückzahl 2.000, Umfang 240 Seiten.', icon: 'Library' },
       ],
     },
     converse: {
@@ -929,7 +927,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       ],
     },
     'buch-ingolstadt': {
-      lead: 'Freies fotografisches Buchprojekt aus Ingolstadt. Die Arbeit verbindet dokumentarischen Blick, urbane Motive und persönliche Perspektive.',
+      lead: 'Buch: „INGOLSTADT“, 2021 – aus 15 Jahren analoger Fotografie editiert. Stückzahl 500, 149 Seiten, Vorwort von Architekt A. Häusler.',
       facts: [
         { label: 'Format', value: 'Buchprojekt' },
         { label: 'Ort', value: 'Ingolstadt' },
@@ -1113,8 +1111,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           anchorId: 'top',
           data: {
             eyebrow: 'Studio Alexander Schuktuew',
-            headline: 'Fotografie, Film und AI Workflows für Marken mit Haltung.',
-            text: '<p>Fotografie für Unternehmen, Persönlichkeiten, für dich und dein Branding. Aus Ingolstadt und München entstehen visuelle Auftritte, die klar positionieren statt austauschbar zu wirken.</p>',
+            headline: 'Ihr Auftritt entscheidet. Ich sorge dafür, dass er gewinnt.',
+            text: '<p>In Sekunden entsteht ein Eindruck – bei Kund:innen, Entscheider:innen und potenziellen Mitarbeitenden. Ich entwickle visuelle Auftritte für Unternehmen, Marken und Persönlichkeiten, die nicht austauschbar sein wollen.</p>',
             imagePrimary: assets.heroPortrait,
             imageSecondary: assets.brandBox,
             hideImageOnMobile: true,
@@ -1128,13 +1126,13 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'kineticIdentity',
           data: {
             badge: 'Positionierung',
-            headline: 'Kein Standardbild. Ein visueller Auftritt.',
-            subline: 'Ein Auftritt entscheidet in Sekunden. Für Unternehmen, Marken und Persönlichkeiten entstehen Bilder, die Haltung, Vertrauen und Charakter sichtbar machen.',
+            headline: 'Keine Standardfotos. Eine klare visuelle Positionierung.',
+            subline: 'Sie bekommen bei mir keine gewöhnlichen Headshots. Sie bekommen Bilder, die Autorität, Selbstbewusstsein und Individualität sichtbar machen.',
             preset: 'editorial',
             statements: [
-              { prefix: 'Keine', highlight: 'Headshots', suffix: 'von der Stange.', text: 'Sondern gezielt entwickelte Markenbilder, die Autorität, Selbstbewusstsein und Individualität sichtbar machen.', image: assets.businessCampaign },
-              { prefix: 'Nicht nur', highlight: 'Fotograf', suffix: 'sondern Markenblick.', text: 'Alexander denkt den visuellen Auftritt strategisch: Werte, Haltung und Identität werden in Bildsprache übersetzt.', image: assets.personalBranding },
-              { prefix: 'Portraits mit', highlight: 'Klarheit', suffix: 'und Charakter.', text: 'Zwischen dokumentarischer Genauigkeit und reduzierter Bildsprache geht es um Präsenz, Ruhe und den richtigen Moment.', image: assets.portraitStudy },
+              { prefix: 'Ich arbeite', highlight: 'nicht einfach', suffix: 'als Fotograf.', text: 'Ich denke wie eine Marke und übersetze Werte, Haltung und Identität in Bilder, die wirken, bevor Sie ein Wort sagen.', image: assets.businessCampaign },
+              { prefix: 'Ich entwickle', highlight: 'Bildwelten', suffix: 'für Ihr Business.', text: 'Kommunikation, Marketing und Employer Branding bekommen einen hochwertigen, strategisch gedachten visuellen Rahmen.', image: assets.personalBranding },
+              { prefix: 'Ich kreiere', highlight: 'Portraits', suffix: 'auf den Punkt.', text: 'Präzise geführt, klar inszeniert und darauf konzentriert, wer Sie sind und wofür Sie stehen.', image: assets.portraitStudy },
             ],
             cta: { label: 'Anfrage starten', href: '/kontakt' },
           },
@@ -1143,18 +1141,18 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'aiWorkflowReel',
           data: {
             badge: 'AI Production System',
-            headline: 'Foto, Film und Content aus einer Hand.',
-            subline: 'Konzept, Bildwelt, Shooting, Schnitt und Formatadaption greifen ineinander. So entsteht ein konsistenter visueller Auftritt für Website, Social und Kampagne.',
+            headline: 'Foto, Film und Content, die zusammenarbeiten.',
+            subline: 'Ich denke Konzept, Bildwelt, Shooting, Schnitt und Formate gemeinsam. So entsteht ein konsistenter visueller Auftritt für Website, Social, Kampagne und Recruiting.',
             media: {
               videoSrc: assets.agencyReel,
               poster: assets.businessCampaign,
               caption: 'Produktion für Content, Kampagnen und Social Assets.',
             },
             steps: [
-              { kicker: '01 · Direction', title: 'Visuelle Positionierung', text: 'Werte, Zielgruppe und Haltung werden in Moodboard, Licht, Look und Bildsprache übersetzt.', proof: 'Branding-Beratung & Moodboard' },
-              { kicker: '02 · Production', title: 'Foto & Film aus einer Hand', text: 'Shooting im Studio oder on location, mit klarer Führung bei Posing, Ausdruck und Licht.', proof: 'Studio oder On-Location' },
-              { kicker: '03 · Formate', title: 'Varianten ableiten', text: 'Zuschnitte, Reels, Webmotive und Kampagnenbilder werden früh mitgedacht.', proof: 'Reels, Ads, Website, Social' },
-              { kicker: '04 · Output', title: 'Fertige Assets für echte Kanäle', text: 'Aus der Produktion entstehen Motive für Website, Kampagne, Recruiting, Personal Branding und Social Media.', proof: 'Kampagnenfähig' },
+              { kicker: '01 · Richtung', title: 'Wirkung festlegen', text: 'Vor dem Shooting klären wir, wofür Ihr Auftritt stehen soll und welche Motive diese Wirkung tragen.', proof: 'Branding-Beratung & Moodboard' },
+              { kicker: '02 · Produktion', title: 'Menschen sicher führen', text: 'Posing, Ausdruck, Licht und Raum werden so geführt, dass vor der Kamera Klarheit entsteht.', proof: 'Studio oder On-Location' },
+              { kicker: '03 · Formate', title: 'Kanäle mitdenken', text: 'Website-Motive, Reels, Social Cuts und Kampagnenbilder werden nicht nachträglich improvisiert, sondern direkt eingeplant.', proof: 'Reels, Ads, Website, Social' },
+              { kicker: '04 · Übergabe', title: 'Nutzbare Assets liefern', text: 'Sie bekommen Bild- und Filmdateien, die nicht nur gut aussehen, sondern Vertrauen aufbauen und Entscheidungen beeinflussen.', proof: 'Kampagnenfähig' },
             ],
             cta: { label: 'Produktion besprechen', href: '/kontakt' },
           },
@@ -1163,19 +1161,18 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'cameraExplodeScroll',
           data: {
             badge: 'Exploded View',
-            headline: 'Die Kamera zerlegt sich. Der Blick wird klarer.',
-            subline: 'Ein starkes Bild entsteht aus vielen bewussten Entscheidungen: Fokus, Timing, Kontrolle und Output.',
-            modelUrl: CAMERA_GLB_URL,
+            headline: 'Was leicht wirkt, wird vorher exakt gebaut.',
+            subline: 'Ein starkes Bild entsteht nicht zufällig. Ich zerlege Wirkung in Haltung, Licht, Perspektive, Moment, Auswahl und fertige Dateien.',
             brandImage: '',
             parts: [
-              { id: 'body', label: 'Gehäuse', text: 'Body, Griff und Haltung.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-              { id: 'lens', label: 'Objektiv', text: 'Fokus, Nähe und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-              { id: 'shutter', label: 'Verschluss', text: 'Timing, Bewegung und Moment.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-              { id: 'sensor', label: 'Sensor', text: 'Look, Farbe und Detailtiefe.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-              { id: 'display', label: 'Monitor', text: 'Auswahl, Kontrolle und Bildführung.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-              { id: 'files', label: 'Dateien', text: 'Website, Social, Kampagne und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+              { id: 'body', label: 'Haltung', text: 'Werte, Positionierung und Auftritt bestimmen die Bildidee.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'lens', label: 'Perspektive', text: 'Nähe, Brennweite und Raum entscheiden, wie souverän ein Motiv wirkt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'shutter', label: 'Moment', text: 'Ausdruck, Timing und Bewegung werden präzise geführt.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+              { id: 'sensor', label: 'Look', text: 'Farbe, Kontrast und Retusche halten die Serie zusammen.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+              { id: 'display', label: 'Auswahl', text: 'Die stärksten Motive werden für Wirkung und Nutzbarkeit kuratiert.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+              { id: 'files', label: 'Output', text: 'Website, Social, Kampagne und Print bekommen passende Dateien.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
-            cta: { label: 'System ansehen', href: '/ai-workflows' },
+            cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
           },
         },
         {
@@ -1282,7 +1279,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: 'AI Production',
             headline: 'Vom Briefing zur fertigen Bildstrecke.',
-            subline: 'Alexander verbindet Planung, Shooting, Schnitt und Varianten so, dass Website, Social und Kampagne denselben Look behalten.',
+            subline: 'Ich verbinde Planung, Shooting, Schnitt und Varianten so, dass Website, Social und Kampagne denselben Look behalten.',
             media: { videoSrc: assets.agencyReel, poster: assets.businessCampaign, caption: 'Ein Produktionsablauf für Foto, Film, Reels und Kampagnenmotive.' },
             steps: [
               { kicker: 'Briefing', title: 'Ziel klären', text: 'Marke, Zielgruppe, Einsatzkanäle und gewünschte Wirkung werden vor der Produktion festgelegt.', proof: 'Richtung vor Shooting' },
@@ -1298,17 +1295,16 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'cameraExplodeScroll',
           data: {
             badge: 'Exploded View',
-            headline: 'Eine Kamera. Viele Entscheidungen.',
-            subline: 'Fokus, Licht, Sensor, Kontrolle und finale Dateien greifen zusammen, bevor ein Motiv veröffentlicht wird.',
-            modelUrl: CAMERA_GLB_URL,
+            headline: 'Aus einem Motiv wird ein kompletter Auftritt.',
+            subline: 'Ich plane nicht nur das Bild, sondern auch die späteren Einsätze: Website, Social, Kampagne, Recruiting und Print.',
             brandImage: '',
             parts: [
-              { id: 'body', label: 'Gehäuse', text: 'Ziel, Marke und Haltung.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-              { id: 'lens', label: 'Objektiv', text: 'Bildsprache, Licht und Perspektive.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-              { id: 'shutter', label: 'Verschluss', text: 'Timing, Bewegung und Moment.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-              { id: 'sensor', label: 'Sensor', text: 'Retusche, Grading und Detailtiefe.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-              { id: 'display', label: 'Monitor', text: 'Auswahl und Freigabe.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-              { id: 'files', label: 'Dateien', text: 'Fertige Formate für Website, Social und Kampagne.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+              { id: 'body', label: 'Briefing', text: 'Ziel, Zielgruppe und Wirkung werden vor der Produktion geklärt.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'lens', label: 'Look', text: 'Licht, Farbe, Raum und Perspektive bekommen eine klare Richtung.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'shutter', label: 'Shooting', text: 'Ausdruck, Timing und Bewegung werden am Set geführt.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+              { id: 'sensor', label: 'Postproduktion', text: 'Auswahl, Retusche, Grading und Schnitt halten die Serie zusammen.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+              { id: 'display', label: 'Freigabe', text: 'Die stärksten Motive werden sichtbar sortiert und abgestimmt.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+              { id: 'files', label: 'Assets', text: 'Fertige Formate für Website, Social, Kampagne und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
             cta: { label: 'Mit Alex sprechen', href: '/kontakt' },
           },
@@ -1329,7 +1325,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             eyebrow: 'Über mich',
             headline: 'Ruhig, präzise, auf den Menschen konzentriert.',
-            text: '<p>Alexander Schuktuew ist Fotograf mit Schwerpunkt auf Portraitfotografie. Er arbeitet für Unternehmen, Editorial und freie Projekte aus dem Raum München und Ingolstadt.</p>',
+            text: '<p>Ich fotografiere Unternehmer, Kreative, Persönlichkeiten und dokumentarische Portraits aus dem Raum Ingolstadt und München. Mit Wurzeln im Skateboarding und einem Studium in Fotojournalismus und Dokumentarfotografie setze ich Markenphilosophie in ausdrucksstarkes, stilsicheres Storytelling um.</p>',
             imagePrimary: assets.studioWide,
             imageSecondary: assets.portraitStudy,
             primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
