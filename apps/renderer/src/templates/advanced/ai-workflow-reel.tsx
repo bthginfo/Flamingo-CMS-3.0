@@ -55,9 +55,9 @@ export function AiWorkflowReelSection({ data }: Props) {
           />
           <div className="mt-8 space-y-3">
             {steps.map((step, index) => (
-              <article key={`${step.title}-${index}`} className="group grid gap-4 rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.06] p-4 backdrop-blur transition hover:bg-white/[.1] sm:grid-cols-[3.2rem_1fr]" data-card data-edit-collection="steps" data-edit-index={index}>
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white text-black">
-                  {index === 0 ? <Bot size={20} /> : index === steps.length - 1 ? <CheckCircle2 size={20} /> : <GitBranch size={20} />}
+              <article key={`${step.title}-${index}`} className="group grid gap-4 rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.06] p-4 backdrop-blur transition hover:bg-white/[.1] sm:grid-cols-[4rem_1fr]" data-card data-edit-collection="steps" data-edit-index={index}>
+                <div className="grid h-14 w-14 place-items-center rounded-2xl border border-white/15 bg-[color:color-mix(in_srgb,var(--token-accent)_24%,white_8%)] text-[color:var(--token-on-dark-heading,#fff)] shadow-[inset_0_1px_0_rgba(255,255,255,.12),0_18px_40px_rgba(0,0,0,.22)]">
+                  {index === 0 ? <Bot size={24} strokeWidth={2.2} /> : index === steps.length - 1 ? <CheckCircle2 size={24} strokeWidth={2.2} /> : <GitBranch size={24} strokeWidth={2.2} />}
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{step.kicker || `Phase ${String(index + 1).padStart(2, '0')}`}</p>
