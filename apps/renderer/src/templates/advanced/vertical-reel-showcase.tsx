@@ -1,4 +1,4 @@
-import { ArrowUpRight, Film, PlayCircle } from 'lucide-react';
+import { ArrowUpRight, PlayCircle } from 'lucide-react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
 import { visibleText } from '@/lib/visible-content';
@@ -96,12 +96,6 @@ export function VerticalReelShowcaseSection({ data }: Props) {
           <ReelFrame reel={featured} index={0} featured aspectRatio={aspectRatio} />
           <div className="grid gap-5 sm:grid-cols-2">
             {rest.map((reel, index) => <ReelFrame key={`${reel.title || reel.videoSrc}-${index}`} reel={reel} index={index + 1} aspectRatio={aspectRatio} />)}
-            {rest.length < 2 && (
-              <div className="flex min-h-64 flex-col justify-between rounded-[var(--token-card-radius)] border border-dashed border-[var(--token-card-border)] bg-[var(--token-section-bg-alt)] p-6">
-                <Film className="text-[color:var(--token-accent)]" />
-                <p className="max-w-xs text-sm leading-6 text-[color:var(--token-muted)]">Hochformat bleibt im Originalformat sichtbar und direkt als Referenz erlebbar.</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

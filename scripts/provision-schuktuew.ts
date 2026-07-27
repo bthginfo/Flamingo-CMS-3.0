@@ -15,6 +15,7 @@ type AssetKey =
   | 'brandBox'
   | 'agencyReel'
   | 'golfReel'
+  | 'referenceReel'
   | 'heroPortrait'
   | 'studioWide'
   | 'businessCampaign'
@@ -120,6 +121,7 @@ const LOCAL_ASSETS = {
   brandBox: 'C:/Users/vonin-ju/AppData/Local/Temp/codex-clipboard-e93ce390-ba23-47f5-be25-11f7029c7db0.png',
   agencyReel: 'C:/Users/vonin-ju/Downloads/AQO8KdTvkw4Kf6EUxVtCyFRf7F5LifMi8MNwfWLKzqGyyCAykS_K1Ax02ovczX6qyVJ5YWtmE9cfy4uV2rI4MhSDlPmaCCwex2tb3lI.mp4',
   golfReel: 'C:/Users/vonin-ju/Downloads/AQNn_ATz6o4QFuhcsAyoZO7tmcsysRQ9FVASQdNuH-e_4vkH7aiBNuRkTD2sGO1tYKSXSKthmsVOttqAf9IlWn0X4KGbR32PuZgETXg.mp4',
+  referenceReel: 'C:/Users/vonin-ju/Downloads/AQPTd0f9OfQ7Dwnm1BWI6IycZzvFeL9Wg6fdkb7oBhPwUCCpyFBTnPyok_Zfac5dSEJzjZDawUBvUY5AA6XAU3Q8aa-GNmimbl3STKI.mp4',
 } satisfies Partial<Record<AssetKey, string>>;
 
 const ASSETS: Record<AssetKey, AssetSpec> = {
@@ -146,6 +148,12 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     filename: 'alexander-schuktuew-golf-reel.mp4',
     contentType: 'video/mp4',
     alt: 'Hochformat-Video Golfproduktion',
+  },
+  referenceReel: {
+    source: LOCAL_ASSETS.referenceReel,
+    filename: 'alexander-schuktuew-reference-reel.mp4',
+    contentType: 'video/mp4',
+    alt: 'Hochformat-Video Referenzproduktion',
   },
   heroPortrait: {
     source: 'https://static.wixstatic.com/media/74d7fc_d49b1c446fe544e0b4ef0d97df15530a~mv2.jpg/v1/fill/w_1600,h_2000,al_c,q_86,enc_avif,quality_auto/74d7fc_d49b1c446fe544e0b4ef0d97df15530a~mv2.jpg',
@@ -747,7 +755,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         category: 'Branding',
         description: 'Visuelle Auftritte für Unternehmen, Marken und Persönlichkeiten, die nicht austauschbar wirken wollen.',
         image: assets.businessCampaign,
-        sourceUrl: 'https://www.schuktuew.com/',
+        sourceUrl: 'https://www.schuktuew.com/golf',
       },
     },
     {
@@ -758,7 +766,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         category: 'Portrait',
         description: 'Portraits, die Haltung, Persönlichkeit und Positionierung sichtbar machen.',
         image: assets.personalBranding,
-        sourceUrl: 'https://www.schuktuew.com/',
+        sourceUrl: 'https://www.schuktuew.com/personal',
       },
     },
     {
@@ -770,7 +778,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         description: 'Dynamische Sportproduktion im Hochformat- und Kampagnenkontext.',
         image: assets.golfFrame,
         video: assets.golfReel,
-        sourceUrl: 'https://www.schuktuew.com/golf',
+        sourceUrl: 'https://www.schuktuew.com/golf-1',
       },
     },
     {
@@ -827,7 +835,6 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
   const curatedGalleryFallbacks: Record<string, string[]> = {
     'business-branding': galleryFromImported((project) => (
       ['commercial', 'efs-recruiting-campaign', 'clients-selection', 'konnekte', 'blackworks'].includes(project.slug)
-      || project.category === 'Commercial'
     )),
     'personal-branding': galleryFromImported((project) => (
       ['personal', 'portraits', 'selfportraits', 'kajan-luc', 'juliane-pittermann'].includes(project.slug)
@@ -837,7 +844,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
   const curatedProjects = projects.map((project) => {
     const imported = importedBySourceUrl.get(project.data.sourceUrl);
     const fallbackGallery = curatedGalleryFallbacks[project.slug] || [];
-    const gallery = Array.from(new Set([...(imported?.gallery || []), ...fallbackGallery, project.data.image].filter(Boolean)));
+    const gallery = Array.from(new Set([project.data.image, ...(imported?.gallery || []), ...fallbackGallery].filter(Boolean)));
     return { ...project, data: { ...project.data, image: gallery[0] || project.data.image, gallery, originalText: imported?.originalText, contentLead: imported?.originalText || project.data.description } };
   });
   const existingSourceUrls = new Set(canonicalSlugBySourceUrl.keys());
@@ -1200,12 +1207,13 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'verticalReelShowcase',
           data: {
             badge: 'Reels & Motion',
-            headline: 'Reels in dem Format, in dem sie wirken.',
-            subline: 'Vertikale Clips für Kampagnen, Sport und Social Assets in dem Format, in dem sie ausgespielt werden.',
+            headline: 'Video-Referenzen für Social, Sport und Kampagne.',
+            subline: 'Kurze vertikale Arbeiten als direkte Referenz: Produktion aus einer Hand, Sportmoment und bewegte Bildstrecke im nativen Reel-Format.',
             aspectRatio: '9/16',
             reels: [
-              { eyebrow: 'Production', title: 'Alles aus einer Hand', text: 'Konzept, Foto, Film, Schnitt und Content-Varianten für Markenauftritte.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: '9:16', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
-              { eyebrow: 'Golf', title: 'Sport in Bewegung', text: 'Golf, Bewegung, Timing und Schnitt als vertikale Referenz.', videoSrc: assets.golfReel, poster: assets.golfFrame, meta: 'Sport Reel', ctaLabel: 'Sport ansehen', ctaHref: '/portfolio' },
+              { eyebrow: 'Production', title: 'Foto, Film und Schnitt aus einer Hand', text: 'Eine vertikale Referenz für Marken, die nicht nur einzelne Bilder, sondern direkt nutzbaren Content brauchen.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: 'Produktion', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
+              { eyebrow: 'Golf', title: 'Sport als bewegte Referenz', text: 'Golf, Timing und Bewegung im Reel-Format – konzipiert für Social, Website und Kampagnenkontext.', videoSrc: assets.golfReel, poster: assets.golfFrame, meta: 'Sport Reel', ctaLabel: 'Sport ansehen', ctaHref: '/portfolio' },
+              { eyebrow: 'Video', title: 'Bewegte Bildstrecke', text: 'Ein drittes Hochformat-Beispiel für die Übersetzung von Bildsprache in kurze, verwertbare Video-Assets.', videoSrc: assets.referenceReel, poster: assets.personalBranding, meta: 'Referenz Reel', ctaLabel: 'Produktion planen', ctaHref: '/kontakt' },
             ],
             cta: { label: 'Produktion planen', href: '/kontakt' },
           },

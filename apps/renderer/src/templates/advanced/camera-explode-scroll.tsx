@@ -483,7 +483,7 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
   }, [modelUrl, parts, progressRef]);
 
   return (
-    <div ref={wrapRef} className="relative h-full min-h-[34rem] w-full">
+    <div ref={wrapRef} className="relative h-full min-h-[22rem] w-full sm:min-h-[30rem] md:min-h-[34rem]">
       <canvas ref={canvasRef} className="h-full w-full" aria-label="3D Exploded View einer Kamera" />
       {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-white/50">3D Kamera lädt</div>}
       {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-white/50">3D nicht verfügbar</div>}
@@ -494,9 +494,11 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
 function PartCopy({ part, index, compact = false }: { part: CameraPart; index: number; compact?: boolean }) {
   const Icon = PART_ICONS[index % PART_ICONS.length];
   return (
-    <article className={`rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.065] ${compact ? 'p-3' : 'p-4'} text-white/88 backdrop-blur-xl`} data-card data-color-context="dark" data-edit-collection="parts" data-edit-index={index}>
-      <div className="flex items-start gap-3">
-        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-white text-black"><Icon size={16} /></div>
+    <article className={`rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.07] ${compact ? 'p-4' : 'p-5'} text-white/88 shadow-[0_18px_54px_rgba(0,0,0,.22)] backdrop-blur-xl`} data-card data-color-context="dark" data-edit-collection="parts" data-edit-index={index}>
+      <div className="flex items-start gap-4">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-white/15 bg-[color:color-mix(in_srgb,var(--token-accent)_18%,white_10%)] text-[color:var(--token-on-dark-heading,#fff)] shadow-[inset_0_1px_0_rgba(255,255,255,.14),0_14px_32px_rgba(0,0,0,.22)]">
+          <Icon size={19} strokeWidth={2.25} />
+        </div>
         <div>
           <p className="text-[10px] font-black uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{String(index + 1).padStart(2, '0')}</p>
           <h3 className="mt-1 text-base font-black text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{part.label}</h3>
@@ -546,15 +548,28 @@ function StaticCameraVisual({ brandImage }: { brandImage: string }) {
   );
 }
 
-function StaticCameraFallback({ data, parts, brandImage, cta }: { data: Record<string, unknown>; parts: CameraPart[]; brandImage: string; cta: AdvancedCta }) {
+function MobileCameraExperience({ data, parts, brandImage, modelUrl, cta, reduceMotion }: { data: Record<string, unknown>; parts: CameraPart[]; brandImage: string; modelUrl: string; cta: AdvancedCta; reduceMotion: boolean | null }) {
+  const mobileRef = useRef<HTMLElement>(null);
+  const shouldLoadScene = useInView(mobileRef, { once: true, margin: '500px 0px 500px 0px' });
+  const { scrollYProgress } = useScroll({ target: mobileRef, offset: ['start 75%', 'end 20%'] });
+  const progress = useTransform(scrollYProgress, [0, 1], [0.08, 0.96]);
   const badge = cleanCameraBadge(data.badge);
   return (
-    <section className="bg-[var(--token-section-bg)] px-5 py-16 md:hidden">
+    <section ref={mobileRef} className="bg-[var(--token-section-bg)] px-5 py-16 md:hidden">
       <AdvancedIntro badge={badge} headline={String(data.headline || '')} subline={String(data.subline || '')} compact />
-      <div className="mt-8 rounded-[calc(var(--token-card-radius)*1.25)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-5">
-        <StaticCameraVisual brandImage={brandImage} />
+      <div className="mt-10 overflow-hidden rounded-[calc(var(--token-card-radius)*1.25)] border border-white/10 bg-[radial-gradient(circle_at_48%_35%,rgba(255,255,255,.13),transparent_42%),radial-gradient(circle_at_88%_16%,color-mix(in_srgb,var(--token-accent)_28%,transparent),transparent_34%),#080808] p-2 shadow-[0_28px_90px_rgba(0,0,0,.32)]">
+        <div className="relative h-[24rem] w-full sm:h-[30rem]">
+          {brandImage && <img src={brandImage} alt="" loading="lazy" decoding="async" className="absolute right-3 top-3 z-20 h-16 w-16 rounded-2xl border border-white/15 object-cover opacity-80 shadow-2xl" data-edit-image="brandImage" />}
+          {reduceMotion ? (
+            <StaticCameraVisual brandImage={brandImage} />
+          ) : shouldLoadScene ? (
+            <CameraThreeScene parts={parts} modelUrl={modelUrl} progress={progress} />
+          ) : (
+            <div className="grid h-full place-items-center text-xs font-black uppercase tracking-[.22em] text-white/45">3D wird geladen</div>
+          )}
+        </div>
       </div>
-      <div className="mt-8 space-y-3">{parts.map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
+      <div className="mt-10 space-y-3">{parts.map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} />)}</div>
       <AdvancedLink cta={cta} className="mt-8" />
     </section>
   );
@@ -578,12 +593,12 @@ export function CameraExplodeScrollSection({ data }: Props) {
 
   return (
     <>
-      <StaticCameraFallback data={displayData} parts={parts} brandImage={brandImage} cta={cta} />
+      <MobileCameraExperience data={displayData} parts={parts} brandImage={brandImage} modelUrl={modelUrl} cta={cta} reduceMotion={reduceMotion} />
       <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${reduceMotion ? 120 : Math.max(220, parts.length * 42)}vh` }}>
         <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(25rem,.7fr)_minmax(34rem,1.3fr)] lg:gap-10 lg:px-14">
-          <div className="relative z-20 flex min-w-0 flex-col justify-between" data-color-context="dark">
+          <div className="relative z-20 flex min-w-0 flex-col py-6" data-color-context="dark">
             <CameraStickyIntro data={displayData} />
-            <div className="grid gap-2 pb-6 xl:grid-cols-2">{parts.slice(0, 6).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} compact />)}</div>
+            <div className="mt-10 grid gap-3 pb-6 xl:grid-cols-2">{parts.slice(0, 6).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} compact />)}</div>
           </div>
           <div className="relative grid min-h-0 place-items-center">
             <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_48%_44%,rgba(255,255,255,.18),transparent_38%),radial-gradient(circle_at_86%_18%,color-mix(in_srgb,var(--token-accent)_34%,transparent),transparent_30%)]" />
