@@ -88,7 +88,8 @@ async function loadVercelProjectEnv() {
   });
   const data = await response.json().catch(() => null) as { envs?: Array<{ key: string; value?: string; target?: string[] }> } | { error?: unknown } | null;
   if (!response.ok || !data || !('envs' in data)) {
-    throw new Error(`Vercel Env konnte nicht geladen werden (${VERCEL_ENV_PROJECT}).`);
+    console.warn(`Vercel Env konnte nicht geladen werden (${VERCEL_ENV_PROJECT}); nutze vorhandene lokale/GitHub-Env.`);
+    return;
   }
   for (const envVar of data.envs || []) {
     if (envVar.key === 'VERCEL_TOKEN') continue;
