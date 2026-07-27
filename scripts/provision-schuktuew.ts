@@ -492,6 +492,8 @@ function extractOriginalText(html: string) {
 
 function cleanOriginalTitle(value: string, slug: string) {
   const title = decodeHtml(value)
+    .replace(/\s+[|–-]\s+Meinewebsite.*$/i, '')
+    .replace(/\s+[|–-]\s+Meine\s+Website.*$/i, '')
     .replace(/\s+[|–-]\s+Alexander\s+Schuktuew.*$/i, '')
     .replace(/\s+[|–-]\s+Schuktuew.*$/i, '')
     .replace(/\s+/g, ' ')
@@ -1111,8 +1113,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           anchorId: 'top',
           data: {
             eyebrow: 'Studio Alexander Schuktuew',
-            headline: 'Ihr Auftritt entscheidet. Ich sorge dafür, dass er gewinnt.',
-            text: '<p>In Sekunden entsteht ein Eindruck – bei Kund:innen, Entscheider:innen und potenziellen Mitarbeitenden. Ich entwickle visuelle Auftritte für Unternehmen, Marken und Persönlichkeiten, die nicht austauschbar sein wollen.</p>',
+            headline: 'Fotografie, Film und AI Workflows für Marken mit Haltung.',
+            text: '<p>Ich entwickle visuelle Auftritte für Unternehmen, Persönlichkeiten und Marken, die klar positionieren statt austauschbar zu wirken. Aus Ingolstadt und München entstehen Portraits, Kampagnenbilder, Reels und Content-Strecken mit einem präzisen Look.</p>',
             imagePrimary: assets.heroPortrait,
             imageSecondary: assets.brandBox,
             hideImageOnMobile: true,
@@ -1141,8 +1143,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'aiWorkflowReel',
           data: {
             badge: 'AI Production System',
-            headline: 'Foto, Film und Content, die zusammenarbeiten.',
-            subline: 'Ich denke Konzept, Bildwelt, Shooting, Schnitt und Formate gemeinsam. So entsteht ein konsistenter visueller Auftritt für Website, Social, Kampagne und Recruiting.',
+            headline: 'Foto, Film und Content aus einer Hand.',
+            subline: 'Konzept, Bildwelt, Shooting, Schnitt und Formatadaption greifen ineinander. So entsteht ein konsistenter visueller Auftritt für Website, Social, Kampagne und Recruiting.',
             media: {
               videoSrc: assets.agencyReel,
               poster: assets.businessCampaign,
@@ -1160,17 +1162,17 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'cameraExplodeScroll',
           data: {
-            badge: 'Visual Production System',
-            headline: 'Aus einem Shooting wird ein kompletter Auftritt.',
-            subline: 'Ich plane Fotografie, Film und KI-Workflows so, dass am Ende nicht nur schöne Bilder entstehen, sondern nutzbare Assets für Website, Social, Kampagne, Recruiting und Print.',
+            badge: 'Production System',
+            headline: 'So wird aus einem Motiv ein kompletter Markenauftritt.',
+            subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, Führung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets für Website, Social, Kampagne und Recruiting.',
             brandImage: '',
             parts: [
-              { id: 'briefing', label: 'Briefing', text: 'Ich kläre zuerst Ziel, Zielgruppe, Kanäle und gewünschte Wirkung – damit die Produktion eine Richtung hat.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-              { id: 'visual-language', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als wiedererkennbare visuelle Linie angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-              { id: 'shooting', label: 'Shooting', text: 'Ich führe Menschen, Bewegung und Ausdruck so, dass Portrait, Commercial und Reel-Material zusammenpassen.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-              { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich dort, wo sie Varianten, Planung oder Adaptionen besser macht – ohne den Look beliebig werden zu lassen.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-              { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto und Film auf denselben Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-              { id: 'assets', label: 'Übergabe', text: 'Geliefert werden fertige Dateien für Website, Social, Kampagne, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+              { id: 'briefing', label: 'Briefing', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie für Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'direction', label: 'Führung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich führe Menschen so, dass der Auftritt glaubwürdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+              { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert für Varianten, Planung und Adaptionen – nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+              { id: 'finish', label: 'Finish', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto, Film und Reel-Material auf denselben visuellen Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+              { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien für Website, Social Media, Kampagnen, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
             cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
           },
@@ -1237,8 +1239,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'infiniteCanvas',
           data: {
             badge: 'Work Map',
-            headline: 'Zieh dich durch die Bildwelt.',
-            subline: 'Eine offene Bildlandkarte aus Portfolio, Portraits, Sport, Commercial und Buchprojekten.',
+            headline: 'Portfolio als visuelle Landkarte.',
+            subline: 'Eine reduzierte Bildlandkarte aus Portrait, Sport, Commercial und Buchprojekten – performant kuratiert statt überladen.',
             ctaLabel: 'Canvas öffnen',
             maxExplorerItems: 16,
             items: portfolioItems,

@@ -38,16 +38,16 @@ const FALLBACK_PARTS: CameraPart[] = [
 ];
 
 const SCHUKTUEW_CAMERA_COPY = {
-  badge: 'Visual Production System',
-  headline: 'Aus einem Shooting wird ein kompletter Auftritt.',
-  subline: 'Ich plane Fotografie, Film und KI-Workflows so, dass am Ende nicht nur schöne Bilder entstehen, sondern nutzbare Assets für Website, Social, Kampagne, Recruiting und Print.',
+  badge: 'Production System',
+  headline: 'So wird aus einem Motiv ein kompletter Markenauftritt.',
+  subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, Führung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets für Website, Social, Kampagne und Recruiting.',
   parts: [
-    { id: 'briefing', label: 'Briefing', text: 'Ich kläre zuerst Ziel, Zielgruppe, Kanäle und gewünschte Wirkung – damit die Produktion eine Richtung hat.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-    { id: 'visual-language', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als wiedererkennbare visuelle Linie angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-    { id: 'shooting', label: 'Shooting', text: 'Ich führe Menschen, Bewegung und Ausdruck so, dass Portrait, Commercial und Reel-Material zusammenpassen.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich dort, wo sie Varianten, Planung oder Adaptionen besser macht – ohne den Look beliebig werden zu lassen.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-    { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto und Film auf denselben Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-    { id: 'assets', label: 'Übergabe', text: 'Geliefert werden fertige Dateien für Website, Social, Kampagne, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+    { id: 'briefing', label: 'Briefing', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+    { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie für Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+    { id: 'direction', label: 'Führung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich führe Menschen so, dass der Auftritt glaubwürdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert für Varianten, Planung und Adaptionen – nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+    { id: 'finish', label: 'Finish', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto, Film und Reel-Material auf denselben visuellen Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+    { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien für Website, Social Media, Kampagnen, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
   ],
   cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
 };

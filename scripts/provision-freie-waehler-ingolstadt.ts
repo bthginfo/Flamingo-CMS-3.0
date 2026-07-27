@@ -68,6 +68,7 @@ const SLUG = 'freie-waehler-ingolstadt';
 const PROJECT_NAME = 'flamingo-freie-waehler-ingolstadt';
 const PREVIEW_URL = `https://${PROJECT_NAME}.vercel.app`;
 const PROJECT_ID = 'prj_YJ11JcHEmhrHiuby0eZZEUe0Ig4Z';
+const VERCEL_ENV_PROJECT = process.env.VERCEL_ENV_PROJECT || 'flamingo-cms-3-0';
 const PAGES_SITEMAP_URL = `${BASE_URL}/sitemap.xml?sitemap=pages&cHash=e57fb11c444801be70f13b7a37a3ace9`;
 const NEWS_SITEMAP_URL = `${BASE_URL}/sitemap.xml?sitemap=newsAktuelles&cHash=b444f208c226e3ecec79898722597d9a`;
 const MAX_NEWS = Number(process.env.FW_MAX_NEWS || '2000');
@@ -78,6 +79,26 @@ const FW_LOGO = `${BASE_URL}/assets/img/FW-logo-design-noclaim.png`;
 const FW_SOCIAL = `${BASE_URL}/assets/img/freie-waehler-social.png`;
 const FW_HERO = `${BASE_URL}/fileadmin/Verbaende/ov-ingolstadt/Bilder_2026/26-03-18_Slider_Wahl_Platz_1-5_1567x700pix.jpg`;
 const MEMBER_PDF = `${BASE_URL}/fileadmin/Verbaende/ov-ingolstadt/PDF_Dokumente/Mitgliedsantrag_Einzugserm%C3%A4chtigung_SEPA_2025.pdf`;
+
+async function loadVercelProjectEnv() {
+  const token = process.env.VERCEL_TOKEN?.trim();
+  if (!token) return;
+  const response = await fetch(`https://api.vercel.com/v9/projects/${encodeURIComponent(VERCEL_ENV_PROJECT)}/env?limit=200`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json().catch(() => null) as { envs?: Array<{ key: string; value?: string; target?: string[] }> } | { error?: unknown } | null;
+  if (!response.ok || !data || !('envs' in data)) {
+    throw new Error(`Vercel Env konnte nicht geladen werden (${VERCEL_ENV_PROJECT}).`);
+  }
+  for (const envVar of data.envs || []) {
+    if (envVar.key === 'VERCEL_TOKEN') continue;
+    const targets = Array.isArray(envVar.target) ? envVar.target : [];
+    if (targets.length && !targets.includes('production')) continue;
+    const value = typeof envVar.value === 'string' ? envVar.value : '';
+    if (!value || value.startsWith('__PLACEHOLDER')) continue;
+    if (!process.env[envVar.key]) process.env[envVar.key] = value;
+  }
+}
 
 const CORE_PAGE_PATHS = [
   '',
@@ -138,9 +159,11 @@ const VEREIN_SECTION_TYPES = new Set([
 const SHARED_SECTION_TYPES = new Set([
   'collectionList',
   'editorialFeatureRail',
+  'featureShowcase',
   'proofWall',
   'signatureGrid',
   'spotlightCards',
+  'teamSpotlight',
   'ctaSplit',
 ]);
 
@@ -940,7 +963,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           hint: 'Kommunalpolitik aus Ingolstadt – ohne Parteizwang, mit Blick auf konkrete Lösungen.',
         }, sectionStyle('soft')),
         {
-          type: 'principlesGrid',
+          type: 'bentoGrid',
           container: 'full',
           spacingTop: 'none',
           spacingBottom: 'xl',
@@ -948,14 +971,13 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           data: {
             badge: 'Unser Anspruch',
             headline: 'Politik beginnt vor Ort.',
-            subline: 'Die Freien Wähler Ingolstadt arbeiten kommunal, unabhängig und lösungsorientiert.',
-            principles: [
-              { eyebrow: 'Unabhängig', title: 'Keine Parteiideologie', text: 'Entscheidend ist, was Ingolstadt konkret weiterbringt.' },
-              { eyebrow: 'Bürgernah', title: 'Nahe an den Themen', text: 'Anliegen aus Stadtteilen, Vereinen und Alltag gehören in den Stadtrat.' },
-              { eyebrow: 'Sachorientiert', title: 'Fakten statt Schlagworte', text: 'Anträge und Entscheidungen sollen nachvollziehbar begründet sein.' },
-              { eyebrow: 'Ehrenamtlich', title: 'Engagement für die Stadt', text: 'Kommunalpolitik lebt von Menschen, die Verantwortung übernehmen.' },
+            subline: 'Kommunalpolitik muss verständlich, unabhängig und konkret bleiben. Diese vier Prinzipien führen durch Programm, Stadtrat und Vereinsarbeit.',
+            items: [
+              { icon: 'Scale', title: 'Unabhängig entscheiden', description: 'Keine Parteiideologie, sondern Lösungen, die Ingolstadt konkret weiterbringen.', span: 'wide' },
+              { icon: 'MapPin', title: 'Nah an den Stadtteilen', description: 'Anliegen aus Bezirken, Vereinen und Alltag gehören sichtbar in die politische Arbeit.' },
+              { icon: 'FileCheck', title: 'Fakten statt Schlagworte', description: 'Anträge und Entscheidungen sollen nachvollziehbar begründet und auffindbar sein.' },
+              { icon: 'Handshake', title: 'Ehrenamt ernst nehmen', description: 'Kommunalpolitik lebt von Menschen, die Zeit, Erfahrung und Verantwortung einbringen.' },
             ],
-            cta: { label: 'Menschen kennenlernen', href: '/menschen' },
           },
         },
         {
@@ -976,19 +998,31 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           },
         },
         {
-          type: 'spotlightCards',
-          container: 'default',
+          type: 'editorialFeatureRail',
+          container: 'full',
           spacingTop: 'xl',
           spacingBottom: 'xl',
+          styleOverrides: {
+            '--token-section-bg': '#ffffff',
+            '--token-heading': '#061532',
+            '--token-body': '#25344f',
+            '--token-card-bg': '#08152c',
+            '--token-card-border': 'rgba(10,35,72,0.14)',
+            '--token-card-body': 'rgba(255,255,255,0.86)',
+            '--token-on-dark-heading': '#ffffff',
+            '--token-eyebrow': '#f8b334',
+            '--token-btn-bg': '#f28c00',
+            '--token-btn-text': '#061532',
+          },
           data: {
             badge: 'Schwerpunkte',
-            headline: 'Die wichtigsten Bereiche',
-            subline: 'Programm, aktuelle Meldungen, Stadtratsarbeit und Möglichkeiten zum Mitmachen auf einen Blick.',
-            cards: [
-              { title: 'Themen & Wahlprogramm', text: 'Die politischen Schwerpunkte für Ingolstadt gebündelt und verständlich.', icon: 'FileText', href: '/wahlprogramm', ctaLabel: 'Programm ansehen' },
-              { title: 'Stadtrat & Anträge', text: 'Anträge, Initiativen und Arbeit der Stadtratsfraktion.', icon: 'Landmark', href: '/stadtrat', ctaLabel: 'Zum Archiv' },
-              { title: 'Organisation', text: 'Vorstand, Fraktion, Kreisvereinigung und Bezirksausschüsse gebündelt.', icon: 'Users', href: '/menschen', ctaLabel: 'Menschen ansehen' },
-              { title: 'Mitmachen', text: 'Mitglied werden, Veranstaltungen besuchen oder direkt Kontakt aufnehmen.', icon: 'Handshake', href: '/mitmachen', ctaLabel: 'Mitmachen' },
+            headline: 'Alles Wichtige ohne Seitendschungel.',
+            subline: 'Programm, aktuelle Meldungen, Stadtratsarbeit, Organisation und Mitmachen sind bewusst gebündelt.',
+            items: [
+              { kicker: 'Programm', title: 'Wofür wir antreten.', text: 'Die politischen Schwerpunkte für Ingolstadt gebündelt und verständlich.', image: contentImage(wahlprogramm?.image) || FW_HERO, ctaLabel: 'Programm ansehen', ctaHref: '/wahlprogramm' },
+              { kicker: 'Stadtrat', title: 'Anträge und Positionen.', text: 'Anträge, Initiativen und Arbeit der Stadtratsfraktion mit Suche und Archiv.', image: contentImage(fraktion?.image) || FW_HERO, ctaLabel: 'Zum Archiv', ctaHref: '/stadtrat#antraege' },
+              { kicker: 'Organisation', title: 'Menschen und Struktur.', text: 'Vorstand, Fraktion, Kreisvereinigung und Bezirksausschüsse an einem Ort.', image: contentImage(kreis?.image) || FW_HERO, ctaLabel: 'Menschen ansehen', ctaHref: '/menschen' },
+              { kicker: 'Mitmachen', title: 'Einbringen statt zuschauen.', text: 'Mitglied werden, Termine besuchen oder direkt Kontakt aufnehmen.', image: contentImage(veranstaltungen?.image) || FW_HERO, ctaLabel: 'Mitmachen', ctaHref: '/mitmachen' },
             ],
           },
         },
@@ -1080,8 +1114,8 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           secondaryCta: { label: 'Mitmachen', href: '/mitmachen' },
         }, sectionStyle('soft')),
         {
-          type: 'principlesGrid',
-          container: 'full',
+          type: 'bentoGrid',
+          container: 'default',
           spacingTop: 'l',
           spacingBottom: 'xl',
           styleOverrides: sectionStyle('light'),
@@ -1089,11 +1123,11 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             badge: 'Programm',
             headline: 'Themen klar geordnet.',
             subline: 'Finanzen, Stadtentwicklung, Mobilität und Transparenz als klare Themenfelder für Ingolstadt.',
-            principles: [
-              { eyebrow: 'Finanzen', title: 'Haushalt & Verantwortung', text: 'Solide Finanzen schaffen Spielraum für Familien, Sicherheit, Bildung und Gesundheit.' },
-              { eyebrow: 'Stadt', title: 'Stadtentwicklung', text: 'Ingolstadt soll sich nachvollziehbar, bezahlbar und lebenswert weiterentwickeln.' },
-              { eyebrow: 'Alltag', title: 'Mobilität & Alltag', text: 'Entscheidungen müssen im Alltag der Bürgerinnen und Bürger funktionieren.' },
-              { eyebrow: 'Offenheit', title: 'Transparenz', text: 'Kommunalpolitik braucht klare Grundlagen, nachvollziehbare Zahlen und offene Kommunikation.' },
+            items: [
+              { icon: 'PiggyBank', title: 'Haushalt & Verantwortung', description: 'Solide Finanzen schaffen Spielraum für Familien, Sicherheit, Bildung und Gesundheit.', span: 'wide' },
+              { icon: 'Building2', title: 'Stadtentwicklung', description: 'Ingolstadt soll sich nachvollziehbar, bezahlbar und lebenswert weiterentwickeln.' },
+              { icon: 'Route', title: 'Mobilität & Alltag', description: 'Entscheidungen müssen im Alltag der Bürgerinnen und Bürger funktionieren.' },
+              { icon: 'SearchCheck', title: 'Transparenz', description: 'Kommunalpolitik braucht klare Grundlagen, nachvollziehbare Zahlen und offene Kommunikation.' },
             ],
           },
         },
@@ -1522,7 +1556,6 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         { label: 'Wahlprogramm', href: '/wahlprogramm' },
         { label: 'Menschen', href: '/menschen' },
         { label: 'Stadtrat', href: '/stadtrat' },
-        { label: 'Veranstaltungen', href: '/veranstaltungen' },
         { label: 'Kontakt', href: '/kontakt' },
       ],
       cta: {
@@ -1798,6 +1831,7 @@ function requirePostgresUrl(name: string, value: string | undefined): string {
 }
 
 async function main() {
+  if (!DRY_RUN) await loadVercelProjectEnv();
   const scraped = await scrapeLegacy();
   const site = buildSite(scraped.pages, scraped.news);
 

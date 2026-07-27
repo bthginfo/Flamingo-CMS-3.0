@@ -49,7 +49,7 @@ export function SpotlightCardsSection({ data }: Props) {
                 {card.icon && <span className="flex h-12 w-12 items-center justify-center rounded-full border bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]" data-color-slot="iconColor cardBg accentColor" style={{ borderColor: 'color-mix(in srgb, var(--token-accent) 28%, transparent)' }}><DynamicIcon editPath="icon" name={card.icon} size={24} /></span>}
                 <div>
                 <h3 className="text-xl font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title" data-color-slot="cardHeadingColor">{card.title}</h3>
-                {card.text && <p className="mt-3 line-clamp-5 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text" data-color-slot="cardBodyColor">{plain(card.text)}</p>}
+                {card.text && <p className="mt-3 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text" data-color-slot="cardBodyColor">{plain(card.text)}</p>}
                 {card.href && (
                   <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-accent)_28%,transparent)] px-3 py-2 text-sm font-bold text-[color:var(--token-accent)] transition group-hover:bg-[color:color-mix(in_srgb,var(--token-accent)_10%,transparent)]">
                     <span data-edit-path="ctaLabel">{card.ctaLabel || 'Mehr erfahren'}</span>
