@@ -2,11 +2,13 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { BILLING_ADDON_KEY, createDb, migrateDatabase, tenants, tenantDatabaseConnections, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, type Industry } from '@flamingo/db';
+import { hashPassword } from '@flamingo/auth';
+import { BILLING_ADDON_KEY, adminSecrets, createDb, migrateDatabase, tenants, tenantDatabaseConnections, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, crmCustomers, leads, type Industry } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, addDomainToProject, removeDomainFromProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject, setStandaloneDatabaseConnection } from '@/lib/vercel';
 import { requireCrmAdmin } from '@/lib/session';
+import { protectCrmSecret } from '@/lib/secret-storage';
 import { createNeonRuntimeDatabaseRole, createNeonTenantProject, deleteNeonProject, getNeonTenantProjectById } from '@/lib/neon';
 import { getRequiredStandaloneDatabase, getTenantDataDb, getTenantDatabaseRecord, markTenantDatabaseActive, mirrorTenantControlFields, registerTenantDatabase, removeTenantDatabaseRecord, updateTenantRuntimeDatabaseConnection } from '@/lib/tenant-data-db';
 import { copyTenantData, purgeSharedTenantData, verifyTenantDataCopy } from '@/lib/tenant-data-migration';
@@ -35,6 +37,44 @@ export async function updateTenantAction(tenantId: string, data: { name?: string
   revalidatePath('/crm');
   revalidatePath(`/crm/tenants/${tenantId}`);
   return { success: true };
+}
+
+export async function resetTenantAdminPasswordAction(tenantId: string, rawPassword: string) {
+  await requireCrmAdmin();
+  const password = rawPassword.trim();
+  if (password.length < 12) return { success: false as const, error: 'Das neue Passwort muss mindestens 12 Zeichen haben.' };
+  if (Buffer.byteLength(password, 'utf8') > 72) return { success: false as const, error: 'Das neue Passwort ist zu lang. Maximal 72 UTF-8-Bytes sind erlaubt.' };
+
+  const controlDb = getDb();
+  const [tenant] = await controlDb.select({ id: tenants.id }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  if (!tenant) return { success: false as const, error: 'Tenant nicht gefunden.' };
+
+  const now = new Date();
+  const passwordHash = await hashPassword(password);
+  const dataDb = await getTenantDataDb(tenantId);
+
+  await dataDb.insert(adminSecrets).values({
+    tenantId,
+    passwordHash,
+    passwordUpdatedAt: now,
+    updatedAt: now,
+  }).onConflictDoUpdate({
+    target: adminSecrets.tenantId,
+    set: { passwordHash, passwordUpdatedAt: now, updatedAt: now },
+  });
+
+  const encryptedPassword = protectCrmSecret(password);
+  await Promise.all([
+    controlDb.update(crmCustomers).set({ adminPassword: encryptedPassword, updatedAt: now }).where(eq(crmCustomers.tenantId, tenantId)),
+    controlDb.update(leads).set({ adminPassword: encryptedPassword, updatedAt: now }).where(eq(leads.tenantId, tenantId)),
+  ]);
+
+  revalidatePath('/crm');
+  revalidatePath('/crm/tenants');
+  revalidatePath(`/crm/tenants/${tenantId}`);
+  revalidatePath('/crm/kunden');
+  revalidatePath('/crm/leads');
+  return { success: true as const };
 }
 
 export async function addDomainAction(tenantId: string, domain: string) {

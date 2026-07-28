@@ -42,7 +42,9 @@ type AssetKey =
   | 'eiszeitDetail01'
   | 'eiszeitDetail02'
   | 'portfolioStill01'
-  | 'portfolioStill02';
+  | 'portfolioStill02'
+  | 'aiLandscapeBefore'
+  | 'aiLandscapeAfter';
 
 type AssetSpec = {
   source: string;
@@ -107,6 +109,91 @@ type SchuktuewProject = {
     originalText?: string;
   };
 };
+
+function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['sections'] {
+  return [
+    {
+      type: 'editorialHero',
+      data: {
+        eyebrow: 'AI Workflows',
+        headline: 'Ich nutze KI, um vor der Produktion klarer zu entscheiden.',
+        text: '<p>Ein gutes Bild entsteht nicht erst in der Retusche. Ich lege vorher fest, welche Wirkung es haben soll: Haltung, Licht, Farbe, Format und Einsatzkanal.</p><p>KI nutze ich als kontrolliertes Werkzeug für Looktests, Varianten und Auslieferung. Die Fotografie bleibt real, die Bildsprache wird früher sichtbar.</p>',
+        imagePrimary: assets.aiLandscapeAfter,
+        imageSecondary: assets.aiLandscapeBefore,
+        primaryCta: { label: 'Workflow besprechen', href: '/kontakt' },
+        secondaryCta: { label: 'Portfolio ansehen', href: '/portfolio' },
+        hint: 'Looktests · Foto · Film · Website · Social',
+      },
+    },
+    {
+      type: 'xrayReveal',
+      container: 'wide',
+      data: {
+        badge: 'Vorher / Nachher',
+        headline: 'Vom flachen Ausgangsmotiv zur klaren Bildwelt.',
+        subline: 'Ich teste Bildstimmung, Licht, Farbe, Tiefe und Zuschnitt, bevor ein Projekt in Produktion geht. Dadurch wird früh sichtbar, ob ein Motiv als Website-Hero, Kampagnenbild oder Social-Asset trägt.',
+        imageBase: assets.aiLandscapeBefore,
+        imageReveal: assets.aiLandscapeAfter,
+        labelBase: 'Rohmotiv',
+        labelReveal: 'Kampagnenlook',
+        caption: 'Nicht Effekt um des Effekts willen: Der Look dient der Marke, dem Format und dem Kanal.',
+        revealStyle: 'scan',
+        aspectRatio: '16/9',
+      },
+    },
+    {
+      type: 'spotlightCards',
+      data: {
+        badge: 'Workflow',
+        headline: 'So wird aus einer Idee eine nutzbare Bildstrecke.',
+        subline: 'Der Ablauf ist schlank, aber bewusst: erst Wirkung klären, dann produzieren, danach sauber für echte Kanäle ausgeben.',
+        cards: [
+          { title: 'Wirkung klären', text: 'Ich sortiere Zielgruppe, Kanal, Tonalität und Referenzen, bevor Kamera oder KI ins Spiel kommen.', icon: 'Sparkles' },
+          { title: 'Looktests bauen', text: 'Farben, Lichtstimmung, Bildausschnitt und Varianten werden früh sichtbar und vergleichbar.', icon: 'ScanSearch' },
+          { title: 'Produktion führen', text: 'Beim Shooting geht es um Haltung, Ausdruck, Licht und Motive, die nicht nur einmal funktionieren.', icon: 'Camera' },
+          { title: 'Formate ableiten', text: 'Aus einer Produktion entstehen Motive für Website, Reels, Kampagne, Recruiting, Social und Print.', icon: 'PanelsTopLeft' },
+          { title: 'Finish angleichen', text: 'Retusche, Grading und Schnitt bleiben in einer visuellen Linie, damit die Marke konsistent wirkt.', icon: 'SlidersHorizontal' },
+          { title: 'Übergabe ordnen', text: 'Geliefert werden verwendbare Dateien, Zuschnitte und Varianten statt unübersichtlicher Rohdatenpakete.', icon: 'FolderCheck' },
+        ],
+        cta: { label: 'Produktion planen', href: '/kontakt' },
+      },
+    },
+    {
+      type: 'aiWorkflowReel',
+      data: {
+        badge: 'Foto + Film + Varianten',
+        headline: 'Ich denke die Ausgabe direkt mit.',
+        subline: 'Wenn ich fotografiere oder filme, plane ich nicht nur das Einzelmotiv. Ich denke an Website-Hero, Portraitstrecke, Reel, Anzeige, Social Cut und Präsentation. Genau dort spart ein guter Workflow später Zeit.',
+        media: { videoSrc: assets.agencyReel, poster: assets.heroPortrait, caption: 'Produktion aus einer Hand: Konzept, Foto, Film, Schnitt und Varianten.' },
+        steps: [
+          { kicker: '01 · Briefing', title: 'Was soll sichtbar werden?', text: 'Ich kläre, welche Haltung, welcher Nutzen und welche Zielgruppe im Bild erkennbar sein sollen.', proof: 'Wirkung · Zielgruppe · Kanäle' },
+          { kicker: '02 · Motive', title: 'Welche Bilder tragen die Marke?', text: 'Ich definiere Motive, die auf der Website funktionieren und als Kampagnen- oder Social-Asset weiterleben können.', proof: 'Hero · Detail · Portrait · Reel' },
+          { kicker: '03 · Produktion', title: 'Foto und Film am Set verbinden', text: 'Licht, Raum, Bewegung und Ausdruck werden so geführt, dass die Ergebnisse zusammengehören.', proof: 'Shooting · Reel · Behind-the-scenes' },
+          { kicker: '04 · Varianten', title: 'Aus einem Look mehrere Formate', text: 'KI und Postproduktion helfen bei kontrollierten Adaptionen, ohne die fotografische Basis zu verwässern.', proof: 'Web · Social · Ads · Print' },
+        ],
+        cta: { label: 'Projekt anfragen', href: '/kontakt' },
+      },
+    },
+    {
+      type: 'cameraExplodeScroll',
+      data: {
+        badge: 'System',
+        headline: 'Eine Produktion. Mehrere Ausgaben.',
+        subline: 'Ich zerlege ein Projekt in Entscheidungen, damit am Ende nicht nur schöne Einzelbilder entstehen, sondern ein verwendbarer visueller Baukasten.',
+        brandImage: '',
+        parts: [
+          { id: 'position', label: 'Positionierung', text: 'Werte, Zielgruppe und Einsatzkanäle geben die Richtung vor.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+          { id: 'look', label: 'Look', text: 'Licht, Farbe, Perspektive und Raum werden als klare Bildsprache definiert.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+          { id: 'shooting', label: 'Shooting', text: 'Menschen, Produkte oder Situationen werden so geführt, dass sie glaubwürdig wirken.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
+          { id: 'motion', label: 'Motion', text: 'Film und Reels werden mitgedacht, wenn Bewegung den Auftritt stärker macht.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+          { id: 'ai', label: 'AI Varianten', text: 'Looktests, Zuschnitte und kontrollierte Adaptionen erweitern die Bildwelt.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
+          { id: 'delivery', label: 'Delivery', text: 'Geliefert werden saubere Formate für Website, Social, Kampagne und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+        ],
+        cta: { label: 'Workflow ansehen', href: '/kontakt' },
+      },
+    },
+  ];
+}
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const SLUG = 'schuktuew';
@@ -316,6 +403,18 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     filename: 'schuktuew-portfolio-still-02.jpg',
     contentType: 'image/jpeg',
     alt: 'Weiteres Portfolio-Motiv aus dem Schuktuew Archiv',
+  },
+  aiLandscapeBefore: {
+    source: path.resolve('apps/renderer/public/seed-media/schuktuew/ai-workflow-landscape-before.png'),
+    filename: 'schuktuew-ai-workflow-landscape-before.png',
+    contentType: 'image/png',
+    alt: 'Unbearbeitetes Landschaftsmotiv als Ausgangspunkt eines AI-Workflows',
+  },
+  aiLandscapeAfter: {
+    source: path.resolve('apps/renderer/public/seed-media/schuktuew/ai-workflow-landscape-after.png'),
+    filename: 'schuktuew-ai-workflow-landscape-after.png',
+    contentType: 'image/png',
+    alt: 'Optimierte Landschaftsbildwelt als Ergebnis eines kontrollierten AI-Workflows',
   },
 };
 
@@ -1416,59 +1515,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         metaDescription: 'AI-gestützte Foto- und Filmproduktion: Konzept, Shooting, Schnitt, Varianten und kanalreife Assets aus einer Hand.',
         ogImage: assets.brandBox,
       },
-      sections: [
-        {
-          type: 'aiWorkflowReel',
-          data: {
-            badge: 'AI Production',
-            headline: 'AI hilft mir beim Planen, Variieren und Ausliefern – nicht beim Zufall.',
-            subline: 'Die Basis bleibt Fotografie, Führung, Licht und Erfahrung. KI nutze ich dort, wo sie den Produktionsprozess verdichtet: für Look-Entwicklung, Varianten, Formatideen und saubere Übergaben für Website, Social und Kampagne.',
-            media: { videoSrc: assets.agencyReel, poster: '', caption: 'Ein Workflow für Foto, Film, Reels und kanalreife Varianten.' },
-            steps: [
-              { kicker: '01 · Konzept', title: 'Richtung vor der Produktion', text: 'Ich kläre, welche Wirkung die Bilder haben sollen: Marke, Zielgruppe, Kanäle, Tonalität und Motive.', proof: 'Briefing · Moodboard · Shotlist' },
-              { kicker: '02 · Bildsprache', title: 'Look gezielt entwickeln', text: 'Referenzen, Licht, Farben und Perspektiven werden vorab sortiert. AI kann Varianten sichtbar machen, die Produktion bleibt aber kontrolliert.', proof: 'Look-Entscheidung vor dem Set' },
-              { kicker: '03 · Produktion', title: 'Foto und Film gemeinsam denken', text: 'Beim Shooting entstehen nicht nur Einzelbilder, sondern Material für Website, Portrait, Kampagne, Reel und Social Cut.', proof: 'Foto · Reel · Kampagnenmotiv' },
-              { kicker: '04 · Finish', title: 'Auswahl, Retusche und Schnitt', text: 'Bilder und Videos bekommen denselben visuellen Anspruch: reduziert, präzise und passend zur Marke.', proof: 'Retusche · Grading · Schnitt' },
-              { kicker: '05 · Übergabe', title: 'Assets für echte Kanäle', text: 'Sie erhalten nutzbare Dateien und Zuschnitte für Website, Social, Anzeigen, Recruiting, Präsentation und Print.', proof: 'Web · Social · Kampagne · Print' },
-            ],
-            cta: { label: 'Produktion anfragen', href: '/kontakt' },
-          },
-        },
-        {
-          type: 'xrayReveal',
-          data: {
-            badge: 'Vorher / Nachher',
-            headline: 'Ein Motiv wird erst stark, wenn Konzept und Auslieferung zusammenpassen.',
-            subline: 'Diese Seite zeigt nicht „AI als Effekt“, sondern einen Produktionsansatz: klare Bildsprache vor dem Shooting, kontrollierte Varianten danach und Dateien, die direkt in Kampagnen, Websites und Social funktionieren.',
-            imageBase: assets.businessCampaign,
-            imageReveal: assets.brandBox,
-            labelBase: 'Produktion',
-            labelReveal: 'Brand-System',
-            caption: 'Vom einzelnen Motiv zur verwertbaren Content-Strecke: Foto, Film, Schnitt und Varianten bleiben in einer visuellen Linie.',
-            revealStyle: 'soft',
-            aspectRatio: '16/9',
-          },
-          container: 'wide',
-        },
-        {
-          type: 'cameraExplodeScroll',
-          data: {
-            badge: 'Visual Production System',
-            headline: 'Foto, Film und KI greifen ineinander.',
-            subline: 'Mein Workflow verbindet Konzept, Produktion, Postproduktion und Varianten. So bleibt der Look gleich, egal ob das Ergebnis auf einer Website, in Reels, in einer Kampagne oder im Print landet.',
-            brandImage: '',
-            parts: [
-              { id: 'briefing', label: 'Briefing', text: 'Ziel, Zielgruppe, Kanäle und gewünschte Wirkung werden vor der Produktion festgelegt.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-              { id: 'visual-language', label: 'Bildsprache', text: 'Licht, Farbe, Raum und Perspektive bekommen eine klare Linie, bevor produziert wird.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-              { id: 'production', label: 'Produktion', text: 'Foto, Film und Reels entstehen so, dass später mehrere Kanäle sauber bedient werden können.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-              { id: 'ai-workflow', label: 'AI Workflow', text: 'KI unterstützt Varianten, Planung und Adaptionen – kontrolliert und passend zur bestehenden Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-              { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading bringen Bilder und Clips auf denselben Look.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-              { id: 'assets', label: 'Übergabe', text: 'Geliefert werden kanalreife Formate für Website, Social, Kampagne, Recruiting und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
-            ],
-            cta: { label: 'Produktion anfragen', href: '/kontakt' },
-          },
-        },
-      ],
+      sections: buildSchuktuewAiWorkflowSections(assets),
     },
     {
       slug: 'ueber-mich',

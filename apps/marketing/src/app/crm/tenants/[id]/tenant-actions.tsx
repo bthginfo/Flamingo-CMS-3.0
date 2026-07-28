@@ -1,13 +1,14 @@
 'use client';
 
-import { useTransition } from 'react';
-import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleBookingAddonAction, toggleBillingAddonAction, toggleI18nAction, updateI18nSettingsAction, convertSharedToStandaloneAction, setDatabasePlanIntentAction, hardenStandaloneDatabaseRoleAction } from '../actions';
+import { useState, useTransition } from 'react';
+import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleBookingAddonAction, toggleBillingAddonAction, toggleI18nAction, updateI18nSettingsAction, convertSharedToStandaloneAction, setDatabasePlanIntentAction, hardenStandaloneDatabaseRoleAction, resetTenantAdminPasswordAction } from '../actions';
 import { toast } from 'sonner';
-import { CalendarCheck, Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe, CloudUpload, ReceiptText } from 'lucide-react';
+import { CalendarCheck, Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe, CloudUpload, ReceiptText, KeyRound } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploymentMode, databasePlanIntent, databaseRoleName, shopActive, bookingActive, billingActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; databasePlanIntent?: string; databaseRoleName?: string; shopActive?: boolean; bookingActive?: boolean; billingActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
   const [pending, startTransition] = useTransition();
+  const [newAdminPassword, setNewAdminPassword] = useState('');
   const router = useRouter();
 
   function toggleStatus() {
@@ -42,6 +43,25 @@ export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploym
         router.refresh();
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Rechnungen & Kunden konnte nicht aktualisiert werden.');
+      }
+    });
+  }
+
+  function resetAdminPassword() {
+    const password = newAdminPassword.trim();
+    if (password.length < 12) {
+      toast.error('Bitte mindestens 12 Zeichen eingeben.');
+      return;
+    }
+    startTransition(async () => {
+      try {
+        const result = await resetTenantAdminPasswordAction(tenantId, password);
+        if (!result.success) throw new Error(result.error);
+        setNewAdminPassword('');
+        toast.success('Admin-Passwort wurde neu gesetzt');
+        router.refresh();
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Passwort konnte nicht gesetzt werden.');
       }
     });
   }
@@ -137,6 +157,31 @@ export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploym
             </select>
           </div>
         )}
+      </div>
+      <div className="border-t border-slate-100 pt-3 space-y-2">
+        <label htmlFor="tenant-admin-password-reset" className="block text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+          Admin-Passwort
+        </label>
+        <input
+          id="tenant-admin-password-reset"
+          type="password"
+          autoComplete="new-password"
+          value={newAdminPassword}
+          onChange={event => setNewAdminPassword(event.target.value)}
+          placeholder="Neues Passwort, mind. 12 Zeichen"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+        />
+        <button
+          type="button"
+          onClick={resetAdminPassword}
+          disabled={pending || newAdminPassword.trim().length < 12}
+          className="w-full crm-btn bg-slate-900 text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <KeyRound size={14} /> Passwort neu setzen
+        </button>
+        <p className="px-1 text-xs leading-5 text-slate-500">
+          Setzt den echten Tenant-Login neu und aktualisiert den verschlüsselten CRM-Merker.
+        </p>
       </div>
       <button
         onClick={() => {
