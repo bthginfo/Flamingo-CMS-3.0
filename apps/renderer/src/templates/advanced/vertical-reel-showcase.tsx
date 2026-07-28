@@ -1,4 +1,7 @@
+'use client';
+
 import { ArrowUpRight, PlayCircle } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
 import { visibleText } from '@/lib/visible-content';
@@ -14,6 +17,7 @@ type Reel = {
   ctaLabel?: string;
   ctaHref?: string;
   autoplay?: boolean;
+  autoPoster?: boolean;
 };
 
 type Props = { data: Record<string, unknown> };
@@ -46,7 +50,6 @@ function isSchuktuewReelShowcase(data: Record<string, unknown>, reels: Reel[]) {
 
 function normalizeSchuktuewReels(reels: Reel[]) {
   const [first, second, third, ...rest] = reels;
-  const fallbackPoster = first?.poster || second?.poster || third?.poster || '';
   const normalized: Reel[] = [];
 
   if (first) {
@@ -56,6 +59,8 @@ function normalizeSchuktuewReels(reels: Reel[]) {
       meta: 'Produktion',
       title: 'Foto, Film und Schnitt aus einer Hand',
       text: 'Eine vertikale Referenz für Marken, die nicht nur einzelne Bilder, sondern direkt nutzbaren Content brauchen.',
+      poster: '',
+      autoPoster: true,
       ctaLabel: first?.ctaLabel || 'Anfragen',
       ctaHref: first?.ctaHref || '/kontakt',
     });
@@ -68,6 +73,8 @@ function normalizeSchuktuewReels(reels: Reel[]) {
       meta: 'Sport Reel',
       title: 'Sport als bewegte Referenz',
       text: 'Golf, Timing und Bewegung im Reel-Format – konzipiert für Social, Website und Kampagnenkontext.',
+      poster: '',
+      autoPoster: true,
       ctaLabel: second?.ctaLabel || 'Sport ansehen',
       ctaHref: second?.ctaHref || '/portfolio',
     });
@@ -80,7 +87,8 @@ function normalizeSchuktuewReels(reels: Reel[]) {
     title: third?.title || 'Bewegte Bildstrecke',
     text: third?.text || 'Ein drittes Hochformat-Beispiel für die Übersetzung von Bildsprache in kurze, verwertbare Video-Assets.',
     videoSrc: third?.videoSrc || SCHUKTUEW_REFERENCE_REEL_SRC,
-    poster: third?.poster || fallbackPoster,
+    poster: '',
+    autoPoster: true,
     ctaLabel: third?.ctaLabel || 'Produktion planen',
     ctaHref: third?.ctaHref || '/kontakt',
     autoplay: third?.autoplay ?? false,
@@ -91,9 +99,27 @@ function normalizeSchuktuewReels(reels: Reel[]) {
 
 function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel; index: number; featured?: boolean; aspectRatio: string }) {
   const videoSrc = safeContentUrl(reel.videoSrc || '');
-  const poster = safeContentUrl(reel.poster || '');
+  const explicitPoster = safeContentUrl(reel.poster || '');
+  const [generatedPoster, setGeneratedPoster] = useState('');
+  const poster = generatedPoster || explicitPoster;
   const href = safeContentUrl(reel.ctaHref || '');
   const ctaLabel = visibleText(reel.ctaLabel || '');
+  const posterSeek = useMemo(() => 0.8 + (index % 3) * 0.35, [index]);
+  const capturePoster = useCallback((video: HTMLVideoElement) => {
+    if (!reel.autoPoster || generatedPoster || !video.videoWidth || !video.videoHeight) return;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      setGeneratedPoster(canvas.toDataURL('image/jpeg', 0.86));
+    } catch {
+      // Some CDN video responses may block canvas extraction. The real video
+      // remains visible/playable; only the generated poster is skipped.
+    }
+  }, [generatedPoster, reel.autoPoster]);
   return (
     <article
       className={`group relative overflow-hidden rounded-[calc(var(--token-card-radius)*1.15)] border border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg)] shadow-[0_30px_90px_var(--token-shadow)] ${featured ? 'lg:translate-y-8' : ''}`}
@@ -110,10 +136,24 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
             poster={poster || undefined}
             controls
             playsInline
+            crossOrigin="anonymous"
             muted={Boolean(reel.autoplay)}
             loop={Boolean(reel.autoplay)}
             autoPlay={Boolean(reel.autoplay)}
-            preload={featured ? 'metadata' : 'none'}
+            preload={reel.autoPoster || featured ? 'metadata' : 'none'}
+            onLoadedMetadata={(event) => {
+              if (!reel.autoPoster || explicitPoster || generatedPoster) return;
+              const video = event.currentTarget;
+              const duration = Number.isFinite(video.duration) ? video.duration : posterSeek + 0.2;
+              const target = Math.min(posterSeek, Math.max(0.1, duration - 0.1));
+              try {
+                if (Math.abs(video.currentTime - target) > 0.05) video.currentTime = target;
+              } catch {
+                capturePoster(video);
+              }
+            }}
+            onSeeked={(event) => capturePoster(event.currentTarget)}
+            onLoadedData={(event) => capturePoster(event.currentTarget)}
             data-edit-path="videoSrc"
           />
         ) : poster ? (

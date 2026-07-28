@@ -9,8 +9,8 @@ import { plain } from '@/lib/strip-html';
 type CanvasItem = { image: string; alt?: string; title?: string; caption?: string; category?: string; href?: string; featured?: boolean };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-const TILE_WIDTH = 1480;
-const TILE_HEIGHT = 1040;
+const TILE_WIDTH = 2400;
+const TILE_HEIGHT = 1680;
 
 function wrap(value: number, span: number) {
   return ((((value + span / 2) % span) + span) % span) - span / 2;
@@ -35,7 +35,7 @@ function clampNumber(value: number, min: number, max: number) {
 
 export function InfiniteCanvasSection({ data }: Props) {
   const items = Array.isArray(data.items) ? (data.items as CanvasItem[]).filter((item) => item?.image) : [];
-  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 16), 8, 18);
+  const maxExplorerItems = clampNumber(Number(data.maxExplorerItems || data.maxItems || 18), 8, 22);
   const explorerItems = items.slice(0, maxExplorerItems);
   const badge = (data.badge as string) || '';
   const headline = (data.headline as string) || '';
@@ -104,19 +104,20 @@ export function InfiniteCanvasSection({ data }: Props) {
 function CanvasExplorer({ items, totalItems, headline, onClose }: { items: CanvasItem[]; totalItems: number; headline: string; onClose: () => void }) {
   const reduceMotion = useReducedMotion();
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(0.9);
+  const [zoom, setZoom] = useState(0.68);
   const [isDragging, setIsDragging] = useState(false);
   const drag = useRef<{ pointerId: number; x: number; y: number; panX: number; panY: number } | null>(null);
-  const tileWidth = Math.max(TILE_WIDTH, Math.round(Math.sqrt(items.length) * 360));
-  const tileHeight = Math.max(TILE_HEIGHT, Math.round(Math.sqrt(items.length) * 260));
+  const tileWidth = Math.max(TILE_WIDTH, Math.round(Math.sqrt(items.length) * 520));
+  const tileHeight = Math.max(TILE_HEIGHT, Math.round(Math.sqrt(items.length) * 380));
   const nodes = useMemo(() => {
     const output: Array<{ item: CanvasItem; key: string; x: number; y: number; width: number }> = [];
     items.forEach((item, index) => {
       // A low-discrepancy sequence spreads arbitrary upload counts evenly
       // without turning the canvas into a rigid grid or collision-heavy stacks.
-      const x = (halton(index + 1, 2) - 0.5) * (tileWidth - 320);
-      const y = (halton(index + 1, 3) - 0.5) * (tileHeight - 260);
-      output.push({ item, key: `${index}`, x, y, width: item.featured ? 320 : 220 + ((index * 37) % 60) });
+      const ringBoost = index % 4 === 0 ? 1.1 : 1;
+      const x = (halton(index + 1, 2) - 0.5) * (tileWidth - 420) * ringBoost;
+      const y = (halton(index + 1, 3) - 0.5) * (tileHeight - 360) * ringBoost;
+      output.push({ item, key: `${index}`, x, y, width: item.featured ? 300 : 190 + ((index * 37) % 58) });
     });
     return output;
   }, [items, tileHeight, tileWidth]);
@@ -166,7 +167,7 @@ function CanvasExplorer({ items, totalItems, headline, onClose }: { items: Canva
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => setZoom((value) => Math.max(0.58, value - 0.12))} className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 hover:bg-white/12" aria-label="Verkleinern"><Minus size={16} /></button>
           <button type="button" onClick={() => setZoom((value) => Math.min(1.45, value + 0.12))} className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 hover:bg-white/12" aria-label="Vergrößern"><Plus size={16} /></button>
-          <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(0.9); }} className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 hover:bg-white/12" aria-label="Ansicht zurücksetzen"><RotateCcw size={16} /></button>
+          <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(0.68); }} className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 hover:bg-white/12" aria-label="Ansicht zurücksetzen"><RotateCcw size={16} /></button>
           <button type="button" onClick={onClose} autoFocus className="ml-1 inline-flex h-10 items-center gap-2 rounded-full bg-white px-4 text-xs font-bold text-black hover:bg-white/90"><X size={15} /> Zurück zur Seite</button>
         </div>
       </header>

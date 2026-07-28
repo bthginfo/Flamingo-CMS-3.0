@@ -101,6 +101,25 @@ async function loadVercelProjectEnv() {
   }
 }
 
+async function loadTenantVercelProjectEnv(projectId: string, mapKeys: Record<string, string> = {}) {
+  const token = process.env.VERCEL_TOKEN?.trim();
+  if (!token || !projectId) return;
+  const response = await fetch(`https://api.vercel.com/v9/projects/${encodeURIComponent(projectId)}/env?limit=200`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json().catch(() => null) as { envs?: Array<{ key: string; value?: string; target?: string[] }> } | { error?: unknown } | null;
+  if (!response.ok || !data || !('envs' in data)) return;
+  for (const envVar of data.envs || []) {
+    const targets = Array.isArray(envVar.target) ? envVar.target : [];
+    if (targets.length && !targets.includes('production')) continue;
+    const value = typeof envVar.value === 'string' ? envVar.value : '';
+    if (!value || value.startsWith('__PLACEHOLDER')) continue;
+    const envKey = mapKeys[envVar.key] || envVar.key;
+    if ((envKey.endsWith('DATABASE_URL') || envKey === 'TENANT_DATABASE_URL') && !value.startsWith('postgres')) continue;
+    if (!process.env[envKey]) process.env[envKey] = value;
+  }
+}
+
 const CORE_PAGE_PATHS = [
   '',
   'aktuelles',
@@ -111,6 +130,7 @@ const CORE_PAGE_PATHS = [
   'kommunalwahl-2026/unsere-stadtratskandidaten',
   'kommunalwahl-2026/unterstuetzer',
   'medien/mitglied-werden',
+  'medien',
   'veranstaltungen',
   'bezirksausschuesse',
   'kontakt',
@@ -862,10 +882,14 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
     .filter((item) => item.title && item.excerpt)
     .sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
   const antragPages = contentPages.filter((page) => page.slug.includes('fraktion/antraege'));
+  const bzaPages = contentPages
+    .filter((page) => /^bezirksausschuesse\/bza-\d{2}/i.test(page.slug) && page.title && page.excerpt)
+    .sort((a, b) => a.slug.localeCompare(b.slug, 'de'));
   const archivePages = contentPages.filter((page) => {
     if (!page.title || !page.excerpt) return false;
     if (CORE_PAGE_PATHS.includes(page.slug)) return false;
     if (page.slug.includes('fraktion/antraege')) return false;
+    if (/^bezirksausschuesse\/bza-\d{2}/i.test(page.slug)) return false;
     if (PERSON_PATH_HINTS.some((hint) => page.slug.includes(hint))) return false;
     return true;
   });
@@ -886,6 +910,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
   const mitglied = getByPath(contentPages, 'medien/mitglied-werden');
   const veranstaltungen = getByPath(contentPages, 'veranstaltungen');
   const bza = getByPath(contentPages, 'bezirksausschuesse');
+  const medien = getByPath(contentPages, 'medien');
   const impressum = getByPath(contentPages, 'impressum');
   const datenschutz = getByPath(contentPages, 'datenschutz');
   const transparenz = getByPath(contentPages, 'transparenzhinweis');
@@ -940,6 +965,52 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
       btnSecondaryBorder: 'rgba(10,35,72,0.18)',
     },
   };
+
+  const bzaListItems = bzaPages.map((page, index) => ({
+    title: page.title.replace(/\s+-\s+FREIE\s+WÄHLER\s+Ingolstadt$/i, ''),
+    slug: page.slug.split('/').filter(Boolean).pop() || slugify(page.title),
+    image: contentImage(page.image) || FW_HERO,
+    excerpt: page.excerpt,
+    priority: index,
+  }));
+
+  const bzaDetailPages: PageDef[] = bzaPages.map((page, index) => ({
+    slug: page.slug,
+    title: page.title.replace(/\s+-\s+FREIE\s+WÄHLER\s+Ingolstadt$/i, ''),
+    seo: {
+      metaTitle: cleanText(page.title, 68),
+      metaDescription: cleanText(page.excerpt, 160),
+      ogImage: contentImage(page.image) || FW_SOCIAL,
+      canonical: page.url,
+    },
+    sections: [
+      heroSection({
+        eyebrow: `Bezirksausschuss ${String(index + 1).padStart(2, '0')}`,
+        headline: page.title.replace(/\s+-\s+FREIE\s+WÄHLER\s+Ingolstadt$/i, ''),
+        text: textFromPage(page, page.excerpt, 300),
+        layout: 'fullBleedImage',
+        imagePrimary: contentImage(page.image) || FW_HERO,
+        imageFit: 'landscapeContain',
+        primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
+        secondaryCta: { label: 'Alle Bezirke', href: '/bezirksausschuesse' },
+      }, sectionStyle('soft')),
+      infoCardsSection(page, 'Wichtige Informationen', 'Informationen aus der bisherigen Bezirksausschuss-Seite.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
+      contentSection(page, 'Details aus der bisherigen Seite', `<p>${page.excerpt}</p>`),
+      {
+        type: 'ctaBand',
+        container: 'default',
+        spacingTop: 'l',
+        spacingBottom: 'xl',
+        data: {
+          badgeText: 'Anliegen im Stadtteil',
+          headline: 'Ein Thema aus dem Bezirk melden?',
+          subline: 'Kurze Nachricht senden, damit das Anliegen in die kommunalpolitische Arbeit aufgenommen werden kann.',
+          ctaPrimary: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'ArrowRight' },
+          ctaSecondary: { label: 'Zurück zu allen Bezirken', href: '/bezirksausschuesse' },
+        },
+      },
+    ],
+  }));
 
   const pages: PageDef[] = [
     {
@@ -1392,6 +1463,28 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           secondaryCta: { label: 'Stadtrat ansehen', href: '/stadtrat' },
         }, sectionStyle('soft')),
         {
+          type: 'collectionList',
+          container: 'default',
+          spacingTop: 'xl',
+          spacingBottom: 'l',
+          data: {
+            headline: 'Alle Bezirksausschüsse',
+            subline: `${bzaListItems.length} Bezirksausschüsse mit direkten Detailseiten, Ansprechpartnern und Informationen aus der bisherigen Website.`,
+            items: bzaListItems,
+            collectionBasePath: '/bezirksausschuesse',
+            showImage: false,
+            showDate: false,
+            showExcerpt: true,
+            showSortControls: true,
+            showSearch: true,
+            searchPlaceholder: 'Bezirk suchen',
+            paginate: true,
+            itemsPerPage: 12,
+            sortBy: 'priority',
+            columns: 3,
+          },
+        },
+        {
           type: 'spotlightCards',
           container: 'default',
           spacingTop: 'xl',
@@ -1409,6 +1502,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         infoCardsSection(bza, 'Informationen aus der bisherigen Seite', 'Informationen zu Bezirksausschüssen und Stadtteilthemen.', { label: 'Anliegen senden', href: '/kontakt' }),
       ],
     },
+    ...bzaDetailPages,
     {
       slug: 'veranstaltungen',
       title: 'Veranstaltungen',
@@ -1483,6 +1577,29 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         infoCardsSection(kreis, 'Informationen aus der bisherigen Kreisvereinigungsseite', 'Informationen zur Kreisvereinigung der Freien Wähler Ingolstadt.', { label: 'Vorstand ansehen', href: '/vorstand' }),
       ],
     },
+    ...(medien ? [{
+      slug: 'medien',
+      title: 'Medien',
+      seo: {
+        metaTitle: 'Medien | Freie Wähler Ingolstadt',
+        metaDescription: 'Medien, Downloads und Informationen der Freien Wähler Ingolstadt.',
+        ogImage: contentImage(medien.image) || FW_SOCIAL,
+      },
+      sections: [
+        heroSection({
+          eyebrow: 'Medien',
+          headline: 'Downloads und Informationen.',
+          text: textFromPage(medien, 'Medien, Downloads und weitere Informationen der Freien Wähler Ingolstadt.', 300),
+          layout: 'fullBleedImage',
+          imagePrimary: contentImage(medien.image) || FW_HERO,
+          imageFit: 'landscapeContain',
+          primaryCta: { label: 'Kontakt', href: '/kontakt' },
+          secondaryCta: { label: 'Mitglied werden', href: MEMBER_PDF },
+        }, sectionStyle('soft')),
+        infoCardsSection(medien, 'Informationen aus der bisherigen Medienseite', 'Downloads und Medieninformationen.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
+        contentSection(medien, 'Details aus der bisherigen Seite', `<p>${medien.excerpt}</p>`),
+      ],
+    } satisfies PageDef] : []),
     {
       slug: 'kontakt',
       title: 'Kontakt',
@@ -1569,7 +1686,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
     },
     footer: {
       columns: [
-        { title: 'Inhalte', links: [{ label: 'Aktuelles', href: '/aktuelles' }, { label: 'Wahlprogramm', href: '/wahlprogramm' }, { label: 'Stadtrat & Anträge', href: '/stadtrat' }, { label: 'Veranstaltungen', href: '/veranstaltungen' }] },
+        { title: 'Inhalte', links: [{ label: 'Aktuelles', href: '/aktuelles' }, { label: 'Wahlprogramm', href: '/wahlprogramm' }, { label: 'Stadtrat & Anträge', href: '/stadtrat' }, { label: 'Veranstaltungen', href: '/veranstaltungen' }, ...(medien ? [{ label: 'Medien', href: '/medien' }] : [])] },
         { title: 'Organisation', links: [{ label: 'Menschen', href: '/menschen' }, { label: 'Vorstand', href: '/vorstand' }, { label: 'Kreisvereinigung', href: '/kreisvereinigung' }, { label: 'Bezirksausschüsse', href: '/bezirksausschuesse' }, { label: 'Kontakt', href: '/kontakt' }] },
       ],
       legalLinks: [
@@ -1851,6 +1968,10 @@ async function main() {
   process.env.DATABASE_URL = requirePostgresUrl('DATABASE_URL', process.env.DATABASE_URL);
   const controlDb = getDb();
   const tenant = await getExistingTenant(controlDb);
+  if (!process.env.FREIE_WAEHLER_DATABASE_URL && !process.env.TENANT_DATABASE_URL) {
+    const tenantProjectId = (tenant as { vercelProjectId?: string | null }).vercelProjectId || PROJECT_ID;
+    await loadTenantVercelProjectEnv(tenantProjectId, { DATABASE_URL: 'FREIE_WAEHLER_DATABASE_URL' });
+  }
   const dataDb = await resolveDataDb(controlDb, tenant.id);
   await updateTenantRows(controlDb, dataDb, tenant.id);
   const result = await seedTenant(dataDb, tenant.id, site);

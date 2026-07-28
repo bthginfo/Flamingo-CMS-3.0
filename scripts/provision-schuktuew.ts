@@ -329,6 +329,25 @@ async function loadVercelProjectEnv() {
   }
 }
 
+async function loadTenantVercelProjectEnv(projectId: string | null | undefined, mapKeys: Record<string, string> = {}) {
+  const token = process.env.VERCEL_TOKEN?.trim();
+  if (!token || !projectId) return;
+  const response = await fetch(`https://api.vercel.com/v9/projects/${encodeURIComponent(projectId)}/env?limit=200`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json().catch(() => null) as { envs?: Array<{ key: string; value?: string; target?: string[] }> } | { error?: unknown } | null;
+  if (!response.ok || !data || !('envs' in data)) return;
+  for (const envVar of data.envs || []) {
+    const targets = Array.isArray(envVar.target) ? envVar.target : [];
+    if (targets.length && !targets.includes('production')) continue;
+    const value = typeof envVar.value === 'string' ? envVar.value : '';
+    if (!value || value.startsWith('__PLACEHOLDER')) continue;
+    const envKey = mapKeys[envVar.key] || envVar.key;
+    if ((envKey.endsWith('DATABASE_URL') || envKey === 'TENANT_DATABASE_URL') && !value.startsWith('postgres')) continue;
+    if (!process.env[envKey]) process.env[envKey] = value;
+  }
+}
+
 function requireEnv(keys: string[]) {
   const missing = keys.filter((key) => !process.env[key]?.trim() || process.env[key]?.startsWith('__PLACEHOLDER'));
   if (missing.length) {
@@ -755,7 +774,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         category: 'Branding',
         description: 'Visuelle Auftritte für Unternehmen, Marken und Persönlichkeiten, die nicht austauschbar wirken wollen.',
         image: assets.businessCampaign,
-        sourceUrl: 'https://www.schuktuew.com/golf',
+        sourceUrl: 'https://www.schuktuew.com/commercial',
       },
     },
     {
@@ -844,7 +863,13 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
   const curatedProjects = projects.map((project) => {
     const imported = importedBySourceUrl.get(project.data.sourceUrl);
     const fallbackGallery = curatedGalleryFallbacks[project.slug] || [];
-    const gallery = Array.from(new Set([project.data.image, ...(imported?.gallery || []), ...fallbackGallery].filter(Boolean)));
+    const preferFallback = ['business-branding', 'personal-branding'].includes(project.slug) && fallbackGallery.length > 0;
+    const gallery = Array.from(new Set([
+      ...(preferFallback ? fallbackGallery : []),
+      project.data.image,
+      ...(imported?.gallery || []),
+      ...(!preferFallback ? fallbackGallery : []),
+    ].filter(Boolean)));
     return { ...project, data: { ...project.data, image: gallery[0] || project.data.image, gallery, originalText: imported?.originalText, contentLead: imported?.originalText || project.data.description } };
   });
   const existingSourceUrls = new Set(canonicalSlugBySourceUrl.keys());
@@ -984,6 +1009,45 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
     return gallery.length ? gallery : [project.data.image].filter(Boolean) as string[];
   }
 
+  function imageIdentity(value: unknown) {
+    const source = String(value || '').trim();
+    return mediaIdFromUrl(source) || source.split('?')[0] || source;
+  }
+
+  function pickDistinctImage(candidates: unknown[], seen: Set<string>) {
+    for (const candidate of candidates) {
+      const image = String(candidate || '').trim();
+      if (!image) continue;
+      const key = imageIdentity(image);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      return image;
+    }
+    const fallback = String(candidates.find(Boolean) || '').trim();
+    if (fallback) seen.add(imageIdentity(fallback));
+    return fallback;
+  }
+
+  function interleaveCanvasItems(items: GalleryImportItem[]) {
+    const groups = new Map<string, GalleryImportItem[]>();
+    for (const item of items) {
+      const key = item.sourceUrl || item.title || item.category || 'misc';
+      const group = groups.get(key) || [];
+      group.push(item);
+      groups.set(key, group);
+    }
+    const output: GalleryImportItem[] = [];
+    const values = Array.from(groups.values());
+    const max = Math.max(0, ...values.map((group) => group.length));
+    for (let index = 0; index < max; index += 1) {
+      for (const group of values) {
+        const item = group[index];
+        if (item) output.push(item);
+      }
+    }
+    return output;
+  }
+
   function projectSection(
     project: SchuktuewProject,
     type: string,
@@ -1071,8 +1135,14 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
     };
   }
 
-  const allProjects = [...curatedProjects, ...importedProjects].map((project) => enrichProject(project as SchuktuewProject));
-  const importedGalleryItems = (extras.galleryItems || []).map((item) => {
+  const projectImageKeys = new Set<string>();
+  const allProjects = [...curatedProjects, ...importedProjects]
+    .map((project) => {
+      const baseProject = project as SchuktuewProject;
+      const distinctImage = pickDistinctImage(galleryForProject(baseProject), projectImageKeys) || baseProject.data.image;
+      return enrichProject({ ...baseProject, data: { ...baseProject.data, image: distinctImage } });
+    });
+  const importedGalleryItems = interleaveCanvasItems(extras.galleryItems || []).map((item) => {
     const canonicalSlug = item.sourceUrl ? canonicalSlugBySourceUrl.get(item.sourceUrl) : null;
     return canonicalSlug ? { ...item, href: `/c/projekte/${canonicalSlug}` } : item;
   });
@@ -1251,7 +1321,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             headline: 'Portfolio als visuelle Landkarte.',
             subline: 'Eine reduzierte Bildlandkarte aus Portrait, Sport, Commercial und Buchprojekten – performant kuratiert statt überladen.',
             ctaLabel: 'Canvas öffnen',
-            maxExplorerItems: 16,
+            maxExplorerItems: 20,
             items: portfolioItems,
           },
         },
@@ -1534,7 +1604,11 @@ async function getOrProvisionTenant() {
     if (existing.deploymentMode !== 'standalone') {
       throw new Error(`Tenant "${SLUG}" existiert bereits, ist aber nicht standalone. Kein automatischer Moduswechsel ohne Migration.`);
     }
-    return { tenantId: existing.id, reused: true, result: null as Awaited<ReturnType<typeof provisionTenant>> | null };
+    return { tenantId: existing.id, reused: true, vercelProjectId: existing.vercelProjectId, result: null as Awaited<ReturnType<typeof provisionTenant>> | null };
+  }
+
+  if (!process.env.SCHUKTUEW_DATABASE_URL?.trim()) {
+    requireEnv(['CRM_CONFIG_ENCRYPTION_KEY', 'NEON_API_KEY']);
   }
 
   const password = process.env.SCHUKTUEW_ADMIN_PASSWORD?.trim();
@@ -1557,7 +1631,7 @@ async function getOrProvisionTenant() {
     address: 'Ingolstadt · München',
     deploymentMode: 'standalone',
   });
-  return { tenantId: result.tenantId, reused: false, result };
+  return { tenantId: result.tenantId, reused: false, vercelProjectId: (result as { vercelProjectId?: string }).vercelProjectId, result };
 }
 
 async function getSchuktuewDataDb(tenantId: string) {
@@ -1749,14 +1823,14 @@ async function main() {
     'GITHUB_REPO_NUMERIC_ID',
     'BLOB_READ_WRITE_TOKEN',
   ];
-  if (!process.env.SCHUKTUEW_DATABASE_URL?.trim()) {
-    requiredEnv.push('CRM_CONFIG_ENCRYPTION_KEY', 'NEON_API_KEY');
-  }
   requireEnv(requiredEnv);
 
-  const { tenantId, reused, result } = await getOrProvisionTenant();
+  const { tenantId, reused, vercelProjectId, result } = await getOrProvisionTenant();
   console.log(reused ? `Tenant reused: ${tenantId}` : `Tenant provisioniert: ${tenantId}`);
 
+  if (!process.env.SCHUKTUEW_DATABASE_URL?.trim()) {
+    await loadTenantVercelProjectEnv(vercelProjectId, { DATABASE_URL: 'SCHUKTUEW_DATABASE_URL' });
+  }
   const dataDb = await getSchuktuewDataDb(tenantId);
   const uploadedAssets = await uploadAssets(dataDb, tenantId);
   const originalImport = await importOriginalProjectGalleries();
