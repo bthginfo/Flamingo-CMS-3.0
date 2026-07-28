@@ -1,6 +1,7 @@
 import { put } from '@vercel/blob';
 import { eq, desc, and } from 'drizzle-orm';
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -368,7 +369,35 @@ async function readAsset(spec: AssetSpec) {
 
 async function uploadAssets(dataDb: Database, tenantId: string): Promise<UploadedAssets> {
   const output = {} as UploadedAssets;
+  const existingAssets = await dataDb
+    .select({ filename: schema.mediaAssets.filename, pathname: schema.mediaAssets.pathname, blobUrl: schema.mediaAssets.blobUrl })
+    .from(schema.mediaAssets)
+    .where(eq(schema.mediaAssets.tenantId, tenantId));
+  const existingByName = new Map<string, string>();
+  for (const asset of existingAssets) {
+    if (asset.filename && asset.blobUrl) existingByName.set(asset.filename, asset.blobUrl);
+    const basename = asset.pathname ? path.basename(asset.pathname) : '';
+    if (basename && asset.blobUrl) existingByName.set(basename, asset.blobUrl);
+  }
+
   for (const [key, spec] of Object.entries(ASSETS) as Array<[AssetKey, AssetSpec]>) {
+    const canReadSource = !isLocalAsset(spec.source) || existsSync(spec.source);
+    const canUpload = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim()) && canReadSource;
+    if (!canUpload) {
+      const existingUrl = existingByName.get(spec.filename);
+      if (existingUrl) {
+        output[key] = existingUrl;
+        console.log(`Asset wiederverwendet: ${key}`);
+        continue;
+      }
+      if (!isLocalAsset(spec.source)) {
+        output[key] = spec.source;
+        console.log(`Asset extern verwendet: ${key}`);
+        continue;
+      }
+      throw new Error(`Asset "${key}" fehlt lokal und wurde nicht in der Mediathek gefunden (${spec.filename}).`);
+    }
+
     const { body, contentType } = await readAsset(spec);
     const pathname = `${tenantId}/media/schuktuew/${key}${extname(spec.filename)}`;
     const blob = await put(pathname, body, {
@@ -1817,11 +1846,7 @@ async function main() {
 
   await loadVercelProjectEnv();
   const requiredEnv = [
-    'VERCEL_TOKEN',
     'DATABASE_URL',
-    'GITHUB_REPO_ID',
-    'GITHUB_REPO_NUMERIC_ID',
-    'BLOB_READ_WRITE_TOKEN',
   ];
   requireEnv(requiredEnv);
 
@@ -1830,6 +1855,9 @@ async function main() {
 
   if (!process.env.SCHUKTUEW_DATABASE_URL?.trim()) {
     await loadTenantVercelProjectEnv(vercelProjectId, { DATABASE_URL: 'SCHUKTUEW_DATABASE_URL' });
+  }
+  if (!process.env.SCHUKTUEW_DATABASE_URL?.trim()) {
+    requireEnv(['CRM_CONFIG_ENCRYPTION_KEY']);
   }
   const dataDb = await getSchuktuewDataDb(tenantId);
   const uploadedAssets = await uploadAssets(dataDb, tenantId);

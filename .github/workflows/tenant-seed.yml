@@ -1,0 +1,77 @@
+name: Tenant content seed
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Tenant to seed
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - schuktuew
+          - freie-waehler-ingolstadt
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tenant-seed.yml'
+      - 'scripts/provision-schuktuew.ts'
+      - 'scripts/provision-freie-waehler-ingolstadt.ts'
+      - 'apps/renderer/src/templates/advanced/infinite-canvas.tsx'
+      - 'apps/renderer/src/templates/advanced/vertical-reel-showcase.tsx'
+
+concurrency:
+  group: tenant-content-seed
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      CRM_CONFIG_ENCRYPTION_KEY: ${{ secrets.CRM_CONFIG_ENCRYPTION_KEY }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      SCHUKTUEW_MAX_ORIGINAL_PROJECTS: '12'
+      SCHUKTUEW_MAX_IMAGES_PER_PROJECT: '12'
+      FW_MAX_NEWS: '2000'
+      FW_MAX_PAGES: '380'
+      FW_IMPORT_CONCURRENCY: '5'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate seed configuration
+        shell: bash
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo 'DATABASE_URL repository secret is missing' >&2
+            exit 1
+          fi
+          if [ -z "$CRM_CONFIG_ENCRYPTION_KEY" ]; then
+            echo 'CRM_CONFIG_ENCRYPTION_KEY repository secret is missing' >&2
+            exit 1
+          fi
+
+      - name: Seed Schuktuew
+        if: ${{ github.event_name == 'push' || inputs.target == 'all' || inputs.target == 'schuktuew' }}
+        run: pnpm exec tsx scripts/provision-schuktuew.ts
+
+      - name: Seed Freie Wähler Ingolstadt
+        if: ${{ github.event_name == 'push' || inputs.target == 'all' || inputs.target == 'freie-waehler-ingolstadt' }}
+        run: pnpm exec tsx scripts/provision-freie-waehler-ingolstadt.ts
+
