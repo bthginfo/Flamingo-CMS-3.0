@@ -39,7 +39,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
 
   return (
     <footer id="site-footer" className="relative overflow-hidden rounded-t-[2rem] md:rounded-t-[3rem]" style={{ backgroundColor: 'var(--brand-footer, var(--brand-dark))', color: 'var(--brand-footer-text, white)' }}>
-      <style>{`#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none }`}</style>
+      <style>{`#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none } #site-footer a[data-footer-closing-link] { color: #475569 } #site-footer a[data-footer-closing-link]:hover { color: #0f172a; text-decoration: none }`}</style>
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-brand-primary/[0.04] rounded-full blur-[100px]" />
@@ -48,14 +48,14 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
 
       {hasFooterClosing && (
         <div className="relative z-10 mx-auto max-w-7xl px-6 pt-8 md:pt-12">
-          <div className="relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-[color:color-mix(in_srgb,var(--brand-footer-text)_14%,transparent)] bg-[color:color-mix(in_srgb,var(--brand-footer-text)_7%,transparent)] p-6 shadow-[0_34px_110px_rgba(0,0,0,.20)] backdrop-blur md:p-8">
-            <div aria-hidden="true" className="absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-[color:color-mix(in_srgb,var(--token-btn-bg)_30%,transparent)] blur-3xl" />
-            <div aria-hidden="true" className="absolute -bottom-32 left-1/4 -z-10 h-64 w-64 rounded-full bg-[color:color-mix(in_srgb,var(--brand-footer-link)_18%,transparent)] blur-3xl" />
+          <div className="relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-slate-950/10 bg-[color:color-mix(in_srgb,var(--token-btn-bg)_8%,white_92%)] p-6 text-slate-950 shadow-[0_34px_110px_rgba(0,0,0,.20)] backdrop-blur md:p-8">
+            <div aria-hidden="true" className="absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-[color:color-mix(in_srgb,var(--token-btn-bg)_26%,transparent)] blur-3xl" />
+            <div aria-hidden="true" className="absolute -bottom-32 left-1/4 -z-10 h-64 w-64 rounded-full bg-[color:color-mix(in_srgb,var(--brand-footer-link)_12%,transparent)] blur-3xl" />
             <div className="grid gap-7 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
               <div className="max-w-2xl">
-                <p className="mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:color-mix(in_srgb,var(--brand-footer-link)_82%,var(--brand-footer-text))]">Nächster Schritt</p>
-                <h2 className="font-display text-2xl font-black tracking-[-.04em] text-[color:var(--brand-footer-text)] md:text-4xl">Bereit für den nächsten Schritt?</h2>
-                <p className="mt-3 max-w-xl text-sm leading-6 text-[color:color-mix(in_srgb,var(--brand-footer-text)_78%,transparent)] md:text-base">{closingCopy}</p>
+                <p className="mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:color-mix(in_srgb,var(--token-btn-bg)_78%,#111827)]">Nächster Schritt</p>
+                <h2 className="font-display text-2xl font-black tracking-[-.04em] text-slate-950 md:text-4xl">Bereit für den nächsten Schritt?</h2>
+                <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 md:text-base">{closingCopy}</p>
               </div>
               <div className="flex flex-col items-start gap-3 md:items-end">
                 {footerCta && (
@@ -75,11 +75,11 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
                         </>
                       );
                       return item.href ? (
-                        <a key={item.label} href={item.href} className="inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--brand-footer-text)_14%,transparent)] px-3 py-1.5 text-xs text-[color:color-mix(in_srgb,var(--brand-footer-text)_78%,transparent)]">
+                        <a data-footer-closing-link key={item.label} href={item.href} className="inline-flex items-center gap-2 rounded-full border border-slate-950/10 bg-slate-950/[.035] px-3 py-1.5 text-xs text-slate-600">
                           {content}
                         </a>
                       ) : (
-                        <span key={item.label} className="inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--brand-footer-text)_14%,transparent)] px-3 py-1.5 text-xs text-[color:color-mix(in_srgb,var(--brand-footer-text)_78%,transparent)]">
+                        <span key={item.label} className="inline-flex items-center gap-2 rounded-full border border-slate-950/10 bg-slate-950/[.035] px-3 py-1.5 text-xs text-slate-600">
                           {content}
                         </span>
                       );

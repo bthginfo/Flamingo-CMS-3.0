@@ -18,9 +18,75 @@ type Reel = {
 
 type Props = { data: Record<string, unknown> };
 
+const SCHUKTUEW_REFERENCE_REEL_SRC = '/media/schuktuew-reference-reel.mp4';
+
 function safeAspectRatio(value: unknown) {
   const ratio = String(value || '9/16');
   return ['9/16', '4/5', '1/1', '16/9'].includes(ratio) ? ratio : '9/16';
+}
+
+function isSchuktuewReelShowcase(data: Record<string, unknown>, reels: Reel[]) {
+  const haystack = [
+    data.badge,
+    data.headline,
+    data.subline,
+    ...(Array.isArray(data.tags) ? data.tags : []),
+    ...reels.flatMap((reel) => [reel.eyebrow, reel.title, reel.text, reel.meta, reel.videoSrc, reel.poster]),
+  ]
+    .map((value) => visibleText(String(value || '')).toLocaleLowerCase('de-DE'))
+    .join(' ');
+
+  return (
+    haystack.includes('reels & motion')
+    || haystack.includes('alles aus einer hand')
+    || haystack.includes('sport in bewegung')
+    || haystack.includes('schuktuew')
+  );
+}
+
+function normalizeSchuktuewReels(reels: Reel[]) {
+  const [first, second, third, ...rest] = reels;
+  const fallbackPoster = first?.poster || second?.poster || third?.poster || '';
+  const normalized: Reel[] = [];
+
+  if (first) {
+    normalized.push({
+      ...first,
+      eyebrow: first?.eyebrow || 'Production',
+      meta: 'Produktion',
+      title: 'Foto, Film und Schnitt aus einer Hand',
+      text: 'Eine vertikale Referenz für Marken, die nicht nur einzelne Bilder, sondern direkt nutzbaren Content brauchen.',
+      ctaLabel: first?.ctaLabel || 'Anfragen',
+      ctaHref: first?.ctaHref || '/kontakt',
+    });
+  }
+
+  if (second) {
+    normalized.push({
+      ...second,
+      eyebrow: second?.eyebrow || 'Golf',
+      meta: 'Sport Reel',
+      title: 'Sport als bewegte Referenz',
+      text: 'Golf, Timing und Bewegung im Reel-Format – konzipiert für Social, Website und Kampagnenkontext.',
+      ctaLabel: second?.ctaLabel || 'Sport ansehen',
+      ctaHref: second?.ctaHref || '/portfolio',
+    });
+  }
+
+  normalized.push({
+    ...third,
+    eyebrow: third?.eyebrow || 'Referenz',
+    meta: 'Video-Asset',
+    title: third?.title || 'Bewegte Bildstrecke',
+    text: third?.text || 'Ein drittes Hochformat-Beispiel für die Übersetzung von Bildsprache in kurze, verwertbare Video-Assets.',
+    videoSrc: third?.videoSrc || SCHUKTUEW_REFERENCE_REEL_SRC,
+    poster: third?.poster || fallbackPoster,
+    ctaLabel: third?.ctaLabel || 'Produktion planen',
+    ctaHref: third?.ctaHref || '/kontakt',
+    autoplay: third?.autoplay ?? false,
+  });
+
+  return [...normalized, ...rest].slice(0, 5);
 }
 
 function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel; index: number; featured?: boolean; aspectRatio: string }) {
@@ -77,19 +143,25 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
 }
 
 export function VerticalReelShowcaseSection({ data }: Props) {
-  const reels = Array.isArray(data.reels) ? (data.reels as Reel[]).filter((reel) => reel && (reel.videoSrc || reel.poster || reel.title)) : [];
-  if (!reels.length) return null;
+  const rawReels = Array.isArray(data.reels) ? (data.reels as Reel[]).filter((reel) => reel && (reel.videoSrc || reel.poster || reel.title)) : [];
+  if (!rawReels.length) return null;
+  const isSchuktuew = isSchuktuewReelShowcase(data, rawReels);
+  const reels = isSchuktuew ? normalizeSchuktuewReels(rawReels) : rawReels;
   const aspectRatio = safeAspectRatio(data.aspectRatio);
   const featured = reels[0];
   const rest = reels.slice(1, 5);
+  const headline = isSchuktuew ? 'Video-Referenzen für Social, Sport und Kampagne.' : String(data.headline || '');
+  const subline = isSchuktuew
+    ? 'Kurze vertikale Arbeiten als direkte Referenz: Produktion aus einer Hand, Sportmoment und bewegte Bildstrecke im nativen Reel-Format.'
+    : String(data.subline || '');
   return (
     <section className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-5 py-16 text-[color:var(--token-body)] md:px-8 md:py-24">
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,color-mix(in_srgb,var(--token-accent)_26%,transparent),transparent_35%),radial-gradient(circle_at_80%_10%,color-mix(in_srgb,var(--token-heading)_18%,transparent),transparent_38%)]" />
       <div className="mx-auto max-w-7xl">
         <AdvancedIntro
           badge={String(data.badge || '')}
-          headline={String(data.headline || '')}
-          subline={String(data.subline || '')}
+          headline={headline}
+          subline={subline}
           aside={<AdvancedLink cta={data.cta as AdvancedCta} className="mt-6" />}
         />
         <div className="mt-12 grid items-start gap-5 lg:grid-cols-[minmax(17rem,.62fr)_minmax(0,1.38fr)] lg:gap-8">
