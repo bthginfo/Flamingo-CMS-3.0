@@ -1,4 +1,7 @@
+'use client';
+
 import { Bot, CheckCircle2, GitBranch, Sparkles } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
 import { visibleText } from '@/lib/visible-content';
@@ -10,8 +13,26 @@ type Props = { data: Record<string, unknown> };
 function WorkflowVideo({ data }: { data: Record<string, unknown> }) {
   const media = (data.media && typeof data.media === 'object' ? data.media : {}) as Record<string, unknown>;
   const videoSrc = safeContentUrl(String(media.videoSrc || data.videoSrc || ''));
-  const poster = safeContentUrl(String(media.poster || data.poster || ''));
+  const explicitPoster = safeContentUrl(String(media.poster || data.poster || ''));
+  const [generatedPoster, setGeneratedPoster] = useState('');
+  const poster = generatedPoster || explicitPoster;
+  const posterSeek = useMemo(() => 0.9, []);
   const caption = visibleText(String(media.caption || data.caption || ''));
+  const capturePoster = useCallback((video: HTMLVideoElement) => {
+    if (explicitPoster || generatedPoster || !video.videoWidth || !video.videoHeight) return;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      setGeneratedPoster(canvas.toDataURL('image/jpeg', 0.86));
+    } catch {
+      // Cross-origin video frames can block canvas extraction. In that case the
+      // real video remains visible/playable; only the generated poster is skipped.
+    }
+  }, [explicitPoster, generatedPoster]);
   return (
     <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
       <div className="relative overflow-hidden rounded-[calc(var(--token-card-radius)*1.4)] border border-white/15 bg-black shadow-[0_42px_120px_var(--token-shadow)]" style={{ aspectRatio: '9/16' }} data-card data-color-context="dark">
@@ -21,8 +42,22 @@ function WorkflowVideo({ data }: { data: Record<string, unknown> }) {
             poster={poster || undefined}
             controls
             playsInline
-            preload="metadata"
+            preload={explicitPoster ? 'metadata' : 'auto'}
             className="h-full w-full object-cover"
+            crossOrigin="anonymous"
+            onLoadedMetadata={(event) => {
+              if (explicitPoster || generatedPoster) return;
+              const video = event.currentTarget;
+              const duration = Number.isFinite(video.duration) ? video.duration : posterSeek + 0.2;
+              const target = Math.min(posterSeek, Math.max(0.1, duration - 0.1));
+              try {
+                if (Math.abs(video.currentTime - target) > 0.05) video.currentTime = target;
+              } catch {
+                capturePoster(video);
+              }
+            }}
+            onSeeked={(event) => capturePoster(event.currentTarget)}
+            onLoadedData={(event) => capturePoster(event.currentTarget)}
             data-edit-path="media.videoSrc"
           />
         ) : poster ? (

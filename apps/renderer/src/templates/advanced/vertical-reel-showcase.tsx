@@ -22,7 +22,7 @@ type Reel = {
 
 type Props = { data: Record<string, unknown> };
 
-const SCHUKTUEW_REFERENCE_REEL_SRC = '/media/schuktuew-reference-reel.mp4';
+const SCHUKTUEW_REFERENCE_REEL_SRC = '/seed-media/schuktuew/alexander-schuktuew-reference-reel.mp4';
 
 function safeAspectRatio(value: unknown) {
   const ratio = String(value || '9/16');

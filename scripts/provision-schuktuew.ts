@@ -34,7 +34,11 @@ type AssetKey =
   | 'aboutPortrait01'
   | 'aboutPortrait02'
   | 'aboutPortrait03'
+  | 'aboutPortrait04'
+  | 'aboutPortrait05'
   | 'aboutStill01'
+  | 'aboutStill02'
+  | 'aboutStill03'
   | 'eiszeitDetail01'
   | 'eiszeitDetail02'
   | 'portfolioStill01'
@@ -259,11 +263,35 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     contentType: 'image/jpeg',
     alt: 'Dokumentarisches Portraitmotiv von Alexander Schuktuew',
   },
+  aboutPortrait04: {
+    source: 'https://static.wixstatic.com/media/74d7fc_ffa0ad65ea16474496df52bfda780375~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_ffa0ad65ea16474496df52bfda780375~mv2.jpg',
+    filename: 'schuktuew-about-portrait-04.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Portraitmotiv aus Alexander Schuktuews Info-Seite',
+  },
+  aboutPortrait05: {
+    source: 'https://static.wixstatic.com/media/74d7fc_f5f882a83b4f47a0b93cb561cc06512e~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_f5f882a83b4f47a0b93cb561cc06512e~mv2.jpg',
+    filename: 'schuktuew-about-portrait-05.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Weitere Portraitarbeit aus der Info-Seite',
+  },
   aboutStill01: {
     source: 'https://static.wixstatic.com/media/74d7fc_d7da0eba7ca8419ca37f3c0f961e7fae~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_d7da0eba7ca8419ca37f3c0f961e7fae~mv2.jpg',
     filename: 'schuktuew-about-still-01.jpg',
     contentType: 'image/jpeg',
     alt: 'Fotografisches Motiv aus der Über-mich-Seite',
+  },
+  aboutStill02: {
+    source: 'https://static.wixstatic.com/media/74d7fc_10a823f1b184475fac7b2fddcf66085e~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_10a823f1b184475fac7b2fddcf66085e~mv2.jpg',
+    filename: 'schuktuew-about-still-02.jpg',
+    contentType: 'image/jpeg',
+    alt: 'Dokumentarisches Motiv aus Alexander Schuktuews Info-Seite',
+  },
+  aboutStill03: {
+    source: 'https://static.wixstatic.com/media/74d7fc_57ab9d72266e486bb8d6b516f1e684c6~mv2.png/v1/fit/w_1200,h_900,q_86,enc_avif,quality_auto/74d7fc_57ab9d72266e486bb8d6b516f1e684c6~mv2.png',
+    filename: 'schuktuew-about-still-03.png',
+    contentType: 'image/png',
+    alt: 'Freies Projektmotiv aus Alexander Schuktuews Website',
   },
   eiszeitDetail01: {
     source: 'https://static.wixstatic.com/media/74d7fc_5eae085b0ef946179ab2646810799825~mv2.png/v1/fit/w_1800,h_1400,q_86,enc_avif,quality_auto/74d7fc_5eae085b0ef946179ab2646810799825~mv2.png',
@@ -1195,7 +1223,11 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
     { image: assets.aboutPortrait01, alt: 'Portraitmotiv', title: 'Portrait', caption: '', category: 'Portrait', featured: true },
     { image: assets.aboutPortrait02, alt: 'Portraitmotiv', title: 'Portrait', caption: '', category: 'Portrait' },
     { image: assets.aboutPortrait03, alt: 'Dokumentarisches Portrait', title: 'Portrait', caption: '', category: 'Portrait' },
+    { image: assets.aboutPortrait04, alt: 'Portraitmotiv', title: 'Portrait', caption: '', category: 'Portrait' },
+    { image: assets.aboutPortrait05, alt: 'Portraitmotiv', title: 'Portrait', caption: '', category: 'Portrait' },
     { image: assets.aboutStill01, alt: 'Fotografisches Motiv', title: 'Still', caption: '', category: 'Archiv' },
+    { image: assets.aboutStill02, alt: 'Dokumentarisches Motiv', title: 'Still', caption: '', category: 'Archiv' },
+    { image: assets.aboutStill03, alt: 'Freies Projektmotiv', title: 'Freies Projekt', caption: '', category: 'Archiv' },
     { image: assets.eiszeitDetail01, alt: 'EISZEIT Buchdetail', title: 'EISZEIT', caption: '', category: 'Buchprojekt', featured: true },
     { image: assets.eiszeitDetail02, alt: 'EISZEIT Portraitdetail', title: 'EISZEIT', caption: '', category: 'Buchprojekt' },
     { image: assets.portfolioStill01, alt: 'Portfolioarbeit', title: 'Portfolio', caption: '', category: 'Archiv' },
@@ -1255,7 +1287,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             subline: 'Konzept, Bildwelt, Shooting, Schnitt und Formatadaption greifen ineinander. So entsteht ein konsistenter visueller Auftritt für Website, Social, Kampagne und Recruiting.',
             media: {
               videoSrc: assets.agencyReel,
-              poster: assets.businessCampaign,
+              poster: '',
               caption: 'Produktion für Content, Kampagnen und Social Assets.',
             },
             steps: [
@@ -1311,9 +1343,9 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
             subline: 'Kurze vertikale Arbeiten als direkte Referenz: Produktion aus einer Hand, Sportmoment und bewegte Bildstrecke im nativen Reel-Format.',
             aspectRatio: '9/16',
             reels: [
-              { eyebrow: 'Production', title: 'Foto, Film und Schnitt aus einer Hand', text: 'Eine vertikale Referenz für Marken, die nicht nur einzelne Bilder, sondern direkt nutzbaren Content brauchen.', videoSrc: assets.agencyReel, poster: assets.businessCampaign, meta: 'Produktion', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
-              { eyebrow: 'Golf', title: 'Sport als bewegte Referenz', text: 'Golf, Timing und Bewegung im Reel-Format – konzipiert für Social, Website und Kampagnenkontext.', videoSrc: assets.golfReel, poster: assets.golfFrame, meta: 'Sport Reel', ctaLabel: 'Sport ansehen', ctaHref: '/portfolio' },
-              { eyebrow: 'Video', title: 'Bewegte Bildstrecke', text: 'Ein drittes Hochformat-Beispiel für die Übersetzung von Bildsprache in kurze, verwertbare Video-Assets.', videoSrc: assets.referenceReel, poster: assets.personalBranding, meta: 'Referenz Reel', ctaLabel: 'Produktion planen', ctaHref: '/kontakt' },
+              { eyebrow: 'Production', title: 'Foto, Film und Schnitt aus einer Hand', text: 'Vertikale Referenz für Marken, die direkt nutzbare Motive, Clips und Content-Varianten brauchen.', videoSrc: assets.agencyReel, poster: '', meta: 'Produktion', ctaLabel: 'Anfragen', ctaHref: '/kontakt' },
+              { eyebrow: 'Golf', title: 'Sport als bewegte Referenz', text: 'Golf, Timing und Bewegung im Reel-Format – konzipiert für Social, Website und Kampagnenkontext.', videoSrc: assets.golfReel, poster: '', meta: 'Sport Reel', ctaLabel: 'Sport ansehen', ctaHref: '/portfolio' },
+              { eyebrow: 'Referenz', title: 'Video-Asset im Hochformat', text: 'Ein weiteres Reel als Beispiel für kurze, verwertbare Bildstrecken mit klarer visueller Linie.', videoSrc: assets.referenceReel, poster: '', meta: 'Video-Asset', ctaLabel: 'Produktion planen', ctaHref: '/kontakt' },
             ],
             cta: { label: 'Produktion planen', href: '/kontakt' },
           },
@@ -1389,18 +1421,34 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'aiWorkflowReel',
           data: {
             badge: 'AI Production',
-            headline: 'Vom Briefing zur fertigen Bildstrecke.',
-            subline: 'Ich verbinde Planung, Shooting, Schnitt und Varianten so, dass Website, Social und Kampagne denselben Look behalten.',
-            media: { videoSrc: assets.agencyReel, poster: assets.businessCampaign, caption: 'Ein Produktionsablauf für Foto, Film, Reels und Kampagnenmotive.' },
+            headline: 'AI hilft mir beim Planen, Variieren und Ausliefern – nicht beim Zufall.',
+            subline: 'Die Basis bleibt Fotografie, Führung, Licht und Erfahrung. KI nutze ich dort, wo sie den Produktionsprozess verdichtet: für Look-Entwicklung, Varianten, Formatideen und saubere Übergaben für Website, Social und Kampagne.',
+            media: { videoSrc: assets.agencyReel, poster: '', caption: 'Ein Workflow für Foto, Film, Reels und kanalreife Varianten.' },
             steps: [
-              { kicker: 'Briefing', title: 'Ziel klären', text: 'Marke, Zielgruppe, Einsatzkanäle und gewünschte Wirkung werden vor der Produktion festgelegt.', proof: 'Richtung vor Shooting' },
-              { kicker: 'Look', title: 'Bildsprache entwickeln', text: 'Licht, Farbe, Perspektive und Referenzen ergeben einen klaren visuellen Rahmen.', proof: 'Moodboard und Shotlist' },
-              { kicker: 'Produktion', title: 'Shooting führen', text: 'Ausdruck, Setting und Timing werden so geführt, dass genügend Material für mehrere Kanäle entsteht.', proof: 'Foto und Film' },
-              { kicker: 'Postproduktion', title: 'Serie veredeln', text: 'Auswahl, Retusche, Grading und Schnitt werden auf denselben Look gebracht.', proof: 'Konsistente Strecke' },
-              { kicker: 'Übergabe', title: 'Formate liefern', text: 'Website, Social, Kampagne und Präsentation bekommen passende Dateien und Zuschnitte.', proof: 'Web · Social · Print' },
+              { kicker: '01 · Konzept', title: 'Richtung vor der Produktion', text: 'Ich kläre, welche Wirkung die Bilder haben sollen: Marke, Zielgruppe, Kanäle, Tonalität und Motive.', proof: 'Briefing · Moodboard · Shotlist' },
+              { kicker: '02 · Bildsprache', title: 'Look gezielt entwickeln', text: 'Referenzen, Licht, Farben und Perspektiven werden vorab sortiert. AI kann Varianten sichtbar machen, die Produktion bleibt aber kontrolliert.', proof: 'Look-Entscheidung vor dem Set' },
+              { kicker: '03 · Produktion', title: 'Foto und Film gemeinsam denken', text: 'Beim Shooting entstehen nicht nur Einzelbilder, sondern Material für Website, Portrait, Kampagne, Reel und Social Cut.', proof: 'Foto · Reel · Kampagnenmotiv' },
+              { kicker: '04 · Finish', title: 'Auswahl, Retusche und Schnitt', text: 'Bilder und Videos bekommen denselben visuellen Anspruch: reduziert, präzise und passend zur Marke.', proof: 'Retusche · Grading · Schnitt' },
+              { kicker: '05 · Übergabe', title: 'Assets für echte Kanäle', text: 'Sie erhalten nutzbare Dateien und Zuschnitte für Website, Social, Anzeigen, Recruiting, Präsentation und Print.', proof: 'Web · Social · Kampagne · Print' },
             ],
             cta: { label: 'Produktion anfragen', href: '/kontakt' },
           },
+        },
+        {
+          type: 'xrayReveal',
+          data: {
+            badge: 'Vorher / Nachher',
+            headline: 'Ein Motiv wird erst stark, wenn Konzept und Auslieferung zusammenpassen.',
+            subline: 'Diese Seite zeigt nicht „AI als Effekt“, sondern einen Produktionsansatz: klare Bildsprache vor dem Shooting, kontrollierte Varianten danach und Dateien, die direkt in Kampagnen, Websites und Social funktionieren.',
+            imageBase: assets.businessCampaign,
+            imageReveal: assets.brandBox,
+            labelBase: 'Produktion',
+            labelReveal: 'Brand-System',
+            caption: 'Vom einzelnen Motiv zur verwertbaren Content-Strecke: Foto, Film, Schnitt und Varianten bleiben in einer visuellen Linie.',
+            revealStyle: 'soft',
+            aspectRatio: '16/9',
+          },
+          container: 'wide',
         },
         {
           type: 'cameraExplodeScroll',
@@ -1436,7 +1484,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             eyebrow: 'Über mich',
             headline: 'Ruhig, präzise, auf den Menschen konzentriert.',
-            text: '<p>Ich fotografiere Unternehmer, Kreative, Persönlichkeiten und dokumentarische Portraits aus dem Raum Ingolstadt und München. Mit Wurzeln im Skateboarding und einem Studium in Fotojournalismus und Dokumentarfotografie setze ich Markenphilosophie in ausdrucksstarkes, stilsicheres Storytelling um.</p>',
+            text: '<p>Ich bin Alexander Schuktuew – Fotograf mit Schwerpunkt auf Portraitfotografie. Ich arbeite für Unternehmen, Editorial und freie Projekte aus dem Raum München und Ingolstadt.</p><p>Menschen zu fotografieren ist für mich keine rein technische Aufgabe, sondern ein Moment von Konzentration und Vertrauen. Ein Portrait funktioniert dann, wenn es mehr zeigt als Oberfläche.</p>',
             imagePrimary: assets.studioWide,
             imageSecondary: assets.portraitStudy,
             primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
@@ -1449,12 +1497,14 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: 'Werdegang',
             headline: 'Visual Journalism, Portrait und freie Projekte.',
-            subline: 'Der Blick kommt aus dokumentarischer Fotografie, Portraitarbeit und eigenen Buch- und Ausstellungsprojekten.',
+            subline: 'Meine Arbeit bewegt sich zwischen dokumentarischer Genauigkeit und klar reduzierter Bildsprache.',
             cards: [
-              { title: 'Visual Journalism', text: 'Ausbildung im Bereich Visual Journalism an der Hochschule Hannover – mit Fokus auf dokumentarische Fotografie und erzählerischen Blick.', icon: 'BookOpen' },
-              { title: 'Portraitarbeit', text: 'Assistenzzeit in Berlin und die Arbeit mit Menschen prägen den ruhigen, direkten Portraitstil.', icon: 'Camera' },
-              { title: 'Freie Projekte', text: 'Bücher und Ausstellungen schaffen Raum für Serien, Recherche und persönliche Perspektive.', icon: 'Images' },
-              { title: 'Region', text: 'Das Studio arbeitet aus dem Raum Ingolstadt und München für Unternehmen, Editorial und freie Arbeiten.', icon: 'MapPin' },
+              { title: 'Visual Journalism', text: 'Meine Ausbildung an der Hochschule Hannover hat mich gelehrt, nicht nur Momente festzuhalten, sondern Geschichten zu erzählen, die wirken.', icon: 'BookOpen' },
+              { title: 'Berlin / Oliver Mark', text: 'Als Assistent bei Oliver Mark habe ich erlebt, wie Portraits für Stern, GQ und ZEIT Magazin entstehen: mit Ruhe, Präsenz und präzisem Timing.', icon: 'Camera' },
+              { title: 'Portraits mit Haltung', text: 'Ich fotografiere Menschen nicht als Rollen, sondern als Persönlichkeiten – reduziert, konzentriert und ohne unnötige Inszenierung.', icon: 'UserRound' },
+              { title: 'Bücher & Ausstellungen', text: 'Parallel zur Auftragsarbeit entwickle ich freie Projekte, die in Buchform veröffentlicht und im Ausstellungskontext gezeigt wurden.', icon: 'Images' },
+              { title: 'Arbeitsfelder', text: 'Portrait, Unternehmen, Editorial, Lifestyle, Sport und freie dokumentarische Projekte aus dem Raum Ingolstadt und München.', icon: 'MapPin' },
+              { title: 'Referenzen', text: 'Auszug aus bisherigen Kontexten: Audi, Levi’s, Converse, Spiegel, Stadt Ingolstadt, ERC Ingolstadt, Solo Skate Magazin und weitere.', icon: 'BadgeCheck' },
             ],
             cta: { label: 'Anfrage senden', href: '/kontakt' },
           },
@@ -1464,14 +1514,22 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           data: {
             badge: 'Bildsprache',
             headline: 'Portraits, Stills und dokumentarische Motive.',
-            subline: 'Auswahl aus Portrait, Studio, Buch- und freien Arbeiten.',
+            subline: 'Auswahl aus Portrait, Studio, Buchprojekten und freien Arbeiten – dichter und näher an der ursprünglichen Info-Seite.',
             images: [
               { src: assets.studioWide, alt: 'Studioarbeit Alexander Schuktuew', category: 'Studio', caption: 'Studio und dokumentarischer Blick.' },
               { src: assets.portraitStudy, alt: 'Portraitarbeit Alexander Schuktuew', category: 'Portrait', caption: 'Portrait als reduzierte Präsenz.' },
               { src: assets.personalBranding, alt: 'Personal Branding Portrait', category: 'Portrait', caption: 'Bildsprache für Persönlichkeit und Marke.' },
               { src: assets.ingolstadtBook, alt: 'Buchprojekt Ingolstadt', category: 'Buchprojekt', caption: 'Freie fotografische Arbeit.' },
               { src: assets.aboutPortrait01, alt: 'Portraitmotiv', category: 'Portrait', caption: '' },
+              { src: assets.aboutPortrait02, alt: 'Portraitmotiv', category: 'Portrait', caption: '' },
+              { src: assets.aboutPortrait03, alt: 'Dokumentarisches Portraitmotiv', category: 'Portrait', caption: '' },
+              { src: assets.aboutPortrait04, alt: 'Portraitmotiv', category: 'Portrait', caption: '' },
+              { src: assets.aboutPortrait05, alt: 'Portraitmotiv', category: 'Portrait', caption: '' },
               { src: assets.aboutStill01, alt: 'Fotografisches Motiv', category: 'Archiv', caption: '' },
+              { src: assets.aboutStill02, alt: 'Dokumentarisches Motiv', category: 'Archiv', caption: '' },
+              { src: assets.aboutStill03, alt: 'Freies Projektmotiv', category: 'Archiv', caption: '' },
+              { src: assets.eiszeitDetail01, alt: 'EISZEIT Buchdetail', category: 'Buchprojekt', caption: '' },
+              { src: assets.eiszeitDetail02, alt: 'EISZEIT Portraitdetail', category: 'Buchprojekt', caption: '' },
             ],
           },
           container: 'wide',
@@ -1593,7 +1651,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
     footer: {
       columns: footerColumns,
       legalLinks: [{ label: 'Impressum', href: '/impressum' }],
-      cta: { label: 'Projekt anfragen', href: '/kontakt' },
+      cta: { label: 'Projekt anfragen', href: '/kontakt', variant: 'editorial' },
     },
     seoGlobal: {
       defaultTitle: 'Alexander Schuktuew · Foto, Film & AI Workflows',

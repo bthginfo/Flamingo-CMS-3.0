@@ -50,19 +50,19 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
   const footerCss = `#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none } #site-footer a[data-footer-closing-link] { color: #475569 } #site-footer a[data-footer-closing-link]:hover { color: #0f172a; text-decoration: none }`;
   const editorialClosing = footerVariant === 'editorial';
   const closingCardClass = editorialClosing
-    ? 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.045))] p-6 text-[color:var(--brand-footer-text)] shadow-[0_34px_110px_rgba(0,0,0,.28)] backdrop-blur md:p-10'
-    : 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-slate-950/10 bg-[color:color-mix(in_srgb,var(--token-btn-bg)_8%,white_92%)] p-6 text-slate-950 shadow-[0_34px_110px_rgba(0,0,0,.20)] backdrop-blur md:p-8';
+    ? 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.055))] p-6 text-white shadow-[0_34px_110px_rgba(0,0,0,.28)] backdrop-blur md:p-10'
+    : 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-slate-950/10 bg-white/95 p-6 text-slate-950 shadow-[0_34px_110px_rgba(0,0,0,.20)] backdrop-blur md:p-8';
   const closingEyebrowClass = editorialClosing
-    ? 'mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:var(--brand-footer-link)]'
+    ? 'mb-3 text-[11px] font-black uppercase tracking-[.22em] text-white/75'
     : 'mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:color-mix(in_srgb,var(--token-btn-bg)_78%,#111827)]';
   const closingHeadlineClass = editorialClosing
-    ? 'font-display text-3xl font-black tracking-[-.055em] text-[color:var(--brand-footer-text)] md:text-5xl'
+    ? 'font-display text-3xl font-black tracking-[-.055em] text-white md:text-5xl'
     : 'font-display text-2xl font-black tracking-[-.04em] text-slate-950 md:text-4xl';
   const closingCopyClass = editorialClosing
-    ? 'mt-3 max-w-xl text-sm leading-6 text-[color:color-mix(in_srgb,var(--brand-footer-text)_82%,transparent)] md:text-base'
+    ? 'mt-3 max-w-xl text-sm leading-6 text-white/78 md:text-base'
     : 'mt-3 max-w-xl text-sm leading-6 text-slate-600 md:text-base';
   const closingChipClass = editorialClosing
-    ? 'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.07] px-3 py-1.5 text-xs'
+    ? 'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.09] px-3 py-1.5 text-xs text-white/88'
     : 'inline-flex items-center gap-2 rounded-full border border-slate-950/10 bg-slate-950/[.035] px-3 py-1.5 text-xs text-slate-600';
 
   if (footerVariant === 'compact') {

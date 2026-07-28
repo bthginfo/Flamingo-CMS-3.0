@@ -17,18 +17,21 @@ export function KineticIdentitySection({ data }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const [active, setActive] = useState(0);
+  const centeredHoldVh = 56;
+  const scrollHeightVh = Math.max(155, items.length * 38) + centeredHoldVh;
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
-  const introOpacity = useTransform(scrollYProgress, [0, .1, .2], [1, .45, 0]);
-  const introY = useTransform(scrollYProgress, [0, .2], [0, -18]);
+  const introOpacity = useTransform(scrollYProgress, [0, .2, .34], [1, .62, 0]);
+  const introY = useTransform(scrollYProgress, [0, .34], [0, -18]);
   useEffect(() => {
     let frame = 0;
     const update = () => {
       frame = 0;
       const section = sectionRef.current;
       if (!section) return;
-      const travel = Math.max(1, section.offsetHeight - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / travel));
-      setActive(Math.min(items.length - 1, Math.max(0, Math.round(progress * Math.max(0, items.length - 1)))));
+      const holdUntilCentered = window.innerHeight * (centeredHoldVh / 100);
+      const travel = Math.max(1, section.offsetHeight - window.innerHeight - holdUntilCentered);
+      const progress = Math.min(1, Math.max(0, (-section.getBoundingClientRect().top - holdUntilCentered) / travel));
+      setActive(Math.min(items.length - 1, Math.max(0, Math.floor(progress * items.length))));
     };
     const schedule = () => {
       if (!frame) frame = window.requestAnimationFrame(update);
@@ -49,7 +52,7 @@ export function KineticIdentitySection({ data }: Props) {
     <section className="advanced-static-fallback bg-[var(--token-section-bg)] px-5 py-16 lg:hidden">
       <div className="mx-auto max-w-3xl">{intro}<div className="mt-10 space-y-12">{items.map((item, index) => <article key={index} className="border-t border-[var(--token-divider)] pt-5" data-edit-collection="statements" data-edit-index={index}><StatementLine item={item} index={index} />{item.text && <p className="mt-4 max-w-xl text-base leading-7 text-[color:var(--token-body)]" data-edit-path="text">{plain(item.text)}</p>}{item.image && <img src={item.image} alt="" loading="lazy" className="mt-5 aspect-[4/3] w-full rounded-[var(--token-card-radius)] object-cover" data-edit-image="image" />}</article>)}</div><AdvancedLink cta={data.cta as AdvancedCta} className="mt-10" /></div>
     </section>
-    <section ref={sectionRef} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] lg:block" style={{ height: `${Math.max(155, items.length * 38)}vh` }}>
+    <section ref={sectionRef} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] lg:block" style={{ height: `${scrollHeightVh}vh` }}>
       <div className="sticky top-0 grid h-[100svh] grid-rows-[auto_minmax(0,1fr)] overflow-hidden px-10 py-6 xl:px-14">
         <motion.div className="relative z-10 max-w-6xl" style={{ opacity: introOpacity, y: introY }} aria-hidden={active > 0 ? true : undefined}><AdvancedIntro compact badge={String(data.badge || '')} headline={String(data.headline || '')} subline={String(data.subline || '')} /></motion.div>
         <div className="grid min-h-0 items-end gap-8 pb-5 pt-4 lg:grid-cols-[1.08fr_.92fr] xl:gap-12">
