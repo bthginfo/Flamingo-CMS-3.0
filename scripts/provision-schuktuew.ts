@@ -117,6 +117,7 @@ const KNOWN_NON_PROJECT_MEDIA_IDS = new Set([
 const MAX_ORIGINAL_PROJECTS = Number(process.env.SCHUKTUEW_MAX_ORIGINAL_PROJECTS || '80');
 const MAX_IMAGES_PER_PROJECT = Number(process.env.SCHUKTUEW_MAX_IMAGES_PER_PROJECT || '28');
 const MAX_CANVAS_ITEMS = Number(process.env.SCHUKTUEW_MAX_CANVAS_ITEMS || '28');
+const STATIC_REFERENCE_REEL_URL = `${PREVIEW_URL}/seed-media/schuktuew/alexander-schuktuew-reference-reel.mp4`;
 
 const LOCAL_ASSETS = {
   brandBox: 'C:/Users/vonin-ju/AppData/Local/Temp/codex-clipboard-e93ce390-ba23-47f5-be25-11f7029c7db0.png',
@@ -151,7 +152,7 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     alt: 'Hochformat-Video Golfproduktion',
   },
   referenceReel: {
-    source: LOCAL_ASSETS.referenceReel,
+    source: STATIC_REFERENCE_REEL_URL,
     filename: 'alexander-schuktuew-reference-reel.mp4',
     contentType: 'video/mp4',
     alt: 'Hochformat-Video Referenzproduktion',
