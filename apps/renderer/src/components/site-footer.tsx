@@ -47,22 +47,22 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
   });
   const showClosing = footerVariant === 'premium' || footerVariant === 'editorial';
   const hasFooterClosing = showClosing && Boolean(footerCta || brand.tagline?.trim() || closingContacts.length);
-  const footerCss = `#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none } #site-footer a[data-footer-closing-link] { color: #475569 } #site-footer a[data-footer-closing-link]:hover { color: #0f172a; text-decoration: none }`;
+  const footerCss = `#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none } #site-footer a[data-footer-closing-link] { color: #475569 } #site-footer a[data-footer-closing-link]:hover { color: #0f172a; text-decoration: none } #site-footer [data-footer-closing="editorial"] [data-footer-closing-eyebrow] { color: rgba(255,255,255,.72) !important } #site-footer [data-footer-closing="editorial"] [data-footer-closing-headline] { color: #fff !important } #site-footer [data-footer-closing="editorial"] [data-footer-closing-copy] { color: rgba(255,255,255,.82) !important } #site-footer [data-footer-closing="editorial"] [data-footer-closing-chip] { color: rgba(255,255,255,.9) !important }`;
   const editorialClosing = footerVariant === 'editorial';
   const closingCardClass = editorialClosing
     ? 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.055))] p-6 text-white shadow-[0_34px_110px_rgba(0,0,0,.28)] backdrop-blur md:p-10'
     : 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-slate-950/10 bg-white/95 p-6 text-slate-950 shadow-[0_34px_110px_rgba(0,0,0,.20)] backdrop-blur md:p-8';
   const closingEyebrowClass = editorialClosing
-    ? 'mb-3 text-[11px] font-black uppercase tracking-[.22em] text-white/75'
+    ? 'mb-3 text-[11px] font-black uppercase tracking-[.22em] !text-white/75'
     : 'mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:color-mix(in_srgb,var(--token-btn-bg)_78%,#111827)]';
   const closingHeadlineClass = editorialClosing
-    ? 'font-display text-3xl font-black tracking-[-.055em] text-white md:text-5xl'
+    ? 'font-display text-3xl font-black tracking-[-.055em] !text-white md:text-5xl'
     : 'font-display text-2xl font-black tracking-[-.04em] text-slate-950 md:text-4xl';
   const closingCopyClass = editorialClosing
-    ? 'mt-3 max-w-xl text-sm leading-6 text-white/78 md:text-base'
+    ? 'mt-3 max-w-xl text-sm leading-6 !text-white/80 md:text-base'
     : 'mt-3 max-w-xl text-sm leading-6 text-slate-600 md:text-base';
   const closingChipClass = editorialClosing
-    ? 'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.09] px-3 py-1.5 text-xs text-white/88'
+    ? 'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.09] px-3 py-1.5 text-xs !text-white/90'
     : 'inline-flex items-center gap-2 rounded-full border border-slate-950/10 bg-slate-950/[.035] px-3 py-1.5 text-xs text-slate-600';
 
   if (footerVariant === 'compact') {
@@ -127,14 +127,14 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
 
       {hasFooterClosing && (
         <div className="relative z-10 mx-auto max-w-7xl px-6 pt-8 md:pt-12">
-          <div className={closingCardClass}>
+          <div className={closingCardClass} data-footer-closing={editorialClosing ? 'editorial' : 'premium'}>
             <div aria-hidden="true" className="absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-[color:color-mix(in_srgb,var(--token-btn-bg)_26%,transparent)] blur-3xl" />
             <div aria-hidden="true" className="absolute -bottom-32 left-1/4 -z-10 h-64 w-64 rounded-full bg-[color:color-mix(in_srgb,var(--brand-footer-link)_12%,transparent)] blur-3xl" />
             <div className="grid gap-7 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
               <div className="max-w-2xl">
-                <p className={closingEyebrowClass}>Nächster Schritt</p>
-                <h2 className={closingHeadlineClass}>Bereit für den nächsten Schritt?</h2>
-                <p className={closingCopyClass}>{closingCopy}</p>
+                <p className={closingEyebrowClass} data-footer-closing-eyebrow>Nächster Schritt</p>
+                <h2 className={closingHeadlineClass} data-footer-closing-headline>Bereit für den nächsten Schritt?</h2>
+                <p className={closingCopyClass} data-footer-closing-copy>{closingCopy}</p>
               </div>
               <div className="flex flex-col items-start gap-3 md:items-end">
                 {footerCta && (
@@ -154,11 +154,11 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
                         </>
                       );
                       return item.href ? (
-                        <a data-footer-closing-link={editorialClosing ? undefined : ''} key={item.label} href={item.href} className={closingChipClass}>
+                        <a data-footer-closing-link={editorialClosing ? undefined : ''} data-footer-closing-chip={editorialClosing ? '' : undefined} key={item.label} href={item.href} className={closingChipClass}>
                           {content}
                         </a>
                       ) : (
-                        <span key={item.label} className={closingChipClass}>
+                        <span key={item.label} data-footer-closing-chip={editorialClosing ? '' : undefined} className={closingChipClass}>
                           {content}
                         </span>
                       );
