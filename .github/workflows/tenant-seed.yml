@@ -1,4 +1,5 @@
 name: Tenant content seed
+run-name: Seed tenant content · ${{ github.event_name == 'workflow_dispatch' && inputs.target || 'push' }}
 
 on:
   workflow_dispatch:
@@ -74,4 +75,3 @@ jobs:
       - name: Seed Freie Wähler Ingolstadt
         if: ${{ github.event_name == 'push' || inputs.target == 'all' || inputs.target == 'freie-waehler-ingolstadt' }}
         run: pnpm exec tsx scripts/provision-freie-waehler-ingolstadt.ts
-
