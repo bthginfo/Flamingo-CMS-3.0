@@ -405,13 +405,13 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     alt: 'Weiteres Portfolio-Motiv aus dem Schuktuew Archiv',
   },
   aiLandscapeBefore: {
-    source: path.resolve('apps/renderer/public/seed-media/schuktuew/ai-workflow-landscape-before.png'),
+    source: `${PREVIEW_URL}/seed-media/schuktuew/ai-workflow-landscape-before.png`,
     filename: 'schuktuew-ai-workflow-landscape-before.png',
     contentType: 'image/png',
     alt: 'Unbearbeitetes Landschaftsmotiv als Ausgangspunkt eines AI-Workflows',
   },
   aiLandscapeAfter: {
-    source: path.resolve('apps/renderer/public/seed-media/schuktuew/ai-workflow-landscape-after.png'),
+    source: `${PREVIEW_URL}/seed-media/schuktuew/ai-workflow-landscape-after.png`,
     filename: 'schuktuew-ai-workflow-landscape-after.png',
     contentType: 'image/png',
     alt: 'Optimierte Landschaftsbildwelt als Ergebnis eines kontrollierten AI-Workflows',
