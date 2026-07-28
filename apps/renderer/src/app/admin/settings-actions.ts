@@ -5,6 +5,7 @@ import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings, navigation, footer, tenants } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { normalizeFooterVariant } from '@/lib/footer-variants';
 
 type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
 
@@ -174,18 +175,32 @@ export async function getFooterSettings() {
   const [row] = await db.select().from(footer).where(eq(footer.tenantId, tenantId)).limit(1);
   const rawColumns = row?.columns as any;
   const rawLegalLinks = row?.legalLinks as any;
+  const rawCta = row?.cta as any;
   if (rawColumns?._localized) {
-    return { columns: rawColumns, legalLinks: rawLegalLinks, _localized: true as const };
+    return { columns: rawColumns, legalLinks: rawLegalLinks, cta: rawCta || {}, variant: normalizeFooterVariant(rawCta?.variant), _localized: true as const };
   }
   return {
     columns: (rawColumns as { title: string; items: { text: string; href?: string }[] }[]) || [],
     legalLinks: (rawLegalLinks as { label: string; href: string }[]) || [],
+    cta: rawCta || {},
+    variant: normalizeFooterVariant(rawCta?.variant),
+  };
+}
+
+function mergeFooterCta(current: unknown, next: unknown) {
+  const currentObj = current && typeof current === 'object' && !Array.isArray(current) ? current as Record<string, unknown> : {};
+  const nextObj = next && typeof next === 'object' && !Array.isArray(next) ? next as Record<string, unknown> : {};
+  return {
+    ...currentObj,
+    ...nextObj,
+    variant: normalizeFooterVariant(nextObj.variant ?? currentObj.variant),
   };
 }
 
 export async function saveFooterSettings(data: {
   columns: { title: string; items: { text: string; href?: string }[] }[];
   legalLinks: { label: string; href: string }[];
+  cta?: { label?: string; href?: string; variant?: string } | null;
 }, locale?: string) {
   const tenantId = await requireWritableTenant();
   const db = getDb();
@@ -193,6 +208,7 @@ export async function saveFooterSettings(data: {
 
   let finalColumns: any = data.columns;
   let finalLegalLinks: any = data.legalLinks;
+  const finalCta = data.cta === undefined ? ((existing?.cta as any) || {}) : mergeFooterCta(existing?.cta, data.cta);
 
   if (locale) {
     const currentColumns = (existing?.columns as any) || {};
@@ -212,9 +228,9 @@ export async function saveFooterSettings(data: {
   }
 
   if (existing) {
-    await db.update(footer).set({ columns: finalColumns, legalLinks: finalLegalLinks, updatedAt: new Date() }).where(eq(footer.tenantId, tenantId));
+    await db.update(footer).set({ columns: finalColumns, legalLinks: finalLegalLinks, cta: finalCta, updatedAt: new Date() }).where(eq(footer.tenantId, tenantId));
   } else {
-    await db.insert(footer).values({ tenantId, columns: finalColumns, legalLinks: finalLegalLinks });
+    await db.insert(footer).values({ tenantId, columns: finalColumns, legalLinks: finalLegalLinks, cta: finalCta });
   }
   revalidatePath('/admin/navigation');
   return { success: true };

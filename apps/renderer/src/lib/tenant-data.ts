@@ -3,12 +3,13 @@ import { navigation, footer, globalSettings, seoGlobal, seoPage, seoItem, tenant
 import { eq, and } from 'drizzle-orm';
 import { unstable_cache } from 'next/cache';
 import { normalizeContactFormFields, type ContactFormFieldDefinition } from '@/lib/contact-form';
+import { normalizeFooterVariant, type FooterVariant } from '@/lib/footer-variants';
 
 export type NavItem = { label: string; href: string; type?: string };
 export type TopBarConfig = { enabled?: boolean; text?: string; linkLabel?: string; linkHref?: string; bgColor?: string; textColor?: string };
 export type NavCta = { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string; topBar?: TopBarConfig };
 export type FooterColumn = { title: string; items: { text: string; href?: string }[] };
-export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[]; cta?: { label: string; href: string } | null };
+export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[]; cta?: { label?: string; href?: string; variant?: FooterVariant } | null };
 export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; logoUrl?: string; faviconUrl?: string; logoDisplay?: 'logo' | 'logoAndName' | 'name'; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string; localSeo?: LocalSeoData };
 export type SocialLinks = Record<string, string>;
 export type ContactData = { phone?: string; email?: string; address?: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string };
@@ -102,7 +103,9 @@ export async function getTenantFooter(tenantId: string, locale?: string): Promis
   if (!f) return null;
   let columns = f.columns as any;
   let legalLinks = f.legalLinks as any;
-  let cta = (f as any).cta as any;
+  const rawCta = (f as any).cta as any;
+  const variant = normalizeFooterVariant(rawCta?.variant);
+  let cta = rawCta;
   if (columns?._localized && locale) {
     columns = columns[locale] ?? columns._default ?? [];
   } else if (columns?._localized) {
@@ -118,7 +121,8 @@ export async function getTenantFooter(tenantId: string, locale?: string): Promis
   } else if (cta?._localized) {
     cta = cta._default ?? null;
   }
-  return { columns: columns as FooterColumn[], legalLinks: legalLinks as { label: string; href: string }[], cta: cta as { label: string; href: string } | null };
+  const ctaObject = cta && typeof cta === 'object' && !Array.isArray(cta) ? cta as Record<string, unknown> : {};
+  return { columns: columns as FooterColumn[], legalLinks: legalLinks as { label: string; href: string }[], cta: { ...ctaObject, variant } as FooterData['cta'] };
   });
 }
 

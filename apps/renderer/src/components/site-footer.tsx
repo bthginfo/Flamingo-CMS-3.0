@@ -5,6 +5,7 @@ import type { ElementType } from 'react';
 import type { FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 import { prefixInternalHref } from '@/lib/link-prefix';
 import { getBrandCssVars } from '@/lib/brand-colors';
+import { normalizeFooterVariant } from '@/lib/footer-variants';
 
 const SOCIAL_ICONS: Record<string, ElementType> = {
   instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube, google: Globe, tiktok: Music,
@@ -27,7 +28,8 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
   const socials = Object.entries(socialLinks || {}).filter(([, url]) => url);
   const footerVars = getBrandCssVars(brand);
   const lightFooter = footerVars['--brand-footer-text'] === '#000000';
-  const footerCta = footer.cta?.label && footer.cta?.href ? footer.cta : null;
+  const footerVariant = normalizeFooterVariant(footer.cta?.variant);
+  const footerCta = footer.cta?.label && footer.cta?.href ? { label: footer.cta.label, href: footer.cta.href } : null;
   const closingCopy = brand.tagline?.trim()
     || (contact?.email ? 'Schreiben Sie uns kurz, worum es geht. Wir melden uns mit dem passenden nächsten Schritt.' : 'Starten Sie mit einer kurzen Anfrage. Wir melden uns mit einer klaren Einschätzung.');
   const closingContacts = [
@@ -35,11 +37,88 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
     contact?.email ? { icon: Mail, label: contact.email, href: `mailto:${contact.email}` } : null,
     contact?.address ? { icon: MapPin, label: contact.address } : null,
   ].filter(Boolean).slice(0, 2) as Array<{ icon: ElementType; label: string; href?: string }>;
-  const hasFooterClosing = Boolean(footerCta || brand.tagline?.trim() || closingContacts.length);
+  const contentColumns = footer.columns.filter((col) => !(contact && col.title?.toLowerCase() === 'kontakt'));
+  const compactLinks = contentColumns.flatMap((col) => {
+    const rawLinks = (col.items || (col as unknown as { links?: { label?: string; text?: string; href?: string }[] }).links || []) as Array<{ label?: string; text?: string; href?: string }>;
+    return rawLinks
+      .map((item) => ({ text: item.text || item.label || '', href: item.href }))
+      .filter((item) => item.text && item.href)
+      .slice(0, 4);
+  });
+  const showClosing = footerVariant === 'premium' || footerVariant === 'editorial';
+  const hasFooterClosing = showClosing && Boolean(footerCta || brand.tagline?.trim() || closingContacts.length);
+  const footerCss = `#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none } #site-footer a[data-footer-closing-link] { color: #475569 } #site-footer a[data-footer-closing-link]:hover { color: #0f172a; text-decoration: none }`;
+  const editorialClosing = footerVariant === 'editorial';
+  const closingCardClass = editorialClosing
+    ? 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-white/12 bg-[linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.045))] p-6 text-[color:var(--brand-footer-text)] shadow-[0_34px_110px_rgba(0,0,0,.28)] backdrop-blur md:p-10'
+    : 'relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-slate-950/10 bg-[color:color-mix(in_srgb,var(--token-btn-bg)_8%,white_92%)] p-6 text-slate-950 shadow-[0_34px_110px_rgba(0,0,0,.20)] backdrop-blur md:p-8';
+  const closingEyebrowClass = editorialClosing
+    ? 'mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:var(--brand-footer-link)]'
+    : 'mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:color-mix(in_srgb,var(--token-btn-bg)_78%,#111827)]';
+  const closingHeadlineClass = editorialClosing
+    ? 'font-display text-3xl font-black tracking-[-.055em] text-[color:var(--brand-footer-text)] md:text-5xl'
+    : 'font-display text-2xl font-black tracking-[-.04em] text-slate-950 md:text-4xl';
+  const closingCopyClass = editorialClosing
+    ? 'mt-3 max-w-xl text-sm leading-6 text-[color:color-mix(in_srgb,var(--brand-footer-text)_82%,transparent)] md:text-base'
+    : 'mt-3 max-w-xl text-sm leading-6 text-slate-600 md:text-base';
+  const closingChipClass = editorialClosing
+    ? 'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.07] px-3 py-1.5 text-xs'
+    : 'inline-flex items-center gap-2 rounded-full border border-slate-950/10 bg-slate-950/[.035] px-3 py-1.5 text-xs text-slate-600';
+
+  if (footerVariant === 'compact') {
+    return (
+      <footer id="site-footer" className="relative overflow-hidden rounded-t-[2rem] md:rounded-t-[3rem]" style={{ backgroundColor: 'var(--brand-footer, var(--brand-dark))', color: 'var(--brand-footer-text, white)' }}>
+        <style>{footerCss}</style>
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-14">
+          <div className="flex flex-col items-center gap-6 text-center">
+            {(brand.logoDisplay !== 'name' && brand.logoUrl) ? (
+              <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={170} height={48} className={`h-10 w-auto object-contain brightness-0 ${lightFooter ? '' : 'invert'}`} />
+            ) : (
+              <div className="font-display text-2xl font-bold">{brand.companyName}</div>
+            )}
+            {brand.tagline && <p className="max-w-2xl text-sm leading-6 opacity-85">{brand.tagline}</p>}
+            {footerCta && (
+              <Link data-footer-button href={prefixInternalHref(footerCta.href || '/', linkPrefix) as string} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)] shadow-[0_16px_46px_rgba(0,0,0,.20)] transition-transform hover:-translate-y-0.5">
+                {footerCta.label}
+                <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+            )}
+            <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+              {compactLinks.slice(0, 10).map((item, index) => (
+                <Link key={`${item.href}-${index}`} href={prefixInternalHref(item.href || '/', linkPrefix) as string}>{item.text}</Link>
+              ))}
+              {shopEnabled && <Link href={prefixInternalHref('/widerrufsbelehrung', linkPrefix) as string}>Widerrufsrecht</Link>}
+              {footer.legalLinks.map((link, index) => (
+                <Link key={`legal-${index}`} href={prefixInternalHref(link.href, linkPrefix) as string}>{legalLinkLabel(link.label, link.href)}</Link>
+              ))}
+            </nav>
+            <div className="flex flex-wrap items-center justify-center gap-3 text-sm opacity-90">
+              {contact?.phone && <a href={`tel:${contact.phone}`} className="inline-flex items-center gap-2"><Phone size={14} />{contact.phone}</a>}
+              {contact?.email && <a href={`mailto:${contact.email}`} className="inline-flex items-center gap-2"><Mail size={14} />{contact.email}</a>}
+              {contact?.address && <span className="inline-flex items-center gap-2"><MapPin size={14} />{contact.address}</span>}
+            </div>
+            {socials.length > 0 && (
+              <div className="flex items-center justify-center gap-3">
+                {socials.map(([platform, url]) => {
+                  const Icon = SOCIAL_ICONS[platform];
+                  return Icon ? (
+                    <a data-footer-icon key={platform} href={url} target="_blank" rel="noopener noreferrer" aria-label={platform.charAt(0).toUpperCase() + platform.slice(1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--brand-footer-text)_8%,transparent)] text-[color:var(--brand-footer-link)] transition-all duration-300 hover:bg-[var(--token-btn-bg)]">
+                      <Icon size={16} />
+                    </a>
+                  ) : null;
+                })}
+              </div>
+            )}
+            <span className="pt-2 text-xs opacity-75">© {new Date().getFullYear()} {brand.companyName}. Alle Rechte vorbehalten.</span>
+          </div>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer id="site-footer" className="relative overflow-hidden rounded-t-[2rem] md:rounded-t-[3rem]" style={{ backgroundColor: 'var(--brand-footer, var(--brand-dark))', color: 'var(--brand-footer-text, white)' }}>
-      <style>{`#site-footer a { color: var(--brand-footer-link, var(--brand-footer-text, #fff)) } #site-footer a:hover { text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.25em } #site-footer a[data-footer-button], #site-footer a[data-footer-icon]:hover { color: var(--token-btn-text) } #site-footer a[data-footer-button]:hover, #site-footer a[data-footer-icon]:hover { text-decoration: none } #site-footer a[data-footer-closing-link] { color: #475569 } #site-footer a[data-footer-closing-link]:hover { color: #0f172a; text-decoration: none }`}</style>
+      <style>{footerCss}</style>
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-brand-primary/[0.04] rounded-full blur-[100px]" />
@@ -48,14 +127,14 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
 
       {hasFooterClosing && (
         <div className="relative z-10 mx-auto max-w-7xl px-6 pt-8 md:pt-12">
-          <div className="relative isolate overflow-hidden rounded-[calc(var(--token-card-radius)*1.35)] border border-slate-950/10 bg-[color:color-mix(in_srgb,var(--token-btn-bg)_8%,white_92%)] p-6 text-slate-950 shadow-[0_34px_110px_rgba(0,0,0,.20)] backdrop-blur md:p-8">
+          <div className={closingCardClass}>
             <div aria-hidden="true" className="absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-[color:color-mix(in_srgb,var(--token-btn-bg)_26%,transparent)] blur-3xl" />
             <div aria-hidden="true" className="absolute -bottom-32 left-1/4 -z-10 h-64 w-64 rounded-full bg-[color:color-mix(in_srgb,var(--brand-footer-link)_12%,transparent)] blur-3xl" />
             <div className="grid gap-7 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
               <div className="max-w-2xl">
-                <p className="mb-3 text-[11px] font-black uppercase tracking-[.22em] text-[color:color-mix(in_srgb,var(--token-btn-bg)_78%,#111827)]">Nächster Schritt</p>
-                <h2 className="font-display text-2xl font-black tracking-[-.04em] text-slate-950 md:text-4xl">Bereit für den nächsten Schritt?</h2>
-                <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 md:text-base">{closingCopy}</p>
+                <p className={closingEyebrowClass}>Nächster Schritt</p>
+                <h2 className={closingHeadlineClass}>Bereit für den nächsten Schritt?</h2>
+                <p className={closingCopyClass}>{closingCopy}</p>
               </div>
               <div className="flex flex-col items-start gap-3 md:items-end">
                 {footerCta && (
@@ -75,11 +154,11 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
                         </>
                       );
                       return item.href ? (
-                        <a data-footer-closing-link key={item.label} href={item.href} className="inline-flex items-center gap-2 rounded-full border border-slate-950/10 bg-slate-950/[.035] px-3 py-1.5 text-xs text-slate-600">
+                        <a data-footer-closing-link={editorialClosing ? undefined : ''} key={item.label} href={item.href} className={closingChipClass}>
                           {content}
                         </a>
                       ) : (
-                        <span key={item.label} className="inline-flex items-center gap-2 rounded-full border border-slate-950/10 bg-slate-950/[.035] px-3 py-1.5 text-xs text-slate-600">
+                        <span key={item.label} className={closingChipClass}>
                           {content}
                         </span>
                       );
@@ -146,8 +225,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
 
           {/* Link columns – skip "Kontakt" column when contact info is already shown in the brand block */}
           <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-10">
-            {footer.columns
-              .filter((col) => !(contact && col.title?.toLowerCase() === 'kontakt'))
+            {contentColumns
               .map((col, i) => {
                 const rawLinks = (col.items || (col as unknown as { links?: { label?: string; text?: string; href?: string }[] }).links || []) as Array<{ label?: string; text?: string; href?: string }>;
                 const links = rawLinks

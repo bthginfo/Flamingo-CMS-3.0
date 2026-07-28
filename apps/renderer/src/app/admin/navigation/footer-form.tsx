@@ -4,20 +4,30 @@ import { useState, useEffect, useRef } from 'react';
 import { saveFooterSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
-import { Plus, Trash2 } from 'lucide-react';
+import { Check, Plus, Trash2 } from 'lucide-react';
+import { FOOTER_VARIANT_OPTIONS, normalizeFooterVariant, type FooterVariant } from '@/lib/footer-variants';
 
 type FooterColumn = { title: string; items: { text: string; href?: string }[] };
 type FooterData = {
   columns: FooterColumn[];
   legalLinks: { label: string; href: string }[];
+  cta?: { label?: string; href?: string; variant?: FooterVariant } | null;
 };
 type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
+
+function getBaseFooterCta(initial: any): { label?: string; href?: string; variant?: FooterVariant } {
+  const cta = initial?.cta;
+  if (!cta || typeof cta !== 'object' || Array.isArray(cta) || cta._localized) return {};
+  return cta;
+}
 
 export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig }) {
   const isLocalized = initial?.columns?._localized || initial?._localized;
   const locales = i18n?.locales || [];
   const defaultLocale = i18n?.defaultLocale || 'de';
   const [activeLocale, setActiveLocale] = useState(defaultLocale);
+  const [variant, setVariant] = useState<FooterVariant>(() => normalizeFooterVariant(initial?.cta?.variant || initial?.variant));
+  const baseCta = getBaseFooterCta(initial);
 
   function getColumnsForLocale(locale: string): FooterColumn[] {
     const cols = initial?.columns;
@@ -60,21 +70,22 @@ export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig 
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
-  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [localeData]);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [localeData, variant]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
+      const cta = { ...baseCta, variant };
       if (i18n?.enabled) {
         for (const loc of locales) {
           const d = localeData[loc];
           if (d) {
-            await saveFooterSettings({ columns: d.columns, legalLinks: d.legalLinks.filter(l => l.label.trim()) }, loc);
+            await saveFooterSettings({ columns: d.columns, legalLinks: d.legalLinks.filter(l => l.label.trim()), cta }, loc);
           }
         }
       } else {
         const d = localeData[defaultLocale];
-        await saveFooterSettings({ columns: d.columns, legalLinks: d.legalLinks.filter(l => l.label.trim()) });
+        await saveFooterSettings({ columns: d.columns, legalLinks: d.legalLinks.filter(l => l.label.trim()), cta });
       }
       toast.success('Footer gespeichert');
       markSaved();
@@ -106,6 +117,34 @@ export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig 
           ))}
         </div>
       )}
+
+      {/* Variant */}
+      <div className="space-y-3">
+        <div>
+          <h3 className="text-sm font-medium text-zinc-700">Footer-Art</h3>
+          <p className="mt-1 text-xs leading-5 text-zinc-500">Wähle den visuellen Aufbau. Inhalte, Farben und Links bleiben weiter über diese Seite und die Markenfarben steuerbar.</p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {FOOTER_VARIANT_OPTIONS.map((option) => {
+            const active = variant === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setVariant(option.value)}
+                aria-pressed={active}
+                className={`min-h-28 rounded-2xl border p-4 text-left transition ${active ? 'border-admin-accent bg-blue-50 shadow-sm ring-2 ring-admin-accent/15' : 'border-admin-border bg-white hover:border-admin-accent/50 hover:bg-zinc-50'}`}
+              >
+                <span className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-bold text-zinc-950">{option.label}</span>
+                  {active && <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-admin-accent text-white"><Check size={13} /></span>}
+                </span>
+                <span className="mt-2 block text-xs leading-5 text-zinc-500">{option.description}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Columns */}
       <div className="space-y-6">
