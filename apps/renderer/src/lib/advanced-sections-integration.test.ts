@@ -38,6 +38,7 @@ test('advanced experiences are wired across picker, renderer, schemas, previews 
     const definition = picker.find((entry) => entry.type === type);
     assert.equal(definition?.category, 'Advanced', `${type} must live in the Advanced picker category`);
     assert.equal(definition?.serviceAvailable, true, `${type} must offer specialist setup`);
+    assert.match(String(definition?.setupLevel || ''), /^(guided|specialist)$/, `${type} must classify setup complexity`);
     assert.ok(definition?.setupHint, `${type} must explain its setup requirements`);
     assert.equal(resolveSectionDefinition({ type, industry: 'tradesman' })?.owner, 'shared');
     assert.ok(schemas[type], `${type} must be documented for the content API`);
@@ -45,6 +46,45 @@ test('advanced experiences are wired across picker, renderer, schemas, previews 
     assert.ok(SECTION_COLOR_CONTRACTS_GENERIC[type]?.length, `${type} must expose a static color contract`);
     assert.equal(contracts.get(type)?.category, 'advanced');
   }
+});
+
+test('advanced experiences stay reusable in key tenant industries', () => {
+  for (const industry of ['tradesman', 'photography', 'verein'] as const) {
+    const picker = getSectionTypesForIndustry(industry);
+    for (const type of ADVANCED_TYPES) {
+      const definition = picker.find((entry) => entry.type === type);
+      assert.equal(definition?.category, 'Advanced', `${type} must be selectable for ${industry}`);
+      assert.ok(definition?.setupHint, `${type} must keep setup help for ${industry}`);
+      assert.equal(resolveSectionDefinition({ type, industry })?.owner, 'shared', `${type} must render as shared section for ${industry}`);
+    }
+  }
+});
+
+test('advanced experiences use guided admin editors, not the generic field editor', () => {
+  const advancedEditorSource = readFileSync(new URL('../app/admin/pages/[id]/advanced-section-editor.tsx', import.meta.url), 'utf8');
+  const sectionDataEditorSource = readFileSync(new URL('../app/admin/pages/[id]/section-data-editor.tsx', import.meta.url), 'utf8');
+
+  for (const type of ADVANCED_TYPES) {
+    assert.match(
+      advancedEditorSource,
+      new RegExp(`${type}:\\s*\\{[\\s\\S]*?requirements:\\s*\\[`),
+      `${type} must expose guided metadata and requirements in the admin editor`,
+    );
+    assert.match(
+      advancedEditorSource,
+      new RegExp(`case ['"]${type}['"]:\\s*return\\s*<[^>]+Editor`),
+      `${type} must have an explicit editor switch case`,
+    );
+    assert.match(
+      sectionDataEditorSource,
+      new RegExp(`\\b${type}:\\s*AdvancedSectionEditor\\b`),
+      `${type} must route from the page editor to AdvancedSectionEditor`,
+    );
+  }
+
+  assert.match(advancedEditorSource, /<AdvancedFrame/, 'advanced editors must render the guided setup frame');
+  assert.match(advancedEditorSource, /Von Flamingo bef/, 'advanced editors must keep the specialist setup CTA');
+  assert.doesNotMatch(advancedEditorSource, /default:\s*return\s*<[^>]*Generic/i, 'advanced editor must not silently fall back to a generic editor');
 });
 
 test('advanced preview payloads satisfy the public API contract', () => {
