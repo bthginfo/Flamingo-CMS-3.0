@@ -10,9 +10,8 @@ const publishClientSources = [
 ];
 
 describe('publish feedback', () => {
-  it('shows one blocker with a readable section and field label', () => {
+  it('keeps legacy structured errors readable without making them a publish gate', () => {
     const description = getPublishFailureDescription({
-      code: 'PUBLISH_PREFLIGHT_FAILED',
       repairQueue: [{
         severity: 'error',
         location: 'pages[0].sections[1].data.de.rows[0].headline',

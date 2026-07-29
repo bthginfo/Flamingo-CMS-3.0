@@ -9,9 +9,6 @@ import { revalidateTag, revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { createHash } from 'crypto';
-import { NextRequest } from 'next/server';
-import { GET as runStoredContentAudit } from '@/app/api/v1/content/validate/route';
-import { isStoredContentReadyToPublish, partitionPublishAuditIssues } from '@/lib/publish-readiness';
 
 export type PublishRepairItem = {
   severity?: string;
@@ -32,14 +29,6 @@ export type PublishResult = {
   advisoryQueue?: PublishRepairItem[];
 };
 type QueryRunner = Pick<ReturnType<typeof getDb>, 'select' | 'update' | 'insert' | 'execute'>;
-
-type StoredContentPreflight = {
-  readyToPublish?: boolean;
-  summary?: Record<string, number> & { colorWarnings?: number };
-  contentIssues?: PublishRepairItem[];
-  colorIssues?: PublishRepairItem[];
-  error?: string;
-};
 
 function normalizeSnapshotForJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value, (_key, input) => {
@@ -77,29 +66,6 @@ export async function publishAction(): Promise<PublishResult> {
 
     const db = getDb();
     const tenantId = session.tenantId;
-
-    // Publishing is a guarded state transition. Run the exact audit exposed
-    // by GET /api/v1/content/validate before changing page status or snapshot
-    // state. The GET handler recognizes the current writable admin session.
-    const preflightResponse = await runStoredContentAudit(
-      new NextRequest('http://internal/api/v1/content/validate'),
-    );
-    const preflight = await preflightResponse.json() as StoredContentPreflight;
-    const { blockers: repairQueue, advisories: advisoryQueue } = partitionPublishAuditIssues(
-      preflight.contentIssues,
-      preflight.colorIssues,
-    );
-    const summaryReady = preflight.summary
-      ? isStoredContentReadyToPublish(preflight.summary)
-      : false;
-    if (!preflightResponse.ok || !preflight.readyToPublish || !summaryReady) {
-      return {
-        error: preflight.error || 'Die Inhalte sind noch nicht bereit zur Veröffentlichung.',
-        code: 'PUBLISH_PREFLIGHT_FAILED',
-        summary: preflight.summary,
-        repairQueue,
-      };
-    }
 
     const rawSnapshot = await getDraftSnapshot(tenantId);
     if (!rawSnapshot) return { error: 'Keine Inhalte zum Veröffentlichen gefunden.' };
@@ -183,12 +149,6 @@ export async function publishAction(): Promise<PublishResult> {
       console.warn('[publishAction] transaction unavailable, using non-transactional fallback');
       result = await runPublish(db);
     }
-
-    result = {
-      ...result,
-      summary: preflight.summary,
-      advisoryQueue,
-    };
 
     revalidateTenant(tenantId);
 

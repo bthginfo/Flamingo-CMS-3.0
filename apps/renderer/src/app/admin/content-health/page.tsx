@@ -15,7 +15,7 @@ function IssueCard({ issue }: { issue: ContentHealthIssue }) {
   return (
     <article className="px-4 py-5 sm:px-5">
       <div className="flex flex-wrap items-center gap-2">
-        <span className={`rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${issue.severity === 'error' ? 'bg-red-50 text-red-700' : issue.source === 'freshness' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-800'}`}>{issue.severity === 'error' ? 'Muss behoben werden' : 'Empfehlung'}</span>
+        <span className={`rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${issue.severity === 'error' ? 'bg-red-50 text-red-700' : issue.source === 'freshness' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-800'}`}>{issue.severity === 'error' ? 'Wichtig' : 'Empfehlung'}</span>
         <span className="rounded-md bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-600">{sourceLabel(issue.source)}</span>
       </div>
       <p className="mt-3 text-sm font-semibold leading-6 text-zinc-900">{copy.title}</p>
@@ -41,7 +41,7 @@ export default async function ContentHealthPage() {
     );
   }
   const hasAdvisories = report.advisoryCount > 0;
-  const status = report.readyToPublish ? (hasAdvisories ? 'Kann veröffentlicht werden' : 'Alles bereit') : 'Vor dem Veröffentlichen noch prüfen';
+  const status = report.readyToPublish ? (hasAdvisories ? 'Optionale Empfehlungen' : 'Alles sieht gut aus') : 'Wichtige Hinweise gefunden';
   const StatusIcon = report.readyToPublish ? CheckCircle2 : AlertTriangle;
 
   return (
@@ -53,7 +53,7 @@ export default async function ContentHealthPage() {
 
       <section className={`mb-6 overflow-hidden rounded-2xl border p-5 sm:p-6 ${report.readyToPublish ? 'border-emerald-200 bg-emerald-50/70' : 'border-amber-200 bg-amber-50/70'}`}>
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3"><span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${report.readyToPublish ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'}`}><StatusIcon size={20} /></span><div><h2 className="font-semibold text-zinc-950">{status}</h2><p className="mt-1 text-sm text-zinc-600">{report.readyToPublish ? 'Es gibt keine Probleme, die eine Veröffentlichung verhindern. Empfehlungen können Sie nach und nach bearbeiten.' : `${report.blockingCount} ${report.blockingCount === 1 ? 'Problem muss' : 'Probleme müssen'} noch behoben werden, bevor die Website veröffentlicht werden kann.`}</p></div></div>
+          <div className="flex items-start gap-3"><span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${report.readyToPublish ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'}`}><StatusIcon size={20} /></span><div><h2 className="font-semibold text-zinc-950">{status}</h2><p className="mt-1 text-sm text-zinc-600">{report.readyToPublish ? 'Diese Empfehlungen können Sie nach und nach bearbeiten.' : `${report.blockingCount} ${report.blockingCount === 1 ? 'wichtiger Hinweis wurde' : 'wichtige Hinweise wurden'} gefunden. Die Veröffentlichung bleibt trotzdem jederzeit möglich.`}</p></div></div>
           <div className="flex flex-wrap gap-2 text-xs font-semibold"><span className="rounded-lg bg-white/80 px-3 py-2 text-red-700">{report.blockingCount} wichtig</span><span className="rounded-lg bg-white/80 px-3 py-2 text-amber-800">{report.advisoryCount} Empfehlungen</span></div>
         </div>
       </section>

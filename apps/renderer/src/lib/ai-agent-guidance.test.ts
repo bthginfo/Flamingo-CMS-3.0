@@ -45,7 +45,7 @@ describe('AI agent guidance', () => {
     assert.match(prompt, /agentContract\.stateMachine/);
     assert.match(prompt, /POST \/api\/v1\/content\/validate/);
     assert.match(prompt, /upsert=true/);
-    assert.match(prompt, /readyToPublish=true/);
+    assert.match(prompt, /publish does not require readyToPublish=true/);
   });
 
   it('gives weak models a profile, plan and targeted repair contract', () => {

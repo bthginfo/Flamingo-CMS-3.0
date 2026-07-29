@@ -116,8 +116,8 @@ export async function GET(req: NextRequest) {
       getCollectionItem: { method: 'GET', path: '/api/v1/content/collections/:key/items/:id', description: 'Get a single collection item with all data' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
       patchPage: { method: 'PATCH', path: '/api/v1/content/pages/:id', description: 'Partially update a page. Send patchSections: [{id, data: {partial fields}}] to merge section data without full replace.' },
-      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings (incomplete content) AND colorWarnings (low contrast / malformed colors). Call /validate FIRST.' },
-      validate: { method: 'GET', path: '/api/v1/content/validate', description: 'Pre-publish audit. Returns { readyToPublish, summary, contentIssues, colorIssues }. ALWAYS call before /publish, fix every error + critical warning, repeat until readyToPublish=true.' },
+      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content immediately. Quality or contrast findings never block this endpoint.' },
+      validate: { method: 'GET', path: '/api/v1/content/validate', description: 'Optional quality audit. Returns { readyToPublish, summary, contentIssues, colorIssues } as advisory information only.' },
       validatePlan: { method: 'POST', path: '/api/v1/content/validate', description: 'Preflight a siteProfile + page plan before any write. Returns stable issue codes, exact locations and deterministic repair instructions.' },
       debug: { method: 'GET', path: '/api/v1/content/debug', description: 'Get raw stored data for all pages, sections, collections and items (for debugging)' },
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
@@ -156,7 +156,7 @@ export async function GET(req: NextRequest) {
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
       'When using section.styleOverrides, the keys MUST be EXACTLY one of the documented keys from sectionStyleContracts. Unknown keys are rejected by API write endpoints so the problem is visible immediately.',
       'Per-section styleOverrides values are CSS colour strings — hex (#rrggbb), rgb(), rgba(), safe var(--token-*) references or safe border/dimension values are valid. Do NOT pass slot enums or label names like "primary" — these are not colours.',
-      'BEFORE calling /publish, ALWAYS call GET /api/v1/content/validate. Fix every "error" issue and every contrast warning. Only publish when readyToPublish=true.',
+      'GET /api/v1/content/validate is an optional advisory audit. Its findings never block /publish.',
       ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
       ...(hasBooking ? ['This tenant has the BOOKING addon active. You may use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase and bookingCtaPro sections where they make sense. Use bookingSlotPicker for restaurants/cafes/salons/appointments where the visitor chooses a day and sees available times. Use bookingDateRange for hotels, apartments, locations, rooms and multi-day requests. The actual booking logic is configured in Admin > Funktionen > Buchungen.'] : ['This tenant does NOT have the booking addon. Do NOT use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase or bookingCtaPro. Keep simple reservation/contact sections if needed.']),
     ],
@@ -247,8 +247,7 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 
 8. PUBLISH (POST /api/v1/content/publish):
    - IMMER als letzter Schritt aufrufen!
-   - VORHER: Call GET /api/v1/content/validate. Wenn readyToPublish=false → fixe ALLE contentIssues mit severity "error" und ALLE colorIssues mit code "INVALID_COLOR_FORMAT" oder severity "error". Wiederhole bis readyToPublish=true.
-   - Beachte auch die "warnings" (z.B. LOW_CONTRAST). Setze passende styleOverrides damit Texte lesbar werden, dann erneut /validate aufrufen.
+   - GET /api/v1/content/validate ist optional und rein beratend. Findings oder readyToPublish=false verhindern den Publish nicht.
 
 ═══════════════════════════════════════════
 FARB- & KONTRAST-PFLICHTREGELN (verhindert "weiß auf weiß" / "dunkel auf dunkel"):
@@ -299,8 +298,8 @@ F) VERBOTENE KOMBINATIONEN (führen zu unsichtbaren Texten in der Live-Vorschau)
 
 G) SICHERER WORKFLOW:
    1) Setze JEDES Mal wenn du eine eigene sectionBg setzt AUCH passende Text-Farben.
-   2) Nach allen PUT/POSTs: GET /api/v1/content/validate.
-   3) Fixe alle "colorIssues" bevor /publish aufgerufen wird.
+   2) Nutze GET /api/v1/content/validate optional als Qualitätsbericht.
+   3) Behebe sinnvolle colorIssues, ohne den Publish davon abhängig zu machen.
    4) Der Server lehnt ungültige styleOverrides (#xyz, "primary", "blue", unbekannte Keys) mit 400 und konkretem Pfad ab — korrigiere die Werte statt sie erneut zu senden.
 
 H) AUTO-FIX: Wenn du PUT /content/design oder section.styleOverrides mit heading/body/muted sendest,
@@ -660,8 +659,8 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
       '4. Create collections before pages when pages link to collection items.',
       '5. Create pages with complete sections and real content.',
       '6. Create collection items with embedded sections and stable UUIDs for every item section.',
-      '7. Call /validate before /publish. Fix every error and every contrast warning. Repeat until readyToPublish=true.',
-      '8. Publish only after validation passes, then manually check live pages and collection routes.',
+      '7. Optionally call /validate and repair useful findings. Validation is advisory.',
+      '8. Publish the saved content, then manually check live pages and collection routes.',
     ],
     style: {
       supportedWebsiteStyle: 'classic',
@@ -750,8 +749,7 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
     },
     industry: industryHints[industry] || fallback,
     finalValidation: [
-      'GET /api/v1/content/validate returns readyToPublish=true.',
-      'No colorIssues warnings remain.',
+      'Optional GET /api/v1/content/validate findings have been reviewed where useful.',
       'Every main route returns 200.',
       'Every collection item linked from nav/cards/footer returns 200.',
       'Visible content is not repeated mechanically across pages.',

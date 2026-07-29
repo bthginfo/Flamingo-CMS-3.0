@@ -288,15 +288,15 @@ const AGENT_AUTOPILOT_RUNBOOK = {
   hardStops: [
     'If a fact is unknown, put it in siteProfile.facts.unknowns and do not state it publicly.',
     'If POST /validate returns valid=false, do not write pages yet.',
-    'If GET /validate returns readyToPublish=false, do not publish.',
-    'If any copy sounds like a section note, media note, prompt note or third-person biography, rewrite it before validation.',
-    'If a page has low contrast or missing foreground tokens on a custom background, repair colors before publishing.',
+    'Treat GET /validate as an advisory quality report. It never blocks publishing.',
+    'If any copy sounds like a section note, media note, prompt note or third-person biography, rewrite it when possible.',
+    'If a page has low contrast or missing foreground tokens on a custom background, repair colors when possible.',
     'If an endpoint returns 400, change only the named location; never retry the same body.',
   ],
   repairLoop: {
     maxUnchangedRetries: 0,
     rule: 'Sort issues by severity, group by location, patch the smallest field/object that satisfies repair.acceptance.',
-    afterPatch: 'Run GET /api/v1/content/validate again and continue until readyToPublish=true.',
+    afterPatch: 'Run GET /api/v1/content/validate again to confirm the repair. Remaining findings are advisory and do not block publishing.',
   },
   pageWriting: {
     batchSize: 1,
@@ -413,8 +413,8 @@ export function buildAiAgentContract(input: {
       { state: 'DISCOVER', action: 'Read this response completely. Reuse existing page IDs/slugs. Never guess section fields.' },
       { state: 'FOUNDATION', action: 'Write brand, contact, design, navigation, footer, opening hours and global SEO.' },
       { state: 'CONTENT', action: 'POST every page with upsert=true. This operation is safe to repeat after corrections.' },
-      { state: 'VERIFY', action: 'GET /api/v1/content/validate. Repair every error and color warning, then repeat validation.' },
-      { state: 'PUBLISH', action: 'POST /api/v1/content/publish only when readyToPublish=true.' },
+      { state: 'VERIFY', action: 'Optionally call GET /api/v1/content/validate and repair useful findings. This report is advisory.' },
+      { state: 'PUBLISH', action: 'POST /api/v1/content/publish. Publishing does not require a readiness result.' },
     ],
     requestRules: {
       authorization: 'Authorization: Bearer <PAT>',
@@ -479,13 +479,13 @@ export function buildAiAgentContract(input: {
           state: 'REPAIR',
           output: 'targeted patches',
           action: 'For each validation issue, edit only issue.location. Follow repair.instruction and confirm repair.acceptance.',
-          gate: 'Repeat GET /api/v1/content/validate until there are no errors and no unresolved identity/link/SEO warnings.',
+          gate: 'Use GET /api/v1/content/validate as an advisory repair list; unresolved findings do not prevent publishing.',
         },
         {
           state: 'PUBLISH',
           output: 'published tenant',
-          action: 'Publish once, only after validation. Never use publish as a validation step.',
-          gate: 'readyToPublish=true and all main/internal routes are valid.',
+          action: 'Publish once the requested content changes are saved.',
+          gate: 'The publish endpoint is available without a readiness gate.',
         },
       ],
       siteProfileIntake: {
@@ -579,7 +579,7 @@ export function buildAiAgentContract(input: {
           .filter(type => allowed.has(type))
           .map(type => [type, SECTION_PREVIEW_DATA[type]]),
       ),
-      validation: 'Treat these examples as shape references only. Replace all sample copy, URLs and claims, then use POST /api/v1/content/validate before writing and GET /api/v1/content/validate before publishing.',
+      validation: 'Treat these examples as shape references only. Replace all sample copy, URLs and claims. GET /api/v1/content/validate is an optional advisory audit.',
     },
     recommendedPages,
     schemaLookup: 'sectionDataSchemas is authoritative. Examples demonstrate shape, not facts.',
@@ -588,5 +588,5 @@ export function buildAiAgentContract(input: {
 }
 
 export function buildAiAgentPrompt(tenantName: string, industry: string): string {
-  return `Create a complete premium ${industry} website for ${tenantName}. Follow agentContract.stateMachine, agentContract.agentRunbook.writeOrder, agentContract.requestBodies and agentContract.missionBrief exactly. Choose one agentContract.experienceFamilies entry before planning. Write final public German copy from the business perspective (ich/wir), never stage directions or section/media notes. Plan distinct pages with at least one fitting Premium/Advanced homepage section when available, then preflight via POST /api/v1/content/validate before writing. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Keep manual color overrides valid: every foreground/background pair must pass /validate. Repair only named issue locations. Publish only with readyToPublish=true and no color warnings.`;
+  return `Create a complete premium ${industry} website for ${tenantName}. Follow agentContract.stateMachine, agentContract.agentRunbook.writeOrder, agentContract.requestBodies and agentContract.missionBrief exactly. Choose one agentContract.experienceFamilies entry before planning. Write final public German copy from the business perspective (ich/wir), never stage directions or section/media notes. Plan distinct pages with at least one fitting Premium/Advanced homepage section when available, then preflight via POST /api/v1/content/validate before writing. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Keep manual color overrides valid and repair named issue locations when possible. GET /api/v1/content/validate is advisory; publish does not require readyToPublish=true.`;
 }

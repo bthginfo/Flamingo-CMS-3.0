@@ -92,7 +92,7 @@ function groupedDescription(issues: PublishRepairItem[], label: string): string 
 export function getPublishFailureDescription(result: PublishResult): string | undefined {
   const blockers = result.repairQueue || [];
   if (blockers.length === 0) {
-    return result.code && result.code !== 'PUBLISH_PREFLIGHT_FAILED' ? result.code : undefined;
+    return result.code;
   }
 
   if (blockers.length === 1) {
