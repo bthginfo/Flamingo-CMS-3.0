@@ -7,7 +7,7 @@ on:
     paths:
       - '.github/workflows/db-migrate.yml'
       - 'packages/db/drizzle/**'
-      - 'packages/db/src/schema/**'
+      - 'packages/db/src/**'
       - 'packages/db/package.json'
       - 'pnpm-lock.yaml'
 
