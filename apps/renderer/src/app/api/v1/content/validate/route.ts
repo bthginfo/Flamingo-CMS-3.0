@@ -84,6 +84,8 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
   };
 
   // ── Page + section audit ──────────────────────────────────────────────
+  const LEGAL_SLUGS = new Set(['impressum', 'datenschutz', 'agb', 'widerrufsbelehrung']);
+
   const allPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title })
     .from(pages).where(eq(pages.tenantId, auth.tenantId));
 
@@ -115,7 +117,7 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
   }
 
   const allSections = allPages.length > 0
-    ? await db.select({ pageId: pageSections.pageId, type: pageSections.type, data: pageSections.data, styleOverrides: pageSections.styleOverrides })
+    ? await db.select({ pageId: pageSections.pageId, type: pageSections.type, data: pageSections.data, styleOverrides: pageSections.styleOverrides, visible: pageSections.visible })
       .from(pageSections).where(inArray(pageSections.pageId, allPages.map(p => p.id))).orderBy(asc(pageSections.sortOrder))
     : [];
   const [seoGlobalRows, seoPageRows, navigationRows, footerRows] = await Promise.all([
@@ -129,13 +131,14 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
   ]);
   const seoByPage = new Map(seoPageRows.map(row => [row.pageId, row]));
   const sectionsByPage = new Map<string, typeof allSections>();
-  for (const s of allSections) { const arr = sectionsByPage.get(s.pageId) || []; arr.push(s); sectionsByPage.set(s.pageId, arr); }
+  const visibleSections = allSections.filter((section) => section.visible !== false);
+  for (const s of visibleSections) { const arr = sectionsByPage.get(s.pageId) || []; arr.push(s); sectionsByPage.set(s.pageId, arr); }
 
   for (const p of allPages) {
     const sections = sectionsByPage.get(p.id) || [];
     if (sections.length === 0) {
       contentIssues.push({
-        severity: 'error',
+        severity: LEGAL_SLUGS.has(p.slug) ? 'warning' : 'error',
         message: `Page "${p.title || p.slug}" has no sections.`,
         location: `pages[${p.slug}]`,
         hint: 'Use PUT /api/v1/content/pages/:id to add sections.',
@@ -146,11 +149,11 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
       const data = (s.data || {}) as Record<string, unknown>;
       const loc = `pages[${p.slug}].sections[${i}] (${s.type})`;
 
-      const requireArray = (key: string, min = 1, hint?: string) => {
+      const requireArray = (key: string, min = 1, hint?: string, severity: 'error' | 'warning' = 'warning') => {
         const v = data[key];
         if (!Array.isArray(v) || v.length < min) {
           contentIssues.push({
-            severity: 'error', message: `${loc}: data.${key} must be an array with ≥${min} items.`, location: loc, hint,
+            severity, message: `${loc}: data.${key} should contain at least ${min} item(s).`, location: loc, hint,
           });
         }
       };
@@ -159,11 +162,11 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
           contentIssues.push({ severity: 'error', message: `${loc}: data.${key} is required and must be non-empty.`, location: loc });
         }
       };
-      const requireArrayMax = (key: string, max: number) => {
+      const requireArrayMax = (key: string, max: number, severity: 'error' | 'warning' = 'warning') => {
         const value = data[key];
         if (Array.isArray(value) && value.length > max) {
           contentIssues.push({
-            severity: 'error', message: `${loc}: data.${key} must contain no more than ${max} items.`, location: loc,
+            severity, message: `${loc}: data.${key} should contain no more than ${max} item(s).`, location: loc,
           });
         }
       };
@@ -261,7 +264,6 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
   // CTA labels/headlines repeat verbatim. These are warnings (they don't block
   // publish) but the AI is told to react to warnings, so they drive real
   // variety instead of a template stamped N times.
-  const LEGAL_SLUGS = new Set(['impressum', 'datenschutz', 'agb', 'widerrufsbelehrung']);
   const contentPages = allPages.filter((p) => !LEGAL_SLUGS.has(p.slug));
   const localizedFirst = (data: Record<string, unknown>): Record<string, unknown> => {
     if (data && data._localized) {
@@ -305,7 +307,7 @@ async function runStoredContentAudit(_req: NextRequest, auth: PatAuthResult) {
   // Repeated CTA labels / headlines verbatim across many sections.
   const ctaLabelCounts: Record<string, number> = {};
   const headlineCounts: Record<string, number> = {};
-  for (const s of allSections) {
+  for (const s of visibleSections) {
     const data = localizedFirst((s.data || {}) as Record<string, unknown>);
     const cta = (data.ctaPrimary || data.primaryCta || data.cta) as { label?: string } | undefined;
     const label = cta?.label?.trim();

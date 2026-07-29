@@ -26,16 +26,17 @@ describe('publish readiness', () => {
     assert.equal(result.advisories.length, 1);
   });
 
-  it('keeps structural errors and contrast warnings blocking', () => {
+  it('keeps structural errors and color errors blocking while color warnings stay advisory', () => {
     assert.equal(isStoredContentReadyToPublish({ contentErrors: 1 }), false);
-    assert.equal(isStoredContentReadyToPublish({ colorWarnings: 1 }), false);
+    assert.equal(isStoredContentReadyToPublish({ colorWarnings: 1 }), true);
+    assert.equal(isStoredContentReadyToPublish({ colorErrors: 1 }), false);
 
     const result = partitionPublishAuditIssues(
       [{ severity: 'error', code: 'plan.section_invalid' }, { severity: 'warning', code: 'copy.generic' }],
       [{ severity: 'warning', code: 'LOW_CONTRAST' }],
     );
 
-    assert.deepEqual(result.blockers.map(issue => issue.code), ['plan.section_invalid', 'LOW_CONTRAST']);
-    assert.deepEqual(result.advisories.map(issue => issue.code), ['copy.generic']);
+    assert.deepEqual(result.blockers.map(issue => issue.code), ['plan.section_invalid']);
+    assert.deepEqual(result.advisories.map(issue => issue.code), ['copy.generic', 'LOW_CONTRAST']);
   });
 });

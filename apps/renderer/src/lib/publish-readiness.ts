@@ -25,8 +25,7 @@ function count(value: number | undefined): number {
  */
 export function isStoredContentReadyToPublish(summary: PublishAuditSummary): boolean {
   return count(summary.contentErrors) === 0
-    && count(summary.colorErrors) === 0
-    && count(summary.colorWarnings) === 0;
+    && count(summary.colorErrors) === 0;
 }
 
 export function partitionPublishAuditIssues(
@@ -36,8 +35,11 @@ export function partitionPublishAuditIssues(
   return {
     blockers: [
       ...contentIssues.filter(issue => issue.severity === 'error'),
-      ...colorIssues.filter(issue => issue.severity === 'error' || issue.severity === 'warning'),
+      ...colorIssues.filter(issue => issue.severity === 'error'),
     ],
-    advisories: contentIssues.filter(issue => issue.severity === 'warning'),
+    advisories: [
+      ...contentIssues.filter(issue => issue.severity === 'warning'),
+      ...colorIssues.filter(issue => issue.severity === 'warning'),
+    ],
   };
 }

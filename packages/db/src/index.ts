@@ -40,12 +40,7 @@ function quoteLiteral(value: string) {
   return `'${value.replace(/'/g, "''")}'`;
 }
 
-function splitSqlStatements(sqlText: string) {
-  const input = sqlText.replace(/^\uFEFF/, '');
-  if (STATEMENT_BREAKPOINT.test(input)) {
-    return input.split(STATEMENT_BREAKPOINT).map(statement => statement.trim()).filter(Boolean);
-  }
-
+function splitSqlChunkBySemicolon(input: string) {
   const statements: string[] = [];
   let current = '';
   let singleQuoted = false;
@@ -137,6 +132,14 @@ function splitSqlStatements(sqlText: string) {
   const tail = current.trim();
   if (tail) statements.push(tail);
   return statements;
+}
+
+function splitSqlStatements(sqlText: string) {
+  const input = sqlText.replace(/^\uFEFF/, '');
+  const chunks = STATEMENT_BREAKPOINT.test(input)
+    ? input.split(STATEMENT_BREAKPOINT)
+    : [input];
+  return chunks.flatMap((chunk) => splitSqlChunkBySemicolon(chunk)).filter(Boolean);
 }
 
 async function executeSqlScript(sql: NeonSql, sqlText: string) {

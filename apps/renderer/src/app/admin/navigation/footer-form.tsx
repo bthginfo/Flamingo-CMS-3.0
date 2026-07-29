@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { saveFooterSettings } from '../settings-actions';
+import { saveBrandSettings, saveFooterSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
+import { usePreview } from '@/components/admin/preview-context';
 import { Check, Plus, Trash2 } from 'lucide-react';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import { FOOTER_VARIANT_OPTIONS, normalizeFooterVariant, type FooterVariant } from '@/lib/footer-variants';
 
 type FooterColumn = { title: string; items: { text: string; href?: string }[] };
@@ -14,6 +16,11 @@ type FooterData = {
   cta?: { label?: string; href?: string; variant?: FooterVariant } | null;
 };
 type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
+type FooterBrand = Record<string, string | undefined> & {
+  footerColor?: string;
+  footerTextColor?: string;
+  footerLinkColor?: string;
+};
 
 function getBaseFooterCta(initial: any): { label?: string; href?: string; variant?: FooterVariant } {
   const cta = initial?.cta;
@@ -21,12 +28,17 @@ function getBaseFooterCta(initial: any): { label?: string; href?: string; varian
   return cta;
 }
 
-export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig }) {
+export function FooterForm({ initial, initialBrand = {}, i18n }: { initial: any; initialBrand?: FooterBrand; i18n?: I18nConfig }) {
   const isLocalized = initial?.columns?._localized || initial?._localized;
   const locales = i18n?.locales || [];
   const defaultLocale = i18n?.defaultLocale || 'de';
   const [activeLocale, setActiveLocale] = useState(defaultLocale);
   const [variant, setVariant] = useState<FooterVariant>(() => normalizeFooterVariant(initial?.cta?.variant || initial?.variant));
+  const [footerColors, setFooterColors] = useState({
+    footerColor: initialBrand.footerColor || '',
+    footerTextColor: initialBrand.footerTextColor || '',
+    footerLinkColor: initialBrand.footerLinkColor || '',
+  });
   const baseCta = getBaseFooterCta(initial);
 
   function getColumnsForLocale(locale: string): FooterColumn[] {
@@ -69,13 +81,40 @@ export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig 
 
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
+  const preview = usePreview();
   const mounted = useRef(false);
-  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [localeData, variant]);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [localeData, variant, footerColors, markDirty]);
+
+  const previewFooter = {
+    columns,
+    legalLinks,
+    cta: { ...baseCta, variant },
+  };
+  const previewBrand = {
+    ...initialBrand,
+    ...footerColors,
+  };
+  const previewFooterJson = JSON.stringify(previewFooter);
+  const previewBrandJson = JSON.stringify(previewBrand);
+
+  useEffect(() => {
+    if (!preview.isOpen) return;
+    const brand = JSON.parse(previewBrandJson) as FooterBrand;
+    const payload = {
+      footer: JSON.parse(previewFooterJson),
+      brand,
+      cssVars: getBrandCssVars(brand),
+    };
+    preview.sendLiveData(payload);
+    const timer = window.setTimeout(() => preview.sendLiveData(payload), 350);
+    return () => window.clearTimeout(timer);
+  }, [preview.isOpen, preview.sendLiveData, previewFooterJson, previewBrandJson]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
       const cta = { ...baseCta, variant };
+      await saveBrandSettings({ ...initialBrand, ...footerColors });
       if (i18n?.enabled) {
         for (const loc of locales) {
           const d = localeData[loc];
@@ -141,6 +180,43 @@ export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig 
                 </span>
                 <span className="mt-2 block text-xs leading-5 text-zinc-500">{option.description}</span>
               </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Footer colors */}
+      <div className="space-y-3 rounded-2xl border border-admin-border bg-zinc-50 p-4">
+        <div>
+          <h3 className="text-sm font-medium text-zinc-700">Footer-Farben</h3>
+          <p className="mt-1 text-xs leading-5 text-zinc-500">Diese Farben gelten fÃ¼r alle Footer-Arten. Leere Felder nutzen automatisch passende Markenfarben mit lesbarem Kontrast.</p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-3">
+          {[
+            ['footerColor', 'Hintergrund', '#0d2137'],
+            ['footerTextColor', 'Text', '#ffffff'],
+            ['footerLinkColor', 'Links', '#ffffff'],
+          ].map(([key, label, fallback]) => {
+            const value = footerColors[key as keyof typeof footerColors] || '';
+            return (
+              <label key={key} className="space-y-1.5 text-xs font-medium text-zinc-600">
+                <span>{label}</span>
+                <div className="flex items-center gap-2 rounded-xl border border-zinc-200 bg-white p-2">
+                  <input
+                    type="color"
+                    value={value || fallback}
+                    onChange={(event) => setFooterColors((current) => ({ ...current, [key]: event.target.value }))}
+                    className="h-9 w-11 shrink-0 cursor-pointer rounded-lg border border-zinc-200 bg-white p-1"
+                    aria-label={`${label} wÃ¤hlen`}
+                  />
+                  <input
+                    className="min-w-0 flex-1 bg-transparent text-sm text-zinc-900 outline-none placeholder:text-zinc-400"
+                    value={value}
+                    onChange={(event) => setFooterColors((current) => ({ ...current, [key]: event.target.value }))}
+                    placeholder="automatisch"
+                  />
+                </div>
+              </label>
             );
           })}
         </div>
