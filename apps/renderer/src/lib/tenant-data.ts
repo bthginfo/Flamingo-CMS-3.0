@@ -17,9 +17,11 @@ export type OpeningHoursRow = { day?: string; hours?: string; note?: string; clo
 export type LocalSeoService = { name: string; description?: string; url?: string };
 export type LocalSeoData = { businessType?: string; priceRange?: string; serviceArea?: string; googleBusinessUrl?: string; sameAs?: string[]; latitude?: number; longitude?: number; ratingValue?: number; ratingCount?: number; services?: LocalSeoService[] };
 
+const PUBLIC_TENANT_DATA_REVALIDATE_SECONDS = 60 * 60;
+
 function cachedTenantRead<T>(tenantId: string, key: string, read: () => Promise<T>): Promise<T> {
   return unstable_cache(read, ['public-tenant-data', key, tenantId], {
-    revalidate: 60,
+    revalidate: PUBLIC_TENANT_DATA_REVALIDATE_SECONDS,
     tags: [`tenant-${tenantId}`],
   })();
 }

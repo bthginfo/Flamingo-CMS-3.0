@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
 
 const lastKnownSnapshots = new Map<string, Snapshot>();
+const PUBLIC_SNAPSHOT_REVALIDATE_SECONDS = 60 * 60;
 
 export type SnapshotPage = {
   id: string;
@@ -109,7 +110,7 @@ export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | nu
       return getDraftSnapshot(tenantId);
     },
     ['public-snapshot', tenantId],
-    { revalidate: 300, tags: [`tenant-${tenantId}`] },
+    { revalidate: PUBLIC_SNAPSHOT_REVALIDATE_SECONDS, tags: [`tenant-${tenantId}`] },
   );
   try {
     const snapshot = await cached();

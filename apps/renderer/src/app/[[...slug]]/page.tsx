@@ -38,8 +38,9 @@ function preloadOptimizedImage(rawUrl: string, sizes: string): void {
   });
 }
 
-// ISR: revalidate every 60s, on-demand revalidation via publish webhook
-export const revalidate = 60;
+// Public pages are snapshot-based and invalidated on publish. A longer ISR
+// window keeps large standalone sites from waking Neon for crawler traffic.
+export const revalidate = 3600;
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { isShopActive } from '@/lib/shop-pages';

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400;
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   let base = 'https://localhost:3002';

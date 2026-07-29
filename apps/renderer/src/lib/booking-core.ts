@@ -5,6 +5,7 @@ import { getTouchedZonedWeekdays, getZonedTime, getZonedWeekday, normalizeTimezo
 import { unstable_cache } from 'next/cache';
 
 export const BOOKING_ADDON_KEY = 'booking';
+const PUBLIC_ADDON_REVALIDATE_SECONDS = 60 * 60;
 
 export const BOOKING_SECTION_TYPES = new Set([
   'bookingWidget',
@@ -27,7 +28,7 @@ export async function hasBookingAddon(tenantId: string): Promise<boolean> {
       .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, BOOKING_ADDON_KEY)))
       .limit(1);
     return addon?.active === true;
-  }, ['public-booking-entitlement', tenantId], { revalidate: 30, tags: [`tenant-${tenantId}`] })();
+  }, ['public-booking-entitlement', tenantId], { revalidate: PUBLIC_ADDON_REVALIDATE_SECONDS, tags: [`tenant-${tenantId}`] })();
 }
 
 export async function requireBookingAddon(tenantId: string) {

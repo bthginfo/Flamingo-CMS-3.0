@@ -12,6 +12,7 @@ import { and, eq } from 'drizzle-orm';
 import { unstable_cache } from 'next/cache';
 
 export const SHOP_ADDON_KEY = 'shop';
+const PUBLIC_ADDON_REVALIDATE_SECONDS = 60 * 60;
 
 /** True when the tenant has the shop addon active. Used e.g. to surface the
  *  legally-required withdrawal (Widerruf) link in the footer on shop sites. */
@@ -24,7 +25,7 @@ export async function isShopActive(tenantId: string): Promise<boolean> {
       .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, SHOP_ADDON_KEY)))
       .limit(1);
     return Boolean(row?.active);
-  }, ['public-shop-entitlement', tenantId], { revalidate: 30, tags: [`tenant-${tenantId}`] })();
+  }, ['public-shop-entitlement', tenantId], { revalidate: PUBLIC_ADDON_REVALIDATE_SECONDS, tags: [`tenant-${tenantId}`] })();
 }
 
 export const SHOP_PAGES = [
