@@ -166,16 +166,38 @@ function makeMigrationStatementIdempotent(statement: string) {
   const trimmedStatement = executableStatement.trim().replace(/;+\s*$/, '');
 
   if (/^CREATE\s+TYPE\s+/i.test(trimmedStatement) && /\s+AS\s+ENUM\s*\(/i.test(trimmedStatement)) {
-    return `DO $flamingo_migration$
-BEGIN
-  ${trimmedStatement};
-EXCEPTION WHEN duplicate_object THEN
-  NULL;
-END
-$flamingo_migration$;`;
+    return wrapMigrationStatementWithDuplicateHandler(trimmedStatement, 'duplicate_object');
+  }
+
+  if (/^CREATE\s+TABLE\s+(?!IF\s+NOT\s+EXISTS\b)/i.test(trimmedStatement)) {
+    return `${trimmedStatement.replace(/^CREATE\s+TABLE\s+/i, 'CREATE TABLE IF NOT EXISTS ')};`;
+  }
+
+  if (/^CREATE\s+(UNIQUE\s+)?INDEX\s+(?!IF\s+NOT\s+EXISTS\b)/i.test(trimmedStatement)) {
+    return `${trimmedStatement.replace(/^CREATE\s+(UNIQUE\s+)?INDEX\s+/i, (_match, uniquePrefix: string | undefined) => (
+      `CREATE ${uniquePrefix ?? ''}INDEX IF NOT EXISTS `
+    ))};`;
+  }
+
+  if (/^ALTER\s+TABLE\s+[\s\S]+\s+ADD\s+COLUMN\s+/i.test(trimmedStatement)) {
+    return wrapMigrationStatementWithDuplicateHandler(trimmedStatement, 'duplicate_column');
+  }
+
+  if (/^ALTER\s+TABLE\s+[\s\S]+\s+ADD\s+CONSTRAINT\s+/i.test(trimmedStatement)) {
+    return wrapMigrationStatementWithDuplicateHandler(trimmedStatement, 'duplicate_object');
   }
 
   return statement;
+}
+
+function wrapMigrationStatementWithDuplicateHandler(statement: string, duplicateCondition: 'duplicate_column' | 'duplicate_object') {
+  return `DO $flamingo_migration$
+BEGIN
+  ${statement};
+EXCEPTION WHEN ${duplicateCondition} THEN
+  NULL;
+END
+$flamingo_migration$;`;
 }
 
 async function executeSqlScript(sql: NeonSql, sqlText: string) {
