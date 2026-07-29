@@ -97,7 +97,7 @@ export function SceneLabSection({ data }: Props) {
 
             <div className="mt-auto border-t border-[var(--token-divider)] pt-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--token-muted)]">Ihre Auswahl</p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--token-card-heading,var(--token-heading))]">{selectedChoices.map((choice) => choice.label).join(' Â· ')}</p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--token-card-heading,var(--token-heading))]">{selectedChoices.map((choice) => choice.label).join(' · ')}</p>
               {cta.label && <a href={cta.href || '#'} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)]" data-edit-link="cta"><span data-edit-path="cta.label">{cta.label}</span><ArrowRight size={16} /></a>}
             </div>
           </div>

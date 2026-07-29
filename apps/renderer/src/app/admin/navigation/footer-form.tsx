@@ -189,7 +189,7 @@ export function FooterForm({ initial, initialBrand = {}, i18n }: { initial: any;
       <div className="space-y-3 rounded-2xl border border-admin-border bg-zinc-50 p-4">
         <div>
           <h3 className="text-sm font-medium text-zinc-700">Footer-Farben</h3>
-          <p className="mt-1 text-xs leading-5 text-zinc-500">Diese Farben gelten fÃ¼r alle Footer-Arten. Leere Felder nutzen automatisch passende Markenfarben mit lesbarem Kontrast.</p>
+          <p className="mt-1 text-xs leading-5 text-zinc-500">Diese Farben gelten für alle Footer-Arten. Leere Felder nutzen automatisch passende Markenfarben mit lesbarem Kontrast.</p>
         </div>
         <div className="grid gap-3 md:grid-cols-3">
           {[
@@ -207,7 +207,7 @@ export function FooterForm({ initial, initialBrand = {}, i18n }: { initial: any;
                     value={value || fallback}
                     onChange={(event) => setFooterColors((current) => ({ ...current, [key]: event.target.value }))}
                     className="h-9 w-11 shrink-0 cursor-pointer rounded-lg border border-zinc-200 bg-white p-1"
-                    aria-label={`${label} wÃ¤hlen`}
+                    aria-label={`${label} wählen`}
                   />
                   <input
                     className="min-w-0 flex-1 bg-transparent text-sm text-zinc-900 outline-none placeholder:text-zinc-400"

@@ -29,25 +29,25 @@ type ExplodeNode = {
 };
 
 const FALLBACK_PARTS: CameraPart[] = [
-  { id: 'briefing', label: 'Briefing', text: 'Ziel, Zielgruppe und EinsatzkanÃ¤le geben der Produktion Richtung.', offsetX: -160, offsetY: 0, offsetZ: -40 },
+  { id: 'briefing', label: 'Briefing', text: 'Ziel, Zielgruppe und Einsatzkanäle geben der Produktion Richtung.', offsetX: -160, offsetY: 0, offsetZ: -40 },
   { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Raum werden als klare visuelle Linie geplant.', offsetX: 160, offsetY: -40, offsetZ: 150 },
-  { id: 'production', label: 'Produktion', text: 'Menschen, Bewegung und Timing werden gefÃ¼hrt statt dem Zufall Ã¼berlassen.', offsetX: 80, offsetY: -140, offsetZ: 70 },
+  { id: 'production', label: 'Produktion', text: 'Menschen, Bewegung und Timing werden geführt statt dem Zufall überlassen.', offsetX: 80, offsetY: -140, offsetZ: 70 },
   { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading halten die Serie zusammen.', offsetX: 170, offsetY: 60, offsetZ: -120 },
-  { id: 'approval', label: 'Auswahl', text: 'Die stÃ¤rksten Motive werden nach Wirkung und Nutzbarkeit kuratiert.', offsetX: -135, offsetY: 130, offsetZ: -130 },
-  { id: 'output', label: 'Assets', text: 'Fertige Formate fÃ¼r Website, Social, Kampagne, Recruiting und Print.', offsetX: 135, offsetY: 140, offsetZ: 130 },
+  { id: 'approval', label: 'Auswahl', text: 'Die stärksten Motive werden nach Wirkung und Nutzbarkeit kuratiert.', offsetX: -135, offsetY: 130, offsetZ: -130 },
+  { id: 'output', label: 'Assets', text: 'Fertige Formate für Website, Social, Kampagne, Recruiting und Print.', offsetX: 135, offsetY: 140, offsetZ: 130 },
 ];
 
 const SCHUKTUEW_CAMERA_COPY = {
   badge: 'Production System',
   headline: 'So wird aus einem Motiv ein kompletter Markenauftritt.',
-  subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, FÃ¼hrung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets fÃ¼r Website, Social, Kampagne und Recruiting.',
+  subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, Führung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets für Website, Social, Kampagne und Recruiting.',
   parts: [
-    { id: 'briefing', label: 'Briefing', text: 'Ich klÃ¤re Ziel, Zielgruppe, EinsatzkanÃ¤le und gewÃ¼nschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42 },
-    { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie fÃ¼r Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154 },
-    { id: 'direction', label: 'FÃ¼hrung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich fÃ¼hre Menschen so, dass der Auftritt glaubwÃ¼rdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86 },
-    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert fÃ¼r Varianten, Planung und Adaptionen â€“ nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132 },
+    { id: 'briefing', label: 'Briefing', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42 },
+    { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie für Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154 },
+    { id: 'direction', label: 'Führung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich führe Menschen so, dass der Auftritt glaubwürdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86 },
+    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert für Varianten, Planung und Adaptionen – nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132 },
     { id: 'finish', label: 'Finish', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto, Film und Reel-Material auf denselben visuellen Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148 },
-    { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien fÃ¼r Website, Social Media, Kampagnen, Recruiting, PrÃ¤sentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142 },
+    { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien für Website, Social Media, Kampagnen, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142 },
   ],
   cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
 };
@@ -79,7 +79,7 @@ function shouldUseSchuktuewCameraCopy(data: Record<string, unknown>, parts: Came
   const ctaLabel = visibleText(cta?.label || '').toLowerCase();
   const labels = parts.map((part) => visibleText(part.label || '').toLowerCase()).join(' ');
   const oldHeadline = /kamera zerlegt|blick wird klarer|was leicht wirkt|aus einem motiv wird ein kompletter auftritt/.test(headline);
-  const oldLabels = /gehÃ¤use|gehaeuse|objektiv|verschluss|sensor|monitor|dateien|haltung|perspektive|moment|look|output/.test(labels);
+  const oldLabels = /gehäuse|gehaeuse|objektiv|verschluss|sensor|monitor|dateien|haltung|perspektive|moment|look|output/.test(labels);
   const oldCta = /system ansehen|workflow ansehen|mit alex sprechen/.test(ctaLabel);
   return oldHeadline && oldLabels && oldCta;
 }
@@ -485,8 +485,8 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
   return (
     <div ref={wrapRef} className="relative h-full min-h-[22rem] w-full sm:min-h-[30rem] md:min-h-[34rem]">
       <canvas ref={canvasRef} className="h-full w-full" aria-label="3D Exploded View einer Kamera" />
-      {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D Kamera lÃ¤dt</div>}
-      {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D nicht verfÃ¼gbar</div>}
+      {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D Kamera lädt</div>}
+      {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D nicht verfügbar</div>}
     </div>
   );
 }

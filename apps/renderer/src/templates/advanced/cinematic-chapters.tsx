@@ -82,7 +82,7 @@ export function CinematicChaptersSection({ data }: Props) {
                 {headline && <h2 className="text-xl font-black tracking-[-0.025em] text-[color:var(--token-on-dark-heading)] lg:text-2xl" data-edit-path="headline">{headline}</h2>}
                 {intro && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-muted)]" data-edit-path="intro">{intro}</p>}
               </div>
-              <button type="button" onClick={skipStory} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_28%,transparent)] px-4 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur transition hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)]">Story Ã¼berspringen <ChevronDown size={14} /></button>
+              <button type="button" onClick={skipStory} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_28%,transparent)] px-4 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur transition hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)]">Story überspringen <ChevronDown size={14} /></button>
             </div>
 
             <div className="mt-auto grid grid-cols-[minmax(0,46rem)_14rem] items-end gap-12 pb-10">
