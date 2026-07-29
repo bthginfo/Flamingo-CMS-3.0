@@ -1,7 +1,7 @@
 ﻿'use client';
 
-import { Bot, CheckCircle2, GitBranch, Sparkles } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { Bot, CheckCircle2, GitBranch, Play, Sparkles } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
 import { visibleText } from '@/lib/visible-content';
@@ -10,54 +10,77 @@ import { AdvancedIntro, AdvancedLink, EmptyVisual, type AdvancedCta } from './ad
 type Step = { kicker?: string; title?: string; text?: string; proof?: string };
 type Props = { data: Record<string, unknown> };
 
+const SCHUKTUEW_WORKFLOW_REEL = {
+  src: '/seed-media/schuktuew/alexander-schuktuew-agency-reel.mp4',
+  poster: '/seed-media/schuktuew/alexander-schuktuew-agency-reel-poster.jpg',
+} as const;
+
+function isSchuktuewWorkflow(data: Record<string, unknown>, source: string) {
+  const media = (data.media && typeof data.media === 'object' ? data.media : {}) as Record<string, unknown>;
+  const haystack = [
+    data.badge,
+    data.headline,
+    data.subline,
+    media.caption,
+    source,
+  ]
+    .map((value) => visibleText(String(value || '')).toLocaleLowerCase('de-DE'))
+    .join(' ');
+
+  return (
+    haystack.includes('schuktuew')
+    || haystack.includes('foto, film und content')
+    || haystack.includes('/schuktuew/agencyreel.mp4')
+  );
+}
+
 function WorkflowVideo({ data }: { data: Record<string, unknown> }) {
   const media = (data.media && typeof data.media === 'object' ? data.media : {}) as Record<string, unknown>;
-  const videoSrc = safeContentUrl(String(media.videoSrc || data.videoSrc || ''));
-  const explicitPoster = safeContentUrl(String(media.poster || data.poster || ''));
-  const [generatedPoster, setGeneratedPoster] = useState('');
-  const poster = generatedPoster || explicitPoster;
-  const posterSeek = useMemo(() => 0.9, []);
+  const storedVideoSrc = String(media.videoSrc || data.videoSrc || '');
+  const schuktuewWorkflow = isSchuktuewWorkflow(data, storedVideoSrc);
+  const videoSrc = safeContentUrl(schuktuewWorkflow ? SCHUKTUEW_WORKFLOW_REEL.src : storedVideoSrc);
+  const poster = safeContentUrl(
+    schuktuewWorkflow
+      ? SCHUKTUEW_WORKFLOW_REEL.poster
+      : String(media.poster || data.poster || ''),
+  );
   const caption = visibleText(String(media.caption || data.caption || ''));
-  const capturePoster = useCallback((video: HTMLVideoElement) => {
-    if (explicitPoster || generatedPoster || !video.videoWidth || !video.videoHeight) return;
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playbackOpen, setPlaybackOpen] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  async function startPlayback() {
+    const video = videoRef.current;
+    if (!video) return;
+    setPlaybackOpen(true);
+    video.currentTime = 0;
+    video.muted = false;
+    video.loop = false;
     try {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const context = canvas.getContext('2d');
-      if (!context) return;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      setGeneratedPoster(canvas.toDataURL('image/jpeg', 0.86));
+      await video.play();
     } catch {
-      // Cross-origin video frames can block canvas extraction. In that case the
-      // real video remains visible/playable; only the generated poster is skipped.
+      setPlaybackOpen(false);
     }
-  }, [explicitPoster, generatedPoster]);
+  }
+
   return (
     <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
       <div className="relative overflow-hidden rounded-[calc(var(--token-card-radius)*1.4)] border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[var(--token-card-bg)] shadow-[0_42px_120px_var(--token-shadow)]" style={{ aspectRatio: '9/16' }} data-card data-color-context="dark">
-        {videoSrc ? (
+        {videoSrc && !videoFailed ? (
           <video
+            ref={videoRef}
             src={videoSrc}
             poster={poster || undefined}
-            controls
+            controls={playbackOpen}
             playsInline
-            preload={explicitPoster ? 'metadata' : 'auto'}
+            preload="metadata"
             className="h-full w-full object-cover"
-            crossOrigin="anonymous"
-            onLoadedMetadata={(event) => {
-              if (explicitPoster || generatedPoster) return;
-              const video = event.currentTarget;
-              const duration = Number.isFinite(video.duration) ? video.duration : posterSeek + 0.2;
-              const target = Math.min(posterSeek, Math.max(0.1, duration - 0.1));
-              try {
-                if (Math.abs(video.currentTime - target) > 0.05) video.currentTime = target;
-              } catch {
-                capturePoster(video);
-              }
+            onPlay={() => setPlaybackOpen(true)}
+            onEnded={(event) => {
+              event.currentTarget.currentTime = 0;
+              setPlaybackOpen(false);
             }}
-            onSeeked={(event) => capturePoster(event.currentTarget)}
-            onLoadedData={(event) => capturePoster(event.currentTarget)}
+            onError={() => setVideoFailed(true)}
             data-edit-path="media.videoSrc"
           />
         ) : poster ? (
@@ -65,8 +88,22 @@ function WorkflowVideo({ data }: { data: Record<string, unknown> }) {
         ) : (
           <EmptyVisual label="Workflow Reel" />
         )}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(0,0,0,.74)_100%)]" />
-        {caption && <p className="absolute inset-x-5 bottom-5 text-sm font-bold leading-5 text-white" data-edit-path="media.caption">{caption}</p>}
+        <div aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_38%,rgba(0,0,0,.76)_100%)] transition-opacity duration-300 ${playbackOpen ? 'opacity-0' : 'opacity-100'}`} />
+        {!playbackOpen && videoSrc && !videoFailed && (
+          <button
+            type="button"
+            onClick={startPlayback}
+            aria-label="Video vollständig abspielen"
+            className="absolute left-1/2 top-[44%] z-20 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-white text-black shadow-[0_22px_60px_rgba(0,0,0,.48)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+          >
+            <Play className="ml-1 fill-current" size={26} aria-hidden="true" />
+          </button>
+        )}
+        {caption && (
+          <p className={`absolute inset-x-5 bottom-5 text-sm font-bold leading-5 text-white transition-opacity duration-300 ${playbackOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`} data-edit-path="media.caption">
+            {caption}
+          </p>
+        )}
       </div>
       <div aria-hidden="true" className="absolute -right-8 -top-8 -z-10 h-40 w-40 rounded-full bg-[color:var(--token-accent)] opacity-30 blur-3xl" />
     </div>

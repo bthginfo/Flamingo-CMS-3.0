@@ -1,7 +1,7 @@
 'use client';
 
-import { ArrowUpRight, PlayCircle } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { ArrowUpRight, Play, PlayCircle } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { plain } from '@/lib/strip-html';
 import { visibleText } from '@/lib/visible-content';
@@ -22,7 +22,20 @@ type Reel = {
 
 type Props = { data: Record<string, unknown> };
 
-const SCHUKTUEW_REFERENCE_REEL_SRC = '/seed-media/schuktuew/alexander-schuktuew-reference-reel.mp4';
+const SCHUKTUEW_REELS = {
+  agency: {
+    src: '/seed-media/schuktuew/alexander-schuktuew-agency-reel.mp4',
+    poster: '/seed-media/schuktuew/alexander-schuktuew-agency-reel-poster.jpg',
+  },
+  golf: {
+    src: '/seed-media/schuktuew/alexander-schuktuew-golf-reel.mp4',
+    poster: '/seed-media/schuktuew/alexander-schuktuew-golf-reel-poster.jpg',
+  },
+  reference: {
+    src: '/seed-media/schuktuew/alexander-schuktuew-reference-reel.mp4',
+    poster: '/seed-media/schuktuew/alexander-schuktuew-reference-reel-poster.jpg',
+  },
+} as const;
 
 function safeAspectRatio(value: unknown) {
   const ratio = String(value || '9/16');
@@ -59,8 +72,10 @@ function normalizeSchuktuewReels(reels: Reel[]) {
       meta: 'Produktion',
       title: 'Foto, Film und Schnitt aus einer Hand',
       text: 'Eine vertikale Referenz für Marken, die nicht nur einzelne Bilder, sondern direkt nutzbaren Content brauchen.',
-      poster: '',
-      autoPoster: true,
+      videoSrc: SCHUKTUEW_REELS.agency.src,
+      poster: SCHUKTUEW_REELS.agency.poster,
+      autoPoster: false,
+      autoplay: false,
       ctaLabel: first?.ctaLabel || 'Anfragen',
       ctaHref: first?.ctaHref || '/kontakt',
     });
@@ -73,8 +88,10 @@ function normalizeSchuktuewReels(reels: Reel[]) {
       meta: 'Sport Reel',
       title: 'Sport als bewegte Referenz',
       text: 'Golf, Timing und Bewegung im Reel-Format – konzipiert für Social, Website und Kampagnenkontext.',
-      poster: '',
-      autoPoster: true,
+      videoSrc: SCHUKTUEW_REELS.golf.src,
+      poster: SCHUKTUEW_REELS.golf.poster,
+      autoPoster: false,
+      autoplay: false,
       ctaLabel: second?.ctaLabel || 'Sport ansehen',
       ctaHref: second?.ctaHref || '/portfolio',
     });
@@ -86,9 +103,9 @@ function normalizeSchuktuewReels(reels: Reel[]) {
     meta: 'Video-Asset',
     title: third?.title || 'Bewegte Bildstrecke',
     text: third?.text || 'Ein drittes Hochformat-Beispiel für die Übersetzung von Bildsprache in kurze, verwertbare Video-Assets.',
-    videoSrc: third?.videoSrc || SCHUKTUEW_REFERENCE_REEL_SRC,
-    poster: '',
-    autoPoster: true,
+    videoSrc: SCHUKTUEW_REELS.reference.src,
+    poster: SCHUKTUEW_REELS.reference.poster,
+    autoPoster: false,
     ctaLabel: third?.ctaLabel || 'Produktion planen',
     ctaHref: third?.ctaHref || '/kontakt',
     autoplay: third?.autoplay ?? false,
@@ -99,27 +116,27 @@ function normalizeSchuktuewReels(reels: Reel[]) {
 
 function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel; index: number; featured?: boolean; aspectRatio: string }) {
   const videoSrc = safeContentUrl(reel.videoSrc || '');
-  const explicitPoster = safeContentUrl(reel.poster || '');
-  const [generatedPoster, setGeneratedPoster] = useState('');
-  const poster = generatedPoster || explicitPoster;
+  const poster = safeContentUrl(reel.poster || '');
   const href = safeContentUrl(reel.ctaHref || '');
   const ctaLabel = visibleText(reel.ctaLabel || '');
-  const posterSeek = useMemo(() => 0.8 + (index % 3) * 0.35, [index]);
-  const capturePoster = useCallback((video: HTMLVideoElement) => {
-    if (!reel.autoPoster || generatedPoster || !video.videoWidth || !video.videoHeight) return;
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playbackOpen, setPlaybackOpen] = useState(Boolean(reel.autoplay));
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  async function startPlayback() {
+    const video = videoRef.current;
+    if (!video) return;
+    setPlaybackOpen(true);
+    video.currentTime = 0;
+    video.muted = false;
+    video.loop = false;
     try {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const context = canvas.getContext('2d');
-      if (!context) return;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      setGeneratedPoster(canvas.toDataURL('image/jpeg', 0.86));
+      await video.play();
     } catch {
-      // Some CDN video responses may block canvas extraction. The real video
-      // remains visible/playable; only the generated poster is skipped.
+      setPlaybackOpen(false);
     }
-  }, [generatedPoster, reel.autoPoster]);
+  }
+
   return (
     <article
       className={`group relative overflow-hidden rounded-[calc(var(--token-card-radius)*1.15)] border border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg)] shadow-[0_30px_90px_var(--token-shadow)] ${featured ? 'lg:translate-y-8' : ''}`}
@@ -129,31 +146,24 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
       data-edit-index={index}
     >
       <div className="relative bg-[var(--token-card-bg)]" style={{ aspectRatio }}>
-        {videoSrc ? (
+        {videoSrc && !videoFailed ? (
           <video
+            ref={videoRef}
             className="h-full w-full object-cover"
             src={videoSrc}
             poster={poster || undefined}
-            controls
+            controls={playbackOpen}
             playsInline
-            crossOrigin="anonymous"
             muted={Boolean(reel.autoplay)}
             loop={Boolean(reel.autoplay)}
             autoPlay={Boolean(reel.autoplay)}
-            preload={reel.autoPoster || featured ? 'metadata' : 'none'}
-            onLoadedMetadata={(event) => {
-              if (!reel.autoPoster || explicitPoster || generatedPoster) return;
-              const video = event.currentTarget;
-              const duration = Number.isFinite(video.duration) ? video.duration : posterSeek + 0.2;
-              const target = Math.min(posterSeek, Math.max(0.1, duration - 0.1));
-              try {
-                if (Math.abs(video.currentTime - target) > 0.05) video.currentTime = target;
-              } catch {
-                capturePoster(video);
-              }
+            preload="metadata"
+            onPlay={() => setPlaybackOpen(true)}
+            onEnded={(event) => {
+              event.currentTarget.currentTime = 0;
+              setPlaybackOpen(false);
             }}
-            onSeeked={(event) => capturePoster(event.currentTarget)}
-            onLoadedData={(event) => capturePoster(event.currentTarget)}
+            onError={() => setVideoFailed(true)}
             data-edit-path="videoSrc"
           />
         ) : poster ? (
@@ -161,13 +171,23 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
         ) : (
           <EmptyVisual label="Reel hochladen" />
         )}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.05)_0%,rgba(0,0,0,.06)_48%,rgba(0,0,0,.76)_100%)]" />
-        <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_32%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_48%,transparent)] px-3 py-1.5 text-[10px] font-black uppercase tracking-[.18em] text-[color:var(--token-on-dark-heading)] backdrop-blur">
+        <div aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.05)_0%,rgba(0,0,0,.06)_48%,rgba(0,0,0,.76)_100%)] transition-opacity duration-300 ${playbackOpen ? 'opacity-0' : 'opacity-100'}`} />
+        {!playbackOpen && videoSrc && !videoFailed && (
+          <button
+            type="button"
+            onClick={startPlayback}
+            aria-label={`${reel.title || `Reel ${index + 1}`} vollständig abspielen`}
+            className="absolute left-1/2 top-[42%] z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-white text-black shadow-[0_20px_55px_rgba(0,0,0,.45)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 md:h-[4.5rem] md:w-[4.5rem]"
+          >
+            <Play className="ml-1 fill-current" size={25} aria-hidden="true" />
+          </button>
+        )}
+        <div className={`pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_32%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_48%,transparent)] px-3 py-1.5 text-[10px] font-black uppercase tracking-[.18em] text-[color:var(--token-on-dark-heading)] backdrop-blur transition-opacity duration-300 ${playbackOpen ? 'opacity-0' : 'opacity-100'}`}>
           <PlayCircle size={14} />
           <span data-edit-path="eyebrow">{reel.eyebrow || `Reel ${String(index + 1).padStart(2, '0')}`}</span>
         </div>
       </div>
-      <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+      <div className={`absolute inset-x-0 bottom-0 p-5 transition-opacity duration-300 md:p-6 ${playbackOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
         {reel.meta && <p className="mb-2 text-[10px] font-black uppercase tracking-[.18em] text-[color:var(--token-eyebrow)]" data-edit-path="meta">{reel.meta}</p>}
         {reel.title && <h3 className="max-w-sm text-2xl font-black leading-none tracking-[-.045em] text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{reel.title}</h3>}
         {reel.text && <p className="mt-3 max-w-sm text-sm leading-6 text-[color:var(--token-on-dark-body)]" data-edit-path="text">{plain(reel.text)}</p>}
