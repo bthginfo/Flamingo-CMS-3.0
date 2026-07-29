@@ -3,7 +3,7 @@ import { tenants, tenantDomains, pages, publishedSnapshots, globalSettings } fro
 import { eq, and, count } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud, UserCheck } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud, UserCheck } from 'lucide-react';
 import { TenantActions } from './tenant-actions';
 import { IndustrySelect } from './industry-select';
 import { DomainManager } from './domain-manager';
@@ -25,18 +25,24 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, id));
   if (!tenant) notFound();
-  const dataDb = await getTenantDataDb(id);
+  const databaseRecord = await getTenantDatabaseRecord(id);
+  const dataDbResult = await getTenantDataDb(id)
+    .then((tenantDb) => ({ tenantDb, error: null as string | null }))
+    .catch((error) => ({
+      tenantDb: null,
+      error: error instanceof Error ? error.message : 'Tenant-Datenbank konnte nicht geladen werden.',
+    }));
+  const dataDb = dataDbResult.tenantDb;
 
-  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive, bookingActive, billingActive, databaseRecord, neonPlan] = await Promise.all([
+  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive, bookingActive, billingActive, neonPlan] = await Promise.all([
     db.select().from(tenantDomains).where(eq(tenantDomains.tenantId, id)),
-    dataDb.select().from(pages).where(eq(pages.tenantId, id)),
-    dataDb.select({ count: count() }).from(publishedSnapshots).where(eq(publishedSnapshots.tenantId, id)),
-    dataDb.select().from(globalSettings).where(eq(globalSettings.tenantId, id)),
+    dataDb ? dataDb.select().from(pages).where(eq(pages.tenantId, id)) : Promise.resolve([]),
+    dataDb ? dataDb.select({ count: count() }).from(publishedSnapshots).where(eq(publishedSnapshots.tenantId, id)) : Promise.resolve([{ count: 0 }]),
+    dataDb ? dataDb.select().from(globalSettings).where(eq(globalSettings.tenantId, id)) : Promise.resolve([]),
     getActiveToken(id),
     getShopAddonStatus(id),
     getBookingAddonStatus(id),
     getBillingAddonStatus(id),
-    getTenantDatabaseRecord(id),
     tenant.deploymentMode === 'standalone' ? getNeonOrganizationPlan().catch(() => null) : Promise.resolve(null),
   ]);
   const neonPlanLabel = neonPlan ? neonPlan.charAt(0).toUpperCase() + neonPlan.slice(1) : 'unbekannt';
@@ -82,6 +88,21 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column */}
         <div className="lg:col-span-2 space-y-6">
+          {dataDbResult.error && (
+            <div className="crm-card border-amber-200 bg-amber-50 p-5 text-amber-950">
+              <div className="flex gap-3">
+                <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-600" />
+                <div>
+                  <h2 className="font-semibold">Standalone-Datenbank braucht Aufmerksamkeit</h2>
+                  <p className="mt-1 text-sm leading-6 text-amber-900">{dataDbResult.error}</p>
+                  <p className="mt-2 text-xs leading-5 text-amber-800">
+                    Die CRM-Aktionen bleiben sichtbar, aber Seiten, Design und Snapshots können erst nach aktiver Tenant-Datenbank vollständig geladen werden.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <div className="crm-card p-4 text-center">

@@ -366,7 +366,8 @@ export async function toggleShopAddonAction(tenantId: string, activate: boolean)
 
 export async function getShopAddonStatus(tenantId: string): Promise<boolean> {
   await requireCrmAdmin();
-  const db = await getTenantDataDb(tenantId);
+  const db = await getTenantDataDb(tenantId).catch(() => null);
+  if (!db) return false;
   const [row] = await db.select().from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
     .limit(1);
@@ -402,7 +403,8 @@ export async function toggleBookingAddonAction(tenantId: string, activate: boole
 
 export async function getBookingAddonStatus(tenantId: string): Promise<boolean> {
   await requireCrmAdmin();
-  const db = await getTenantDataDb(tenantId);
+  const db = await getTenantDataDb(tenantId).catch(() => null);
+  if (!db) return false;
   const [row] = await db.select().from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'booking')))
     .limit(1);
@@ -432,7 +434,8 @@ export async function toggleBillingAddonAction(tenantId: string, activate: boole
 
 export async function getBillingAddonStatus(tenantId: string): Promise<boolean> {
   await requireCrmAdmin();
-  const db = await getTenantDataDb(tenantId);
+  const db = await getTenantDataDb(tenantId).catch(() => null);
+  if (!db) return false;
   const [row] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, BILLING_ADDON_KEY)))
     .limit(1);

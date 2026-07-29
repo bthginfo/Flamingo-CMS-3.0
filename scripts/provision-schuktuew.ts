@@ -922,7 +922,7 @@ async function importOriginalProjectGalleries(): Promise<{ importedProjects: Imp
 }
 
 function sectionIdentity(type: string) {
-  return { definitionKey: `${type}.advanced.v1`, schemaVersion: 1 };
+  return { definitionKey: `${type}.shared.v1`, schemaVersion: 1 };
 }
 
 function regularSectionIdentity(type: string) {

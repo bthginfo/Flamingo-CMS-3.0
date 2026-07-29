@@ -19,8 +19,12 @@ export function resolveSectionWriteIdentity(input: {
   const explicitKey = typeof input.definitionKey === 'string' && input.definitionKey.trim()
     ? input.definitionKey.trim()
     : null;
-  const definition = explicitKey
-    ? getSectionDefinitionByKey(explicitKey)
+  const explicitDefinition = explicitKey ? getSectionDefinitionByKey(explicitKey) : null;
+  // Stored tenants can carry stale definition keys from older provisioning
+  // scripts. Those sections still render through the legacy type resolver, so
+  // admin writes must repair the key instead of blocking normal "save".
+  const definition = explicitDefinition?.type === input.type
+    ? explicitDefinition
     : resolveSectionDefinition({ type: input.type, industry: input.industry });
 
   if (!definition || definition.type !== input.type) {
