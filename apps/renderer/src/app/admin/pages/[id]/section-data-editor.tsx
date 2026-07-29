@@ -2346,28 +2346,53 @@ function StatsCounterEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badge, setBadge] = useState((data.badge as string) || '');
+  const [layout, setLayout] = useState((data.layout as string) === 'projectDossier' ? 'projectDossier' : 'default');
   const [stats, setStats] = useState<{ value: string; suffix: string; prefix: string; label: string }[]>(
-    ((data.stats as any[]) || []).map(s => ({ value: String(s.value || ''), suffix: (s.suffix as string) || '', prefix: (s.prefix as string) || '', label: (s.label as string) || '' }))
+    ((data.stats as any[]) || []).map(s => ({ value: String(s.value ?? ''), suffix: (s.suffix as string) || '', prefix: (s.prefix as string) || '', label: (s.label as string) || '' }))
   );
-  useReport({ headline, subline, badge, stats: stats.map(s => ({ ...s, value: Number(s.value) || 0 })) }, onChange);
+  useReport({
+    headline,
+    subline,
+    badge,
+    layout,
+    stats: stats.map((stat) => {
+      const trimmedValue = stat.value.trim();
+      const numericValue = Number(trimmedValue);
+      return {
+        ...stat,
+        value: trimmedValue !== '' && Number.isFinite(numericValue) ? numericValue : stat.value,
+      };
+    }),
+  }, onChange);
 
   return (
     <div className="space-y-3">
       <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
+      <div>
+        <label className="text-xs font-medium text-zinc-600">Darstellung</label>
+        <select className="admin-input mt-1 w-full" value={layout} onChange={(event) => setLayout(event.target.value)}>
+          <option value="default">Kennzahlen-Karten</option>
+          <option value="projectDossier">Projekt-Dossier</option>
+        </select>
+        <p className="mt-1 text-xs leading-5 text-zinc-500">
+          Das Projekt-Dossier zeigt Textwerte kompakt als redaktionelle Stichwörter.
+        </p>
+      </div>
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button type="button" onClick={() => setStats(stats.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label="Prefix (z.B. +)" value={stat.prefix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, prefix: v } : s))} />
-            <Field label="Wert (Zahl)" value={stat.value} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, value: v } : s))} />
+            <Field label="Wert (Zahl oder Text)" value={stat.value} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, value: v } : s))} placeholder="z.B. 25 oder Website · Kampagne" />
             <Field label="Suffix (z.B. %)" value={stat.suffix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} />
           </div>
           <Field label={fieldLabel('label')} value={stat.label} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
+          <p className="text-xs leading-5 text-zinc-500">Zahlen werden animiert. Trenne mehrere Stichwörter mit ·, • oder |.</p>
         </div>
       ))}
-      <button type="button" onClick={() => setStats([...stats, { value: '', suffix: '', prefix: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Stat</button>
+      <button type="button" onClick={() => setStats([...stats, { value: '', suffix: '', prefix: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Fakt hinzufügen</button>
     </div>
   );
 }

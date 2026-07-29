@@ -1365,6 +1365,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         badge: 'Fakten',
         headline: 'Projekt auf einen Blick.',
         subline: 'Bereich, Umfang und Einsatz der Arbeit.',
+        layout: 'projectDossier',
         stats: story.facts.map((fact) => ({ value: fact.value, label: fact.label })),
       }, 'default', 'l', 'l'),
       projectSection(project, 'spotlightCards', 3, {
