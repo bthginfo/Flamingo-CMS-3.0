@@ -196,7 +196,7 @@ export function VerticalReelShowcaseSection({ data }: Props) {
     : String(data.subline || '');
   return (
     <section className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-5 py-16 text-[color:var(--token-body)] md:px-8 md:py-24">
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,color-mix(in_srgb,var(--token-accent)_26%,transparent),transparent_35%),radial-gradient(circle_at_80%_10%,color-mix(in_srgb,var(--token-heading)_18%,transparent),transparent_38%)]" />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,color-mix(in_srgb,var(--token-accent)_26%,transparent),transparent_35%),radial-gradient(circle_at_80%_10%,color-mix(in_srgb,var(--token-card-bg)_18%,transparent),transparent_38%)]" />
       <div className="mx-auto max-w-7xl">
         <AdvancedIntro
           badge={String(data.badge || '')}

@@ -114,7 +114,7 @@ export function MaterialAtelierSection({ data }: Props) {
                       <span className="min-w-0">
                         {item.kicker && <span className={`block text-[9px] font-black uppercase tracking-[.22em] ${isActive ? 'text-inherit opacity-65' : 'text-[color:var(--token-accent)]'}`} data-edit-path="kicker">{item.kicker}</span>}
                         <span className="mt-1 block hyphens-auto text-lg font-black leading-[1.12] text-inherit [overflow-wrap:normal]" data-edit-path="title">{item.title}</span>
-                        {isActive && <span className="mt-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[.13em] text-inherit opacity-75"><Check size={12} /> Ausgewählt</span>}
+                        {isActive && <span className="mt-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[.13em] text-inherit opacity-75"><Check size={12} className="text-[color:var(--token-check)]" /> Ausgewählt</span>}
                       </span>
                       <ChevronRight aria-hidden="true" className={`transition ${isActive ? 'translate-x-0 text-inherit' : '-translate-x-1 text-inherit opacity-55 group-hover:translate-x-0 group-hover:opacity-90'}`} size={18} />
                     </button>

@@ -21,7 +21,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
         .editorial-feature-rail [data-feature-rail-copy] { color: var(--token-body, #25344f) !important; }
         .editorial-feature-rail [data-feature-card-title] { color: var(--token-on-dark-heading, #ffffff) !important; text-shadow: 0 2px 20px rgba(0,0,0,0.45); }
         .editorial-feature-rail [data-feature-card-copy] { color: var(--token-on-dark-body, var(--token-card-body, rgba(255,255,255,0.88))) !important; text-shadow: 0 1px 12px rgba(0,0,0,0.32); }
-        .editorial-feature-rail [data-feature-card-kicker] { color: var(--token-eyebrow, #f8b334) !important; text-shadow: 0 1px 12px rgba(0,0,0,0.35); }
+        .editorial-feature-rail [data-feature-card-kicker] { color: var(--token-eyebrow) !important; text-shadow: 0 1px 12px rgba(0,0,0,0.35); }
       `}</style>
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 max-w-3xl">

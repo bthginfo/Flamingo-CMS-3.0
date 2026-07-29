@@ -21,14 +21,21 @@ const gen = require('./generate-section-color-contracts.cjs');
 const INDUSTRY_ALIASES = { handwerk: 'tradesman' };
 const pascal = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
+const componentFieldCache = new Map();
+
 function fieldsForComponent(componentName, componentToFile, cssVarToField) {
+  if (componentFieldCache.has(componentName)) return componentFieldCache.get(componentName);
   const file = componentToFile.get(componentName);
-  if (!file) return null;
+  if (!file) {
+    componentFieldCache.set(componentName, null);
+    return null;
+  }
   const out = new Set(['sectionBg']);
   for (const t of gen.extractTokenVars(file)) {
     const f = cssVarToField.get(t);
     if (f) out.add(f);
   }
+  componentFieldCache.set(componentName, out);
   return out;
 }
 

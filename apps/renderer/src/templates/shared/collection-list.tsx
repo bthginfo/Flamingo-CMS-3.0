@@ -111,7 +111,7 @@ export function CollectionListSection({ data }: Props) {
       {((showSearch && items.length > 1) || (showSortControls && items.length > 1) || (paginate && pageCount > 1)) && (
         <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           {showSearch && items.length > 1 ? (
-            <label className="relative block w-full max-w-xl">
+            <label className="relative block w-full max-w-xl text-[color:var(--token-label)]">
               <span className="sr-only">Einträge durchsuchen</span>
               <Search aria-hidden="true" size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--token-muted)]" />
               <input

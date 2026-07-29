@@ -78,7 +78,7 @@ export function AiWorkflowReelSection({ data }: Props) {
   if (!steps.length && !data.headline) return null;
   return (
     <section className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-5 py-16 md:px-8 md:py-24">
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(120deg,color-mix(in_srgb,var(--token-heading)_94%,black)_0%,var(--token-section-bg)_58%,color-mix(in_srgb,var(--token-accent)_18%,var(--token-section-bg))_100%)]" />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(120deg,color-mix(in_srgb,var(--token-card-bg)_94%,black)_0%,var(--token-section-bg)_58%,color-mix(in_srgb,var(--token-accent)_18%,var(--token-section-bg))_100%)]" />
       <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[minmax(0,.95fr)_minmax(0,1.05fr)] lg:gap-16">
         <WorkflowVideo data={data} />
         <div data-color-context="dark">
@@ -92,7 +92,7 @@ export function AiWorkflowReelSection({ data }: Props) {
             {steps.map((step, index) => (
               <article key={`${step.title}-${index}`} className="group grid gap-4 rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.06] p-4 backdrop-blur transition hover:bg-white/[.1] sm:grid-cols-[4rem_1fr]" data-card data-edit-collection="steps" data-edit-index={index}>
                 <div className="grid h-14 w-14 place-items-center rounded-2xl border border-white/15 bg-[color:color-mix(in_srgb,var(--token-accent)_24%,white_8%)] text-[color:var(--token-on-dark-heading,#fff)] shadow-[inset_0_1px_0_rgba(255,255,255,.12),0_18px_40px_rgba(0,0,0,.22)]">
-                  {index === 0 ? <Bot size={24} strokeWidth={2.2} /> : index === steps.length - 1 ? <CheckCircle2 size={24} strokeWidth={2.2} /> : <GitBranch size={24} strokeWidth={2.2} />}
+                  {index === 0 ? <Bot size={24} strokeWidth={2.2} /> : index === steps.length - 1 ? <CheckCircle2 className="text-[color:var(--token-check)]" size={24} strokeWidth={2.2} /> : <GitBranch size={24} strokeWidth={2.2} />}
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{step.kicker || `Phase ${String(index + 1).padStart(2, '0')}`}</p>
