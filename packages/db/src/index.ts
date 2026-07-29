@@ -142,9 +142,45 @@ function splitSqlStatements(sqlText: string) {
   return chunks.flatMap((chunk) => splitSqlChunkBySemicolon(chunk)).filter(Boolean);
 }
 
+function stripLeadingSqlComments(statement: string) {
+  let current = statement.trimStart();
+
+  while (current.startsWith('--') || current.startsWith('/*')) {
+    if (current.startsWith('--')) {
+      const lineEnd = current.indexOf('\n');
+      if (lineEnd === -1) return '';
+      current = current.slice(lineEnd + 1).trimStart();
+      continue;
+    }
+
+    const blockEnd = current.indexOf('*/');
+    if (blockEnd === -1) return current;
+    current = current.slice(blockEnd + 2).trimStart();
+  }
+
+  return current;
+}
+
+function makeMigrationStatementIdempotent(statement: string) {
+  const executableStatement = stripLeadingSqlComments(statement);
+  const trimmedStatement = executableStatement.trim().replace(/;+\s*$/, '');
+
+  if (/^CREATE\s+TYPE\s+/i.test(trimmedStatement) && /\s+AS\s+ENUM\s*\(/i.test(trimmedStatement)) {
+    return `DO $flamingo_migration$
+BEGIN
+  ${trimmedStatement};
+EXCEPTION WHEN duplicate_object THEN
+  NULL;
+END
+$flamingo_migration$;`;
+  }
+
+  return statement;
+}
+
 async function executeSqlScript(sql: NeonSql, sqlText: string) {
   for (const statement of splitSqlStatements(sqlText)) {
-    await sql.query(statement, []);
+    await sql.query(makeMigrationStatementIdempotent(statement), []);
   }
 }
 
