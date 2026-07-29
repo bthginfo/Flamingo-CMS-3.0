@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ScanSearch } from 'lucide-react';
@@ -72,23 +72,23 @@ export function XrayRevealSection({ data }: Props) {
             </div>
 
             {revealStyle !== 'scan' && !reduceMotion && (
-              <motion.div animate={{ opacity: engaged ? 1 : 0.76, scale: engaged ? 1 : 0.94 }} className="pointer-events-none absolute hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/25 text-white shadow-xl backdrop-blur-sm md:flex" style={{ left: `${position.x}%`, top: `${position.y}%` }}>
+              <motion.div animate={{ opacity: engaged ? 1 : 0.76, scale: engaged ? 1 : 0.94 }} className="pointer-events-none absolute hidden h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_70%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_35%,transparent)] text-[color:var(--token-on-dark-heading)] shadow-xl backdrop-blur-sm md:flex" style={{ left: `${position.x}%`, top: `${position.y}%` }}>
                 <ScanSearch size={23} />
               </motion.div>
             )}
 
-            <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/48 px-3 py-1.5 text-xs font-bold text-white backdrop-blur" data-edit-path="labelBase">{labelBase}</span>
-            <span className="absolute right-4 top-4 rounded-full border border-white/20 bg-black/48 px-3 py-1.5 text-xs font-bold text-white backdrop-blur" data-edit-path="labelReveal">{labelReveal}</span>
+            <span className="absolute left-4 top-4 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_25%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_58%,transparent)] px-3 py-1.5 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur" data-edit-path="labelBase">{labelBase}</span>
+            <span className="absolute right-4 top-4 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_25%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_58%,transparent)] px-3 py-1.5 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur" data-edit-path="labelReveal">{labelReveal}</span>
           </div>
 
           <div className="grid items-center gap-5 p-5 md:grid-cols-[1fr_minmax(16rem,28rem)] md:px-7">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]">Interaktiver Blick hinter die Oberfläche</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]">Interaktiver Blick hinter die OberflÃ¤che</p>
               {caption && <p className="mt-1 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="caption">{caption}</p>}
             </div>
             <label className="block text-[color:var(--token-label)]">
               <span className="mb-2 flex items-center justify-between text-xs font-semibold"><span>Reveal verschieben</span><span>{slider}%</span></span>
-              <input type="range" min="5" max="95" value={slider} onChange={(event) => { const value = Number(event.target.value); setSlider(value); setPosition((current) => ({ ...current, x: value })); }} className="w-full rounded-full border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] text-[color:var(--token-input-text)] accent-[var(--token-accent)]" aria-label="Position der X-Ray-Enthüllung" />
+              <input type="range" min="5" max="95" value={slider} onChange={(event) => { const value = Number(event.target.value); setSlider(value); setPosition((current) => ({ ...current, x: value })); }} className="w-full rounded-full border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] text-[color:var(--token-input-text)] accent-[var(--token-accent)]" aria-label="Position der X-Ray-EnthÃ¼llung" />
             </label>
           </div>
         </motion.div>

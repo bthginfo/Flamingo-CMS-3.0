@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Check, Layers3 } from 'lucide-react';
@@ -63,7 +63,7 @@ export function SceneLabSection({ data }: Props) {
               ))}
             </AnimatePresence>
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10" />
-            <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/50 px-3 py-2 text-xs font-bold text-white backdrop-blur"><Layers3 size={14} /> Live-Komposition</div>
+            <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_25%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_60%,transparent)] px-3 py-2 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur"><Layers3 size={14} /> Live-Komposition</div>
           </div>
 
           <div className="flex min-h-full flex-col p-5 md:p-7 lg:p-8">
@@ -84,7 +84,7 @@ export function SceneLabSection({ data }: Props) {
                   return (
                     <button key={choiceKey(choice, choiceIndex)} type="button" onClick={() => setSelections((current) => ({ ...current, [currentGroupId]: choiceIndex }))} className={`relative min-h-20 rounded-xl border p-3 text-left transition ${selected ? 'border-[var(--token-accent)] bg-[var(--token-section-bg-alt)] shadow-sm' : 'border-[var(--token-card-border)] hover:border-[var(--token-accent)]'}`} data-edit-collection="choices" data-edit-index={choiceIndex}>
                       <span className="flex items-center gap-2">
-                        <span className="h-5 w-5 shrink-0 rounded-full border border-black/10" style={{ background: choice.swatch || 'var(--token-section-bg-alt)' }} />
+                        <span className="h-5 w-5 shrink-0 rounded-full border border-[color:var(--token-card-border)]" style={{ background: choice.swatch || 'var(--token-section-bg-alt)' }} />
                         <span className="text-sm font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{choice.label}</span>
                       </span>
                       {choice.priceLabel && <span className="mt-2 block text-xs text-[color:var(--token-price)]" data-edit-path="priceLabel">{choice.priceLabel}</span>}
@@ -97,7 +97,7 @@ export function SceneLabSection({ data }: Props) {
 
             <div className="mt-auto border-t border-[var(--token-divider)] pt-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[color:var(--token-muted)]">Ihre Auswahl</p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--token-card-heading,var(--token-heading))]">{selectedChoices.map((choice) => choice.label).join(' · ')}</p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--token-card-heading,var(--token-heading))]">{selectedChoices.map((choice) => choice.label).join(' Â· ')}</p>
               {cta.label && <a href={cta.href || '#'} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)]" data-edit-link="cta"><span data-edit-path="cta.label">{cta.label}</span><ArrowRight size={16} /></a>}
             </div>
           </div>

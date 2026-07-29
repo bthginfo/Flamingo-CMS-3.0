@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, Maximize2, Minus, Move, Plus, RotateCcw, X } from 'lucide-react';
@@ -87,13 +87,13 @@ export function InfiniteCanvasSection({ data }: Props) {
               'left-[8%] bottom-[5%] w-[24%] rotate-[2deg]', 'left-[38%] bottom-[2%] w-[27%] rotate-[-1deg]', 'right-[6%] bottom-[6%] w-[25%] rotate-[-2deg]',
             ];
             return (
-              <motion.figure key={`${item.image}-${index}`} whileHover={{ scale: 1.035, zIndex: 5 }} className={`absolute overflow-hidden rounded-[calc(var(--token-card-radius)*.72)] border border-white/30 bg-[var(--token-card-bg)] shadow-2xl ${positions[index]}`} data-edit-collection="items" data-edit-index={index}>
+              <motion.figure key={`${item.image}-${index}`} whileHover={{ scale: 1.035, zIndex: 5 }} className={`absolute overflow-hidden rounded-[calc(var(--token-card-radius)*.72)] border border-[color:color-mix(in_srgb,var(--token-card-border)_78%,transparent)] bg-[var(--token-card-bg)] shadow-2xl ${positions[index]}`} data-edit-collection="items" data-edit-index={index}>
                 <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" loading="lazy" decoding="async" data-edit-image="image" />
                 {item.title && <figcaption className="truncate px-3 py-2 text-xs font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{item.title}</figcaption>}
               </motion.figure>
             );
           })}
-          <span className="absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/30 bg-black/60 px-4 py-2 text-xs font-bold text-white backdrop-blur"><Move size={14} /> Öffnen, ziehen und entdecken</span>
+          <span className="absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_35%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_70%,transparent)] px-4 py-2 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur"><Move size={14} /> Ã–ffnen, ziehen und entdecken</span>
         </button>
       </div>
       {mounted && open && createPortal(<CanvasExplorer items={explorerItems} totalItems={items.length} headline={headline} onClose={() => setOpen(false)} />, document.body)}
@@ -161,14 +161,14 @@ function CanvasExplorer({ items, totalItems, headline, onClose }: { items: Canva
   }
 
   return (
-    <div className="fixed inset-0 z-[160] bg-[#080a0f] text-white" role="dialog" aria-modal="true" aria-label="Infinite Canvas Explorer" onKeyDown={trapFocus}>
-      <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-black/35 px-4 py-3 backdrop-blur-xl md:px-6">
-        <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">Galerie-Explorer</p><h2 className="truncate text-sm font-bold md:text-base">{headline || 'Infinite Canvas'}</h2></div>
+    <div className="fixed inset-0 z-[160] bg-[var(--token-section-bg)] text-[color:var(--token-on-dark-body)]" role="dialog" aria-modal="true" aria-label="Infinite Canvas Explorer" onKeyDown={trapFocus}>
+      <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-4 border-b border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_42%,transparent)] px-4 py-3 backdrop-blur-xl md:px-6">
+        <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted)]">Galerie-Explorer</p><h2 className="truncate text-sm font-bold md:text-base">{headline || 'Infinite Canvas'}</h2></div>
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => setZoom((value) => Math.max(0.58, value - 0.12))} className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 hover:bg-white/12" aria-label="Verkleinern"><Minus size={16} /></button>
-          <button type="button" onClick={() => setZoom((value) => Math.min(1.45, value + 0.12))} className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 hover:bg-white/12" aria-label="Vergrößern"><Plus size={16} /></button>
-          <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(0.68); }} className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 hover:bg-white/12" aria-label="Ansicht zurücksetzen"><RotateCcw size={16} /></button>
-          <button type="button" onClick={onClose} autoFocus className="ml-1 inline-flex h-10 items-center gap-2 rounded-full bg-white px-4 text-xs font-bold text-black hover:bg-white/90"><X size={15} /> Zurück zur Seite</button>
+          <button type="button" onClick={() => setZoom((value) => Math.max(0.58, value - 0.12))} className="grid h-10 w-10 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] hover:bg-[color:color-mix(in_srgb,var(--token-card-bg)_13%,transparent)]" aria-label="Verkleinern"><Minus size={16} /></button>
+          <button type="button" onClick={() => setZoom((value) => Math.min(1.45, value + 0.12))} className="grid h-10 w-10 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] hover:bg-[color:color-mix(in_srgb,var(--token-card-bg)_13%,transparent)]" aria-label="VergrÃ¶ÃŸern"><Plus size={16} /></button>
+          <button type="button" onClick={() => { setPan({ x: 0, y: 0 }); setZoom(0.68); }} className="grid h-10 w-10 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] hover:bg-[color:color-mix(in_srgb,var(--token-card-bg)_13%,transparent)]" aria-label="Ansicht zurÃ¼cksetzen"><RotateCcw size={16} /></button>
+          <button type="button" onClick={onClose} autoFocus className="ml-1 inline-flex h-10 items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-4 text-xs font-bold text-[color:var(--token-btn-text)] hover:opacity-90"><X size={15} /> ZurÃ¼ck zur Seite</button>
         </div>
       </header>
 
@@ -176,16 +176,16 @@ function CanvasExplorer({ items, totalItems, headline, onClose }: { items: Canva
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,.06),transparent_52%)]" />
         <div className="absolute left-1/2 top-1/2 h-0 w-0 will-change-transform" style={{ transform: `scale(${zoom})`, transition: reduceMotion || isDragging ? undefined : 'transform 180ms ease-out' }}>
           {nodes.map(({ item, key, x, y, width }) => (
-            <figure key={key} className="absolute overflow-hidden rounded-2xl border border-white/12 bg-[#12151d] shadow-[0_18px_48px_rgba(0,0,0,.42)]" style={{ left: wrap(x * zoom + pan.x, tileWidth * zoom) / zoom, top: wrap(y * zoom + pan.y, tileHeight * zoom) / zoom, width, transform: 'translate(-50%,-50%)', contain: 'layout paint' }}>
+            <figure key={key} className="absolute overflow-hidden rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[var(--token-card-bg)] shadow-[0_18px_48px_rgba(0,0,0,.42)]" style={{ left: wrap(x * zoom + pan.x, tileWidth * zoom) / zoom, top: wrap(y * zoom + pan.y, tileHeight * zoom) / zoom, width, transform: 'translate(-50%,-50%)', contain: 'layout paint' }}>
               <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" draggable={false} loading="lazy" decoding="async" />
-              {(item.title || item.caption) && <figcaption className="p-3"><div className="flex items-start justify-between gap-3"><div><strong className="block text-sm">{item.title}</strong>{item.caption && <span className="mt-1 block text-xs leading-5 text-white/55">{plain(item.caption)}</span>}</div>{item.href && <a href={item.href} className="pointer-events-auto grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 hover:bg-white hover:text-black" aria-label={`${item.title || 'Eintrag'} öffnen`}><ArrowUpRight size={14} /></a>}</div></figcaption>}
+              {(item.title || item.caption) && <figcaption className="p-3"><div className="flex items-start justify-between gap-3"><div><strong className="block text-sm">{item.title}</strong>{item.caption && <span className="mt-1 block text-xs leading-5 text-[color:var(--token-on-dark-muted)]">{plain(item.caption)}</span>}</div>{item.href && <a href={item.href} className="pointer-events-auto grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)]" aria-label={`${item.title || 'Eintrag'} Ã¶ffnen`}><ArrowUpRight size={14} /></a>}</div></figcaption>}
             </figure>
           ))}
         </div>
       </div>
-      <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/45 px-4 py-2 text-xs text-white/65 backdrop-blur">
-        <Move className="mr-2 inline" size={13} />Ziehen zum Bewegen · Mausrad zum Zoomen
-        {totalItems > items.length ? <span className="ml-2 text-white/45">· {items.length} von {totalItems} Bildern geladen</span> : null}
+      <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_58%,transparent)] px-4 py-2 text-xs text-[color:var(--token-on-dark-muted)] backdrop-blur">
+        <Move className="mr-2 inline" size={13} />Ziehen zum Bewegen Â· Mausrad zum Zoomen
+        {totalItems > items.length ? <span className="ml-2 opacity-70">Â· {items.length} von {totalItems} Bildern geladen</span> : null}
       </div>
     </div>
   );

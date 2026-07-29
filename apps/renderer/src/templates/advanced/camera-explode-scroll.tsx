@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useInView, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { Aperture, ArrowUpRight, Box, Cuboid, Eye, Layers3, ScanLine, View } from 'lucide-react';
@@ -29,25 +29,25 @@ type ExplodeNode = {
 };
 
 const FALLBACK_PARTS: CameraPart[] = [
-  { id: 'briefing', label: 'Briefing', text: 'Ziel, Zielgruppe und Einsatzkanäle geben der Produktion Richtung.', offsetX: -160, offsetY: 0, offsetZ: -40, color: '#151515' },
-  { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Raum werden als klare visuelle Linie geplant.', offsetX: 160, offsetY: -40, offsetZ: 150, color: '#050505' },
-  { id: 'production', label: 'Produktion', text: 'Menschen, Bewegung und Timing werden geführt statt dem Zufall überlassen.', offsetX: 80, offsetY: -140, offsetZ: 70, color: '#d11224' },
-  { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading halten die Serie zusammen.', offsetX: 170, offsetY: 60, offsetZ: -120, color: '#1b2430' },
-  { id: 'approval', label: 'Auswahl', text: 'Die stärksten Motive werden nach Wirkung und Nutzbarkeit kuratiert.', offsetX: -135, offsetY: 130, offsetZ: -130, color: '#f4eee3' },
-  { id: 'output', label: 'Assets', text: 'Fertige Formate für Website, Social, Kampagne, Recruiting und Print.', offsetX: 135, offsetY: 140, offsetZ: 130, color: '#c7ff4a' },
+  { id: 'briefing', label: 'Briefing', text: 'Ziel, Zielgruppe und EinsatzkanÃ¤le geben der Produktion Richtung.', offsetX: -160, offsetY: 0, offsetZ: -40 },
+  { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Raum werden als klare visuelle Linie geplant.', offsetX: 160, offsetY: -40, offsetZ: 150 },
+  { id: 'production', label: 'Produktion', text: 'Menschen, Bewegung und Timing werden gefÃ¼hrt statt dem Zufall Ã¼berlassen.', offsetX: 80, offsetY: -140, offsetZ: 70 },
+  { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading halten die Serie zusammen.', offsetX: 170, offsetY: 60, offsetZ: -120 },
+  { id: 'approval', label: 'Auswahl', text: 'Die stÃ¤rksten Motive werden nach Wirkung und Nutzbarkeit kuratiert.', offsetX: -135, offsetY: 130, offsetZ: -130 },
+  { id: 'output', label: 'Assets', text: 'Fertige Formate fÃ¼r Website, Social, Kampagne, Recruiting und Print.', offsetX: 135, offsetY: 140, offsetZ: 130 },
 ];
 
 const SCHUKTUEW_CAMERA_COPY = {
   badge: 'Production System',
   headline: 'So wird aus einem Motiv ein kompletter Markenauftritt.',
-  subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, Führung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets für Website, Social, Kampagne und Recruiting.',
+  subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, FÃ¼hrung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets fÃ¼r Website, Social, Kampagne und Recruiting.',
   parts: [
-    { id: 'briefing', label: 'Briefing', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-    { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie für Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
-    { id: 'direction', label: 'Führung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich führe Menschen so, dass der Auftritt glaubwürdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert für Varianten, Planung und Adaptionen – nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
-    { id: 'finish', label: 'Finish', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto, Film und Reel-Material auf denselben visuellen Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-    { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien für Website, Social Media, Kampagnen, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+    { id: 'briefing', label: 'Briefing', text: 'Ich klÃ¤re Ziel, Zielgruppe, EinsatzkanÃ¤le und gewÃ¼nschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42 },
+    { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie fÃ¼r Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154 },
+    { id: 'direction', label: 'FÃ¼hrung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich fÃ¼hre Menschen so, dass der Auftritt glaubwÃ¼rdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86 },
+    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert fÃ¼r Varianten, Planung und Adaptionen â€“ nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132 },
+    { id: 'finish', label: 'Finish', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto, Film und Reel-Material auf denselben visuellen Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148 },
+    { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien fÃ¼r Website, Social Media, Kampagnen, Recruiting, PrÃ¤sentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142 },
   ],
   cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
 };
@@ -79,7 +79,7 @@ function shouldUseSchuktuewCameraCopy(data: Record<string, unknown>, parts: Came
   const ctaLabel = visibleText(cta?.label || '').toLowerCase();
   const labels = parts.map((part) => visibleText(part.label || '').toLowerCase()).join(' ');
   const oldHeadline = /kamera zerlegt|blick wird klarer|was leicht wirkt|aus einem motiv wird ein kompletter auftritt/.test(headline);
-  const oldLabels = /gehäuse|gehaeuse|objektiv|verschluss|sensor|monitor|dateien|haltung|perspektive|moment|look|output/.test(labels);
+  const oldLabels = /gehÃ¤use|gehaeuse|objektiv|verschluss|sensor|monitor|dateien|haltung|perspektive|moment|look|output/.test(labels);
   const oldCta = /system ansehen|workflow ansehen|mit alex sprechen/.test(ctaLabel);
   return oldHeadline && oldLabels && oldCta;
 }
@@ -485,8 +485,8 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
   return (
     <div ref={wrapRef} className="relative h-full min-h-[22rem] w-full sm:min-h-[30rem] md:min-h-[34rem]">
       <canvas ref={canvasRef} className="h-full w-full" aria-label="3D Exploded View einer Kamera" />
-      {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-white/50">3D Kamera lädt</div>}
-      {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-white/50">3D nicht verfügbar</div>}
+      {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D Kamera lÃ¤dt</div>}
+      {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D nicht verfÃ¼gbar</div>}
     </div>
   );
 }
@@ -494,9 +494,9 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
 function PartCopy({ part, index, compact = false }: { part: CameraPart; index: number; compact?: boolean }) {
   const Icon = PART_ICONS[index % PART_ICONS.length];
   return (
-    <article className={`rounded-[var(--token-card-radius)] border border-white/10 bg-white/[.07] ${compact ? 'p-4' : 'p-5'} text-white/88 shadow-[0_18px_54px_rgba(0,0,0,.22)] backdrop-blur-xl`} data-card data-color-context="dark" data-edit-collection="parts" data-edit-index={index}>
+    <article className={`rounded-[var(--token-card-radius)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] ${compact ? 'p-4' : 'p-5'} text-[color:var(--token-on-dark-body)] shadow-[0_18px_54px_rgba(0,0,0,.22)] backdrop-blur-xl`} data-card data-color-context="dark" data-edit-collection="parts" data-edit-index={index}>
       <div className="flex items-start gap-4">
-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-white/15 bg-[color:color-mix(in_srgb,var(--token-accent)_18%,white_10%)] text-[color:var(--token-on-dark-heading,#fff)] shadow-[inset_0_1px_0_rgba(255,255,255,.14),0_14px_32px_rgba(0,0,0,.22)]">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_24%,transparent)] bg-[color:color-mix(in_srgb,var(--token-accent)_18%,white_10%)] text-[color:var(--token-on-dark-heading)] shadow-[inset_0_1px_0_rgba(255,255,255,.14),0_14px_32px_rgba(0,0,0,.22)]">
           <Icon size={19} strokeWidth={2.25} />
         </div>
         <div>
@@ -532,18 +532,18 @@ function CameraStickyIntro({ data }: Props) {
 function StaticCameraVisual({ brandImage }: { brandImage: string }) {
   return (
     <div className="relative mx-auto aspect-[4/3] max-w-sm">
-      <div className="absolute left-[10%] top-[34%] h-[35%] w-[64%] rounded-[2rem] border border-white/15 bg-[#181818] shadow-2xl" />
-      <div className="absolute left-[27%] top-[25%] h-[18%] w-[23%] rounded-t-[1.2rem] bg-[#101010] shadow-xl" />
-      <div className="absolute left-[69%] top-[37%] h-[28%] w-[14%] rounded-[1.25rem] bg-[#070707] shadow-2xl" />
+      <div className="absolute left-[10%] top-[34%] h-[35%] w-[64%] rounded-[2rem] border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_84%,white_8%)] shadow-2xl" />
+      <div className="absolute left-[27%] top-[25%] h-[18%] w-[23%] rounded-t-[1.2rem] bg-[color:color-mix(in_srgb,var(--token-card-bg)_92%,black_8%)] shadow-xl" />
+      <div className="absolute left-[69%] top-[37%] h-[28%] w-[14%] rounded-[1.25rem] bg-[var(--token-card-bg)] shadow-2xl" />
       <div className="absolute left-[43%] top-[27%] h-[46%] w-[33%] rounded-full bg-black shadow-[0_20px_70px_rgba(0,0,0,.65)] ring-[10px] ring-white/10" />
-      <div className="absolute left-[47.5%] top-[34%] h-[32%] w-[24%] rounded-full border-[10px] border-[#222] bg-[#050505]" />
-      <div className="absolute left-[53%] top-[43%] h-[15%] w-[11%] rounded-full bg-[#223044]" />
-      <div className="absolute left-[56%] top-[46%] h-[6%] w-[4%] rounded-full bg-white/45" />
-      <div className="absolute left-[16%] top-[27%] h-[9%] w-[19%] rounded-2xl bg-[#0a0a0a]" />
-      <div className="absolute right-[3%] top-[51%] h-[18%] w-[25%] translate-x-6 rounded-2xl border border-white/12 bg-[color:var(--token-accent)] shadow-xl" />
-      <div className="absolute left-[8%] top-[66%] h-[17%] w-[29%] -translate-x-5 rotate-[-8deg] rounded-2xl border border-white/15 bg-[#f4eee3] shadow-xl" />
-      <div className="absolute left-[49%] top-[72%] h-[13%] w-[28%] rotate-[5deg] rounded-2xl bg-[#c7ff4a] shadow-xl" />
-      {brandImage && <img src={brandImage} alt="" loading="lazy" className="absolute right-0 top-0 h-20 w-20 rounded-2xl border border-white/15 object-cover" data-edit-image="brandImage" />}
+      <div className="absolute left-[47.5%] top-[34%] h-[32%] w-[24%] rounded-full border-[10px] border-[color:color-mix(in_srgb,var(--token-card-border)_28%,transparent)] bg-[var(--token-card-bg)]" />
+      <div className="absolute left-[53%] top-[43%] h-[15%] w-[11%] rounded-full bg-[color:color-mix(in_srgb,var(--token-accent)_22%,var(--token-card-bg))]" />
+      <div className="absolute left-[56%] top-[46%] h-[6%] w-[4%] rounded-full bg-[color:color-mix(in_srgb,var(--token-card-bg)_45%,transparent)]" />
+      <div className="absolute left-[16%] top-[27%] h-[9%] w-[19%] rounded-2xl bg-[var(--token-card-bg)]" />
+      <div className="absolute right-[3%] top-[51%] h-[18%] w-[25%] translate-x-6 rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] bg-[color:var(--token-accent)] shadow-xl" />
+      <div className="absolute left-[8%] top-[66%] h-[17%] w-[29%] -translate-x-5 rotate-[-8deg] rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[var(--token-btn-bg)] shadow-xl" />
+      <div className="absolute left-[49%] top-[72%] h-[13%] w-[28%] rotate-[5deg] rounded-2xl bg-[color:color-mix(in_srgb,var(--token-accent)_78%,var(--token-btn-bg))] shadow-xl" />
+      {brandImage && <img src={brandImage} alt="" loading="lazy" className="absolute right-0 top-0 h-20 w-20 rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] object-cover" data-edit-image="brandImage" />}
     </div>
   );
 }
@@ -555,17 +555,17 @@ function MobileCameraExperience({ data, parts, brandImage, modelUrl, cta, reduce
   const progress = useTransform(scrollYProgress, [0, 1], [0.08, 0.96]);
   const badge = cleanCameraBadge(data.badge);
   return (
-    <section ref={mobileRef} className="bg-[var(--token-section-bg)] px-5 py-16 md:hidden">
+    <section ref={mobileRef} className="bg-[var(--token-section-bg)] [--_quote-role:var(--token-quote)] px-5 py-16 md:hidden">
       <AdvancedIntro badge={badge} headline={String(data.headline || '')} subline={String(data.subline || '')} compact />
-      <div className="mt-10 overflow-hidden rounded-[calc(var(--token-card-radius)*1.25)] border border-white/10 bg-[radial-gradient(circle_at_48%_35%,rgba(255,255,255,.13),transparent_42%),radial-gradient(circle_at_88%_16%,color-mix(in_srgb,var(--token-accent)_28%,transparent),transparent_34%),#080808] p-2 shadow-[0_28px_90px_rgba(0,0,0,.32)]">
+      <div className="mt-10 overflow-hidden rounded-[calc(var(--token-card-radius)*1.25)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[radial-gradient(circle_at_48%_35%,rgba(255,255,255,.13),transparent_42%),radial-gradient(circle_at_88%_16%,color-mix(in_srgb,var(--token-accent)_28%,transparent),transparent_34%),var(--token-card-bg)] p-2 shadow-[0_28px_90px_rgba(0,0,0,.32)]">
         <div className="relative h-[24rem] w-full sm:h-[30rem]">
-          {brandImage && <img src={brandImage} alt="" loading="lazy" decoding="async" className="absolute right-3 top-3 z-20 h-16 w-16 rounded-2xl border border-white/15 object-cover opacity-80 shadow-2xl" data-edit-image="brandImage" />}
+          {brandImage && <img src={brandImage} alt="" loading="lazy" decoding="async" className="absolute right-3 top-3 z-20 h-16 w-16 rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] object-cover opacity-80 shadow-2xl" data-edit-image="brandImage" />}
           {reduceMotion ? (
             <StaticCameraVisual brandImage={brandImage} />
           ) : shouldLoadScene ? (
             <CameraThreeScene parts={parts} modelUrl={modelUrl} progress={progress} />
           ) : (
-            <div className="grid h-full place-items-center text-xs font-black uppercase tracking-[.22em] text-white/45">3D wird geladen</div>
+            <div className="grid h-full place-items-center text-xs font-black uppercase tracking-[.22em] text-[color:var(--token-on-dark-muted)]">3D wird geladen</div>
           )}
         </div>
       </div>
@@ -594,7 +594,7 @@ export function CameraExplodeScrollSection({ data }: Props) {
   return (
     <>
       <MobileCameraExperience data={displayData} parts={parts} brandImage={brandImage} modelUrl={modelUrl} cta={cta} reduceMotion={reduceMotion} />
-      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${reduceMotion ? 120 : Math.max(220, parts.length * 42)}vh` }}>
+      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] [--_quote-role:var(--token-quote)] text-[color:var(--token-on-dark-body)] md:block" style={{ height: `${reduceMotion ? 120 : Math.max(220, parts.length * 42)}vh` }}>
         <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(25rem,.7fr)_minmax(34rem,1.3fr)] lg:gap-10 lg:px-14">
           <div className="relative z-20 flex min-w-0 flex-col py-6" data-color-context="dark">
             <CameraStickyIntro data={displayData} />
@@ -602,10 +602,10 @@ export function CameraExplodeScrollSection({ data }: Props) {
           </div>
           <div className="relative grid min-h-0 place-items-center">
             <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_48%_44%,rgba(255,255,255,.18),transparent_38%),radial-gradient(circle_at_86%_18%,color-mix(in_srgb,var(--token-accent)_34%,transparent),transparent_30%)]" />
-            {brandImage && <img src={brandImage} alt="" loading="lazy" decoding="async" className="absolute right-6 top-6 z-20 h-24 w-24 rounded-2xl border border-white/15 object-cover opacity-80 shadow-2xl" data-edit-image="brandImage" />}
-            <div aria-hidden="true" className="absolute left-1/2 top-1/2 h-[28rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/45 blur-3xl" />
+            {brandImage && <img src={brandImage} alt="" loading="lazy" decoding="async" className="absolute right-6 top-6 z-20 h-24 w-24 rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] object-cover opacity-80 shadow-2xl" data-edit-image="brandImage" />}
+            <div aria-hidden="true" className="absolute left-1/2 top-1/2 h-[28rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:color-mix(in_srgb,var(--token-card-bg)_45%,transparent)] blur-3xl" />
             {reduceMotion ? (
-              <div className="relative grid h-[min(68vh,42rem)] w-full max-w-4xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-8">
+              <div className="relative grid h-[min(68vh,42rem)] w-full max-w-4xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),var(--token-card-bg)] p-8">
                 <StaticCameraVisual brandImage={brandImage} />
               </div>
             ) : shouldLoadScene ? (
@@ -613,14 +613,14 @@ export function CameraExplodeScrollSection({ data }: Props) {
                 <CameraThreeScene parts={parts} modelUrl={modelUrl} progress={progress} />
               </div>
             ) : (
-              <div className="relative grid h-[min(78vh,48rem)] w-full max-w-5xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-white/10 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),#080808] p-8 text-xs font-black uppercase tracking-[.22em] text-white/45">
+              <div className="relative grid h-[min(78vh,48rem)] w-full max-w-5xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),var(--token-card-bg)] p-8 text-xs font-black uppercase tracking-[.22em] text-[color:var(--token-on-dark-muted)]">
                 3D wird geladen
               </div>
             )}
-            <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-white/12 bg-black/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/55 backdrop-blur">
+            <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_35%,transparent)] px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-[color:var(--token-on-dark-muted)] backdrop-blur">
               {modelUrl ? '3D Kamera' : 'Kamera-System'}
             </div>
-            {ctaHref && ctaLabel && <a href={ctaHref} className="absolute bottom-8 right-8 z-30 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-black shadow-2xl transition hover:-translate-y-0.5" data-edit-link="cta"><span data-edit-path="cta.label">{ctaLabel}</span><ArrowUpRight size={16} /></a>}
+            {ctaHref && ctaLabel && <a href={ctaHref} className="absolute bottom-8 right-8 z-30 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-black text-[color:var(--token-btn-text)] shadow-2xl transition hover:-translate-y-0.5" data-edit-link="cta"><span data-edit-path="cta.label">{ctaLabel}</span><ArrowUpRight size={16} /></a>}
           </div>
         </div>
       </section>

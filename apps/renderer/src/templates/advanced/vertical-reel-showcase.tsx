@@ -128,7 +128,7 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
       data-edit-collection="reels"
       data-edit-index={index}
     >
-      <div className="relative bg-black" style={{ aspectRatio }}>
+      <div className="relative bg-[var(--token-card-bg)]" style={{ aspectRatio }}>
         {videoSrc ? (
           <video
             className="h-full w-full object-cover"
@@ -162,7 +162,7 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
           <EmptyVisual label="Reel hochladen" />
         )}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.05)_0%,rgba(0,0,0,.06)_48%,rgba(0,0,0,.76)_100%)]" />
-        <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-[10px] font-black uppercase tracking-[.18em] text-white backdrop-blur">
+        <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_32%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_48%,transparent)] px-3 py-1.5 text-[10px] font-black uppercase tracking-[.18em] text-[color:var(--token-on-dark-heading)] backdrop-blur">
           <PlayCircle size={14} />
           <span data-edit-path="eyebrow">{reel.eyebrow || `Reel ${String(index + 1).padStart(2, '0')}`}</span>
         </div>
@@ -195,7 +195,7 @@ export function VerticalReelShowcaseSection({ data }: Props) {
     ? 'Kurze vertikale Arbeiten als direkte Referenz: Produktion aus einer Hand, Sportmoment und bewegte Bildstrecke im nativen Reel-Format.'
     : String(data.subline || '');
   return (
-    <section className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-5 py-16 text-[color:var(--token-body)] md:px-8 md:py-24">
+    <section className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-5 py-16 text-[color:var(--token-body)] [--_quote-role:var(--token-quote)] md:px-8 md:py-24">
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,color-mix(in_srgb,var(--token-accent)_26%,transparent),transparent_35%),radial-gradient(circle_at_80%_10%,color-mix(in_srgb,var(--token-card-bg)_18%,transparent),transparent_38%)]" />
       <div className="mx-auto max-w-7xl">
         <AdvancedIntro

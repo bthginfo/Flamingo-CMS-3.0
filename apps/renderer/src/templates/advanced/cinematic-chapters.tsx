@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
 import { ArrowRight, ChevronDown } from 'lucide-react';
@@ -65,7 +65,7 @@ export function CinematicChaptersSection({ data }: Props) {
   return (
     <>
       <div className="advanced-static-fallback md:hidden">{mobile}</div>
-      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-white md:block" style={{ height: `${Math.max(320, chapters.length * 86)}vh` }}>
+      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] text-[color:var(--token-on-dark-heading)] md:block" style={{ height: `${Math.max(320, chapters.length * 86)}vh` }}>
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <AnimatePresence mode="sync" initial={false}>
             <motion.div key={activeIndex} initial={transitionInitial} animate={{ opacity: 1, y: 0, scale: 1 }} exit={transitionExit} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} className="absolute inset-0" data-edit-collection="chapters" data-edit-index={activeIndex}>
@@ -82,7 +82,7 @@ export function CinematicChaptersSection({ data }: Props) {
                 {headline && <h2 className="text-xl font-black tracking-[-0.025em] text-[color:var(--token-on-dark-heading)] lg:text-2xl" data-edit-path="headline">{headline}</h2>}
                 {intro && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-muted)]" data-edit-path="intro">{intro}</p>}
               </div>
-              <button type="button" onClick={skipStory} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/25 bg-black/20 px-4 text-xs font-bold text-white backdrop-blur transition hover:bg-white hover:text-black">Story überspringen <ChevronDown size={14} /></button>
+              <button type="button" onClick={skipStory} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_28%,transparent)] px-4 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur transition hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)]">Story Ã¼berspringen <ChevronDown size={14} /></button>
             </div>
 
             <div className="mt-auto grid grid-cols-[minmax(0,46rem)_14rem] items-end gap-12 pb-10">
@@ -98,10 +98,10 @@ export function CinematicChaptersSection({ data }: Props) {
               <nav aria-label="Kapitel" className="space-y-3">
                 {chapters.map((chapter, index) => (
                   <div key={`${chapter.title}-${index}`} className="grid grid-cols-[2rem_1fr] items-center gap-3 text-xs">
-                    <span className={`font-bold tabular-nums ${index === activeIndex ? 'text-white' : 'text-white/38'}`}>{String(index + 1).padStart(2, '0')}</span>
+                    <span className={`font-bold tabular-nums ${index === activeIndex ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:color-mix(in_srgb,var(--token-on-dark-muted)_55%,transparent)]'}`}>{String(index + 1).padStart(2, '0')}</span>
                     <div>
-                      <div className="h-px overflow-hidden bg-white/20"><motion.div className="h-full origin-left bg-[var(--token-accent)]" animate={{ scaleX: index < activeIndex ? 1 : index === activeIndex ? 0.72 : 0 }} /></div>
-                      <span className={`mt-1 block truncate ${index === activeIndex ? 'text-white/85' : 'text-white/35'}`}>{chapter.kicker || chapter.title}</span>
+                      <div className="h-px overflow-hidden bg-[color:color-mix(in_srgb,var(--token-card-border)_25%,transparent)]"><motion.div className="h-full origin-left bg-[var(--token-accent)]" animate={{ scaleX: index < activeIndex ? 1 : index === activeIndex ? 0.72 : 0 }} /></div>
+                      <span className={`mt-1 block truncate ${index === activeIndex ? 'text-[color:var(--token-on-dark-body)]' : 'text-[color:color-mix(in_srgb,var(--token-on-dark-muted)_50%,transparent)]'}`}>{chapter.kicker || chapter.title}</span>
                     </div>
                   </div>
                 ))}
