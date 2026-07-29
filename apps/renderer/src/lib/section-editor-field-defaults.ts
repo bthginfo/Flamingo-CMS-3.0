@@ -418,8 +418,13 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   },
   "editorialHero": {
     "badgeText": "",
+    "hideImageOnMobile": "",
     "image": "",
-    "subline": ""
+    "imageFit": "",
+    "layout": "",
+    "mobileImageMode": "",
+    "subline": "",
+    "variant": ""
   },
   "zigzagShowcase": {
     "startRight": ""
@@ -546,9 +551,15 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "subline": ""
   },
   "collectionList": {
+    "itemsPerPage": [],
+    "pageSize": "",
+    "paginate": "",
+    "pagination": "",
+    "searchPlaceholder": "",
     "showDate": false,
     "showExcerpt": false,
     "showImage": "",
+    "showSearch": false,
     "sortBy": ""
   },
   "instagramFeed": {
