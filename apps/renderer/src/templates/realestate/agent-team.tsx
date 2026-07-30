@@ -42,7 +42,7 @@ export function AgentTeamSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1 }}
               className="bg-[var(--token-card-bg)] rounded-xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-lg transition-shadow"
-             data-edit-collection="agents" data-edit-index={i}>
+             data-edit-collection="agents" data-edit-index={i} data-card>
               <div className="relative aspect-[4/5] overflow-hidden">
                 <Image data-edit-image="image" src={agent.image} alt={agent.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
               </div>

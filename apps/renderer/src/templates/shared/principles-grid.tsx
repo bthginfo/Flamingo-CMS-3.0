@@ -36,7 +36,7 @@ export function PrinciplesGridSection({ data }: Props) {
               viewport={{ once: true, margin: '-80px' }}
               transition={{ delay: index * 0.05 }}
               className="min-h-[280px] rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-8 py-10"
-             data-edit-collection="principles" data-edit-index={index}>
+             data-edit-collection="principles" data-edit-index={index} data-card>
               <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-card-badge-bg)] text-sm font-black text-[color:var(--token-card-badge-text)]">
                 {String(index + 1).padStart(2, '0')}
               </div>

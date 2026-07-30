@@ -26,6 +26,7 @@ function ActionItems({ actions }: { actions: MobileAction[] }) {
           href={action.href}
           data-edit-collection="actions"
           data-edit-index={index}
+          data-card-scope="control"
           data-edit-link="href"
           data-event="mobile-action"
           data-action={action.kind}

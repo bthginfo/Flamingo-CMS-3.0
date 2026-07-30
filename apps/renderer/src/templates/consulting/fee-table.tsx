@@ -34,7 +34,7 @@ export function FeeTableSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
             className={`relative p-8 rounded-xl border ${fee.highlighted ? 'border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-badge-bg)_40%,transparent)] ring-1 ring-brand-primary/20' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'} text-center`}
-           data-edit-collection="fees" data-edit-index={i}>
+           data-edit-collection="fees" data-edit-index={i} data-card>
             {fee.highlighted && <BorderBeam />}
             {fee.highlighted && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>

@@ -12,6 +12,7 @@ import { getStyleCssVars } from '@/lib/styles';
 import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
 import type { BrandData } from '@/lib/tenant-data';
 import { ImageUploadField } from '@/components/image-upload-field';
+import { buildCssVarPatch } from '@/components/admin/preview-live-data';
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -94,6 +95,7 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
 
   // Send live CSS vars to preview whenever brand colors change
   const preview = usePreview();
+  const previousCssVars = useRef<Record<string, string>>({});
   useEffect(() => {
     if (!mounted.current) return;
     const styleVars = getStyleCssVars(industry, activeStyle);
@@ -102,14 +104,15 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
       ...getBrandCssVars(form, styleVars),
       ...getTenantFontCssVars(form),
     };
-    if (Object.keys(cssVars).length > 0) {
-      preview.sendLiveData({
-        brand: form,
-        cssVars,
-        fontsUrl: fontAssets.googleFontsUrl,
-        fontFaceCss: fontAssets.fontFaceCss,
-      });
-    }
+    preview.sendLiveData({
+      brand: form,
+      cssVarLayers: {
+        brand: buildCssVarPatch(previousCssVars.current, cssVars),
+      },
+      fontsUrl: fontAssets.googleFontsUrl,
+      fontFaceCss: fontAssets.fontFaceCss,
+    });
+    previousCssVars.current = cssVars;
   }, [activeStyle, formJson, industry, preview]);
 
   // Load Google Fonts for preview

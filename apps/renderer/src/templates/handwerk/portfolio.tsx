@@ -84,7 +84,7 @@ export function PortfolioSection({ data }: Props) {
                 {project.stats && project.stats.length > 0 && (
                   <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-section-bg-alt,#f8fafc)] p-4" data-color-slot="sectionBgAlt borderColor" style={{ background: 'var(--token-section-bg-alt,#f8fafc)', borderColor: 'var(--token-card-border)' }}>
                     {project.stats.map((stat, j) => (
-                      <div key={j} className="min-w-0 rounded-xl bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,transparent)] px-4 py-3" data-color-slot="cardBg" data-edit-collection="stats" data-edit-index={j}>
+                      <div key={j} className="min-w-0 rounded-xl bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,transparent)] px-4 py-3" data-color-slot="cardBg" data-card data-edit-collection="stats" data-edit-index={j}>
                         <div className="text-lg font-extrabold leading-none text-[color:var(--token-heading)]" data-color-slot="headingColor" data-edit-path="value">{stat.value}</div>
                         <div className="mt-1 text-xs font-medium leading-tight text-[color:var(--token-muted)]" data-color-slot="mutedColor" data-edit-path="label">{stat.label}</div>
                       </div>

@@ -33,7 +33,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       <div className="mb-6 flex flex-wrap gap-3 text-sm text-[color:var(--token-muted)]">{ratingValue && <span>{ratingValue}</span>}{ratingCount && <span>{ratingCount}</span>}</div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md" data-edit-collection="items" data-edit-index={i}>
+          <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md" data-card data-edit-collection="items" data-edit-index={i}>
             <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star className="text-[color:var(--token-rating-star)]" key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading)] rt-content" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>

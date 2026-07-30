@@ -109,6 +109,7 @@ export function MaterialAtelierSection({ data }: Props) {
                       className={`group grid min-h-[5.45rem] w-full grid-cols-[2.75rem_minmax(0,1fr)_2rem] items-center gap-4 rounded-[calc(var(--token-button-radius)*.82)] border px-5 py-5 text-left shadow-[0_14px_42px_rgba(0,0,0,.18)] transition focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${isActive ? 'border-[var(--token-accent)] bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow-[0_18px_54px_rgba(0,0,0,.28)]' : 'border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_92%,var(--token-section-bg-alt))] text-[color:var(--token-card-heading,var(--token-heading))] hover:-translate-y-0.5 hover:border-[var(--token-accent)] hover:bg-[color-mix(in_srgb,var(--token-btn-bg)_12%,var(--token-card-bg))]'}`}
                       data-edit-collection="items"
                       data-edit-index={index}
+                      data-card
                     >
                       <span className="font-mono text-[10px] tracking-[.14em] opacity-70">{String(index + 1).padStart(2, '0')}</span>
                       <span className="min-w-0">

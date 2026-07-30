@@ -39,6 +39,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
                 transition={{ delay: i * 0.08 }}
                 className="overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-lg"
                 data-edit-collection="venues" data-edit-index={i}
+                data-card
               >
                 {venue.image && (
                   <div className="relative aspect-[3/2]">
@@ -128,7 +129,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
             <h3 className="text-2xl font-semibold text-[color:var(--token-heading)] text-center mb-8">Unterkünfte</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {accommodations.map((a, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl overflow-hidden bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl border border-[color:var(--token-card-border)]" data-edit-collection="accommodations" data-edit-index={i}>
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl overflow-hidden bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl border border-[color:var(--token-card-border)]" data-card data-edit-collection="accommodations" data-edit-index={i}>
                   {a.image && <div className="relative h-40"><Image data-edit-image="image" src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>

@@ -55,7 +55,7 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
       {values.length > 0 && (
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((v, i) => (
-            <motion.div key={`${v.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="values" data-edit-index={i}>
+            <motion.div key={`${v.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-card data-edit-collection="values" data-edit-index={i}>
               <div className="shrink-0 rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] p-2.5 text-[color:var(--token-badge-text)]"><DynamicIcon editPath="icon" name={v.icon || 'heart'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>

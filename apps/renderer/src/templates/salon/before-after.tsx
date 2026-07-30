@@ -29,7 +29,7 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {items.map((item, i) => (
-          <motion.article key={`${item.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="items" data-edit-index={i}>
+          <motion.article key={`${item.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-card data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-2">
               {item.beforeImage && <div className="relative aspect-square"><Image data-edit-image="beforeImage" src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image data-edit-image="afterImage" src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}

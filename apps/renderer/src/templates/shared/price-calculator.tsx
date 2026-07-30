@@ -90,7 +90,7 @@ export function PriceCalculatorSection({ data }: Props) {
           {options.map((opt, i) => {
             const type = opt.type || (opt.choices?.length ? 'select' : 'toggle');
             return (
-              <motion.div key={`${opt.label}-${i}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 md:p-6" data-edit-collection="options" data-edit-index={i}>
+              <motion.div key={`${opt.label}-${i}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 md:p-6" data-card data-edit-collection="options" data-edit-index={i}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
                     <h3 className="font-semibold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{opt.label}</h3>

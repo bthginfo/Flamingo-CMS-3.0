@@ -22,7 +22,7 @@ function Classic({ header, items }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="items" data-edit-index={index}>
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-card data-edit-collection="items" data-edit-index={index}>
             <Download size={22} className="text-[color:var(--token-icon)]" />
             {item.metaLabel && <p className="mt-4 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>

@@ -54,7 +54,7 @@ export function IndustryStorySection({ data, defaults }: { data: Record<string, 
       {values.length > 0 && (
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((v, i) => (
-            <motion.div key={`${v.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="values" data-edit-index={i}>
+            <motion.div key={`${v.title || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-card data-edit-collection="values" data-edit-index={i}>
               <div className="shrink-0 text-[color:var(--token-eyebrow)]"><DynamicIcon editPath="icon" name={v.icon || iconFallback} size={20} /></div>
               <div><h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
@@ -112,7 +112,7 @@ export function IndustryTestimonialsSection({ data, defaults }: { data: Record<s
       {(ratingValue || ratingCount) && <p className="mb-6 text-sm text-[color:var(--token-muted)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="items" data-edit-index={i}>
+          <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-card data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow)]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>}
             <div className="mt-4 border-t border-[var(--token-card-border)] pt-3">

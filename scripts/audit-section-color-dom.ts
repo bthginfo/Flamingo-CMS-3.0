@@ -615,6 +615,14 @@ async function auditTarget(page: any, baseUrl: string, job: AuditJob): Promise<F
   await disableMotionForAudit(page);
   await waitForSectionRoot(page, sectionType);
   await waitForStableColorTargets(page, sectionType);
+  // Apply the baseline once more after hydration. The preview route also
+  // receives these values through the URL, but client hydration may briefly
+  // replace inherited colors before the section-level overrides settle.
+  // Reapplying here makes the baseline and every field probe comparable.
+  await applyStyleOverrides(page, sectionType, baselineOverrides);
+  await page.evaluate(() => new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  }));
   const baseline: FieldAuditBaseline = {
     targets: await readTargets(page, sectionType),
     overrides: baselineOverrides,

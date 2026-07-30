@@ -7,6 +7,7 @@ import type { SnapshotSection } from './snapshot';
 import {
   escapeCssAttributeValue,
   escapeStyleElementText,
+  normalizeStyleOverrides,
   normalizeStyleOverridesForSection,
   normalizeStyleOverridesForSectionWithIssues,
 } from './section-style-overrides';
@@ -64,6 +65,21 @@ test('known legacy aliases remain renderable but are rewritten to canonical toke
     '--token-section-bg': '#101820',
     '--token-heading': '#ffffff',
     '--token-body': 'rgba(255, 255, 255, 0.85)',
+  });
+});
+
+test('canonical public color values win over internal aliases independent of JSON order', () => {
+  assert.deepEqual(normalizeStyleOverrides({
+    '--token-heading': '#102030',
+    '--token-on-dark-heading': '#ffffff',
+  }), {
+    '--token-heading': '#102030',
+  });
+  assert.deepEqual(normalizeStyleOverrides({
+    '--token-on-dark-heading': '#ffffff',
+    '--token-heading': '#102030',
+  }), {
+    '--token-heading': '#102030',
   });
 });
 
@@ -142,4 +158,35 @@ test('renderer CSS-escapes an untrusted section id before writing a style elemen
   assert.doesNotMatch(html, /<script/i);
   assert.doesNotMatch(styleText, /<\/style|<script/i);
   assert.match(styleText, /\\3c /);
+});
+
+test('structural edit collections do not opt into card color roles', () => {
+  (globalThis as typeof globalThis & { React: typeof React }).React = React;
+  const section: SnapshotSection = {
+    id: 'semantic-colors',
+    type: 'faq',
+    variant: null,
+    visible: true,
+    container: 'default',
+    spacingTop: 'm',
+    spacingBottom: 'm',
+    anchorId: null,
+    data: { items: [{ question: 'Frage', answer: 'Antwort' }] },
+    styleOverrides: {
+      headingColor: '#102030',
+      bodyColor: '#304050',
+      cardHeadingColor: '#f1f5f9',
+      cardBodyColor: '#e2e8f0',
+    },
+  };
+
+  const html = renderToStaticMarkup(React.createElement(SectionRenderer, {
+    section,
+    industry: 'hotel',
+  }));
+  const styleText = Array.from(html.matchAll(/<style>([\s\S]*?)<\/style>/g), (match) => match[1]).join('\n');
+
+  assert.match(styleText, /\[data-card\] :is\(h1,h2,h3,h4,h5,h6\)/);
+  assert.doesNotMatch(styleText, /\[data-edit-collection\] :is\(h1,h2,h3,h4,h5,h6\)/);
+  assert.doesNotMatch(styleText, /\[data-edit-collection\],/);
 });

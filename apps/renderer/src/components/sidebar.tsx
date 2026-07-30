@@ -49,10 +49,9 @@ export function Sidebar({ tenantId, industry, inboxUnread = 0 }: { tenantId: str
   const preview = usePreview();
   const [open, setOpen] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('sidebar-collapsed') === '1';
-  });
+  // Keep the server and the first client render identical. Persisted UI state
+  // is applied only after hydration to avoid React #418 in every admin page.
+  const [collapsed, setCollapsed] = useState(false);
   const filteredNav = NAV.filter(item => {
     if (isDemo && item.href === '/admin/ai-api') return false;
     return !item.industry || item.industry === industry;
@@ -63,6 +62,10 @@ export function Sidebar({ tenantId, industry, inboxUnread = 0 }: { tenantId: str
   useEffect(() => {
     setIsDemo(document.cookie.split(';').some((cookie) => cookie.trim() === `flamingo_public_demo=${tenantId}`));
   }, [tenantId]);
+
+  useEffect(() => {
+    setCollapsed(localStorage.getItem('sidebar-collapsed') === '1');
+  }, []);
 
   function toggleCollapse() {
     const next = !collapsed;

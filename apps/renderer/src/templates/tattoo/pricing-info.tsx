@@ -24,7 +24,7 @@ export function PricingInfoSection({ data }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-              className="bg-[color-mix(in_srgb,var(--token-card-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] rounded-lg p-6 text-center" data-edit-collection="items" data-edit-index={i}>
+              className="bg-[color-mix(in_srgb,var(--token-card-bg)_5%,transparent)] border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] rounded-lg p-6 text-center" data-card data-edit-collection="items" data-edit-index={i}>
               <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] text-sm uppercase tracking-wider" data-edit-path="label">{item.label}</p>
               <p className="text-3xl font-bold text-[color:var(--token-on-dark-heading)] mt-2" data-edit-path="value">{item.value}</p>
               {item.note && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_30%,transparent)] text-xs mt-2" data-edit-path="note">{item.note}</p>}

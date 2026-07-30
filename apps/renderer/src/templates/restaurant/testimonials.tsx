@@ -38,7 +38,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
+          <motion.article key={`${item.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-6 shadow-md" data-card data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow)]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]"><span className="text-[color:var(--token-quote)]">&ldquo;</span><span data-edit-path="quote">{plain(item.quote)}</span><span className="text-[color:var(--token-quote)]">&rdquo;</span></p>}
             <div className="mt-4 border-t border-black/10 pt-4">

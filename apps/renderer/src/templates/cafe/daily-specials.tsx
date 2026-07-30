@@ -34,7 +34,7 @@ export function DailySpecialsSection({ data }: Props) {
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.1 }}
               className="flex items-start gap-4 bg-[var(--token-card-bg)] rounded-lg p-5 border border-[var(--token-card-border)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl"
-             data-edit-collection="specials" data-edit-index={i}>
+             data-edit-collection="specials" data-edit-index={i} data-card>
               {item.day && (
                 <span className="whitespace-nowrap rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-badge-bg)] px-2.5 py-1 text-xs font-bold uppercase text-[var(--token-card-badge-text)]">{item.day}</span>
               )}

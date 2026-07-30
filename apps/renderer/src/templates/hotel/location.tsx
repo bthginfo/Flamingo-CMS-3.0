@@ -79,7 +79,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, phone, ema
         )}
         <div className="grid gap-4 sm:grid-cols-2">
           {nearbyItems.map((item, index) => (
-            <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-4 shadow-md" data-edit-collection="nearbyItems" data-edit-index={index}>
+            <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-4 shadow-md" data-card data-edit-collection="nearbyItems" data-edit-index={index}>
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.distanceLabel && <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="distanceLabel">{item.distanceLabel}</p>}

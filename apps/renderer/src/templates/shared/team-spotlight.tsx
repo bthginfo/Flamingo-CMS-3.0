@@ -40,6 +40,7 @@ export function TeamSpotlightSection({ data }: Props) {
             transition={{ delay: i * 0.07, duration: 0.45 }}
             className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--token-card-bg)] shadow-md"
             data-edit-collection="members" data-edit-index={i}
+            data-card
           >
             {m.image ? (
               <img data-edit-image="image" src={m.image} alt={m.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />

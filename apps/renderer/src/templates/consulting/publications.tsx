@@ -34,7 +34,7 @@ export function PublicationsSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
             className="group border border-[color:var(--token-card-border)] rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-[var(--token-card-bg)]"
-           data-edit-collection="articles" data-edit-index={i}>
+           data-edit-collection="articles" data-edit-index={i} data-card>
             {article.image && (
               <div className="aspect-[16/9] overflow-hidden bg-[var(--token-section-bg-alt)]">
                 <img data-edit-image="image" src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

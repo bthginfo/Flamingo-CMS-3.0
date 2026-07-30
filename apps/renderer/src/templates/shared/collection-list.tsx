@@ -164,6 +164,7 @@ export function CollectionListSection({ data }: Props) {
                 className="group block overflow-hidden rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-shadow hover:shadow-md"
                 data-edit-collection="items"
                 data-edit-index={editIndex}
+                data-card
               >
                 {showImage && item.image && (
                   <div className="aspect-[16/10] overflow-hidden">

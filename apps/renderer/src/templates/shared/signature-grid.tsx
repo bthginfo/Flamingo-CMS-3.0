@@ -32,7 +32,7 @@ export function SignatureGridSection({ data }: Props) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {traits.map((trait, index) => (
-          <motion.article key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="traits" data-edit-index={index}>
+          <motion.article key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-card data-edit-collection="traits" data-edit-index={index}>
             {trait.icon && <DynamicIcon editPath="icon" name={trait.icon} size={28} className="mb-6 text-[color:var(--token-icon)]" />}
             <h3 className="text-xl font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{trait.title}</h3>
             {trait.text && <p className="mt-3 text-sm leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(trait.text)}</p>}

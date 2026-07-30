@@ -43,7 +43,7 @@ export function PropertyShowcaseSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1 }}
               className="group overflow-hidden rounded-3xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_18px_50px_color-mix(in_srgb,var(--token-shadow)_8%,transparent)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_color-mix(in_srgb,var(--token-shadow)_13%,transparent)]"
-             data-edit-collection="properties" data-edit-index={i}>
+             data-edit-collection="properties" data-edit-index={i} data-card>
               <div className="relative aspect-[4/3] overflow-hidden">
                 <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--token-card-bg,#fff)_84%,var(--token-section-bg-alt,#f8fafc)),color-mix(in_srgb,var(--token-accent)_12%,var(--token-card-bg,#fff)))]" />
                 {property.image && (

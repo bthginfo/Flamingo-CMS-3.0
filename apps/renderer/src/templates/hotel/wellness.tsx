@@ -51,7 +51,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
       {features.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {features.map((feature, index) => (
-            <motion.div key={`${feature.title}-${index}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="features" data-edit-index={index}>
+            <motion.div key={`${feature.title}-${index}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-card data-edit-collection="features" data-edit-index={index}>
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,transparent)] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={feature.icon || 'heart'} size={20} /></div>
               <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{feature.title || ''}</h3>
               {feature.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: feature.text }} />}
@@ -62,7 +62,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
       {treatments.length > 0 && (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {treatments.map((treatment, index) => (
-          <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md" data-edit-collection="treatments" data-edit-index={index}>
+          <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md" data-card data-edit-collection="treatments" data-edit-index={index}>
             {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-xl"><Image data-edit-image="image" src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm text-[color:var(--token-price)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: treatment.text }} />}

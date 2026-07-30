@@ -123,6 +123,7 @@ function normalizeStyleOverridesInternal(
     ? new Set(getFieldsForSection(sectionType, industry, definitionKey).map(canonicalColorField))
     : null;
   const normalized: Record<string, string> = {};
+  const inputPriority: Partial<Record<ColorFieldKey, number>> = {};
 
   for (const [key, value] of Object.entries(styleOverrides)) {
     const field = fieldForInputKey(key);
@@ -173,7 +174,16 @@ function normalizeStyleOverridesInternal(
       continue;
     }
 
-    normalized[FIELD_DEFS[field].cssVar] = trimmed;
+    // Canonical public inputs always win over legacy/internal aliases,
+    // regardless of JSON property order. Otherwise an old
+    // --token-on-dark-heading value could silently replace the editor's
+    // --token-heading value during normalization.
+    const canonicalCssVar = FIELD_DEFS[field].cssVar;
+    const priority = key === field || key === canonicalCssVar ? 2 : 1;
+    if ((inputPriority[field] ?? 0) <= priority) {
+      normalized[canonicalCssVar] = trimmed;
+      inputPriority[field] = priority;
+    }
   }
 
   return { styleOverrides: Object.keys(normalized).length ? normalized : null, issues };

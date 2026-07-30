@@ -31,7 +31,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         {members.map((m, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="group relative bg-[var(--token-card-bg)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[color:var(--token-card-border)]" data-edit-collection="members" data-edit-index={i}>
+            className="group relative bg-[var(--token-card-bg)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[color:var(--token-card-border)]" data-card data-edit-collection="members" data-edit-index={i}>
             <div className="relative aspect-[3/4] overflow-hidden">
               {m.image ? (
                 <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />

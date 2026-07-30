@@ -22,7 +22,7 @@ function Classic({ header, members }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-6 md:grid-cols-3">
         {members.map((item, index) => (
-          <article key={`${item.name}-${index}`} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="members" data-edit-index={index}>
+          <article key={`${item.name}-${index}`} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-card data-edit-collection="members" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.role && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-success)]" data-edit-path="role">{item.role}</p>}

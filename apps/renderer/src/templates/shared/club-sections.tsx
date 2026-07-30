@@ -102,7 +102,7 @@ export function MatchScheduleSection({ data }: Props) {
         </div>
         <div className="overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm">
           {matches.map((m, i) => (
-            <div key={i} className="grid grid-cols-[3.25rem_1fr_auto] items-center gap-3 border-b border-[var(--token-card-border)] px-4 py-4 transition-colors last:border-b-0 hover:bg-[var(--token-section-bg-alt)] sm:grid-cols-[5.5rem_1fr_5.5rem] sm:px-5" data-edit-collection="matches" data-edit-index={i}>
+            <div key={i} className="grid grid-cols-[3.25rem_1fr_auto] items-center gap-3 border-b border-[var(--token-card-border)] px-4 py-4 transition-colors last:border-b-0 hover:bg-[var(--token-section-bg-alt)] sm:grid-cols-[5.5rem_1fr_5.5rem] sm:px-5" data-card data-edit-collection="matches" data-edit-index={i}>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-sm font-bold text-[color:var(--token-heading)]"><CalendarDays size={13} className="shrink-0 text-[color:var(--token-icon)]" /><span data-edit-path="dateLabel">{m.dateLabel || ''}</span></div>
                 {m.competition && <div className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-wide text-[color:var(--token-muted)]" data-edit-path="competition">{m.competition}</div>}
@@ -152,7 +152,7 @@ export function LeagueTableSection({ data }: Props) {
             </thead>
             <tbody>
               {rows.map((r, i) => (
-                <tr key={i} className={`border-b border-[var(--token-card-border)] last:border-b-0 ${r.highlight ? 'bg-[var(--token-accent)]/10' : ''}`} data-edit-collection="rows" data-edit-index={i}>
+                <tr key={i} className={`border-b border-[var(--token-card-border)] last:border-b-0 ${r.highlight ? 'bg-[var(--token-accent)]/10' : ''}`} data-card data-edit-collection="rows" data-edit-index={i}>
                   <td className="px-4 py-3 font-bold text-[color:var(--token-heading)]">{r.rank || i + 1}</td>
                   <td className="px-4 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="team">{r.team || ''}</td>
                   {cols.map(([key, label]) => <td key={label} className={`px-3 py-3 text-center ${key === 'points' ? 'font-bold text-[color:var(--token-heading)]' : 'text-[color:var(--token-body)]'}`}>{str(r[key])}</td>)}
@@ -184,7 +184,7 @@ export function TeamRosterSection({ data }: Props) {
         </div>
         <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {players.map((p, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i % 5) * 0.05 }} className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 hover:shadow-xl" data-edit-collection="players" data-edit-index={i}>
+            <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i % 5) * 0.05 }} className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 hover:shadow-xl" data-card data-edit-collection="players" data-edit-index={i}>
               <div className="relative aspect-[3/4] overflow-hidden bg-[var(--token-section-bg-alt)]">
                 {p.image
                   ? <img data-edit-image="image" src={p.image} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />

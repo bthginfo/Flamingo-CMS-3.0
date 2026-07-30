@@ -31,7 +31,7 @@ function PriceClassic({ headline, subline, badgeText, categories, footnote, ctaP
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <motion.article key={`${cat.title || 'item'}-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="categories" data-edit-index={ci}>
+          <motion.article key={`${cat.title || 'item'}-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-6 shadow-md" data-card data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y divide-[color-mix(in_srgb,var(--token-icon)_20%,transparent)]">

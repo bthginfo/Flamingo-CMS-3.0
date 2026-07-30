@@ -23,7 +23,7 @@ function Classic({ header, seasons }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {seasons.map((season, index) => (
-          <motion.article key={`${season.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="seasons" data-edit-index={index}>
+          <motion.article key={`${season.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-card data-edit-collection="seasons" data-edit-index={index}>
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-success)]">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>

@@ -38,7 +38,7 @@ function Classic({ badge, headline, story, image, milestones }: P) {
             {milestones.length > 0 && (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {milestones.map((m, i) => (
-                  <motion.article key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="milestones" data-edit-index={i}>
+                  <motion.article key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-card data-edit-collection="milestones" data-edit-index={i}>
                     {m.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={m.image} alt={m.title || headline} fill className="object-cover" /></div>}
                     <div className="p-5">
                       <span className="text-xs font-semibold uppercase tracking-wider text-[color:var(--token-icon)]" data-edit-path={m.year ? 'year' : 'date'}>{m.year || m.date}</span>

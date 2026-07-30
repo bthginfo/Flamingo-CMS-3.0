@@ -40,7 +40,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <motion.article key={`${space.name || 'item'}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
+          <motion.article key={`${space.name || 'item'}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-card data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>

@@ -27,7 +27,7 @@ function Classic({ header, introText, cards }: Props) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {cards.map((card, index) => (
-          <article key={`${card.title}-${index}`} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl" data-edit-collection="cards" data-edit-index={index}>
+          <article key={`${card.title}-${index}`} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl" data-card data-edit-collection="cards" data-edit-index={index}>
             <div className="flex items-start gap-4">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--token-icon)_13%,transparent)] text-[color:var(--token-icon)]">
                 <DynamicIcon editPath="icon" name={card.icon || 'stethoscope'} size={20} />

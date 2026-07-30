@@ -7,6 +7,14 @@ import { SiteFooter } from '@/components/site-footer';
 import { EditOverlays } from './edit-overlays';
 import type { SnapshotSection, SnapshotCollection } from '@/lib/snapshot';
 import type { ContactFormFieldDefinition } from '@/lib/contact-form';
+import {
+  applyCssVarLayerPatches,
+  applyCssVarPatch,
+  composeCssVarLayers,
+  type CssVarLayerPatches,
+  type CssVarLayers,
+  type CssVarPatch,
+} from '@/components/admin/preview-live-data';
 
 interface InitialData {
   industry?: string;
@@ -31,6 +39,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [industry, setIndustry] = useState(initialData.industry || 'tradesman');
   const [styleVariant, setStyleVariant] = useState(initialData.styleVariant || 'classic');
   const [cssVars, setCssVars] = useState<Record<string, string>>(initialData.cssVars || {});
+  const [cssVarLayers, setCssVarLayers] = useState<CssVarLayers>({});
   const [navItems, setNavItems] = useState(initialData.navItems || []);
   const [navCta, setNavCta] = useState(initialData.navCta || undefined);
   const [navTopBar, setNavTopBar] = useState(initialData.navTopBar || undefined);
@@ -58,7 +67,10 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.sections) setSections(p.sections);
       if (p.industry) setIndustry(p.industry);
       if (p.styleVariant) setStyleVariant(p.styleVariant);
-      if (p.cssVars) setCssVars(prev => ({ ...prev, ...p.cssVars }));
+      if (p.cssVars) setCssVars(prev => applyCssVarPatch(prev, p.cssVars as CssVarPatch));
+      if (p.cssVarLayers) {
+        setCssVarLayers(prev => applyCssVarLayerPatches(prev, p.cssVarLayers as CssVarLayerPatches));
+      }
       if (p.navItems) setNavItems(p.navItems);
       if (p.navCta !== undefined) setNavCta(p.navCta || undefined);
       if (p.navTopBar !== undefined) setNavTopBar(p.navTopBar || undefined);
@@ -273,13 +285,14 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
 
   const visibleSections = sections.filter(s => s.visible !== false);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
+  const resolvedCssVars = composeCssVarLayers(cssVars, cssVarLayers);
 
   return (
     <div
       data-style={styleVariant}
       style={{
-        ...cssVars,
-        ...(cssVars['--custom-body-font'] ? { fontFamily: 'var(--custom-body-font)' } : {}),
+        ...resolvedCssVars,
+        ...(resolvedCssVars['--custom-body-font'] ? { fontFamily: 'var(--custom-body-font)' } : {}),
       } as React.CSSProperties}
     >
       {fontsUrl && <link rel="stylesheet" href={fontsUrl} />}

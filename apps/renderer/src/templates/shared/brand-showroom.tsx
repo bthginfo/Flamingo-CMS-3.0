@@ -46,7 +46,7 @@ export function BrandShowroomSection({ data }: Props) {
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
                   className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] backdrop-blur-sm border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] rounded-lg p-4"
-                 data-edit-collection="highlights" data-edit-index={i}>
+                 data-edit-collection="highlights" data-edit-index={i} data-card>
                   <h4 className="font-semibold text-[color:var(--token-on-dark-heading)] text-sm" data-edit-path="title">{h.title}</h4>
                   <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-xs mt-1" data-edit-path="text">{plain(h.text)}</p>
                 </motion.div>

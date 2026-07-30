@@ -82,7 +82,30 @@ const BG_TO_TEXT_VAR: Record<string, { textVar: string; overrideKey: string }> =
   bgSubtle: { textVar: '--style-text-on-subtle', overrideKey: 'textOnBgSubtle' },
 };
 
-export function getDesignCssVars(design: Record<string, string>): Record<string, string> {
+export const EDITABLE_BACKGROUND_DESIGN_KEYS = [
+  'sectionBg',
+  'sectionBgAlt',
+  'cardBg',
+  'bgSubtle',
+  'textOnSectionBg',
+  'textOnSectionBgAlt',
+  'textOnCardBg',
+  'textOnBgSubtle',
+] as const;
+
+export function normalizeDesignStringRecord(value: unknown): Record<string, string> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const normalized: Record<string, string> = {};
+  for (const [key, raw] of Object.entries(value)) {
+    if (typeof raw !== 'string') continue;
+    const trimmed = raw.trim();
+    if (trimmed) normalized[key] = trimmed;
+  }
+  return normalized;
+}
+
+export function getDesignCssVars(designValue: Record<string, unknown>): Record<string, string> {
+  const design = normalizeDesignStringRecord(designValue);
   const vars: Record<string, string> = {};
 
   // 1. Map design keys to CSS variables

@@ -480,7 +480,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
           <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
             {['Datum wählen', 'Slots prüfen', config?.mode === 'instant' ? 'Direkt buchen' : 'Anfrage senden'].map((item, index) => (
-              <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--token-card-border)', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 8%, transparent)', color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-edit-collection="senden" data-edit-index={index}>
+              <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--token-card-border)', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 8%, transparent)', color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-card data-edit-collection="senden" data-edit-index={index}>
                 <span className="mb-2 grid h-7 w-7 place-items-center rounded-full text-xs font-black" style={{ background: 'var(--token-card-badge-bg)', color: 'var(--token-card-badge-text)' }}>{index + 1}</span>
                 {item}
               </div>
@@ -817,7 +817,7 @@ export function ResourceBookingShowcaseSection({ data }: SectionProps) {
     <BookingShell data={data} icon={<MapPin size={18} />} defaultBadge="Ressourcen" defaultHeadline="Räume, Tische oder Teams direkt anfragen">
       <div className="grid gap-3">
         {['Ressource wählen', 'Zeitraum prüfen', 'Anfrage senden'].map((label, index) => (
-          <div key={label} className="flex items-center gap-3 rounded-2xl border p-4" style={{ borderColor: 'var(--token-card-border)', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 10%, transparent)' }} data-edit-collection="senden" data-edit-index={index}>
+          <div key={label} className="flex items-center gap-3 rounded-2xl border p-4" style={{ borderColor: 'var(--token-card-border)', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 10%, transparent)' }} data-card data-edit-collection="senden" data-edit-index={index}>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-black" style={{ background: 'var(--token-card-badge-bg)', color: 'var(--token-card-badge-text)' }}>{index + 1}</span>
             <p className="font-semibold" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} data-edit-path="label">{label}</p>
           </div>

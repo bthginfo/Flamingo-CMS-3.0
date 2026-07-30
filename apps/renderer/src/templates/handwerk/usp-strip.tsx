@@ -49,7 +49,7 @@ export function UspStripSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
               className="group rounded-2xl border border-[var(--token-card-border)] p-8 text-center transition-all duration-500 hover:-translate-y-0.5 hover:border-[var(--token-accent)] lg:p-10"
-             data-edit-collection="items" data-edit-index={i}>
+             data-edit-collection="items" data-edit-index={i} data-card>
               {item.icon && (
                 <div className="flex items-center justify-center text-4xl mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1">
                   <DynamicIcon editPath="icon" name={item.icon} size={32} className="text-[color:var(--token-icon)]" />

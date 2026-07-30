@@ -21,7 +21,7 @@ function Classic({ header, items }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="items" data-edit-index={index}>
+          <article key={`${item.title}-${index}`} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-card data-edit-collection="items" data-edit-index={index}>
             {item.metaLabel && <p className="mb-3 text-xs font-bold uppercase tracking-widest text-[var(--token-success)]">{item.metaLabel}</p>}
             <IconRows items={[item]} />
           </article>

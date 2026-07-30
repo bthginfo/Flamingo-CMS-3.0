@@ -335,6 +335,7 @@ function ChoiceGrid({
             onClick={() => onSelect(option.label)}
             data-edit-collection={editable ? collection : undefined}
             data-edit-index={editable ? index : undefined}
+            data-card
             className={`group relative flex min-h-16 w-full items-start gap-3 rounded-[var(--token-card-radius)] border p-4 text-left outline-none transition-[border-color,background-color,box-shadow,transform] duration-200 motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-[var(--token-btn-bg)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--token-section-bg)] ${active
               ? 'border-[color:color-mix(in_srgb,var(--token-btn-bg)_56%,var(--token-card-border))] bg-[color:color-mix(in_srgb,var(--token-btn-bg)_8%,var(--token-card-bg))] shadow-[0_10px_30px_var(--token-shadow)]'
               : 'border-[var(--token-card-border)] bg-[var(--token-card-bg)] hover:border-[color:color-mix(in_srgb,var(--token-btn-bg)_34%,var(--token-card-border))]'}`}

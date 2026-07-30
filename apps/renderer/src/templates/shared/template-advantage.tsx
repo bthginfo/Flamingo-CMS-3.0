@@ -30,7 +30,7 @@ export function TemplateAdvantageSection({ data }: Props) {
             {bullets.length > 0 && (
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {bullets.map((item, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm font-semibold text-[color:var(--token-card-body,var(--token-body))]" data-edit-collection="bullets" data-edit-index={index}>
+                  <div key={index} className="flex items-center gap-2 text-sm font-semibold text-[color:var(--token-card-body,var(--token-body))]" data-card data-edit-collection="bullets" data-edit-index={index}>
                     <CheckCircle2 size={18} className="text-[color:var(--token-check)]" />
                     {item}
                   </div>
@@ -50,7 +50,7 @@ export function TemplateAdvantageSection({ data }: Props) {
               viewport={{ once: true, margin: '-80px' }}
               transition={{ delay: index * 0.06 }}
               className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_rgba(20,17,26,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_90px_rgba(20,17,26,0.13)]"
-             data-edit-collection="cards" data-edit-index={index}>
+             data-edit-collection="cards" data-edit-index={index} data-card>
               <div className="relative aspect-[16/11] overflow-hidden bg-[color:color-mix(in_srgb,var(--token-card-border)_35%,var(--token-card-bg,#fff))]">
                 {card.image && <img data-edit-image="image" src={card.image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />}
                 {card.image && <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />}

@@ -59,6 +59,7 @@ export function JobListingsSection({ data }: Props) {
                 transition={{ delay: i * 0.06 }}
                 className="group flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl md:p-7"
                 data-edit-collection="jobs" data-edit-index={i}
+                data-card
               >
                 <div className="min-w-0 flex-1">
                   <h3 className="text-lg font-bold text-[color:var(--token-card-heading,var(--token-heading))] md:text-xl" data-edit-path="title">{job.title}</h3>

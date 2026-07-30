@@ -82,6 +82,7 @@ export function MenuCardSection({ data }: Props) {
               }`}
               data-edit-collection="categories"
               data-edit-index={idx}
+              data-card-scope="control"
             >
               <span data-edit-path="label">{cat.label}</span>
             </button>
@@ -110,6 +111,7 @@ export function MenuCardSection({ data }: Props) {
               className="relative flex gap-4 rounded-xl border border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg,#fff)] p-4 shadow-sm transition-shadow hover:shadow-md"
               data-edit-collection="items"
               data-edit-index={i}
+              data-card
             >
               {/* Optional Image */}
               {dish.image && (

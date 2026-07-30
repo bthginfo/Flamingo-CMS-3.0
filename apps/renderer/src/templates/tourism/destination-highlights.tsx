@@ -24,7 +24,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="items" data-edit-index={index}>
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-card data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.category && <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Leaf size={12} /><span data-edit-path="category">{item.category}</span></div>}

@@ -29,7 +29,7 @@ function TeamClassic({ headline, subline, badgeText, members }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
-          <motion.article key={`${m.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="members" data-edit-index={i}>
+          <motion.article key={`${m.name || 'item'}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-card data-edit-collection="members" data-edit-index={i}>
             {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={m.image} alt={m.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {m.role && <span className="inline-block rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-badge-text)]" data-edit-path="role">{m.role}</span>}

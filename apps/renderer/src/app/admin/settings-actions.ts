@@ -260,11 +260,13 @@ export async function saveActiveStyle(_style: string) {
 
 // ─── Design (Background & Text Colors) ───────────────────────────────
 
-export async function getDesignSettings(): Promise<Record<string, string>> {
+export async function getDesignSettings(): Promise<Record<string, unknown>> {
   const tenantId = await requireTenant();
   const db = getDb();
   const [row] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  return (row?.design as Record<string, string>) || {};
+  return row?.design && typeof row.design === 'object' && !Array.isArray(row.design)
+    ? row.design as Record<string, unknown>
+    : {};
 }
 
 export async function saveDesignSettings(data: Record<string, string>) {
@@ -276,7 +278,10 @@ export async function saveDesignSettings(data: Record<string, string>) {
       .onConflictDoUpdate({
         target: globalSettings.tenantId,
         set: {
-          design: sql`excluded.design`,
+          // BackgroundForm owns only these keys. Clear its previous values
+          // (including reset fields), then merge the submitted patch while
+          // preserving unrelated/forward-compatible design metadata.
+          design: sql`(coalesce(${globalSettings.design}, '{}'::jsonb) - ARRAY['sectionBg','sectionBgAlt','cardBg','bgSubtle','textOnSectionBg','textOnSectionBgAlt','textOnCardBg','textOnBgSubtle']::text[]) || excluded.design`,
           updatedAt: new Date(),
         },
       });

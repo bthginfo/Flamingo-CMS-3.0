@@ -37,7 +37,7 @@ export function RealestateTestimonialsSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1 }}
               className="bg-[var(--token-card-bg)] p-6 rounded-xl border border-[color:var(--token-card-border)] shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl"
-             data-edit-collection="testimonials" data-edit-index={i}>
+             data-edit-collection="testimonials" data-edit-index={i} data-card>
               {t.stars && (
                 <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: t.stars }).map((_, j) => (

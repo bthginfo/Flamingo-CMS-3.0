@@ -37,7 +37,7 @@ export function ServiceTabsSection({ data }: Props) {
             className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300 ${i === active
               ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow-lg'
               : 'border border-[var(--token-card-border)] bg-[var(--token-card-bg)] text-[color:var(--token-muted)] hover:text-[color:var(--token-heading)] hover:shadow-md'}`}
-            data-edit-collection="tabs" data-edit-index={i}
+            data-edit-collection="tabs" data-edit-index={i} data-card-scope="control"
           >
             {t.icon && <DynamicIcon editPath="icon" name={t.icon} size={15} />}
             <span data-edit-path="label">{t.label}</span>

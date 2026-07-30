@@ -48,7 +48,7 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
         {subline && <div className="mt-4 text-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 grid gap-5">
           {highlights.map((highlight, index) => (
-            <motion.div key={`${highlight.title || 'item'}-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg)] p-4 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-edit-collection="highlights" data-edit-index={index}>
+            <motion.div key={`${highlight.title || 'item'}-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg)] p-4 shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl" data-card data-edit-collection="highlights" data-edit-index={index}>
               <div className="mt-0.5 shrink-0 rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] p-2 text-[color:var(--token-badge-text)]"><DynamicIcon editPath="icon" name={highlight.icon || 'star'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{highlight.title || ''}</h3>

@@ -60,7 +60,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
       {stats.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 md:mb-24">
           {stats.map((s, i) => (
-            <div key={i} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 text-center" data-edit-collection="stats" data-edit-index={i}>
+            <div key={i} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 text-center" data-card data-edit-collection="stats" data-edit-index={i}>
               <div className="font-display mb-1 text-3xl font-bold text-[color:var(--token-stat-value)] lg:text-4xl" data-edit-path="value">{s.value}</div>
               <div className="text-sm text-[color:var(--token-body)]" data-edit-path="label">{s.label}</div>
             </div>
@@ -72,7 +72,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           <h3 className="font-display mb-12 text-center text-2xl font-bold text-[color:var(--token-heading)]">{valuesHeadline}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
-              <div key={i} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8 shadow-sm transition-all hover:shadow-lg" data-edit-collection="values" data-edit-index={i}>
+              <div key={i} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8 shadow-sm transition-all hover:shadow-lg" data-card data-edit-collection="values" data-edit-index={i}>
                 {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] transition-transform group-hover:scale-110"><DynamicIcon editPath="icon" name={v.icon} size={28} className="text-[color:var(--token-icon)]" /></div>}
                 <h4 className="mb-2 text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title}</h4>
                 <div className="rt-content text-sm leading-relaxed text-[color:var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />

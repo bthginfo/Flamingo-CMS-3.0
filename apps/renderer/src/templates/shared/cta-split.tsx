@@ -33,7 +33,7 @@ export function CtaSplitSection({ data }: Props) {
           {checklist.length > 0 && (
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
               {checklist.map((item, index) => (
-                <li key={index} className="flex items-start gap-2.5 text-sm leading-6 text-[color:var(--token-card-body)]" data-edit-collection="checklist" data-edit-index={index}>
+                <li key={index} className="flex items-start gap-2.5 text-sm leading-6 text-[color:var(--token-card-body)]" data-card data-edit-collection="checklist" data-edit-index={index}>
                   <Check aria-hidden="true" size={17} className="mt-1 shrink-0 text-[color:var(--token-check)]" />
                   <span>{item}</span>
                 </li>

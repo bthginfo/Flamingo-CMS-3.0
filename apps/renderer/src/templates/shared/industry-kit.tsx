@@ -88,7 +88,7 @@ export function IconRows({ items, iconFallback = 'sparkles', style = 'rows' }: {
   return (
     <div className="grid gap-4">
       {list.map((item, index) => (
-        <div key={`${item.title}-${index}`} className="group flex gap-4 border-t border-[var(--token-card-border)] py-4 first:border-t-0 first:pt-0" data-edit-collection="items" data-edit-index={index}>
+        <div key={`${item.title}-${index}`} className="group flex gap-4 border-t border-[var(--token-card-border)] py-4 first:border-t-0 first:pt-0" data-card data-edit-collection="items" data-edit-index={index}>
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]">
             <DynamicIcon editPath="icon" name={item.icon || iconFallback} size={18} />
           </span>

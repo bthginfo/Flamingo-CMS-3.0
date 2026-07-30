@@ -48,11 +48,13 @@ test('infinite canvas keeps item links outside its pan pointer capture', () => {
   assert.match(canvas, /onPointerDown=\{\(event\) => event\.stopPropagation\(\)\}/);
 });
 
-test('editorial feature cards always use on-dark roles over image overlays', () => {
+test('editorial feature cards own explicit card roles over image overlays', () => {
   const rail = source('../templates/shared/editorial-feature-rail.tsx');
-  assert.match(rail, /var\(--token-on-dark-heading,\s*#ffffff/);
-  assert.match(rail, /var\(--token-on-dark-body,\s*rgba\(255,255,255,0\.88\)/);
-  assert.doesNotMatch(rail, /var\(--token-card-heading,\s*var\(--token-on-dark-heading/);
+  assert.match(rail, /var\(--token-card-heading,\s*#ffffff/);
+  assert.match(rail, /var\(--token-card-body,\s*rgba\(255,255,255,0\.88\)/);
+  assert.match(rail, /data-color-slot="cardBg borderColor cardMutedColor"/);
+  assert.match(rail, /data-color-slot="cardHeadingColor"/);
+  assert.match(rail, /data-color-slot="cardBodyColor"/);
 });
 
 test('mobile project dossier uses per-row rails and never draws a global line through its numbers', () => {

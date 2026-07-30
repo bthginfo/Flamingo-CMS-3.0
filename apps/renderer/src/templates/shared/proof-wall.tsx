@@ -46,6 +46,7 @@ export function ProofWallSection({ data }: Props) {
                     style={{ backgroundColor: 'var(--token-card-bg)' }}
                     data-edit-collection="reviews"
                     data-edit-index={index}
+                    data-card
                   >
                     <Quote aria-hidden="true" className="mb-4 text-[color:var(--token-quote)]" size={24} />
                     {review.quote && <p className="text-sm leading-7 text-[color:var(--token-card-body)]" data-edit-path="quote">{plain(review.quote)}</p>}
@@ -65,7 +66,7 @@ export function ProofWallSection({ data }: Props) {
             {logos.length > 0 && (
               <div className="mt-5 grid gap-2 sm:grid-cols-3">
                 {logos.map((logo, index) => (
-                  <div key={index} className="flex min-h-16 items-center justify-center rounded-xl border border-[var(--token-card-border)] px-3 text-center text-xs font-bold uppercase tracking-wide text-[color:var(--token-card-muted)]" data-edit-collection="logos" data-edit-index={index}>
+                  <div key={index} className="flex min-h-16 items-center justify-center rounded-xl border border-[var(--token-card-border)] px-3 text-center text-xs font-bold uppercase tracking-wide text-[color:var(--token-card-muted)]" data-card data-edit-collection="logos" data-edit-index={index}>
                     {logo.image ? <img data-edit-image="image" src={logo.image} alt={logo.name} className="max-h-8 max-w-full object-contain" /> : <span className="inline-flex items-center gap-2"><CheckCircle2 aria-hidden="true" className="text-[color:var(--token-check)]" size={14} /><span data-edit-path="name">{logo.name}</span></span>}
                   </div>
                 ))}

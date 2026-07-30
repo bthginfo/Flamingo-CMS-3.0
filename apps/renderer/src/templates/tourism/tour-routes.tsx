@@ -36,7 +36,7 @@ function Classic({ header, routes, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
-          <motion.article key={`${route.title || 'item'}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="routes" data-edit-index={index}>
+          <motion.article key={`${route.title || 'item'}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-card data-edit-collection="routes" data-edit-index={index}>
             {route.image && <div className="relative aspect-[16/9]"><Image data-edit-image="image" src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-6">
               <RouteMeta route={route} className="text-[color:var(--token-badge-text)]" />

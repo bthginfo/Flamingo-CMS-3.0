@@ -35,7 +35,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
-          <motion.figure key={`${image.src}-${index}`} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="images" data-edit-index={index}>
+          <motion.figure key={`${image.src}-${index}`} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-card data-edit-collection="images" data-edit-index={index}>
             {image.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={image.src} alt={image.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {image.category && <p className="text-xs uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="category">{image.category}</p>}

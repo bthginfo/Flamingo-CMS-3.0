@@ -119,7 +119,7 @@ export function InfiniteCanvasSection({ data }: Props) {
               'left-[8%] bottom-[5%] w-[24%] rotate-[2deg]', 'left-[38%] bottom-[2%] w-[27%] rotate-[-1deg]', 'right-[6%] bottom-[6%] w-[25%] rotate-[-2deg]',
             ];
             return (
-              <motion.figure key={`${item.image}-${index}`} whileHover={{ scale: 1.035, zIndex: 5 }} className={`absolute overflow-hidden rounded-[calc(var(--token-card-radius)*.72)] border border-[color:color-mix(in_srgb,var(--token-card-border)_78%,transparent)] bg-[var(--token-card-bg)] shadow-2xl ${positions[index]}`} data-edit-collection="items" data-edit-index={index}>
+              <motion.figure key={`${item.image}-${index}`} whileHover={{ scale: 1.035, zIndex: 5 }} className={`absolute overflow-hidden rounded-[calc(var(--token-card-radius)*.72)] border border-[color:color-mix(in_srgb,var(--token-card-border)_78%,transparent)] bg-[var(--token-card-bg)] shadow-2xl ${positions[index]}`} data-card data-edit-collection="items" data-edit-index={index}>
                 <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" loading="lazy" decoding="async" data-edit-image="image" />
                 {item.title && <figcaption className="truncate px-3 py-2 text-xs font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{item.title}</figcaption>}
               </motion.figure>

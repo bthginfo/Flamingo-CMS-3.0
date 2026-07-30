@@ -38,7 +38,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
       {offers.length === 0 && fallbackText ? <p className="text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-6 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <motion.article key={`${offer.title || 'item'}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
+          <motion.article key={`${offer.title || 'item'}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-card data-edit-collection="offers" data-edit-index={index}>
             {offer.highlighted && <BorderBeam />}
             {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">

@@ -6,7 +6,12 @@ import { saveDesignSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { usePreview } from '@/components/admin/preview-context';
-import { getDesignCssVars } from '@/lib/design-vars';
+import { buildCssVarPatch } from '@/components/admin/preview-live-data';
+import {
+  EDITABLE_BACKGROUND_DESIGN_KEYS,
+  getDesignCssVars,
+  normalizeDesignStringRecord,
+} from '@/lib/design-vars';
 import { getContrastColor, contrastRatio, getContrastLevel } from '@/lib/contrast';
 import { Check, AlertTriangle, RotateCcw } from 'lucide-react';
 
@@ -26,9 +31,9 @@ const TEXT_OVERRIDE_KEYS: Record<string, string> = {
   bgSubtle: 'textOnBgSubtle',
 };
 
-export function BackgroundForm({ initial }: { initial: DesignData }) {
+export function BackgroundForm({ initial }: { initial: Record<string, unknown> }) {
   const router = useRouter();
-  const [form, setForm] = useState<DesignData>({ ...initial });
+  const [form, setForm] = useState<DesignData>(() => normalizeDesignStringRecord(initial));
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
@@ -40,13 +45,17 @@ export function BackgroundForm({ initial }: { initial: DesignData }) {
 
   // Send live CSS vars to preview whenever background colors change
   const preview = usePreview();
+  const previousCssVars = useRef<Record<string, string>>({});
   useEffect(() => {
     if (!mounted.current) return;
     const cssVars = getDesignCssVars(form);
-    if (Object.keys(cssVars).length > 0) {
-      preview.sendLiveData({ cssVars });
-    }
-  }, [formJson]);
+    preview.sendLiveData({
+      cssVarLayers: {
+        design: buildCssVarPatch(previousCssVars.current, cssVars),
+      },
+    });
+    previousCssVars.current = cssVars;
+  }, [formJson, preview]);
 
   function updateField(key: string, value: string) {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -78,8 +87,9 @@ export function BackgroundForm({ initial }: { initial: DesignData }) {
     try {
       // Clean empty values
       const clean: DesignData = {};
-      for (const [k, v] of Object.entries(form)) {
-        if (v && v.trim()) clean[k] = v.trim();
+      for (const key of EDITABLE_BACKGROUND_DESIGN_KEYS) {
+        const value = form[key];
+        if (typeof value === 'string' && value.trim()) clean[key] = value.trim();
       }
       const result = await saveDesignSettings(clean);
       if (!result.success) {

@@ -106,7 +106,7 @@ export function CinematicHeroSection({ data }: Props) {
         {factItems.length > 0 && (
           <div className="mt-10 grid w-full max-w-3xl grid-cols-2 gap-3 md:mt-12 md:grid-cols-4 md:gap-4">
             {factItems.map((fact, i) => (
-              <div key={i} className="rounded-2xl border border-[color:var(--token-card-border)] p-4 md:p-5" style={{ backgroundColor: trustStripColor || 'transparent' }} data-edit-collection="facts" data-edit-index={i}>
+              <div key={i} className="rounded-2xl border border-[color:var(--token-card-border)] p-4 md:p-5" style={{ backgroundColor: trustStripColor || 'transparent' }} data-card data-edit-collection="facts" data-edit-index={i}>
                 <div className="text-2xl font-black" style={{ color: heroText }} data-edit-path="value">{fact.value}</div>
                 <div className="mt-1 text-xs" style={{ color: heroMuted }} data-edit-path="label">{fact.label}</div>
               </div>

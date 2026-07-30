@@ -27,7 +27,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
         {items.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {items.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-[var(--token-card-bg)] rounded-xl shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl border border-[color:var(--token-card-border)] flex items-start gap-4" data-edit-collection="items" data-edit-index={i}>
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-[var(--token-card-bg)] rounded-xl shadow-sm transition-all duration-300 motion-safe:hover:-translate-y-1 hover:shadow-xl border border-[color:var(--token-card-border)] flex items-start gap-4" data-card data-edit-collection="items" data-edit-index={i}>
                 <div className="w-10 h-10 rounded-full bg-[var(--token-badge-bg)] flex items-center justify-center shrink-0">
                   <Gift className="w-4 h-4 text-[color:var(--token-icon)]" />
                 </div>

@@ -47,7 +47,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {stats.length > 0 && (
               <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
                 {stats.map((st, i) => (
-                  <div key={i} className="rounded-xl border border-[color-mix(in_srgb,var(--token-card-border)_60%,transparent)] p-4 text-center" data-edit-collection="stats" data-edit-index={i}>
+                  <div key={i} className="rounded-xl border border-[color-mix(in_srgb,var(--token-card-border)_60%,transparent)] p-4 text-center" data-card data-edit-collection="stats" data-edit-index={i}>
                     <div className="text-2xl font-bold text-[color:var(--token-stat-value)]" data-edit-path="value">{st.value}</div>
                     <div className="mt-1 text-xs uppercase tracking-wide text-[color:var(--token-muted)]" data-edit-path="label">{st.label}</div>
                   </div>
@@ -58,7 +58,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {values.length > 0 && (
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {values.map((v, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-[color-mix(in_srgb,var(--token-badge-bg)_35%,transparent)] border border-[color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" data-edit-collection="values" data-edit-index={i}>
+                  <div key={i} className="p-4 rounded-xl bg-[color-mix(in_srgb,var(--token-badge-bg)_35%,transparent)] border border-[color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" data-card data-edit-collection="values" data-edit-index={i}>
                     <h4 className="font-semibold text-[color:var(--token-heading)] text-sm" data-edit-path="title">{v.title}</h4>
                     <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>

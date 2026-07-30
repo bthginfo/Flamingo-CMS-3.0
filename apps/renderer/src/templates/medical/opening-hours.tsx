@@ -31,7 +31,7 @@ function Classic({ header, days, acuteCareText, holidayNote, ctaPrimary }: Props
       </div>
       <div className="rounded-xl bg-[var(--token-card-bg)] shadow-lg">
         {days.map((day, index) => (
-          <div key={`${day.label || 'item'}-${index}`} className="flex items-center justify-between gap-4 border-b border-[var(--token-card-border)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
+          <div key={`${day.label || 'item'}-${index}`} className="flex items-center justify-between gap-4 border-b border-[var(--token-card-border)] px-5 py-4 last:border-b-0" data-card data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
               <Clock size={17} className="text-[color:var(--token-icon)]" />
               <div><p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{day.label || ''}</p>{day.note && <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="note">{day.note}</p>}</div>

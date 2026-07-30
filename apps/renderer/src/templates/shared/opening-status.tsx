@@ -74,7 +74,7 @@ export function OpeningStatusSection({ data }: Props) {
           {days.map((d, i) => {
             const isToday = todayName ? d.day.toLowerCase().startsWith(todayName.toLowerCase().slice(0, 2)) : false;
             return (
-              <li key={`${d.day}-${i}`} className={`flex items-baseline justify-between gap-4 py-2.5 text-sm ${isToday ? 'font-bold text-[color:var(--token-card-heading,var(--token-heading))]' : 'text-[color:var(--token-card-body,var(--token-body))]'}`} data-edit-collection="days" data-edit-index={i}>
+              <li key={`${d.day}-${i}`} className={`flex items-baseline justify-between gap-4 py-2.5 text-sm ${isToday ? 'font-bold text-[color:var(--token-card-heading,var(--token-heading))]' : 'text-[color:var(--token-card-body,var(--token-body))]'}`} data-card data-edit-collection="days" data-edit-index={i}>
                 <span className="flex items-center gap-2" data-edit-path="day">{isToday && <Clock size={13} className="text-[color:var(--token-icon)]" />}{d.day}</span>
                 <span className="tabular-nums" data-edit-path="hours">{d.closed ? 'geschlossen' : (d.hours || '—')}{d.note ? ` · ${d.note}` : ''}</span>
               </li>

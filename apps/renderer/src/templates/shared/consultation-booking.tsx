@@ -54,7 +54,7 @@ export function ConsultationBookingSection({ data }: Props) {
                   ? 'bg-[color-mix(in_srgb,var(--token-icon)_5%,transparent)] border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] shadow-md'
                   : 'bg-[var(--token-card-bg)] border-[rgba(0,0,0,0.06)] hover:border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)]'
               }`}
-             data-edit-collection="services" data-edit-index={i}>
+             data-edit-collection="services" data-edit-index={i} data-card>
               {service.icon && (
                 <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]' : 'bg-[color-mix(in_srgb,var(--token-icon)_10%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]'} transition-colors`}>
                   <DynamicIcon editPath="icon" name={service.icon} size={20} />

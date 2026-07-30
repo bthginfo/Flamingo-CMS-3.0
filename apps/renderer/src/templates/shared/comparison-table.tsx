@@ -43,6 +43,7 @@ export function ComparisonTableSection({ data }: Props) {
                   data-edit-collection="columns"
                   data-edit-index={index}
                   data-edit-path="label"
+                  data-card-scope="table-cell"
                 >
                   {column.label || `Option ${index + 1}`}
                 </th>
@@ -63,6 +64,7 @@ export function ComparisonTableSection({ data }: Props) {
                       className={`border-b border-r border-[color:var(--token-card-border)] px-6 py-5 text-center transition-colors last:border-r-0 group-last:border-b-0 md:px-8 ${columnIndex === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent)_9%,var(--token-card-bg))]' : 'bg-[color:var(--token-card-bg)] group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt)_58%,var(--token-card-bg))]'}`}
                       data-edit-collection="values"
                       data-edit-index={columnIndex}
+                      data-card-scope="table-cell"
                     >
                       {value === 'true' ? (
                         <span className="inline-flex" aria-label="Enthalten"><Check aria-hidden="true" size={19} className="text-[color:var(--token-check)]" /></span>

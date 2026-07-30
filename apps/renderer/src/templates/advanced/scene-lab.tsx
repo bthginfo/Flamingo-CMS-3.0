@@ -82,7 +82,7 @@ export function SceneLabSection({ data }: Props) {
                 {currentGroup.choices.map((choice, choiceIndex) => {
                   const selected = (selections[currentGroupId] ?? 0) === choiceIndex;
                   return (
-                    <button key={choiceKey(choice, choiceIndex)} type="button" onClick={() => setSelections((current) => ({ ...current, [currentGroupId]: choiceIndex }))} className={`relative min-h-20 rounded-xl border p-3 text-left transition ${selected ? 'border-[var(--token-accent)] bg-[var(--token-section-bg-alt)] shadow-sm' : 'border-[var(--token-card-border)] hover:border-[var(--token-accent)]'}`} data-edit-collection="choices" data-edit-index={choiceIndex}>
+                    <button key={choiceKey(choice, choiceIndex)} type="button" onClick={() => setSelections((current) => ({ ...current, [currentGroupId]: choiceIndex }))} className={`relative min-h-20 rounded-xl border p-3 text-left transition ${selected ? 'border-[var(--token-accent)] bg-[var(--token-section-bg-alt)] shadow-sm' : 'border-[var(--token-card-border)] hover:border-[var(--token-accent)]'}`} data-card data-edit-collection="choices" data-edit-index={choiceIndex}>
                       <span className="flex items-center gap-2">
                         <span className="h-5 w-5 shrink-0 rounded-full border border-[color:var(--token-card-border)]" style={{ background: choice.swatch || 'var(--token-section-bg-alt)' }} />
                         <span className="text-sm font-bold text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{choice.label}</span>

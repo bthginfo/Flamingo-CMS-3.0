@@ -111,7 +111,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {images.length > 1 && (
             <div className="flex gap-3">
               {images.slice(0, 4).map((img, i) => (
-                <button key={i} aria-label={`Bild ${i + 1} anzeigen`} aria-pressed={i === selectedImage} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`} data-edit-collection="images" data-edit-index={i}>
+                <button key={i} aria-label={`Bild ${i + 1} anzeigen`} aria-pressed={i === selectedImage} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`} data-card data-edit-collection="images" data-edit-index={i}>
                   <img data-edit-image="img" src={img} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
