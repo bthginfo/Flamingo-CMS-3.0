@@ -6,6 +6,7 @@ import { unstable_cache } from 'next/cache';
 
 const lastKnownSnapshots = new Map<string, Snapshot>();
 const PUBLIC_SNAPSHOT_REVALIDATE_SECONDS = 60 * 60;
+const PUBLIC_SNAPSHOT_CACHE_VERSION = '2026-07-30-editorial-v1';
 
 export type SnapshotPage = {
   id: string;
@@ -109,7 +110,7 @@ export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | nu
       if (meta) return meta.snapshot;
       return getDraftSnapshot(tenantId);
     },
-    ['public-snapshot', tenantId],
+    ['public-snapshot', PUBLIC_SNAPSHOT_CACHE_VERSION, tenantId],
     { revalidate: PUBLIC_SNAPSHOT_REVALIDATE_SECONDS, tags: [`tenant-${tenantId}`] },
   );
   try {
