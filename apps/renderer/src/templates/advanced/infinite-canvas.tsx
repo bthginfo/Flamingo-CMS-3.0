@@ -155,6 +155,8 @@ function CanvasExplorer({ items, totalItems, headline, theme, onClose }: { items
   }, [items, tileHeight, tileWidth]);
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    const target = event.target;
+    if (target instanceof Element && target.closest('a[href], button')) return;
     drag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, panX: pan.x, panY: pan.y };
     setIsDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -217,7 +219,7 @@ function CanvasExplorer({ items, totalItems, headline, theme, onClose }: { items
           {nodes.map(({ item, key, x, y, width }) => (
             <figure key={key} className="absolute overflow-hidden rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[var(--token-card-bg)] shadow-[0_18px_48px_rgba(0,0,0,.42)]" style={{ left: wrap(x * zoom + pan.x, tileWidth * zoom) / zoom, top: wrap(y * zoom + pan.y, tileHeight * zoom) / zoom, width, transform: 'translate(-50%,-50%)', contain: 'layout paint' }}>
               <img src={item.image} alt={item.alt || ''} className="aspect-[4/3] w-full object-cover" draggable={false} loading="lazy" decoding="async" />
-              {(item.title || item.caption) && <figcaption className="p-3"><div className="flex items-start justify-between gap-3"><div><strong className="block text-sm text-[color:var(--token-card-heading,var(--token-on-dark-heading,#fff))]">{item.title}</strong>{item.caption && <span className="mt-1 block text-xs leading-5 text-[color:var(--token-card-muted,var(--token-on-dark-muted,#b8b8b8))]">{plain(item.caption)}</span>}</div>{item.href && <a href={item.href} className="pointer-events-auto grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)]" aria-label={`${item.title || 'Eintrag'} öffnen`}><ArrowUpRight size={14} /></a>}</div></figcaption>}
+              {(item.title || item.caption) && <figcaption className="p-3"><div className="flex items-start justify-between gap-3"><div><strong className="block text-sm text-[color:var(--token-card-heading,var(--token-on-dark-heading,#fff))]">{item.title}</strong>{item.caption && <span className="mt-1 block text-xs leading-5 text-[color:var(--token-card-muted,var(--token-on-dark-muted,#b8b8b8))]">{plain(item.caption)}</span>}</div>{item.href && <a href={item.href} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()} className="pointer-events-auto grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] transition hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--token-accent)]" aria-label={`${item.title || 'Eintrag'} öffnen`}><ArrowUpRight size={15} /></a>}</div></figcaption>}
             </figure>
           ))}
         </div>

@@ -126,8 +126,11 @@ export async function PATCH(request: NextRequest) {
         continue;
       }
 
-      const neonProject = await findNeonTenantProject(slug)
-        || await findNeonTenantProjectByConnectionUri(databaseUrl)
+      // During a quota recovery or database rotation, the slug can still match
+      // the retired Neon project. The supplied runtime URL is the authoritative
+      // cutover target and therefore must be resolved first.
+      const neonProject = await findNeonTenantProjectByConnectionUri(databaseUrl)
+        || await findNeonTenantProject(slug)
         || externalNeonConnection(databaseUrl);
       if (!neonProject) {
         results.push({ slug, success: false, error: 'Neon-Projekt nicht gefunden.' });

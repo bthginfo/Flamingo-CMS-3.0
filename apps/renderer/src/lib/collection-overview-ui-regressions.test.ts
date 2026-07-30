@@ -6,6 +6,32 @@ function source(relativePath: string) {
   return readFileSync(new URL(relativePath, import.meta.url), 'utf8');
 }
 
+test('collection admin promotes overview editing before entry management', () => {
+  const page = source('../app/admin/collections/[key]/page.tsx');
+  const submit = source('../app/admin/collections/[key]/overview-page-submit.tsx');
+  const overviewPanel = page.indexOf('aria-labelledby="collection-overview-title"');
+  const entriesHeading = page.indexOf('>Einträge</h2>');
+
+  assert.ok(overviewPanel >= 0, 'overview destination panel should be present');
+  assert.ok(entriesHeading > overviewPanel, 'entry management should follow the overview destination');
+  assert.match(page, /<OverviewPageSubmit \/>/);
+  assert.match(submit, /Übersichtsseite gestalten/);
+  assert.match(page, /htmlFor="new-collection-item"/);
+});
+
+test('collection overview destination stays tablet-safe and reports pending navigation', () => {
+  const page = source('../app/admin/collections/[key]/page.tsx');
+  const submit = source('../app/admin/collections/[key]/overview-page-submit.tsx');
+
+  assert.match(page, /grid-cols-\[auto_1fr\]/);
+  assert.match(page, /lg:grid-cols-\[auto_1fr_auto\]/);
+  assert.match(page, /className="col-span-2 lg:col-span-1"/);
+  assert.match(page, /from-blue-600 via-indigo-500 to-admin-accent/);
+  assert.match(submit, /useFormStatus\(\)/);
+  assert.match(submit, /disabled=\{pending\}/);
+  assert.match(submit, /Wird geöffnet …/);
+});
+
 test('fullscreen infinite canvas carries section-scoped color roles into its portal', () => {
   const canvas = source('../templates/advanced/infinite-canvas.tsx');
   assert.match(canvas, /CANVAS_THEME_VARS/);
@@ -14,6 +40,12 @@ test('fullscreen infinite canvas carries section-scoped color roles into its por
   assert.match(canvas, /--token-section-bg,#08090b/);
   assert.match(canvas, /--token-card-heading/);
   assert.match(canvas, /--token-card-body/);
+});
+
+test('infinite canvas keeps item links outside its pan pointer capture', () => {
+  const canvas = source('../templates/advanced/infinite-canvas.tsx');
+  assert.match(canvas, /target\.closest\('a\[href\], button'\)/);
+  assert.match(canvas, /onPointerDown=\{\(event\) => event\.stopPropagation\(\)\}/);
 });
 
 test('editorial feature cards always use on-dark roles over image overlays', () => {

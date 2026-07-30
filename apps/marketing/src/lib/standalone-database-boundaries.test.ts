@@ -60,6 +60,14 @@ test('standalone provisioning creates, migrates and registers a dedicated Neon d
   assert.match(provisioning, /createStandaloneProject\(input\.slug, tenantId, neonProject\.pooledConnectionUri, \{ waitForDeployment: false \}\)/);
 });
 
+test('registry repair treats the supplied database URL as the authoritative rotation target', () => {
+  const route = source('../app/api/internal/provisioning/tenants/route.ts');
+  const byConnectionIndex = route.indexOf('findNeonTenantProjectByConnectionUri(databaseUrl)');
+  const bySlugIndex = route.indexOf('findNeonTenantProject(slug)');
+  assert.ok(byConnectionIndex > 0, 'repair route must resolve the supplied database URL');
+  assert.ok(bySlugIndex > byConnectionIndex, 'the supplied database URL must win over an older slug-matching project');
+});
+
 test('standalone Vercel provisioning cleans up freshly created projects on late failures', () => {
   const vercel = source('./vercel.ts');
   const createProject = vercel.slice(

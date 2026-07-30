@@ -18,7 +18,12 @@ export function resolveStatsCounterLayout(
   const headline = normalizedSignature(data.headline);
 
   // Narrow compatibility bridge for the already-provisioned Schuktuew project facts.
-  return badge === 'fakten' && headline === 'projekt auf einen blick'
+  // The editorial copy migration changed the headline without adding the newer
+  // explicit layout field, so both copy generations must resolve identically.
+  const schuktuewBadge = badge === 'fakten' || badge === 'einsatz';
+  const schuktuewHeadline = headline === 'projekt auf einen blick'
+    || headline === 'eine bildwelt für den ganzen auftritt';
+  return schuktuewBadge && schuktuewHeadline
     ? 'projectDossier'
     : 'default';
 }
