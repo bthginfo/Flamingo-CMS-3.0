@@ -6,7 +6,7 @@ import { unstable_cache } from 'next/cache';
 
 const lastKnownSnapshots = new Map<string, Snapshot>();
 const PUBLIC_SNAPSHOT_REVALIDATE_SECONDS = 60 * 60;
-const PUBLIC_SNAPSHOT_CACHE_VERSION = '2026-07-30-editorial-v1';
+const PUBLIC_SNAPSHOT_CACHE_VERSION = '2026-07-30-editorial-v2';
 
 export type SnapshotPage = {
   id: string;
