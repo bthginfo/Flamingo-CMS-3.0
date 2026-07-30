@@ -135,9 +135,9 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
     {
       type: 'glowHero',
       data: {
-        eyebrow: 'AI Workflows',
-        headline: 'Ich teste die Bildwelt, bevor wir sie produzieren.',
-        subline: 'Ich nutze KI nicht als Selbstzweck. Sie hilft mir, Wirkung, Look, Zuschnitt und Ausgabe früh zu prüfen — bevor Foto, Film und Retusche Zeit kosten.',
+        eyebrow: 'AI + Fotografie',
+        headline: 'Ich mache Ideen sichtbar, bevor sie teuer werden.',
+        subline: 'Mit kontrollierten AI-Looktests entwickle ich Licht, Farbe, Perspektive und Formate, bevor wir produzieren. So gehen Foto und Film mit einer klaren Bildidee ins Set.',
         image: assets.archiveStill04,
         imagePosition: 'center 42%',
         glowColor: 'rgba(239,35,60,.46)',
@@ -155,14 +155,14 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
       type: 'xrayReveal',
       container: 'wide',
       data: {
-        badge: 'Vorher / Nachher',
-        headline: 'Ein Motiv muss tragen, bevor es fertig aussieht.',
-        subline: 'Ich prüfe Licht, Farbe, Tiefe und Format früh. So wird sichtbar, ob aus einem Motiv ein Website-Hero, Kampagnenbild oder Social-Asset werden kann.',
+        badge: 'Lookentwicklung',
+        headline: 'Eine Idee. Zwei Bildwelten.',
+        subline: 'Aus einem neutralen Ausgangsmotiv entwickle ich eine visuelle Richtung, die zu Marke, Kampagne und Medium passt.',
         imageBase: assets.aiLandscapeBefore,
         imageReveal: assets.aiLandscapeAfter,
         labelBase: 'Ausgangsmotiv',
         labelReveal: 'geprüfte Bildrichtung',
-        caption: 'Die AI-Variante ist ein Prüfstand für Wirkung und Bildsprache — nicht das Endprodukt.',
+        caption: 'Der Looktest macht Licht, Farbe und Atmosphäre früh entscheidbar.',
         revealStyle: 'scan',
         aspectRatio: '16/9',
       },
@@ -171,17 +171,17 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
     {
       type: 'transformationSequence',
       data: {
-        badge: 'Produktionslogik',
-        headline: 'Vom ersten Eindruck zur fertigen Strecke.',
-        subline: 'Ich arbeite nicht linear von Shooting zu Export. Ich plane rückwärts vom späteren Einsatz: Wo erscheint das Motiv, wie nah muss es sein, welches Format braucht es?',
+        badge: 'Von der Idee zur Produktion',
+        headline: 'Erst die Richtung. Dann das Bild.',
+        subline: 'Ich plane vom späteren Einsatz zurück: Welche Wirkung braucht das Motiv, welche Perspektive trägt sie und welche Formate müssen am Ende funktionieren?',
         states: [
           {
             kicker: '01 · Wirkung',
             title: 'Wofür soll das Bild arbeiten?',
             text: 'Ich kläre Zielgruppe, Haltung, Medium und gewünschte Reaktion. Ohne diese Richtung bleibt jedes Motiv austauschbar.',
             image: assets.businessCampaign,
-            metricValue: 'Brief',
-            metricLabel: 'vor Kamera und KI',
+            metricValue: 'Ziel',
+            metricLabel: 'vor der Gestaltung',
           },
           {
             kicker: '02 · Bildsprache',
@@ -189,7 +189,7 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
             text: 'Farbwelt, Licht, Perspektive und Zuschnitt werden getestet, damit die Produktion eine klare visuelle Linie bekommt.',
             image: assets.personalBranding,
             metricValue: 'Look',
-            metricLabel: 'als Entscheidung',
+            metricLabel: 'als klare Richtung',
           },
           {
             kicker: '03 · Produktion',
@@ -197,15 +197,15 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
             text: 'Wenn Bewegung sinnvoll ist, denke ich Reels, Sequenzen und Still-Motive direkt am Set mit.',
             image: assets.heroPortrait,
             metricValue: 'Set',
-            metricLabel: 'mit Ausgabe im Kopf',
+            metricLabel: 'für Foto und Film',
           },
           {
             kicker: '04 · Ausgabe',
-            title: 'Am Ende stehen verwendbare Assets.',
+            title: 'Am Ende stehen fertige Formate.',
             text: 'Aus einem Look entstehen Zuschnitte und Varianten für Website, Social, Kampagne, Recruiting, Präsentation und Print.',
             image: assets.studioWide,
-            metricValue: 'Assets',
-            metricLabel: 'statt Rohdatenchaos',
+            metricValue: 'Formate',
+            metricLabel: 'bereit für den Einsatz',
           },
         ],
         cta: { label: 'Produktion planen', href: '/kontakt' },
@@ -215,9 +215,9 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
     {
       type: 'layeredAnatomy',
       data: {
-        badge: 'Bildaufbau',
-        headline: 'Ich zerlege ein Motiv nach seiner späteren Aufgabe.',
-        subline: 'Nicht jede gute Aufnahme funktioniert automatisch als Website-Hero, Reel-Cover oder Kampagnenmotiv. Diese Fragen kläre ich früh.',
+        badge: 'Bildentscheidung',
+        headline: 'Jedes Detail arbeitet für die Wirkung.',
+        subline: 'Botschaft, Raum, Licht und Zuschnitt stimme ich vor dem Shooting aufeinander ab – damit das Motiv dort funktioniert, wo es gebraucht wird.',
         mode: 'hotspots',
         baseImage: assets.businessCampaign,
         aspectRatio: '16/9',
@@ -235,9 +235,9 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
     {
       type: 'dayToNight',
       data: {
-        badge: 'Ausgabe',
-        headline: 'Ein Motiv muss in mehreren Situationen funktionieren.',
-        subline: 'Ich plane nicht nur das schöne Einzelbild. Ich plane die Varianten, die später wirklich gebraucht werden.',
+        badge: 'Ein Look, viele Formate',
+        headline: 'Die Bildwelt bleibt wiedererkennbar.',
+        subline: 'Vom Website-Hero bis zum Reel-Cover: Ich entwickle Varianten, die zusammengehören und für ihren jeweiligen Einsatz gestaltet sind.',
         scenes: [
           {
             id: 'website',
@@ -269,7 +269,7 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
           {
             id: 'delivery',
             time: 'Übergabe',
-            label: 'Assets',
+            label: 'Formate',
             title: 'Verwendbare Dateien',
             text: 'Am Ende zählt, ob Bilder und Clips schnell in Website, Anzeigen, Präsentation oder Print eingesetzt werden können.',
             image: assets.studioWide,
@@ -283,9 +283,9 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
     {
       type: 'livingBlueprint',
       data: {
-        badge: 'Workflow-Karte',
-        headline: 'So bleibt ein Projekt kontrolliert, ohne steif zu werden.',
-        subline: 'Die Karte zeigt, welche Entscheidungen früh fallen und wo im Prozess noch Spielraum bleibt.',
+        badge: 'Zusammenarbeit',
+        headline: 'Klare Entscheidungen. Genug Raum für den Moment.',
+        subline: 'Wir legen Wirkung und Bildsprache früh fest. Am Set bleibt dadurch mehr Freiheit für echte Situationen, Ausdruck und Bewegung.',
         layout: 'blueprint',
         nodes: [
           { id: 'brief', title: 'Briefing', text: 'Ziel, Zielgruppe, Tonalität und Einsatzkanäle werden festgelegt.', icon: 'ClipboardList', metric: 'Richtung' },
@@ -293,7 +293,7 @@ function buildSchuktuewAiWorkflowSections(assets: UploadedAssets): PageConfig['s
           { id: 'motif-plan', title: 'Motivplan', text: 'Ich plane Serien, Details, Portraits, Reels und Reserve-Crops vor.', icon: 'PanelsTopLeft', metric: 'Planen' },
           { id: 'production', title: 'Produktion', text: 'Foto und Film entstehen mit Führung, Licht und einem klaren Ausgabeziel.', icon: 'Camera', metric: 'Produzieren' },
           { id: 'finish', title: 'Finish', text: 'Auswahl, Retusche, Grading und Schnitt halten die Linie zusammen.', icon: 'SlidersHorizontal', metric: 'Schärfen' },
-          { id: 'delivery', title: 'Übergabe', text: 'Sie bekommen sortierte Assets für Website, Social, Kampagne und Print.', icon: 'FolderCheck', metric: 'Nutzen' },
+          { id: 'delivery', title: 'Übergabe', text: 'Sie erhalten fertig aufbereitete Dateien für Website, Social Media, Kampagne und Print.', icon: 'FolderCheck', metric: 'Nutzen' },
         ],
         cta: { label: 'Workflow besprechen', href: '/kontakt' },
       },
@@ -472,13 +472,13 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     source: 'https://static.wixstatic.com/media/74d7fc_ffa0ad65ea16474496df52bfda780375~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_ffa0ad65ea16474496df52bfda780375~mv2.jpg',
     filename: 'schuktuew-about-portrait-04.jpg',
     contentType: 'image/jpeg',
-    alt: 'Portraitmotiv aus Alexander Schuktuews Info-Seite',
+    alt: 'Portraitarbeit von Alexander Schuktuew',
   },
   aboutPortrait05: {
     source: 'https://static.wixstatic.com/media/74d7fc_f5f882a83b4f47a0b93cb561cc06512e~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_f5f882a83b4f47a0b93cb561cc06512e~mv2.jpg',
     filename: 'schuktuew-about-portrait-05.jpg',
     contentType: 'image/jpeg',
-    alt: 'Weitere Portraitarbeit aus der Info-Seite',
+    alt: 'Portrait von Alexander Schuktuew',
   },
   aboutStill01: {
     source: 'https://static.wixstatic.com/media/74d7fc_d7da0eba7ca8419ca37f3c0f961e7fae~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_d7da0eba7ca8419ca37f3c0f961e7fae~mv2.jpg',
@@ -490,7 +490,7 @@ const ASSETS: Record<AssetKey, AssetSpec> = {
     source: 'https://static.wixstatic.com/media/74d7fc_10a823f1b184475fac7b2fddcf66085e~mv2.jpg/v1/fit/w_1600,h_1600,q_86,enc_avif,quality_auto/74d7fc_10a823f1b184475fac7b2fddcf66085e~mv2.jpg',
     filename: 'schuktuew-about-still-02.jpg',
     contentType: 'image/jpeg',
-    alt: 'Dokumentarisches Motiv aus Alexander Schuktuews Info-Seite',
+    alt: 'Dokumentarische Fotografie von Alexander Schuktuew',
   },
   aboutStill03: {
     source: 'https://static.wixstatic.com/media/74d7fc_57ab9d72266e486bb8d6b516f1e684c6~mv2.png/v1/fit/w_1200,h_900,q_86,enc_avif,quality_auto/74d7fc_57ab9d72266e486bb8d6b516f1e684c6~mv2.png',
@@ -1175,7 +1175,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       facts: [
         { label: 'Einsatz', value: 'Website · Kampagne · Recruiting' },
         { label: 'Region', value: 'Ingolstadt · München' },
-        { label: 'Output', value: 'Portraits · Stills · Social Assets' },
+        { label: 'Ausgabe', value: 'Portraits · Stills · Social Formate' },
       ],
       angles: [
         { title: 'Positionierung', text: 'Gemeinsam übersetzen wir Werte, Haltung und Identität in Bilder, die wirken, bevor ein Wort gesagt wird.', icon: 'Sparkles' },
@@ -1197,7 +1197,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       ],
     },
     'sport-golf': {
-      lead: 'Sport, Bewegung und Timing werden so fotografiert und geschnitten, dass aus einem Moment Material für Social, Website und Kampagne entsteht.',
+      lead: 'Ich fotografiere Sport dort, wo Konzentration in Bewegung kippt – präzise im Timing, nah am Moment und mit einem klaren Gefühl für Rhythmus.',
       facts: [
         { label: 'Format', value: 'Foto · Reel · Kampagne' },
         { label: 'Kontext', value: 'Golf · Sport · Bewegung' },
@@ -1224,7 +1224,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       ],
     },
     converse: {
-      lead: 'Serie zur Präsentation eines neuen Modells des ikonischen CONVERSE-Schuhs; gezeigt im Berliner Flagshipstore in Mitte.',
+      lead: 'Für die Präsentation eines neuen CONVERSE-Modells entwickelte ich eine Serie, die im Berliner Flagshipstore in Mitte gezeigt wurde.',
       facts: [
         { label: 'Marke', value: 'CONVERSE' },
         { label: 'Kontext', value: 'Flagshipstore Berlin-Mitte' },
@@ -1237,7 +1237,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       ],
     },
     'buch-ingolstadt': {
-      lead: 'Buch: „INGOLSTADT“, 2021 – aus 15 Jahren analoger Fotografie editiert. Stückzahl 500, 149 Seiten, Vorwort von Architekt A. Häusler.',
+      lead: 'Für mein Buch „INGOLSTADT“ habe ich 15 Jahre analoge Fotografie zu einer persönlichen Sicht auf die Stadt verdichtet. Erschienen 2021 mit einem Vorwort von Architekt A. Häusler.',
       facts: [
         { label: 'Format', value: 'Buchprojekt' },
         { label: 'Ort', value: 'Ingolstadt' },
@@ -1261,20 +1261,20 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       .map((entry) => entry.replace(/\s+/g, ' ').trim())
       .filter((entry) => entry.length > 24)
       .slice(0, 3);
-    const lead = fragments[0] || description || `Bildserie aus dem Bereich ${category} mit klarer visueller Linie.`;
-    const second = fragments[1] || 'Die Motive zeigen die visuelle Linie der Serie und machen den Charakter des Projekts schnell erfassbar.';
-    const third = fragments[2] || 'Die Motive zeigen, wie der Look auf Website, Social und Kampagne wirkt.';
+    const lead = fragments[0] || description || `Eine fotografische Serie aus dem Bereich ${category}.`;
+    const second = fragments[1] || 'Übersichten, Details und Momente verbinden sich zu einer zusammenhängenden Serie.';
+    const third = fragments[2] || 'Licht, Perspektive und Bildrhythmus geben der Arbeit ihren eigenen Charakter.';
     return {
       lead,
       facts: [
         { label: 'Bereich', value: category },
         { label: 'Umfang', value: `${project.data.gallery?.length || 1} Bilder` },
-        { label: 'Einsatz', value: 'Portfolio · Website · Anfrage' },
+        { label: 'Form', value: 'Fotografie · Bildserie' },
       ],
       angles: [
-        { title: 'Bildidee', text: lead, icon: 'Layers' },
-        { title: 'Motive', text: second, icon: 'Images' },
-        { title: 'Einsatz', text: third, icon: 'ArrowUpRight' },
+        { title: 'Kontext', text: lead, icon: 'Layers' },
+        { title: 'Serie', text: second, icon: 'Images' },
+        { title: 'Bildsprache', text: third, icon: 'ArrowUpRight' },
       ],
     };
   }
@@ -1362,22 +1362,22 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         secondaryCta: { label: 'Zurück zum Portfolio', href: '/portfolio' },
       }, 'full', 'none', 'none'),
       projectSection(project, 'statsCounter', 2, {
-        badge: 'Fakten',
-        headline: 'Projekt auf einen Blick.',
-        subline: 'Bereich, Umfang und Einsatz der Arbeit.',
+        badge: 'Einsatz',
+        headline: 'Eine Bildwelt für den ganzen Auftritt.',
+        subline: 'Von Portraits bis Kampagnenmotiven – konsistent über alle relevanten Kanäle.',
         layout: 'projectDossier',
         stats: story.facts.map((fact) => ({ value: fact.value, label: fact.label })),
       }, 'default', 'l', 'l'),
       projectSection(project, 'spotlightCards', 3, {
-        badge: 'Projektprofil',
-        headline: 'Was die Serie ausmacht.',
+        badge: 'Arbeitsweise',
+        headline: 'Klar positioniert. Sicher fotografiert.',
         subline: story.lead,
         cards: story.angles,
       }, 'default', 'xl', 'l'),
       projectSection(project, 'galleryPro', 4, {
         badge: 'Galerie',
         headline: `${project.title} in Bildern`,
-        subline: 'Auswahl aus der Projektgalerie.',
+        subline: 'Portraits, Details und Motive aus der Serie.',
         images: gallery.slice(0, 28).map((src, imageIndex) => ({
           src,
           alt: `${project.title} ${imageIndex + 1}`,
@@ -1386,9 +1386,9 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         })),
       }, 'wide', 'l', 'xl'),
       projectSection(project, 'ctaBand', 5, {
-        badgeText: 'Ähnliches Projekt',
-        headline: 'Eine starke Bildwelt planen?',
-        subline: 'Kurz Projektziel, Einsatzkanäle und Timing senden.',
+        badgeText: 'Ihr Projekt',
+        headline: 'Wie soll Ihr Auftritt wirken?',
+        subline: 'Gemeinsam entwickeln wir eine Bildwelt, die zu Ihrer Marke, Ihren Menschen und Ihrem Einsatz passt.',
         ctaPrimary: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'ArrowRight' },
         ctaSecondary: { label: 'Portfolio ansehen', href: '/portfolio' },
       }, 'default', 'l', 'xl'),
@@ -1500,19 +1500,19 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'aiWorkflowReel',
           data: {
-            badge: 'AI Production System',
-            headline: 'Foto, Film und Content aus einer Hand.',
-            subline: 'Konzept, Bildwelt, Shooting, Schnitt und Formatadaption greifen ineinander. So entsteht ein konsistenter visueller Auftritt für Website, Social, Kampagne und Recruiting.',
+            badge: 'Foto + Film',
+            headline: 'Ein Auftritt. Eine Bildsprache. Alle Formate.',
+            subline: 'Ich verbinde Konzept, Fotografie, Film und Schnitt zu einem Auftritt, der auf Website, Social Media, in Kampagnen und im Recruiting wiedererkennbar bleibt.',
             media: {
               videoSrc: assets.agencyReel,
               poster: '',
-              caption: 'Produktion für Content, Kampagnen und Social Assets.',
+              caption: 'Fotografie und Film für Marken, Unternehmen und Persönlichkeiten.',
             },
             steps: [
               { kicker: '01 · Richtung', title: 'Wirkung festlegen', text: 'Vor dem Shooting klären wir, wofür Ihr Auftritt stehen soll und welche Motive diese Wirkung tragen.', proof: 'Branding-Beratung & Moodboard' },
               { kicker: '02 · Produktion', title: 'Menschen sicher führen', text: 'Posing, Ausdruck, Licht und Raum werden so geführt, dass vor der Kamera Klarheit entsteht.', proof: 'Studio oder On-Location' },
               { kicker: '03 · Formate', title: 'Kanäle mitdenken', text: 'Website-Motive, Reels, Social Cuts und Kampagnenbilder werden nicht nachträglich improvisiert, sondern direkt eingeplant.', proof: 'Reels, Ads, Website, Social' },
-              { kicker: '04 · Übergabe', title: 'Nutzbare Assets liefern', text: 'Sie bekommen Bild- und Filmdateien, die nicht nur gut aussehen, sondern Vertrauen aufbauen und Entscheidungen beeinflussen.', proof: 'Kampagnenfähig' },
+              { kicker: '04 · Übergabe', title: 'Bereit für Ihre Kanäle', text: 'Sie erhalten fertig aufbereitete Bilder und Filme für Website, Social Media, Kampagne, Recruiting und Print.', proof: 'Direkt einsetzbar' },
             ],
             cta: { label: 'Produktion besprechen', href: '/kontakt' },
           },
@@ -1520,17 +1520,17 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'cameraExplodeScroll',
           data: {
-            badge: 'Production System',
-            headline: 'So wird aus einem Motiv ein kompletter Markenauftritt.',
-            subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, Führung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets für Website, Social, Kampagne und Recruiting.',
+            badge: 'Arbeitsweise',
+            headline: 'Gute Bilder beginnen lange vor dem Auslösen.',
+            subline: 'Ich verbinde Ziel, Bildsprache, Führung und Finish zu einer Produktion, die Menschen glaubwürdig zeigt und Marken unverwechselbar macht.',
             brandImage: '',
             parts: [
-              { id: 'briefing', label: 'Briefing', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
-              { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie für Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
+              { id: 'briefing', label: 'Konzept', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor die Kamera ins Spiel kommt.', offsetX: -174, offsetY: -8, offsetZ: -42, color: '#151515' },
+              { id: 'look', label: 'Look', text: 'Licht, Farbe, Perspektive und Setting formen eine klare visuelle Linie für Marke, Mensch oder Kampagne.', offsetX: 164, offsetY: -46, offsetZ: 154, color: '#070707' },
               { id: 'direction', label: 'Führung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich führe Menschen so, dass der Auftritt glaubwürdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86, color: '#050505' },
-              { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert für Varianten, Planung und Adaptionen – nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
+              { id: 'ai-workflow', label: 'Looktests', text: 'Mit kontrollierten AI-Tests prüfe ich Varianten und Formate, bevor wir Zeit in die Produktion investieren.', offsetX: 180, offsetY: 72, offsetZ: -132, color: '#d11224' },
               { id: 'finish', label: 'Finish', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto, Film und Reel-Material auf denselben visuellen Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148, color: '#f4eee3' },
-              { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien für Website, Social Media, Kampagnen, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
+              { id: 'assets', label: 'Ausgabe', text: 'Sie erhalten fertige Bilder und Filme für Website, Social Media, Kampagnen, Recruiting und Print.', offsetX: 150, offsetY: 150, offsetZ: 142, color: '#c7ff4a' },
             ],
             cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
           },
@@ -1539,8 +1539,8 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           type: 'materialAtelier',
           data: {
             badge: 'Arbeitsfelder',
-            headline: 'Von Portrait bis Buchprojekt.',
-            subline: 'Die wichtigsten Linien aus Portrait, Business, Sport, Commercial und Buchprojekten.',
+            headline: 'Arbeiten mit eigener Haltung.',
+            subline: 'Portraits, Kampagnen, Sport und freie Serien – konzentriert auf Menschen, Bewegung und eine klare visuelle Idee.',
             preset: 'editorial',
             items: [
               { id: 'business', kicker: 'Business', title: 'Branding & Kampagne', text: 'Starke Bildwelten für Kommunikation, Marketing und Employer Branding.', image: assets.businessCampaign, href: '/portfolio', meta: ['Branding', 'Campaign', 'Employer Branding'] },
@@ -1597,9 +1597,9 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'infiniteCanvas',
           data: {
-            badge: 'Work Map',
-            headline: 'Portfolio als visuelle Landkarte.',
-            subline: 'Eine reduzierte Bildlandkarte aus Portrait, Sport, Commercial und Buchprojekten – performant kuratiert statt überladen.',
+            badge: 'Portfolio entdecken',
+            headline: 'Arbeiten, die für sich sprechen.',
+            subline: 'Portraits, Kampagnen, Sport und freie Serien – mit Raum für Nähe, Bewegung und Details.',
             ctaLabel: 'Canvas öffnen',
             maxExplorerItems: 20,
             items: portfolioItems,
@@ -1608,9 +1608,9 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'editorialCardMorph',
           data: {
-            badge: 'Cases',
-            headline: 'Ausgewählte Linien.',
-            subline: 'Ausgewählte Projekte mit direktem Weg zur Detailseite und Galerie.',
+            badge: 'Ausgewählte Arbeiten',
+            headline: 'Serien mit eigener Haltung.',
+            subline: 'Jedes Projekt folgt seinem eigenen Rhythmus: von leisen Portraits bis zu Bewegung, Marke und dokumentarischer Beobachtung.',
             layout: 'rail',
             items: allProjects.slice(0, 24).map((project) => ({
               id: project.slug,
@@ -1655,7 +1655,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
           spacingBottom: 'xl',
           data: {
             headline: 'Alle Projekte',
-            subline: 'Serien, Kampagnen und freie Arbeiten mit eigener Detailseite und Galerie.',
+            subline: 'Serien, Kampagnen und freie Arbeiten – mit Bildern, Kontext und eigener Geschichte.',
             collectionKey: 'projekte',
             collectionBasePath: '/c/projekte',
             showImage: true,
@@ -1673,7 +1673,7 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
       title: 'AI Workflows',
       seo: {
         metaTitle: 'AI Workflows · Alexander Schuktuew',
-        metaDescription: 'AI-gestützte Foto- und Filmproduktion: Konzept, Shooting, Schnitt, Varianten und kanalreife Assets aus einer Hand.',
+        metaDescription: 'AI-gestützte Foto- und Filmproduktion: von der frühen Lookentwicklung bis zu Fotografie, Film, Schnitt und fertigen Formaten.',
         ogImage: assets.brandBox,
       },
       sections: buildSchuktuewAiWorkflowSections(assets),
@@ -1720,9 +1720,9 @@ function buildSite(assets: UploadedAssets, extras: BuildExtras = {}) {
         {
           type: 'galleryPro',
           data: {
-            badge: 'Bildsprache',
-            headline: 'Portraits, Stills und dokumentarische Motive.',
-            subline: 'Auswahl aus Portrait, Studio, Buchprojekten und freien Arbeiten – dichter und näher an der ursprünglichen Info-Seite.',
+            badge: 'Ausgewählte Arbeiten',
+            headline: 'Portraits, freie Serien und Bücher.',
+            subline: 'Arbeiten zwischen Nähe, klarer Form und dokumentarischer Beobachtung.',
             images: [
               { src: assets.studioWide, alt: 'Studioarbeit Alexander Schuktuew', category: 'Studio', caption: 'Studio und dokumentarischer Blick.' },
               { src: assets.portraitStudy, alt: 'Portraitarbeit Alexander Schuktuew', category: 'Portrait', caption: 'Portrait als reduzierte Präsenz.' },
