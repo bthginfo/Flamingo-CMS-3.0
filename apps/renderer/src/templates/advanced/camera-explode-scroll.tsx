@@ -38,16 +38,16 @@ const FALLBACK_PARTS: CameraPart[] = [
 ];
 
 const SCHUKTUEW_CAMERA_COPY = {
-  badge: 'Production System',
-  headline: 'So wird aus einem Motiv ein kompletter Markenauftritt.',
-  subline: 'Ich zerlege ein Projekt vor der Produktion in Wirkung, Bildsprache, Führung, Formate und Auslieferung. Dadurch entstehen nicht nur einzelne Bilder, sondern Assets für Website, Social, Kampagne und Recruiting.',
+  badge: 'Arbeitsweise',
+  headline: 'Gute Bilder beginnen lange vor dem Auslösen.',
+  subline: 'Ich verbinde Ziel, Bildsprache, Führung und Finish zu einer Produktion, die Menschen glaubwürdig zeigt und Marken unverwechselbar macht.',
   parts: [
-    { id: 'briefing', label: 'Briefing', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor Kamera oder AI ins Spiel kommen.', offsetX: -174, offsetY: -8, offsetZ: -42 },
-    { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting werden als klare visuelle Linie für Marke, Mensch oder Kampagne angelegt.', offsetX: 164, offsetY: -46, offsetZ: 154 },
+    { id: 'briefing', label: 'Konzept', text: 'Ich kläre Ziel, Zielgruppe, Einsatzkanäle und gewünschte Wirkung, bevor die Kamera ins Spiel kommt.', offsetX: -174, offsetY: -8, offsetZ: -42 },
+    { id: 'look', label: 'Bildsprache', text: 'Licht, Farbe, Perspektive und Setting formen eine klare visuelle Linie für Marke, Mensch oder Kampagne.', offsetX: 164, offsetY: -46, offsetZ: 154 },
     { id: 'direction', label: 'Führung', text: 'Vor der Kamera geht es um Haltung, Ausdruck und Sicherheit. Ich führe Menschen so, dass der Auftritt glaubwürdig wirkt.', offsetX: 82, offsetY: -146, offsetZ: 86 },
-    { id: 'ai-workflow', label: 'AI Workflow', text: 'KI nutze ich kontrolliert für Varianten, Planung und Adaptionen – nicht als Zufallsgenerator, sondern als Erweiterung der Bildwelt.', offsetX: 180, offsetY: 72, offsetZ: -132 },
+    { id: 'ai-workflow', label: 'Looktests', text: 'Mit kontrollierten AI-Tests prüfe ich Varianten und Formate, bevor wir Zeit in die Produktion investieren.', offsetX: 180, offsetY: 72, offsetZ: -132 },
     { id: 'finish', label: 'Finish', text: 'Auswahl, Retusche, Schnitt und Grading bringen Foto, Film und Reel-Material auf denselben visuellen Anspruch.', offsetX: -142, offsetY: 134, offsetZ: -148 },
-    { id: 'assets', label: 'Assets', text: 'Geliefert werden nutzbare Dateien für Website, Social Media, Kampagnen, Recruiting, Präsentation und Print.', offsetX: 150, offsetY: 150, offsetZ: 142 },
+    { id: 'assets', label: 'Ausgabe', text: 'Sie erhalten fertige Bilder und Filme für Website, Social Media, Kampagnen, Recruiting und Print.', offsetX: 150, offsetY: 150, offsetZ: 142 },
   ],
   cta: { label: 'Workflow ansehen', href: '/ai-workflows' },
 };

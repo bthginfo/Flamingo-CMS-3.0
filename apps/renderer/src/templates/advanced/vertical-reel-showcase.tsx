@@ -69,9 +69,9 @@ function normalizeSchuktuewReels(reels: Reel[]) {
     normalized.push({
       ...first,
       eyebrow: first?.eyebrow || 'Production',
-      meta: 'Produktion',
-      title: 'Foto, Film und Schnitt aus einer Hand',
-      text: 'Eine vertikale Referenz für Marken, die nicht nur einzelne Bilder, sondern direkt nutzbaren Content brauchen.',
+      meta: first?.meta || 'Produktion',
+      title: first?.title || 'Foto, Film und Schnitt aus einer Hand',
+      text: first?.text || 'Ich entwickle Foto und Film gemeinsam – vom Konzept bis zu fertigen Formaten für Website, Social Media und Kampagne.',
       videoSrc: SCHUKTUEW_REELS.agency.src,
       poster: SCHUKTUEW_REELS.agency.poster,
       autoPoster: false,
@@ -85,9 +85,9 @@ function normalizeSchuktuewReels(reels: Reel[]) {
     normalized.push({
       ...second,
       eyebrow: second?.eyebrow || 'Golf',
-      meta: 'Sport Reel',
-      title: 'Sport als bewegte Referenz',
-      text: 'Golf, Timing und Bewegung im Reel-Format – konzipiert für Social, Website und Kampagnenkontext.',
+      meta: second?.meta || 'Sport Reel',
+      title: second?.title || 'Sport in Bewegung',
+      text: second?.text || 'Beim Sportfilm zählen Timing, Perspektive und Rhythmus. Daraus entsteht Bewegtbild für Social Media, Website und Kampagne.',
       videoSrc: SCHUKTUEW_REELS.golf.src,
       poster: SCHUKTUEW_REELS.golf.poster,
       autoPoster: false,
@@ -99,10 +99,10 @@ function normalizeSchuktuewReels(reels: Reel[]) {
 
   normalized.push({
     ...third,
-    eyebrow: third?.eyebrow || 'Referenz',
-    meta: 'Video-Asset',
-    title: third?.title || 'Bewegte Bildstrecke',
-    text: third?.text || 'Ein drittes Hochformat-Beispiel für die Übersetzung von Bildsprache in kurze, verwertbare Video-Assets.',
+    eyebrow: third?.eyebrow || 'Motion',
+    meta: third?.meta || 'Produktfilm',
+    title: third?.title || 'Produkt im Fokus',
+    text: third?.text || 'Kurze Produktfilme verdichten Licht, Bewegung und Schnitt zu einem klaren visuellen Auftritt.',
     videoSrc: SCHUKTUEW_REELS.reference.src,
     poster: SCHUKTUEW_REELS.reference.poster,
     autoPoster: false,
@@ -210,10 +210,10 @@ export function VerticalReelShowcaseSection({ data }: Props) {
   const aspectRatio = safeAspectRatio(data.aspectRatio);
   const featured = reels[0];
   const rest = reels.slice(1, 5);
-  const headline = isSchuktuew ? 'Video-Referenzen für Social, Sport und Kampagne.' : String(data.headline || '');
-  const subline = isSchuktuew
-    ? 'Kurze vertikale Arbeiten als direkte Referenz: Produktion aus einer Hand, Sportmoment und bewegte Bildstrecke im nativen Reel-Format.'
-    : String(data.subline || '');
+  const headline = String(data.headline || (isSchuktuew ? 'Bewegtbild für Social, Sport und Kampagne.' : ''));
+  const subline = String(data.subline || (isSchuktuew
+    ? 'Ich produziere vertikale Filme für Markenauftritte, Sportkommunikation und Social Media – von der Idee bis zum fertigen Schnitt.'
+    : ''));
   return (
     <section className="relative isolate overflow-hidden bg-[var(--token-section-bg)] px-5 py-16 text-[color:var(--token-body)] [--_quote-role:var(--token-quote)] md:px-8 md:py-24">
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,color-mix(in_srgb,var(--token-accent)_26%,transparent),transparent_35%),radial-gradient(circle_at_80%_10%,color-mix(in_srgb,var(--token-card-bg)_18%,transparent),transparent_38%)]" />

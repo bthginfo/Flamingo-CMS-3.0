@@ -57,7 +57,7 @@ export function MaterialAtelierSection({ data }: Props) {
           badge={String(data.badge || '')}
           headline={String(data.headline || '')}
           subline={String(data.subline || '')}
-          aside={<p className="mt-5 text-[10px] font-bold uppercase tracking-[.22em] text-[color:var(--token-eyebrow)] lg:text-right">{items.length} Positionen · kuratiert</p>}
+          aside={<p className="mt-5 text-[10px] font-bold uppercase tracking-[.22em] text-[color:var(--token-eyebrow)] lg:text-right">{items.length} Arbeitsfelder</p>}
         />
 
         <div className="mt-10 hidden min-h-[36rem] grid-cols-[minmax(0,1.48fr)_minmax(24rem,.82fr)] gap-6 lg:grid">

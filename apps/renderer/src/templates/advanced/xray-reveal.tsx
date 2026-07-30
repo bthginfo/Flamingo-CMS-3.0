@@ -83,12 +83,12 @@ export function XrayRevealSection({ data }: Props) {
 
           <div className="grid items-center gap-5 p-5 md:grid-cols-[1fr_minmax(16rem,28rem)] md:px-7">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]">Interaktiver Blick hinter die Oberfläche</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]">Look im direkten Vergleich</p>
               {caption && <p className="mt-1 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="caption">{caption}</p>}
             </div>
             <label className="block text-[color:var(--token-label)]">
-              <span className="mb-2 flex items-center justify-between text-xs font-semibold"><span>Reveal verschieben</span><span>{slider}%</span></span>
-              <input type="range" min="5" max="95" value={slider} onChange={(event) => { const value = Number(event.target.value); setSlider(value); setPosition((current) => ({ ...current, x: value })); }} className="w-full rounded-full border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] text-[color:var(--token-input-text)] accent-[var(--token-accent)]" aria-label="Position der X-Ray-Enthüllung" />
+              <span className="mb-2 flex items-center justify-between text-xs font-semibold"><span>Vergleich verschieben</span><span>{slider}%</span></span>
+              <input type="range" min="5" max="95" value={slider} onChange={(event) => { const value = Number(event.target.value); setSlider(value); setPosition((current) => ({ ...current, x: value })); }} className="w-full rounded-full border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] text-[color:var(--token-input-text)] accent-[var(--token-accent)]" aria-label="Position des Bildvergleichs" />
             </label>
           </div>
         </motion.div>
