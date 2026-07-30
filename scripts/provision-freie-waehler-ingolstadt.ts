@@ -808,52 +808,151 @@ function textFromPage(page: ScrapedPage | undefined, fallback: string, max = 380
   return fallback;
 }
 
-function contentSection(page: ScrapedPage | undefined, headline = 'Weitere Informationen', fallback = '<p>Weitere Informationen folgen.</p>'): SectionDef {
+function pageLinks(page: ScrapedPage | undefined) {
+  if (!page?.content) return [] as Array<{ label: string; href: string }>;
+  return [...page.content.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)]
+    .map((match) => ({
+      href: decodeHtml(match[1]).trim(),
+      label: cleanText(stripTags(match[2]), 90),
+    }))
+    .filter((entry) => entry.href && entry.label);
+}
+
+function districtProfile(page: ScrapedPage, index: number) {
+  const district = page.title.replace(/\s+-\s+FREIE\s+WÄHLER\s+Ingolstadt$/i, '');
+  const plainText = cleanText(stripTags(page.content || page.text), 0);
+  const headingNames = [...(page.content || '').matchAll(/<h4[^>]*>([\s\S]*?)<\/h4>/gi)]
+    .map((match) => cleanText(stripTags(match[1]), 80))
+    .filter((value) => value && !/kontaktdaten|kontakt/i.test(value));
+  const email = plainText.match(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/)?.[0] || '';
+  const name = headingNames[0] || cleanText(
+    plainText.match(/Stadtbezirk\s+\d+\s+.+?\s+([A-ZÄÖÜ][A-Za-zÄÖÜäöüß.'-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß.'-]+){1,3})\s+Beruf:/i)?.[1] || '',
+    80,
+  );
+  const occupation = cleanText(plainText.match(/Beruf:\s*(.+?)(?=\s+(?:Vorsitz|Mitglied|Vertreter|Kontaktdaten|E-Mail:))/i)?.[1] || '', 100);
+  const role = cleanText(
+    plainText.match(/((?:stellvertretende[rn]?\s+)?Vorsitzende?r(?:in)?\s+des\s+BZA[^.]*|Mitglied\s+(?:des|im)\s+BZA[^.]*)/i)?.[1]
+      || `Ansprechpartner im ${district}`,
+    110,
+  );
+  const districtPdf = pageLinks(page).find((link) =>
+    /\.pdf(?:$|[?#])/i.test(link.href)
+    && /stadtbezirk|bezirksgrenzen|bza/i.test(`${link.label} ${link.href}`),
+  );
   return {
-    type: 'richText',
-    container: 'narrow',
-    spacingTop: 'l',
-    spacingBottom: 'xl',
+    district,
+    number: String(index + 1).padStart(2, '0'),
+    name,
+    occupation,
+    role,
+    email,
+    image: contentImage(page.image) || '',
+    districtPdf,
+  };
+}
+
+function districtTeamSection(page: ScrapedPage, index: number): SectionDef {
+  const profile = districtProfile(page, index);
+  return {
+    type: 'teamSpotlight',
+    container: 'default',
+    spacingTop: 'xl',
+    spacingBottom: 'l',
     data: {
-      headline,
-      content: richContentFromPage(page, fallback),
+      badge: 'Ansprechpartner vor Ort',
+      headline: profile.name ? `Ihr Kontakt für ${profile.district}` : profile.district,
+      subline: profile.email
+        ? 'Fragen und Anliegen aus dem Stadtbezirk können direkt per E-Mail übermittelt werden.'
+        : 'Fragen und Anliegen aus dem Stadtbezirk können über unser Kontaktformular übermittelt werden.',
+      members: profile.name ? [{
+        name: profile.name,
+        role: profile.role,
+        image: profile.image,
+        focus: profile.occupation ? [profile.occupation] : [],
+        email: profile.email || undefined,
+      }] : [],
     },
   };
 }
 
-function infoCardsSection(page: ScrapedPage | undefined, headline = 'Weitere Informationen', fallback = 'Weitere Informationen folgen.', cta?: { label: string; href: string }): SectionDef {
-  const source = textFromPage(page, fallback, 900);
-  const pieces = (source.match(/[^.!?]+[.!?]?/g) || [source])
-    .map((entry) => cleanText(entry, 0))
-    .filter((entry) => entry.length > 20);
-  const chunks: string[] = [];
-  for (const piece of pieces) {
-    const last = chunks[chunks.length - 1] || '';
-    if (!last || last.length + piece.length > 230) {
-      chunks.push(piece);
-    } else {
-      chunks[chunks.length - 1] = `${last} ${piece}`.trim();
-    }
-    if (chunks.length >= 3 && chunks[2].length > 120) break;
+function districtResourcesSection(page: ScrapedPage, index: number): SectionDef {
+  const profile = districtProfile(page, index);
+  const cards: Array<Record<string, unknown>> = [
+    {
+      title: 'Anliegen aus dem Stadtbezirk',
+      text: 'Teilen Sie uns mit, welches Thema wir aus Ihrem Stadtbezirk aufnehmen sollen.',
+      icon: 'MessageCircle',
+      href: '/kontakt',
+      ctaLabel: 'Anliegen senden',
+    },
+  ];
+  if (profile.districtPdf) {
+    cards.push({
+      title: 'Stadtbezirk als PDF',
+      text: `Unterlagen und Abgrenzung für ${profile.district}.`,
+      icon: 'FileDown',
+      href: profile.districtPdf.href,
+      ctaLabel: 'PDF öffnen',
+    });
   }
-  const texts = chunks.length ? chunks.slice(0, 3) : [fallback];
-  const titles = ['Worum es geht', 'Was wichtig ist', 'Nächster Schritt'];
-  const icons = ['FileText', 'MessageCircle', 'ArrowRight'];
+  cards.push({
+    title: 'Alle Bezirksausschüsse',
+    text: 'Ansprechpartner und Unterlagen der weiteren Ingolstädter Stadtbezirke.',
+    icon: 'Map',
+    href: '/bezirksausschuesse',
+    ctaLabel: 'Übersicht öffnen',
+  });
   return {
     type: 'spotlightCards',
     container: 'default',
     spacingTop: 'l',
+    spacingBottom: 'l',
+    data: {
+      badge: 'Kontakt und Unterlagen',
+      headline: 'Das Wichtigste für Ihren Stadtbezirk.',
+      cards,
+    },
+  };
+}
+
+function mediaResourcesSection(page: ScrapedPage): SectionDef {
+  const links = pageLinks(page)
+    .filter((link) => !/mitglied|facebook|cookie|datenschutz|impressum|shop|landtag|europaparlament/i.test(`${link.label} ${link.href}`))
+    .slice(0, 6);
+  const cards = links.length
+    ? links.map((link, index) => ({
+      title: link.label,
+      text: 'Direkt zum veröffentlichten Angebot.',
+      icon: index % 2 === 0 ? 'Images' : 'ExternalLink',
+      href: link.href,
+      ctaLabel: 'Öffnen',
+    }))
+    : [
+      {
+        title: 'Aktuelle Meldungen',
+        text: 'Pressemitteilungen, Anträge und Positionen aus Ingolstadt.',
+        icon: 'Newspaper',
+        href: '/aktuelles',
+        ctaLabel: 'Aktuelles öffnen',
+      },
+      {
+        title: 'Medienanfrage',
+        text: 'Direkter Kontakt für Bilder, Informationen und Rückfragen.',
+        icon: 'Mail',
+        href: '/kontakt',
+        ctaLabel: 'Kontakt aufnehmen',
+      },
+    ];
+  return {
+    type: 'spotlightCards',
+    container: 'default',
+    spacingTop: 'xl',
     spacingBottom: 'xl',
     data: {
-      badge: 'Details',
-      headline,
-      cards: texts.map((text, index) => ({
-        title: titles[index] || 'Information',
-        text,
-        icon: icons[index] || 'FileText',
-        href: cta?.href,
-        ctaLabel: cta?.label,
-      })),
+      badge: 'Medien',
+      headline: 'Bilder, Filme und Veröffentlichungen.',
+      subline: 'Ausgewählte Medienangebote der Freien Wähler Ingolstadt.',
+      cards,
     },
   };
 }
@@ -974,43 +1073,48 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
     priority: index,
   }));
 
-  const bzaDetailPages: PageDef[] = bzaPages.map((page, index) => ({
-    slug: page.slug,
-    title: page.title.replace(/\s+-\s+FREIE\s+WÄHLER\s+Ingolstadt$/i, ''),
-    seo: {
-      metaTitle: cleanText(page.title, 68),
-      metaDescription: cleanText(page.excerpt, 160),
-      ogImage: contentImage(page.image) || FW_SOCIAL,
-      canonical: page.url,
-    },
-    sections: [
-      heroSection({
-        eyebrow: `Bezirksausschuss ${String(index + 1).padStart(2, '0')}`,
-        headline: page.title.replace(/\s+-\s+FREIE\s+WÄHLER\s+Ingolstadt$/i, ''),
-        text: textFromPage(page, page.excerpt, 300),
-        layout: 'fullBleedImage',
-        imagePrimary: contentImage(page.image) || FW_HERO,
-        imageFit: 'landscapeContain',
-        primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
-        secondaryCta: { label: 'Alle Bezirke', href: '/bezirksausschuesse' },
-      }, sectionStyle('soft')),
-      infoCardsSection(page, 'Wichtige Informationen', 'Informationen aus der bisherigen Bezirksausschuss-Seite.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
-      contentSection(page, 'Details aus der bisherigen Seite', `<p>${page.excerpt}</p>`),
-      {
-        type: 'ctaBand',
-        container: 'default',
-        spacingTop: 'l',
-        spacingBottom: 'xl',
-        data: {
-          badgeText: 'Anliegen im Stadtteil',
-          headline: 'Ein Thema aus dem Bezirk melden?',
-          subline: 'Kurze Nachricht senden, damit das Anliegen in die kommunalpolitische Arbeit aufgenommen werden kann.',
-          ctaPrimary: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'ArrowRight' },
-          ctaSecondary: { label: 'Zurück zu allen Bezirken', href: '/bezirksausschuesse' },
-        },
+  const bzaDetailPages: PageDef[] = bzaPages.map((page, index) => {
+    const profile = districtProfile(page, index);
+    return {
+      slug: page.slug,
+      title: profile.district,
+      seo: {
+        metaTitle: cleanText(page.title, 68),
+        metaDescription: cleanText(page.excerpt, 160),
+        ogImage: contentImage(page.image) || FW_SOCIAL,
+        canonical: page.url,
       },
-    ],
-  }));
+      sections: [
+        heroSection({
+          eyebrow: `Bezirksausschuss ${String(index + 1).padStart(2, '0')}`,
+          headline: profile.district,
+          text: profile.name
+            ? `${profile.name} ist ${profile.role.toLowerCase()}${profile.occupation ? ` und arbeitet als ${profile.occupation}` : ''}.`
+            : `Hier finden Sie den direkten Kontakt und die Unterlagen für ${profile.district}.`,
+          layout: 'fullBleedImage',
+          imagePrimary: contentImage(page.image) || FW_HERO,
+          imageFit: 'landscapeContain',
+          primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
+          secondaryCta: { label: 'Alle Bezirke', href: '/bezirksausschuesse' },
+        }, sectionStyle('soft')),
+        districtTeamSection(page, index),
+        districtResourcesSection(page, index),
+        {
+          type: 'ctaBand',
+          container: 'default',
+          spacingTop: 'l',
+          spacingBottom: 'xl',
+          data: {
+            badgeText: 'Anliegen im Stadtteil',
+            headline: 'Ein Thema aus dem Bezirk melden?',
+            subline: 'Kurze Nachricht senden, damit das Anliegen in die kommunalpolitische Arbeit aufgenommen werden kann.',
+            ctaPrimary: { label: 'Kontakt aufnehmen', href: '/kontakt', icon: 'ArrowRight' },
+            ctaSecondary: { label: 'Zurück zu allen Bezirken', href: '/bezirksausschuesse' },
+          },
+        },
+      ],
+    };
+  });
 
   const pages: PageDef[] = [
     {
@@ -1424,7 +1528,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         heroSection({
           eyebrow: 'Organisation',
           headline: 'Vorstand der Freien Wähler Ingolstadt.',
-          text: textFromPage(vorstand, 'Der Vorstand koordiniert Verein, Themenarbeit und Ansprechpartner vor Ort.', 280),
+          text: 'Der Vorstand koordiniert den Verein, bündelt Themen und ist Ansprechpartner für Mitglieder und Interessierte.',
           layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
@@ -1447,7 +1551,6 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             })),
           },
         },
-        infoCardsSection(vorstand, 'Informationen aus der bisherigen Vorstandsseite', 'Der Vorstand koordiniert die Arbeit der Freien Wähler Ingolstadt.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
       ],
     },
     {
@@ -1462,7 +1565,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         heroSection({
           eyebrow: 'Stadtrat',
           headline: 'Stadtratsfraktion und kommunale Arbeit.',
-          text: textFromPage(fraktion, 'Informationen zur Stadtratsfraktion, Ansprechpartnern und Arbeit im Stadtrat.', 280),
+          text: 'Unsere Stadtratsfraktion bringt konkrete Anliegen in den Stadtrat ein und macht Anträge und Ansprechpartner transparent.',
           layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
@@ -1484,7 +1587,6 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             ],
           },
         },
-        infoCardsSection(fraktion, 'Informationen aus der bisherigen Fraktionsseite', 'Informationen zur Stadtratsfraktion der Freien Wähler Ingolstadt.', { label: 'Anträge öffnen', href: '/stadtrat#antraege' }),
       ],
     },
     {
@@ -1499,7 +1601,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         heroSection({
           eyebrow: 'Stadtteile',
           headline: 'Politik beginnt in den Bezirken.',
-          text: textFromPage(bza, 'Kommunale Themen entstehen in den Stadtteilen. Die Bezirksausschüsse sind dafür ein wichtiger Ort.', 300),
+          text: 'In den Bezirksausschüssen werden Anliegen aus den Stadtteilen aufgenommen und in die kommunale Arbeit eingebracht.',
           layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
@@ -1513,7 +1615,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
           spacingBottom: 'l',
           data: {
             headline: 'Alle Bezirksausschüsse',
-            subline: `${bzaListItems.length} Bezirksausschüsse mit direkten Detailseiten, Ansprechpartnern und Informationen aus der bisherigen Website.`,
+            subline: `${bzaListItems.length} Bezirksausschüsse mit Ansprechpartnern, Kontaktdaten und Unterlagen.`,
             items: bzaListItems,
             collectionBasePath: '/bezirksausschuesse',
             showImage: false,
@@ -1543,7 +1645,6 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             ],
           },
         },
-        infoCardsSection(bza, 'Informationen aus der bisherigen Seite', 'Informationen zu Bezirksausschüssen und Stadtteilthemen.', { label: 'Anliegen senden', href: '/kontakt' }),
       ],
     },
     ...bzaDetailPages,
@@ -1559,7 +1660,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         heroSection({
           eyebrow: 'Termine',
           headline: 'Veranstaltungen und Austausch.',
-          text: textFromPage(veranstaltungen, 'Termine, Treffen und Veranstaltungen der Freien Wähler Ingolstadt.', 300),
+          text: 'Bei unseren Terminen und Veranstaltungen kommen wir über aktuelle Themen und Anliegen aus Ingolstadt ins Gespräch.',
           layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
@@ -1581,7 +1682,6 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             ],
           },
         },
-        infoCardsSection(veranstaltungen, 'Informationen aus der bisherigen Veranstaltungsseite', 'Termine und Veranstaltungen der Freien Wähler Ingolstadt.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
       ],
     },
     {
@@ -1596,7 +1696,7 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         heroSection({
           eyebrow: 'Kreisvereinigung',
           headline: 'Kommunales Engagement bündeln.',
-          text: textFromPage(kreis, 'Die Kreisvereinigung bündelt das kommunalpolitische Engagement der Freien Wähler Ingolstadt.', 300),
+          text: 'Die Kreisvereinigung bündelt das kommunalpolitische Engagement der Freien Wähler in Ingolstadt.',
           layout: 'fullBleedImage',
           imagePrimary: FW_HERO,
           imageFit: 'landscapeContain',
@@ -1618,7 +1718,6 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
             ],
           },
         },
-        infoCardsSection(kreis, 'Informationen aus der bisherigen Kreisvereinigungsseite', 'Informationen zur Kreisvereinigung der Freien Wähler Ingolstadt.', { label: 'Vorstand ansehen', href: '/vorstand' }),
       ],
     },
     ...(medien ? [{
@@ -1633,15 +1732,14 @@ function buildSite(scrapedPages: ScrapedPage[], scrapedNews: ScrapedPage[]) {
         heroSection({
           eyebrow: 'Medien',
           headline: 'Downloads und Informationen.',
-          text: textFromPage(medien, 'Medien, Downloads und weitere Informationen der Freien Wähler Ingolstadt.', 300),
+          text: 'Filme, Bilder, Zeitungen und weitere Veröffentlichungen der Freien Wähler Ingolstadt.',
           layout: 'fullBleedImage',
           imagePrimary: contentImage(medien.image) || FW_HERO,
           imageFit: 'landscapeContain',
           primaryCta: { label: 'Kontakt', href: '/kontakt' },
           secondaryCta: { label: 'Mitglied werden', href: MEMBER_PDF },
         }, sectionStyle('soft')),
-        infoCardsSection(medien, 'Informationen aus der bisherigen Medienseite', 'Downloads und Medieninformationen.', { label: 'Kontakt aufnehmen', href: '/kontakt' }),
-        contentSection(medien, 'Details aus der bisherigen Seite', `<p>${medien.excerpt}</p>`),
+        mediaResourcesSection(medien),
       ],
     } satisfies PageDef] : []),
     {

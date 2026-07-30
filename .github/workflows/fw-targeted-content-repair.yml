@@ -1,0 +1,109 @@
+name: Repair Freie Waehler content
+run-name: Targeted FW content repair · ${{ github.event_name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Apply the reviewed targeted repair
+        required: true
+        default: false
+        type: boolean
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fw-targeted-content-repair.yml'
+      - 'scripts/lib/freie-waehler-content-repair.ts'
+      - 'scripts/lib/renderer-cache-invalidation.ts'
+      - 'scripts/patch-freie-waehler-content.ts'
+      - 'apps/renderer/src/app/api/revalidate/route.ts'
+
+concurrency:
+  group: fw-targeted-content-repair
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Test and audit targeted delta
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      CRM_CONFIG_ENCRYPTION_KEY: ${{ secrets.CRM_CONFIG_ENCRYPTION_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate read-only configuration
+        shell: bash
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo 'DATABASE_URL repository secret is missing' >&2
+            exit 1
+          fi
+          if [ -z "$CRM_CONFIG_ENCRYPTION_KEY" ]; then
+            echo 'CRM_CONFIG_ENCRYPTION_KEY repository secret is missing' >&2
+            exit 1
+          fi
+
+      - name: Run focused repair tests
+        run: pnpm exec tsx --test scripts/patch-freie-waehler-content.test.ts
+
+      - name: Audit targeted changes
+        run: pnpm exec tsx scripts/patch-freie-waehler-content.ts
+
+  apply:
+    name: Apply reviewed repair
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply }}
+    needs: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      CRM_CONFIG_ENCRYPTION_KEY: ${{ secrets.CRM_CONFIG_ENCRYPTION_KEY }}
+      REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate production configuration
+        shell: bash
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo 'DATABASE_URL repository secret is missing' >&2
+            exit 1
+          fi
+          if [ -z "$CRM_CONFIG_ENCRYPTION_KEY" ]; then
+            echo 'CRM_CONFIG_ENCRYPTION_KEY repository secret is missing' >&2
+            exit 1
+          fi
+          if [ -z "$REVALIDATE_SECRET" ] && [ -z "$VERCEL_TOKEN" ]; then
+            echo 'REVALIDATE_SECRET or VERCEL_TOKEN is required for post-apply cache invalidation' >&2
+            exit 1
+          fi
+
+      - name: Apply targeted changes
+        run: pnpm exec tsx scripts/patch-freie-waehler-content.ts --apply

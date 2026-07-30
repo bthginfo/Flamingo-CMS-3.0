@@ -21,6 +21,9 @@ export async function POST(request: NextRequest) {
   const tenantId = request.nextUrl.searchParams.get('tenant');
   if (tenantId) {
     revalidateTag(`tenant-${tenantId}`);
+    // This endpoint runs inside the standalone renderer. Invalidating the
+    // layout also evicts full-route output that depended on the old snapshot.
+    revalidatePath('/', 'layout');
     return NextResponse.json({ revalidated: true, scope: 'tenant', tenantId });
   }
 
