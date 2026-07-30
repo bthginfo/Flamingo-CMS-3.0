@@ -115,8 +115,6 @@ function ProjectDossier({
           transition={{ duration: reduceMotion ? 0 : 0.72, ease: 'easeOut' }}
           className="absolute inset-x-0 top-0 hidden h-[2px] origin-left bg-[var(--token-accent)] md:block"
         />
-        <div aria-hidden="true" className="absolute bottom-5 left-[1.08rem] top-5 w-px bg-[var(--token-accent)] md:hidden" />
-
         {stats.map((stat, i) => {
           const numeric = isNumericValue(stat.value);
           const parts = numeric ? [] : splitStatTextValue(stat.value);
@@ -126,16 +124,22 @@ function ProjectDossier({
               initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration, delay: reduceMotion ? 0 : 0.08 + i * 0.07 }}
-              className="group relative grid grid-cols-[2.2rem_minmax(0,1fr)] gap-3 border-b border-[var(--token-divider)] py-5 last:border-b-0 md:block md:border-b-0 md:border-r md:px-6 md:py-7 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
+              className="group relative grid grid-cols-[2.75rem_minmax(0,1fr)] gap-4 border-b border-[var(--token-divider)] py-6 last:border-b-0 md:block md:border-b-0 md:border-r md:px-6 md:py-7 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
               data-edit-collection="stats"
               data-edit-index={i}
               data-card
             >
-              <div className="relative z-10 flex flex-col items-center gap-2 md:mb-8 md:block">
-                <span className="text-[10px] font-bold tabular-nums tracking-[.2em] text-[color:var(--token-card-muted,var(--token-muted))]">
+              <div className="relative z-10 flex min-h-full flex-col items-center md:mb-8 md:block">
+                <span className="relative z-10 inline-grid min-h-7 min-w-8 place-items-center rounded-full bg-[var(--token-section-bg)] px-1 text-[10px] font-bold tabular-nums tracking-[.16em] text-[color:var(--token-card-muted,var(--token-muted))]">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span aria-hidden="true" className="mt-0.5 size-2 rounded-full border-2 border-[var(--token-section-bg)] bg-[var(--token-accent)] shadow-[0_0_0_1px_var(--token-accent)] md:absolute md:-top-[2.03rem] md:left-0 md:mt-0" />
+                <span aria-hidden="true" className="relative z-10 mt-2 size-2 rounded-full border-2 border-[var(--token-section-bg)] bg-[var(--token-accent)] shadow-[0_0_0_1px_var(--token-accent)] md:absolute md:-top-[2.03rem] md:left-0 md:mt-0" />
+                {i < stats.length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute bottom-[-1.55rem] top-10 w-px bg-[color:color-mix(in_srgb,var(--token-accent)_72%,var(--token-divider))] md:hidden"
+                  />
+                )}
               </div>
 
               <div className="min-w-0">

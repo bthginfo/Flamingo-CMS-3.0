@@ -346,8 +346,6 @@ function collectAllowedRoutes(input: ContentQualityInput): Set<string> {
     if (!isObjectRecord(collection)) continue;
     const key = text(collection.key);
     if (!key) continue;
-    routes.add(key);
-    routes.add(`/${key}`);
     for (const item of Array.isArray(collection.items) ? collection.items : []) {
       if (!isObjectRecord(item)) continue;
       const slug = text(item.slug);

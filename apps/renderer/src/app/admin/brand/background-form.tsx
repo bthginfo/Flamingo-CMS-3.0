@@ -81,12 +81,17 @@ export function BackgroundForm({ initial }: { initial: DesignData }) {
       for (const [k, v] of Object.entries(form)) {
         if (v && v.trim()) clean[k] = v.trim();
       }
-      await saveDesignSettings(clean);
+      const result = await saveDesignSettings(clean);
+      if (!result.success) {
+        toast.error(result.error || 'Design konnte nicht gespeichert werden. Bitte erneut versuchen.');
+        return;
+      }
       markSaved();
       router.refresh();
       toast.success('Hintergrundfarben gespeichert');
-    } catch {
-      toast.error('Fehler beim Speichern');
+    } catch (error) {
+      console.error('[BackgroundForm] Save failed', error);
+      toast.error('Design konnte nicht gespeichert werden. Bitte erneut versuchen.');
     } finally {
       setSaving(false);
     }

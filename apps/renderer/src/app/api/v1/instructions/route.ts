@@ -109,7 +109,11 @@ export async function GET(req: NextRequest) {
       formFields: { method: 'PUT', path: '/api/v1/content/form-fields', description: 'Set contact form fields: { fields: [{ name, label, type: "text"|"email"|"tel"|"textarea"|"select", placeholder?, required?, options?, halfWidth? }] }' },
       openingHours: { method: 'PUT', path: '/api/v1/content/opening-hours', description: 'Set opening hours: { hours: [{ type?: "regular"|"special", day?: string, date?: "YYYY-MM-DD", hours?: string, closed?: boolean, note?: string }] }. Use regular rows for weekly hours and special rows for holidays, vacations or one-off changes.' },
       listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
-      createCollection: { method: 'POST', path: '/api/v1/content/collections', description: 'Create a new collection (key: lowercase-slug, label: display name). Use for repeating content types like services, rooms, news, team members, etc.' },
+      createCollection: {
+        method: 'POST',
+        path: '/api/v1/content/collections',
+        description: 'Create a collection and its editable /<collectionKey> overview page. Retries repair a missing overview without overwriting an existing page. Pass overviewPage { slug?, title?, sections? } for a tailored premium overview, or createOverviewPage: false only for intentionally private/internal collections.',
+      },
       createCollectionItem: { method: 'POST', path: '/api/v1/content/collections/:key/items', description: 'Create a collection item (title, slug, data with sections)' },
       updateCollectionItem: { method: 'PUT', path: '/api/v1/content/collections/:key/items/:id', description: 'Update a collection item (full replace of provided fields)' },
       patchCollectionItem: { method: 'PATCH', path: '/api/v1/content/collections/:key/items/:id', description: 'Partially update a collection item (merges data fields instead of replacing)' },
@@ -230,7 +234,9 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
       - legalContent (headline: "Datenschutzerklärung", blocks mit: Verantwortlicher, Hosting, Cookies, Kontaktformular, Analyse-Tools, Rechte der Betroffenen)
 
 6. COLLECTIONS — Nur wenn wiederholbare Inhalte fachlich sinnvoll sind; Key und Inhalt an sitemapPolicy/Branche anpassen. Dienstleister-Beispiel:
-   - POST /api/v1/content/collections → { key: "leistungen", label: "Leistungen" }
+   - POST /api/v1/content/collections → { key: "leistungen", label: "Leistungen", overviewPage: { slug: "leistungen", title: "Leistungen", sections: [/* 4–6 passende, vollständige Sections inkl. collectionList mit collectionKey:"leistungen" */] } }
+   - Der Endpoint legt standardmäßig automatisch eine editierbare Übersichtsseite unter /<collectionKey> an. Bei Retries wird eine fehlende Übersicht repariert; eine vorhandene Seite wird NIE überschrieben. Nur für bewusst interne Collections createOverviewPage:false senden.
+   - Der automatische collectionHero+collectionList-Fallback verhindert 404s, ersetzt aber keine kuratierte Premium-Übersicht. Für öffentliche Collections immer overviewPage mit einer eigenständigen 4–6-Section-Komposition mitsenden.
    - Dann für JEDE Leistung ein Item erstellen (MINDESTENS 4 Items):
      POST /api/v1/content/collections/leistungen/items → { title: "...", slug: "...", data: { sections: [...] } }
    - Jedes Collection-Item braucht sections mit echtem Content (collectionHero + textImage + ctaBand minimum)   - WICHTIG: Jede Section in data.sections MUSS ein "id"-Feld haben (UUID v4 Format, z.B. "a1b2c3d4-e5f6-7890-abcd-ef1234567890"). Ohne ID funktioniert Drag&Drop im Editor nicht!
@@ -656,11 +662,11 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
       '1. Read tenant, existingPages, hasShopAddon, hasBookingAddon, availableSectionTypes, sectionDataSchemas, sectionStyleContracts.',
       '2. Design a tenant identity before writing content: company name, city/region, story, tone, brand palette, image world.',
       '3. Create global brand/contact/design/style/navigation/footer/SEO first.',
-      '4. Create collections before pages when pages link to collection items.',
+      '4. Create collections before pages when pages link to collection items. Every public collection POST creates or repairs its reachable overview page; supply overviewPage for a tailored 4–6 section composition.',
       '5. Create pages with complete sections and real content.',
       '6. Create collection items with embedded sections and stable UUIDs for every item section.',
       '7. Optionally call /validate and repair useful findings. Validation is advisory.',
-      '8. Publish the saved content, then manually check live pages and collection routes.',
+      '8. Publish the saved content, then verify HTTP 200 for every collection overview URL and at least one /c/<collectionKey>/<itemSlug> detail URL per collection.',
     ],
     style: {
       supportedWebsiteStyle: 'classic',
@@ -699,7 +705,10 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
       'Page slug values never start with "/". Use "leistungen", not "/leistungen".',
       'Navigation/footer href values do start with "/". Use "/leistungen".',
       'Only link to pages and collection items that actually exist.',
+      'Every public collection has a normal, editable overview page. POST /content/collections creates /<collectionKey> automatically unless overviewPage.slug customizes it.',
+      'Use overviewPage with a tailored 4–6 section composition for polished sites; the automatic collectionHero+collectionList page is only a safety net.',
       'Collection detail links use "/c/<collectionKey>/<itemSlug>".',
+      'Before handoff, verify the collection overview URL and at least one detail URL return HTTP 200.',
       'If the API validation lists a required page, create that exact slug even if the visible nav label differs.',
     ],
     contentRules: [

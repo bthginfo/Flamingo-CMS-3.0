@@ -1,0 +1,51 @@
+name: Ensure collection overview pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/collection-overviews.yml'
+      - 'scripts/ensure-collection-overview-pages.ts'
+
+concurrency:
+  group: collection-overview-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      CRM_CONFIG_ENCRYPTION_KEY: ${{ secrets.CRM_CONFIG_ENCRYPTION_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate configuration
+        shell: bash
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo 'DATABASE_URL repository secret is missing' >&2
+            exit 1
+          fi
+          if [ -z "$CRM_CONFIG_ENCRYPTION_KEY" ]; then
+            echo 'CRM_CONFIG_ENCRYPTION_KEY repository secret is missing' >&2
+            exit 1
+          fi
+
+      - name: Create only missing overview pages
+        run: pnpm exec tsx scripts/ensure-collection-overview-pages.ts

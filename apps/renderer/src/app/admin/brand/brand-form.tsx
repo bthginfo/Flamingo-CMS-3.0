@@ -104,6 +104,7 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
     };
     if (Object.keys(cssVars).length > 0) {
       preview.sendLiveData({
+        brand: form,
         cssVars,
         fontsUrl: fontAssets.googleFontsUrl,
         fontFaceCss: fontAssets.fontFaceCss,
@@ -134,14 +135,15 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
     try {
       const result = await saveBrandSettings(form);
       if (result.success) {
+        markSaved();
+        router.refresh();
         toast.success('Marken-Einstellungen gespeichert ✓');
       } else {
-        toast.error('Speichern fehlgeschlagen');
+        toast.error(result.error || 'Speichern fehlgeschlagen. Bitte erneut versuchen.');
       }
-      markSaved();
-      router.refresh();
-    } catch {
-      toast.error('Fehler beim Speichern');
+    } catch (error) {
+      console.error('[BrandForm] Save failed', error);
+      toast.error('Marke konnte nicht gespeichert werden. Bitte erneut versuchen.');
     } finally {
       setSaving(false);
     }

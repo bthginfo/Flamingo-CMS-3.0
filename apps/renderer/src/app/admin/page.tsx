@@ -1,11 +1,28 @@
 ﻿import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
-import { pages, pageSections, collectionItems, tenants, mediaAssets, seoGlobal, seoPage, publishedSnapshots } from '@flamingo/db';
+import {
+  pages,
+  pageSections,
+  collectionItems,
+  tenants,
+  mediaAssets,
+  seoGlobal,
+  seoPage,
+  publishedSnapshots,
+  globalSettings,
+  navigation as navigationTable,
+  footer as footerTable,
+} from '@flamingo/db';
 import { eq, count, and, desc } from 'drizzle-orm';
 import { Camera, FileText, Home, Layers, FolderOpen, Rocket, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { DashboardActions } from './dashboard-actions';
+import { OnboardingChecklist } from '@/components/admin/onboarding-checklist';
+import {
+  getBusinessProfileCompleteness,
+  readPersistedBusinessProfile,
+} from '@/lib/business-profile';
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -29,6 +46,9 @@ export default async function DashboardPage() {
     allMedia,
     activeSnapshotRows,
     snapshotVersionRows,
+    settingsRows,
+    navigationRows,
+    footerRows,
   ] = await Promise.all([
     db.select().from(tenants).where(eq(tenants.id, tid)).limit(1),
     db.select({ value: count() }).from(pages).where(eq(pages.tenantId, tid)),
@@ -37,7 +57,7 @@ export default async function DashboardPage() {
     db.select({ value: count() }).from(pages).where(and(eq(pages.tenantId, tid), eq(pages.status, 'published'))),
     db.select({ value: count() }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid)),
     db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, tid)).limit(1),
-    db.select({ id: pages.id, title: pages.title, slug: pages.slug }).from(pages).where(eq(pages.tenantId, tid)),
+    db.select({ id: pages.id, title: pages.title, slug: pages.slug, type: pages.type }).from(pages).where(eq(pages.tenantId, tid)),
     db.select({ pageId: seoPage.pageId }).from(seoPage).where(eq(seoPage.tenantId, tid)),
     db.select({ id: mediaAssets.id, alt: mediaAssets.alt }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid)),
     db.select({ version: publishedSnapshots.version, createdAt: publishedSnapshots.createdAt })
@@ -50,6 +70,15 @@ export default async function DashboardPage() {
       .where(eq(publishedSnapshots.tenantId, tid))
       .orderBy(desc(publishedSnapshots.version))
       .limit(25),
+    db.select({
+      brand: globalSettings.brand,
+      businessProfile: globalSettings.businessProfile,
+    }).from(globalSettings).where(eq(globalSettings.tenantId, tid)).limit(1),
+    db.select({ items: navigationTable.items }).from(navigationTable).where(eq(navigationTable.tenantId, tid)).limit(1),
+    db.select({
+      columns: footerTable.columns,
+      legalLinks: footerTable.legalLinks,
+    }).from(footerTable).where(eq(footerTable.tenantId, tid)).limit(1),
   ]);
   const tenant = tenantRows[0];
   const pageCount = pageCountRows[0];
@@ -67,6 +96,24 @@ export default async function DashboardPage() {
   const pagesWithoutSeo = allPages.filter(p => !seoPageIds.has(p.id));
   const seoGlobalComplete = !!(seoRow?.defaultTitle && seoRow?.defaultDescription);
   const homePage = allPages.find(page => ['', 'home', 'startseite'].includes(page.slug));
+  const settings = settingsRows[0];
+  const navigationItems = navigationRows[0]?.items || [];
+  const footerConfig = footerRows[0];
+  const legalSlugs = new Set(allPages.map(page => page.slug));
+  const legalReady = legalSlugs.has('impressum') && legalSlugs.has('datenschutz');
+  const persistedProfile = readPersistedBusinessProfile(settings?.businessProfile);
+  const profileCompleteness = persistedProfile
+    ? getBusinessProfileCompleteness(persistedProfile)
+    : null;
+  const onboardingCompleted = {
+    company: Boolean(profileCompleteness && profileCompleteness.completed >= 7),
+    design: Boolean(settings?.brand && Object.keys(settings.brand).length >= 3),
+    content: (pageCount?.value ?? 0) > 0 && (sectionCount?.value ?? 0) > 0,
+    structure: navigationItems.length > 0
+      && Boolean((footerConfig?.columns?.length || 0) + (footerConfig?.legalLinks?.length || 0))
+      && legalReady,
+    publish: Boolean(activeSnapshot),
+  };
 
   // Check media without alt
   const mediaWithoutAlt = allMedia.filter(m => !m.alt);
@@ -94,6 +141,8 @@ export default async function DashboardPage() {
           canRollback={hasPreviousSnapshot && !isPublicDemoMode}
         />
       </div>
+
+      <OnboardingChecklist tenantId={tid} completed={onboardingCompleted} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((s) => (

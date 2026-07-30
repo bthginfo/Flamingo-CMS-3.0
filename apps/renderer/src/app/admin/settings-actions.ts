@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings, navigation, footer, tenants } from '@flamingo/db';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { normalizeFooterVariant } from '@/lib/footer-variants';
 
@@ -37,25 +37,30 @@ export async function saveBrandSettings(data: Record<string, unknown>) {
   const tenantId = await requireWritableTenant();
   const db = getDb();
 
-  // Check if row exists
-  const [existing] = await db.select({ id: globalSettings.id, brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  const existingBrand = (existing?.brand as Record<string, unknown>) || {};
-  const nextBrand = { ...data };
-  if (existingBrand.localSeo && !nextBrand.localSeo) nextBrand.localSeo = existingBrand.localSeo;
+  try {
+    await db.insert(globalSettings)
+      .values({ tenantId, brand: data })
+      .onConflictDoUpdate({
+        target: globalSettings.tenantId,
+        set: {
+          // Merge in the database so tenant-specific, forward-compatible
+          // brand fields survive while empty strings still reset a field.
+          brand: sql`coalesce(${globalSettings.brand}, '{}'::jsonb) || excluded.brand`,
+          updatedAt: new Date(),
+        },
+      });
 
-  if (existing) {
-    await db.update(globalSettings)
-      .set({ brand: nextBrand, updatedAt: new Date() })
-      .where(eq(globalSettings.tenantId, tenantId));
-  } else {
-    await db.insert(globalSettings).values({ tenantId, brand: nextBrand });
+    revalidatePath('/admin/brand');
+    revalidatePath('/', 'layout');
+    revalidatePath('/', 'page');
+    return { success: true as const };
+  } catch (error) {
+    console.error('[settings] Failed to save brand settings', { tenantId, error });
+    return {
+      success: false as const,
+      error: 'Marke konnte nicht gespeichert werden. Bitte erneut versuchen.',
+    };
   }
-
-
-  revalidatePath('/admin/brand');
-  revalidatePath('/', 'layout');
-  revalidatePath('/', 'page');
-  return { success: true };
 }
 
 // ─── Contact ──────────────────────────────────────────────────────────
@@ -265,12 +270,23 @@ export async function getDesignSettings(): Promise<Record<string, string>> {
 export async function saveDesignSettings(data: Record<string, string>) {
   const tenantId = await requireWritableTenant();
   const db = getDb();
-  const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  if (existing) {
-    await db.update(globalSettings).set({ design: data, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
-  } else {
-    await db.insert(globalSettings).values({ tenantId, design: data });
+  try {
+    await db.insert(globalSettings)
+      .values({ tenantId, design: data })
+      .onConflictDoUpdate({
+        target: globalSettings.tenantId,
+        set: {
+          design: sql`excluded.design`,
+          updatedAt: new Date(),
+        },
+      });
+    revalidatePath('/admin/brand');
+    return { success: true as const };
+  } catch (error) {
+    console.error('[settings] Failed to save design settings', { tenantId, error });
+    return {
+      success: false as const,
+      error: 'Design konnte nicht gespeichert werden. Bitte erneut versuchen.',
+    };
   }
-  revalidatePath('/admin/brand');
-  return { success: true };
 }

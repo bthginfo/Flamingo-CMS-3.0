@@ -63,7 +63,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </main>
       <PreviewSlot />
       <PublishFab />
-      <OnboardingTour />
+      <OnboardingTour tenantId={session.tenantId} />
       <Toaster position="top-right" richColors closeButton />
     </div>
     </PreviewProvider>

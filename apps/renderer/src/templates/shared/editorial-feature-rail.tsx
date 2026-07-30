@@ -20,7 +20,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
         .editorial-feature-rail [data-feature-rail-heading] { color: var(--token-heading, #061532) !important; }
         .editorial-feature-rail [data-feature-rail-copy] { color: var(--token-body, #25344f) !important; }
         .editorial-feature-rail [data-feature-card-title] { color: var(--token-on-dark-heading, #ffffff) !important; text-shadow: 0 2px 20px rgba(0,0,0,0.45); }
-        .editorial-feature-rail [data-feature-card-copy] { color: var(--token-on-dark-body, var(--token-card-body, rgba(255,255,255,0.88))) !important; text-shadow: 0 1px 12px rgba(0,0,0,0.32); }
+        .editorial-feature-rail [data-feature-card-copy] { color: var(--token-on-dark-body, rgba(255,255,255,0.88)) !important; text-shadow: 0 1px 12px rgba(0,0,0,0.32); }
         .editorial-feature-rail [data-feature-card-kicker] { color: var(--token-eyebrow) !important; text-shadow: 0 1px 12px rgba(0,0,0,0.35); }
       `}</style>
       <div className="mx-auto max-w-7xl px-6">
@@ -38,7 +38,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
               <div className="relative z-10 flex h-full flex-col justify-end p-6 md:p-8">
                 {item.kicker && <div className="mb-3 text-xs font-bold uppercase tracking-[0.2em] !text-[color:var(--token-eyebrow)]" data-edit-path="kicker" data-feature-card-kicker>{item.kicker}</div>}
                 <h3 className="text-3xl font-black leading-tight !text-[color:var(--token-on-dark-heading,#fff)] md:text-4xl" data-edit-path="title" data-feature-card-title>{item.title}</h3>
-                {item.text && <p className="mt-4 max-w-md text-sm leading-7 !text-[color:var(--token-on-dark-body,var(--token-card-body,rgba(255,255,255,0.88)))]" data-edit-path="text" data-feature-card-copy>{plain(item.text)}</p>}
+                {item.text && <p className="mt-4 max-w-md text-sm leading-7 !text-[color:var(--token-on-dark-body,rgba(255,255,255,0.88))]" data-edit-path="text" data-feature-card-copy>{plain(item.text)}</p>}
                 {item.ctaLabel && <a href={item.ctaHref || '#'} className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-4 py-2 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="ctaLabel">{item.ctaLabel}</span><ArrowRight size={15} /></a>}
               </div>
             </motion.article>

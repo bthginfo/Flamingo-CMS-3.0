@@ -237,6 +237,20 @@ const AGENT_REQUEST_BODIES = {
       locale: 'de_DE',
     },
   },
+  collection: {
+    method: 'POST',
+    path: '/api/v1/content/collections',
+    body: {
+      key: 'projekte',
+      label: 'Projekte',
+      overviewPage: {
+        slug: 'projekte',
+        title: 'Projekte',
+        sections: '<tailored 4-6 section composition including collectionList with collectionKey "projekte">',
+      },
+    },
+    invariant: 'Creates or repairs the editable /projekte overview by default. Existing overview pages are never overwritten. Use createOverviewPage=false only for intentionally private collections.',
+  },
   page: {
     method: 'POST',
     path: '/api/v1/content/pages',
@@ -437,6 +451,7 @@ export function buildAiAgentContract(input: {
       'No public field may contain stage directions, section labels, design notes or media-production notes.',
       'Headlines communicate a customer outcome, not generic welcome copy.',
       'Every CTA points to an existing route and describes the next action.',
+      'Every public collection has a reachable editable overview page plus reachable /c/<collectionKey>/<itemSlug> detail routes.',
       'Every image is relevant and has meaningful alt text.',
       'Use at least three substantive array items unless reality provides fewer.',
       'Avoid duplicated paragraphs and repeated headlines across sections.',
@@ -541,6 +556,9 @@ export function buildAiAgentContract(input: {
           'Do not use the generic homepage sequence hero, uspStrip, servicesGrid, processSteps, testimonials, faq, ctaBand.',
           'No page may share the exact same opener-middle-closer sequence with another page.',
           'Every CTA resolves to a planned page, collection item, anchor, phone, email or verified external URL.',
+          'For every public collection, plan a tailored 4-6 section overviewPage. The collection POST auto-creates /<collectionKey> as a safety net, but generic fallback composition is not the quality target.',
+          'Do not add navigation/footer links to a collection overview until its POST response reports overviewPage.status "created" or "existing".',
+          'Final QA checks HTTP 200 for every collection overview URL and at least one collection detail URL.',
           'Every page has unique SEO before any write starts.',
         ],
       },

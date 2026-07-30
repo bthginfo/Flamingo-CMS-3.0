@@ -13,14 +13,6 @@ on:
           - all
           - schuktuew
           - freie-waehler-ingolstadt
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/tenant-seed.yml'
-      - 'scripts/provision-schuktuew.ts'
-      - 'scripts/provision-freie-waehler-ingolstadt.ts'
-      - 'apps/renderer/src/templates/advanced/infinite-canvas.tsx'
-      - 'apps/renderer/src/templates/advanced/vertical-reel-showcase.tsx'
 
 concurrency:
   group: tenant-content-seed
@@ -69,9 +61,9 @@ jobs:
           fi
 
       - name: Seed Schuktuew
-        if: ${{ github.event_name == 'push' || inputs.target == 'all' || inputs.target == 'schuktuew' }}
+        if: ${{ inputs.target == 'all' || inputs.target == 'schuktuew' }}
         run: pnpm exec tsx scripts/provision-schuktuew.ts
 
       - name: Seed Freie Wähler Ingolstadt
-        if: ${{ github.event_name == 'push' || inputs.target == 'all' || inputs.target == 'freie-waehler-ingolstadt' }}
+        if: ${{ inputs.target == 'all' || inputs.target == 'freie-waehler-ingolstadt' }}
         run: pnpm exec tsx scripts/provision-freie-waehler-ingolstadt.ts

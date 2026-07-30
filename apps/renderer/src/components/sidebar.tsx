@@ -40,7 +40,7 @@ const NAV: { href: string; label: string; icon: typeof LayoutDashboard; group: N
   { href: '/admin/mail', label: 'Mail-Server', icon: Mail, group: 'System' },
   { href: '/admin/security', label: 'Passwort & Zugang', icon: Lock, group: 'System' },
   { href: '/admin/ai-api', label: 'KI-API', icon: Bot, group: 'System' },
-  { href: '/admin/help', label: 'Hilfe & Anleitung', icon: HelpCircle, group: 'System' },
+  { href: '/admin/help', label: 'Hilfe & Anleitung', icon: HelpCircle, group: 'System', tour: 'sidebar-help' },
 ];
 
 export function Sidebar({ tenantId, industry, inboxUnread = 0 }: { tenantId: string; industry: string; inboxUnread?: number }) {
@@ -130,7 +130,7 @@ export function Sidebar({ tenantId, industry, inboxUnread = 0 }: { tenantId: str
           </div>)}
         </nav>
         <div className="px-3 py-4 border-t border-sidebar-border space-y-1">
-          <button onClick={() => { preview.isOpen ? preview.close() : preview.open(); setOpen(false); }} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full">
+          <button data-tour="admin-preview" onClick={() => { preview.isOpen ? preview.close() : preview.open(); setOpen(false); }} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full">
             <MonitorPlay size={18} /> Vorschau
           </button>
           <button onClick={async () => { await logoutAction(); router.push('/admin/login'); }} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full">
@@ -182,7 +182,7 @@ export function Sidebar({ tenantId, industry, inboxUnread = 0 }: { tenantId: str
         {/* Footer */}
         <div className={`py-4 border-t border-sidebar-border space-y-1 ${collapsed ? 'px-2' : 'px-3'}`}>
           <div className="relative">
-            <button onClick={() => { preview.isOpen ? preview.close() : preview.open(); }} title={collapsed ? 'Vorschau — Texte direkt in der Vorschau bearbeiten' : undefined}
+            <button data-tour="admin-preview" onClick={() => { preview.isOpen ? preview.close() : preview.open(); }} title={collapsed ? 'Vorschau — Texte direkt in der Vorschau bearbeiten' : undefined}
               className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
               <MonitorPlay size={18} />
               {!collapsed && 'Vorschau'}

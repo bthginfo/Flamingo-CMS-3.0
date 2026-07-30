@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import { createLivePreviewRelay } from './preview-live-data';
 
 type PreviewContextValue = {
   isOpen: boolean;
@@ -41,6 +42,8 @@ export function PreviewProvider({ children, tenantId }: { children: React.ReactN
   const [refreshKey, setRefreshKey] = useState(0);
   const [editMode, setEditModeState] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const liveRelayRef = useRef<ReturnType<typeof createLivePreviewRelay> | null>(null);
+  if (!liveRelayRef.current) liveRelayRef.current = createLivePreviewRelay();
 
   const open = useCallback((previewUrl?: string) => {
     setUrlState(previewUrl || defaultUrl);
@@ -52,26 +55,39 @@ export function PreviewProvider({ children, tenantId }: { children: React.ReactN
   const setUrl = useCallback((u: string) => setUrlState(u), []);
 
   const sendLiveData = useCallback((payload: Record<string, unknown>) => {
-    // Target the same origin only — iframe is always loaded from the renderer
-    // host. Using a wildcard '*' would leak preview data to any cross-origin
-    // window that ever takes over the iframe URL.
-    iframeRef.current?.contentWindow?.postMessage(
-      { type: 'flamingo-live-preview', payload },
+    liveRelayRef.current?.send(
+      payload,
+      iframeRef.current?.contentWindow,
       typeof window !== 'undefined' ? window.location.origin : '/',
     );
   }, []);
 
-  // Broadcast editMode changes to the iframe so the live-preview client can
-  // toggle hover-outlines / contentEditable behaviour. The setter is exposed
-  // via context so the parent toolbar button (in PreviewPanel) is the sole
-  // owner of the edit-mode state.
+  useEffect(() => {
+    function handlePreviewReady(event: MessageEvent) {
+      const previewWindow = iframeRef.current?.contentWindow;
+      if (
+        !previewWindow
+        || event.source !== previewWindow
+        || event.origin !== window.location.origin
+        || event.data?.type !== 'flamingo-live-preview-ready'
+      ) {
+        return;
+      }
+
+      liveRelayRef.current?.replay(previewWindow, window.location.origin);
+    }
+
+    window.addEventListener('message', handlePreviewReady);
+    return () => window.removeEventListener('message', handlePreviewReady);
+  }, []);
+
+  // Broadcast edit-mode changes to the same-origin preview.
   const setEditMode = useCallback((v: boolean) => {
     setEditModeState(v);
     sendLiveData({ editMode: v });
   }, [sendLiveData]);
 
-  // Re-broadcast editMode whenever the iframe (re-)opens or refreshes so the
-  // freshly mounted client always reflects the parent's intent.
+  // A newly mounted iframe also receives this state through the ready replay.
   useEffect(() => {
     if (isOpen) sendLiveData({ editMode });
   }, [isOpen, editMode, sendLiveData, refreshKey]);
