@@ -94,13 +94,13 @@ function WorkflowVideo({ data }: { data: Record<string, unknown> }) {
             type="button"
             onClick={startPlayback}
             aria-label="Video vollständig abspielen"
-            className="absolute left-1/2 top-[44%] z-20 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-white text-black shadow-[0_22px_60px_rgba(0,0,0,.48)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+            className="absolute left-1/2 top-[44%] z-20 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_35%,transparent)] bg-[var(--token-on-dark-heading)] text-[color:var(--token-section-bg)] shadow-[0_22px_60px_rgba(0,0,0,.48)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)]"
           >
             <Play className="ml-1 fill-current" size={26} aria-hidden="true" />
           </button>
         )}
         {caption && (
-          <p className={`absolute inset-x-5 bottom-5 text-sm font-bold leading-5 text-white transition-opacity duration-300 ${playbackOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`} data-edit-path="media.caption">
+          <p className={`absolute inset-x-5 bottom-5 text-sm font-bold leading-5 text-[color:var(--token-on-dark-heading)] transition-opacity duration-300 ${playbackOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`} data-edit-path="media.caption">
             {caption}
           </p>
         )}
@@ -127,7 +127,7 @@ export function AiWorkflowReelSection({ data }: Props) {
           />
           <div className="mt-8 space-y-3">
             {steps.map((step, index) => (
-              <article key={`${step.title}-${index}`} className="group grid gap-4 rounded-[var(--token-card-radius)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] p-4 backdrop-blur transition hover:bg-white/[.1] sm:grid-cols-[4rem_1fr]" data-card data-edit-collection="steps" data-edit-index={index}>
+              <article key={`${step.title}-${index}`} className="group grid gap-4 rounded-[var(--token-card-radius)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] p-4 backdrop-blur transition hover:bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] sm:grid-cols-[4rem_1fr]" data-card data-edit-collection="steps" data-edit-index={index}>
                 <div className="grid h-14 w-14 place-items-center rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-accent)_24%,white_8%)] text-[color:var(--token-on-dark-heading)] shadow-[inset_0_1px_0_rgba(255,255,255,.12),0_18px_40px_rgba(0,0,0,.22)]">
                   {index === 0 ? <Bot size={24} strokeWidth={2.2} /> : index === steps.length - 1 ? <CheckCircle2 className="text-[color:var(--token-check)]" size={24} strokeWidth={2.2} /> : <GitBranch size={24} strokeWidth={2.2} />}
                 </div>

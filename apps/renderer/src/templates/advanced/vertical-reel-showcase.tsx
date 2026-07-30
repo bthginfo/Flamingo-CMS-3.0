@@ -177,7 +177,7 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
             type="button"
             onClick={startPlayback}
             aria-label={`${reel.title || `Reel ${index + 1}`} vollständig abspielen`}
-            className="absolute left-1/2 top-[42%] z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-white text-black shadow-[0_20px_55px_rgba(0,0,0,.45)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 md:h-[4.5rem] md:w-[4.5rem]"
+            className="absolute left-1/2 top-[42%] z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_35%,transparent)] bg-[var(--token-on-dark-heading)] text-[color:var(--token-section-bg)] shadow-[0_20px_55px_rgba(0,0,0,.45)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)] md:h-[4.5rem] md:w-[4.5rem]"
           >
             <Play className="ml-1 fill-current" size={25} aria-hidden="true" />
           </button>
