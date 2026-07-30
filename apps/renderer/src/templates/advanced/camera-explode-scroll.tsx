@@ -34,7 +34,7 @@ const FALLBACK_PARTS: CameraPart[] = [
   { id: 'production', label: 'Produktion', text: 'Menschen, Bewegung und Timing werden geführt statt dem Zufall überlassen.', offsetX: 80, offsetY: -140, offsetZ: 70 },
   { id: 'postproduction', label: 'Postproduktion', text: 'Auswahl, Retusche, Schnitt und Grading halten die Serie zusammen.', offsetX: 170, offsetY: 60, offsetZ: -120 },
   { id: 'approval', label: 'Auswahl', text: 'Die stärksten Motive werden nach Wirkung und Nutzbarkeit kuratiert.', offsetX: -135, offsetY: 130, offsetZ: -130 },
-  { id: 'output', label: 'Assets', text: 'Fertige Formate für Website, Social, Kampagne, Recruiting und Print.', offsetX: 135, offsetY: 140, offsetZ: 130 },
+  { id: 'output', label: 'Ausgabe', text: 'Fertige Bilder und Filme für Website, Social Media, Kampagne, Recruiting und Print.', offsetX: 135, offsetY: 140, offsetZ: 130 },
 ];
 
 const SCHUKTUEW_CAMERA_COPY = {
@@ -79,9 +79,10 @@ function shouldUseSchuktuewCameraCopy(data: Record<string, unknown>, parts: Came
   const ctaLabel = visibleText(cta?.label || '').toLowerCase();
   const labels = parts.map((part) => visibleText(part.label || '').toLowerCase()).join(' ');
   const oldHeadline = /kamera zerlegt|blick wird klarer|was leicht wirkt|aus einem motiv wird ein kompletter auftritt/.test(headline);
-  const oldLabels = /gehäuse|gehaeuse|objektiv|verschluss|sensor|monitor|dateien|haltung|perspektive|moment|look|output/.test(labels);
+  const currentSchuktuewHeadline = /gute bilder beginnen lange vor dem auslösen/.test(headline);
+  const oldLabels = /gehäuse|gehaeuse|objektiv|verschluss|sensor|monitor|dateien|haltung|perspektive|moment|look|output|assets/.test(labels);
   const oldCta = /system ansehen|workflow ansehen|mit alex sprechen/.test(ctaLabel);
-  return oldHeadline && oldLabels && oldCta;
+  return (oldHeadline || currentSchuktuewHeadline) && oldLabels && oldCta;
 }
 
 function isLikelyModelUrl(url: string) {
