@@ -414,6 +414,8 @@ test('targeted patch script cannot invoke the destructive reseed', () => {
   const source = readFileSync(new URL('./patch-freie-waehler-content.ts', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /seedTenant|provision-freie-waehler-ingolstadt/);
   assert.match(source, /--apply/);
+  assert.match(source, /await sql\.transaction\(transaction\)/);
+  assert.doesNotMatch(source, /await db\.transaction/);
 });
 
 test('future FW provisioning no longer emits generic import sections', () => {

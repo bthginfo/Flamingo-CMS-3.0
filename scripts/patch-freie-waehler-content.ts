@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { neon } from '@neondatabase/serverless';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { createDb } from '@flamingo/db';
 import * as schema from '../packages/db/src/schema';
@@ -42,7 +43,8 @@ async function resolveTenantDb(
 ) {
   if (process.env.CRM_CONFIG_ENCRYPTION_KEY?.trim() || process.env.CONFIG_ENCRYPTION_KEY?.trim()) {
     try {
-      return (await getRequiredStandaloneDatabase(tenantId)).db;
+      const standalone = await getRequiredStandaloneDatabase(tenantId);
+      return { db: standalone.db, databaseUrl: standalone.pooledConnectionUri };
     } catch {
       // Fail over to the tenant project's environment without logging secrets.
     }
@@ -51,7 +53,7 @@ async function resolveTenantDb(
   const projectEnvironment = !explicit ? await loadTenantEnvironment() : {};
   const databaseUrl = explicit || projectEnvironment.DATABASE_URL || projectEnvironment.TENANT_DATABASE_URL;
   if (!databaseUrl?.startsWith('postgres')) throw new Error('Standalone database connection unavailable.');
-  return createDb(databaseUrl);
+  return { db: createDb(databaseUrl), databaseUrl };
 }
 
 function snapshotContainsTargetPage(snapshot: unknown) {
@@ -171,11 +173,15 @@ async function main() {
   };
   let tenantId: string;
   let db: ReturnType<typeof createDb>;
+  let tenantDatabaseUrl: string;
   if (tenant) {
     tenantId = tenant.id;
-    db = await resolveTenantDb(tenantId, loadTenantEnvironment);
+    const standalone = await resolveTenantDb(tenantId, loadTenantEnvironment);
+    db = standalone.db;
+    tenantDatabaseUrl = standalone.databaseUrl;
   } else {
-    const standaloneDb = createDb(process.env.DATABASE_URL);
+    tenantDatabaseUrl = process.env.DATABASE_URL;
+    const standaloneDb = createDb(tenantDatabaseUrl);
     const activeCandidates = await standaloneDb.select({
       tenantId: schema.publishedSnapshots.tenantId,
       snapshot: schema.publishedSnapshots.snapshot,
@@ -245,7 +251,10 @@ async function main() {
     }
     return {
       id: repaired.id,
-      patch: mergeRepairIntoDraftSection(activeSection, repaired, draft),
+      next: {
+        ...draft,
+        ...mergeRepairIntoDraftSection(activeSection, repaired, draft),
+      },
     };
   }));
   for (const repair of repairs) {
@@ -288,47 +297,62 @@ async function main() {
     generatedAt,
   );
   const checksum = createHash('sha256').update(JSON.stringify(nextSnapshot)).digest('hex');
-  await db.transaction(async (tx) => {
-    for (const update of draftUpdates) {
-      await tx.update(schema.pageSections).set({
-        ...update.patch,
-        updatedAt: new Date(),
-      }).where(and(
-        eq(schema.pageSections.tenantId, tenantId),
-        eq(schema.pageSections.id, update.id),
-      ));
-    }
-    if (deleteIds.length) {
-      await tx.delete(schema.pageSections).where(and(
-        eq(schema.pageSections.tenantId, tenantId),
-        inArray(schema.pageSections.id, deleteIds),
-      ));
-    }
-    await tx.update(schema.publishedSnapshots).set({ isActive: false }).where(and(
-      eq(schema.publishedSnapshots.tenantId, tenantId),
-      eq(schema.publishedSnapshots.id, active.id),
-    ));
-    await tx.insert(schema.publishedSnapshots).values({
-      tenantId,
-      version: (latestRows[0]?.version ?? active.version) + 1,
-      snapshot: nextSnapshot,
-      checksum,
-      createdBy: 'script:patch-freie-waehler-content',
-      isActive: true,
-    });
-  });
+  const nextVersion = (latestRows[0]?.version ?? active.version) + 1;
+  const sql = neon(tenantDatabaseUrl, { fetchOptions: { cache: 'no-store' } });
+  const transaction = [
+    ...draftUpdates.map(({ id, next }) => sql`
+      UPDATE page_sections
+      SET
+        type = ${next.type},
+        definition_key = ${next.definitionKey},
+        schema_version = ${next.schemaVersion},
+        variant = ${next.variant},
+        visible = ${next.visible},
+        locked = ${next.locked},
+        container = ${next.container},
+        spacing_top = ${next.spacingTop},
+        spacing_bottom = ${next.spacingBottom},
+        anchor_id = ${next.anchorId},
+        style_overrides = ${JSON.stringify(next.styleOverrides)}::jsonb,
+        data = ${JSON.stringify(next.data)}::jsonb,
+        updated_at = NOW()
+      WHERE tenant_id = ${tenantId}::uuid AND id = ${id}::uuid
+    `),
+    ...deleteIds.map((id) => sql`
+      DELETE FROM page_sections
+      WHERE tenant_id = ${tenantId}::uuid AND id = ${id}::uuid
+    `),
+    sql`
+      UPDATE published_snapshots
+      SET is_active = false
+      WHERE tenant_id = ${tenantId}::uuid AND id = ${active.id}::uuid
+    `,
+    sql`
+      INSERT INTO published_snapshots (
+        tenant_id, version, snapshot, checksum, created_by, is_active
+      ) VALUES (
+        ${tenantId}::uuid,
+        ${nextVersion},
+        ${JSON.stringify(nextSnapshot)}::jsonb,
+        ${checksum},
+        'script:patch-freie-waehler-content',
+        true
+      )
+    `,
+  ];
+  await sql.transaction(transaction);
   let cache;
   try {
     cache = await invalidateCache();
   } catch (error) {
     const detail = error instanceof Error ? error.message : 'Unknown cache invalidation error.';
     throw new Error(
-      `Snapshot version ${(latestRows[0]?.version ?? active.version) + 1} was applied, but cache invalidation failed: ${detail}`,
+      `Snapshot version ${nextVersion} was applied, but cache invalidation failed: ${detail}`,
     );
   }
   console.log(JSON.stringify({
     ...report,
-    snapshotVersion: (latestRows[0]?.version ?? active.version) + 1,
+    snapshotVersion: nextVersion,
     cache,
   }, null, 2));
 }
