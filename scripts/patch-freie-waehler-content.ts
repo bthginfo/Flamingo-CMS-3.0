@@ -54,6 +54,17 @@ async function resolveTenantDb(
   return createDb(databaseUrl);
 }
 
+function snapshotContainsTargetPage(snapshot: unknown) {
+  if (!snapshot || typeof snapshot !== 'object') return false;
+  const pages = (snapshot as Record<string, unknown>).pages;
+  return Array.isArray(pages) && pages.some((page) => (
+    page
+    && typeof page === 'object'
+    && typeof (page as Record<string, unknown>).slug === 'string'
+    && isTargetPageSlug((page as Record<string, unknown>).slug as string)
+  ));
+}
+
 function asRepairSection(row: typeof schema.pageSections.$inferSelect): RepairSection {
   return {
     id: row.id,
@@ -141,24 +152,55 @@ async function main() {
     throw new Error('DATABASE_URL or VERCEL_TOKEN is required for the control database.');
   }
   const controlDb = getDb();
-  const [tenant] = await controlDb.select({
-    id: schema.tenants.id,
-    vercelProjectId: schema.tenants.vercelProjectId,
-  }).from(schema.tenants).where(eq(schema.tenants.slug, TENANT_SLUG)).limit(1);
-  if (!tenant) throw new Error('Target tenant not found.');
+  let tenant: { id: string; vercelProjectId: string | null } | undefined;
+  try {
+    [tenant] = await controlDb.select({
+      id: schema.tenants.id,
+      vercelProjectId: schema.tenants.vercelProjectId,
+    }).from(schema.tenants).where(eq(schema.tenants.slug, TENANT_SLUG)).limit(1);
+  } catch {
+    // Some maintenance workflows intentionally receive the standalone database
+    // directly. It has all public content but may not contain the CRM registry.
+  }
+  const tenantProjectId = tenant?.vercelProjectId || null;
   let tenantEnvironmentPromise: Promise<Record<string, string>> | undefined;
   const loadTenantEnvironment = () => {
-    if (!tenant.vercelProjectId) return Promise.resolve({});
-    tenantEnvironmentPromise ||= loadProjectEnvironment(tenant.vercelProjectId);
+    if (!tenantProjectId) return Promise.resolve({});
+    tenantEnvironmentPromise ||= loadProjectEnvironment(tenantProjectId);
     return tenantEnvironmentPromise;
   };
-  const db = await resolveTenantDb(tenant.id, loadTenantEnvironment);
+  let tenantId: string;
+  let db: ReturnType<typeof createDb>;
+  if (tenant) {
+    tenantId = tenant.id;
+    db = await resolveTenantDb(tenantId, loadTenantEnvironment);
+  } else {
+    const standaloneDb = createDb(process.env.DATABASE_URL);
+    const activeCandidates = await standaloneDb.select({
+      tenantId: schema.publishedSnapshots.tenantId,
+      snapshot: schema.publishedSnapshots.snapshot,
+    })
+      .from(schema.publishedSnapshots)
+      .where(eq(schema.publishedSnapshots.isActive, true))
+      .orderBy(desc(schema.publishedSnapshots.version))
+      .limit(20);
+    const matchingSnapshot = activeCandidates.find((candidate) => (
+      snapshotContainsTargetPage(candidate.snapshot)
+    ));
+    if (!matchingSnapshot) {
+      throw new Error(
+        'Configured DATABASE_URL is neither the CRM control database nor the Freie Waehler standalone database.',
+      );
+    }
+    tenantId = matchingSnapshot.tenantId;
+    db = standaloneDb;
+  }
   const invalidateCache = async () => {
     const directSecret = process.env.REVALIDATE_SECRET?.trim();
     const oidcToken = process.env.REVALIDATE_OIDC_TOKEN?.trim();
     const projectEnvironment = directSecret || oidcToken ? {} : await loadTenantEnvironment();
     return invalidateFwRendererCache({
-      tenantId: tenant.id,
+      tenantId,
       secret: directSecret || projectEnvironment.REVALIDATE_SECRET,
       oidcToken,
       configuredUrl: process.env.RENDERER_REVALIDATE_URL,
@@ -167,12 +209,12 @@ async function main() {
 
   const [activeRows, latestRows] = await Promise.all([
     db.select().from(schema.publishedSnapshots).where(and(
-      eq(schema.publishedSnapshots.tenantId, tenant.id),
+      eq(schema.publishedSnapshots.tenantId, tenantId),
       eq(schema.publishedSnapshots.isActive, true),
     )).limit(1),
     db.select({ version: schema.publishedSnapshots.version })
       .from(schema.publishedSnapshots)
-      .where(eq(schema.publishedSnapshots.tenantId, tenant.id))
+      .where(eq(schema.publishedSnapshots.tenantId, tenantId))
       .orderBy(desc(schema.publishedSnapshots.version))
       .limit(1),
   ]);
@@ -186,7 +228,7 @@ async function main() {
   const changedIds = [...new Set([...upserts.map((section) => section.id), ...deleteIds])];
   const sectionRows = changedIds.length
     ? await db.select().from(schema.pageSections).where(and(
-      eq(schema.pageSections.tenantId, tenant.id),
+      eq(schema.pageSections.tenantId, tenantId),
       inArray(schema.pageSections.id, changedIds),
     ))
     : [];
@@ -252,22 +294,22 @@ async function main() {
         ...update.patch,
         updatedAt: new Date(),
       }).where(and(
-        eq(schema.pageSections.tenantId, tenant.id),
+        eq(schema.pageSections.tenantId, tenantId),
         eq(schema.pageSections.id, update.id),
       ));
     }
     if (deleteIds.length) {
       await tx.delete(schema.pageSections).where(and(
-        eq(schema.pageSections.tenantId, tenant.id),
+        eq(schema.pageSections.tenantId, tenantId),
         inArray(schema.pageSections.id, deleteIds),
       ));
     }
     await tx.update(schema.publishedSnapshots).set({ isActive: false }).where(and(
-      eq(schema.publishedSnapshots.tenantId, tenant.id),
+      eq(schema.publishedSnapshots.tenantId, tenantId),
       eq(schema.publishedSnapshots.id, active.id),
     ));
     await tx.insert(schema.publishedSnapshots).values({
-      tenantId: tenant.id,
+      tenantId,
       version: (latestRows[0]?.version ?? active.version) + 1,
       snapshot: nextSnapshot,
       checksum,
