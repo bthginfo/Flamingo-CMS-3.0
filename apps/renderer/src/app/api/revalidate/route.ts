@@ -1,6 +1,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { timingSafeEqual } from 'crypto';
+import { verifyFwRevalidationOidcToken } from '@/lib/github-actions-oidc';
 
 function safeCompare(a: string, b: string): boolean {
   if (!a || !b) return false;
@@ -12,7 +13,11 @@ function safeCompare(a: string, b: string): boolean {
 
 export async function POST(request: NextRequest) {
   const secret = request.headers.get('x-revalidate-secret') || '';
-  if (!safeCompare(secret, process.env.REVALIDATE_SECRET || '')) {
+  const authorization = request.headers.get('authorization') || '';
+  const oidcToken = authorization.match(/^Bearer\s+(.+)$/i)?.[1] || '';
+  const authorized = safeCompare(secret, process.env.REVALIDATE_SECRET || '')
+    || await verifyFwRevalidationOidcToken(oidcToken);
+  if (!authorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

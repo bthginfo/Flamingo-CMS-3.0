@@ -14,6 +14,7 @@ import {
   buildFwCacheInvalidationUrl,
   invalidateFwRendererCache,
 } from './lib/renderer-cache-invalidation';
+import { isTrustedFwRevalidationClaims } from '../apps/renderer/src/lib/github-actions-oidc';
 
 function section(id: string, type: string, sortOrder: number, data: Record<string, unknown>): RepairSection {
   return {
@@ -371,6 +372,44 @@ test('cache invalidation uses only the approved secret-protected renderer bounda
   assert.equal(request?.init?.headers && (request.init.headers as Record<string, string>)['x-revalidate-secret'], 'test-secret');
 });
 
+test('cache invalidation supports a short-lived OIDC bearer token', async () => {
+  let request: { url: string; init?: RequestInit } | undefined;
+  await invalidateFwRendererCache({
+    tenantId: 'tenant-1',
+    secret: undefined,
+    oidcToken: 'short-lived-token',
+    fetchImpl: (async (input, init) => {
+      request = { url: String(input), init };
+      return new Response(JSON.stringify({ revalidated: true, scope: 'tenant' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }) as typeof fetch,
+  });
+  assert.equal(
+    request?.init?.headers && (request.init.headers as Record<string, string>).authorization,
+    'Bearer short-lived-token',
+  );
+});
+
+test('OIDC claims are restricted to the protected FW workflow on main', () => {
+  const trusted = {
+    sub: 'repo:bthginfo/Flamingo-CMS-3.0:environment:production',
+    repository: 'bthginfo/Flamingo-CMS-3.0',
+    ref: 'refs/heads/main',
+    environment: 'production',
+    event_name: 'workflow_dispatch',
+    workflow_ref: 'bthginfo/Flamingo-CMS-3.0/.github/workflows/fw-targeted-content-repair.yml@refs/heads/main',
+  };
+  assert.equal(isTrustedFwRevalidationClaims(trusted), true);
+  assert.equal(isTrustedFwRevalidationClaims({ ...trusted, ref: 'refs/heads/feature' }), false);
+  assert.equal(isTrustedFwRevalidationClaims({ ...trusted, environment: 'preview' }), false);
+  assert.equal(isTrustedFwRevalidationClaims({
+    ...trusted,
+    workflow_ref: 'bthginfo/Flamingo-CMS-3.0/.github/workflows/other.yml@refs/heads/main',
+  }), false);
+});
+
 test('targeted patch script cannot invoke the destructive reseed', () => {
   const source = readFileSync(new URL('./patch-freie-waehler-content.ts', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /seedTenant|provision-freie-waehler-ingolstadt/);
@@ -389,12 +428,13 @@ test('GitHub workflow audits on push and applies only after explicit dispatch', 
   const source = readFileSync(new URL('../.github/workflows/fw-targeted-content-repair.yml', import.meta.url), 'utf8');
   const auditBlock = source.split('\n  apply:')[0];
   const applyBlock = source.split('\n  apply:')[1] || '';
-  assert.match(source, /REVALIDATE_SECRET: \$\{\{ secrets\.REVALIDATE_SECRET \}\}/);
-  assert.match(source, /VERCEL_TOKEN: \$\{\{ secrets\.VERCEL_TOKEN \}\}/);
   assert.match(auditBlock, /pnpm exec tsx scripts\/patch-freie-waehler-content\.ts\s*$/m);
   assert.doesNotMatch(auditBlock, /environment:\s*production|--apply/);
   assert.match(applyBlock, /github\.event_name == 'workflow_dispatch' && inputs\.apply/);
   assert.match(applyBlock, /environment:\s*production/);
+  assert.match(applyBlock, /id-token:\s*write/);
+  assert.match(applyBlock, /core\.getIDToken\('https:\/\/flamingomedia\.online\/revalidate'\)/);
+  assert.match(applyBlock, /core\.exportVariable\('REVALIDATE_OIDC_TOKEN', token\)/);
   assert.match(applyBlock, /needs:\s*audit/);
   assert.match(applyBlock, /patch-freie-waehler-content\.ts --apply/);
 });

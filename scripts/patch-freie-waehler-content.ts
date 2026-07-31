@@ -155,10 +155,12 @@ async function main() {
   const db = await resolveTenantDb(tenant.id, loadTenantEnvironment);
   const invalidateCache = async () => {
     const directSecret = process.env.REVALIDATE_SECRET?.trim();
-    const projectEnvironment = directSecret ? {} : await loadTenantEnvironment();
+    const oidcToken = process.env.REVALIDATE_OIDC_TOKEN?.trim();
+    const projectEnvironment = directSecret || oidcToken ? {} : await loadTenantEnvironment();
     return invalidateFwRendererCache({
       tenantId: tenant.id,
       secret: directSecret || projectEnvironment.REVALIDATE_SECRET,
+      oidcToken,
       configuredUrl: process.env.RENDERER_REVALIDATE_URL,
     });
   };

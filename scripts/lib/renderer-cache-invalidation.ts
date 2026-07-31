@@ -27,16 +27,23 @@ export function buildFwCacheInvalidationUrl(tenantId: string, configuredUrl?: st
 export async function invalidateFwRendererCache(input: {
   tenantId: string;
   secret: string | undefined;
+  oidcToken?: string | undefined;
   configuredUrl?: string;
   fetchImpl?: typeof fetch;
 }): Promise<CacheInvalidationResult> {
   const secret = input.secret?.trim();
-  if (!secret) throw new Error('REVALIDATE_SECRET is required after applying the repair.');
+  const oidcToken = input.oidcToken?.trim();
+  if (!secret && !oidcToken) {
+    throw new Error('A renderer secret or trusted GitHub OIDC token is required after applying the repair.');
+  }
   const url = buildFwCacheInvalidationUrl(input.tenantId, input.configuredUrl);
+  const authorizationHeaders = secret
+    ? { 'x-revalidate-secret': secret }
+    : { authorization: `Bearer ${oidcToken}` };
   const response = await (input.fetchImpl || fetch)(url, {
     method: 'POST',
     headers: {
-      'x-revalidate-secret': secret,
+      ...authorizationHeaders,
       'content-type': 'application/json',
     },
     body: JSON.stringify({ reason: 'targeted-fw-content-repair' }),

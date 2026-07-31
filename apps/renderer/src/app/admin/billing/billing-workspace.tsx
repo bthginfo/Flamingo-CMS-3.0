@@ -23,7 +23,18 @@ import {
   sendBillingDocumentAction, setBillingRecurringScheduleStatusAction, updateBillingQuoteStatusAction,
 } from './actions';
 import { BILLING_JURISDICTIONS, getBillingJurisdiction, type BillingCountryCode, type BillingTaxRate } from '@/lib/billing-jurisdictions';
-import { billingBankInstruction, billingPaymentInstruction } from '@/lib/billing-payment-instructions';
+import { billingPaymentInstruction } from '@/lib/billing-payment-instructions';
+import {
+  DEFAULT_PAYPAL_INSTRUCTION,
+  detectPaymentInstructionMode,
+  paymentInstructionText,
+  type BillingPaymentInstructionMode,
+} from '@/lib/billing-payment-modes';
+import {
+  resolveTaxSelection,
+  taxSelection,
+  type BillingTaxSelection,
+} from '@/lib/billing-tax-presets';
 
 type WorkspaceData = Awaited<ReturnType<typeof getBillingWorkspaceData>>;
 type Customer = WorkspaceData['customers'][number];
@@ -35,7 +46,6 @@ type DocumentDetail = Awaited<ReturnType<typeof getBillingDocumentAction>>;
 type View = 'overview' | 'invoices' | 'customers' | 'services' | 'recurring' | 'settings';
 type BillingLogoDisplay = 'logo_and_name' | 'logo_only' | 'name_only';
 type PriceInputMode = 'net' | 'gross';
-type PaymentInstructionMode = 'bank_transfer' | 'payment_link' | 'cash' | 'custom';
 type SettingsSection = 'identity' | 'numbers' | 'payment' | 'texts';
 
 const VIEWS: Array<{ id: View; label: string; icon: typeof FileText }> = [
@@ -104,26 +114,6 @@ function grossCentsFromNet(netCents: number, taxRateBasisPoints: number) {
 
 function netCentsFromGross(grossCents: number, taxRateBasisPoints: number) {
   return Math.round((grossCents || 0) / taxMultiplier(taxRateBasisPoints));
-}
-
-function bankInstruction(settings: WorkspaceData['settings']) {
-  return billingBankInstruction(settings) || 'Bitte überweisen Sie den Rechnungsbetrag fristgerecht unter Angabe der Rechnungsnummer. Bankverbindung bitte in den Rechnungseinstellungen ergänzen.';
-}
-
-function paymentInstructionText(mode: PaymentInstructionMode, settings: WorkspaceData['settings'], paymentLinkUrl: string, customText = '') {
-  if (mode === 'payment_link') return paymentLinkUrl ? `Bitte begleichen Sie den Rechnungsbetrag über den Zahlungslink: ${paymentLinkUrl}` : 'Bitte begleichen Sie den Rechnungsbetrag über den hinterlegten Zahlungslink.';
-  if (mode === 'cash') return 'Der Rechnungsbetrag wird bar beglichen.';
-  if (mode === 'custom') return customText;
-  return bankInstruction(settings);
-}
-
-function detectPaymentInstructionMode(closingText: string, paymentLinkUrl: string, settings: WorkspaceData['settings']): PaymentInstructionMode {
-  const text = closingText.trim();
-  if (paymentLinkUrl) return 'payment_link';
-  if (!text) return 'bank_transfer';
-  if (/bar\b|cash/i.test(text)) return 'cash';
-  if (text === bankInstruction(settings) || /überweis|ueberweis|iban|konto/i.test(text)) return 'bank_transfer';
-  return 'custom';
 }
 
 function dateValue(value: Date | string | null | undefined) {
@@ -525,9 +515,11 @@ function RecurringDialog({ open, data, onClose, onSaved }: { open: RecurringSche
     });
   }, [open, existing, data.settings.smallBusiness, data.settings.smallBusinessNotice]);
   function patch(value: Partial<typeof form>) { setForm(current => ({ ...current, ...value })); }
-  function changeTaxMode(taxMode: typeof form.taxMode) {
+  function changeTaxMode(selection: BillingTaxSelection) {
+    const { taxMode, taxExemptionReason } = resolveTaxSelection(selection, form.taxExemptionReason);
     patch({
       taxMode,
+      taxExemptionReason,
       lines: form.lines.map(line => {
         const nextTaxRateBasisPoints = taxMode === 'standard' ? (line.taxRateBasisPoints || jurisdiction.defaultTaxRateBasisPoints) : 0;
         const shownGrossCents = grossCentsFromNet(line.unitPriceNetCents, line.taxRateBasisPoints);
@@ -542,7 +534,7 @@ function RecurringDialog({ open, data, onClose, onSaved }: { open: RecurringSche
   function addService() { const service = data.services.find(item => item.id === serviceChoice); if (!service) return; patch({ lines: [...form.lines, { serviceId: service.id, position: form.lines.length + 1, name: service.name, description: service.description || '', quantity: 1, unitCode: service.unitCode, unitLabel: service.unitLabel, unitPriceNetCents: service.unitPriceNetCents, discountBasisPoints: 0, discountType: 'percent', discountValue: 0, taxRateBasisPoints: form.taxMode === 'standard' ? service.taxRateBasisPoints : 0 }] }); setServiceChoice(''); }
   function submit(event: FormEvent) { event.preventDefault(); startTransition(async () => { try { const start = new Date(`${form.nextRunAt}T12:00:00`); requireActionSuccess(await saveBillingRecurringScheduleAction({ id: existing?.id, name: form.name, customerId: form.customerId, status: existing?.status || 'active', intervalCount: form.intervalCount, intervalUnit: form.intervalUnit, startAt: existing?.startAt || start, nextRunAt: start, endAt: form.endAt ? new Date(`${form.endAt}T12:00:00`) : null, deliveryMode: form.deliveryMode, recipient: form.deliveryMode === 'finalize_send' ? form.recipient : null, template: { documentType: form.documentType, introText: data.settings.defaultIntroText, closingText: data.settings.defaultClosingText, notes: null, buyerReference: null, purchaseOrderReference: null, taxMode: form.taxMode, taxExemptionReason: form.taxExemptionReason || null, discountType: form.discountType, discountValue: form.discountValue, cashDiscountBasisPoints: form.cashDiscountBasisPoints, cashDiscountDays: form.cashDiscountDays, paymentLinkUrl: form.paymentLinkUrl || null, servicePeriodDays: form.servicePeriodDays, lines: form.lines.map((line, index) => ({ ...line, position: index + 1 })) } })); onSaved(); } catch (error) { toast.error('Serie konnte nicht gespeichert werden', { description: errorMessage(error) }); } }); }
   return <Dialog open={Boolean(open)} onClose={onClose} title={existing ? 'Serienvorlage bearbeiten' : 'Wiederkehrende Rechnung anlegen'} description="Zeitplan, Inhalt und Automationsgrad bleiben jederzeit kontrollierbar." size="xl"><form onSubmit={submit} className="space-y-6"><div className="grid gap-4 sm:grid-cols-2"><Field label="Name der Serie" required><input required value={form.name} onChange={event => patch({ name: event.target.value })} className="admin-input" placeholder="z. B. Monatliche Wartung" /></Field><Field label="Kunde" required><select required value={form.customerId} onChange={event => patch({ customerId: event.target.value, recipient: data.customers.find(item => item.id === event.target.value)?.email || form.recipient })} className="admin-input"><option value="">Kunde auswählen …</option>{data.customers.map(customer => <option key={customer.id} value={customer.id}>{customerName(customer)}</option>)}</select></Field></div><div className="grid gap-4 sm:grid-cols-4"><Field label="Alle"><input type="number" min="1" max="120" value={form.intervalCount} onChange={event => patch({ intervalCount: Number(event.target.value) })} className="admin-input" /></Field><Field label="Einheit"><select value={form.intervalUnit} onChange={event => patch({ intervalUnit: event.target.value as typeof form.intervalUnit })} className="admin-input"><option value="month">Monat(e)</option><option value="week">Woche(n)</option><option value="year">Jahr(e)</option><option value="day">Tag(e)</option></select></Field><Field label="Nächster Lauf" required><input required type="date" value={form.nextRunAt} onChange={event => patch({ nextRunAt: event.target.value })} className="admin-input" /></Field><Field label="Ende (optional)"><input type="date" value={form.endAt} onChange={event => patch({ endAt: event.target.value })} className="admin-input" /></Field></div><div className="grid gap-4 sm:grid-cols-2"><Field label="Belegart"><select value={form.documentType} onChange={event => patch({ documentType: event.target.value as typeof form.documentType })} className="admin-input"><option value="invoice">Rechnung</option><option value="advance_invoice">Anzahlungsrechnung</option><option value="partial_invoice">Abschlagsrechnung</option><option value="final_invoice">Schlussrechnung</option></select></Field><Field label="Automationsgrad"><select value={form.deliveryMode} onChange={event => patch({ deliveryMode: event.target.value as typeof form.deliveryMode })} className="admin-input"><option value="draft">Entwurf erzeugen (empfohlen)</option><option value="finalize">Automatisch festschreiben</option><option value="finalize_send">Festschreiben und versenden</option></select></Field></div>{form.deliveryMode === 'finalize_send' ? <Field label="Empfänger-E-Mail" required><input required type="email" value={form.recipient} onChange={event => patch({ recipient: event.target.value })} className="admin-input" /></Field> : null}<div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950"><strong>{form.deliveryMode === 'draft' ? 'Sicherer Standard:' : 'Verbindliche Automation:'}</strong> {form.deliveryMode === 'draft' ? 'Der Lauf erzeugt einen prüfbaren Entwurf ohne Rechnungsnummer.' : 'Jeder Lauf erzeugt einen unveränderbaren Beleg mit fortlaufender Nummer.'}</div>
-    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><h3 className="text-sm font-semibold text-zinc-950">Regeln für jeden Lauf</h3><div className="flex items-center gap-2 text-xs font-semibold text-zinc-500"><span>Preiseingabe</span><PriceInputModeToggle value={priceInputMode} onChange={setPriceInputMode} /></div></div><div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Steuerfall"><select value={form.taxMode} onChange={event => changeTaxMode(event.target.value as typeof form.taxMode)} className="admin-input bg-white"><option value="standard">Regulär</option><option value="small_business">Kleinunternehmer</option><option value="reverse_charge">Reverse Charge</option><option value="intra_eu">Innergemeinschaftlich</option><option value="exempt">Steuerbefreit</option></select></Field><Field label="Leistungszeitraum"><div className="relative"><input type="number" min="0" max="3660" value={form.servicePeriodDays} onChange={event => patch({ servicePeriodDays: Number(event.target.value) })} className="admin-input bg-white pr-16 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Tage rückw.</span></div></Field><Field label="Gesamtrabatt"><div className="grid grid-cols-[1fr_100px] gap-2"><select value={form.discountType} onChange={event => patch({ discountType: event.target.value as typeof form.discountType, discountValue: 0 })} className="admin-input bg-white"><option value="percent">%</option><option value="fixed">€</option></select><DecimalInput value={form.discountValue} onValueChange={discountValue => patch({ discountValue })} max={form.discountType === 'percent' ? 100 : undefined} className="admin-input bg-white text-right" /></div></Field></div>{!['standard', 'small_business'].includes(form.taxMode) ? <div className="mt-4"><Field label="Rechtlicher Steuerhinweis" required><textarea required value={form.taxExemptionReason} onChange={event => patch({ taxExemptionReason: event.target.value })} className="admin-input min-h-20 bg-white" /></Field></div> : null}<div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Skonto"><div className="relative"><DecimalInput value={form.cashDiscountBasisPoints} onValueChange={cashDiscountBasisPoints => patch({ cashDiscountBasisPoints })} max={100} className="admin-input bg-white pr-10 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">%</span></div></Field><Field label="Skontofrist"><input type="number" min="0" max="365" value={form.cashDiscountDays} onChange={event => patch({ cashDiscountDays: Number(event.target.value) })} className="admin-input bg-white text-right" /></Field><Field label="Zahlungslink"><input type="text" inputMode="url" value={form.paymentLinkUrl} onChange={event => patch({ paymentLinkUrl: event.target.value })} className="admin-input bg-white" placeholder="https://…" /></Field></div></div>
+    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><h3 className="text-sm font-semibold text-zinc-950">Regeln für jeden Lauf</h3><div className="flex items-center gap-2 text-xs font-semibold text-zinc-500"><span>Preiseingabe</span><PriceInputModeToggle value={priceInputMode} onChange={setPriceInputMode} /></div></div><div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Steuerfall"><select value={taxSelection(form.taxMode, form.taxExemptionReason)} onChange={event => changeTaxMode(event.target.value as BillingTaxSelection)} className="admin-input bg-white"><option value="standard">Regulär</option><option value="small_business">Kleinunternehmer</option><option value="education_exempt">Lehr-/Bildungsleistung (§ 4 Nr. 21 UStG)</option><option value="reverse_charge">Reverse Charge</option><option value="intra_eu">Innergemeinschaftlich</option><option value="exempt">Sonstige Steuerbefreiung</option></select></Field><Field label="Leistungszeitraum"><div className="relative"><input type="number" min="0" max="3660" value={form.servicePeriodDays} onChange={event => patch({ servicePeriodDays: Number(event.target.value) })} className="admin-input bg-white pr-16 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Tage rückw.</span></div></Field><Field label="Gesamtrabatt"><div className="grid grid-cols-[1fr_100px] gap-2"><select value={form.discountType} onChange={event => patch({ discountType: event.target.value as typeof form.discountType, discountValue: 0 })} className="admin-input bg-white"><option value="percent">%</option><option value="fixed">€</option></select><DecimalInput value={form.discountValue} onValueChange={discountValue => patch({ discountValue })} max={form.discountType === 'percent' ? 100 : undefined} className="admin-input bg-white text-right" /></div></Field></div>{!['standard', 'small_business'].includes(form.taxMode) ? <div className="mt-4"><Field label="Rechtlicher Steuerhinweis" required hint={taxSelection(form.taxMode, form.taxExemptionReason) === 'education_exempt' ? 'Nur verwenden, wenn die gesetzlichen Voraussetzungen erfüllt sind; im Zweifel steuerlich prüfen.' : undefined}><textarea required value={form.taxExemptionReason} onChange={event => patch({ taxExemptionReason: event.target.value })} className="admin-input min-h-20 bg-white" /></Field></div> : null}<div className="mt-4 grid gap-4 sm:grid-cols-3"><Field label="Skonto"><div className="relative"><DecimalInput value={form.cashDiscountBasisPoints} onValueChange={cashDiscountBasisPoints => patch({ cashDiscountBasisPoints })} max={100} className="admin-input bg-white pr-10 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">%</span></div></Field><Field label="Skontofrist"><input type="number" min="0" max="365" value={form.cashDiscountDays} onChange={event => patch({ cashDiscountDays: Number(event.target.value) })} className="admin-input bg-white text-right" /></Field><Field label="Zahlungslink"><input type="text" inputMode="url" value={form.paymentLinkUrl} onChange={event => patch({ paymentLinkUrl: event.target.value })} className="admin-input bg-white" placeholder="https://…" /></Field></div></div>
     <div><h3 className="text-sm font-semibold text-zinc-950">Positionen</h3><div className="mt-3 flex gap-2"><select value={serviceChoice} onChange={event => setServiceChoice(event.target.value)} className="admin-input"><option value="">Leistung auswählen …</option>{data.services.map(service => <option key={service.id} value={service.id}>{service.name} · {money(service.unitPriceNetCents)}</option>)}</select><button type="button" disabled={!serviceChoice} onClick={addService} className="admin-btn-secondary min-h-11 disabled:opacity-40">Hinzufügen</button></div><div className="mt-3 space-y-2">{form.lines.map((line, index) => <LineEditor key={`${line.serviceId}-${index}`} line={line} index={index} taxRates={jurisdiction.taxRates} taxMode={form.taxMode} priceInputMode={priceInputMode} onChange={value => patch({ lines: form.lines.map((item, itemIndex) => itemIndex === index ? { ...item, ...value } : item) })} onRemove={() => patch({ lines: form.lines.filter((_, itemIndex) => itemIndex !== index) })} />)}</div></div><DialogActions onCancel={onClose} pending={isPending} submitLabel="Serie speichern" /></form></Dialog>;
 }
 
@@ -1096,9 +1088,20 @@ function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: 
   const [finalizeOpen, setFinalizeOpen] = useState(false);
   const [serviceChoice, setServiceChoice] = useState('');
   const [priceInputMode, setPriceInputMode] = usePriceInputMode();
+  const initialPaymentMode = useMemo(() => {
+    const initial = draftForm(detail);
+    return detectPaymentInstructionMode(initial.closingText, initial.paymentLinkUrl, data.settings);
+  }, [detail, data.settings]);
+  const [paymentMode, setPaymentModeState] = useState<BillingPaymentInstructionMode>(initialPaymentMode);
   const [customPaymentInstruction, setCustomPaymentInstruction] = useState(() => {
     const initial = draftForm(detail);
     return detectPaymentInstructionMode(initial.closingText, initial.paymentLinkUrl, data.settings) === 'custom' ? initial.closingText : '';
+  });
+  const [paypalPaymentInstruction, setPaypalPaymentInstruction] = useState(() => {
+    const initial = draftForm(detail);
+    return detectPaymentInstructionMode(initial.closingText, initial.paymentLinkUrl, data.settings) === 'paypal'
+      ? initial.closingText
+      : DEFAULT_PAYPAL_INSTRUCTION;
   });
   const [isPending, startTransition] = useTransition();
   const customer = data.customers.find(item => item.id === form.customerId);
@@ -1108,13 +1111,13 @@ function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: 
   const totals = useMemo(() => calculateDraftTotals(form.lines, form.discountType, form.discountValue, form.taxMode), [form.lines, form.discountType, form.discountValue, form.taxMode]);
   const finalizeChecks = useMemo(() => draftFinalizeReadiness(data, customer, form, documentType), [data, customer, form, documentType]);
   const finalizeBlocker = finalizeChecks.find(item => item.blocking && !item.ready);
-  const paymentMode = detectPaymentInstructionMode(form.closingText, form.paymentLinkUrl, data.settings);
   function patch(value: Partial<DraftForm>) { setForm(current => ({ ...current, ...value })); }
   function updateLine(index: number, value: Partial<DraftLine>) { setForm(current => ({ ...current, lines: current.lines.map((line, lineIndex) => lineIndex === index ? { ...line, ...value } : line) })); }
-  function changeTaxMode(taxMode: DraftForm['taxMode']) {
+  function changeTaxMode(selection: BillingTaxSelection) {
+    const { taxMode, taxExemptionReason } = resolveTaxSelection(selection, form.taxExemptionReason);
     patch({
       taxMode,
-      taxExemptionReason: taxMode === 'standard' || taxMode === 'small_business' ? '' : form.taxExemptionReason,
+      taxExemptionReason,
       lines: form.lines.map(line => {
         const nextTaxRateBasisPoints = taxMode === 'standard' ? (line.taxRateBasisPoints || jurisdiction.defaultTaxRateBasisPoints) : 0;
         const shownGrossCents = grossCentsFromNet(line.unitPriceNetCents, line.taxRateBasisPoints);
@@ -1126,18 +1129,26 @@ function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: 
       }),
     });
   }
-  function setPaymentMode(mode: PaymentInstructionMode) {
+  function setPaymentMode(mode: BillingPaymentInstructionMode) {
     const link = form.paymentLinkUrl || data.settings.paymentLinkBaseUrl || '';
+    setPaymentModeState(mode);
     if (mode === 'custom') {
       const nextText = customPaymentInstruction || form.closingText || '';
       setCustomPaymentInstruction(nextText);
       patch({ paymentLinkUrl: '', closingText: nextText });
       return;
     }
-    patch({ paymentLinkUrl: mode === 'payment_link' ? link : '', closingText: paymentInstructionText(mode, data.settings, link, customPaymentInstruction) });
+    const instruction = mode === 'paypal'
+      ? paymentInstructionText(mode, data.settings, '', paypalPaymentInstruction)
+      : paymentInstructionText(mode, data.settings, link, customPaymentInstruction);
+    patch({ paymentLinkUrl: mode === 'payment_link' ? link : '', closingText: instruction });
   }
   function updatePaymentLink(link: string) { patch({ paymentLinkUrl: link, closingText: paymentInstructionText('payment_link', data.settings, link, customPaymentInstruction) }); }
   function updateCustomPaymentInstruction(text: string) { setCustomPaymentInstruction(text); patch({ paymentLinkUrl: '', closingText: text }); }
+  function updatePaypalPaymentInstruction(text: string) {
+    setPaypalPaymentInstruction(text);
+    patch({ paymentLinkUrl: '', closingText: text || DEFAULT_PAYPAL_INSTRUCTION });
+  }
   function addBlankLine() { patch({ lines: [...form.lines, { position: form.lines.length + 1, name: '', description: '', quantity: 1, unitCode: 'C62', unitLabel: 'Stück', unitPriceNetCents: 0, discountBasisPoints: 0, discountType: 'percent', discountValue: 0, taxRateBasisPoints: form.taxMode === 'standard' ? jurisdiction.defaultTaxRateBasisPoints : 0 }] }); }
   function addService(serviceId: string) {
     const service = data.services.find(item => item.id === serviceId); if (!service) return;
@@ -1184,21 +1195,23 @@ function DraftComposer({ detail, data, onBack, onRefresh, onReload }: { detail: 
           {form.lines.length ? <div className="mt-5 ml-auto max-w-xs space-y-2 border-t border-zinc-200 pt-4 text-sm"><TotalRow label="Positionen" value={money(totals.beforeDiscount)} />{totals.discount > 0 ? <TotalRow label="Gesamtrabatt" value={`− ${money(totals.discount)}`} /> : null}<TotalRow label="Netto" value={money(totals.net)} /><TotalRow label="Umsatzsteuer" value={money(totals.tax)} /><TotalRow label="Gesamt" value={money(totals.gross)} strong /></div> : null}
         </ComposerSection>
         <ComposerSection number="4" title="Rabatt, Steuer und Zahlung" done={Boolean(form.taxMode)}>
-          <div className="grid gap-4 sm:grid-cols-3"><Field label="Gesamtrabatt"><select value={form.discountType} onChange={event => patch({ discountType: event.target.value as 'percent' | 'fixed', discountValue: 0 })} className="admin-input"><option value="percent">Prozentual</option><option value="fixed">Fester Betrag</option></select></Field><Field label={form.discountType === 'percent' ? 'Rabatt in %' : 'Rabatt in €'}><DecimalInput value={form.discountValue} onValueChange={discountValue => patch({ discountValue })} max={form.discountType === 'percent' ? 100 : undefined} className="admin-input text-right" /></Field><Field label="Steuerfall"><select value={form.taxMode} onChange={event => changeTaxMode(event.target.value as DraftForm['taxMode'])} className="admin-input"><option value="standard">Regulär steuerpflichtig</option><option value="small_business">Kleinunternehmer</option><option value="reverse_charge">Reverse Charge</option><option value="intra_eu">Innergemeinschaftlich</option><option value="exempt">Steuerbefreit</option></select></Field></div>
-          {!['standard', 'small_business'].includes(form.taxMode) ? <div className="mt-4"><Field label="Rechtlicher Steuerhinweis" required><textarea required value={form.taxExemptionReason} onChange={event => patch({ taxExemptionReason: event.target.value })} className="admin-input min-h-20 resize-y" placeholder="Rechtsgrundlage bzw. Hinweis für den Empfänger" /></Field></div> : null}
+          <div className="grid gap-4 sm:grid-cols-3"><Field label="Gesamtrabatt"><select value={form.discountType} onChange={event => patch({ discountType: event.target.value as 'percent' | 'fixed', discountValue: 0 })} className="admin-input"><option value="percent">Prozentual</option><option value="fixed">Fester Betrag</option></select></Field><Field label={form.discountType === 'percent' ? 'Rabatt in %' : 'Rabatt in €'}><DecimalInput value={form.discountValue} onValueChange={discountValue => patch({ discountValue })} max={form.discountType === 'percent' ? 100 : undefined} className="admin-input text-right" /></Field><Field label="Steuerfall"><select value={taxSelection(form.taxMode, form.taxExemptionReason)} onChange={event => changeTaxMode(event.target.value as BillingTaxSelection)} className="admin-input"><option value="standard">Regulär steuerpflichtig</option><option value="small_business">Kleinunternehmer</option><option value="education_exempt">Lehr-/Bildungsleistung (§ 4 Nr. 21 UStG)</option><option value="reverse_charge">Reverse Charge</option><option value="intra_eu">Innergemeinschaftlich</option><option value="exempt">Sonstige Steuerbefreiung</option></select></Field></div>
+          {!['standard', 'small_business'].includes(form.taxMode) ? <div className="mt-4"><Field label="Rechtlicher Steuerhinweis" required hint={taxSelection(form.taxMode, form.taxExemptionReason) === 'education_exempt' ? 'Der Hinweis ist vorausgefüllt. Nur verwenden, wenn die Voraussetzungen erfüllt sind; im Zweifel steuerlich prüfen.' : undefined}><textarea required value={form.taxExemptionReason} onChange={event => patch({ taxExemptionReason: event.target.value })} className="admin-input min-h-20 resize-y" placeholder="Rechtsgrundlage bzw. Hinweis für den Empfänger" /></Field></div> : null}
           {documentType !== 'quote' ? <div className="mt-4 grid gap-4 sm:grid-cols-2"><Field label="Skonto"><div className="relative"><DecimalInput value={form.cashDiscountBasisPoints} onValueChange={cashDiscountBasisPoints => patch({ cashDiscountBasisPoints })} max={100} className="admin-input pr-10 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">%</span></div></Field><Field label="Skontofrist"><div className="relative"><input type="number" min="0" max="365" value={form.cashDiscountDays} onChange={event => patch({ cashDiscountDays: Number(event.target.value) })} className="admin-input pr-14 text-right" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">Tage</span></div></Field></div> : null}
           <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between"><div><h4 className="text-sm font-semibold text-zinc-950">Zahlungsart auf dem Beleg</h4><p className="text-xs leading-5 text-zinc-500">Dieser Text erscheint unterhalb der Summen und im PDF.</p></div><span className="rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-zinc-500 ring-1 ring-zinc-200">{paymentMode === 'bank_transfer' ? 'Überweisung' : paymentMode === 'payment_link' ? 'Zahlungslink' : paymentMode === 'cash' ? 'Bar' : 'Eigener Text'}</span></div>
-            <div className="mt-3 grid gap-2 sm:grid-cols-4">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between"><div><h4 className="text-sm font-semibold text-zinc-950">Zahlungsart auf dem Beleg</h4><p className="text-xs leading-5 text-zinc-500">Dieser Text erscheint unterhalb der Summen und im PDF.</p></div><span className="rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-zinc-500 ring-1 ring-zinc-200">{paymentMode === 'bank_transfer' ? 'Überweisung' : paymentMode === 'payment_link' ? 'Zahlungslink' : paymentMode === 'paypal' ? 'PayPal' : paymentMode === 'cash' ? 'Bar' : 'Eigener Text'}</span></div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
               {([
                 ['bank_transfer', 'Überweisung'],
                 ['payment_link', 'Zahlungslink'],
+                ['paypal', 'PayPal'],
                 ['cash', 'Bar'],
                 ['custom', 'Eigener Text'],
               ] as const).map(mode => <button key={mode[0]} type="button" onClick={() => setPaymentMode(mode[0])} className={`min-h-11 rounded-xl border px-3 text-sm font-semibold transition ${paymentMode === mode[0] ? 'border-blue-500 bg-white text-blue-700 shadow-sm' : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:text-zinc-950'}`}>{mode[1]}</button>)}
             </div>
             {paymentMode === 'payment_link' ? <div className="mt-4"><Field label="Zahlungslink" hint="Optional. Erscheint im PDF und im sicheren Kundenlink."><input type="text" inputMode="url" value={form.paymentLinkUrl} onChange={event => updatePaymentLink(event.target.value)} className="admin-input bg-white" placeholder="https://…" /></Field></div> : null}
-            {paymentMode === 'custom' ? <div className="mt-4"><Field label="Eigener Zahlungstext"><textarea value={form.closingText} onChange={event => updateCustomPaymentInstruction(event.target.value)} className="admin-input min-h-20 bg-white resize-y" placeholder="z. B. Barzahlung bei Abholung, Zahlung per EC vor Ort …" /></Field></div> : <p className="mt-4 rounded-xl bg-white px-4 py-3 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-200">{paymentInstructionText(paymentMode, data.settings, form.paymentLinkUrl, customPaymentInstruction)}</p>}
+            {paymentMode === 'paypal' ? <div className="mt-4"><Field label="PayPal-Zahlungshinweis" hint="Optional können Sie die PayPal-Adresse oder einen PayPal.Me-Link ergänzen."><textarea value={paypalPaymentInstruction} onChange={event => updatePaypalPaymentInstruction(event.target.value)} className="admin-input min-h-20 bg-white resize-y" placeholder={DEFAULT_PAYPAL_INSTRUCTION} /></Field></div> : null}
+            {paymentMode === 'custom' ? <div className="mt-4"><Field label="Eigener Zahlungstext"><textarea value={form.closingText} onChange={event => updateCustomPaymentInstruction(event.target.value)} className="admin-input min-h-20 bg-white resize-y" placeholder="z. B. Kartenzahlung vor Ort oder Zahlung bei Abholung …" /></Field></div> : paymentMode !== 'paypal' ? <p className="mt-4 rounded-xl bg-white px-4 py-3 text-sm leading-6 text-zinc-600 ring-1 ring-zinc-200">{paymentInstructionText(paymentMode, data.settings, form.paymentLinkUrl, customPaymentInstruction)}</p> : null}
           </div>
         </ComposerSection>
         <ComposerSection number="5" title="Texte" done><Field label="Einleitung"><textarea value={form.introText} onChange={event => patch({ introText: event.target.value })} className="admin-input min-h-24 resize-y" /></Field><div className="mt-4"><Field label="Abschlusstext"><textarea value={form.closingText} onChange={event => patch({ closingText: event.target.value })} className="admin-input min-h-24 resize-y" /></Field></div><div className="mt-4"><Field label="Interne Notiz" hint={`Nicht auf ${documentType === 'quote' ? 'dem Angebot' : 'der Rechnung'} sichtbar.`}><textarea value={form.notes} onChange={event => patch({ notes: event.target.value })} className="admin-input min-h-20 resize-y" /></Field></div></ComposerSection>
