@@ -232,6 +232,7 @@ export const publishedSnapshots = pgTable('published_snapshots', {
 }, (t) => [
   index('published_snapshots_active_idx').on(t.tenantId, t.isActive),
   index('published_snapshots_tenant_idx').on(t.tenantId),
+  uniqueIndex('published_snapshots_tenant_version_idx').on(t.tenantId, t.version),
   uniqueIndex('published_snapshots_one_active_per_tenant_idx').on(t.tenantId).where(sql`${t.isActive} = true`),
 ]);
 

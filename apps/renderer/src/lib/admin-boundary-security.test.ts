@@ -52,3 +52,19 @@ test('public demo flows never persist customer data', () => {
 
   for (const route of routes) assert.match(route, /isDemoTenant\(tenantId\)/);
 });
+
+test('demo login only accepts explicitly marked demo tenants', () => {
+  const route = source('../app/admin/demo-login/route.ts');
+
+  assert.match(route, /eq\(tenants\.isDemo, true\)/);
+});
+
+test('admin tenant resolution rejects suspended tenants', () => {
+  const login = source('../app/admin/login/actions.ts');
+  const hostResolver = source('./tenant-host.ts');
+
+  assert.match(login, /eq\(tenants\.status, 'active'\)/);
+  assert.match(login, /tenant\.status !== 'active'/);
+  assert.match(hostResolver, /eq\(tenants\.status, 'active'\)/);
+  assert.match(hostResolver, /resolveActiveFixedTenantId/);
+});

@@ -30,6 +30,7 @@ interface InitialData {
   formFields?: ContactFormFieldDefinition[];
   fontsUrl?: string | null;
   fontFaceCss?: string;
+  defaultLocale?: string;
   sections?: SnapshotSection[];
   collections?: SnapshotCollection[];
 }
@@ -51,6 +52,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [collections, setCollections] = useState<SnapshotCollection[]>(initialData.collections || []);
   const [fontsUrl, setFontsUrl] = useState(initialData.fontsUrl || null);
   const [fontFaceCss, setFontFaceCss] = useState(initialData.fontFaceCss || '');
+  const [defaultLocale, setDefaultLocale] = useState<string | undefined>(initialData.defaultLocale);
   const [locale, setLocale] = useState<string | undefined>(undefined);
   // editMode is owned by the parent admin shell (PreviewPanel toolbar) and
   // pushed in via postMessage. The old in-iframe toggle button is gone.
@@ -82,6 +84,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.collections) setCollections(p.collections);
       if (p.fontsUrl !== undefined) setFontsUrl(p.fontsUrl);
       if (p.fontFaceCss !== undefined) setFontFaceCss(p.fontFaceCss);
+      if (p.defaultLocale !== undefined) setDefaultLocale(p.defaultLocale || undefined);
       if (p.locale !== undefined) setLocale(p.locale);
       if (typeof p.editMode === 'boolean') setEditMode(p.editMode);
     }
@@ -317,7 +320,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
           {visibleSections.map((section) => (
             <div
               key={section.id}
-              data-section-id={section.id}
+              data-preview-section-id={section.id}
               onClick={(e) => {
                 if (!editMode) return;
                 // If the click was inside an editable text element, let
@@ -338,7 +341,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
                   {section.type}
                 </div>
               )}
-              <SectionRenderer section={section} collections={collections} styleVariant={styleVariant} industry={industry} locale={locale} globalFormFields={formFields} />
+              <SectionRenderer section={section} collections={collections} styleVariant={styleVariant} industry={industry} locale={locale} defaultLocale={defaultLocale} globalFormFields={formFields} />
             </div>
           ))}
         </main>

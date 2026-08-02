@@ -117,7 +117,13 @@ try {
 const after = fs.readFileSync(GENERATED, 'utf8');
 assertNoInternalPublicFields(after, 'fresh generator output');
 
-if (before === after) {
+// Git may check this tracked generated file out with CRLF on Windows while the
+// generator intentionally emits LF. Line endings do not change a TypeScript
+// contract, so compare canonical newlines while preserving the original line
+// endings when this check exits successfully.
+const normalizeLineEndings = (source) => source.replace(/\r\n/g, '\n');
+if (normalizeLineEndings(before) === normalizeLineEndings(after)) {
+  if (before !== after) fs.writeFileSync(GENERATED, before);
   console.log('section-color-contracts-generated.ts is in sync.');
   process.exit(0);
 }

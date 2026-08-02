@@ -150,3 +150,20 @@ test('persisted blank brand fields behave like unset values', () => {
   assert.equal(vars['--token-btn-bg'], '#815a32');
   assert.equal(vars['--token-btn-secondary-bg'], '#f0e5d5');
 });
+
+test('unsafe persisted brand values cannot escape into CSS custom properties', () => {
+  const vars = getBrandCssVars({
+    primaryColor: '#123456; background:url(https://attacker.example)',
+    navBgColor: '#111111; color:red',
+    headingColor: '</style><script>alert(1)</script>',
+    bodyTextColor: { unexpected: true } as unknown as string,
+    cardRadius: '8px; color:red',
+    btnRadius: '12px',
+  });
+
+  assert.equal(vars['--brand-primary'], '#1a5276');
+  assert.equal(vars['--brand-nav-bg'], undefined);
+  assert.equal(vars['--brand-heading'], undefined);
+  assert.equal(vars['--token-card-radius'], undefined);
+  assert.equal(vars['--token-button-radius'], '12px');
+});

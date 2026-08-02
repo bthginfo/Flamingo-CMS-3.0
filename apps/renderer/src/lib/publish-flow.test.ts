@@ -26,4 +26,11 @@ describe('publish flow', () => {
     assert.doesNotMatch(apiPublishSource, /colorWarnings/);
     assert.doesNotMatch(apiPublishSource, /warnings\.push/);
   });
+
+  it('uses the shared atomic publisher for admin and PAT publication', () => {
+    for (const source of [adminPublishSource, apiPublishSource]) {
+      assert.match(source, /publishSnapshotAtomically/);
+      assert.doesNotMatch(source, /No transactions support in neon-http driver/);
+    }
+  });
 });

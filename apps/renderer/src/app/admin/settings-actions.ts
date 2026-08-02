@@ -4,10 +4,46 @@ import { getDb } from '@/lib/db';
 import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings, navigation, footer, tenants } from '@flamingo/db';
 import { eq, sql } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { normalizeFooterVariant } from '@/lib/footer-variants';
+import { isValidColorString, validateBrandPayload } from '@/lib/color-validation';
+import { EDITABLE_BACKGROUND_DESIGN_KEYS } from '@/lib/design-vars';
 
 type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
+
+/**
+ * All public tenant reads use this tag. Settings are intentionally live (they
+ * are not part of a content snapshot), so every settings save must invalidate
+ * the public cache as well as the admin route that submitted the change.
+ */
+function revalidateTenantPublicData(tenantId: string) {
+  revalidateTag(`tenant-${tenantId}`);
+  revalidatePath('/', 'layout');
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function invalidBrandColorMessage(data: Record<string, unknown>): string | null {
+  const issue = validateBrandPayload(data).find((candidate) => candidate.severity === 'error');
+  return issue ? 'Eine Farbe hat kein gültiges Format. Bitte Hex, rgb() oder rgba() verwenden.' : null;
+}
+
+function sanitizeDesignPayload(data: unknown): { value?: Record<string, string>; error?: string } {
+  if (!isRecord(data)) return { error: 'Die Design-Daten sind ungültig.' };
+
+  const value: Record<string, string> = {};
+  for (const key of EDITABLE_BACKGROUND_DESIGN_KEYS) {
+    const raw = data[key];
+    if (raw === undefined || raw === null || raw === '') continue;
+    if (typeof raw !== 'string' || !isValidColorString(raw.trim())) {
+      return { error: 'Eine Hintergrund- oder Textfarbe hat kein gültiges Format.' };
+    }
+    value[key] = raw.trim();
+  }
+  return { value };
+}
 
 export async function requireTenant() {
   const session = await getSession();
@@ -38,6 +74,12 @@ export async function saveBrandSettings(data: Record<string, unknown>) {
   const db = getDb();
 
   try {
+    if (!isRecord(data)) {
+      return { success: false as const, error: 'Die Marken-Daten sind ungültig.' };
+    }
+    const colorError = invalidBrandColorMessage(data);
+    if (colorError) return { success: false as const, error: colorError };
+
     await db.insert(globalSettings)
       .values({ tenantId, brand: data })
       .onConflictDoUpdate({
@@ -51,8 +93,7 @@ export async function saveBrandSettings(data: Record<string, unknown>) {
       });
 
     revalidatePath('/admin/brand');
-    revalidatePath('/', 'layout');
-    revalidatePath('/', 'page');
+    revalidateTenantPublicData(tenantId);
     return { success: true as const };
   } catch (error) {
     console.error('[settings] Failed to save brand settings', { tenantId, error });
@@ -86,6 +127,7 @@ export async function saveContactSettings(data: { phone: string; email: string; 
     await db.insert(globalSettings).values({ tenantId, contact: data });
   }
   revalidatePath('/admin/contact');
+  revalidateTenantPublicData(tenantId);
   return { success: true };
 }
 
@@ -99,6 +141,7 @@ export async function saveOpeningHours(hours: OpeningHoursRow[]) {
     await db.insert(globalSettings).values({ tenantId, openingHours: hours });
   }
   revalidatePath('/admin/contact');
+  revalidateTenantPublicData(tenantId);
   return { success: true };
 }
 
@@ -112,6 +155,7 @@ export async function saveSocialLinks(links: Record<string, string>) {
     await db.insert(globalSettings).values({ tenantId, socialLinks: links });
   }
   revalidatePath('/admin/social');
+  revalidateTenantPublicData(tenantId);
   return { success: true };
 }
 
@@ -169,6 +213,7 @@ export async function saveNavigationSettings(items: { label: string; href: strin
     await db.insert(navigation).values({ tenantId, items: finalItems, cta: finalCta });
   }
   revalidatePath('/admin/navigation');
+  revalidateTenantPublicData(tenantId);
   return { success: true };
 }
 
@@ -238,6 +283,7 @@ export async function saveFooterSettings(data: {
     await db.insert(footer).values({ tenantId, columns: finalColumns, legalLinks: finalLegalLinks, cta: finalCta });
   }
   revalidatePath('/admin/navigation');
+  revalidateTenantPublicData(tenantId);
   return { success: true };
 }
 
@@ -255,6 +301,7 @@ export async function saveActiveStyle(_style: string) {
   const db = getDb();
   await db.update(tenants).set({ activeStyle: 'classic', updatedAt: new Date() }).where(eq(tenants.id, tenantId));
   revalidatePath('/admin/design');
+  revalidateTenantPublicData(tenantId);
   return { success: true };
 }
 
@@ -273,8 +320,12 @@ export async function saveDesignSettings(data: Record<string, string>) {
   const tenantId = await requireWritableTenant();
   const db = getDb();
   try {
+    const normalized = sanitizeDesignPayload(data);
+    if (normalized.error || !normalized.value) {
+      return { success: false as const, error: normalized.error || 'Die Design-Daten sind ungültig.' };
+    }
     await db.insert(globalSettings)
-      .values({ tenantId, design: data })
+      .values({ tenantId, design: normalized.value })
       .onConflictDoUpdate({
         target: globalSettings.tenantId,
         set: {
@@ -286,6 +337,7 @@ export async function saveDesignSettings(data: Record<string, string>) {
         },
       });
     revalidatePath('/admin/brand');
+    revalidateTenantPublicData(tenantId);
     return { success: true as const };
   } catch (error) {
     console.error('[settings] Failed to save design settings', { tenantId, error });

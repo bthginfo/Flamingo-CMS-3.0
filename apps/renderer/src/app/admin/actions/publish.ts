@@ -3,12 +3,10 @@
 import { getWritableSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
 import { getDraftSnapshot } from '@/lib/snapshot';
-import { pages, publishedSnapshots, publishHistory } from '@flamingo/db';
-import { eq, and, desc, lt, sql } from 'drizzle-orm';
+import { checksumPublishedSnapshot, publishSnapshotAtomically, rollbackSnapshotAtomically } from '@/lib/publish-snapshot';
 import { revalidateTag, revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createHash } from 'crypto';
 
 export type PublishRepairItem = {
   severity?: string;
@@ -28,8 +26,6 @@ export type PublishResult = {
   repairQueue?: PublishRepairItem[];
   advisoryQueue?: PublishRepairItem[];
 };
-type QueryRunner = Pick<ReturnType<typeof getDb>, 'select' | 'update' | 'insert' | 'execute'>;
-
 function normalizeSnapshotForJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value, (_key, input) => {
     if (typeof input === 'bigint') return input.toString();
@@ -67,88 +63,18 @@ export async function publishAction(): Promise<PublishResult> {
     const db = getDb();
     const tenantId = session.tenantId;
 
-    const rawSnapshot = await getDraftSnapshot(tenantId);
-    if (!rawSnapshot) return { error: 'Keine Inhalte zum Veröffentlichen gefunden.' };
-    const snapshot = normalizeSnapshotForJson(rawSnapshot);
+    const snapshot = await getDraftSnapshot(tenantId);
+    if (!snapshot) return { error: 'Keine Inhalte zum Veröffentlichen gefunden.' };
 
-    const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
-
-    const runPublish = async (tx: QueryRunner) => {
-      const [currentActive] = await tx
-        .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
-        .from(publishedSnapshots)
-        .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
-        .orderBy(desc(publishedSnapshots.version))
-        .limit(1);
-
-      await tx.update(pages)
-        .set({ status: 'published' })
-        .where(and(eq(pages.tenantId, tenantId), eq(pages.status, 'draft')));
-
-      if (currentActive && currentActive.checksum === checksum) {
-        return { success: true as const, unchanged: true as const, version: currentActive.version };
-      }
-
-      const [latest] = await tx
-        .select({ version: publishedSnapshots.version })
-        .from(publishedSnapshots)
-        .where(eq(publishedSnapshots.tenantId, tenantId))
-        .orderBy(desc(publishedSnapshots.version))
-        .limit(1);
-
-      const nextVersion = (latest?.version ?? 0) + 1;
-      const [created] = await tx.insert(publishedSnapshots).values({
-        tenantId,
-        version: nextVersion,
-        snapshot: snapshot as unknown as Record<string, unknown>,
-        checksum,
-        createdBy: 'admin',
-        // Create first without touching the currently active snapshot. If this
-        // insert fails, public rendering remains on the previous version.
-        isActive: false,
-      }).returning({ id: publishedSnapshots.id });
-
-      if (!created?.id) throw new Error('Published Snapshot konnte nicht erstellt werden.');
-
-      // The switch is one PostgreSQL statement, hence atomic even with the
-      // neon-http driver. A failure rolls the whole statement back and leaves
-      // the previous snapshot active instead of exposing the draft fallback.
-      await tx.execute(sql`
-        WITH deactivated AS (
-          UPDATE published_snapshots
-          SET is_active = false
-          WHERE tenant_id = ${tenantId} AND is_active = true AND id <> ${created.id}
-          RETURNING id
-        )
-        UPDATE published_snapshots
-        SET is_active = true
-        WHERE id = ${created.id}
-          AND tenant_id = ${tenantId}
-          AND (SELECT count(*) FROM deactivated) >= 0
-      `);
-
-      await tx.insert(publishHistory).values({
-        tenantId,
-        snapshotId: created.id,
-        previousSnapshotId: currentActive?.id ?? null,
-        action: 'publish',
-        note: `v${nextVersion}`,
-      });
-
-      return { success: true as const, version: nextVersion };
+    const publishInput = {
+      tenantId,
+      snapshot: normalizeSnapshotForJson(snapshot),
+      checksum: checksumPublishedSnapshot(snapshot),
+      createdBy: 'admin',
+      publishDraftPages: true,
     };
 
-    let result: PublishResult;
-    try {
-      result = await db.transaction(async (tx) => runPublish(tx));
-    } catch (txError) {
-      const txMessage = txError instanceof Error ? txError.message : String(txError);
-      if (!txMessage.includes('No transactions support in neon-http driver')) {
-        throw txError;
-      }
-      console.warn('[publishAction] transaction unavailable, using non-transactional fallback');
-      result = await runPublish(db);
-    }
+    const result = await publishSnapshotAtomically(db, publishInput);
 
     revalidateTenant(tenantId);
 
@@ -165,7 +91,7 @@ export async function publishAction(): Promise<PublishResult> {
       }
     }
 
-    return result;
+    return { success: true, version: result.version, unchanged: result.unchanged || undefined };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unbekannter Publish-Fehler';
     console.error('[publishAction] failed:', message);
@@ -189,62 +115,15 @@ export async function rollbackPublishAction(): Promise<PublishResult> {
   const db = getDb();
   const tenantId = session.tenantId;
 
-  const runRollback = async (tx: QueryRunner) => {
-    const [current] = await tx
-      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version })
-      .from(publishedSnapshots)
-      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
-      .orderBy(desc(publishedSnapshots.version))
-      .limit(1);
-
-    if (!current) return { error: 'Kein aktiver Snapshot vorhanden.' };
-
-    const [previous] = await tx
-      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version })
-      .from(publishedSnapshots)
-      .where(and(eq(publishedSnapshots.tenantId, tenantId), lt(publishedSnapshots.version, current.version)))
-      .orderBy(desc(publishedSnapshots.version))
-      .limit(1);
-
-    if (!previous) return { error: 'Kein vorheriger Snapshot vorhanden.' };
-
-    await tx.execute(sql`
-      WITH deactivated AS (
-        UPDATE published_snapshots
-        SET is_active = false
-        WHERE tenant_id = ${tenantId} AND is_active = true AND id <> ${previous.id}
-        RETURNING id
-      )
-      UPDATE published_snapshots
-      SET is_active = true
-      WHERE id = ${previous.id}
-        AND tenant_id = ${tenantId}
-        AND (SELECT count(*) FROM deactivated) >= 0
-    `);
-
-    await tx.insert(publishHistory).values({
-      tenantId,
-      snapshotId: previous.id,
-      previousSnapshotId: current.id,
-      action: 'rollback',
-      note: `v${current.version} -> v${previous.version}`,
-    });
-
-    return { success: true as const, version: previous.version };
-  };
-
-  let result: PublishResult;
-  try {
-    result = await db.transaction(async (tx) => runRollback(tx));
-  } catch (txError) {
-    const txMessage = txError instanceof Error ? txError.message : String(txError);
-    if (!txMessage.includes('No transactions support in neon-http driver')) {
-      throw txError;
-    }
-    console.warn('[rollbackPublishAction] transaction unavailable, using non-transactional fallback');
-    result = await runRollback(db);
+  const result = await rollbackSnapshotAtomically(db, tenantId);
+  if ('error' in result) {
+    return {
+      error: result.error === 'no-active-snapshot'
+        ? 'Kein aktiver Snapshot vorhanden.'
+        : 'Kein vorheriger Snapshot vorhanden.',
+    };
   }
 
   revalidateTenant(tenantId);
-  return result;
+  return { success: true, version: result.version };
 }

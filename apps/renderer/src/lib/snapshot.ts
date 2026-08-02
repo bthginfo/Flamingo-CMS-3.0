@@ -1,8 +1,9 @@
 import { getDb } from './db';
 import { tenants, tenantDomains, pages, pageSections, collections, collectionItems, publishedSnapshots } from '@flamingo/db';
-import { eq, and, asc, desc, notInArray } from 'drizzle-orm';
+import { eq, and, asc, desc, inArray, notInArray, or } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
+import { resolveActiveFixedTenantId } from './active-tenant';
 
 const lastKnownSnapshots = new Map<string, Snapshot>();
 const PUBLIC_SNAPSHOT_REVALIDATE_SECONDS = 60 * 60;
@@ -62,7 +63,14 @@ export type Snapshot = {
 export async function resolveTenant(candidateSlug?: string): Promise<string | null> {
   // Standalone mode: fixed tenant via env var (dedicated Vercel project)
   const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (fixedTenantId) return fixedTenantId;
+  if (fixedTenantId) {
+    try {
+      return await resolveActiveFixedTenantId();
+    } catch (err) {
+      console.error('[resolveTenant] fixed tenant status unavailable:', err);
+      return null;
+    }
+  }
 
   try {
     const db = getDb();
@@ -71,11 +79,25 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
     const isLocalHost = host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]');
 
     // Try domain lookup
-    const [domain] = await db.select({ tenantId: tenantDomains.tenantId }).from(tenantDomains).where(eq(tenantDomains.domain, host)).limit(1);
+    const [domain] = await db
+      .select({ tenantId: tenantDomains.tenantId })
+      .from(tenantDomains)
+      .innerJoin(tenants, eq(tenants.id, tenantDomains.tenantId))
+      .where(and(eq(tenantDomains.domain, host), eq(tenants.status, 'active')))
+      .limit(1);
     if (domain) return domain.tenantId;
 
     if (candidateSlug) {
-      const [tenantBySlug] = await db.select({ id: tenants.id }).from(tenants).where(and(eq(tenants.slug, candidateSlug), eq(tenants.status, 'active'))).limit(1);
+      const [tenantBySlug] = await db.select({ id: tenants.id }).from(tenants).where(
+        isLocalHost
+          ? and(eq(tenants.slug, candidateSlug), eq(tenants.status, 'active'))
+          : and(
+              eq(tenants.slug, candidateSlug),
+              eq(tenants.status, 'active'),
+              inArray(tenants.deploymentMode, ['shared', 'lead_shared']),
+              or(eq(tenants.isDemo, true), eq(tenants.isLead, true)),
+            ),
+      ).limit(1);
       if (tenantBySlug) return tenantBySlug.id;
       if (!isLocalHost) return null;
     }

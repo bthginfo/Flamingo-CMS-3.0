@@ -1,4 +1,5 @@
-import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
+import { resolveTenant } from '@/lib/snapshot';
+import { resolvePublicTenantId } from '@/lib/public-tenant';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
@@ -9,7 +10,7 @@ import { SiteFooter } from '@/components/site-footer';
 import { ShopProductDetailSection } from '@/templates/shared/shop-product-detail';
 import { getDb } from '@/lib/db';
 import { products, tenantDomains, tenants } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray, or } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { serializeJsonForHtml } from '@/lib/safe-json';
@@ -18,14 +19,6 @@ import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
 export const revalidate = 60;
 
 type SearchParams = Promise<{ tenantId?: string }>;
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function resolveExplicitTenant(queryTenantId: string | null) {
-  const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (!queryTenantId || !UUID_RE.test(queryTenantId)) return null;
-  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
-  return queryTenantId;
-}
 
 async function getProduct(slug: string, tenantId: string) {
   const db = getDb();
@@ -35,18 +28,25 @@ async function getProduct(slug: string, tenantId: string) {
 }
 
 async function resolveTenantForProduct(slug: string, queryTenantId: string | null) {
-  const explicitTenantId = resolveExplicitTenant(queryTenantId);
-  if (explicitTenantId) return explicitTenantId;
-
   const hostTenantId = await resolveTenant();
   if (hostTenantId) return hostTenantId;
+
+  // On a shared renderer, explicit IDs are public only for demo/lead tenants.
+  if (queryTenantId) return resolvePublicTenantId(queryTenantId);
 
   // Shared host fallback: resolve tenant from a unique active product slug.
   const db = getDb();
   const matches = await db
     .select({ tenantId: products.tenantId })
     .from(products)
-    .where(and(eq(products.slug, slug), eq(products.status, 'active')))
+    .innerJoin(tenants, eq(tenants.id, products.tenantId))
+    .where(and(
+      eq(products.slug, slug),
+      eq(products.status, 'active'),
+      eq(tenants.status, 'active'),
+      inArray(tenants.deploymentMode, ['shared', 'lead_shared']),
+      or(eq(tenants.isDemo, true), eq(tenants.isLead, true)),
+    ))
     .limit(2);
   if (matches.length !== 1) return null;
   return matches[0]?.tenantId ?? null;

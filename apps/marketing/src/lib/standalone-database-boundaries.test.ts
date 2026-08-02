@@ -114,7 +114,20 @@ test('shared-to-standalone cutover verifies deployment and every copied table be
   assert.match(migration, /source\.transaction\(async transaction/);
   assert.match(migration, /name === 'billing_documents'[\s\S]*status: 'draft'/, 'immutable billing documents must be staged before their items are copied');
   assert.match(migration, /order_status_history/, 'order status history must be copied and verified');
-  for (const table of ['billing_settings', 'billing_services', 'billing_documents', 'billing_document_items', 'billing_document_events', 'billing_delivery_attempts']) {
+  for (const table of [
+    'billing_settings',
+    'billing_services',
+    'billing_documents',
+    'billing_document_items',
+    'billing_payments',
+    'billing_reminders',
+    'billing_recurring_schedules',
+    'billing_recurring_runs',
+    'billing_portal_links',
+    'billing_document_events',
+    'billing_delivery_attempts',
+    'booking_blackouts',
+  ]) {
     assert.match(migration, new RegExp(`'${table}'`), `${table} must move with standalone tenants`);
   }
 });

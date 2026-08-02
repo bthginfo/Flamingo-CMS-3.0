@@ -145,6 +145,34 @@ test('brand and design settings use atomic upserts without replacing unknown key
   assert.doesNotMatch(designAction, /design: sql`excluded\.design`/);
 });
 
+test('settings changes invalidate the tenant-scoped public cache', () => {
+  const actions = source('../app/admin/settings-actions.ts');
+  assert.match(actions, /function revalidateTenantPublicData\(tenantId: string\)[\s\S]*revalidateTag\(`tenant-\$\{tenantId\}`\)/);
+
+  for (const action of [
+    'saveBrandSettings',
+    'saveContactSettings',
+    'saveOpeningHours',
+    'saveSocialLinks',
+    'saveNavigationSettings',
+    'saveFooterSettings',
+    'saveActiveStyle',
+    'saveDesignSettings',
+  ]) {
+    const start = actions.indexOf(`export async function ${action}`);
+    const end = actions.indexOf('\nexport async function ', start + 1);
+    const body = actions.slice(start, end === -1 ? undefined : end);
+    assert.match(body, /revalidateTenantPublicData\(tenantId\)/, `${action} must invalidate public tenant cache`);
+  }
+});
+
+test('public renderer only creates important CSS from validated colors', () => {
+  const page = source('../app/[[...slug]]/page.tsx');
+  assert.match(page, /const safeBrandColor = .*isValidColorString/);
+  assert.match(page, /<style>\{escapeStyleElementText\(importantOverrides\.join/);
+  assert.doesNotMatch(page, /importantOverrides\.join\('\\n'\) \}\} \/>/);
+});
+
 test('admin persisted sidebar state is applied only after hydration', () => {
   const sidebar = source('../components/sidebar.tsx');
   assert.match(sidebar, /const \[collapsed, setCollapsed\] = useState\(false\)/);

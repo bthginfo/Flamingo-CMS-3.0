@@ -2,6 +2,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { tenants } from '@flamingo/db';
 import { getDb } from '@/lib/db';
 import { resolveTenant } from '@/lib/snapshot';
+import { resolveActiveFixedTenantId } from '@/lib/active-tenant';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -32,7 +33,8 @@ export async function resolvePublicTenantId(explicitValue?: unknown): Promise<st
   const explicitTenantId = parsePublicTenantId(explicitValue);
   const fixedTenantId = process.env.FIXED_TENANT_ID?.trim();
   if (fixedTenantId) {
-    return !explicitValue || explicitTenantId === fixedTenantId ? fixedTenantId : null;
+    if (explicitValue && explicitTenantId !== fixedTenantId) return null;
+    return resolveActiveFixedTenantId();
   }
 
   if (!explicitValue) return resolveTenant();

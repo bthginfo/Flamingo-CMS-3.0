@@ -160,6 +160,36 @@ test('renderer CSS-escapes an untrusted section id before writing a style elemen
   assert.match(styleText, /\\3c /);
 });
 
+test('renderer falls back to the configured default locale for a missing preview locale', () => {
+  (globalThis as typeof globalThis & { React: typeof React }).React = React;
+  const section: SnapshotSection = {
+    id: 'localized-preview-section',
+    type: 'faq',
+    variant: null,
+    visible: true,
+    container: 'default',
+    spacingTop: 'm',
+    spacingBottom: 'm',
+    anchorId: null,
+    data: {
+      _localized: true,
+      de: { items: [{ question: 'Deutsch', answer: 'Deutsche Antwort' }] },
+      en: { items: [{ question: 'English default', answer: 'English answer' }] },
+    },
+    styleOverrides: null,
+  };
+
+  const html = renderToStaticMarkup(React.createElement(SectionRenderer, {
+    section,
+    industry: 'hotel',
+    locale: 'fr',
+    defaultLocale: 'en',
+  }));
+
+  assert.match(html, /English default/);
+  assert.doesNotMatch(html, /Deutsch/);
+});
+
 test('structural edit collections do not opt into card color roles', () => {
   (globalThis as typeof globalThis & { React: typeof React }).React = React;
   const section: SnapshotSection = {

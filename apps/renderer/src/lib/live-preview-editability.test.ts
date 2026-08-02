@@ -18,6 +18,21 @@ test('live preview direct editing rescans dynamic section states and resolves sa
   assert.match(overlays, /let cursor: HTMLElement \| null = el;/, 'image/link/icon path builder must include collection markers placed on the target element itself');
 });
 
+test('live preview preserves the tenant default locale and has one renderer section root', () => {
+  const client = source('../app/live-preview/client.tsx');
+  const page = source('../app/live-preview/page.tsx');
+  const editor = source('../app/admin/pages/[id]/page-editor.tsx');
+
+  assert.match(page, /getTenantI18n\(tenantId\)/, 'the live-preview route must load the tenant i18n configuration');
+  assert.match(page, /defaultLocale:\s*i18n\.defaultLocale/, 'the tenant default locale must seed the iframe');
+  assert.match(client, /const \[defaultLocale, setDefaultLocale\] = useState<string \| undefined>\(initialData\.defaultLocale\)/);
+  assert.match(client, /p\.defaultLocale !== undefined\) setDefaultLocale\(p\.defaultLocale \|\| undefined\)/, 'live payloads must retain the configured default locale');
+  assert.match(client, /<SectionRenderer[\s\S]*?locale=\{locale\}[\s\S]*?defaultLocale=\{defaultLocale\}/, 'the section renderer must receive both locale values');
+  assert.match(editor, /defaultLocale:\s*i18n\?\.defaultLocale/, 'the page editor must forward the default locale with live updates');
+  assert.match(client, /data-preview-section-id=\{section\.id\}/, 'the interaction wrapper needs a distinct non-renderer marker');
+  assert.doesNotMatch(client, /data-section-id=\{section\.id\}/, 'only SectionRenderer may own the renderer section root');
+});
+
 test('advanced sections expose direct-edit markers for visible nested content', () => {
   const sceneLab = source('../templates/advanced/scene-lab.tsx');
   assert.match(sceneLab, /data-edit-collection="groups"[\s\S]*?data-edit-path="description"/, 'sceneLab group description must edit groups[index].description');

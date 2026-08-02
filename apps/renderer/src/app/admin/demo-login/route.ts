@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         resolved = await resolveDemoTenantBySlug(`demo-${industry}`);
       }
 
-      // 4. Fallback: find any tenant with matching industry and slug starting with "demo"
+      // 4. Legacy fallback: a demo-looking slug still has to be explicitly marked as demo.
       if (!resolved) {
         const db = getDb();
         const [tenant] = await db
@@ -84,6 +84,7 @@ export async function GET(request: NextRequest) {
           .where(and(
             eq(tenants.industry, dbIndustry as typeof tenants.industry.enumValues[number]),
             like(tenants.slug, 'demo%'),
+            eq(tenants.isDemo, true),
             eq(tenants.status, 'active'),
           ))
           .limit(1);
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
       }
 
       if (!resolved) {
-        return NextResponse.json({ error: `No demo tenant found for industry: ${industry}. Make sure a tenant with industry="${dbIndustry}" exists (with isDemo=true or slug starting with "demo").` }, { status: 404 });
+        return NextResponse.json({ error: `No demo tenant found for industry: ${industry}. Make sure an active tenant with industry="${dbIndustry}" has isDemo=true.` }, { status: 404 });
       }
       tenantId = resolved;
     } catch (e) {

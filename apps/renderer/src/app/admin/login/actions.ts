@@ -5,7 +5,7 @@ import { timingSafeEqual } from 'crypto';
 import { getDb } from '@/lib/db';
 import { adminSecrets, tenants } from '@flamingo/db';
 import { verifyPassword, createSessionToken } from '@flamingo/auth';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { cookies, headers } from 'next/headers';
 import { resolveTenantByHost } from '@/lib/tenant-host';
 import {
@@ -45,7 +45,9 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
   if (fixedId) {
     tenantId = fixedId;
   } else if (tenantSlug) {
-    const [t] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.slug, tenantSlug)).limit(1);
+    const [t] = await db.select({ id: tenants.id }).from(tenants)
+      .where(and(eq(tenants.slug, tenantSlug), eq(tenants.status, 'active')))
+      .limit(1);
     tenantId = t?.id ?? null;
   } else {
     tenantId = await resolveTenantByHost();
@@ -53,7 +55,7 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
   if (!tenantId) return { error: 'Kein Tenant für diese Domain konfiguriert' };
 
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
-  if (!tenant) return { error: 'Kein Tenant konfiguriert' };
+  if (!tenant || tenant.status !== 'active') return { error: 'Kein aktiver Tenant konfiguriert' };
 
   const [secret] = await db.select().from(adminSecrets).where(eq(adminSecrets.tenantId, tenant.id));
   if (!secret) return { error: 'Kein Admin-Passwort konfiguriert' };

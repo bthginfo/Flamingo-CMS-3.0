@@ -1,5 +1,5 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
-import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
+import { getTenantNav, getTenantFooter, getTenantBrand, getTenantI18n, getTenantStyle } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { getDesignCssVars } from '@/lib/design-vars';
@@ -26,11 +26,12 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
       return <LivePreviewClient initialData={{}} />;
     }
 
-  const [navData, footerData, { brand, contact, socialLinks, design, formFields }, tenantStyle, snapshot] = await Promise.all([
+  const [navData, footerData, { brand, contact, socialLinks, design, formFields }, tenantStyle, i18n, snapshot] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
     getTenantStyle(tenantId),
+    getTenantI18n(tenantId),
     getActiveSnapshot(tenantId),
   ]);
 
@@ -78,6 +79,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
         formFields,
         fontsUrl: fontAssets.googleFontsUrl,
         fontFaceCss: fontAssets.fontFaceCss,
+        defaultLocale: i18n.defaultLocale,
         sections: initialSections,
         collections: snapshot?.collections || [],
       }}

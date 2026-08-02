@@ -204,10 +204,14 @@ export async function createItemAction(collectionId: string, formData: FormData)
   const db = getDb();
   const title = (formData.get('title') as string)?.trim();
   if (!title) return;
+  const [collection] = await db.select({ id: collections.id }).from(collections)
+    .where(and(eq(collections.id, collectionId), eq(collections.tenantId, session.tenantId)))
+    .limit(1);
+  if (!collection) return { error: 'Collection nicht gefunden oder keine Berechtigung' };
   const slug = title.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/(^-|-$)/g, '').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
   await db.insert(collectionItems).values({
     tenantId: session.tenantId,
-    collectionId,
+    collectionId: collection.id,
     title,
     slug: slug || 'neuer-eintrag',
     data: {},

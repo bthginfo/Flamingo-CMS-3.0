@@ -3,6 +3,7 @@
  * including auto-contrast text colors for custom backgrounds.
  */
 import { getContrastColor } from './contrast';
+import { isValidColorString } from './color-validation';
 
 /** Maps global design JSON keys to CSS custom property names. */
 const DESIGN_TO_CSS_VARS: Record<string, string[]> = {
@@ -108,11 +109,19 @@ export function getDesignCssVars(designValue: Record<string, unknown>): Record<s
   const design = normalizeDesignStringRecord(designValue);
   const vars: Record<string, string> = {};
 
+  // The design document is persisted JSON and may predate the server-side
+  // validator. Do not turn a legacy/malicious string into a CSS declaration.
+  const color = (key: string) => {
+    const value = design[key];
+    return value && isValidColorString(value) ? value : undefined;
+  };
+
   // 1. Map design keys to CSS variables
   for (const [key, cssVars] of Object.entries(DESIGN_TO_CSS_VARS)) {
-    if (!design[key]) continue;
+    const value = color(key);
+    if (!value) continue;
     for (const cssVar of cssVars) {
-      vars[cssVar] = design[key];
+      vars[cssVar] = value;
     }
   }
 
@@ -122,23 +131,25 @@ export function getDesignCssVars(designValue: Record<string, unknown>): Record<s
 
   // 2. Auto-compute text colors for custom backgrounds
   for (const [bgKey, { textVar, overrideKey }] of Object.entries(BG_TO_TEXT_VAR)) {
-    const bgColor = design[bgKey];
+    const bgColor = color(bgKey);
     if (!bgColor) continue;
 
     // If user has set a text override, use it; otherwise auto-calculate
-    const textOverride = design[overrideKey];
+    const textOverride = color(overrideKey);
     vars[textVar] = textOverride || getContrastColor(bgColor);
   }
 
   // 3. If sectionBg is set but heading text is NOT manually set, auto-derive primary text
-  if (design.sectionBg && !design.textPrimary && !design.headingColor && !design.heading) {
-    vars['--style-text-primary'] = vars['--style-text-on-section'] || getContrastColor(design.sectionBg);
+  const sectionBg = color('sectionBg');
+  if (sectionBg && !color('textPrimary') && !color('headingColor') && !color('heading')) {
+    vars['--style-text-primary'] = vars['--style-text-on-section'] || getContrastColor(sectionBg);
     vars['--token-heading'] = vars['--style-text-primary'];
   }
 
   // 4. If sectionBgAlt is set but body text is NOT set, derive secondary text from alt bg
-  if (design.sectionBgAlt && !design.textSecondary && !design.bodyColor && !design.body) {
-    const autoText = vars['--style-text-on-section-alt'] || getContrastColor(design.sectionBgAlt);
+  const sectionBgAlt = color('sectionBgAlt');
+  if (sectionBgAlt && !color('textSecondary') && !color('bodyColor') && !color('body')) {
+    const autoText = vars['--style-text-on-section-alt'] || getContrastColor(sectionBgAlt);
     // Secondary text is slightly muted version
     vars['--style-text-secondary'] = autoText === '#1a1a1a' ? '#4a5568' : '#cbd5e1';
     vars['--token-body'] = vars['--style-text-secondary'];

@@ -1,7 +1,8 @@
 import { headers } from 'next/headers';
 import { getDb } from './db';
-import { tenantDomains } from '@flamingo/db';
-import { eq } from 'drizzle-orm';
+import { tenantDomains, tenants } from '@flamingo/db';
+import { and, eq } from 'drizzle-orm';
+import { resolveActiveFixedTenantId } from './active-tenant';
 
 /**
  * Resolve a tenant strictly from the HTTP Host header against tenant_domains.
@@ -15,7 +16,7 @@ import { eq } from 'drizzle-orm';
  */
 export async function resolveTenantByHost(): Promise<string | null> {
   const fixed = process.env.FIXED_TENANT_ID;
-  if (fixed) return fixed;
+  if (fixed) return resolveActiveFixedTenantId();
 
   const h = await headers();
   const host = (h.get('host') || '').toLowerCase();
@@ -25,7 +26,8 @@ export async function resolveTenantByHost(): Promise<string | null> {
   const [row] = await db
     .select({ tenantId: tenantDomains.tenantId })
     .from(tenantDomains)
-    .where(eq(tenantDomains.domain, host))
+    .innerJoin(tenants, eq(tenants.id, tenantDomains.tenantId))
+    .where(and(eq(tenantDomains.domain, host), eq(tenants.status, 'active')))
     .limit(1);
   return row?.tenantId ?? null;
 }

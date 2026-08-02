@@ -59,6 +59,8 @@ import { generateCollectionItemMetadata, renderCollectionItemPage } from '@/app/
 import { serializeJsonForHtml } from '@/lib/safe-json';
 import { composeSeoTitle } from '@/lib/seo-title';
 import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
+import { isValidColorString } from '@/lib/color-validation';
+import { escapeStyleElementText } from '@/lib/section-style-overrides';
 
 // Known locale codes for i18n routing (first slug segment)
 const LOCALE_PATTERN = /^[a-z]{2}$/;
@@ -456,10 +458,15 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
 
   // Build dynamic style overrides that need !important to beat Tailwind utilities
   const importantOverrides: string[] = [];
-  if (brand.headingColor) importantOverrides.push(`[data-style] main h1, [data-style] main h2, [data-style] main h3, [data-style] main h4, [data-style] main h5, [data-style] main h6 { color: ${brand.headingColor} !important; }`);
-  if (brand.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li { color: ${brand.bodyTextColor} !important; }`);
-  if (brand.mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${brand.mutedTextColor} !important; }`);
-  if (brand.linkColor) importantOverrides.push(`[data-style] main a:not([data-edit-link]):not(.cms-button):not([class*="cms-button"]):not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${brand.linkColor} !important; }`);
+  const safeBrandColor = (value: unknown) => typeof value === 'string' && isValidColorString(value) ? value.trim() : null;
+  const headingColor = safeBrandColor(brand.headingColor);
+  const bodyTextColor = safeBrandColor(brand.bodyTextColor);
+  const mutedTextColor = safeBrandColor(brand.mutedTextColor);
+  const linkColor = safeBrandColor(brand.linkColor);
+  if (headingColor) importantOverrides.push(`[data-style] main h1, [data-style] main h2, [data-style] main h3, [data-style] main h4, [data-style] main h5, [data-style] main h6 { color: ${headingColor} !important; }`);
+  if (bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li { color: ${bodyTextColor} !important; }`);
+  if (mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${mutedTextColor} !important; }`);
+  if (linkColor) importantOverrides.push(`[data-style] main a:not([data-edit-link]):not(.cms-button):not([class*="cms-button"]):not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${linkColor} !important; }`);
   importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-on-dark-heading, #fff) !important; }`);
   importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(p,li,.cms-section-subtitle) { color: var(--token-on-dark-body, rgba(255,255,255,.78)) !important; }`);
   importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(.section-badge,.eyebrow) { color: var(--token-eyebrow, var(--token-on-dark-muted, rgba(255,255,255,.62))) !important; }`);
@@ -475,7 +482,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       {fontAssets.googleFontsUrl && <link rel="stylesheet" href={fontAssets.googleFontsUrl} />}
       {fontAssets.fontFaceCss && <style>{fontAssets.fontFaceCss}</style>}
       {fontAssets.hasBodyFont && <style>{'[data-style] { font-family: var(--custom-body-font) !important; }'}</style>}
-      {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
+      {importantOverrides.length > 0 && <style>{escapeStyleElementText(importantOverrides.join('\n'))}</style>}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLdList) }} />
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} topBar={navData.topBar} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} linkPrefix={linkPrefix} />
       <main>

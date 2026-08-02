@@ -63,8 +63,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
     const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current);
-    preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
-  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale, collections, tenantId, previewProducts]);
+    preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, defaultLocale: i18n?.defaultLocale, collections });
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale, collections, tenantId, previewProducts]);
 
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
 
@@ -150,7 +150,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
               // brand-new section is added back-to-back with field edits.
               if (preview.isOpen) {
                 const liveSections = buildLiveSections(next, pendingChanges.current);
-                preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+                preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, defaultLocale: i18n?.defaultLocale, collections });
               }
               return next;
             });
@@ -199,7 +199,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
           toast.success('Sektion kopiert');
           if (preview.isOpen) {
             const liveSections = buildLiveSections([...sectionsRef.current, section as Section], pendingChanges.current);
-            preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+            preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, defaultLocale: i18n?.defaultLocale, collections });
           }
           resolve(true);
         } catch {
@@ -243,7 +243,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       // featured products, …) keep rendering when an unrelated field is
       // edited. Earlier this field was omitted and the iframe sometimes
       // reset to an "empty" state until a full refresh.
-      preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+      preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, defaultLocale: i18n?.defaultLocale, collections });
     }
   }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale, collections]);
 
@@ -375,7 +375,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       // "colors only appear after iframe reload".
       if (preview.isOpen) {
         const liveSections = buildLiveSections(next, pendingChanges.current);
-        preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+        preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, defaultLocale: i18n?.defaultLocale, collections });
       }
       return next;
     });

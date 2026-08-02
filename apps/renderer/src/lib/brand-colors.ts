@@ -1,4 +1,5 @@
 import { compositeColors, parseCssColor } from './color-engine';
+import { isValidColorString } from './color-validation';
 
 /**
  * Derives --brand-* CSS variables from tenant brand colors (primaryColor, secondaryColor, accentColor).
@@ -152,7 +153,17 @@ export function getBrandCssVars(
   fallbackVars: Record<string, string> = {},
 ): Record<string, string> {
   const vars: Record<string, string> = {};
-  const configured = (value: string | undefined) => value?.trim() || undefined;
+  // Brand values are tenant-controlled and become CSS custom properties.
+  // Treat persisted legacy data as untrusted too: only the small color grammar
+  // accepted by the editor may reach a public `style` attribute.
+  const configured = (value: unknown) => {
+    const normalized = typeof value === 'string' ? value.trim() : undefined;
+    return normalized && isValidColorString(normalized) ? normalized : undefined;
+  };
+  const configuredDimension = (value: unknown) => {
+    const normalized = typeof value === 'string' ? value.trim() : undefined;
+    return normalized && /^(?:\d+|\d*\.\d+)(?:px|rem|em|%)?$/.test(normalized) ? normalized : undefined;
+  };
   const fallback = (...keys: string[]) => keys
     .map((key) => fallbackVars[key])
     .find((value) => typeof value === 'string' && value.trim());
@@ -320,8 +331,8 @@ export function getBrandCssVars(
   vars['--token-btn-secondary-bg']     = secondaryButtonBg;
   vars['--token-btn-secondary-text']   = secondaryButtonText;
   vars['--token-btn-secondary-border'] = configured(brand.btnSecondaryBorder) ?? fallback('--token-btn-secondary-border', '--style-button-secondary-border') ?? 'color-mix(in srgb, currentColor 22%, transparent)';
-  const cardRadius = configured(brand.cardRadius) ?? fallback('--token-card-radius', '--style-card-radius');
-  const buttonRadius = configured(brand.btnRadius) ?? fallback('--token-button-radius', '--style-button-radius');
+  const cardRadius = configuredDimension(brand.cardRadius) ?? fallback('--token-card-radius', '--style-card-radius');
+  const buttonRadius = configuredDimension(brand.btnRadius) ?? fallback('--token-button-radius', '--style-button-radius');
   if (cardRadius) vars['--token-card-radius'] = cardRadius;
   if (buttonRadius) vars['--token-button-radius'] = buttonRadius;
   // Phase 4: typography utilities + shadow + image overlay.
