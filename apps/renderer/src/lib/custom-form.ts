@@ -104,6 +104,10 @@ export function parseCustomFormConfig(value: unknown) {
   return customFormConfigSchema.safeParse(value);
 }
 
+export function isCustomFormSectionPreview(value: unknown) {
+  return Boolean(value && typeof value === 'object' && !Array.isArray(value) && Reflect.get(value, '_isSectionPreview') === true);
+}
+
 /**
  * The section preview adds renderer-only metadata to every data object. Keep
  * the persisted/server contract strict, but remove this one trusted rendering

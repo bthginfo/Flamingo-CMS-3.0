@@ -7,11 +7,13 @@ import { buildCustomFormPdfFilename, renderCustomFormPdf } from './custom-form-p
 import { CustomFormDeliveryUncertainError, deliverCustomForm, type CustomFormMail } from './custom-form-delivery';
 import { fingerprintCustomFormRequest, runCustomFormClaimedAction, type CustomFormDeliveryClaim } from './custom-form-idempotency';
 import { createRendererContactActionIdentity, rendererContactRequestHeaders } from './renderer-contact-client-security';
+import { SECTION_EDITOR_FIELD_DEFAULTS } from './section-editor-field-defaults';
+import { SECTION_PREVIEW_DATA } from './section-preview-data';
 import type { Snapshot } from './snapshot';
 
 const formRouteSource = readFileSync(new URL('../app/api/forms/[formKey]/route.ts', import.meta.url), 'utf8');
 const formClientSource = readFileSync(new URL('../templates/shared/custom-form.tsx', import.meta.url), 'utf8');
-const deliveryMigrationSource = readFileSync(new URL('../../../../packages/db/drizzle/0025_custom_form_delivery_idempotency.sql', import.meta.url), 'utf8');
+const deliveryMigrationSource = readFileSync(new URL('../../../../packages/db/drizzle/0026_custom_form_delivery_idempotency.sql', import.meta.url), 'utf8');
 
 function config(policy: 'live' | 'dry-run' = 'dry-run'): CustomFormConfig {
   return customFormConfigSchema.parse({
@@ -37,6 +39,15 @@ describe('custom form contract', () => {
   it('accepts the trusted preview marker only at the rendering boundary', () => {
     assert.equal(parseCustomFormConfig({ ...config(), _isSectionPreview: true }).success, false);
     assert.equal(parseCustomFormRenderConfig({ ...config(), _isSectionPreview: true }).success, true);
+  });
+
+  it('seeds a strict server-valid custom form without renderer preview metadata', () => {
+    const seeded = {
+      ...(SECTION_EDITOR_FIELD_DEFAULTS.customForm || {}),
+      ...(SECTION_PREVIEW_DATA.customForm || {}),
+    };
+    assert.equal(Object.hasOwn(seeded, '_isSectionPreview'), false);
+    assert.equal(parseCustomFormConfig(seeded).success, true);
   });
 
   it('rejects duplicate field ids, missing selection options and unknown condition targets', () => {

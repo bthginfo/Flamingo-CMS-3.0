@@ -5,6 +5,7 @@ import { AlertCircle, AlertTriangle, CheckCircle2, LockKeyhole, Send } from 'luc
 import type { SectionProps } from './industry-kit';
 import {
   customFormValueToText,
+  isCustomFormSectionPreview,
   isCustomFormFieldVisible,
   parseCustomFormRenderConfig,
   validateCustomFormValues,
@@ -29,7 +30,7 @@ export function CustomFormSection({ data }: SectionProps) {
   const prefix = useId().replace(/:/g, '');
 
   if (!parsed.success) {
-    const isPreview = data._isSectionPreview === true;
+    const isPreview = isCustomFormSectionPreview(data);
     return (
       <div className="mx-auto max-w-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 sm:p-8" data-card="" role="alert">
         <div className="flex items-start gap-4">
