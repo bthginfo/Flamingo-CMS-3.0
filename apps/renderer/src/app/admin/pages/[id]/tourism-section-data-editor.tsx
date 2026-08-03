@@ -7,6 +7,7 @@ import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { LineListField } from '@/components/string-list-field';
 import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
+import { CalendarDays, ChevronDown, Plus, Trash2 } from 'lucide-react';
 
 type ButtonValue = { label: string; href: string };
 type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
@@ -61,10 +62,28 @@ function EventsCalendarEditor({ data, onChange }: EditorProps) {
     calendarName: str(data.calendarName) || 'Veranstaltungen',
     calendarTimezone: str(data.calendarTimezone) || 'Europe/Berlin',
   });
+  const [openEventIndex, setOpenEventIndex] = useState<number | null>(arr(data.events).length ? 0 : null);
   useReport(d, onChange);
+
+  const addEvent = () => {
+    const nextIndex = d.events.length;
+    setD({ ...d, events: [...d.events, eventFromData({})] });
+    setOpenEventIndex(nextIndex);
+  };
+
+  const removeEvent = (index: number) => {
+    const eventTitle = d.events[index]?.title?.trim() || `Termin ${index + 1}`;
+    if (!window.confirm(`„${eventTitle}“ wirklich löschen?`)) return;
+    setD({ ...d, events: d.events.filter((_: unknown, itemIndex: number) => itemIndex !== index) });
+    setOpenEventIndex(current => {
+      if (current === index) return null;
+      return current !== null && current > index ? current - 1 : current;
+    });
+  };
+
   return <div className="space-y-4">
     <Basics d={d} setD={setD} />
-    <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-3 space-y-3">
+    <div className="space-y-3 rounded-xl border border-blue-100 bg-blue-50/60 p-4">
       <Checkbox label="Kalender-Download anzeigen" checked={d.showCalendarDownload} onChange={(v) => setD({ ...d, showCalendarDownload: v })} />
       {d.showCalendarDownload && <>
         <p className="text-xs leading-5 text-blue-800">Der Button erstellt eine .ics-Datei aus allen Terminen mit gepflegtem Startdatum. Sie funktioniert mit Apple Kalender, Google Kalender, Outlook und weiteren Kalender-Apps.</p>
@@ -76,29 +95,68 @@ function EventsCalendarEditor({ data, onChange }: EditorProps) {
         </div>
       </>}
     </div>
-    <Repeater items={d.events} addLabel="+ Termin" onAdd={() => setD({ ...d, events: [...d.events, eventFromData({})] })} render={(item, index) => <div className="space-y-3">
-      {imageCardFields({ item, index, d, setD, keyName: 'events' })}
-      <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3 space-y-3">
-        <p className="text-xs font-semibold text-zinc-700">Kalenderdaten</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <NativeField type="date" label="Startdatum" value={item.startDate} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, startDate: v })} />
-          <NativeField type="date" label="Enddatum (inklusive)" value={item.endDate} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, endDate: v })} />
-        </div>
-        <Checkbox label="Ganztägiger Termin" checked={item.allDay} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, allDay: v })} />
-        {!item.allDay && <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <NativeField type="time" label="Beginn" value={item.startTime} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, startTime: v })} />
-          <NativeField type="time" label="Ende" value={item.endTime} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, endTime: v })} />
-        </div>}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div><p className="text-sm font-semibold text-zinc-900">Termine</p><p className="text-xs text-zinc-500">{d.events.length} {d.events.length === 1 ? 'Termin' : 'Termine'} eingetragen</p></div>
+        <button type="button" onClick={addEvent} className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-zinc-700"><Plus size={15} aria-hidden="true" />Termin hinzufügen</button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        <Field label="Sichtbares Datum" value={item.dateLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, dateLabel: v })} />
-        <Field label="Sichtbare Zeit" value={item.timeLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, timeLabel: v })} />
-        <Field label="Ort" value={item.locationLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, locationLabel: v })} />
-        <Field label="Kategorie" value={item.category} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, category: v })} />
-        <Field label="Preis" value={item.priceLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, priceLabel: v })} />
-      </div>
-    </div>} />
+      {d.events.length === 0 && <div className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-4 py-8 text-center text-sm text-zinc-500">Noch keine Termine eingetragen.</div>}
+      {d.events.map((item, index) => <EventEditorCard
+        key={index}
+        item={item}
+        index={index}
+        isOpen={openEventIndex === index}
+        onToggle={() => setOpenEventIndex(current => current === index ? null : index)}
+        onChange={(nextItem) => updateItem(d, setD, 'events', index, nextItem)}
+        onDelete={() => removeEvent(index)}
+      />)}
+    </div>
     <Field label="Fallback-Text" value={d.fallbackText} onChange={(v) => setD({ ...d, fallbackText: v })} multiline />
+  </div>;
+}
+
+function EventEditorCard({ item, index, isOpen, onToggle, onChange, onDelete }: { item: ReturnType<typeof eventFromData>; index: number; isOpen: boolean; onToggle: () => void; onChange: (item: ReturnType<typeof eventFromData>) => void; onDelete: () => void }) {
+  const summaryDate = item.dateLabel || item.startDate || 'Datum fehlt';
+  const summaryTime = item.allDay ? 'ganztägig' : (item.timeLabel || item.startTime || 'Zeit offen');
+  return <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+    <div className="flex items-stretch border-b border-zinc-200 bg-zinc-50/80">
+      <button type="button" className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left hover:bg-zinc-100" onClick={onToggle} aria-expanded={isOpen}>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-zinc-600 shadow-sm">{index + 1}</span>
+        <span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold text-zinc-900">{item.title || 'Neuer Termin'}</span><span className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-zinc-500"><CalendarDays size={12} aria-hidden="true" />{summaryDate} · {summaryTime}</span></span>
+        <ChevronDown size={18} className={`shrink-0 text-zinc-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+      </button>
+      <button type="button" onClick={onDelete} className="m-2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-red-50 hover:text-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500" aria-label={`${item.title || `Termin ${index + 1}`} löschen`} title="Termin löschen"><Trash2 size={17} aria-hidden="true" /></button>
+    </div>
+    {isOpen && <div className="space-y-5 p-4 sm:p-5">
+      <section className="space-y-3">
+        <div><p className="text-xs font-semibold uppercase tracking-wide text-zinc-700">Inhalt der Karte</p><p className="text-xs text-zinc-500">Diese Angaben sind direkt auf der Website sichtbar.</p></div>
+        <Field label="Titel" value={item.title} onChange={(v) => onChange({ ...item, title: v })} />
+        <Field label="Beschreibung" value={item.text} onChange={(v) => onChange({ ...item, text: v })} multiline />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Field label="Ort" value={item.locationLabel} onChange={(v) => onChange({ ...item, locationLabel: v })} />
+          <Field label="Kategorie" value={item.category} onChange={(v) => onChange({ ...item, category: v })} />
+          <Field label="Preis / Hinweis" value={item.priceLabel} onChange={(v) => onChange({ ...item, priceLabel: v })} />
+        </div>
+      </section>
+      <section className="space-y-3 rounded-lg border border-blue-100 bg-blue-50/50 p-4">
+        <div><p className="text-xs font-semibold uppercase tracking-wide text-blue-900">Datum & Kalender</p><p className="text-xs text-blue-700">Diese Felder steuern den Kalenderexport.</p></div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <NativeField type="date" label="Startdatum" value={item.startDate} onChange={(v) => onChange({ ...item, startDate: v })} />
+          <NativeField type="date" label="Enddatum (inklusive)" value={item.endDate} onChange={(v) => onChange({ ...item, endDate: v })} />
+        </div>
+        <Checkbox label="Ganztägiger Termin" checked={item.allDay} onChange={(v) => onChange({ ...item, allDay: v })} />
+        {!item.allDay && <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><NativeField type="time" label="Beginn" value={item.startTime} onChange={(v) => onChange({ ...item, startTime: v })} /><NativeField type="time" label="Ende" value={item.endTime} onChange={(v) => onChange({ ...item, endTime: v })} /></div>}
+      </section>
+      <details className="rounded-lg border border-zinc-200 bg-zinc-50">
+        <summary className="cursor-pointer px-4 py-3 text-xs font-semibold text-zinc-700">Optionale Anzeige & Verlinkung</summary>
+        <div className="space-y-3 border-t border-zinc-200 p-4">
+          <p className="text-xs leading-5 text-zinc-500">Nur ausfüllen, wenn Datum oder Uhrzeit auf der Website anders formuliert werden sollen als im Kalender.</p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"><Field label="Sichtbares Datum" value={item.dateLabel} onChange={(v) => onChange({ ...item, dateLabel: v })} /><Field label="Sichtbare Zeit" value={item.timeLabel} onChange={(v) => onChange({ ...item, timeLabel: v })} /></div>
+          <ImageUploadField label="Bild (optional)" value={item.image} onChange={(v) => onChange({ ...item, image: v })} />
+          <ButtonField label="Termin-Link (optional)" value={item.cta} onChange={(v) => onChange({ ...item, cta: v })} />
+        </div>
+      </details>
+    </div>}
   </div>;
 }
 

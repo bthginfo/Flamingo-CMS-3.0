@@ -26,12 +26,14 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 
 function EventMeta({ event }: { event: EventItem }) {
   return (
-    <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-body)]">
-      {(event.dateLabel || event.startDate) && <span className="inline-flex items-center gap-1"><CalendarDays size={13} />{event.dateLabel || formatDateLabel(event.startDate)}</span>}
-      {(event.timeLabel || event.startTime) && !event.allDay && <span>{event.timeLabel || `${event.startTime} Uhr`}</span>}
-      {event.locationLabel && <span className="inline-flex items-center gap-1"><MapPin size={13} />{event.locationLabel}</span>}
-      {event.category && <span data-edit-path="category">{event.category}</span>}
-      {event.priceLabel && <span className="text-[color:var(--token-price)]" data-edit-path="priceLabel">{event.priceLabel}</span>}
+    <div>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[color:var(--token-card-muted)]">
+        {(event.dateLabel || event.startDate) && <span className="inline-flex items-center gap-2 whitespace-nowrap"><CalendarDays size={14} aria-hidden="true" />{event.dateLabel || formatDateLabel(event.startDate)}</span>}
+        {(event.timeLabel || event.startTime) && !event.allDay && <span className="whitespace-nowrap">{event.timeLabel || `${event.startTime} Uhr`}</span>}
+        {event.category && <span className="rounded-full border border-[var(--token-card-border)] px-2.5 py-1 text-[color:var(--token-label)]" data-edit-path="category">{event.category}</span>}
+        {event.priceLabel && <span className="rounded-full bg-[var(--token-section-bg)] px-2.5 py-1 text-[color:var(--token-price)]" data-edit-path="priceLabel">{event.priceLabel}</span>}
+      </div>
+      {event.locationLabel && <div className="mt-3 inline-flex items-start gap-2 text-sm font-medium leading-5 text-[color:var(--token-card-muted)]"><MapPin className="mt-0.5 shrink-0" size={15} aria-hidden="true" /><span>{event.locationLabel}</span></div>}
     </div>
   );
 }
@@ -66,12 +68,13 @@ function Classic({ header, events, fallbackText, showCalendarDownload, calendarB
       {events.length === 0 && fallbackText ? <p className="text-[color:var(--token-body)]">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
-          <motion.article key={`${event.title || 'item'}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg sm:grid-cols-[180px_1fr]" data-card data-edit-collection="events" data-edit-index={index}>
-            {event.image && <div className="relative min-h-48"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
-            <div className="p-5">
+          <motion.article key={`${event.title || 'item'}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: Math.min(index * 0.06, 0.3) }} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_12px_35px_rgba(20,16,12,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(20,16,12,0.13)] ${event.image ? 'grid sm:grid-cols-[220px_minmax(0,1fr)]' : 'flex'}`} data-card data-edit-collection="events" data-edit-index={index}>
+            <div className="absolute inset-x-0 top-0 z-10 h-1 bg-[var(--token-label)]" aria-hidden="true" />
+            {event.image && <div className="relative min-h-56"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover transition duration-500 group-hover:scale-[1.03]" sizes="(min-width: 1024px) 220px, (min-width: 640px) 220px, 100vw" /></div>}
+            <div className="min-w-0 flex-1 p-6 sm:p-7">
               <EventMeta event={event} />
-              <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{event.title || ''}</h3>
-              {event.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: event.text }} />}
+              <h3 className="mt-5 text-2xl font-bold leading-tight text-[color:var(--token-card-heading)]" data-edit-path="title">{event.title || ''}</h3>
+              {event.text && <div className="mt-3 max-w-2xl text-base leading-7 text-[color:var(--token-card-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: event.text }} />}
               {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-link)] hover:text-[color:var(--token-link-hover)]"><span data-edit-path="label">{event.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </motion.article>
