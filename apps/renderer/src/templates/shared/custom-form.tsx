@@ -64,15 +64,15 @@ export function CustomFormSection({ data }: SectionProps) {
     <div className="mx-auto max-w-5xl">
       <style>{`@keyframes customFormDetailReveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}`}</style>
       <header className="max-w-3xl">
-        {config.eyebrow && <p className="section-badge mb-4 inline-flex border px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em]" data-edit-path="eyebrow">{config.eyebrow}</p>}
+        {config.eyebrow && <p className="section-badge mb-4 inline-flex border px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{config.eyebrow}</p>}
         <h2 className="text-balance text-3xl font-bold leading-tight text-[color:var(--token-heading)] sm:text-4xl lg:text-5xl" data-edit-path="title">{config.title}</h2>
         {config.description && <p className="mt-5 max-w-2xl text-base leading-7 text-[color:var(--token-body)] sm:text-lg" data-edit-path="description">{config.description}</p>}
       </header>
 
-      <div className="mt-10 border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_-45px_color-mix(in_srgb,var(--token-heading)_45%,transparent)] sm:mt-12" data-card="">
+      <div className="mt-10 border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_-45px_var(--token-shadow)] sm:mt-12" data-card="">
         {status === 'success' ? (
           <div className="flex min-h-80 flex-col items-center justify-center px-6 py-16 text-center" role="status" aria-live="polite">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]"><CheckCircle2 aria-hidden="true" size={28} /></span>
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]"><CheckCircle2 aria-hidden="true" className="text-[color:var(--token-check)]" size={28} /></span>
             <h3 className="mt-6 text-2xl font-semibold text-[color:var(--token-card-heading)]">{config.successTitle}</h3>
             <p className="mt-3 max-w-xl leading-7 text-[color:var(--token-card-body)]">{config.successMessage}</p>
           </div>
@@ -179,9 +179,9 @@ function CustomField({
   const id = `${prefix}-${field.id}`;
   const describedBy = [field.helpText ? `${id}-help` : '', error ? `${id}-error` : ''].filter(Boolean).join(' ') || undefined;
   const width = field.width === 'half' ? 'sm:col-span-3' : field.width === 'third' ? 'sm:col-span-2' : 'sm:col-span-6';
-  const inputClass = `min-h-12 w-full border bg-[var(--token-input-bg)] px-3.5 py-2.5 text-base text-[color:var(--token-input-text)] outline-none transition-[border-color,box-shadow] placeholder:text-[color:var(--token-muted)] focus:border-[var(--token-brand)] focus:ring-4 focus:ring-[color:color-mix(in_srgb,var(--token-brand)_20%,transparent)] ${error ? 'border-[var(--token-danger)]' : 'border-[var(--token-input-border)]'}`;
+  const inputClass = `min-h-12 w-full border bg-[var(--token-input-bg)] px-3.5 py-2.5 text-base text-[color:var(--token-input-text)] outline-none transition-[border-color,box-shadow] placeholder:text-[color:var(--token-muted)] focus:border-[var(--token-accent)] focus:ring-4 focus:ring-[color:color-mix(in_srgb,var(--token-accent)_20%,transparent)] ${error ? 'border-[var(--token-danger)]' : 'border-[var(--token-input-border)]'}`;
   const label = (
-    <label htmlFor={id} className="mb-2 block text-[15px] font-semibold leading-6 text-[color:var(--token-card-heading)]">
+    <label htmlFor={id} className="mb-2 block text-[15px] font-semibold leading-6 text-[color:var(--token-label)]">
       {field.label}
       {field.required && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}
     </label>
@@ -197,7 +197,7 @@ function CustomField({
     const entry = typeof value === 'object' && value && !Array.isArray(value) ? value : undefined;
     const answered = typeof entry?.answer === 'boolean';
     const cardClass = matrix
-      ? `rounded-[var(--token-card-radius)] !border-2 p-5 shadow-[0_14px_34px_-28px_color-mix(in_srgb,var(--token-heading)_40%,transparent)] transition-[border-color,background-color,box-shadow] sm:p-6 ${
+      ? `rounded-[var(--token-card-radius)] !border-2 p-5 shadow-[0_14px_34px_-28px_var(--token-shadow)] transition-[border-color,background-color,box-shadow] sm:p-6 ${
           error
             ? 'border-[var(--token-danger)] bg-[var(--token-danger-bg)]'
             : answered
@@ -209,7 +209,7 @@ function CustomField({
     return (
       <div className={cardClass}>
         <fieldset aria-describedby={describedBy} aria-invalid={Boolean(error)}>
-          <legend className="text-base font-bold leading-6 text-[color:var(--token-card-heading)] sm:text-lg">{field.label}{field.required && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}</legend>
+          <legend className="text-base font-bold leading-6 text-[color:var(--token-label)] sm:text-lg">{field.label}{field.required && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}</legend>
           <div className="mt-4 flex flex-wrap gap-3">
             {[true, false].map(answer => (
               <label key={String(answer)} className="cursor-pointer">
@@ -221,7 +221,7 @@ function CustomField({
                   checked={entry?.answer === answer}
                   onChange={() => onChange({ answer, details: entry?.details })}
                 />
-                <span className="flex min-h-12 min-w-24 items-center justify-center rounded-[var(--token-button-radius)] !border-2 border-[var(--token-input-border)] bg-[var(--token-input-bg)] px-5 text-base font-bold text-[color:var(--token-card-body)] transition-[border-color,background-color,color,box-shadow] peer-checked:border-[var(--token-btn-bg)] peer-checked:bg-[var(--token-btn-bg)] peer-checked:text-[color:var(--token-btn-text)] peer-focus-visible:ring-4 peer-focus-visible:ring-[color:color-mix(in_srgb,var(--token-brand)_28%,transparent)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--token-card-bg)]">
+                <span className="flex min-h-12 min-w-24 items-center justify-center rounded-[var(--token-button-radius)] !border-2 border-[var(--token-input-border)] bg-[var(--token-input-bg)] px-5 text-base font-bold text-[color:var(--token-card-body)] transition-[border-color,background-color,color,box-shadow] peer-checked:border-[var(--token-btn-bg)] peer-checked:bg-[var(--token-btn-bg)] peer-checked:text-[color:var(--token-btn-text)] peer-focus-visible:ring-4 peer-focus-visible:ring-[color:color-mix(in_srgb,var(--token-accent)_28%,transparent)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--token-card-bg)]">
                   {answer ? 'Ja' : 'Nein'}
                 </span>
               </label>
@@ -229,7 +229,7 @@ function CustomField({
           </div>
           {entry?.answer && (
             <div className="mt-5 border-t border-[var(--token-card-border)] pt-5 motion-safe:animate-[customFormDetailReveal_180ms_ease-out]">
-              <label htmlFor={`${id}-details`} className="mb-2 block text-[15px] font-semibold leading-6 text-[color:var(--token-card-heading)]">
+              <label htmlFor={`${id}-details`} className="mb-2 block text-[15px] font-semibold leading-6 text-[color:var(--token-label)]">
                 {field.detailsLabel || 'Ergänzende Angaben'}
                 {field.detailsRequired && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}
               </label>
@@ -252,12 +252,12 @@ function CustomField({
   if (field.type === 'radio') {
     return (
       <fieldset className={width} aria-describedby={describedBy} aria-invalid={Boolean(error)}>
-        <legend className="text-[15px] font-semibold leading-6 text-[color:var(--token-card-heading)]">{field.label}{field.required && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}</legend>
+        <legend className="text-[15px] font-semibold leading-6 text-[color:var(--token-label)]">{field.label}{field.required && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}</legend>
         <div className="mt-3 flex flex-wrap gap-3">
           {field.options?.map((option, index) => (
             <label key={option.value} className="cursor-pointer">
               <input id={index === 0 ? id : undefined} className="peer sr-only" type="radio" name={field.id} checked={value === option.value} onChange={() => onChange(option.value)} />
-              <span className="flex min-h-12 items-center rounded-[var(--token-button-radius)] !border-2 border-[var(--token-input-border)] bg-[var(--token-input-bg)] px-5 text-base font-semibold text-[color:var(--token-card-body)] transition-[border-color,background-color,color,box-shadow] peer-checked:border-[var(--token-btn-bg)] peer-checked:bg-[var(--token-btn-bg)] peer-checked:text-[color:var(--token-btn-text)] peer-focus-visible:ring-4 peer-focus-visible:ring-[color:color-mix(in_srgb,var(--token-brand)_28%,transparent)] peer-focus-visible:ring-offset-2">
+              <span className="flex min-h-12 items-center rounded-[var(--token-button-radius)] !border-2 border-[var(--token-input-border)] bg-[var(--token-input-bg)] px-5 text-base font-semibold text-[color:var(--token-card-body)] transition-[border-color,background-color,color,box-shadow] peer-checked:border-[var(--token-btn-bg)] peer-checked:bg-[var(--token-btn-bg)] peer-checked:text-[color:var(--token-btn-text)] peer-focus-visible:ring-4 peer-focus-visible:ring-[color:color-mix(in_srgb,var(--token-accent)_28%,transparent)] peer-focus-visible:ring-offset-2">
                 {option.label}
               </span>
             </label>
@@ -273,13 +273,13 @@ function CustomField({
       const selected = Array.isArray(value) ? value : [];
       return (
         <fieldset className={width} aria-describedby={describedBy} aria-invalid={Boolean(error)}>
-          <legend className="text-[15px] font-semibold leading-6 text-[color:var(--token-card-heading)]">{field.label}</legend>
+          <legend className="text-[15px] font-semibold leading-6 text-[color:var(--token-label)]">{field.label}</legend>
           <div className="mt-3 space-y-3">
             {field.options.map((option, index) => {
               const isSelected = selected.includes(option.value);
               return (
-                <label key={option.value} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-[var(--token-button-radius)] !border-2 px-4 py-3 text-[15px] leading-6 text-[color:var(--token-card-body)] transition-[border-color,background-color,box-shadow] focus-within:ring-4 focus-within:ring-[color:color-mix(in_srgb,var(--token-brand)_20%,transparent)] ${isSelected ? 'border-[var(--token-btn-bg)] bg-[color:color-mix(in_srgb,var(--token-btn-bg)_6%,var(--token-input-bg))]' : 'border-[var(--token-input-border)] bg-[var(--token-input-bg)]'}`}>
-                  <input id={index === 0 ? id : undefined} type="checkbox" checked={isSelected} onChange={event => onChange(event.target.checked ? [...selected, option.value] : selected.filter(item => item !== option.value))} className="h-6 w-6 shrink-0 accent-[var(--token-brand)]" />
+                <label key={option.value} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-[var(--token-button-radius)] !border-2 px-4 py-3 text-[15px] leading-6 text-[color:var(--token-card-body)] transition-[border-color,background-color,box-shadow] focus-within:ring-4 focus-within:ring-[color:color-mix(in_srgb,var(--token-accent)_20%,transparent)] ${isSelected ? 'border-[var(--token-btn-bg)] bg-[color:color-mix(in_srgb,var(--token-btn-bg)_6%,var(--token-input-bg))]' : 'border-[var(--token-input-border)] bg-[var(--token-input-bg)]'}`}>
+                  <input id={index === 0 ? id : undefined} type="checkbox" checked={isSelected} onChange={event => onChange(event.target.checked ? [...selected, option.value] : selected.filter(item => item !== option.value))} className="h-6 w-6 shrink-0 accent-[var(--token-accent)]" />
                   {option.label}
                 </label>
               );
@@ -293,9 +293,9 @@ function CustomField({
     const checked = value === true;
     return (
       <div className={width}>
-        <label className={`flex cursor-pointer items-start gap-3 rounded-[var(--token-card-radius)] !border-2 p-5 text-[15px] leading-6 transition-[border-color,background-color,box-shadow] focus-within:ring-4 focus-within:ring-[color:color-mix(in_srgb,var(--token-brand)_20%,transparent)] ${error ? 'border-[var(--token-danger)] bg-[var(--token-danger-bg)]' : checked ? 'border-[var(--token-btn-bg)] bg-[color:color-mix(in_srgb,var(--token-btn-bg)_6%,var(--token-input-bg))]' : 'border-[var(--token-input-border)] bg-[var(--token-input-bg)]'}`}>
-          <input id={id} type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} aria-describedby={describedBy} aria-invalid={Boolean(error)} className="mt-0.5 h-6 w-6 shrink-0 accent-[var(--token-brand)]" />
-          <span className="text-[color:var(--token-card-body)]">{field.label}{field.required && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}</span>
+        <label className={`flex cursor-pointer items-start gap-3 rounded-[var(--token-card-radius)] !border-2 p-5 text-[15px] leading-6 transition-[border-color,background-color,box-shadow] focus-within:ring-4 focus-within:ring-[color:color-mix(in_srgb,var(--token-accent)_20%,transparent)] ${error ? 'border-[var(--token-danger)] bg-[var(--token-danger-bg)]' : checked ? 'border-[var(--token-btn-bg)] bg-[color:color-mix(in_srgb,var(--token-btn-bg)_6%,var(--token-input-bg))]' : 'border-[var(--token-input-border)] bg-[var(--token-input-bg)]'}`}>
+          <input id={id} type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} aria-describedby={describedBy} aria-invalid={Boolean(error)} className="mt-0.5 h-6 w-6 shrink-0 accent-[var(--token-accent)]" />
+          <span className="text-[color:var(--token-label)]">{field.label}{field.required && <span className="ml-1 text-[color:var(--token-danger)]" aria-hidden="true">*</span>}</span>
         </label>
         {help}
       </div>
