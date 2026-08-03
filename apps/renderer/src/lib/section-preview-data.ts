@@ -1481,9 +1481,14 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   },
   eventsCalendar: {
     events: [
-      { title: 'Almabtrieb', date: '2026-09-15', location: 'Marktplatz', description: 'Traditioneller Almabtrieb mit Fest' },
-      { title: 'Weihnachtsmarkt', date: '2026-12-01', location: 'Altstadt', description: 'Adventszauber mit 50 Ständen' },
+      { title: 'Almabtrieb', text: 'Traditioneller Almabtrieb mit Fest', dateLabel: '15. September 2026', startDate: '2026-09-15', startTime: '11:00', locationLabel: 'Marktplatz' },
+      { title: 'Weihnachtsmarkt', text: 'Adventszauber mit 50 Ständen', dateLabel: '1. Dezember 2026', startDate: '2026-12-01', startTime: '16:00', locationLabel: 'Altstadt' },
     ],
+    showCalendarDownload: true,
+    calendarButtonLabel: 'Alle Termine zum Kalender hinzufügen',
+    calendarFilename: 'veranstaltungen.ics',
+    calendarName: 'Veranstaltungen',
+    calendarTimezone: 'Europe/Berlin',
     fallbackText: "Aktuell keine Veranstaltungen geplant.",
   },
   placesMap: {

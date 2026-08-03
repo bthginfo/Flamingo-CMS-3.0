@@ -51,9 +51,55 @@ function SeasonTeaserEditor({ data, onChange }: EditorProps) {
 }
 
 function EventsCalendarEditor({ data, onChange }: EditorProps) {
-  const [d, setD] = useState({ ...basicData(data), events: arr(data.events).map(eventFromData), fallbackText: str(data.fallbackText) });
+  const [d, setD] = useState({
+    ...basicData(data),
+    events: arr(data.events).map(eventFromData),
+    fallbackText: str(data.fallbackText),
+    showCalendarDownload: (data.showCalendarDownload as boolean) ?? false,
+    calendarButtonLabel: str(data.calendarButtonLabel) || 'Alle Termine zum Kalender hinzufügen',
+    calendarFilename: str(data.calendarFilename) || 'veranstaltungen.ics',
+    calendarName: str(data.calendarName) || 'Veranstaltungen',
+    calendarTimezone: str(data.calendarTimezone) || 'Europe/Berlin',
+  });
   useReport(d, onChange);
-  return <div className="space-y-3"><Basics d={d} setD={setD} /><Repeater items={d.events} addLabel="+ Event" onAdd={() => setD({ ...d, events: [...d.events, eventFromData({})] })} render={(item, index) => <div className="space-y-3">{imageCardFields({ item, index, d, setD, keyName: 'events' })}<div className="grid grid-cols-5 gap-3"><Field label="Datum" value={item.dateLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, dateLabel: v })} /><Field label="Zeit" value={item.timeLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, timeLabel: v })} /><Field label="Ort" value={item.locationLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, locationLabel: v })} /><Field label="Kategorie" value={item.category} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, category: v })} /><Field label="Preis" value={item.priceLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, priceLabel: v })} /></div></div>} /><Field label="Fallback-Text" value={d.fallbackText} onChange={(v) => setD({ ...d, fallbackText: v })} multiline /></div>;
+  return <div className="space-y-4">
+    <Basics d={d} setD={setD} />
+    <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-3 space-y-3">
+      <Checkbox label="Kalender-Download anzeigen" checked={d.showCalendarDownload} onChange={(v) => setD({ ...d, showCalendarDownload: v })} />
+      {d.showCalendarDownload && <>
+        <p className="text-xs leading-5 text-blue-800">Der Button erstellt eine .ics-Datei aus allen Terminen mit gepflegtem Startdatum. Sie funktioniert mit Apple Kalender, Google Kalender, Outlook und weiteren Kalender-Apps.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Field label="Button-Beschriftung" value={d.calendarButtonLabel} onChange={(v) => setD({ ...d, calendarButtonLabel: v })} />
+          <Field label="Dateiname" value={d.calendarFilename} onChange={(v) => setD({ ...d, calendarFilename: v })} />
+          <Field label="Kalendername" value={d.calendarName} onChange={(v) => setD({ ...d, calendarName: v })} />
+          <label className="block text-sm"><span className="text-gray-600 text-xs">Zeitzone</span><select className="admin-input mt-1 w-full" value={d.calendarTimezone} onChange={(e) => setD({ ...d, calendarTimezone: e.target.value })}><option value="Europe/Berlin">Europa/Berlin</option><option value="Europe/Vienna">Europa/Wien</option><option value="Europe/Zurich">Europa/Zürich</option><option value="UTC">UTC</option></select></label>
+        </div>
+      </>}
+    </div>
+    <Repeater items={d.events} addLabel="+ Termin" onAdd={() => setD({ ...d, events: [...d.events, eventFromData({})] })} render={(item, index) => <div className="space-y-3">
+      {imageCardFields({ item, index, d, setD, keyName: 'events' })}
+      <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3 space-y-3">
+        <p className="text-xs font-semibold text-zinc-700">Kalenderdaten</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <NativeField type="date" label="Startdatum" value={item.startDate} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, startDate: v })} />
+          <NativeField type="date" label="Enddatum (inklusive)" value={item.endDate} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, endDate: v })} />
+        </div>
+        <Checkbox label="Ganztägiger Termin" checked={item.allDay} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, allDay: v })} />
+        {!item.allDay && <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <NativeField type="time" label="Beginn" value={item.startTime} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, startTime: v })} />
+          <NativeField type="time" label="Ende" value={item.endTime} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, endTime: v })} />
+        </div>}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <Field label="Sichtbares Datum" value={item.dateLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, dateLabel: v })} />
+        <Field label="Sichtbare Zeit" value={item.timeLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, timeLabel: v })} />
+        <Field label="Ort" value={item.locationLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, locationLabel: v })} />
+        <Field label="Kategorie" value={item.category} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, category: v })} />
+        <Field label="Preis" value={item.priceLabel} onChange={(v) => updateItem(d, setD, 'events', index, { ...item, priceLabel: v })} />
+      </div>
+    </div>} />
+    <Field label="Fallback-Text" value={d.fallbackText} onChange={(v) => setD({ ...d, fallbackText: v })} multiline />
+  </div>;
 }
 
 function PlacesMapEditor({ data, onChange }: EditorProps) {
@@ -237,6 +283,10 @@ function Field({ label, value, onChange, multiline }: { label: string; value: st
   return <label className="block text-sm"><span className="text-gray-600 text-xs">{label}</span>{multiline ? <textarea className="admin-input mt-1 w-full" rows={3} value={value} onChange={(e) => onChange(e.target.value)} /> : <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} />}</label>;
 }
 
+function NativeField({ label, type, value, onChange }: { label: string; type: 'date' | 'time'; value: string; onChange: (v: string) => void }) {
+  return <label className="block text-sm"><span className="text-gray-600 text-xs">{label}</span><input type={type} className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} /></label>;
+}
+
 function Checkbox({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />{label}</label>;
 }
@@ -264,7 +314,7 @@ function lines(value: string): string[] { return value.split('\n').map((item) =>
 function imageCardFromData(r: Record<string, unknown>) { return { title: str(r.title), text: str(r.text), image: str(r.image), category: str(r.category), cta: btn(r.cta) }; }
 function experienceFromData(r: Record<string, unknown>) { return { ...imageCardFromData(r), durationLabel: str(r.durationLabel), audienceLabel: str(r.audienceLabel), difficultyLabel: str(r.difficultyLabel), priceLabel: str(r.priceLabel) }; }
 function seasonFromData(r: Record<string, unknown>) { return { ...imageCardFromData(r), periodLabel: str(r.periodLabel) }; }
-function eventFromData(r: Record<string, unknown>) { return { ...imageCardFromData(r), dateLabel: str(r.dateLabel), timeLabel: str(r.timeLabel), locationLabel: str(r.locationLabel), priceLabel: str(r.priceLabel) }; }
+function eventFromData(r: Record<string, unknown>) { return { ...imageCardFromData(r), dateLabel: str(r.dateLabel), timeLabel: str(r.timeLabel), startDate: str(r.startDate), startTime: str(r.startTime), endDate: str(r.endDate), endTime: str(r.endTime), allDay: Boolean(r.allDay), locationLabel: str(r.locationLabel), priceLabel: str(r.priceLabel) }; }
 function placeFromData(r: Record<string, unknown>) { return { ...imageCardFromData(r), distanceLabel: str(r.distanceLabel), address: str(r.address) }; }
 function sightFromData(r: Record<string, unknown>) { return { ...imageCardFromData(r), openingText: str(r.openingText) }; }
 function routeFromData(r: Record<string, unknown>) { return { ...imageCardFromData(r), lengthLabel: str(r.lengthLabel), durationLabel: str(r.durationLabel), difficultyLabel: str(r.difficultyLabel), startLabel: str(r.startLabel), highlights: join(r.highlights) }; }

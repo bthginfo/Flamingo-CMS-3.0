@@ -194,7 +194,7 @@ export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'destinationHighlights', label: 'Destination-Highlights', description: 'Top-Orte, Naturpunkte und Highlights' },
   { type: 'experienceGrid', label: 'Erlebnisse', description: 'Aktivitäten, Dauer, Zielgruppe und CTAs' },
   { type: 'seasonTeaser', label: 'Saison-Teaser', description: 'Jahreszeiten und saisonale Angebote' },
-  { type: 'eventsCalendar', label: 'Veranstaltungen', description: 'Events mit Datum, Ort, Kategorie und Preis' },
+  { type: 'eventsCalendar', label: 'Veranstaltungen', description: 'Card-basierte Termine mit optionalem ICS-Kalenderdownload' },
   { type: 'placesMap', label: 'Orte & Karte', description: 'Karte, Orte, Distanzen und Adressen' },
   { type: 'sightseeingList', label: 'Sehenswürdigkeiten', description: 'Museen, Aussichtspunkte und Attraktionen' },
   { type: 'tourRoutes', label: 'Routen & Touren', description: 'Routen mit Länge, Dauer und Schwierigkeit' },
