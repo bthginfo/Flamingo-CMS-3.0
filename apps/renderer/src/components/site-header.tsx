@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
@@ -88,10 +88,34 @@ function isDarkColor(color?: string | null) {
   return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.45;
 }
 
+function MobileTopBarContact({ contact }: { contact: ContactData }) {
+  const email = contact.email?.trim();
+  const phone = contact.phone?.trim();
+  const value = email || phone;
+
+  if (!value) return null;
+
+  const href = email ? `mailto:${email}` : `tel:${phone}`;
+  const Icon = email ? Mail : Phone;
+
+  return (
+    <a
+      data-site-header-mobile-contact
+      href={href}
+      className="flex min-h-10 min-w-0 flex-1 items-center gap-2 py-2 text-[12px] leading-4 opacity-90 transition-opacity hover:opacity-100 sm:hidden"
+    >
+      <Icon size={13} className="shrink-0 text-brand-accent" aria-hidden="true" />
+      <span className="min-w-0 whitespace-normal [overflow-wrap:anywhere]">{value}</span>
+    </a>
+  );
+}
+
 export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false, linkPrefix = '', topBar }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean; linkPrefix?: string; topBar?: TopBarConfig }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [topBarHeight, setTopBarHeight] = useState(40);
+  const topBarRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const measuredHeroDark = useHeaderContrast(darkBg);
@@ -124,6 +148,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const topBarBgColor = (topBarConfig.bgColor || '').trim() || 'var(--brand-topbar, var(--brand-dark))';
   const topBarLinkLabel = (topBarConfig.linkLabel || '').trim();
   const topBarLinkHref = (topBarConfig.linkHref || '').trim();
+  const topBarOffset = topBarEnabled ? topBarHeight : 0;
+  const topBarHidden = scrolled || mobileOpen;
   const navLinkColorDesktop = brand.navLinkColor || ((scrolled || (!isHeroDark)) ? '#4b5563' : '#ffffff');
   const navLinkHoverColor = brand.linkHoverColor || brand.accentColor || 'var(--brand-accent)';
   const activeNavBg = brand.navBgColor || 'rgba(255,255,255,0.8)';
@@ -139,17 +165,40 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const mobileBrandColor = brand.navBrandColor || (mobileNavIsDark ? navLinkColorMobile : brand.primaryColor);
   const denseDesktopNav = navItems.length > 6;
 
+  useEffect(() => {
+    if (!topBarEnabled || !topBarRef.current) return;
+
+    const element = topBarRef.current;
+    const updateHeight = () => {
+      const measuredHeight = Math.max(40, Math.ceil(element.getBoundingClientRect().height));
+      setTopBarHeight((currentHeight) => currentHeight === measuredHeight ? currentHeight : measuredHeight);
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', updateHeight);
+      return () => window.removeEventListener('resize', updateHeight);
+    }
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [contact.email, contact.phone, topBarEnabled, topBarLinkLabel, topBarText]);
+
   return (
     <>
       {/* Top bar */}
       {topBarEnabled && <motion.div
-        animate={{ y: scrolled || mobileOpen ? -40 : 0, opacity: scrolled || mobileOpen ? 0 : 1 }}
+        ref={topBarRef}
+        animate={{ y: topBarHidden ? -topBarOffset : 0, opacity: topBarHidden ? 0 : 1 }}
         transition={{ duration: 0.3 }}
-        className="fixed top-0 left-0 right-0 z-[60] text-white/80 text-xs py-2.5"
+        className="fixed left-0 right-0 top-0 z-[60] min-h-10 text-xs text-white/80"
         style={{ backgroundColor: topBarBgColor, color: topBarTextColor }}
       >
         {topBarText ? (
-          <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-4">
+          <div className="mx-auto flex min-h-10 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+            <MobileTopBarContact contact={contact} />
             <div className="hidden min-w-0 items-center gap-5 sm:flex">
               {contact.phone && (
                 <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity">
@@ -162,8 +211,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 </a>
               )}
             </div>
-            <div className="flex min-w-0 flex-1 items-center justify-between gap-3 sm:flex-none sm:justify-start">
-              <span className="min-w-0 truncate font-medium">{topBarText}</span>
+            <div className={cn('min-w-0 flex-1 items-center justify-between gap-3 sm:flex sm:flex-none sm:justify-start', (contact.email || contact.phone) ? 'hidden' : 'flex')}>
+              <span className="min-w-0 whitespace-normal font-medium [overflow-wrap:anywhere] sm:whitespace-nowrap">{topBarText}</span>
               {topBarLinkLabel && topBarLinkHref && (
                 <Link
                   href={prefixInternalHref(topBarLinkHref, linkPrefix) as string}
@@ -176,16 +225,17 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
             </div>
           </div>
         ) : (
-          <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div className="flex items-center gap-5">
+          <div className="mx-auto flex min-h-10 max-w-7xl items-center justify-between px-4 sm:px-6">
+            <MobileTopBarContact contact={contact} />
+            <div className="hidden items-center gap-5 sm:flex">
               {contact.phone && (
                 <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity">
                   <Phone size={12} className="text-brand-accent" />{contact.phone}
                 </a>
               )}
               {contact.email && (
-                <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity truncate max-w-[180px] sm:max-w-none">
-                  <Mail size={12} className="text-brand-accent shrink-0" /><span className="truncate">{contact.email}</span>
+                <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 opacity-90 transition-opacity hover:opacity-100">
+                  <Mail size={12} className="shrink-0 text-brand-accent" />{contact.email}
                 </a>
               )}
             </div>
@@ -198,10 +248,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
       <motion.header
         animate={{ y: hidden ? -100 : 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className={cn(
-          'fixed left-0 right-0 z-50 transition-all duration-500',
-          scrolled || !topBarEnabled ? 'top-0' : 'top-10',
-        )}
+        className="fixed left-0 right-0 z-50 transition-all duration-500"
+        style={{ top: scrolled || !topBarEnabled ? 0 : topBarOffset }}
       >
         <div className={cn(
           'transition-all duration-500',
@@ -373,7 +421,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         </AnimatePresence>
       </motion.header>
 
-      {topBarEnabled && <div className="h-10" />}
+      {topBarEnabled && <div aria-hidden="true" style={{ height: topBarOffset }} />}
     </>
   );
 }
