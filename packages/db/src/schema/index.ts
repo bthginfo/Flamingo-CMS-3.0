@@ -624,6 +624,29 @@ export const publicFlowRequests = pgTable('public_flow_requests', {
   check('public_flow_requests_status_check', sql`${t.status} IN ('processing', 'completed', 'failed', 'uncertain')`),
 ]);
 
+// Metadata-only delivery ledger for forms that may contain health data. The
+// request body, addresses, rendered PDF and answer-derived plaintext must never
+// be persisted here.
+export const customFormDeliveries = pgTable('custom_form_deliveries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  formKey: varchar('form_key', { length: 80 }).notNull(),
+  idempotencyKey: uuid('idempotency_key').notNull(),
+  requestHash: varchar('request_hash', { length: 64 }).notNull(),
+  status: varchar('status', { length: 20 }).notNull().default('processing'),
+  practiceStatus: varchar('practice_status', { length: 20 }).notNull().default('pending'),
+  confirmationStatus: varchar('confirmation_status', { length: 20 }).notNull().default('pending'),
+  lastErrorCode: varchar('last_error_code', { length: 80 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('custom_form_deliveries_tenant_key_idx').on(t.tenantId, t.idempotencyKey),
+  index('custom_form_deliveries_status_idx').on(t.status, t.updatedAt),
+  check('custom_form_deliveries_status_check', sql`${t.status} IN ('processing', 'completed', 'retryable', 'uncertain', 'partial')`),
+  check('custom_form_deliveries_practice_status_check', sql`${t.practiceStatus} IN ('pending', 'sending', 'sent', 'uncertain')`),
+  check('custom_form_deliveries_confirmation_status_check', sql`${t.confirmationStatus} IN ('pending', 'sending', 'sent', 'uncertain')`),
+]);
+
 export const crmEmailDeliveries = pgTable('crm_email_deliveries', {
   idempotencyKey: uuid('idempotency_key').primaryKey(),
   purpose: varchar('purpose', { length: 40 }).notNull(),

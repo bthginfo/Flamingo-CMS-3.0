@@ -25,6 +25,7 @@ import { RichTextSection } from './handwerk/rich-text';
 import { LegalContentSection } from './handwerk/legal-content';
 import { VideoEmbedSection } from './shared/video-embed';
 import { EmbedSection } from './shared/embed';
+import { CustomFormSection } from './shared/custom-form';
 import { NoticeBannerSection } from './shared/notice-banner';
 import { ComparisonTableSection } from './shared/comparison-table';
 import { SocialProofBarSection } from './shared/social-proof-bar';
@@ -785,6 +786,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
   embed: EmbedSection,
+  customForm: CustomFormSection,
   freeText: RichTextSection,
   headerBanner: HeaderBannerSection,
   textImage: TextImageSection,

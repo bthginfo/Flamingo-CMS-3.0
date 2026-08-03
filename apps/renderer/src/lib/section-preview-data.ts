@@ -2,12 +2,14 @@
  * Example preview data for each section type.
  * Used by the section-preview route to render isolated section previews.
  */
+import { DEFAULT_ANAMNESIS_CUSTOM_FORM } from './custom-form-defaults';
 const SCENE_LAYER_WARM = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23b76d38" fill-opacity=".22"/%3E%3C/svg%3E';
 const SCENE_LAYER_LIGHT = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23f6efe4" fill-opacity=".32"/%3E%3C/svg%3E';
 const SCENE_LAYER_BLACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%2313171d" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%2313171d" stop-opacity=".28"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%2313171d" stroke-width="8" stroke-opacity=".18"/%3E%3C/svg%3E';
 const SCENE_LAYER_BRASS = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%23b08d57" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%23b08d57" stop-opacity=".3"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%23b08d57" stroke-width="8" stroke-opacity=".24"/%3E%3C/svg%3E';
 
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  customForm: DEFAULT_ANAMNESIS_CUSTOM_FORM,
   verticalReelShowcase: {
     badge: 'Reel Portfolio',
     headline: 'Kurze Filme, die sofort Haltung zeigen.',

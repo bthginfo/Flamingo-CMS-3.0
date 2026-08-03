@@ -32,6 +32,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'newsGrid', label: 'News-Grid', description: 'News-Beiträge als Grid', category: 'Medien' },
   { type: 'collectionList', label: 'Collection-Liste', description: 'Einträge einer Collection als Übersicht anzeigen', category: 'Medien' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular', category: 'Kontakt' },
+  { type: 'customForm', label: 'Individuelles Formular', description: 'Sicheres Formular mit Gruppen, Bedingungen, PDF und Bestätigung', category: 'Kontakt', setupLevel: 'guided', setupHint: 'Felder und Versandtexte strukturiert konfigurieren; Tests immer zuerst im Dry-run ausführen.' },
   { type: 'map', label: 'Karte', description: 'Google Maps Einbettung', category: 'Kontakt' },
   { type: 'contactLocation', label: 'Standort & Anreise', description: 'Adresse, Anreise, Karte, Umgebung und Routen-CTA', category: 'Kontakt' },
   { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Mehrere Standorte als Karten mit optionaler Karte, Adresse, Kontakt und Öffnungszeiten', category: 'Kontakt' },

@@ -25,6 +25,7 @@ import {
   type EditorialFieldGroup,
 } from '@/lib/editorial-field-metadata';
 import { AdvancedSectionEditor } from './advanced-section-editor';
+import { CustomFormEditor } from './custom-form-editor';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -3837,6 +3838,7 @@ function MenuCardEditor({ data, onChange }: EditorProps) {
   );
 }
 const EDITORS: Record<string, React.FC<EditorProps>> = {
+  customForm: CustomFormEditor,
   dualWave: AdvancedSectionEditor,
   cinematicChapters: AdvancedSectionEditor,
   transformationSequence: AdvancedSectionEditor,
