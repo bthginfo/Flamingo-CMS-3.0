@@ -197,6 +197,13 @@
       "when": 1784937600000,
       "tag": "0027_published_snapshot_versions",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1785974400000,
+      "tag": "0028_billing_free_text_documents",
+      "breakpoints": true
     }
   ]
 }

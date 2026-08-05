@@ -1169,6 +1169,39 @@ export const billingDocuments = pgTable('billing_documents', {
   check('billing_documents_payment_check', sql`${t.amountPaidCents} >= 0 AND ${t.reminderLevel} BETWEEN 0 AND 99`),
 ]);
 
+// Correspondence deliberately lives outside billing_documents: it has no
+// prices, taxes, e-invoice state or accounting number sequence.
+export const billingFreeTextDocuments = pgTable('billing_free_text_documents', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'restrict' }),
+  status: varchar('status', { length: 20 }).notNull().default('draft'),
+  recipientMode: varchar('recipient_mode', { length: 20 }).notNull().default('customer'),
+  title: varchar('title', { length: 255 }).notNull().default('Neues Schreiben'),
+  subject: varchar('subject', { length: 500 }).notNull().default(''),
+  issueDate: timestamp('issue_date', { withTimezone: true }).notNull().defaultNow(),
+  recipientDraft: jsonb('recipient_draft').$type<Record<string, unknown>>(),
+  content: jsonb('content').$type<Record<string, unknown>>().notNull().default({ type: 'doc', content: [{ type: 'paragraph' }] }),
+  sellerSnapshot: jsonb('seller_snapshot').$type<Record<string, unknown>>(),
+  recipientSnapshot: jsonb('recipient_snapshot').$type<Record<string, unknown>>(),
+  finalizationToken: uuid('finalization_token'),
+  pdfBase64: text('pdf_base64'),
+  pdfBlobUrl: text('pdf_blob_url'),
+  pdfSha256: varchar('pdf_sha256', { length: 64 }),
+  documentSha256: varchar('document_sha256', { length: 64 }),
+  pageCount: integer('page_count'),
+  finalizedAt: timestamp('finalized_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('billing_free_text_documents_tenant_status_idx').on(t.tenantId, t.status, t.updatedAt),
+  index('billing_free_text_documents_customer_idx').on(t.tenantId, t.customerId),
+  check('billing_free_text_documents_status_check', sql`${t.status} IN ('draft', 'finalizing', 'finalized')`),
+  check('billing_free_text_documents_recipient_mode_check', sql`${t.recipientMode} IN ('customer', 'custom')`),
+  check('billing_free_text_documents_finalization_claim_check', sql`(${t.status} = 'draft' AND ${t.finalizationToken} IS NULL) OR (${t.status} IN ('finalizing', 'finalized') AND ${t.finalizationToken} IS NOT NULL)`),
+  check('billing_free_text_documents_finalized_artifact_check', sql`${t.status} <> 'finalized' OR (${t.sellerSnapshot} IS NOT NULL AND ${t.recipientSnapshot} IS NOT NULL AND ${t.pdfSha256} IS NOT NULL AND ${t.documentSha256} IS NOT NULL AND ${t.finalizedAt} IS NOT NULL AND ${t.pageCount} > 0 AND (${t.pdfBase64} IS NOT NULL OR ${t.pdfBlobUrl} IS NOT NULL))`),
+]);
+
 export const billingDocumentItems = pgTable('billing_document_items', {
   id: uuid('id').primaryKey().defaultRandom(),
   tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),

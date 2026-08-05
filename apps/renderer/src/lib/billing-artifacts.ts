@@ -1,4 +1,4 @@
-import { put } from '@vercel/blob';
+import { del, put } from '@vercel/blob';
 
 const PDF_CONTENT_TYPE = 'application/pdf';
 const XML_CONTENT_TYPE = 'application/xml; charset=utf-8';
@@ -12,6 +12,7 @@ type StoreArtifactInput = {
   documentNumber: string;
   kind: ArtifactKind;
   content: Buffer | Uint8Array | string | null;
+  immutableSha256?: string;
 };
 
 type ReadArtifactInput = {
@@ -58,7 +59,7 @@ export async function storeBillingArtifact(input: StoreArtifactInput) {
     safePathPart(input.tenantId),
     'billing',
     safePathPart(input.documentId),
-    `${safePathPart(input.documentNumber)}.${input.kind}`,
+    `${safePathPart(input.documentNumber)}${input.immutableSha256 ? `-${safePathPart(input.immutableSha256)}` : ''}.${input.kind}`,
   ].join('/');
   try {
     const blob = await put(pathname, body, {
@@ -66,13 +67,19 @@ export async function storeBillingArtifact(input: StoreArtifactInput) {
       token: process.env.BLOB_READ_WRITE_TOKEN,
       contentType: artifactContentType(input.kind),
       addRandomSuffix: false,
-      allowOverwrite: true,
+      allowOverwrite: !input.immutableSha256,
     });
     return blob.url;
   } catch (error) {
     console.error('[Billing Artifact Upload Error]', error instanceof Error ? error.message : error);
     return null;
   }
+}
+
+export async function deleteBillingArtifact(url: string | null | undefined) {
+  if (!url || !billingArtifactStorageConfigured() || !isTrustedBlobUrl(url)) return;
+  try { await del(url, { token: process.env.BLOB_READ_WRITE_TOKEN }); }
+  catch (error) { console.error('[Billing Artifact Cleanup Error]', error instanceof Error ? error.message : error); }
 }
 
 async function readBlobUrl(url: string) {

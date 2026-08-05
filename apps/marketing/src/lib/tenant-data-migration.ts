@@ -12,6 +12,7 @@ import {
   bookingSettings,
   bookingStatusHistory,
   billingDeliveryAttempts,
+  billingFreeTextDocuments,
   billingDocumentEvents,
   billingDocumentItems,
   billingDocuments,
@@ -66,7 +67,7 @@ import {
   tenants,
   variantOptions,
 } from '@flamingo/db';
-import { and, count, eq, inArray } from 'drizzle-orm';
+import { and, count, eq, inArray, sql } from 'drizzle-orm';
 
 type CopyResult = { tables: Record<string, number>; totalRows: number };
 
@@ -114,6 +115,7 @@ const TENANT_TABLES = [
   ['billing_settings', billingSettings],
   ['billing_services', billingServices],
   ['billing_documents', billingDocuments],
+  ['billing_free_text_documents', billingFreeTextDocuments],
   ['billing_document_items', billingDocumentItems],
   ['billing_payments', billingPayments],
   ['billing_reminders', billingReminders],
@@ -233,6 +235,9 @@ export async function verifyTenantDataCopy(source: Database, target: Database, t
 export async function purgeSharedTenantData(source: Database, tenantId: string) {
   const purgeTables = [...TENANT_TABLES].reverse().filter(([name]) => name !== 'tenant_domains');
   await source.transaction(async transaction => {
+    // Transaction-local, tenant-bound maintenance capability. The database
+    // trigger still rejects ordinary deletion of finalized correspondence.
+    await transaction.execute(sql`SELECT set_config('flamingo.tenant_maintenance_tenant', ${tenantId}, true)`);
     for (const [, table] of purgeTables) {
       await (transaction as any).delete(table).where(eq((table as any).tenantId, tenantId));
     }

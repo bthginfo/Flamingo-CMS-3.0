@@ -35,6 +35,7 @@ import {
   taxSelection,
   type BillingTaxSelection,
 } from '@/lib/billing-tax-presets';
+import { FreeTextWorkspace } from './free-text-workspace';
 
 type WorkspaceData = Awaited<ReturnType<typeof getBillingWorkspaceData>>;
 type Customer = WorkspaceData['customers'][number];
@@ -43,7 +44,7 @@ type DocumentRow = WorkspaceData['documents'][number];
 type CustomField = WorkspaceData['customFields'][number];
 type RecurringSchedule = WorkspaceData['recurringSchedules'][number];
 type DocumentDetail = Awaited<ReturnType<typeof getBillingDocumentAction>>;
-type View = 'overview' | 'invoices' | 'customers' | 'services' | 'recurring' | 'settings';
+type View = 'overview' | 'invoices' | 'letters' | 'customers' | 'services' | 'recurring' | 'settings';
 type BillingLogoDisplay = 'logo_and_name' | 'logo_only' | 'name_only';
 type PriceInputMode = 'net' | 'gross';
 type SettingsSection = 'identity' | 'numbers' | 'payment' | 'texts';
@@ -51,6 +52,7 @@ type SettingsSection = 'identity' | 'numbers' | 'payment' | 'texts';
 const VIEWS: Array<{ id: View; label: string; icon: typeof FileText }> = [
   { id: 'overview', label: 'Überblick', icon: ListChecks },
   { id: 'invoices', label: 'Dokumente', icon: ReceiptText },
+  { id: 'letters', label: 'Schreiben', icon: FileText },
   { id: 'customers', label: 'Kunden', icon: UsersRound },
   { id: 'services', label: 'Leistungen', icon: BookOpen },
   { id: 'recurring', label: 'Serien', icon: CalendarClock },
@@ -244,6 +246,7 @@ export function BillingWorkspace({ initialData }: { initialData: WorkspaceData }
   const viewParam = searchParams.get('view');
   const view: View = VIEWS.some(item => item.id === viewParam) ? viewParam as View : 'overview';
   const documentId = searchParams.get('document');
+  const letterId = searchParams.get('letter');
 
   useEffect(() => setData(initialData), [initialData]);
 
@@ -252,6 +255,12 @@ export function BillingWorkspace({ initialData }: { initialData: WorkspaceData }
     if (next !== 'overview') params.set('view', next);
     if (document) params.set('document', document);
     router.push(`/admin/billing${params.size ? `?${params}` : ''}`);
+  }
+
+  function navigateLetter(letter?: string) {
+    const params = new URLSearchParams({ view: 'letters' });
+    if (letter) params.set('letter', letter);
+    router.push(`/admin/billing?${params}`);
   }
 
   function refresh(message?: string) {
@@ -285,7 +294,7 @@ export function BillingWorkspace({ initialData }: { initialData: WorkspaceData }
       <nav aria-label="Bereiche Rechnungen und Kunden" className="mb-7 overflow-x-auto border-b border-zinc-200">
         <div className="flex min-w-max gap-1">
           {VIEWS.map(item => {
-            const active = view === item.id && !documentId;
+            const active = view === item.id && !documentId && !letterId;
             return <button key={item.id} type="button" onClick={() => navigate(item.id)} className={`relative inline-flex min-h-12 items-center gap-2 px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset ${active ? 'text-zinc-950' : 'text-zinc-500 hover:text-zinc-800'}`}>
               <item.icon className={`size-4 ${active ? 'text-blue-600' : ''}`} /> {item.label}
               {active ? <span className="absolute inset-x-2 bottom-0 h-0.5 bg-blue-600" /> : null}
@@ -294,12 +303,16 @@ export function BillingWorkspace({ initialData }: { initialData: WorkspaceData }
         </div>
       </nav>
 
-      {documentId ? (
+      {letterId ? (
+        <FreeTextWorkspace customers={data.customers} settings={data.settings} documentId={letterId} onOpen={navigateLetter} onBack={() => navigateLetter()} />
+      ) : documentId ? (
         <InvoiceWorkspace documentId={documentId} data={data} onBack={() => navigate('invoices')} onOpenDocument={id => navigate('invoices', id)} onRefresh={refresh} />
       ) : view === 'overview' ? (
         <Overview data={data} onCreateDraft={createDraft} onNavigate={navigate} />
       ) : view === 'invoices' ? (
         <InvoicesView data={data} onOpen={id => navigate('invoices', id)} onCreateDraft={createDraft} />
+      ) : view === 'letters' ? (
+        <FreeTextWorkspace customers={data.customers} settings={data.settings} documentId={null} onOpen={navigateLetter} onBack={() => navigateLetter()} />
       ) : view === 'customers' ? (
         <CustomersView data={data} onEdit={setCustomerDialog} onCreateInvoice={createDraft} />
       ) : view === 'services' ? (

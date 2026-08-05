@@ -113,6 +113,7 @@ test('shared-to-standalone cutover verifies deployment and every copied table be
   assert.match(actions, /\['shared', 'lead_shared'\]\.includes\(tenant\.deploymentMode\)/);
   assert.match(migration, /source\.transaction\(async transaction/);
   assert.match(migration, /name === 'billing_documents'[\s\S]*status: 'draft'/, 'immutable billing documents must be staged before their items are copied');
+  assert.match(migration, /set_config\('flamingo\.tenant_maintenance_tenant',[\s\S]*true\)/, 'purge must use the transaction-local tenant maintenance capability');
   assert.match(migration, /order_status_history/, 'order status history must be copied and verified');
   for (const table of [
     'billing_settings',
