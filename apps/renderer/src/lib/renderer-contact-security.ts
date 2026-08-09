@@ -234,6 +234,13 @@ export function rendererAdminLoginRateRules(clientAddress: string): RendererCont
   ];
 }
 
+export function rendererDemoLoginRateRules(clientAddress: string): RendererContactRateRule[] {
+  return [
+    { scope: 'renderer_demo_login_ip', subject: clientAddress, limit: 10, windowSeconds: 60 * 60 },
+    { scope: 'renderer_demo_login_global', subject: 'all', limit: 500, windowSeconds: 60 * 60 },
+  ];
+}
+
 export function rendererContactRateRules(tenantId: string, clientAddress: string, email: string): RendererContactRateRule[] {
   return [
     { scope: 'renderer_contact_email', subject: `${tenantId}:${email.toLowerCase()}`, limit: 2, windowSeconds: 60 * 60 },
@@ -249,6 +256,35 @@ export function rendererAutoResponseRateRules(tenantId: string, clientAddress: s
     { scope: 'renderer_autoresponse_ip', subject: `${tenantId}:${clientAddress}`, limit: 3, windowSeconds: 24 * 60 * 60 },
     { scope: 'renderer_autoresponse_tenant', subject: tenantId, limit: 20, windowSeconds: 60 * 60 },
     { scope: 'renderer_autoresponse_global', subject: 'all', limit: 100, windowSeconds: 60 * 60 },
+  ];
+}
+
+export function rendererCouponRateRules(tenantId: string, clientAddress: string): RendererContactRateRule[] {
+  return [
+    { scope: 'renderer_coupon_ip', subject: `${tenantId}:${clientAddress}`, limit: 20, windowSeconds: 10 * 60 },
+    { scope: 'renderer_coupon_tenant', subject: tenantId, limit: 200, windowSeconds: 10 * 60 },
+    { scope: 'renderer_coupon_global', subject: 'all', limit: 2_000, windowSeconds: 10 * 60 },
+  ];
+}
+
+export function rendererBookingCancellationRateRules(clientAddress: string): RendererContactRateRule[] {
+  return [
+    { scope: 'renderer_booking_cancel_ip', subject: clientAddress, limit: 30, windowSeconds: 10 * 60 },
+    { scope: 'renderer_booking_cancel_global', subject: 'all', limit: 1_000, windowSeconds: 10 * 60 },
+  ];
+}
+
+export function rendererRsvpRateRules(
+  tenantId: string,
+  clientAddress: string,
+  email: string,
+): RendererContactRateRule[] {
+  const normalizedEmail = email.trim().toLowerCase() || `no-email:${clientAddress}`;
+  return [
+    { scope: 'renderer_rsvp_ip', subject: `${tenantId}:${clientAddress}`, limit: 5, windowSeconds: 10 * 60 },
+    { scope: 'renderer_rsvp_email', subject: `${tenantId}:${normalizedEmail}`, limit: 3, windowSeconds: 60 * 60 },
+    { scope: 'renderer_rsvp_tenant', subject: tenantId, limit: 50, windowSeconds: 10 * 60 },
+    { scope: 'renderer_rsvp_global', subject: 'all', limit: 500, windowSeconds: 10 * 60 },
   ];
 }
 

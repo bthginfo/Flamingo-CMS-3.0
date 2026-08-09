@@ -2,16 +2,17 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { hashPassword } from '@flamingo/auth';
-import { BILLING_ADDON_KEY, adminSecrets, createDb, migrateDatabase, tenants, tenantDatabaseConnections, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, crmCustomers, leads, type Industry } from '@flamingo/db';
-import { eq, and, inArray } from 'drizzle-orm';
+import { BCRYPT_MAX_PASSWORD_BYTES, hashPassword, isPasswordWithinBcryptLimit } from '@flamingo/auth';
+import { BILLING_ADDON_KEY, createDb, migrateDatabase, tenants, tenantDatabaseConnections, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, billingSettings, pages, pageSections, crmCustomers, leads, type Industry } from '@flamingo/db';
+import { eq, and, inArray, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, addDomainToProject, removeDomainFromProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject, setStandaloneDatabaseConnection } from '@/lib/vercel';
 import { requireCrmAdmin } from '@/lib/session';
 import { protectCrmSecret } from '@/lib/secret-storage';
-import { createNeonRuntimeDatabaseRole, createNeonTenantProject, deleteNeonProject, getNeonTenantProjectById } from '@/lib/neon';
-import { getRequiredStandaloneDatabase, getTenantDataDb, getTenantDatabaseRecord, markTenantDatabaseActive, mirrorTenantControlFields, registerTenantDatabase, removeTenantDatabaseRecord, updateTenantRuntimeDatabaseConnection } from '@/lib/tenant-data-db';
+import { createNeonRuntimeDatabaseRole, createNeonTenantProject, deleteNeonProject, findNeonTenantProject, getNeonTenantProjectById } from '@/lib/neon';
+import { getRequiredStandaloneDatabase, getTenantDataDb, getTenantDatabaseRecord, markTenantDatabaseActive, mirrorTenantControlFields, registerTenantDatabase, updateTenantRuntimeDatabaseConnection } from '@/lib/tenant-data-db';
 import { copyTenantData, purgeSharedTenantData, verifyTenantDataCopy } from '@/lib/tenant-data-migration';
+import { acquireTenantOperation, completeTenantOperation, createTenantOperationFingerprint, failTenantOperation, heartbeatTenantOperation } from '@/lib/tenant-operation';
 
 export async function createTenantAction(input: ProvisionInput) {
   await requireCrmAdmin();
@@ -29,11 +30,31 @@ export async function createTenantAction(input: ProvisionInput) {
 
 export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: 'shared' | 'lead_shared'; industry?: Industry }) {
   await requireCrmAdmin();
-  const db = getDb();
-  await db.update(tenants)
-    .set({ ...data, updatedAt: new Date() })
-    .where(eq(tenants.id, tenantId));
-  await mirrorTenantControlFields(tenantId, data);
+  const controlDb = getDb();
+  if (data.status === 'suspended') {
+    // Revoke in the runtime database first. If the subsequent control-plane
+    // mirror fails, the customer-facing admin boundary still fails closed.
+    const dataDb = await getTenantDataDb(tenantId);
+    const [revokedTenant] = await dataDb.update(tenants)
+      .set({
+        ...data,
+        sessionVersion: sql`${tenants.sessionVersion} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(eq(tenants.id, tenantId))
+      .returning({ sessionVersion: tenants.sessionVersion });
+    if (!revokedTenant) throw new Error('Tenant nicht gefunden');
+    if (dataDb !== controlDb) {
+      await controlDb.update(tenants)
+        .set({ ...data, sessionVersion: revokedTenant.sessionVersion, updatedAt: new Date() })
+        .where(eq(tenants.id, tenantId));
+    }
+  } else {
+    await controlDb.update(tenants)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(tenants.id, tenantId));
+    await mirrorTenantControlFields(tenantId, data);
+  }
   revalidatePath('/crm');
   revalidatePath(`/crm/tenants/${tenantId}`);
   return { success: true };
@@ -43,7 +64,7 @@ export async function resetTenantAdminPasswordAction(tenantId: string, rawPasswo
   await requireCrmAdmin();
   const password = rawPassword.trim();
   if (password.length < 12) return { success: false as const, error: 'Das neue Passwort muss mindestens 12 Zeichen haben.' };
-  if (Buffer.byteLength(password, 'utf8') > 72) return { success: false as const, error: 'Das neue Passwort ist zu lang. Maximal 72 UTF-8-Bytes sind erlaubt.' };
+  if (!isPasswordWithinBcryptLimit(password)) return { success: false as const, error: `Das neue Passwort ist zu lang. Maximal ${BCRYPT_MAX_PASSWORD_BYTES} UTF-8-Bytes sind erlaubt.` };
 
   const controlDb = getDb();
   const [tenant] = await controlDb.select({ id: tenants.id }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
@@ -53,15 +74,33 @@ export async function resetTenantAdminPasswordAction(tenantId: string, rawPasswo
   const passwordHash = await hashPassword(password);
   const dataDb = await getTenantDataDb(tenantId);
 
-  await dataDb.insert(adminSecrets).values({
-    tenantId,
-    passwordHash,
-    passwordUpdatedAt: now,
-    updatedAt: now,
-  }).onConflictDoUpdate({
-    target: adminSecrets.tenantId,
-    set: { passwordHash, passwordUpdatedAt: now, updatedAt: now },
-  });
+  // neon-http has no interactive Drizzle transactions. Upsert the secret and
+  // revoke every previous session in one atomic statement instead.
+  const resetResult = await dataDb.execute(sql`
+    WITH upserted_secret AS (
+      INSERT INTO admin_secrets (tenant_id, password_hash, password_updated_at, updated_at)
+      VALUES (${tenantId}::uuid, ${passwordHash}, ${now}, ${now})
+      ON CONFLICT (tenant_id) DO UPDATE SET
+        password_hash = EXCLUDED.password_hash,
+        password_updated_at = EXCLUDED.password_updated_at,
+        updated_at = EXCLUDED.updated_at
+      RETURNING tenant_id
+    ),
+    updated_tenant AS (
+      UPDATE tenants
+      SET session_version = session_version + 1,
+          updated_at = ${now}
+      WHERE id = ${tenantId}::uuid
+        AND EXISTS (SELECT 1 FROM upserted_secret)
+      RETURNING session_version
+    )
+    SELECT session_version FROM updated_tenant
+  `);
+  const nextSessionVersion = Number((resetResult.rows[0] as { session_version?: number | string } | undefined)?.session_version);
+  if (!Number.isSafeInteger(nextSessionVersion) || nextSessionVersion < 0) throw new Error('Tenant nicht gefunden.');
+  if (dataDb !== controlDb) {
+    await controlDb.update(tenants).set({ sessionVersion: nextSessionVersion, updatedAt: now }).where(eq(tenants.id, tenantId));
+  }
 
   const encryptedPassword = protectCrmSecret(password);
   await Promise.all([
@@ -117,41 +156,108 @@ export async function convertSharedToStandaloneAction(tenantId: string) {
   const db = getDb();
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
   if (!tenant) return { success: false as const, error: 'Tenant nicht gefunden' };
+  const operationKey = `shared-to-standalone:${tenantId}`;
+  // This remains stable across the final routing flip, allowing a response
+  // retry to resolve the same durable operation after the tenant is standalone.
+  const inputFingerprint = createTenantOperationFingerprint({ tenantId, slug: tenant.slug });
+  const claim = await acquireTenantOperation({
+    operationKey,
+    kind: 'shared_to_standalone',
+    inputFingerprint,
+    tenantId,
+    slug: tenant.slug,
+  });
+  if (claim.state === 'completed') return claim.result as { success: true; projectUrl?: string; warning?: string };
+  if (claim.state === 'in_progress') {
+    return { success: false as const, error: `Der Standalone-Umzug läuft bereits (Phase: ${claim.phase}).` };
+  }
+  const ownerToken = claim.ownerToken;
   if (!['shared', 'lead_shared'].includes(tenant.deploymentMode)) {
-    return { success: false as const, error: 'Nur Shared-Tenants können in ein Standalone-Projekt umgezogen werden.' };
+    if (tenant.deploymentMode === 'standalone' && tenant.vercelProjectId) {
+      const existingRegistry = await getTenantDatabaseRecord(tenantId);
+      if (existingRegistry?.status === 'active') {
+        const alreadyComplete = {
+          success: true as const,
+          projectUrl: `https://flamingo-${tenant.slug}.vercel.app`,
+          warning: 'Der Tenant war bereits vollständig auf Standalone umgestellt.',
+        };
+        await completeTenantOperation({ operationKey, ownerToken, result: alreadyComplete });
+        return alreadyComplete;
+      }
+    }
+    const error = new Error('Nur Shared-Tenants können in ein Standalone-Projekt umgezogen werden.');
+    await failTenantOperation({ operationKey, ownerToken, error });
+    return { success: false as const, error: error.message };
   }
 
   let neonProject: Awaited<ReturnType<typeof createNeonTenantProject>> | undefined;
   let vercelProjectId: string | undefined;
-  let vercelProjectCreated = false;
   let cutoverComplete = false;
   const movedDomains: string[] = [];
   try {
-    await db.update(tenants).set({ status: 'provisioning', updatedAt: new Date() }).where(eq(tenants.id, tenantId));
-    neonProject = await createNeonTenantProject(tenant.slug);
+    const [quiesced] = await db.update(tenants)
+      .set({ status: 'provisioning', updatedAt: new Date() })
+      .where(and(eq(tenants.id, tenantId), inArray(tenants.deploymentMode, ['shared', 'lead_shared'])))
+      .returning({ id: tenants.id });
+    if (!quiesced) throw new Error('Der Tenant wurde parallel verändert; der Umzug wurde sicher abgebrochen.');
+    await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'writes_quiesced', tenantId });
+
+    const registered = await getTenantDatabaseRecord(tenantId);
+    if (registered) {
+      const standalone = await getRequiredStandaloneDatabase(tenantId);
+      neonProject = {
+        projectId: registered.projectId,
+        branchId: '',
+        region: registered.region,
+        databaseName: registered.databaseName,
+        roleName: registered.roleName,
+        pooledConnectionUri: standalone.pooledConnectionUri,
+        directConnectionUri: standalone.directConnectionUri,
+      };
+    } else {
+      neonProject = await findNeonTenantProject(tenant.slug) || await createNeonTenantProject(tenant.slug);
+      await migrateDatabase(neonProject.directConnectionUri);
+      const runtime = await createNeonRuntimeDatabaseRole(neonProject);
+      neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
+      await registerTenantDatabase({ tenantId, ...neonProject });
+    }
     await migrateDatabase(neonProject.directConnectionUri);
-    const runtime = await createNeonRuntimeDatabaseRole(neonProject);
-    neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
-    await registerTenantDatabase({ tenantId, ...neonProject });
+    await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'database_ready', tenantId, resources: { neonProjectId: neonProject.projectId } });
     const targetDb = createDb(neonProject.pooledConnectionUri);
-    await copyTenantData(db, targetDb, tenantId);
+    let targetVerified = false;
+    try {
+      await verifyTenantDataCopy(db, targetDb, tenantId);
+      targetVerified = true;
+    } catch {
+      // A previous owned attempt may have stopped halfway through the copy.
+      // Target is not routable while the control tenant is quiesced, so only
+      // this incomplete target copy is reset and then resumed from source.
+      const [partialTenant] = await targetDb.select({ id: tenants.id }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+      if (partialTenant) {
+        await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'resetting_partial_target', tenantId });
+        await purgeSharedTenantData(targetDb, tenantId);
+        await targetDb.delete(tenants).where(eq(tenants.id, tenantId));
+      }
+    }
+    if (!targetVerified) await copyTenantData(db, targetDb, tenantId);
+    await verifyTenantDataCopy(db, targetDb, tenantId);
+    await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'copy_verified', tenantId });
 
     const result = await createStandaloneProject(tenant.slug, tenant.id, neonProject.pooledConnectionUri);
     vercelProjectId = result.projectId;
-    vercelProjectCreated = result.projectCreated;
-    await verifyTenantDataCopy(db, targetDb, tenantId);
-    await db.update(tenants)
-      .set({ deploymentMode: 'standalone', vercelProjectId, isLead: false, status: tenant.status, updatedAt: new Date() })
-      .where(eq(tenants.id, tenantId));
+    await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'deployment_ready', tenantId, resources: { vercelProjectId } });
+
+    // Custom domains must never route to a target whose tenant is still
+    // provisioning. The source stays quiesced through the final verification.
     await targetDb.update(tenants)
-      .set({ deploymentMode: 'standalone', vercelProjectId, isLead: false, status: tenant.status, updatedAt: new Date() })
+      .set({ deploymentMode: 'standalone', vercelProjectId, isLead: false, status: 'active', updatedAt: new Date() })
       .where(eq(tenants.id, tenantId));
 
     const previewDomain = `flamingo-${tenant.slug}.vercel.app`;
-    const [existingDomain] = await db.select().from(tenantDomains).where(eq(tenantDomains.domain, previewDomain)).limit(1);
-    if (!existingDomain) {
-      await db.insert(tenantDomains).values({ tenantId, domain: previewDomain, type: 'preview', verified: true });
-      await targetDb.insert(tenantDomains).values({ tenantId, domain: previewDomain, type: 'preview', verified: true });
+    for (const database of [db, targetDb]) {
+      const [existingDomain] = await database.select().from(tenantDomains).where(eq(tenantDomains.domain, previewDomain)).limit(1);
+      if (existingDomain && existingDomain.tenantId !== tenantId) throw new Error(`Die Preview-Domain ${previewDomain} ist bereits belegt.`);
+      if (!existingDomain) await database.insert(tenantDomains).values({ tenantId, domain: previewDomain, type: 'preview', verified: true });
     }
 
     const existingDomains = await db.select().from(tenantDomains).where(eq(tenantDomains.tenantId, tenantId));
@@ -164,6 +270,7 @@ export async function convertSharedToStandaloneAction(tenantId: string) {
           await targetDb.update(tenantDomains).set({ verified: true }).where(eq(tenantDomains.domain, domain.domain));
         }
         movedDomains.push(domain.domain);
+        await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'routing_domains', tenantId });
       } catch (domainError) {
         console.error(`Domain cutover failed for ${domain.domain}:`, domainError);
         await addDomainToRenderer(domain.domain).catch(restoreError => console.error(`Domain restore failed for ${domain.domain}:`, restoreError));
@@ -171,8 +278,14 @@ export async function convertSharedToStandaloneAction(tenantId: string) {
       }
     }
 
+    await verifyTenantDataCopy(db, targetDb, tenantId);
     await markTenantDatabaseActive(tenantId);
-    await purgeSharedTenantData(db, tenantId);
+    // deploymentMode is the routing authority and is flipped only after the
+    // target, deployment and domains are ready. Source rows remain available
+    // for an explicit later purge after an observation window.
+    await db.update(tenants)
+      .set({ deploymentMode: 'standalone', vercelProjectId, isLead: false, status: 'active', updatedAt: new Date() })
+      .where(eq(tenants.id, tenantId));
     cutoverComplete = true;
 
     revalidatePath('/crm');
@@ -180,18 +293,25 @@ export async function convertSharedToStandaloneAction(tenantId: string) {
     const warnings = [
       !result.blobConnected ? 'Blob Storage wurde nicht automatisch verbunden. Bitte im Tenant prüfen.' : '',
     ].filter(Boolean);
-    return { success: true as const, projectUrl: result.projectUrl, warning: warnings.join(' ') };
+    warnings.push('Die Shared-Quelldaten bleiben bis zu einer separaten, verifizierten Bereinigung als Rückfallkopie erhalten.');
+    const actionResult = { success: true as const, projectUrl: result.projectUrl, warning: warnings.join(' ') };
+    await completeTenantOperation({ operationKey, ownerToken, result: actionResult }).catch(error => console.error('Cutover operation completion failed:', error));
+    return actionResult;
   } catch (err) {
     if (!cutoverComplete) {
-      if (vercelProjectId && vercelProjectCreated) await deleteVercelProject(vercelProjectId).catch(cleanupError => console.error('Vercel rollback failed:', cleanupError));
       for (const domain of movedDomains) {
         if (vercelProjectId) await removeDomainFromProject(vercelProjectId, domain).catch(() => undefined);
         await addDomainToRenderer(domain).catch(cleanupError => console.error(`Domain rollback failed for ${domain}:`, cleanupError));
       }
-      if (neonProject?.projectId) await deleteNeonProject(neonProject.projectId).catch(cleanupError => console.error('Neon rollback failed:', cleanupError));
-      await removeTenantDatabaseRecord(tenantId).catch(cleanupError => console.error('Database registry rollback failed:', cleanupError));
       await db.update(tenants).set({ status: tenant.status, deploymentMode: tenant.deploymentMode, isLead: tenant.isLead, vercelProjectId: tenant.vercelProjectId, updatedAt: new Date() }).where(eq(tenants.id, tenantId));
+      if (neonProject) {
+        const targetDb = createDb(neonProject.pooledConnectionUri);
+        await targetDb.update(tenants).set({ status: 'provisioning', updatedAt: new Date() }).where(eq(tenants.id, tenantId)).catch(() => undefined);
+      }
+      await db.update(tenantDatabaseConnections).set({ status: 'provisioning', updatedAt: new Date() })
+        .where(eq(tenantDatabaseConnections.tenantId, tenantId)).catch(() => undefined);
     }
+    await failTenantOperation({ operationKey, ownerToken, error: err }).catch(error => console.error('Cutover operation failure update failed:', error));
     return { success: false as const, error: err instanceof Error ? err.message : 'Standalone-Umzug fehlgeschlagen' };
   }
 }

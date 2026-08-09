@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqueIndex, index, pgEnum, numeric, check } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, boolean, integer, bigint, jsonb, timestamp, uniqueIndex, index, pgEnum, numeric, check } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 // ─── Enums ────────────────────────────────────────────────────────────
@@ -46,6 +46,7 @@ export const tenants = pgTable('tenants', {
   industry: industryEnum('industry').notNull(),
   activeStyle: varchar('active_style', { length: 50 }).notNull().default('classic'),
   status: tenantStatusEnum('status').notNull().default('active'),
+  sessionVersion: integer('session_version').notNull().default(0),
   isDemo: boolean('is_demo').notNull().default(false),
   isLead: boolean('is_lead').notNull().default(false),
   deploymentMode: deploymentModeEnum('deployment_mode').notNull().default('standalone'),
@@ -98,6 +99,35 @@ export const tenantDatabaseConnections = pgTable('tenant_database_connections', 
   index('tenant_database_connections_status_idx').on(t.status),
   check('tenant_database_connections_status_check', sql`${t.status} IN ('provisioning', 'active', 'migration_failed', 'deleting')`),
   check('tenant_database_connections_plan_intent_check', sql`${t.billingPlanIntent} IN ('free', 'paid_requested', 'external_paid')`),
+]);
+
+// Durable ownership for long-running provisioning and database cutover jobs.
+// Serverless invocations may overlap or be retried after a timeout, so process
+// memory cannot be used as a lock or as the source of truth for cleanup.
+export const tenantOperations = pgTable('tenant_operations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  operationKey: varchar('operation_key', { length: 180 }).notNull(),
+  kind: varchar('kind', { length: 50 }).notNull(),
+  tenantId: uuid('tenant_id'),
+  slug: varchar('slug', { length: 100 }),
+  ownerToken: uuid('owner_token').notNull(),
+  inputFingerprint: varchar('input_fingerprint', { length: 64 }).notNull(),
+  status: varchar('status', { length: 24 }).notNull().default('running'),
+  phase: varchar('phase', { length: 80 }).notNull().default('claimed'),
+  resources: jsonb('resources').$type<Record<string, unknown>>().notNull().default({}),
+  result: jsonb('result').$type<Record<string, unknown> | null>(),
+  error: text('error'),
+  attempt: integer('attempt').notNull().default(1),
+  heartbeatAt: timestamp('heartbeat_at', { withTimezone: true }).notNull().defaultNow(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('tenant_operations_key_idx').on(t.operationKey),
+  index('tenant_operations_tenant_idx').on(t.tenantId, t.status),
+  index('tenant_operations_heartbeat_idx').on(t.status, t.heartbeatAt),
+  check('tenant_operations_status_check', sql`${t.status} IN ('running', 'completed', 'failed', 'cleanup_pending')`),
 ]);
 
 // ─── 3. admin_secrets ─────────────────────────────────────────────────
@@ -1054,6 +1084,7 @@ export const billingSettings = pgTable('billing_settings', {
   nextCancellationNumber: integer('next_cancellation_number').notNull().default(1),
   nextQuoteNumber: integer('next_quote_number').notNull().default(1),
   nextCreditNumber: integer('next_credit_number').notNull().default(1),
+  configurationRevision: bigint('configuration_revision', { mode: 'number' }).notNull().default(0),
   customerPrefix: varchar('customer_prefix', { length: 20 }).notNull().default('KD'),
   nextCustomerNumber: integer('next_customer_number').notNull().default(1),
   currency: varchar('currency', { length: 3 }).notNull().default('EUR'),
@@ -1107,6 +1138,7 @@ export const billingDocuments = pgTable('billing_documents', {
   customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'restrict' }),
   originalDocumentId: uuid('original_document_id'),
   documentNumber: varchar('document_number', { length: 80 }),
+  draftRevision: bigint('draft_revision', { mode: 'number' }).notNull().default(0),
   documentType: varchar('document_type', { length: 20 }).notNull().default('invoice'),
   status: varchar('status', { length: 20 }).notNull().default('draft'),
   currency: varchar('currency', { length: 3 }).notNull().default('EUR'),
@@ -1330,10 +1362,12 @@ export const billingDocumentEvents = pgTable('billing_document_events', {
   payload: jsonb('payload').$type<Record<string, unknown>>().notNull().default({}),
   previousHash: varchar('previous_hash', { length: 64 }),
   eventHash: varchar('event_hash', { length: 64 }).notNull(),
+  chainPosition: bigint('chain_position', { mode: 'number' }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index('billing_document_events_document_idx').on(t.documentId, t.createdAt),
   uniqueIndex('billing_document_events_hash_idx').on(t.tenantId, t.eventHash),
+  uniqueIndex('billing_document_events_chain_position_idx').on(t.tenantId, t.documentId, t.chainPosition),
 ]);
 
 export const billingDeliveryAttempts = pgTable('billing_delivery_attempts', {

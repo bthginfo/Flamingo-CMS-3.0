@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collections, collectionItems } from '@flamingo/db';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, desc } from 'drizzle-orm';
 
 export async function GET(req: NextRequest) {
   const auth = await validatePat(req.headers.get('authorization'));
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     db.select().from(pages).where(eq(pages.tenantId, auth.tenantId)).orderBy(asc(pages.sortOrder)),
     db.select().from(pageSections).where(eq(pageSections.tenantId, auth.tenantId)).orderBy(asc(pageSections.sortOrder)),
     db.select().from(collections).where(eq(collections.tenantId, auth.tenantId)),
-    db.select().from(collectionItems).where(eq(collectionItems.tenantId, auth.tenantId)).orderBy(asc(collectionItems.priority)),
+    db.select().from(collectionItems).where(eq(collectionItems.tenantId, auth.tenantId)).orderBy(desc(collectionItems.priority), desc(collectionItems.updatedAt), asc(collectionItems.id)),
   ]);
 
   return NextResponse.json({

@@ -9,7 +9,10 @@ import {
   MAX_RENDERER_CONTACT_REQUEST_BYTES,
   readBoundedRendererContactJson,
   rendererAutoResponseRateRules,
+  rendererBookingCancellationRateRules,
   rendererContactRateRules,
+  rendererCouponRateRules,
+  rendererRsvpRateRules,
   RendererContactBodyTooLargeError,
 } from './renderer-contact-security';
 import {
@@ -22,6 +25,9 @@ import { normalizeSmtpConfig, pinPublicSmtpHost, resolveRendererPlatformSmtpProf
 const ENDPOINT = 'https://tenant.example/api/contact';
 const TENANT_ID = '6d10ab45-8183-4c69-9ee5-5bfb045739e3';
 const contactRouteSource = readFileSync(new URL('../app/api/contact/route.ts', import.meta.url), 'utf8');
+const bookingCancellationRouteSource = readFileSync(new URL('../app/api/booking/cancel/route.ts', import.meta.url), 'utf8');
+const couponRouteSource = readFileSync(new URL('../app/api/shop/coupon/route.ts', import.meta.url), 'utf8');
+const rsvpRouteSource = readFileSync(new URL('../app/api/rsvp/route.ts', import.meta.url), 'utf8');
 
 describe('renderer contact security', () => {
   it('bounds streamed request bytes without trusting Content-Length', async () => {
@@ -64,6 +70,35 @@ describe('renderer contact security', () => {
       'renderer_autoresponse_global',
     ]);
     assert.equal(rendererAutoResponseRateRules(TENANT_ID, 'ip', 'person@example.com')[0]?.limit, 1);
+  });
+
+  it('uses persistent IP, tenant and global limits for coupons and RSVP submissions', () => {
+    assert.deepEqual(rendererCouponRateRules(TENANT_ID, '203.0.113.1').map(rule => rule.scope), [
+      'renderer_coupon_ip',
+      'renderer_coupon_tenant',
+      'renderer_coupon_global',
+    ]);
+    assert.deepEqual(rendererRsvpRateRules(TENANT_ID, '203.0.113.1', 'Guest@Example.com').map(rule => rule.scope), [
+      'renderer_rsvp_ip',
+      'renderer_rsvp_email',
+      'renderer_rsvp_tenant',
+      'renderer_rsvp_global',
+    ]);
+    assert.equal(rendererRsvpRateRules(TENANT_ID, 'ip', 'Guest@Example.com')[1]?.subject, `${TENANT_ID}:guest@example.com`);
+    assert.deepEqual(rendererBookingCancellationRateRules('203.0.113.1').map(rule => rule.scope), [
+      'renderer_booking_cancel_ip',
+      'renderer_booking_cancel_global',
+    ]);
+
+    for (const source of [bookingCancellationRouteSource, couponRouteSource, rsvpRouteSource]) {
+      assert.match(source, /consumeRendererContactRateRules/);
+      assert.match(source, /getRendererContactClientAddress/);
+      assert.doesNotMatch(source, /from ['"]@\/lib\/rate-limit['"]/);
+    }
+    for (const source of [couponRouteSource, rsvpRouteSource]) {
+      assert.match(source, /readBoundedRendererContactJson/);
+      assert.match(source, /isTrustedRendererContactOrigin/);
+    }
   });
 
   it('recovers only from a missing persistent rate-limit table', () => {

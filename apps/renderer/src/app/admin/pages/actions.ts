@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db';
 import { getSession, getWritableSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
 import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems, products } from '@flamingo/db';
-import { eq, and, asc, desc, not } from 'drizzle-orm';
+import { eq, and, asc, desc, not, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -237,7 +237,7 @@ export async function getPageWithSectionsAction(pageId: string) {
   // Build collections with items for live preview
   const colIds = collectionsResult.map(c => c.id);
   const allItems = colIds.length > 0
-    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority))
+    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(desc(collectionItems.priority), desc(collectionItems.updatedAt), asc(collectionItems.id))
     : [];
   const previewCollections = collectionsResult.map(c => ({
     key: c.key, label: c.label,
@@ -480,20 +480,47 @@ export async function deleteSectionAction(sectionId: string, pageId: string) {
   const db = getDb();
   // Prevent deletion of locked sections (shop system sections)
   const [section] = await db.select({ locked: pageSections.locked }).from(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).limit(1);
-  if (section?.locked) return;
-  await db.delete(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId)));
+  if (!section) return { error: 'Sektion nicht gefunden oder keine Berechtigung' };
+  if (section.locked) return { error: 'Gesperrte Sektionen können nicht gelöscht werden' };
+  const deleted = await db.delete(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
+  if (deleted.length === 0) return { error: 'Sektion konnte nicht gelöscht werden' };
   revalidatePath(`/admin/pages/${pageId}`);
+  return { success: true as const };
 }
 
 export async function reorderSectionsAction(pageId: string, sectionIds: string[]) {
   const session = await requireWriteSession();
   const db = getDb();
-  await Promise.all(
-    sectionIds.map((id, i) =>
-      db.update(pageSections).set({ sortOrder: i }).where(and(eq(pageSections.id, id), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId)))
-    )
+  const uniqueIds = new Set(sectionIds);
+  if (uniqueIds.size !== sectionIds.length) return { error: 'Die Sektionsreihenfolge enthält Duplikate' };
+  if (sectionIds.length === 0) return { success: true as const };
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidPattern.test(pageId) || sectionIds.some(id => !uuidPattern.test(id))) {
+    return { error: 'Ungültige Seiten- oder Sektions-ID' };
+  }
+  const requestedRows = sql.join(
+    sectionIds.map((id, index) => sql`(${id}::uuid, ${index}::integer)`),
+    sql`, `,
   );
+  const updated = await db.execute(sql`
+    WITH requested(id, sort_order) AS (VALUES ${requestedRows}),
+    updated AS (
+      UPDATE page_sections AS section
+      SET sort_order = requested.sort_order,
+          updated_at = now()
+      FROM requested
+      WHERE section.id = requested.id
+        AND section.page_id = ${pageId}::uuid
+        AND section.tenant_id = ${session.tenantId}::uuid
+      RETURNING section.id
+    )
+    SELECT id FROM updated
+  `);
+  if (updated.rows.length !== sectionIds.length) {
+    return { error: 'Mindestens eine Sektion wurde nicht gefunden oder darf nicht bearbeitet werden' };
+  }
   revalidatePath(`/admin/pages/${pageId}`);
+  return { success: true as const };
 }
 
 export async function getSectionCopySourcesAction(currentPageId: string) {

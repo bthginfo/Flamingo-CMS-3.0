@@ -147,7 +147,10 @@ test('brand and design settings use atomic upserts without replacing unknown key
 
 test('settings changes invalidate the tenant-scoped public cache', () => {
   const actions = source('../app/admin/settings-actions.ts');
-  assert.match(actions, /function revalidateTenantPublicData\(tenantId: string\)[\s\S]*revalidateTag\(`tenant-\$\{tenantId\}`\)/);
+  const invalidation = source('./tenant-cache-invalidation.ts');
+  assert.match(invalidation, /function revalidateTenantPublicData\(tenantId: string\)[\s\S]*revalidateTag\(`tenant-\$\{tenantId\}`\)/);
+  assert.match(invalidation, /revalidatePath\('\/', 'layout'\)/);
+  assert.match(actions, /import \{ revalidateTenantPublicData \} from '@\/lib\/tenant-cache-invalidation'/);
 
   for (const action of [
     'saveBrandSettings',
@@ -164,6 +167,21 @@ test('settings changes invalidate the tenant-scoped public cache', () => {
     const body = actions.slice(start, end === -1 ? undefined : end);
     assert.match(body, /revalidateTenantPublicData\(tenantId\)/, `${action} must invalidate public tenant cache`);
   }
+});
+
+test('SEO and i18n settings invalidate live public tenant data', () => {
+  const seoActions = source('../app/admin/seo/actions.ts');
+  const i18nActions = source('../app/admin/functions/i18n/actions.ts');
+
+  for (const action of ['saveLocalSeoAction', 'saveSeoGlobalAction', 'saveSeoPageAction', 'saveSeoItemAction']) {
+    const start = seoActions.indexOf(`export async function ${action}`);
+    const end = seoActions.indexOf('\nexport async function ', start + 1);
+    const body = seoActions.slice(start, end === -1 ? undefined : end);
+    assert.ok(start >= 0, `${action} must exist`);
+    assert.match(body, /revalidateTenantPublicData\(session\.tenantId\)/, `${action} must invalidate live public metadata`);
+  }
+
+  assert.match(i18nActions, /updateI18nSettings[\s\S]*revalidateTenantPublicData\(session\.tenantId\)/);
 });
 
 test('public renderer only creates important CSS from validated colors', () => {

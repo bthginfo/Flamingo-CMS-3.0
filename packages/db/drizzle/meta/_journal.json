@@ -204,6 +204,27 @@
       "when": 1785974400000,
       "tag": "0028_billing_free_text_documents",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1786233600000,
+      "tag": "0029_admin_session_revocation",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1786320000000,
+      "tag": "0030_provisioning_cutover_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1786406400000,
+      "tag": "0031_billing_event_linear_chain",
+      "breakpoints": true
     }
   ]
 }

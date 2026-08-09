@@ -6,6 +6,7 @@ import { tenants } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { validateI18nSettings } from '@/lib/i18n-admin-settings';
+import { revalidateTenantPublicData } from '@/lib/tenant-cache-invalidation';
 
 export async function updateI18nSettings(data: {
   locales: string[];
@@ -35,5 +36,6 @@ export async function updateI18nSettings(data: {
   }).where(eq(tenants.id, session.tenantId));
 
   revalidatePath('/admin/functions/i18n');
+  revalidateTenantPublicData(session.tenantId);
   return { success: true as const };
 }

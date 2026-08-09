@@ -680,7 +680,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     return (
       <SectionReveal {...sectionMetadata} disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} data-definition-key={resolvedDefinition?.key} data-schema-version={section.schemaVersion ?? resolvedDefinition?.schemaVersion} className={`${sectionClassName} bg-[var(--style-section-bg,transparent)]`} data-style="" style={sectionStyle}>
         {sectionOverrideCss && <style>{sectionOverrideCss}</style>}
-        <SectionErrorBoundary sectionType={section.type}>
+        <SectionErrorBoundary sectionType={section.type} resetKey={section}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>
       </SectionReveal>
@@ -695,7 +695,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     <SectionReveal {...sectionMetadata} disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} data-definition-key={resolvedDefinition?.key} data-schema-version={section.schemaVersion ?? resolvedDefinition?.schemaVersion} className={`${sectionClassName} ${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} data-style="" style={sectionStyle}>
       {sectionOverrideCss && <style>{sectionOverrideCss}</style>}
       <div className={`cms-section-shell ${containerClass}`}>
-        <SectionErrorBoundary sectionType={section.type}>
+        <SectionErrorBoundary sectionType={section.type} resetKey={section}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>
       </div>

@@ -6,6 +6,7 @@ import { globalSettings, seoGlobal, seoPage, seoItem } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { revalidateTenantPublicData } from '@/lib/tenant-cache-invalidation';
 
 async function requireSession() {
   const session = await getSession();
@@ -96,7 +97,7 @@ export async function saveLocalSeoAction(data: {
   }
 
   revalidatePath('/admin/seo');
-  revalidatePath('/', 'layout');
+  revalidateTenantPublicData(session.tenantId);
 }
 
 export async function saveSeoGlobalAction(data: {
@@ -118,6 +119,7 @@ export async function saveSeoGlobalAction(data: {
     await db.insert(seoGlobal).values({ tenantId: session.tenantId, ...data });
   }
   revalidatePath('/admin/seo');
+  revalidateTenantPublicData(session.tenantId);
 }
 
 export async function getSeoPageAction(pageId: string) {
@@ -144,6 +146,7 @@ export async function saveSeoPageAction(pageId: string, data: {
     await db.insert(seoPage).values({ tenantId: session.tenantId, pageId, ...data });
   }
   revalidatePath(`/admin/pages/${pageId}`);
+  revalidateTenantPublicData(session.tenantId);
 }
 
 // ─── Collection Item SEO ───────────────────────────────────────────
@@ -171,4 +174,5 @@ export async function saveSeoItemAction(collectionItemId: string, data: {
     await db.insert(seoItem).values({ tenantId: session.tenantId, collectionItemId, ...data });
   }
   revalidatePath('/admin/collections');
+  revalidateTenantPublicData(session.tenantId);
 }

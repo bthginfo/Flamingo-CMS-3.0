@@ -73,7 +73,7 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
     console.error('[admin-login] failed to clear successful login attempts', error);
   });
 
-  const token = await createSessionToken(tenant.id);
+  const token = await createSessionToken(tenant.id, '7d', 'admin', tenant.sessionVersion);
   const isProduction = process.env.NODE_ENV === 'production';
 
   const cookieStore = await cookies();

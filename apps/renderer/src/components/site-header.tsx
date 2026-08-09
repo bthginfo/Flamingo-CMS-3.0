@@ -13,6 +13,7 @@ import { LanguageSwitcher } from './language-switcher';
 import { getNavScriptProvider } from '@/lib/embed-providers';
 import type { NavItem, NavCta, BrandData, ContactData, TopBarConfig } from '@/lib/tenant-data';
 import { prefixInternalHref } from '@/lib/link-prefix';
+import { useModalFocusTrap } from '@/hooks/use-modal-focus-trap';
 
 function NavCtaButton({ cta, scrolled, isHeroDark, linkPrefix, className }: { cta: NavCta; scrolled: boolean; isHeroDark: boolean; linkPrefix: string; className?: string }) {
   const scriptProvider = cta.scriptProvider ? getNavScriptProvider(cta.scriptProvider) : null;
@@ -116,10 +117,20 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const [hidden, setHidden] = useState(false);
   const [topBarHeight, setTopBarHeight] = useState(40);
   const topBarRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuCloseRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuTriggerRef = useRef<HTMLButtonElement>(null);
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const measuredHeroDark = useHeaderContrast(darkBg);
   const isHeroDark = forceDarkNav ? true : measuredHeroDark;
+
+  useModalFocusTrap({
+    active: mobileOpen,
+    containerRef: mobileMenuRef,
+    initialFocusRef: mobileMenuCloseRef,
+    onEscape: () => setMobileOpen(false),
+  });
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
   useEffect(() => {
@@ -319,8 +330,13 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
             </nav>
 
             <button
+              ref={mobileMenuTriggerRef}
+              type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
+              aria-expanded={mobileOpen}
+              aria-controls="site-mobile-menu"
+              aria-haspopup="dialog"
               className={cn('rounded-lg p-2 transition-colors', denseDesktopNav ? '2xl:hidden' : 'xl:hidden')}
               style={{ color: mobileToggleColor }}
               onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileToggleHoverBg; }}
@@ -335,6 +351,12 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
+              ref={mobileMenuRef}
+              id="site-mobile-menu"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Hauptmenü"
+              tabIndex={-1}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -354,7 +376,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     <span className="sr-only">{brand.companyName || 'Startseite'}</span>
                   )}
                 </Link>
-                <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg transition-colors" style={{ color: navLinkColorMobile }} onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileHoverBg; }} onMouseLeave={(event) => { event.currentTarget.style.backgroundColor = 'transparent'; }}>
+                <button ref={mobileMenuCloseRef} type="button" aria-label="Menü schließen" onClick={() => setMobileOpen(false)} className="p-2 rounded-lg transition-colors" style={{ color: navLinkColorMobile }} onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileHoverBg; }} onMouseLeave={(event) => { event.currentTarget.style.backgroundColor = 'transparent'; }}>
                   <X size={24} />
                 </button>
               </div>

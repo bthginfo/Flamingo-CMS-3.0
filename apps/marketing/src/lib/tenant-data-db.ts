@@ -3,8 +3,6 @@ import { eq } from 'drizzle-orm';
 import { getDb } from './db';
 import { protectCrmSecret, revealCrmSecret } from './secret-storage';
 
-const tenantDbs = new Map<string, Database>();
-
 function requireStableDatabaseEncryptionKey() {
   const value = process.env.CRM_CONFIG_ENCRYPTION_KEY?.trim() || process.env.CONFIG_ENCRYPTION_KEY?.trim();
   if (!value || value.length < 32) {
@@ -39,27 +37,24 @@ export async function getTenantDatabaseRecord(tenantId: string) {
 }
 
 export async function getTenantDataDb(tenantId: string): Promise<Database> {
-  const cached = tenantDbs.get(tenantId);
-  if (cached) return cached;
   const controlDb = getDb();
-  const [[tenant], record] = await Promise.all([
-    controlDb.select({ deploymentMode: tenants.deploymentMode }).from(tenants).where(eq(tenants.id, tenantId)).limit(1),
-    getTenantDatabaseRecord(tenantId),
-  ]);
+  const [tenant] = await controlDb
+    .select({ deploymentMode: tenants.deploymentMode, status: tenants.status })
+    .from(tenants)
+    .where(eq(tenants.id, tenantId))
+    .limit(1);
   if (!tenant) throw new Error('Der Tenant ist im Control-Plane-Register nicht vorhanden.');
-  if (!record) {
-    if (tenant.deploymentMode === 'standalone') {
-      throw new Error('Für diesen Standalone-Tenant ist keine dedizierte Datenbank registriert.');
-    }
-    return controlDb;
-  }
+
+  // Provisioning is the distributed write-quiesce barrier during cutover.
+  if (tenant.status !== 'active') throw new Error('Der Tenant ist für Schreibzugriffe derzeit nicht aktiv.');
+  // The control-plane mode is the routing authority. A target connection can
+  // be prepared and verified before it is allowed to receive application IO.
+  if (tenant.deploymentMode !== 'standalone') return controlDb;
+
+  const record = await getTenantDatabaseRecord(tenantId);
+  if (!record) throw new Error('Für diesen Standalone-Tenant ist keine dedizierte Datenbank registriert.');
   if (record.status === 'provisioning') {
-    if (tenant.deploymentMode === 'standalone') {
-      throw new Error('Die Standalone-Datenbank wird noch bereitgestellt und ist noch nicht verfügbar.');
-    }
-    // During an explicit shared-to-standalone migration the source remains the
-    // shared database until the verified cutover flips deploymentMode.
-    return controlDb;
+    throw new Error('Die Standalone-Datenbank wird noch bereitgestellt und ist noch nicht verfügbar.');
   }
   if (record.status === 'migration_failed') {
     throw new Error('Die Standalone-Datenbank benötigt eine erfolgreiche Schema-Migration, bevor sie wieder verwendet werden kann.');
@@ -67,9 +62,10 @@ export async function getTenantDataDb(tenantId: string): Promise<Database> {
   if (record.status !== 'active') throw new Error('Die Standalone-Datenbank ist derzeit nicht verfügbar.');
   const uri = revealCrmSecret(record.connectionUriEncrypted);
   if (!uri) throw new Error(`Die Standalone-Datenbank für Tenant ${tenantId} kann nicht entschlüsselt werden.`);
-  const tenantDb = createDb(uri);
-  tenantDbs.set(tenantId, tenantDb);
-  return tenantDb;
+
+  // No permanent handle cache: a warm serverless process must observe a
+  // registry rotation before its next write instead of retaining the old URI.
+  return createDb(uri);
 }
 
 export async function getRequiredStandaloneDatabase(tenantId: string) {
@@ -98,22 +94,18 @@ export async function registerTenantDatabase(input: { tenantId: string; projectI
   };
   await getDb().insert(tenantDatabaseConnections).values({ tenantId: input.tenantId, provider: 'neon', ...values })
     .onConflictDoUpdate({ target: tenantDatabaseConnections.tenantId, set: values });
-  tenantDbs.delete(input.tenantId);
 }
 
 export async function removeTenantDatabaseRecord(tenantId: string) {
   await getDb().delete(tenantDatabaseConnections).where(eq(tenantDatabaseConnections.tenantId, tenantId));
-  tenantDbs.delete(tenantId);
 }
 
 export async function markTenantDatabaseActive(tenantId: string, schemaVersion = DATABASE_SCHEMA_VERSION) {
   await getDb().update(tenantDatabaseConnections).set({ status: 'active', schemaVersion, lastMigratedAt: new Date(), updatedAt: new Date() }).where(eq(tenantDatabaseConnections.tenantId, tenantId));
-  tenantDbs.delete(tenantId);
 }
 
 export async function markTenantDatabaseMigrationFailed(tenantId: string) {
   await getDb().update(tenantDatabaseConnections).set({ status: 'migration_failed', updatedAt: new Date() }).where(eq(tenantDatabaseConnections.tenantId, tenantId));
-  tenantDbs.delete(tenantId);
 }
 
 export async function updateTenantRuntimeDatabaseConnection(tenantId: string, input: { roleName: string; connectionUri: string }) {
@@ -125,7 +117,6 @@ export async function updateTenantRuntimeDatabaseConnection(tenantId: string, in
     connectionUriEncrypted,
     updatedAt: new Date(),
   }).where(eq(tenantDatabaseConnections.tenantId, tenantId));
-  tenantDbs.delete(tenantId);
 }
 
 export async function mirrorTenantControlFields(tenantId: string, values: Partial<typeof tenants.$inferInsert>) {

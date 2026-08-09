@@ -4,22 +4,13 @@ import { getDb } from '@/lib/db';
 import { getSession, getWritableSession } from '@/lib/session';
 import { globalSettings, navigation, footer, tenants } from '@flamingo/db';
 import { eq, sql } from 'drizzle-orm';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { normalizeFooterVariant } from '@/lib/footer-variants';
 import { isValidColorString, validateBrandPayload } from '@/lib/color-validation';
 import { EDITABLE_BACKGROUND_DESIGN_KEYS } from '@/lib/design-vars';
+import { revalidateTenantPublicData } from '@/lib/tenant-cache-invalidation';
 
 type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
-
-/**
- * All public tenant reads use this tag. Settings are intentionally live (they
- * are not part of a content snapshot), so every settings save must invalidate
- * the public cache as well as the admin route that submitted the change.
- */
-function revalidateTenantPublicData(tenantId: string) {
-  revalidateTag(`tenant-${tenantId}`);
-  revalidatePath('/', 'layout');
-}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);

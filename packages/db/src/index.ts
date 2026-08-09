@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless';
+import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { createHash, randomBytes } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
@@ -12,7 +12,7 @@ export function createDb(databaseUrl: string) {
 
 export type Database = ReturnType<typeof createDb>;
 
-export const DATABASE_SCHEMA_VERSION = 28;
+export const DATABASE_SCHEMA_VERSION = 31;
 
 const RUNTIME_DATABASE_ROLE_PREFIX = 'flamingo_app';
 const STATEMENT_BREAKPOINT = /^\s*-->\s*statement-breakpoint\s*$/m;
@@ -21,9 +21,13 @@ type MigrationJournal = {
   entries?: Array<{ tag: string; when: number }>;
 };
 
-type NeonSql = {
-  query: (queryText: string, params?: unknown[]) => Promise<unknown[]>;
-};
+type NeonSql = NeonQueryFunction<false, false>;
+type MigrationQuery = { text: string; params?: unknown[] };
+
+// Fixed, database-local advisory lock namespace for Flamingo schema work.
+// Transaction-scoped locks are released automatically even if a migration
+// fails or a serverless invocation is interrupted.
+const MIGRATION_LOCK_KEYS = [1179405645, 1291845633] as const;
 
 function assertSafeIdentifier(value: string, label: string) {
   if (!/^[a-zA-Z_][a-zA-Z0-9_]{0,62}$/.test(value)) {
@@ -206,6 +210,53 @@ async function executeSqlScript(sql: NeonSql, sqlText: string) {
   }
 }
 
+async function executeLockedTransaction(sql: NeonSql, queries: MigrationQuery[]) {
+  await sql.transaction(transaction => [
+    transaction.query('SELECT pg_advisory_xact_lock($1, $2)', [...MIGRATION_LOCK_KEYS]),
+    ...queries.map(query => transaction.query(query.text, query.params ?? [])),
+  ], { isolationLevel: 'Serializable' });
+}
+
+function migrationGuardedStatement(statement: string, hash: string, index: number) {
+  const normalized = makeMigrationStatementIdempotent(statement).trim();
+  const suffix = `${hash.slice(0, 12)}_${index}`;
+  const guardTag = `$flamingo_guard_${suffix}$`;
+  let statementTag = `$flamingo_statement_${suffix}$`;
+  while (normalized.includes(statementTag)) statementTag = `${statementTag.slice(0, -1)}_x$`;
+  return `DO ${guardTag}
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM drizzle.__drizzle_migrations WHERE hash = ${quoteLiteral(hash)}) THEN
+    EXECUTE ${statementTag}${normalized}${statementTag};
+  END IF;
+END
+${guardTag};`;
+}
+
+function migrationTransactionQueries(hash: string, createdAt: number, sqlText: string) {
+  const statements = splitSqlStatements(sqlText);
+  return [
+    ...statements.map((statement, index) => ({ text: migrationGuardedStatement(statement, hash, index) })),
+    {
+      text: 'INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ($1, $2) ON CONFLICT (hash) DO NOTHING',
+      params: [hash, createdAt],
+    },
+  ] satisfies MigrationQuery[];
+}
+
+function validateJournalEntries(entries: Array<{ tag: string; when: number }>, folder: string) {
+  const seen = new Set<string>();
+  for (const entry of entries) {
+    if (!/^\d{4}_[a-z0-9_]+$/.test(entry.tag) || !Number.isSafeInteger(entry.when) || entry.when <= 0) {
+      throw new Error(`Invalid migration journal entry: ${entry.tag}`);
+    }
+    if (seen.has(entry.tag)) throw new Error(`Duplicate migration journal entry: ${entry.tag}`);
+    seen.add(entry.tag);
+    if (!existsSync(path.join(folder, `${entry.tag}.sql`))) {
+      throw new Error(`Migration file is missing for journal entry: ${entry.tag}`);
+    }
+  }
+}
+
 export async function grantRuntimeDatabasePrivileges(ownerDatabaseUrl: string, roleName: string) {
   assertSafeIdentifier(roleName, 'Runtime-Rolle');
   const sql = neon(ownerDatabaseUrl, { fetchOptions: { cache: 'no-store' } });
@@ -264,46 +315,63 @@ function resolveMigrationsFolder(explicit?: string) {
 }
 
 async function ensureMigrationTable(sql: NeonSql) {
-  await executeSqlScript(sql, `
-    CREATE SCHEMA IF NOT EXISTS drizzle;
-    CREATE TABLE IF NOT EXISTS drizzle.__drizzle_migrations (
-      id serial PRIMARY KEY,
-      hash text NOT NULL,
-      created_at bigint
-    );
-  `);
+  await executeLockedTransaction(sql, [
+    { text: 'CREATE SCHEMA IF NOT EXISTS drizzle' },
+    {
+      text: `CREATE TABLE IF NOT EXISTS drizzle.__drizzle_migrations (
+        id serial PRIMARY KEY,
+        hash text NOT NULL,
+        created_at bigint
+      )`,
+    },
+    {
+      text: `DELETE FROM drizzle.__drizzle_migrations AS duplicate
+        USING drizzle.__drizzle_migrations AS keeper
+        WHERE duplicate.hash = keeper.hash AND duplicate.id > keeper.id`,
+    },
+    { text: 'CREATE UNIQUE INDEX IF NOT EXISTS drizzle_migrations_hash_unique ON drizzle.__drizzle_migrations (hash)' },
+  ]);
 }
 
 export async function migrateDatabase(databaseUrl: string, migrationsFolder?: string) {
   const folder = resolveMigrationsFolder(migrationsFolder);
   const sql = neon(databaseUrl, { fetchOptions: { cache: 'no-store' } });
+  await ensureMigrationTable(sql);
 
   // Fresh standalone tenant databases receive a generated snapshot of the
   // current schema first. Running the historic migration chain into an empty
   // DB is brittle, and the previous WebSocket migrator is not stable in Vercel
-  // Serverless. This HTTP runner executes one SQL statement per request.
+  // Serverless. The HTTP runner groups each migration into one atomic request.
   const relation = await sql.query("select to_regclass('public.tenants')::text as tenants", []) as Array<{ tenants: string | null }>;
   const journal = JSON.parse(readFileSync(path.join(folder, 'meta', '_journal.json'), 'utf8')) as MigrationJournal;
   const entries = journal.entries || [];
+  validateJournalEntries(entries, folder);
 
   if (!relation[0]?.tenants) {
     const baselinePath = path.join(folder, 'baseline.sql');
     if (!existsSync(baselinePath)) throw new Error('Flamingo database baseline is not available in this deployment.');
-    await executeSqlScript(sql, readFileSync(baselinePath, 'utf8'));
-    await ensureMigrationTable(sql);
-
     const baselineMeta = JSON.parse(readFileSync(path.join(folder, 'baseline.meta.json'), 'utf8')) as {
       lastJournalTag?: string;
     };
     const baselineIndex = entries.findIndex(entry => entry.tag === baselineMeta.lastJournalTag);
     if (baselineIndex < 0) throw new Error('Flamingo database baseline metadata does not match the migration journal.');
-    for (const entry of entries.slice(0, baselineIndex + 1)) {
+    const baselineEntries = entries.slice(0, baselineIndex + 1).map(entry => {
       const sqlText = readFileSync(path.join(folder, `${entry.tag}.sql`), 'utf8');
-      const hash = createHash('sha256').update(sqlText).digest('hex');
-      await sql.query('INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ($1, $2)', [hash, entry.when]);
-    }
-  } else {
-    await ensureMigrationTable(sql);
+      return { ...entry, hash: createHash('sha256').update(sqlText).digest('hex') };
+    });
+    const baselineGuardHash = baselineEntries.at(-1)?.hash;
+    if (!baselineGuardHash) throw new Error('Flamingo database baseline metadata is empty.');
+    const baselineSql = readFileSync(baselinePath, 'utf8');
+    const baselineQueries: MigrationQuery[] = [
+      ...splitSqlStatements(baselineSql).map((statement, index) => ({
+        text: migrationGuardedStatement(statement, baselineGuardHash, index),
+      })),
+      ...baselineEntries.map(entry => ({
+        text: 'INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ($1, $2) ON CONFLICT (hash) DO NOTHING',
+        params: [entry.hash, entry.when],
+      })),
+    ];
+    await executeLockedTransaction(sql, baselineQueries);
   }
 
   const appliedRows = await sql.query('SELECT hash FROM drizzle.__drizzle_migrations', []) as Array<{ hash: string }>;
@@ -313,8 +381,10 @@ export async function migrateDatabase(databaseUrl: string, migrationsFolder?: st
     const sqlText = readFileSync(migrationPath, 'utf8');
     const hash = createHash('sha256').update(sqlText).digest('hex');
     if (applied.has(hash)) continue;
-    await executeSqlScript(sql, sqlText);
-    await sql.query('INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ($1, $2)', [hash, entry.when]);
+    // The advisory lock, guarded statements and journal insert live in the
+    // same transaction. Concurrent provisioners therefore cannot execute a
+    // migration twice, and a failed migration can never be journaled as done.
+    await executeLockedTransaction(sql, migrationTransactionQueries(hash, entry.when, sqlText));
     applied.add(hash);
   }
 

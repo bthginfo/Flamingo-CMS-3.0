@@ -2,13 +2,20 @@
  * Tenant provisioning: creates all necessary DB records for a new tenant.
  */
 import { getDb } from './db';
-import { createDb, migrateDatabase, tenants, tenantDomains, tenantDatabaseConnections, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
-import { hashPassword } from '@flamingo/auth';
+import { createDb, migrateDatabase, tenants, tenantDomains, adminSecrets, globalSettings, navigation, footer, pages, pageSections, publishedSnapshots, type Industry } from '@flamingo/db';
+import { BCRYPT_MAX_PASSWORD_BYTES, hashPassword, isPasswordWithinBcryptLimit } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { addDomainToRenderer, createStandaloneProject, addDomainToProject, deleteVercelProject } from './vercel';
-import { createNeonRuntimeDatabaseRole, createNeonTenantProject, deleteNeonProject, findNeonTenantProject, type NeonTenantProject } from './neon';
-import { markTenantDatabaseActive, registerTenantDatabase } from './tenant-data-db';
+import { addDomainToRenderer, createStandaloneProject, addDomainToProject, waitForVercelDeploymentReady } from './vercel';
+import { createNeonRuntimeDatabaseRole, createNeonTenantProject, findNeonTenantProject, type NeonTenantProject } from './neon';
+import { getRequiredStandaloneDatabase, getTenantDatabaseRecord, markTenantDatabaseActive, registerTenantDatabase } from './tenant-data-db';
+import {
+  acquireTenantOperation,
+  completeTenantOperation,
+  createTenantOperationFingerprint,
+  failTenantOperation,
+  heartbeatTenantOperation,
+} from './tenant-operation';
 
 export type ProvisionInput = {
   name: string;
@@ -71,25 +78,61 @@ type ProvisioningDefaults = {
 };
 
 export async function provisionTenant(input: ProvisionInput): Promise<ProvisionResult> {
+  if (!isPasswordWithinBcryptLimit(input.password)) {
+    throw new Error(`Das Admin-Passwort ist zu lang. Maximal ${BCRYPT_MAX_PASSWORD_BYTES} UTF-8-Bytes sind erlaubt.`);
+  }
   const db = getDb();
   const defaults = getProvisioningDefaults(input);
+  const deploymentMode = input.deploymentMode || 'standalone';
+  const operationKey = `provision:${input.slug}`;
+  const inputFingerprint = createTenantOperationFingerprint({ ...input, deploymentMode });
+  const claim = await acquireTenantOperation({
+    operationKey,
+    kind: 'provision',
+    inputFingerprint,
+    slug: input.slug,
+  });
+  if (claim.state === 'completed') return claim.result as unknown as ProvisionResult;
+  if (claim.state === 'in_progress') {
+    throw new Error(`Dieser Tenant wird bereits bereitgestellt (Phase: ${claim.phase}). Bitte den laufenden Vorgang nicht erneut starten.`);
+  }
+  const ownerToken = claim.ownerToken;
 
-  // Clean up zombie tenant from a previous failed attempt (stuck in 'provisioning')
+  // A provisioning tenant belongs to this durable operation and is resumed.
+  // It must never be deleted merely because another HTTP retry arrived.
   const [existing] = await db.select().from(tenants).where(eq(tenants.slug, input.slug)).limit(1);
   if (existing) {
-    if (existing.status === 'provisioning') {
-      // Clean up external resources from an interrupted previous attempt before
-      // removing the control-plane registry row.
-      const [databaseRecord] = await db.select().from(tenantDatabaseConnections)
-        .where(eq(tenantDatabaseConnections.tenantId, existing.id)).limit(1);
-      if (existing.vercelProjectId) await deleteVercelProject(existing.vercelProjectId).catch(error => console.warn('Interrupted Vercel cleanup failed:', error));
-      const orphanNeonProjectId = databaseRecord?.projectId || (await findNeonTenantProject(existing.slug).catch(error => {
-        console.warn('Interrupted Neon lookup failed:', error);
-        return null;
-      }))?.projectId;
-      if (orphanNeonProjectId) await deleteNeonProject(orphanNeonProjectId).catch(error => console.warn('Interrupted Neon cleanup failed:', error));
-      await db.delete(tenants).where(eq(tenants.id, existing.id));
-    } else {
+    if (existing.status !== 'provisioning') {
+      // The previous invocation may have committed activation and then lost
+      // its HTTP response before it could complete the operation ledger. Only
+      // the operation that already recorded this tenant id may reconcile it.
+      if (existing.status === 'active' && claim.tenantId === existing.id && existing.deploymentMode === deploymentMode) {
+        if (deploymentMode === 'standalone') {
+          const registry = await getTenantDatabaseRecord(existing.id);
+          if (!registry || registry.status !== 'active' || !existing.vercelProjectId) {
+            const error = new Error('Der Standalone-Tenant wurde aktiviert, aber sein Infrastruktur-Cutover ist noch nicht vollständig.');
+            await failTenantOperation({ operationKey, ownerToken, error });
+            throw error;
+          }
+        }
+        const [customDomain] = input.domain
+          ? await db.select({ verified: tenantDomains.verified }).from(tenantDomains).where(eq(tenantDomains.domain, input.domain)).limit(1)
+          : [];
+        const rendererBaseUrl = process.env.RENDERER_URL || 'https://flamingo-renderer.vercel.app';
+        const standaloneUrl = existing.vercelProjectId ? `https://flamingo-${input.slug}.vercel.app` : undefined;
+        const recoveredResult: ProvisionResult = {
+          tenantId: existing.id,
+          slug: input.slug,
+          domain: input.domain,
+          domainConfigured: deploymentMode === 'standalone' || !input.domain || Boolean(customDomain?.verified),
+          adminUrl: standaloneUrl ? `${standaloneUrl}/admin` : `${rendererBaseUrl}/admin/login?tenant=${input.slug}`,
+          rendererUrl: standaloneUrl || (input.domain ? `https://${input.domain}` : `${rendererBaseUrl}/${input.slug}`),
+          warning: 'Die bereits abgeschlossene Bereitstellung wurde nach einer unterbrochenen Antwort sicher bestätigt.',
+        };
+        await completeTenantOperation({ operationKey, ownerToken, result: recoveredResult as unknown as Record<string, unknown> });
+        return recoveredResult;
+      }
+      await failTenantOperation({ operationKey, ownerToken, error: `Tenant ${input.slug} existiert bereits.` });
       throw new Error(`Ein Tenant mit dem Slug "${input.slug}" existiert bereits.`);
     }
   }
@@ -97,36 +140,65 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   // 1. Create tenant
   // Real customer tenants are isolated by default. Shared infrastructure is
   // an explicit choice reserved for lead and demo sites.
-  const deploymentMode = input.deploymentMode || 'standalone';
-  const [tenant] = await db.insert(tenants).values({
-    name: input.name,
-    slug: input.slug,
-    industry: input.industry,
-    activeStyle: 'classic',
-    status: 'provisioning',
-    deploymentMode,
-    isLead: deploymentMode === 'lead_shared',
-  }).returning();
+  const tenant = existing || (await db.insert(tenants).values({
+      name: input.name,
+      slug: input.slug,
+      industry: input.industry,
+      activeStyle: 'classic',
+      status: 'provisioning',
+      deploymentMode,
+      isLead: deploymentMode === 'lead_shared',
+    }).returning())[0];
 
   const tenantId = tenant.id;
+  await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'tenant_registered', tenantId });
   let dataDb = db;
   let neonProject: NeonTenantProject | undefined;
   let vercelProjectId: string | undefined;
 
   try {
     if (deploymentMode === 'standalone') {
-      neonProject = await createNeonTenantProject(input.slug);
+      const databaseRecord = await getTenantDatabaseRecord(tenantId);
+      if (databaseRecord) {
+        const registered = await getRequiredStandaloneDatabase(tenantId);
+        neonProject = {
+          projectId: databaseRecord.projectId,
+          branchId: '',
+          region: databaseRecord.region,
+          databaseName: databaseRecord.databaseName,
+          roleName: databaseRecord.roleName,
+          pooledConnectionUri: registered.pooledConnectionUri,
+          directConnectionUri: registered.directConnectionUri,
+        };
+      } else {
+        neonProject = await findNeonTenantProject(input.slug) || await createNeonTenantProject(input.slug);
+        await migrateDatabase(neonProject.directConnectionUri);
+        const runtime = await createNeonRuntimeDatabaseRole(neonProject);
+        neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
+        await registerTenantDatabase({ tenantId, ...neonProject });
+      }
+      // A retry may follow a newer application deploy than the first attempt.
+      // Running the idempotent migration again keeps the resumed target current.
       await migrateDatabase(neonProject.directConnectionUri);
-      const runtime = await createNeonRuntimeDatabaseRole(neonProject);
-      neonProject = { ...neonProject, roleName: runtime.roleName, pooledConnectionUri: runtime.connectionUri };
-      await registerTenantDatabase({ tenantId, ...neonProject });
+      await heartbeatTenantOperation({
+        operationKey,
+        ownerToken,
+        phase: 'database_ready',
+        tenantId,
+        resources: { neonProjectId: neonProject.projectId },
+      });
       dataDb = createDb(neonProject.pooledConnectionUri);
-      await dataDb.insert(tenants).values({ ...tenant, deploymentMode: 'standalone', status: 'provisioning' });
+      await dataDb.insert(tenants).values({ ...tenant, deploymentMode: 'standalone', status: 'provisioning' })
+        .onConflictDoUpdate({
+          target: tenants.id,
+          set: { name: input.name, industry: input.industry, deploymentMode: 'standalone', status: 'provisioning', updatedAt: new Date() },
+        });
     }
 
   // 2. Admin secret
   const passwordHash = await hashPassword(input.password);
-  await dataDb.insert(adminSecrets).values({ tenantId, passwordHash });
+  await dataDb.insert(adminSecrets).values({ tenantId, passwordHash })
+    .onConflictDoUpdate({ target: adminSecrets.tenantId, set: { passwordHash, passwordUpdatedAt: new Date(), updatedAt: new Date() } });
 
   // 3. Global settings
   await dataDb.insert(globalSettings).values({
@@ -143,6 +215,19 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       email: input.email || '',
       address: input.address || '',
     },
+  }).onConflictDoUpdate({
+    target: globalSettings.tenantId,
+    set: {
+      brand: {
+        companyName: input.companyName,
+        tagline: input.tagline || '',
+        primaryColor: input.primaryColor || defaults.brand.primaryColor,
+        secondaryColor: input.secondaryColor || defaults.brand.secondaryColor,
+        accentColor: input.accentColor || defaults.brand.accentColor,
+      },
+      contact: { phone: input.phone || '', email: input.email || '', address: input.address || '' },
+      updatedAt: new Date(),
+    },
   });
 
   // 4. Default navigation
@@ -150,7 +235,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     tenantId,
     items: defaults.navigationItems,
     cta: defaults.navigationCta,
-  });
+  }).onConflictDoUpdate({ target: navigation.tenantId, set: { items: defaults.navigationItems, cta: defaults.navigationCta, updatedAt: new Date() } });
 
   // 5. Default footer
   await dataDb.insert(footer).values({
@@ -161,6 +246,14 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       { label: 'Datenschutz', href: '/datenschutz' },
     ],
     cta: defaults.footerCta,
+  }).onConflictDoUpdate({
+    target: footer.tenantId,
+    set: {
+      columns: defaults.footerColumns,
+      legalLinks: [{ label: 'Impressum', href: '/impressum' }, { label: 'Datenschutz', href: '/datenschutz' }],
+      cta: defaults.footerCta,
+      updatedAt: new Date(),
+    },
   });
 
   // 6. Default pages + sections
@@ -173,8 +266,12 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       status: 'published',
       visible: true,
       sortOrder: pageDefinition.sortOrder,
+    }).onConflictDoUpdate({
+      target: [pages.tenantId, pages.slug],
+      set: { title: pageDefinition.title, status: 'published', visible: true, sortOrder: pageDefinition.sortOrder, updatedAt: new Date() },
     }).returning();
 
+    await dataDb.delete(pageSections).where(eq(pageSections.pageId, page.id));
     await dataDb.insert(pageSections).values(pageDefinition.sections.map((section, index) => ({
       tenantId,
       pageId: page.id,
@@ -211,14 +308,29 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     checksum,
     isActive: true,
     createdBy: 'provisioning',
+  }).onConflictDoUpdate({
+    target: [publishedSnapshots.tenantId, publishedSnapshots.version],
+    set: { snapshot: snapshot as unknown as Record<string, unknown>, checksum, isActive: true, createdBy: 'provisioning' },
   });
+  await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'content_seeded', tenantId });
 
   // 8. Domain provisioning
   let domainConfigured = false;
   let standaloneWarning: string | undefined;
   const storeDomain = async (values: typeof tenantDomains.$inferInsert) => {
-    await db.insert(tenantDomains).values(values);
-    if (dataDb !== db) await dataDb.insert(tenantDomains).values(values);
+    const storeIn = async (database: typeof db) => {
+      const [stored] = await database.select({ tenantId: tenantDomains.tenantId }).from(tenantDomains)
+        .where(eq(tenantDomains.domain, values.domain)).limit(1);
+      if (stored && stored.tenantId !== tenantId) throw new Error(`Die Domain ${values.domain} gehört bereits zu einem anderen Tenant.`);
+      if (stored) {
+        await database.update(tenantDomains).set({ type: values.type, verified: values.verified, updatedAt: new Date() })
+          .where(eq(tenantDomains.domain, values.domain));
+      } else {
+        await database.insert(tenantDomains).values(values);
+      }
+    };
+    await storeIn(db);
+    if (dataDb !== db) await storeIn(dataDb);
   };
   const markDomainVerified = async (domain: string) => {
     await db.update(tenantDomains).set({ verified: true }).where(eq(tenantDomains.domain, domain));
@@ -232,6 +344,17 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     if (!standaloneResult.blobConnected) standaloneWarning = 'Blob Storage konnte nicht automatisch verbunden werden. Bitte im CRM konfigurieren.';
     // Persist early so an interrupted retry can clean up the Vercel project.
     await db.update(tenants).set({ vercelProjectId, updatedAt: new Date() }).where(eq(tenants.id, tenantId));
+    await heartbeatTenantOperation({
+      operationKey,
+      ownerToken,
+      phase: 'deployment_waiting',
+      tenantId,
+      resources: { vercelProjectId, deploymentId: standaloneResult.deploymentId },
+    });
+    // Never expose an active tenant before the exact production deployment
+    // carrying its isolated DATABASE_URL is READY.
+    await waitForVercelDeploymentReady(standaloneResult.deploymentId, 240_000);
+    await heartbeatTenantOperation({ operationKey, ownerToken, phase: 'deployment_ready', tenantId });
 
     // Store the Vercel test domain as preview
     const vercelDomain = vercelProjectId
@@ -293,20 +416,22 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   const updateData: Record<string, unknown> = { status: 'active', updatedAt: new Date() };
   if (vercelProjectId) updateData.vercelProjectId = vercelProjectId;
 
-  await db.update(tenants)
-    .set(updateData as any)
-    .where(eq(tenants.id, tenantId));
   if (dataDb !== db) {
+    // Target first, registry second, control-plane routing flag last. Until the
+    // final update getTenantDataDb rejects writes through the quiesce barrier.
     await dataDb.update(tenants).set(updateData as any).where(eq(tenants.id, tenantId));
     await markTenantDatabaseActive(tenantId);
   }
+  await db.update(tenants)
+    .set(updateData as any)
+    .where(eq(tenants.id, tenantId));
 
   const standaloneUrl = vercelProjectId ? `https://flamingo-${input.slug}.vercel.app` : undefined;
 
   const rendererBaseUrl = process.env.RENDERER_URL || 'https://flamingo-renderer.vercel.app';
   const sharedUrl = input.domain ? `https://${input.domain}` : `${rendererBaseUrl}/${input.slug}`;
 
-  return {
+  const result: ProvisionResult = {
     tenantId,
     slug: input.slug,
     domain: input.domain,
@@ -315,10 +440,12 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     rendererUrl: standaloneUrl || sharedUrl,
     warning: standaloneWarning,
   };
+  await completeTenantOperation({ operationKey, ownerToken, result: result as unknown as Record<string, unknown> });
+  return result;
   } catch (error) {
-    if (vercelProjectId) await deleteVercelProject(vercelProjectId).catch(cleanupError => console.error('Vercel rollback failed:', cleanupError));
-    if (neonProject?.projectId) await deleteNeonProject(neonProject.projectId).catch(cleanupError => console.error('Neon rollback failed:', cleanupError));
-    await db.delete(tenants).where(eq(tenants.id, tenantId)).catch(cleanupError => console.error('Control-plane rollback failed:', cleanupError));
+    // Preserve owned partial resources for a resumable retry. Destructive
+    // cleanup is deliberately not performed by an arbitrary timed-out request.
+    await failTenantOperation({ operationKey, ownerToken, error }).catch(markError => console.error('Provisioning operation update failed:', markError));
     throw error;
   }
 }

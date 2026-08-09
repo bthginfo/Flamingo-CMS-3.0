@@ -40,7 +40,7 @@ import {
   type BillingSellerSnapshot,
   type BillingTaxMode,
 } from '@/lib/billing-core';
-import { readBillingPdfArtifact, readBillingXmlArtifact, storeBillingArtifact } from '@/lib/billing-artifacts';
+import { deleteBillingArtifact, readBillingPdfArtifact, readBillingXmlArtifact, storeBillingArtifact } from '@/lib/billing-artifacts';
 import { getBillingJurisdiction, normalizeBillingCountryCode } from '@/lib/billing-jurisdictions';
 
 const nullableText = (max: number) => z.string().trim().max(max).optional().nullable().transform(value => value || null);
@@ -457,10 +457,10 @@ export async function saveBillingSettingsAction(input: unknown) {
     )) {
       return { success: false as const, error: 'Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.' };
     }
-    await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+    await db.update(billingSettings).set({ ...value, configurationRevision: sql`${billingSettings.configurationRevision} + 1`, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
       if (!isMissingBillingLogoDisplayColumn(error)) throw error;
       const { logoDisplay: _logoDisplay, ...compatibleValue } = value;
-      await db.update(billingSettings).set({ ...compatibleValue, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+      await db.update(billingSettings).set({ ...compatibleValue, configurationRevision: sql`${billingSettings.configurationRevision} + 1`, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
     });
     revalidatePath('/admin/billing');
     return { success: true as const };
@@ -495,10 +495,10 @@ export async function saveBillingSettingsSectionAction(input: unknown) {
         return { success: false as const, error: 'Nach der ersten festgeschriebenen Rechnung dürfen laufende Nummern nur erhöht, nicht zurückgesetzt werden.' };
       }
     }
-    await db.update(billingSettings).set({ ...value.data, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+    await db.update(billingSettings).set({ ...value.data, configurationRevision: sql`${billingSettings.configurationRevision} + 1`, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
       if (!isMissingBillingLogoDisplayColumn(error) || value.section !== 'identity') throw error;
       const { logoDisplay: _logoDisplay, ...compatibleValue } = value.data;
-      await db.update(billingSettings).set({ ...compatibleValue, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+      await db.update(billingSettings).set({ ...compatibleValue, configurationRevision: sql`${billingSettings.configurationRevision} + 1`, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
     });
     revalidatePath('/admin/billing');
     return { success: true as const };
@@ -513,9 +513,9 @@ export async function saveBillingLogoSettingsAction(input: unknown) {
   try {
     const value = logoSettingsSchema.parse(input);
     const db = getDb();
-    await db.update(billingSettings).set({ ...value, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
+    await db.update(billingSettings).set({ ...value, configurationRevision: sql`${billingSettings.configurationRevision} + 1`, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId)).catch(async (error: unknown) => {
       if (!isMissingBillingLogoDisplayColumn(error)) throw error;
-      await db.update(billingSettings).set({ logoUrl: value.logoUrl, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
+      await db.update(billingSettings).set({ logoUrl: value.logoUrl, configurationRevision: sql`${billingSettings.configurationRevision} + 1`, updatedAt: new Date() }).where(eq(billingSettings.tenantId, tenantId));
     });
     revalidatePath('/admin/billing');
     return { success: true as const };
@@ -718,28 +718,109 @@ async function saveBillingDraftForTenant(tenantId: string, input: unknown) {
     documentDiscount: { type: value.discountType, value: value.discountValue },
   });
   const db = getDb();
-  const [saved] = await db.update(billingDocuments).set({
-    customerId: value.customerId, issueDate: value.issueDate, serviceDateFrom: value.serviceDateFrom, serviceDateTo: value.serviceDateTo,
-    dueDate: value.dueDate, buyerReference: value.buyerReference, purchaseOrderReference: value.purchaseOrderReference,
-    introText: value.introText, closingText: value.closingText, notes: value.notes,
-    taxMode: value.taxMode, taxExemptionReason: value.taxExemptionReason,
-    discountType: value.discountType, discountValue: value.discountValue, discountCents: totals.documentDiscountCents,
-    cashDiscountBasisPoints: value.cashDiscountBasisPoints, cashDiscountDays: value.cashDiscountDays,
-    paymentLinkUrl: value.paymentLinkUrl, quoteValidUntil: value.quoteValidUntil,
-    subtotalNetCents: totals.subtotalNetCents, taxCents: totals.taxCents, totalGrossCents: totals.totalGrossCents,
-    taxBreakdown: totals.taxBreakdown, updatedAt: new Date(),
-  }).where(and(eq(billingDocuments.id, value.id), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.status, 'draft'))).returning({ id: billingDocuments.id });
-  if (!saved) throw new Error('Nur Entwürfe können bearbeitet werden.');
-  await db.delete(billingDocumentItems).where(and(eq(billingDocumentItems.documentId, value.id), eq(billingDocumentItems.tenantId, tenantId)));
-  await db.insert(billingDocumentItems).values(totals.normalizedLines.map((line, index) => ({
-    tenantId, documentId: value.id, serviceId: value.lines[index]?.serviceId || null, position: line.position,
-    name: line.name, description: line.description || null, quantity: String(line.quantity), unitCode: line.unitCode, unitLabel: line.unitLabel,
-    unitPriceNetCents: line.unitPriceNetCents,
-    discountBasisPoints: line.discountType === 'percent' ? line.discountValue ?? line.discountBasisPoints : 0,
-    discountType: line.discountType || 'percent', discountValue: line.discountValue ?? line.discountBasisPoints,
-    discountCents: line.discountCents || 0,
-    taxRateBasisPoints: line.taxRateBasisPoints, lineNetCents: line.lineNetCents,
-  })));
+  const itemRows = totals.normalizedLines.map((line, index) => ({
+    service_id: value.lines[index]?.serviceId || null,
+    position: line.position,
+    name: line.name,
+    description: line.description || null,
+    quantity: String(line.quantity),
+    unit_code: line.unitCode,
+    unit_label: line.unitLabel,
+    unit_price_net_cents: line.unitPriceNetCents,
+    discount_basis_points: line.discountType === 'percent' ? line.discountValue ?? line.discountBasisPoints : 0,
+    discount_type: line.discountType || 'percent',
+    discount_value: line.discountValue ?? line.discountBasisPoints,
+    discount_cents: line.discountCents || 0,
+    tax_rate_basis_points: line.taxRateBasisPoints,
+    line_net_cents: line.lineNetCents,
+  }));
+
+  // neon-http has no portable interactive transaction. This one PostgreSQL
+  // statement keeps the draft and its complete line set atomic: any failed
+  // line insert rolls the document update and item deletion back as well.
+  const result = await db.execute(sql`
+    WITH saved_document AS (
+      UPDATE billing_documents document SET
+        customer_id = ${value.customerId}::uuid,
+        issue_date = ${value.issueDate},
+        service_date_from = ${value.serviceDateFrom},
+        service_date_to = ${value.serviceDateTo},
+        due_date = ${value.dueDate},
+        buyer_reference = ${value.buyerReference},
+        purchase_order_reference = ${value.purchaseOrderReference},
+        intro_text = ${value.introText},
+        closing_text = ${value.closingText},
+        notes = ${value.notes},
+        tax_mode = ${value.taxMode},
+        tax_exemption_reason = ${value.taxExemptionReason},
+        discount_type = ${value.discountType},
+        discount_value = ${value.discountValue},
+        discount_cents = ${totals.documentDiscountCents},
+        cash_discount_basis_points = ${value.cashDiscountBasisPoints},
+        cash_discount_days = ${value.cashDiscountDays},
+        payment_link_url = ${value.paymentLinkUrl},
+        quote_valid_until = ${value.quoteValidUntil},
+        subtotal_net_cents = ${totals.subtotalNetCents},
+        tax_cents = ${totals.taxCents},
+        total_gross_cents = ${totals.totalGrossCents},
+        tax_breakdown = ${JSON.stringify(totals.taxBreakdown)}::jsonb,
+        draft_revision = document.draft_revision + 1,
+        updated_at = now()
+      WHERE document.id = ${value.id}::uuid
+        AND document.tenant_id = ${tenantId}::uuid
+        AND document.status = 'draft'
+        AND document.document_number IS NULL
+        AND EXISTS (
+          SELECT 1 FROM customers customer
+          WHERE customer.id = ${value.customerId}::uuid
+            AND customer.tenant_id = ${tenantId}::uuid
+            AND customer.archived_at IS NULL
+        )
+      RETURNING document.id
+    ),
+    deleted_items AS (
+      DELETE FROM billing_document_items item
+      WHERE item.document_id = ${value.id}::uuid
+        AND item.tenant_id = ${tenantId}::uuid
+        AND EXISTS (SELECT 1 FROM saved_document)
+      RETURNING item.id
+    ),
+    deletion_complete AS (
+      SELECT count(*) AS deleted_count FROM deleted_items
+    ),
+    inserted_items AS (
+      INSERT INTO billing_document_items (
+        tenant_id, document_id, service_id, position, name, description,
+        quantity, unit_code, unit_label, unit_price_net_cents,
+        discount_basis_points, discount_type, discount_value, discount_cents,
+        tax_rate_basis_points, line_net_cents
+      )
+      SELECT
+        ${tenantId}::uuid, ${value.id}::uuid, source.service_id, source.position,
+        source.name, source.description, source.quantity, source.unit_code,
+        source.unit_label, source.unit_price_net_cents,
+        source.discount_basis_points, source.discount_type,
+        source.discount_value, source.discount_cents,
+        source.tax_rate_basis_points, source.line_net_cents
+      FROM jsonb_to_recordset(${JSON.stringify(itemRows)}::jsonb) AS source(
+        service_id uuid, position integer, name text, description text,
+        quantity numeric(12,3), unit_code text, unit_label text,
+        unit_price_net_cents integer, discount_basis_points integer,
+        discount_type text, discount_value integer, discount_cents integer,
+        tax_rate_basis_points integer, line_net_cents integer
+      )
+      CROSS JOIN saved_document
+      CROSS JOIN deletion_complete
+      RETURNING id
+    )
+    SELECT saved_document.id::text AS id,
+      (SELECT count(*)::integer FROM inserted_items) AS item_count
+    FROM saved_document
+  `);
+  const saved = result.rows?.[0] as { id?: string; item_count?: number } | undefined;
+  if (!saved?.id || Number(saved.item_count) !== itemRows.length) {
+    throw new Error('Nur unveränderte Entwürfe können bearbeitet werden. Bitte laden Sie den Beleg neu.');
+  }
   revalidatePath('/admin/billing');
   return { success: true as const };
 }
@@ -757,7 +838,13 @@ export async function saveBillingDraftAction(input: unknown) {
 export async function deleteBillingDraftAction(id: string) {
   const tenantId = await requireBillingTenant();
   try {
-    await getDb().delete(billingDocuments).where(and(eq(billingDocuments.id, z.string().uuid().parse(id)), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.status, 'draft')));
+    const [deleted] = await getDb().delete(billingDocuments).where(and(
+      eq(billingDocuments.id, z.string().uuid().parse(id)),
+      eq(billingDocuments.tenantId, tenantId),
+      eq(billingDocuments.status, 'draft'),
+      isNull(billingDocuments.documentNumber),
+    )).returning({ id: billingDocuments.id });
+    if (!deleted) throw new Error('Dieser Entwurf wird bereits festgeschrieben und kann nicht gelöscht werden.');
     revalidatePath('/admin/billing');
     return { success: true as const };
   } catch (error) {
@@ -799,7 +886,14 @@ function numberSeries(documentType: BillingDocumentSnapshot['documentType']): Bi
   return 'invoice';
 }
 
-async function allocateDocumentNumber(tenantId: string, documentId: string, settings: typeof billingSettings.$inferSelect, date: Date, type: BillingNumberSeries) {
+async function claimDocumentNumber(
+  tenantId: string,
+  documentId: string,
+  settings: typeof billingSettings.$inferSelect,
+  date: Date,
+  type: BillingNumberSeries,
+  expectedDraftRevision: number,
+) {
   const period = sequencePeriod(date, settings.sequenceReset as 'never' | 'year' | 'month');
   const format = type === 'invoice' ? settings.invoiceNumberFormat
     : type === 'cancellation' ? settings.cancellationNumberFormat
@@ -807,11 +901,24 @@ async function allocateDocumentNumber(tenantId: string, documentId: string, sett
   const prefix = type === 'invoice' ? settings.invoicePrefix
     : type === 'cancellation' ? settings.cancellationPrefix
       : type === 'quote' ? settings.quotePrefix : settings.creditPrefix;
+  const staleBefore = new Date(Date.now() - 10 * 60_000);
   const result = await getDb().execute(sql`
     WITH locked_document AS MATERIALIZED (
-      SELECT id, document_number, document_type FROM billing_documents
-      WHERE id = ${documentId}::uuid AND tenant_id = ${tenantId}::uuid AND status = 'draft'
+      SELECT id, document_number, document_type, draft_revision, updated_at FROM billing_documents
+      WHERE id = ${documentId}::uuid
+        AND tenant_id = ${tenantId}::uuid
+        AND status = 'draft'
+        AND draft_revision = ${expectedDraftRevision}
       FOR UPDATE
+    ),
+    reclaimed AS (
+      UPDATE billing_documents document
+      SET draft_revision = document.draft_revision + 1, updated_at = now()
+      FROM locked_document locked
+      WHERE document.id = locked.id
+        AND locked.document_number IS NOT NULL
+        AND locked.updated_at <= ${staleBefore}
+      RETURNING document.document_number, document.draft_revision
     ),
     allocated AS MATERIALIZED (
       SELECT CASE
@@ -826,7 +933,9 @@ async function allocateDocumentNumber(tenantId: string, documentId: string, sett
         ELSE settings.next_credit_number
       END AS value
       FROM billing_settings settings, locked_document document
-      WHERE settings.tenant_id = ${tenantId}::uuid AND document.document_number IS NULL
+      WHERE settings.tenant_id = ${tenantId}::uuid
+        AND settings.configuration_revision = ${settings.configurationRevision}
+        AND document.document_number IS NULL
       FOR UPDATE OF settings
     ),
     advanced AS (
@@ -862,105 +971,349 @@ async function allocateDocumentNumber(tenantId: string, documentId: string, sett
           regexp_replace(${format}, '\\{N+\\}', lpad(allocated.value::text, length(substring(${format} from '\\{(N+)\\}')), '0')),
           '{PREFIX}', ${prefix}), '{YYYY}', ${String(date.getUTCFullYear())}), '{YY}', ${String(date.getUTCFullYear()).slice(-2)}), '{MM}', ${String(date.getUTCMonth() + 1).padStart(2, '0')})
         FROM allocated
-      ), updated_at = now()
-      WHERE document.id IN (SELECT id FROM locked_document) AND document.document_number IS NULL
-      RETURNING document.document_number
+      ), draft_revision = document.draft_revision + 1, updated_at = now()
+      WHERE document.id IN (SELECT id FROM locked_document)
+        AND document.document_number IS NULL
+        AND EXISTS (SELECT 1 FROM allocated)
+      RETURNING document.document_number, document.draft_revision
     )
-    SELECT document_number FROM numbered
-    UNION ALL SELECT document_number FROM locked_document WHERE document_number IS NOT NULL
+    SELECT document_number, draft_revision, true AS claimed FROM numbered
+    UNION ALL SELECT document_number, draft_revision, true AS claimed FROM reclaimed
+    UNION ALL
+      SELECT document_number, draft_revision, false AS claimed
+      FROM locked_document
+      WHERE document_number IS NOT NULL AND updated_at > ${staleBefore}
     LIMIT 1
   `);
-  const number = (result.rows?.[0] as { document_number?: string } | undefined)?.document_number;
-  if (!number) throw new Error('Rechnungsnummer konnte nicht sicher vergeben werden.');
-  return number;
+  const row = result.rows?.[0] as { document_number?: string; draft_revision?: number | string; claimed?: boolean } | undefined;
+  return row?.document_number
+    ? { documentNumber: row.document_number, claimRevision: Number(row.draft_revision), claimed: row.claimed === true }
+    : null;
+}
+
+function isBillingEventChainConflict(error: unknown) {
+  let current: unknown = error;
+  for (let depth = 0; depth < 4 && current && typeof current === 'object'; depth += 1) {
+    const candidate = current as { code?: unknown; constraint?: unknown; message?: unknown; cause?: unknown };
+    const code = typeof candidate.code === 'string' ? candidate.code : '';
+    const constraint = typeof candidate.constraint === 'string' ? candidate.constraint : '';
+    const message = typeof candidate.message === 'string' ? candidate.message : '';
+    const isChainConstraint = constraint === 'billing_document_events_chain_position_idx'
+      || constraint === 'billing_document_events_hash_idx'
+      || message.includes('billing_document_events_chain_position_idx')
+      || message.includes('billing_document_events_hash_idx');
+    if (code === '23505' && isChainConstraint) return true;
+    current = candidate.cause;
+  }
+  return false;
+}
+
+async function withBillingEventChainRetry<T>(operation: () => Promise<T>) {
+  const maxAttempts = 8;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (!isBillingEventChainConflict(error) || attempt === maxAttempts - 1) throw error;
+    }
+  }
+  throw new Error('Audit-Ereignis konnte nach mehreren Versuchen nicht gespeichert werden.');
 }
 
 async function appendEvent(tenantId: string, documentId: string, eventType: string, payload: Record<string, unknown>) {
   const db = getDb();
-  const [previous] = await db.select({ eventHash: billingDocumentEvents.eventHash }).from(billingDocumentEvents)
-    .where(and(eq(billingDocumentEvents.tenantId, tenantId), eq(billingDocumentEvents.documentId, documentId))).orderBy(desc(billingDocumentEvents.createdAt)).limit(1);
-  const eventHash = sha256(JSON.stringify({ previousHash: previous?.eventHash || null, tenantId, documentId, eventType, payload }));
-  await db.insert(billingDocumentEvents).values({ tenantId, documentId, eventType, payload, previousHash: previous?.eventHash || null, eventHash });
+  const payloadJson = JSON.stringify(payload);
+  // One statement is essential for neon-http: the transaction-scoped lock,
+  // predecessor lookup and insert cannot be split without allowing two
+  // concurrent events to branch from the same predecessor.
+  const result = await withBillingEventChainRetry(() => db.execute(sql`
+    WITH document_lock AS (
+      SELECT pg_advisory_xact_lock(
+        hashtextextended(${`${tenantId}:${documentId}`}::text, 0)
+      )
+    ),
+    previous_event AS MATERIALIZED (
+      SELECT event.event_hash, event.chain_position
+      FROM billing_document_events event, document_lock
+      WHERE event.tenant_id = ${tenantId}::uuid
+        AND event.document_id = ${documentId}::uuid
+      ORDER BY event.chain_position DESC NULLS LAST, event.created_at DESC, event.id DESC
+      LIMIT 1
+    ),
+    inserted_event AS (
+      INSERT INTO billing_document_events (
+        tenant_id, document_id, event_type, payload, previous_hash, event_hash, chain_position
+      )
+      SELECT
+        ${tenantId}::uuid,
+        ${documentId}::uuid,
+        ${eventType},
+        ${payloadJson}::jsonb,
+        previous_event.event_hash,
+        encode(sha256(convert_to(
+          '{"previousHash":' || CASE
+            WHEN previous_event.event_hash IS NULL THEN 'null'
+            ELSE to_json(previous_event.event_hash)::text
+          END
+          || ',"tenantId":' || to_json(${tenantId}::text)::text
+          || ',"documentId":' || to_json(${documentId}::text)::text
+          || ',"eventType":' || to_json(${eventType}::text)::text
+          || ',"payload":' || ${payloadJson}::text || '}',
+          'UTF8'
+        )), 'hex')
+        , coalesce(previous_event.chain_position, 0) + 1
+      FROM document_lock
+      LEFT JOIN previous_event ON true
+      RETURNING event_hash
+    )
+    SELECT event_hash FROM inserted_event
+  `));
+  const eventHash = (result.rows?.[0] as { event_hash?: string } | undefined)?.event_hash;
+  if (!eventHash) throw new Error('Audit-Ereignis konnte nicht revisionssicher gespeichert werden.');
   return eventHash;
 }
 
 async function finalizeBillingDocumentForTenant(tenantId: string, id: string) {
   const documentId = z.string().uuid().parse(id);
   const db = getDb();
-  const [document, settings] = await Promise.all([
+  const [initialDocument, initialSettings] = await Promise.all([
     db.select().from(billingDocuments).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1).then(rows => rows[0]),
     ensureBillingSettings(tenantId),
   ]);
-  if (!document) throw new Error('Dokument nicht gefunden.');
-  if (document.status !== 'draft') return { success: true as const, documentNumber: document.documentNumber };
-  if (!document.customerId || !document.issueDate || !document.serviceDateFrom || !document.dueDate) throw new Error('Kunde, Rechnungs-, Leistungs- und Fälligkeitsdatum sind erforderlich.');
-  const [customer, storedItems] = await Promise.all([
-    db.select().from(customers).where(and(eq(customers.id, document.customerId), eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).limit(1).then(rows => rows[0]),
+  if (!initialDocument) throw new Error('Dokument nicht gefunden.');
+  if (initialDocument.status !== 'draft') return { success: true as const, documentNumber: initialDocument.documentNumber };
+  if (!initialDocument.customerId || !initialDocument.issueDate || !initialDocument.serviceDateFrom || !initialDocument.dueDate) {
+    throw new Error('Kunde, Rechnungs-, Leistungs- und Fälligkeitsdatum sind erforderlich.');
+  }
+
+  // Validate before consuming a number. The CAS below repeats the reads after
+  // claiming, so a concurrent save can never leak a stale immutable artifact.
+  const [initialCustomer, initialItems] = await Promise.all([
+    db.select().from(customers).where(and(eq(customers.id, initialDocument.customerId), eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).limit(1).then(rows => rows[0]),
     db.select().from(billingDocumentItems).where(and(eq(billingDocumentItems.documentId, documentId), eq(billingDocumentItems.tenantId, tenantId))).orderBy(asc(billingDocumentItems.position)),
   ]);
-  if (!customer) throw new Error('Der ausgewählte Kunde wurde nicht gefunden.');
-  const seller = sellerSnapshot(settings);
-  const buyer = customerSnapshot(customer);
-  const lines: BillingLine[] = storedItems.map(item => ({
+  if (!initialCustomer) throw new Error('Der ausgewählte Kunde wurde nicht gefunden.');
+  const initialLines: BillingLine[] = initialItems.map(item => ({
     ...item,
     quantity: Number(item.quantity),
     description: item.description || undefined,
     discountType: item.discountType as 'percent' | 'fixed',
   }));
-  const missing = validateBillingReadiness(seller, buyer, lines);
-  if (missing.length) throw new Error(`Noch nicht bereit: ${missing.join(', ')}.`);
-  const type = document.documentType as BillingDocumentSnapshot['documentType'];
-  const taxMode = (seller.smallBusiness ? 'small_business' : document.taxMode) as BillingTaxMode;
-  const totals = calculateBillingTotals(lines, {
-    taxMode,
-    documentDiscount: { type: document.discountType as 'percent' | 'fixed', value: document.discountValue },
-  });
-  const documentNumber = await allocateDocumentNumber(tenantId, documentId, settings, document.issueDate, numberSeries(type));
-  let originalDocumentNumber: string | undefined;
-  if (document.originalDocumentId) {
-    const [original] = await db.select({ documentNumber: billingDocuments.documentNumber }).from(billingDocuments)
-      .where(and(eq(billingDocuments.id, document.originalDocumentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
-    originalDocumentNumber = original?.documentNumber || undefined;
+  const initialMissing = validateBillingReadiness(
+    sellerSnapshot(initialSettings),
+    customerSnapshot(initialCustomer),
+    initialLines,
+  );
+  if (initialMissing.length) throw new Error(`Noch nicht bereit: ${initialMissing.join(', ')}.`);
+
+  const initialType = initialDocument.documentType as BillingDocumentSnapshot['documentType'];
+  const claim = await claimDocumentNumber(
+    tenantId,
+    documentId,
+    initialSettings,
+    initialDocument.issueDate,
+    numberSeries(initialType),
+    initialDocument.draftRevision,
+  );
+  if (!claim) {
+    const [current] = await db.select({ status: billingDocuments.status, documentNumber: billingDocuments.documentNumber })
+      .from(billingDocuments).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId))).limit(1);
+    if (current && current.status !== 'draft') return { success: true as const, documentNumber: current.documentNumber };
+    throw new Error('Der Entwurf wurde parallel geändert. Bitte laden Sie ihn neu und versuchen Sie es erneut.');
   }
-  const snapshot: BillingDocumentSnapshot = {
-    documentNumber, documentType: type, issueDate: document.issueDate, serviceDateFrom: document.serviceDateFrom,
-    serviceDateTo: document.serviceDateTo || undefined, dueDate: document.dueDate, currency: 'EUR', buyerReference: document.buyerReference || undefined,
-    purchaseOrderReference: document.purchaseOrderReference || undefined, introText: document.introText || undefined,
-    closingText: document.closingText || undefined, notes: document.notes || undefined, originalDocumentNumber,
-    taxMode, taxExemptionReason: document.taxExemptionReason || undefined,
-    discountType: document.discountType as 'percent' | 'fixed', discountValue: document.discountValue,
-    cashDiscountBasisPoints: document.cashDiscountBasisPoints, cashDiscountDays: document.cashDiscountDays,
-    paymentLinkUrl: document.paymentLinkUrl || undefined, quoteValidUntil: document.quoteValidUntil || undefined,
-  };
-  const [pdf, xml] = await Promise.all([
-    renderBillingPdf({ document: snapshot, seller, customer: buyer, lines, totals }),
-    type === 'quote' ? Promise.resolve(null) : generateEInvoice({ document: snapshot, seller, customer: buyer, lines, totals }),
-  ]);
-  const pdfSha256 = sha256(pdf);
-  const xmlSha256 = xml ? sha256(xml) : null;
-  const documentSha256 = sha256(JSON.stringify({ snapshot, seller, buyer, lines: totals.normalizedLines, totals, pdfSha256, xmlSha256 }));
-  const retentionUntil = new Date(document.issueDate);
-  retentionUntil.setUTCFullYear(retentionUntil.getUTCFullYear() + getBillingJurisdiction(settings.countryCode).retentionYears);
-  const finalizedAt = new Date();
-  const finalizedStatus = type === 'quote' ? 'issued' : 'finalized';
-  const [pdfBlobUrl, xmlBlobUrl] = await Promise.all([
-    storeBillingArtifact({ tenantId, documentId, documentNumber, kind: 'pdf', content: pdf }),
-    storeBillingArtifact({ tenantId, documentId, documentNumber, kind: 'xml', content: xml }),
-  ]);
-  const [finalized] = await db.update(billingDocuments).set({
-    documentNumber, sellerSnapshot: seller, customerSnapshot: buyer, paymentSnapshot: { bankName: seller.bankName, accountHolder: seller.accountHolder, iban: seller.iban, bic: seller.bic, paymentLinkUrl: document.paymentLinkUrl, cashDiscountBasisPoints: document.cashDiscountBasisPoints, cashDiscountDays: document.cashDiscountDays },
-    subtotalNetCents: totals.subtotalNetCents, taxCents: totals.taxCents, totalGrossCents: totals.totalGrossCents, taxBreakdown: totals.taxBreakdown,
-    discountCents: totals.documentDiscountCents,
-    pdfBase64: pdfBlobUrl ? null : Buffer.from(pdf).toString('base64'),
-    xmlContent: xmlBlobUrl ? null : xml,
-    pdfBlobUrl,
-    xmlBlobUrl,
-    pdfSha256, xmlSha256, documentSha256,
-    finalizedAt, retentionUntil, status: finalizedStatus, updatedAt: finalizedAt,
-  }).where(and(eq(billingDocuments.id, documentId), eq(billingDocuments.tenantId, tenantId), eq(billingDocuments.status, 'draft'))).returning({ id: billingDocuments.id });
-  if (finalized) await appendEvent(tenantId, documentId, type === 'quote' ? 'issued' : 'finalized', { documentNumber, documentSha256, pdfSha256, xmlSha256, retentionUntil: retentionUntil.toISOString() });
-  revalidatePath('/admin/billing');
-  return { success: true as const, documentNumber };
+  if (!claim.claimed) throw new Error('Der Beleg wird bereits festgeschrieben. Bitte warten Sie kurz.');
+
+  const documentNumber = claim.documentNumber;
+  let pdfBlobUrl: string | null = null;
+  let xmlBlobUrl: string | null = null;
+  let committed = false;
+  try {
+    const [document, settings] = await Promise.all([
+      db.select().from(billingDocuments).where(and(
+        eq(billingDocuments.id, documentId),
+        eq(billingDocuments.tenantId, tenantId),
+        eq(billingDocuments.status, 'draft'),
+        eq(billingDocuments.documentNumber, documentNumber),
+        eq(billingDocuments.draftRevision, claim.claimRevision),
+      )).limit(1).then(rows => rows[0]),
+      db.select().from(billingSettings).where(eq(billingSettings.tenantId, tenantId)).limit(1).then(rows => rows[0]),
+    ]);
+    if (!document || !settings) throw new Error('Der Finalisierungsstand konnte nicht konsistent gelesen werden.');
+    if (settings.configurationRevision !== initialSettings.configurationRevision) {
+      throw new Error('Die Rechnungseinstellungen wurden parallel geändert. Bitte prüfen Sie den Entwurf erneut.');
+    }
+    if (!document.customerId || !document.issueDate || !document.serviceDateFrom || !document.dueDate) {
+      throw new Error('Kunde, Rechnungs-, Leistungs- und Fälligkeitsdatum sind erforderlich.');
+    }
+    const [customer, storedItems, original] = await Promise.all([
+      db.select().from(customers).where(and(eq(customers.id, document.customerId), eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).limit(1).then(rows => rows[0]),
+      db.select().from(billingDocumentItems).where(and(eq(billingDocumentItems.documentId, documentId), eq(billingDocumentItems.tenantId, tenantId))).orderBy(asc(billingDocumentItems.position)),
+      document.originalDocumentId
+        ? db.select({ documentNumber: billingDocuments.documentNumber }).from(billingDocuments)
+          .where(and(eq(billingDocuments.id, document.originalDocumentId), eq(billingDocuments.tenantId, tenantId))).limit(1).then(rows => rows[0])
+        : Promise.resolve(undefined),
+    ]);
+    if (!customer) throw new Error('Der ausgewählte Kunde wurde nicht gefunden.');
+
+    const seller = sellerSnapshot(settings);
+    const buyer = customerSnapshot(customer);
+    const lines: BillingLine[] = storedItems.map(item => ({
+      ...item,
+      quantity: Number(item.quantity),
+      description: item.description || undefined,
+      discountType: item.discountType as 'percent' | 'fixed',
+    }));
+    const missing = validateBillingReadiness(seller, buyer, lines);
+    if (missing.length) throw new Error(`Noch nicht bereit: ${missing.join(', ')}.`);
+    const type = document.documentType as BillingDocumentSnapshot['documentType'];
+    const taxMode = (seller.smallBusiness ? 'small_business' : document.taxMode) as BillingTaxMode;
+    const totals = calculateBillingTotals(lines, {
+      taxMode,
+      documentDiscount: { type: document.discountType as 'percent' | 'fixed', value: document.discountValue },
+    });
+    const snapshot: BillingDocumentSnapshot = {
+      documentNumber, documentType: type, issueDate: document.issueDate, serviceDateFrom: document.serviceDateFrom,
+      serviceDateTo: document.serviceDateTo || undefined, dueDate: document.dueDate, currency: 'EUR', buyerReference: document.buyerReference || undefined,
+      purchaseOrderReference: document.purchaseOrderReference || undefined, introText: document.introText || undefined,
+      closingText: document.closingText || undefined, notes: document.notes || undefined,
+      originalDocumentNumber: original?.documentNumber || undefined,
+      taxMode, taxExemptionReason: document.taxExemptionReason || undefined,
+      discountType: document.discountType as 'percent' | 'fixed', discountValue: document.discountValue,
+      cashDiscountBasisPoints: document.cashDiscountBasisPoints, cashDiscountDays: document.cashDiscountDays,
+      paymentLinkUrl: document.paymentLinkUrl || undefined, quoteValidUntil: document.quoteValidUntil || undefined,
+    };
+    const [pdf, xml] = await Promise.all([
+      renderBillingPdf({ document: snapshot, seller, customer: buyer, lines, totals }),
+      type === 'quote' ? Promise.resolve(null) : generateEInvoice({ document: snapshot, seller, customer: buyer, lines, totals }),
+    ]);
+    const pdfSha256 = sha256(pdf);
+    const xmlSha256 = xml ? sha256(xml) : null;
+    const documentSha256 = sha256(JSON.stringify({ snapshot, seller, buyer, lines: totals.normalizedLines, totals, pdfSha256, xmlSha256 }));
+    const retentionUntil = new Date(document.issueDate);
+    retentionUntil.setUTCFullYear(retentionUntil.getUTCFullYear() + getBillingJurisdiction(settings.countryCode).retentionYears);
+    const finalizedAt = new Date();
+    const finalizedStatus = type === 'quote' ? 'issued' : 'finalized';
+    // Capture every successful upload even if its sibling fails. A rejected
+    // Promise.all would otherwise discard the fulfilled URL and leave an
+    // immutable orphan that cleanup can no longer address.
+    const artifactResults = await Promise.allSettled([
+      storeBillingArtifact({ tenantId, documentId, documentNumber, kind: 'pdf', content: pdf, immutableSha256: pdfSha256 }),
+      storeBillingArtifact({ tenantId, documentId, documentNumber, kind: 'xml', content: xml, immutableSha256: xmlSha256 || undefined }),
+    ]);
+    if (artifactResults[0].status === 'fulfilled') pdfBlobUrl = artifactResults[0].value;
+    if (artifactResults[1].status === 'fulfilled') xmlBlobUrl = artifactResults[1].value;
+    const artifactFailure = artifactResults.find(result => result.status === 'rejected');
+    if (artifactFailure?.status === 'rejected') throw artifactFailure.reason;
+    const paymentSnapshot = {
+      bankName: seller.bankName, accountHolder: seller.accountHolder, iban: seller.iban, bic: seller.bic,
+      paymentLinkUrl: document.paymentLinkUrl, cashDiscountBasisPoints: document.cashDiscountBasisPoints,
+      cashDiscountDays: document.cashDiscountDays,
+    };
+    const eventType = type === 'quote' ? 'issued' : 'finalized';
+    const eventPayload = { documentNumber, documentSha256, pdfSha256, xmlSha256, retentionUntil: retentionUntil.toISOString() };
+    const pdfBase64 = pdfBlobUrl ? null : Buffer.from(pdf).toString('base64');
+    const commit = await withBillingEventChainRetry(() => db.execute(sql`
+      WITH document_lock AS (
+        SELECT pg_advisory_xact_lock(hashtextextended(${`${tenantId}:${documentId}`}::text, 0))
+      ),
+      settings_guard AS MATERIALIZED (
+        SELECT settings.tenant_id
+        FROM billing_settings settings, document_lock
+        WHERE settings.tenant_id = ${tenantId}::uuid
+          AND settings.configuration_revision = ${settings.configurationRevision}
+        FOR SHARE OF settings
+      ),
+      previous_event AS MATERIALIZED (
+        SELECT event.event_hash, event.chain_position
+        FROM billing_document_events event, document_lock
+        WHERE event.tenant_id = ${tenantId}::uuid AND event.document_id = ${documentId}::uuid
+        ORDER BY event.chain_position DESC NULLS LAST, event.created_at DESC, event.id DESC
+        LIMIT 1
+      ),
+      finalized_document AS (
+        UPDATE billing_documents final_document SET
+          seller_snapshot = ${JSON.stringify(seller)}::jsonb,
+          customer_snapshot = ${JSON.stringify(buyer)}::jsonb,
+          payment_snapshot = ${JSON.stringify(paymentSnapshot)}::jsonb,
+          subtotal_net_cents = ${totals.subtotalNetCents},
+          tax_cents = ${totals.taxCents},
+          total_gross_cents = ${totals.totalGrossCents},
+          tax_breakdown = ${JSON.stringify(totals.taxBreakdown)}::jsonb,
+          discount_cents = ${totals.documentDiscountCents},
+          pdf_base64 = ${pdfBase64},
+          xml_content = ${xmlBlobUrl ? null : xml},
+          pdf_blob_url = ${pdfBlobUrl},
+          xml_blob_url = ${xmlBlobUrl},
+          pdf_sha256 = ${pdfSha256},
+          xml_sha256 = ${xmlSha256},
+          document_sha256 = ${documentSha256},
+          finalized_at = ${finalizedAt},
+          retention_until = ${retentionUntil},
+          status = ${finalizedStatus},
+          updated_at = ${finalizedAt}
+        FROM document_lock, settings_guard
+        WHERE final_document.id = ${documentId}::uuid
+          AND final_document.tenant_id = ${tenantId}::uuid
+          AND final_document.status = 'draft'
+          AND final_document.document_number = ${documentNumber}
+          AND final_document.draft_revision = ${claim.claimRevision}
+        RETURNING final_document.id
+      ),
+      inserted_event AS (
+        INSERT INTO billing_document_events (
+          tenant_id, document_id, event_type, payload, previous_hash, event_hash, chain_position
+        )
+        SELECT
+          ${tenantId}::uuid, ${documentId}::uuid, ${eventType}, ${JSON.stringify(eventPayload)}::jsonb,
+          previous_event.event_hash,
+          encode(sha256(convert_to(
+            '{"previousHash":' || CASE
+              WHEN previous_event.event_hash IS NULL THEN 'null'
+              ELSE to_json(previous_event.event_hash)::text
+            END
+            || ',"tenantId":' || to_json(${tenantId}::text)::text
+            || ',"documentId":' || to_json(${documentId}::text)::text
+            || ',"eventType":' || to_json(${eventType}::text)::text
+            || ',"payload":' || ${JSON.stringify(eventPayload)}::text || '}',
+            'UTF8'
+          )), 'hex'),
+          coalesce(previous_event.chain_position, 0) + 1
+        FROM finalized_document
+        LEFT JOIN previous_event ON true
+        RETURNING event_hash
+      )
+      SELECT finalized_document.id::text AS id, inserted_event.event_hash
+      FROM finalized_document, inserted_event
+    `));
+    const finalized = commit.rows?.[0] as { id?: string; event_hash?: string } | undefined;
+    if (!finalized?.id || !finalized.event_hash) throw new Error('Der Beleg konnte nicht atomar festgeschrieben werden.');
+    committed = true;
+    revalidatePath('/admin/billing');
+    return { success: true as const, documentNumber };
+  } catch (error) {
+    if (!committed) {
+      await Promise.allSettled([
+        deleteBillingArtifact(pdfBlobUrl),
+        deleteBillingArtifact(xmlBlobUrl),
+      ]);
+      try {
+        await db.update(billingDocuments).set({
+          documentNumber: null,
+          draftRevision: sql`${billingDocuments.draftRevision} + 1`,
+          updatedAt: new Date(),
+        }).where(and(
+          eq(billingDocuments.id, documentId),
+          eq(billingDocuments.tenantId, tenantId),
+          eq(billingDocuments.status, 'draft'),
+          eq(billingDocuments.documentNumber, documentNumber),
+          eq(billingDocuments.draftRevision, claim.claimRevision),
+        ));
+      } catch (releaseError) {
+        console.error('[Billing Finalization Claim Release Error]', releaseError instanceof Error ? releaseError.message : releaseError);
+      }
+    }
+    throw error;
+  }
 }
 
 export async function finalizeBillingDocumentAction(id: string) {

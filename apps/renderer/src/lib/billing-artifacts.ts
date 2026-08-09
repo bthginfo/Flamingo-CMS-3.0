@@ -1,8 +1,10 @@
-import { del, put } from '@vercel/blob';
+import { del, get, put } from '@vercel/blob';
+import { createHash } from 'node:crypto';
 
 const PDF_CONTENT_TYPE = 'application/pdf';
 const XML_CONTENT_TYPE = 'application/xml; charset=utf-8';
 const FETCH_TIMEOUT_MS = 5000;
+const MAX_ARTIFACT_BYTES = 25 * 1024 * 1024;
 
 type ArtifactKind = 'pdf' | 'xml';
 
@@ -51,6 +53,20 @@ function isTrustedBlobUrl(url: string) {
   }
 }
 
+function isLegacyPublicBlobUrl(url: string) {
+  try {
+    return new URL(url).hostname.endsWith('.public.blob.vercel-storage.com');
+  } catch {
+    return false;
+  }
+}
+
+export function billingArtifactMatchesSha256(content: Buffer | Uint8Array | string, expectedSha256: string | null | undefined) {
+  if (!expectedSha256 || !/^[a-f0-9]{64}$/i.test(expectedSha256)) return false;
+  const body = typeof content === 'string' ? Buffer.from(content, 'utf8') : Buffer.from(content);
+  return createHash('sha256').update(body).digest('hex') === expectedSha256.toLowerCase();
+}
+
 export async function storeBillingArtifact(input: StoreArtifactInput) {
   if (!billingArtifactStorageConfigured()) return null;
   const body = toBody(input.content);
@@ -63,7 +79,10 @@ export async function storeBillingArtifact(input: StoreArtifactInput) {
   ].join('/');
   try {
     const blob = await put(pathname, body, {
-      access: 'public',
+      // Billing documents contain personal and financial data. Their raw Blob
+      // URLs must never be usable as a second, unauthenticated download path;
+      // all delivery goes through the tenant-scoped routes below /api/billing.
+      access: 'private',
       token: process.env.BLOB_READ_WRITE_TOKEN,
       contentType: artifactContentType(input.kind),
       addRandomSuffix: false,
@@ -87,9 +106,27 @@ async function readBlobUrl(url: string) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
-    const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
-    if (!response.ok) return null;
-    return Buffer.from(await response.arrayBuffer());
+    // Keep existing finalized documents readable while old public artifacts
+    // are phased out. New artifacts always use authenticated private storage.
+    if (isLegacyPublicBlobUrl(url)) {
+      const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+      if (!response.ok) return null;
+      const declaredSize = Number(response.headers.get('content-length') || 0);
+      if (declaredSize > MAX_ARTIFACT_BYTES) return null;
+      const bytes = Buffer.from(await response.arrayBuffer());
+      return bytes.byteLength <= MAX_ARTIFACT_BYTES ? bytes : null;
+    }
+
+    if (!billingArtifactStorageConfigured()) return null;
+    const result = await get(url, {
+      access: 'private',
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+      useCache: false,
+      abortSignal: controller.signal,
+    });
+    if (!result || result.statusCode !== 200 || result.blob.size > MAX_ARTIFACT_BYTES) return null;
+    const bytes = Buffer.from(await new Response(result.stream).arrayBuffer());
+    return bytes.byteLength <= MAX_ARTIFACT_BYTES ? bytes : null;
   } catch (error) {
     console.error('[Billing Artifact Download Error]', error instanceof Error ? error.message : error);
     return null;

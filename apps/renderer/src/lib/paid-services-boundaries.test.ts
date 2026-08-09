@@ -99,6 +99,7 @@ test('billing finalization is immutable, numbered atomically and delivered with 
   assert.match(actions, /readBillingPdfArtifact\(\{ blobUrl: document\.pdfBlobUrl, base64: document\.pdfBase64 \}\)/);
   assert.match(artifacts, /isTrustedBlobUrl/);
   assert.match(artifacts, /\.public\.blob\.vercel-storage\.com/);
+  assert.match(artifacts, /access: 'private'/);
   assert.match(actions, /attachments: \[/);
   assert.match(actions, /application\/pdf/);
   assert.match(actions, /application\/xml/);

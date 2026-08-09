@@ -196,7 +196,7 @@ export async function getCollectionByKeyAction(key: string) {
 export async function getItemsAction(collectionId: string) {
   const session = await requireSession();
   const db = getDb();
-  return db.select().from(collectionItems).where(and(eq(collectionItems.collectionId, collectionId), eq(collectionItems.tenantId, session.tenantId))).orderBy(asc(collectionItems.priority), desc(collectionItems.updatedAt));
+  return db.select().from(collectionItems).where(and(eq(collectionItems.collectionId, collectionId), eq(collectionItems.tenantId, session.tenantId))).orderBy(desc(collectionItems.priority), desc(collectionItems.updatedAt), asc(collectionItems.id));
 }
 
 export async function createItemAction(collectionId: string, formData: FormData) {
@@ -299,7 +299,7 @@ export async function getCollectionLinksAction() {
   const db = getDb();
   const cols = await db.select().from(collections).where(eq(collections.tenantId, session.tenantId)).orderBy(asc(collections.key));
   const items = await db.select({ id: collectionItems.id, collectionId: collectionItems.collectionId, title: collectionItems.title, slug: collectionItems.slug })
-    .from(collectionItems).where(eq(collectionItems.tenantId, session.tenantId)).orderBy(asc(collectionItems.priority));
+    .from(collectionItems).where(eq(collectionItems.tenantId, session.tenantId)).orderBy(desc(collectionItems.priority), desc(collectionItems.updatedAt), asc(collectionItems.id));
   return cols.map(c => ({
     key: c.key,
     label: c.label,
@@ -329,7 +329,7 @@ export async function getItemWithIndustryAction(itemId: string) {
     ? { enabled: true, locales: (tenant.i18nLocales || 'de').split(','), defaultLocale: tenant.i18nDefaultLocale || 'de' }
     : undefined;
   const allItems = collectionsResult.length > 0
-    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority))
+    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(desc(collectionItems.priority), desc(collectionItems.updatedAt), asc(collectionItems.id))
     : [];
   const previewCollections = collectionsResult.map(collection => ({
     key: collection.key,

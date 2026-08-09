@@ -5,7 +5,11 @@ import { resolveDemoTenant, resolveDemoTenantBySlug } from '@/lib/snapshot';
 import { getDb } from '@/lib/db';
 import { tenants } from '@flamingo/db';
 import { eq, and, like } from 'drizzle-orm';
-import { rateLimit } from '@/lib/rate-limit';
+import {
+  consumeRendererContactRateRules,
+  getRendererContactClientAddress,
+  rendererDemoLoginRateRules,
+} from '@/lib/renderer-contact-security';
 
 const DEFAULT_DEMO_TENANT_ID = 'f50cbf53-279d-43f3-b58b-f5ae3d550ab2';
 
@@ -37,17 +41,24 @@ const SLUG_MAP: Record<string, string> = {
 };
 
 export async function GET(request: NextRequest) {
-  // Rate-limit per IP: 10 demo logins / hour. Each demo-login issues an Admin
-  // JWT that grants full CMS write access to a demo tenant, so the endpoint
-  // must not be loopable.
-  const ip = (request.headers.get('x-forwarded-for') || '').split(',')[0].trim()
-    || request.headers.get('x-real-ip')
-    || 'unknown';
-  const limit = rateLimit(`demo-login:${ip}`, 10, 60 * 60 * 1000);
-  if (!limit.ok) {
+  // Persistent IP and platform-wide caps survive cold starts and multi-instance
+  // fan-out. Store failures fail closed because this endpoint mints a token.
+  let denied;
+  try {
+    denied = await consumeRendererContactRateRules(
+      rendererDemoLoginRateRules(getRendererContactClientAddress(request.headers)),
+    );
+  } catch (error) {
+    console.error('[demo-login] rate-limit store unavailable', error);
+    return NextResponse.json(
+      { error: 'Demo login temporarily unavailable.' },
+      { status: 503, headers: { 'Retry-After': '60' } },
+    );
+  }
+  if (denied) {
     return NextResponse.json(
       { error: 'Too many demo logins, please retry later.' },
-      { status: 429, headers: { 'Retry-After': String(Math.ceil(limit.resetMs / 1000)) } },
+      { status: 429, headers: { 'Retry-After': String(denied.retryAfterSeconds) } },
     );
   }
 
@@ -100,7 +111,30 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const token = await createSessionToken(tenantId, '1h', 'demo');
+  // Apply the capability boundary once more to every resolution path,
+  // including the parameterless default. A hard-coded UUID must never bypass
+  // revocation, suspension, or removal of the explicit demo designation.
+  let demoTenant: { id: string; sessionVersion: number } | undefined;
+  try {
+    const db = getDb();
+    [demoTenant] = await db
+      .select({ id: tenants.id, sessionVersion: tenants.sessionVersion })
+      .from(tenants)
+      .where(and(
+        eq(tenants.id, tenantId),
+        eq(tenants.isDemo, true),
+        eq(tenants.status, 'active'),
+      ))
+      .limit(1);
+  } catch (e) {
+    return NextResponse.json({ error: `Failed to validate demo tenant: ${e instanceof Error ? e.message : 'unknown'}` }, { status: 500 });
+  }
+  if (!demoTenant) {
+    return NextResponse.json({ error: 'No active demo tenant found.' }, { status: 404 });
+  }
+
+  tenantId = demoTenant.id;
+  const token = await createSessionToken(tenantId, '1h', 'demo', demoTenant.sessionVersion);
   const safeNext = requestedNext?.startsWith('/admin') && !requestedNext.startsWith('/admin/login')
     ? requestedNext
     : '/admin';

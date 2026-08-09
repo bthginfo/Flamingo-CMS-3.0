@@ -169,13 +169,11 @@ export async function POST(req: NextRequest) {
     const cancellationToken = crypto.randomBytes(24).toString('hex');
     const cancellationTokenHash = crypto.createHash('sha256').update(cancellationToken).digest('hex');
 
-    // The neon-http driver has NO interactive transactions, so the former
-    // pg_advisory_xact_lock + tx wrapper (which made this endpoint throw on
-    // every request) is removed. For instant bookings we re-check conflicts
-    // immediately before inserting — this covers the common sequential case.
-    // A fully race-proof guard needs a DB exclusion constraint
-    // (btree_gist over a tstzrange of [startsAt, endsAt) per resource); tracked
-    // as a follow-up since it requires a reviewed migration.
+    // The neon-http driver has no interactive Drizzle transactions. The
+    // database trigger from 0014_booking_overlap_guard serializes confirmed
+    // inserts per tenant/resource and enforces capacity atomically. This early
+    // read only improves UX for the common sequential conflict; the trigger is
+    // the authoritative race-proof guard.
     if (settings.mode === 'instant') {
       const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt, timezone, bufferBeforeMinutes, bufferAfterMinutes });
       if (conflict) return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.' }, { status: 409 });

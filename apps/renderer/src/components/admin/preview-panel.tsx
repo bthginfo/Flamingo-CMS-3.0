@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, type RefObject } from 'react';
 import { X, Monitor, Smartphone, RefreshCw, Pencil, Maximize2, Minimize2 } from 'lucide-react';
 import { usePreview } from './preview-context';
+import { useModalFocusTrap } from '@/hooks/use-modal-focus-trap';
 
 type Props = {
   url: string;
@@ -15,23 +16,47 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
   const internalRef = useRef<HTMLIFrameElement>(null);
   const iframeRef = externalRef || internalRef;
   const containerRef = useRef<HTMLDivElement>(null);
+  const mobileDialogRef = useRef<HTMLDivElement>(null);
+  const mobileCloseRef = useRef<HTMLButtonElement>(null);
+  const desktopPanelRef = useRef<HTMLDivElement>(null);
+  const fullscreenToggleRef = useRef<HTMLButtonElement>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [scale, setScale] = useState(0.5);
   const [fullscreen, setFullscreen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const { editMode, setEditMode } = usePreview();
 
-  // Close on Escape (and leave fullscreen first if active so users don't
-  // accidentally dismiss the whole panel while in fullscreen).
   useEffect(() => {
+    const media = window.matchMedia('(max-width: 1023px)');
+    const updateViewport = () => setIsMobileViewport(media.matches);
+    updateViewport();
+    media.addEventListener('change', updateViewport);
+    return () => media.removeEventListener('change', updateViewport);
+  }, []);
+
+  useModalFocusTrap({
+    active: isMobileViewport,
+    containerRef: mobileDialogRef,
+    initialFocusRef: mobileCloseRef,
+    onEscape: onClose,
+  });
+
+  useModalFocusTrap({
+    active: !isMobileViewport && fullscreen,
+    containerRef: desktopPanelRef,
+    initialFocusRef: fullscreenToggleRef,
+    onEscape: () => setFullscreen(false),
+  });
+
+  // The regular desktop side panel is not modal, but Escape still closes it.
+  useEffect(() => {
+    if (isMobileViewport || fullscreen) return;
     function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        if (fullscreen) setFullscreen(false);
-        else onClose();
-      }
+      if (e.key === 'Escape') onClose();
     }
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose, fullscreen]);
+  }, [onClose, fullscreen, isMobileViewport]);
 
   // Calculate scale to fit container — re-runs when fullscreen toggles so
   // the iframe redraws at the right size in both layouts.
@@ -83,9 +108,9 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
   return (
     <>
       {/* Mobile: full-screen overlay */}
-      <div className="fixed inset-0 z-[60] bg-white flex flex-col lg:hidden">
+      <div ref={mobileDialogRef} role="dialog" aria-modal="true" aria-label="Live-Vorschau" tabIndex={-1} className="fixed inset-0 z-[60] bg-white flex flex-col lg:hidden">
         <div className="flex items-center gap-2 px-4 py-3 border-b bg-gray-50">
-          <button onClick={onClose} className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+          <button ref={mobileCloseRef} type="button" onClick={onClose} className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900">
             <X size={18} /> Zurück zum Editor
           </button>
           <div className="flex-1" />
@@ -95,12 +120,19 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
           </button>
         </div>
         <div className="flex-1 overflow-hidden">
-          <iframe key={refreshKey} ref={iframeRef} src={url} className="w-full h-full border-0" />
+          {isMobileViewport && (
+            <iframe key={refreshKey} ref={iframeRef} src={url} title="Live-Vorschau" className="w-full h-full border-0" />
+          )}
         </div>
       </div>
 
       {/* Desktop: side panel (or fullscreen overlay when toggled) */}
       <div
+        ref={desktopPanelRef}
+        role={fullscreen ? 'dialog' : undefined}
+        aria-modal={fullscreen ? 'true' : undefined}
+        aria-label={fullscreen ? 'Live-Vorschau im Vollbild' : undefined}
+        tabIndex={fullscreen ? -1 : undefined}
         className={
           fullscreen
             ? 'hidden lg:flex fixed inset-0 z-[70] flex-col bg-gray-900 shadow-2xl'
@@ -132,6 +164,8 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
             <RefreshCw size={15} />
           </button>
           <button
+            ref={fullscreenToggleRef}
+            type="button"
             onClick={() => setFullscreen((v) => !v)}
             className={`p-1.5 rounded text-gray-400 hover:text-gray-200 hover:bg-gray-700 ${fullscreen ? 'bg-gray-700 text-white' : ''}`}
             title={fullscreen ? 'Vollbild verlassen (Esc)' : 'Vollbild'}
@@ -152,17 +186,20 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
               height: iframeHeight * scale,
             }}
           >
-            <iframe
-              key={refreshKey}
-              ref={iframeRef}
-              src={url}
-              className="border-0 origin-top-left"
-              style={{
-                width: iframeWidth,
-                height: iframeHeight,
-                transform: `scale(${scale})`,
-              }}
-            />
+            {!isMobileViewport && (
+              <iframe
+                key={refreshKey}
+                ref={iframeRef}
+                src={url}
+                title={`Live-Vorschau – ${device === 'desktop' ? 'Desktop' : 'Mobil'}`}
+                className="border-0 origin-top-left"
+                style={{
+                  width: iframeWidth,
+                  height: iframeHeight,
+                  transform: `scale(${scale})`,
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

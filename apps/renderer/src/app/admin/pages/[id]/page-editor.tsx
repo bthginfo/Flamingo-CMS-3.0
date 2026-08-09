@@ -22,6 +22,7 @@ import { EditorWorkspaceShell } from '@/app/admin/editor/editor-workspace-shell'
 import { EditorDocumentHeader } from '@/app/admin/editor/editor-document-header';
 import { useLivePreviewMessageBridge } from '@/app/admin/editor/use-live-preview-message-bridge';
 import { getPublishFailureDescription } from '@/app/admin/publish-feedback';
+import { restoreItemAtIndex, restoreOrderByIds } from '@/lib/admin-editor-recovery';
 
 type Section = EditableSection;
 
@@ -55,6 +56,9 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   // Live preview sync
   const sectionsRef = useRef(sections);
   sectionsRef.current = sections;
+  const confirmedSectionOrderRef = useRef(initialSections.map(section => section.id));
+  const reorderQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const latestReorderRequestRef = useRef(0);
   // Forward ref to handleSectionChange so the postMessage listener (declared
   // before the handler) can invoke the latest closure without TDZ issues.
   const handleSectionChangeRef = useRef<((sectionId: string, data: Record<string, unknown>) => void) | null>(null);
@@ -84,7 +88,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     if (!hasDirty) setPage(initialPage);
   }, [initialPage, hasDirty]);
   useEffect(() => {
-    if (!hasDirty) setSections(initialSections);
+    if (!hasDirty) {
+      setSections(initialSections);
+      confirmedSectionOrderRef.current = initialSections.map(section => section.id);
+    }
   }, [initialSections, hasDirty]);
 
   // ── Data-loss protection ─────────────────────────────────────────────
@@ -131,9 +138,27 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     setSections(newOrder);
     setHasDirty(true);
     setSaved(false);
+    const nextIds = newOrder.map(section => section.id);
+    const requestId = latestReorderRequestRef.current + 1;
+    latestReorderRequestRef.current = requestId;
+    const request = reorderQueueRef.current.then(async () => {
+      const result = await reorderSectionsAction(page.id, nextIds);
+      if (!result.success) throw new Error(result.error);
+      confirmedSectionOrderRef.current = nextIds;
+    });
+    reorderQueueRef.current = request.then(() => undefined, () => undefined);
     startTransition(async () => {
-      await reorderSectionsAction(page.id, newOrder.map(s => s.id));
-      toast.success('Reihenfolge gespeichert');
+      try {
+        await request;
+        if (requestId === latestReorderRequestRef.current) toast.success('Reihenfolge gespeichert');
+      } catch {
+        if (requestId === latestReorderRequestRef.current) {
+          setSections(current => restoreOrderByIds(current, confirmedSectionOrderRef.current));
+          setHasDirty(true);
+          setSaved(false);
+          toast.error('Reihenfolge konnte nicht gespeichert werden');
+        }
+      }
     });
   }
 
@@ -143,6 +168,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         try {
           const section = await addSectionAction(page.id, type);
           if (section) {
+            confirmedSectionOrderRef.current = [...confirmedSectionOrderRef.current, section.id];
             setSections(prev => {
               const next = [...prev, section as Section];
               // Push to live preview synchronously — don't wait for the
@@ -193,7 +219,11 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             resolve(false);
             return;
           }
-          setSections(prev => [...prev, section as Section]);
+          confirmedSectionOrderRef.current = [...confirmedSectionOrderRef.current, section.id];
+          setSections(prev => {
+            const next = [...prev, section as Section];
+            return next;
+          });
           setHasDirty(true);
           setSaved(false);
           toast.success('Sektion kopiert');
@@ -212,14 +242,31 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
   function handleDeleteSection(sectionId: string) {
     if (!confirm('Sektion wirklich löschen?')) return;
+    const currentSections = sectionsRef.current;
+    const deletedIndex = currentSections.findIndex(section => section.id === sectionId);
+    const deletedSection = currentSections[deletedIndex];
+    if (!deletedSection) return;
+    const deletedPendingChange = pendingChanges.current.get(sectionId);
+    const hadPendingTypeChange = pendingTypeChanges.current.has(sectionId);
     setSections(prev => prev.filter(s => s.id !== sectionId));
     pendingChanges.current.delete(sectionId);
     pendingTypeChanges.current.delete(sectionId);
     setHasDirty(true);
     setSaved(false);
     startTransition(async () => {
-      await deleteSectionAction(sectionId, page.id);
-      toast.success('Sektion gelöscht');
+      try {
+        const result = await deleteSectionAction(sectionId, page.id);
+        if (!result.success) throw new Error(result.error);
+        confirmedSectionOrderRef.current = confirmedSectionOrderRef.current.filter(id => id !== sectionId);
+        toast.success('Sektion gelöscht');
+      } catch {
+        setSections(current => restoreItemAtIndex(current, deletedSection, deletedIndex));
+        if (deletedPendingChange) pendingChanges.current.set(sectionId, deletedPendingChange);
+        if (hadPendingTypeChange) pendingTypeChanges.current.add(sectionId);
+        setHasDirty(true);
+        setSaved(false);
+        toast.error('Sektion konnte nicht gelöscht werden');
+      }
     });
   }
 
@@ -303,6 +350,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         const newData = pendingChanges.current.get(section.id);
         return newData ? { ...section, data: newData } : section;
       }));
+      confirmedSectionOrderRef.current = currentSections.map(section => section.id);
       pendingChanges.current.clear();
       pendingTypeChanges.current.clear();
       try { localStorage.removeItem(`flamingo-draft-${page.id}`); } catch { /* best-effort */ }

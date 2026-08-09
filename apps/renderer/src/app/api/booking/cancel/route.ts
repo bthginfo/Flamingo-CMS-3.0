@@ -5,7 +5,11 @@ import { getDb } from '@/lib/db';
 import { bookingRequests, bookingSettings } from '@flamingo/db';
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { formatBookingDate } from '@/lib/booking-time';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import {
+  consumeRendererContactRateRules,
+  getRendererContactClientAddress,
+  rendererBookingCancellationRateRules,
+} from '@/lib/renderer-contact-security';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -95,10 +99,12 @@ async function loadCancellation(req: NextRequest, bookingId: string, token: stri
   if (!UUID_RE.test(bookingId) || token.length < 32 || token.length > 256) {
     return { response: htmlPage('Ungültiger Storno-Link', 'Dieser Link ist unvollständig oder ungültig.', 400) };
   }
-  const rl = rateLimit(`booking-cancel:${getClientIp(req)}`, 30, 10 * 60 * 1000);
-  if (!rl.ok) {
+  const denied = await consumeRendererContactRateRules(
+    rendererBookingCancellationRateRules(getRendererContactClientAddress(req.headers)),
+  );
+  if (denied) {
     const response = htmlPage('Zu viele Versuche', 'Bitte versuchen Sie es später erneut.', 429);
-    response.headers.set('Retry-After', String(Math.ceil(rl.resetMs / 1000)));
+    response.headers.set('Retry-After', String(denied.retryAfterSeconds));
     return { response };
   }
 

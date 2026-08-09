@@ -56,7 +56,13 @@ test('public demo flows never persist customer data', () => {
 test('demo login only accepts explicitly marked demo tenants', () => {
   const route = source('../app/admin/demo-login/route.ts');
 
-  assert.match(route, /eq\(tenants\.isDemo, true\)/);
+  const finalEligibilityCheck = route.indexOf('eq(tenants.id, tenantId)');
+  const tokenMint = route.indexOf("createSessionToken(tenantId, '1h', 'demo'");
+  assert.ok(finalEligibilityCheck > route.indexOf('if (industry)'));
+  assert.ok(tokenMint > finalEligibilityCheck);
+  assert.match(route.slice(finalEligibilityCheck, tokenMint), /eq\(tenants\.isDemo, true\)/);
+  assert.match(route.slice(finalEligibilityCheck, tokenMint), /eq\(tenants\.status, 'active'\)/);
+  assert.match(route.slice(tokenMint), /demoTenant\.sessionVersion/);
 });
 
 test('admin tenant resolution rejects suspended tenants', () => {
@@ -67,4 +73,12 @@ test('admin tenant resolution rejects suspended tenants', () => {
   assert.match(login, /tenant\.status !== 'active'/);
   assert.match(hostResolver, /eq\(tenants\.status, 'active'\)/);
   assert.match(hostResolver, /resolveActiveFixedTenantId/);
+});
+
+test('all admin sessions are checked against current tenant revocation state', () => {
+  const session = source('./session.ts');
+  assert.match(session, /tenants\.sessionVersion/);
+  assert.match(session, /tenants\.status/);
+  assert.match(session, /tenants\.isDemo/);
+  assert.match(session, /isSessionStateValid\(session, tenant\)/);
 });

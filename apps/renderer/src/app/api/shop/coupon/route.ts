@@ -4,11 +4,13 @@ import { coupons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolvePublicTenantId } from '@/lib/public-tenant';
 import { couponEffect } from '@/lib/shop-totals';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { isShopActive } from '@/lib/shop-pages';
 import {
+  consumeRendererContactRateRules,
+  getRendererContactClientAddress,
   isTrustedRendererContactOrigin,
   readBoundedRendererContactJson,
+  rendererCouponRateRules,
   RendererContactBodyInvalidError,
   RendererContactBodyTooLargeError,
 } from '@/lib/renderer-contact-security';
@@ -39,11 +41,13 @@ export async function POST(req: NextRequest) {
   if (!code) return NextResponse.json({ error: 'Code required' }, { status: 400 });
 
   // Throttle to stop brute-forcing valid coupon codes / hammering the DB.
-  const rl = rateLimit(`coupon:${tenantId}:${getClientIp(req)}`, 20, 10 * 60 * 1000);
-  if (!rl.ok) {
+  const denied = await consumeRendererContactRateRules(
+    rendererCouponRateRules(tenantId, getRendererContactClientAddress(req.headers)),
+  );
+  if (denied) {
     return NextResponse.json(
       { error: 'Zu viele Versuche. Bitte später erneut versuchen.' },
-      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+      { status: 429, headers: { 'Retry-After': String(denied.retryAfterSeconds) } },
     );
   }
 

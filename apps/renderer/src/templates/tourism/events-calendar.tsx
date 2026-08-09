@@ -69,7 +69,7 @@ function Classic({ header, events, fallbackText, showCalendarDownload, calendarB
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
           <motion.article key={`${event.title || 'item'}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: Math.min(index * 0.06, 0.3) }} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_12px_35px_rgba(20,16,12,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(20,16,12,0.13)] ${event.image ? 'grid sm:grid-cols-[220px_minmax(0,1fr)]' : 'flex'}`} data-card data-edit-collection="events" data-edit-index={index}>
-            <div className="absolute inset-x-0 top-0 z-10 h-1 bg-[var(--token-label)]" aria-hidden="true" />
+            <div className="absolute inset-x-0 top-0 z-10 h-1 bg-[var(--token-accent)]" aria-hidden="true" />
             {event.image && <div className="relative min-h-56"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover transition duration-500 group-hover:scale-[1.03]" sizes="(min-width: 1024px) 220px, (min-width: 640px) 220px, 100vw" /></div>}
             <div className="min-w-0 flex-1 p-6 sm:p-7">
               <EventMeta event={event} />

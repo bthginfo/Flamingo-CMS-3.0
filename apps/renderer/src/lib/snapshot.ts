@@ -170,7 +170,7 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
 
   const allSections = await db.select().from(pageSections).where(eq(pageSections.tenantId, tenantId)).orderBy(asc(pageSections.sortOrder));
   const allCollections = await db.select().from(collections).where(eq(collections.tenantId, tenantId));
-  const allItems = await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority));
+  const allItems = await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, tenantId), eq(collectionItems.published, true))).orderBy(desc(collectionItems.priority), desc(collectionItems.updatedAt), asc(collectionItems.id));
 
   const snapshotPages: SnapshotPage[] = allPages.map(p => ({
     id: p.id,
