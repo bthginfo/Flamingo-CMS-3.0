@@ -316,6 +316,8 @@ export function layoutFreeTextDocument(document: FreeTextDocument, options?: { f
 export type FreeTextHeaderLayout = {
   recipientLines: Array<{ text: string; bold: boolean }>;
   subjectLines: string[];
+  recipientY: number;
+  subjectLabelY: number;
   subjectY: number;
   contentStartY: number;
   fits: boolean;
@@ -332,11 +334,12 @@ export function layoutFreeTextHeader(recipient: FreeTextRecipient, subject: stri
   const subjectLines = wrapLayoutSegments([{
     text: normalizeFreeTextPdfText(subject || title), size: 15, bold: true, italic: false, underline: false,
   }], 483.28).map(line => line.map(segment => segment.text).join(''));
-  const subjectY = Math.min(620, 724 - recipientLines.length * 14 - 22);
-  const contentStartY = Math.min(570, subjectY - subjectLines.length * 19 - 24);
-  return { recipientLines, subjectLines, subjectY, contentStartY, fits: contentStartY >= 430 };
+  const recipientY = 696;
+  const subjectLabelY = Math.min(646, recipientY - recipientLines.length * 14 - 18);
+  const subjectY = subjectLabelY - 22;
+  const contentStartY = Math.min(550, subjectY - subjectLines.length * 19 - 34);
+  return { recipientLines, subjectLines, recipientY, subjectLabelY, subjectY, contentStartY, fits: contentStartY >= 420 };
 }
-
 async function embedFreeTextLogo(doc: PDFDocument, url?: string) {
   if (!url) return null;
   try {
@@ -403,29 +406,38 @@ export async function renderFreeTextDocumentPdf(input: {
     page = pdf.addPage([pageWidth, pageHeight]);
     pages.push(page);
     if (first && logo) {
-      const scale = Math.min(150 / logo.width, 52 / logo.height);
+      const scale = Math.min(136 / logo.width, 44 / logo.height);
       const width = logo.width * scale;
       const height = logo.height * scale;
-      page.drawImage(logo, { x: margin, y: 794 - height, width, height });
+      page.drawImage(logo, { x: margin, y: 800 - height, width, height });
     }
-    const sellerLines = first ? [input.seller.companyName, input.seller.street, `${input.seller.postalCode} ${input.seller.city}`] : [input.seller.companyName];
-    sellerLines.forEach((line, index) => {
-      const size = index === 0 ? (first ? 9 : 8) : 7.5;
-      const safeLine = normalizeFreeTextPdfText(line || '');
-      page.drawText(safeLine, { x: pageWidth - margin - (index === 0 ? bold : regular).widthOfTextAtSize(safeLine, size), y: 800 - index * 12, font: index === 0 ? bold : regular, size, color: index === 0 ? ink : muted });
-    });
-    page.drawLine({ start: { x: margin, y: first ? 730 : 785 }, end: { x: pageWidth - margin, y: first ? 730 : 785 }, thickness: 1, color: rgb(0.88, 0.9, 0.93) });
-    if (!first) page.drawText(normalizeFreeTextPdfText(input.title).slice(0, 60), { x: margin, y: 800, font: regular, size: 8, color: muted });
+    if (first) {
+      const companyLines = wrapPdfText(bold, input.seller.companyName || '', 9, 210, 2);
+      companyLines.forEach((line, index) => page.drawText(line, { x: pageWidth - margin - bold.widthOfTextAtSize(line, 9), y: 800 - index * 11, font: bold, size: 9, color: ink }));
+      const address = [input.seller.street, `${input.seller.postalCode} ${input.seller.city}`.trim()].filter(Boolean).join(' \u00b7 ');
+      wrapPdfText(regular, address, 7, 210, 2).forEach((line, index) => page.drawText(line, { x: pageWidth - margin - regular.widthOfTextAtSize(line, 7), y: 777 - index * 9, font: regular, size: 7, color: muted }));
+      page.drawLine({ start: { x: margin, y: 752 }, end: { x: pageWidth - margin, y: 752 }, thickness: 0.8, color: rgb(0.88, 0.9, 0.93) });
+      page.drawLine({ start: { x: margin, y: 752 }, end: { x: margin + 54, y: 752 }, thickness: 2.2, color: accent });
+    } else {
+      const safeTitle = normalizeFreeTextPdfText(input.title).slice(0, 60);
+      page.drawText(safeTitle, { x: margin, y: 800, font: regular, size: 8, color: muted });
+      const safeCompany = normalizeFreeTextPdfText(input.seller.companyName || '');
+      page.drawText(safeCompany, { x: pageWidth - margin - regular.widthOfTextAtSize(safeCompany, 8), y: 800, font: regular, size: 8, color: muted });
+      page.drawLine({ start: { x: margin, y: 785 }, end: { x: pageWidth - margin, y: 785 }, thickness: 0.8, color: rgb(0.88, 0.9, 0.93) });
+    }
     return page;
   };
 
   layout.pages.forEach((_, index) => addPage(index === 0));
   page = pages[0];
   const senderLine = [input.seller.companyName, input.seller.street, `${input.seller.postalCode} ${input.seller.city}`].filter(Boolean).join(' \u00b7 ');
-  wrapPdfText(regular, senderLine, 6.8, contentWidth, 1).forEach(line => page!.drawText(line, { x: margin, y: 744, font: regular, size: 6.8, color: muted }));
-  header.recipientLines.forEach((line, index) => page!.drawText(line.text, { x: margin, y: 724 - index * 14, font: line.bold ? bold : regular, size: 10, color: ink }));
+  wrapPdfText(regular, senderLine, 6.8, contentWidth, 1).forEach(line => page!.drawText(line, { x: margin, y: 736, font: regular, size: 6.8, color: muted }));
+  page!.drawText('EMPF\u00c4NGER', { x: margin, y: 714, font: bold, size: 6, color: accent });
+  page!.drawText('DATUM', { x: pageWidth - margin - bold.widthOfTextAtSize('DATUM', 6), y: 714, font: bold, size: 6, color: accent });
+  header.recipientLines.forEach((line, index) => page!.drawText(line.text, { x: margin, y: header.recipientY - index * 14, font: line.bold ? bold : regular, size: 10, color: ink }));
   const dateText = new Intl.DateTimeFormat('de-DE').format(input.issueDate);
-  page!.drawText(dateText, { x: pageWidth - margin - regular.widthOfTextAtSize(dateText, 9), y: 650, font: regular, size: 9, color: muted });
+  page!.drawText(dateText, { x: pageWidth - margin - regular.widthOfTextAtSize(dateText, 9), y: header.recipientY, font: regular, size: 9, color: muted });
+  page!.drawText('BETREFF', { x: margin, y: header.subjectLabelY, font: bold, size: 6, color: accent });
   header.subjectLines.forEach((line, index) => page!.drawText(line, { x: margin, y: header.subjectY - index * 19, font: bold, size: 15, color: ink }));
 
   layout.pages.forEach((layoutPage, pageIndex) => {

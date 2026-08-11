@@ -1,237 +1,244 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1778841828807,
-      "tag": "0000_orange_network",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1779880000000,
-      "tag": "0001_crm_customers",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1779881000000,
-      "tag": "0002_florist_industry",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1779882000000,
-      "tag": "0003_location_lead_shared",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1779883000000,
-      "tag": "0004_crm_blog_posts",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1779884000000,
-      "tag": "0005_booking_addon",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1779885000000,
-      "tag": "0006_booking_hardening",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1779886000000,
-      "tag": "0007_booking_calendar_blocks",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1779887000000,
-      "tag": "0008_booking_service_rules",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1779888000000,
-      "tag": "0009_instagram_integration",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1749427200000,
-      "tag": "0010_media_folder",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "7",
-      "when": 1781222400000,
-      "tag": "0011_unique_active_published_snapshot",
-      "breakpoints": true
-    },
-    {
-      "idx": 12,
-      "version": "7",
-      "when": 1781222500000,
-      "tag": "0012_media_assets_dedupe_unique",
-      "breakpoints": true
-    },
-    {
-      "idx": 13,
-      "version": "7",
-      "when": 1781222600000,
-      "tag": "0013_verein_industry",
-      "breakpoints": true
-    },
-    {
-      "idx": 14,
-      "version": "7",
-      "when": 1781222700000,
-      "tag": "0014_booking_overlap_guard",
-      "breakpoints": true
-    },
-    {
-      "idx": 15,
-      "version": "7",
-      "when": 1781222800000,
-      "tag": "0015_section_definition_identity",
-      "breakpoints": true
-    },
-    {
-      "idx": 16,
-      "version": "7",
-      "when": 1783728000000,
-      "tag": "0016_form_submission_payload",
-      "breakpoints": true
-    },
-    {
-      "idx": 17,
-      "version": "7",
-      "when": 1783814400000,
-      "tag": "0017_marketing_security",
-      "breakpoints": true
-    },
-    {
-      "idx": 18,
-      "version": "7",
-      "when": 1783900800000,
-      "tag": "0018_public_flow_security",
-      "breakpoints": true
-    },
-    {
-      "idx": 19,
-      "version": "7",
-      "when": 1783987200000,
-      "tag": "0019_business_profile",
-      "breakpoints": true
-    },
-    {
-      "idx": 20,
-      "version": "7",
-      "when": 1784419200000,
-      "tag": "0020_standalone_tenant_databases",
-      "breakpoints": true
-    },
-    {
-      "idx": 21,
-      "version": "7",
-      "when": 1784505600000,
-      "tag": "0021_billing_customer_management",
-      "breakpoints": true
-    },
-    {
-      "idx": 22,
-      "version": "7",
-      "when": 1784592000000,
-      "tag": "0022_billing_operations_suite",
-      "breakpoints": true
-    },
-    {
-      "idx": 23,
-      "version": "7",
-      "when": 1784678400000,
-      "tag": "0023_standalone_free_hardening",
-      "breakpoints": true
-    },
-    {
-      "idx": 24,
-      "version": "7",
-      "when": 1784764800000,
-      "tag": "0024_billing_logo_display",
-      "breakpoints": true
-    },
-    {
-      "idx": 25,
-      "version": "7",
-      "when": 1784851200000,
-      "tag": "0025_billing_artifact_blob_storage",
-      "breakpoints": true
-    },
-    {
-      "idx": 26,
-      "version": "7",
-      "when": 1785724800000,
-      "tag": "0026_custom_form_delivery_idempotency",
-      "breakpoints": true
-    },
-    {
-      "idx": 27,
-      "version": "7",
-      "when": 1784937600000,
-      "tag": "0027_published_snapshot_versions",
-      "breakpoints": true
-    },
-    {
-      "idx": 28,
-      "version": "7",
-      "when": 1785974400000,
-      "tag": "0028_billing_free_text_documents",
-      "breakpoints": true
-    },
-    {
-      "idx": 29,
-      "version": "7",
-      "when": 1786233600000,
-      "tag": "0029_admin_session_revocation",
-      "breakpoints": true
-    },
-    {
-      "idx": 30,
-      "version": "7",
-      "when": 1786320000000,
-      "tag": "0030_provisioning_cutover_hardening",
-      "breakpoints": true
-    },
-    {
-      "idx": 31,
-      "version": "7",
-      "when": 1786406400000,
-      "tag": "0031_billing_event_linear_chain",
-      "breakpoints": true
-    },
-    {
-      "idx": 32,
-      "version": "7",
-      "when": 1786492800000,
-      "tag": "0032_customer_billing_address_compat",
-      "breakpoints": true
-    }
-  ]
+    "version":  "7",
+    "dialect":  "postgresql",
+    "entries":  [
+                    {
+                        "idx":  0,
+                        "version":  "7",
+                        "when":  1778841828807,
+                        "tag":  "0000_orange_network",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  1,
+                        "version":  "7",
+                        "when":  1779880000000,
+                        "tag":  "0001_crm_customers",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  2,
+                        "version":  "7",
+                        "when":  1779881000000,
+                        "tag":  "0002_florist_industry",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  3,
+                        "version":  "7",
+                        "when":  1779882000000,
+                        "tag":  "0003_location_lead_shared",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  4,
+                        "version":  "7",
+                        "when":  1779883000000,
+                        "tag":  "0004_crm_blog_posts",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  5,
+                        "version":  "7",
+                        "when":  1779884000000,
+                        "tag":  "0005_booking_addon",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  6,
+                        "version":  "7",
+                        "when":  1779885000000,
+                        "tag":  "0006_booking_hardening",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  7,
+                        "version":  "7",
+                        "when":  1779886000000,
+                        "tag":  "0007_booking_calendar_blocks",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  8,
+                        "version":  "7",
+                        "when":  1779887000000,
+                        "tag":  "0008_booking_service_rules",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  9,
+                        "version":  "7",
+                        "when":  1779888000000,
+                        "tag":  "0009_instagram_integration",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  10,
+                        "version":  "7",
+                        "when":  1749427200000,
+                        "tag":  "0010_media_folder",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  11,
+                        "version":  "7",
+                        "when":  1781222400000,
+                        "tag":  "0011_unique_active_published_snapshot",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  12,
+                        "version":  "7",
+                        "when":  1781222500000,
+                        "tag":  "0012_media_assets_dedupe_unique",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  13,
+                        "version":  "7",
+                        "when":  1781222600000,
+                        "tag":  "0013_verein_industry",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  14,
+                        "version":  "7",
+                        "when":  1781222700000,
+                        "tag":  "0014_booking_overlap_guard",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  15,
+                        "version":  "7",
+                        "when":  1781222800000,
+                        "tag":  "0015_section_definition_identity",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  16,
+                        "version":  "7",
+                        "when":  1783728000000,
+                        "tag":  "0016_form_submission_payload",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  17,
+                        "version":  "7",
+                        "when":  1783814400000,
+                        "tag":  "0017_marketing_security",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  18,
+                        "version":  "7",
+                        "when":  1783900800000,
+                        "tag":  "0018_public_flow_security",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  19,
+                        "version":  "7",
+                        "when":  1783987200000,
+                        "tag":  "0019_business_profile",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  20,
+                        "version":  "7",
+                        "when":  1784419200000,
+                        "tag":  "0020_standalone_tenant_databases",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  21,
+                        "version":  "7",
+                        "when":  1784505600000,
+                        "tag":  "0021_billing_customer_management",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  22,
+                        "version":  "7",
+                        "when":  1784592000000,
+                        "tag":  "0022_billing_operations_suite",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  23,
+                        "version":  "7",
+                        "when":  1784678400000,
+                        "tag":  "0023_standalone_free_hardening",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  24,
+                        "version":  "7",
+                        "when":  1784764800000,
+                        "tag":  "0024_billing_logo_display",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  25,
+                        "version":  "7",
+                        "when":  1784851200000,
+                        "tag":  "0025_billing_artifact_blob_storage",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  26,
+                        "version":  "7",
+                        "when":  1785724800000,
+                        "tag":  "0026_custom_form_delivery_idempotency",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  27,
+                        "version":  "7",
+                        "when":  1784937600000,
+                        "tag":  "0027_published_snapshot_versions",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  28,
+                        "version":  "7",
+                        "when":  1785974400000,
+                        "tag":  "0028_billing_free_text_documents",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  29,
+                        "version":  "7",
+                        "when":  1786233600000,
+                        "tag":  "0029_admin_session_revocation",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  30,
+                        "version":  "7",
+                        "when":  1786320000000,
+                        "tag":  "0030_provisioning_cutover_hardening",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  31,
+                        "version":  "7",
+                        "when":  1786406400000,
+                        "tag":  "0031_billing_event_linear_chain",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  32,
+                        "version":  "7",
+                        "when":  1786492800000,
+                        "tag":  "0032_customer_billing_address_compat",
+                        "breakpoints":  true
+                    },
+                    {
+                        "idx":  33,
+                        "version":  "7",
+                        "when":  1786579200000,
+                        "tag":  "0033_mutable_free_text_documents",
+                        "breakpoints":  true
+                    }
+                ]
 }
