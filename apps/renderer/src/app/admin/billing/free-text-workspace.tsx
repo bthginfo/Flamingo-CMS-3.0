@@ -70,7 +70,7 @@ export function FreeTextWorkspace({ customers, settings, documentId, onOpen, onB
         <button type="button" disabled={pending} onClick={() => void create()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 disabled:opacity-50"><Plus className="size-4" /> Freitext-Dokument</button>
       </div>
       <div className="mb-4 grid gap-2 rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm sm:grid-cols-[minmax(180px,1fr)_160px_170px]" aria-label="Schreiben filtern">
-        <label className="text-xs font-semibold text-zinc-600">Suche<input className={`${field} mt-1`} value={query} onChange={event => setQuery(event.target.value)} placeholder="Titel, Betreff, Empf\u00e4nger" /></label>
+        <label className="text-xs font-semibold text-zinc-600">Suche<input className={`${field} mt-1`} value={query} onChange={event => setQuery(event.target.value)} placeholder="Titel, Betreff, Empfänger" /></label>
         <label className="text-xs font-semibold text-zinc-600">Status<select className={`${field} mt-1`} value={statusFilter} onChange={event => setStatusFilter(event.target.value as typeof statusFilter)}><option value="all">Alle</option><option value="draft">Entw\u00fcrfe</option><option value="finalizing">In Verarbeitung</option><option value="finalized">Festgeschrieben</option></select></label>
         <label className="text-xs font-semibold text-zinc-600">Bearbeitet ab<input type="date" className={`${field} mt-1`} value={updatedAfter} onChange={event => setUpdatedAfter(event.target.value)} /></label>
       </div>
