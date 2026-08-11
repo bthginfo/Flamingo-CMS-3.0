@@ -349,25 +349,49 @@ function isMissingBillingLogoDisplayColumn(error: unknown) {
   return /logo_display|column .* does not exist/i.test(message);
 }
 
+function collectErrorMessages(error: unknown) {
+  const messages: string[] = [];
+  const seen = new Set<unknown>();
+  let current: unknown = error;
+
+  for (let depth = 0; depth < 5 && current && !seen.has(current); depth += 1) {
+    seen.add(current);
+    if (current instanceof Error) {
+      if (current.message) messages.push(current.message);
+      current = (current as Error & { cause?: unknown }).cause;
+      continue;
+    }
+    if (typeof current === 'object' && current !== null && 'message' in current) {
+      const value = current as { message?: unknown; cause?: unknown };
+      if (typeof value.message === 'string' && value.message) messages.push(value.message);
+      current = value.cause;
+      continue;
+    }
+    break;
+  }
+
+  return messages.join('\n');
+}
+
 function actionErrorMessage(error: unknown) {
   if (error instanceof z.ZodError) {
     return error.issues.map(issue => issue.message).filter(Boolean).slice(0, 3).join(' · ') || 'Bitte prüfen Sie die Eingaben.';
   }
-  if (!(error instanceof Error)) return 'Die Aktion konnte nicht abgeschlossen werden.';
-  if (/customers_tenant_email_idx|duplicate key.*customers/i.test(error.message)) {
+  const messages = collectErrorMessages(error);
+  if (/customers_tenant_email_idx|duplicate key.*customers/i.test(messages)) {
     return 'Diese E-Mail ist bereits bei einem Kunden hinterlegt.';
   }
-  if (/customer_custom_fields_tenant_key_idx|duplicate key.*customer_custom_field/i.test(error.message)) {
+  if (/customer_custom_fields_tenant_key_idx|duplicate key.*customer_custom_field/i.test(messages)) {
     return 'Ein Stammdatenfeld mit diesem technischen Schlüssel existiert bereits.';
   }
-  if (/relation .* does not exist|column .* does not exist|database schema|schema/i.test(error.message)) {
+  if (/relation .* does not exist|column .* does not exist|database schema|schema/i.test(messages)) {
     return 'Die Datenbank dieses Tenants ist noch nicht vollständig migriert.';
   }
-  return error.message || 'Die Aktion konnte nicht abgeschlossen werden.';
+  return 'Die Aktion konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.';
 }
 
 function logBillingActionError(scope: string, error: unknown) {
-  if (error instanceof Error && /relation .* does not exist|column .* does not exist|database schema|schema/i.test(error.message)) {
+  if (/relation .* does not exist|column .* does not exist|database schema|schema/i.test(collectErrorMessages(error))) {
     console.error(`[Billing] ${scope} failed: tenant database schema is incomplete`, error);
     return;
   }

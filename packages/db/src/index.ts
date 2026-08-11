@@ -12,7 +12,7 @@ export function createDb(databaseUrl: string) {
 
 export type Database = ReturnType<typeof createDb>;
 
-export const DATABASE_SCHEMA_VERSION = 31;
+export const DATABASE_SCHEMA_VERSION = 32;
 
 const RUNTIME_DATABASE_ROLE_PREFIX = 'flamingo_app';
 const STATEMENT_BREAKPOINT = /^\s*-->\s*statement-breakpoint\s*$/m;

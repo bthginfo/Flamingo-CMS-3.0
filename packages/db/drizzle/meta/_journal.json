@@ -225,6 +225,13 @@
       "when": 1786406400000,
       "tag": "0031_billing_event_linear_chain",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1786492800000,
+      "tag": "0032_customer_billing_address_compat",
+      "breakpoints": true
     }
   ]
 }
