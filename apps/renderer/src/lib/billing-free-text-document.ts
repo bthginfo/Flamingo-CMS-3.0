@@ -334,8 +334,8 @@ export function layoutFreeTextHeader(recipient: FreeTextRecipient, subject: stri
   const subjectLines = wrapLayoutSegments([{
     text: normalizeFreeTextPdfText(subject || title), size: 15, bold: true, italic: false, underline: false,
   }], 483.28).map(line => line.map(segment => segment.text).join(''));
-  const recipientY = 696;
-  const subjectLabelY = Math.min(646, recipientY - recipientLines.length * 14 - 18);
+  const recipientY = 678;
+  const subjectLabelY = Math.min(622, recipientY - recipientLines.length * 14 - 18);
   const subjectY = subjectLabelY - 22;
   const contentStartY = Math.min(550, subjectY - subjectLines.length * 19 - 34);
   return { recipientLines, subjectLines, recipientY, subjectLabelY, subjectY, contentStartY, fits: contentStartY >= 420 };
@@ -416,8 +416,8 @@ export async function renderFreeTextDocumentPdf(input: {
       companyLines.forEach((line, index) => page.drawText(line, { x: pageWidth - margin - bold.widthOfTextAtSize(line, 9), y: 800 - index * 11, font: bold, size: 9, color: ink }));
       const address = [input.seller.street, `${input.seller.postalCode} ${input.seller.city}`.trim()].filter(Boolean).join(' \u00b7 ');
       wrapPdfText(regular, address, 7, 210, 2).forEach((line, index) => page.drawText(line, { x: pageWidth - margin - regular.widthOfTextAtSize(line, 7), y: 777 - index * 9, font: regular, size: 7, color: muted }));
-      page.drawLine({ start: { x: margin, y: 752 }, end: { x: pageWidth - margin, y: 752 }, thickness: 0.8, color: rgb(0.88, 0.9, 0.93) });
-      page.drawLine({ start: { x: margin, y: 752 }, end: { x: margin + 54, y: 752 }, thickness: 2.2, color: accent });
+      page.drawLine({ start: { x: margin, y: 738 }, end: { x: pageWidth - margin, y: 738 }, thickness: 0.8, color: rgb(0.88, 0.9, 0.93) });
+      page.drawLine({ start: { x: margin, y: 738 }, end: { x: margin + 54, y: 738 }, thickness: 2.2, color: accent });
     } else {
       const safeTitle = normalizeFreeTextPdfText(input.title).slice(0, 60);
       page.drawText(safeTitle, { x: margin, y: 800, font: regular, size: 8, color: muted });
@@ -431,8 +431,8 @@ export async function renderFreeTextDocumentPdf(input: {
   layout.pages.forEach((_, index) => addPage(index === 0));
   page = pages[0];
   const senderLine = [input.seller.companyName, input.seller.street, `${input.seller.postalCode} ${input.seller.city}`].filter(Boolean).join(' \u00b7 ');
-  wrapPdfText(regular, senderLine, 6.8, contentWidth, 1).forEach(line => page!.drawText(line, { x: margin, y: 736, font: regular, size: 6.8, color: muted }));
-  page!.drawText('EMPF\u00c4NGER', { x: margin, y: 714, font: bold, size: 6, color: accent });
+  wrapPdfText(regular, senderLine, 6.8, contentWidth, 1).forEach(line => page!.drawText(line, { x: margin, y: 723, font: regular, size: 6.8, color: muted }));
+  page!.drawText('EMPF\u00c4NGER', { x: margin, y: 698, font: bold, size: 6, color: accent });
   page!.drawText('DATUM', { x: pageWidth - margin - bold.widthOfTextAtSize('DATUM', 6), y: 714, font: bold, size: 6, color: accent });
   header.recipientLines.forEach((line, index) => page!.drawText(line.text, { x: margin, y: header.recipientY - index * 14, font: line.bold ? bold : regular, size: 10, color: ink }));
   const dateText = new Intl.DateTimeFormat('de-DE').format(input.issueDate);
