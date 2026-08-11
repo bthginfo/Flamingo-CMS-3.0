@@ -639,6 +639,22 @@ export async function saveBillingCustomerAction(input: unknown) {
       revalidatePath('/admin/billing');
       return { success: true as const, id: saved.id };
     }
+    const [existingCustomer] = await db.select({ id: customers.id, archivedAt: customers.archivedAt })
+      .from(customers)
+      .where(and(eq(customers.tenantId, tenantId), sql`lower(${customers.email}) = lower(${value.email})`))
+      .limit(1);
+    if (existingCustomer) {
+      if (!existingCustomer.archivedAt) {
+        return { success: false as const, error: 'Diese E-Mail ist bereits bei einem Kunden hinterlegt.' };
+      }
+      const [restored] = await db.update(customers)
+        .set({ ...update, archivedAt: null })
+        .where(and(eq(customers.id, existingCustomer.id), eq(customers.tenantId, tenantId)))
+        .returning({ id: customers.id });
+      if (!restored) return { success: false as const, error: 'Archivierter Kunde konnte nicht wiederhergestellt werden.' };
+      revalidatePath('/admin/billing');
+      return { success: true as const, id: restored.id };
+    }
     const customerNumber = await allocateCustomerNumber(tenantId);
     const [saved] = await db.insert(customers).values({ tenantId, customerNumber, ...update }).returning({ id: customers.id });
     revalidatePath('/admin/billing');
