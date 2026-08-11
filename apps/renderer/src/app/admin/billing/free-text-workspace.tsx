@@ -147,7 +147,7 @@ function ComposerLoaded({ detail, customers, settings, pending, startTransition,
   });
   const save = () => run(() => saveFreeTextDocumentAction(payload()), '\u00c4nderungen gespeichert', () => window.location.reload());
   const finalize = () => run(() => finalizeFreeTextDocumentAction(payload()), 'PDF erstellt', () => window.location.reload());
-  const remove = () => { if (window.confirm('Dieses Schreiben mit seiner PDF-Datei wirklich l\u00f6schen?')) run(() => deleteFreeTextDocumentAction(detail.id), 'Schreiben gel\u00f6scht', onBack); };
+  const remove = () => { if (window.confirm('Dieses Schreiben mit seiner PDF-Datei wirklich l\u00f6schen?')) run(() => deleteFreeTextDocumentAction(detail.id), 'Schreiben gel\u00f6scht', () => window.location.replace('/admin/billing?view=letters')); };
   useEffect(() => {
     if (!confirmFinalize) return;
     confirmRef.current?.focus();

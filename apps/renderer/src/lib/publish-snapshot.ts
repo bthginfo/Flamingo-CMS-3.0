@@ -75,36 +75,34 @@ export async function publishSnapshotAtomically(
       FROM published_snapshots, tenant_lock
       WHERE tenant_id = ${tenantId}
     ),
-    created AS (
-      INSERT INTO published_snapshots (tenant_id, version, snapshot, checksum, created_by, is_active)
-      SELECT ${tenantId}, latest_version.version + 1, ${JSON.stringify(snapshot)}::jsonb,
-        ${checksum}, ${createdBy}, false
+    publication_decision AS (
+      SELECT latest_version.version + 1 AS next_version,
+        NOT EXISTS (SELECT 1 FROM current_active WHERE current_active.checksum = ${checksum}) AS should_publish
       FROM latest_version
-      WHERE NOT EXISTS (
-        SELECT 1 FROM current_active WHERE current_active.checksum = ${checksum}
-      )
-      RETURNING id, version
     ),
     deactivated AS (
       UPDATE published_snapshots
       SET is_active = false
       WHERE tenant_id = ${tenantId}
         AND is_active = true
-        AND EXISTS (SELECT 1 FROM created)
+        AND (SELECT should_publish FROM publication_decision)
       RETURNING id
     ),
-    activated AS (
-      UPDATE published_snapshots
-      SET is_active = true
-      WHERE id = (SELECT id FROM created)
-        AND tenant_id = ${tenantId}
-        AND (SELECT COUNT(*) FROM deactivated) >= 0
+    deactivation_barrier AS (
+      SELECT COUNT(*)::integer AS deactivated_count FROM deactivated
+    ),
+    created AS (
+      INSERT INTO published_snapshots (tenant_id, version, snapshot, checksum, created_by, is_active)
+      SELECT ${tenantId}, publication_decision.next_version, ${JSON.stringify(snapshot)}::jsonb,
+        ${checksum}, ${createdBy}, true
+      FROM publication_decision, deactivation_barrier
+      WHERE publication_decision.should_publish
       RETURNING id, version
     ),
     history AS (
       INSERT INTO publish_history (tenant_id, snapshot_id, previous_snapshot_id, action, note)
-      SELECT ${tenantId}, activated.id, current_active.id, 'publish', CONCAT('v', activated.version)
-      FROM activated
+      SELECT ${tenantId}, created.id, current_active.id, 'publish', CONCAT('v', created.version)
+      FROM created
       LEFT JOIN current_active ON true
       RETURNING id
     ),
@@ -117,7 +115,7 @@ export async function publishSnapshotAtomically(
       RETURNING id
     )
     SELECT
-      COALESCE((SELECT version FROM activated), (SELECT version FROM current_active)) AS version,
+      COALESCE((SELECT version FROM created), (SELECT version FROM current_active)) AS version,
       NOT EXISTS (SELECT 1 FROM created) AS unchanged
   `);
 

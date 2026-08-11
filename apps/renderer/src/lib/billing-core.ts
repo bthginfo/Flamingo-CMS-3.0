@@ -414,8 +414,11 @@ async function embedLogo(doc: PDFDocument, url?: string) {
     if (!response.ok || Number(response.headers.get('content-length') || 0) > 2_000_000) return null;
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (bytes.byteLength > 2_000_000) return null;
-    const mime = response.headers.get('content-type') || '';
-    return mime.includes('png') ? await doc.embedPng(bytes) : await doc.embedJpg(bytes);
+    const isPng = bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 && bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a;
+    const isJpeg = bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    if (isPng) return await doc.embedPng(bytes);
+    if (isJpeg) return await doc.embedJpg(bytes);
+    return null;
   } catch { return null; }
 }
 

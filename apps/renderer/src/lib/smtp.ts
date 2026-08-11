@@ -125,14 +125,14 @@ export function resolveRendererPlatformSmtpProfiles(
       port: environment.PLATFORM_SMTP_PORT || 587,
       user: environment.PLATFORM_SMTP_USER,
       pass: environment.PLATFORM_SMTP_PASS,
-      from: environment.PLATFORM_SMTP_FROM,
+      from: environment.PLATFORM_SMTP_FROM || environment.PLATFORM_SMTP_USER,
     }),
     normalizeSmtpConfig({
       host: environment.SMTP_HOST,
       port: environment.SMTP_PORT || 587,
       user: environment.SMTP_USER,
       pass: environment.SMTP_PASS,
-      from: environment.SMTP_FROM,
+      from: environment.SMTP_FROM || environment.SMTP_USER,
     }),
   ].filter((configuration): configuration is SmtpConfig => configuration !== null);
 }
