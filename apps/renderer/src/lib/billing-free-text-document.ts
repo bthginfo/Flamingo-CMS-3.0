@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { BillingSellerSnapshot } from './billing-core';
 
 export const FREE_TEXT_FONT_SIZES = [8, 9, 10, 11, 12, 14, 18, 24, 30] as const;
+export const FREE_TEXT_RECIPIENT_LINE_HEIGHT = 16;
 
 const textMarkSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('bold') }).strict(),
@@ -335,7 +336,7 @@ export function layoutFreeTextHeader(recipient: FreeTextRecipient, subject: stri
     text: normalizeFreeTextPdfText(subject || title), size: 15, bold: true, italic: false, underline: false,
   }], 483.28).map(line => line.map(segment => segment.text).join(''));
   const recipientY = 678;
-  const subjectLabelY = Math.min(622, recipientY - recipientLines.length * 14 - 18);
+  const subjectLabelY = Math.min(622, recipientY - recipientLines.length * FREE_TEXT_RECIPIENT_LINE_HEIGHT - 18);
   const subjectY = subjectLabelY - 22;
   const contentStartY = Math.min(550, subjectY - subjectLines.length * 19 - 34);
   return { recipientLines, subjectLines, recipientY, subjectLabelY, subjectY, contentStartY, fits: contentStartY >= 420 };
@@ -349,7 +350,11 @@ async function embedFreeTextLogo(doc: PDFDocument, url?: string) {
     if (!response.ok || Number(response.headers.get('content-length') || 0) > 2_000_000) return null;
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (!bytes.byteLength || bytes.byteLength > 2_000_000) return null;
-    return (response.headers.get('content-type') || '').includes('png') ? doc.embedPng(bytes) : doc.embedJpg(bytes);
+    const isPng = bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+    const isJpeg = bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    if (isPng) return await doc.embedPng(bytes);
+    if (isJpeg) return await doc.embedJpg(bytes);
+    return null;
   } catch { return null; }
 }
 
@@ -434,7 +439,7 @@ export async function renderFreeTextDocumentPdf(input: {
   wrapPdfText(regular, senderLine, 6.8, contentWidth, 1).forEach(line => page!.drawText(line, { x: margin, y: 723, font: regular, size: 6.8, color: muted }));
   page!.drawText('EMPF\u00c4NGER', { x: margin, y: 698, font: bold, size: 6, color: accent });
   page!.drawText('DATUM', { x: pageWidth - margin - bold.widthOfTextAtSize('DATUM', 6), y: 714, font: bold, size: 6, color: accent });
-  header.recipientLines.forEach((line, index) => page!.drawText(line.text, { x: margin, y: header.recipientY - index * 14, font: line.bold ? bold : regular, size: 10, color: ink }));
+  header.recipientLines.forEach((line, index) => page!.drawText(line.text, { x: margin, y: header.recipientY - index * FREE_TEXT_RECIPIENT_LINE_HEIGHT, font: line.bold ? bold : regular, size: 10, color: ink }));
   const dateText = new Intl.DateTimeFormat('de-DE').format(input.issueDate);
   page!.drawText(dateText, { x: pageWidth - margin - regular.widthOfTextAtSize(dateText, 9), y: header.recipientY, font: regular, size: 9, color: muted });
   page!.drawText('BETREFF', { x: margin, y: header.subjectLabelY, font: bold, size: 6, color: accent });
