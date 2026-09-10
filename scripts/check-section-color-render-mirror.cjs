@@ -17,9 +17,10 @@
 const path = require('path');
 const gen = require('./generate-section-color-contracts.cjs');
 
-// Mirror of resolver.ts INDUSTRY_CONTRACT_ALIASES (keep in sync).
-const INDUSTRY_ALIASES = { handwerk: 'tradesman' };
-const pascal = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+// Exercise production resolution, not a second implementation of its bugs.
+require('tsx/cjs');
+const { getFieldsForSection } = require('../apps/renderer/src/lib/section-color-resolver.ts');
+const { LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER, SECTION_INDUSTRY_ALIASES } = require('../apps/renderer/src/lib/section-industry-config.ts');
 
 const componentFieldCache = new Map();
 
@@ -42,7 +43,6 @@ function fieldsForComponent(componentName, componentToFile, cssVarToField) {
 function main() {
   const { cssVarToField } = gen.loadFieldRegistry();
   const { componentToFile, industryTypeComponent, sharedTypeComponent } = gen.loadTemplateRegistry();
-  const { perIndustry, perType, perAny } = gen.build();
 
   // Reconstruct the renderer's three maps.
   const industryMap = {};          // industry -> { type -> componentName }
@@ -52,26 +52,20 @@ function main() {
   const sharedMap = {};            // type -> componentName
   for (const { type, componentName } of sharedTypeComponent) sharedMap[type] = componentName;
   const allMap = {};               // type -> componentName (last industry wins, mirrors reduce)
-  for (const { type, componentName } of industryTypeComponent) allMap[type] = componentName;
-
-  // Mirror of resolveColorContractForSection().
-  const resolve = (type, industry) => {
-    const norm = INDUSTRY_ALIASES[industry] || industry;
-    const key = type + pascal(norm);
-    if (perIndustry[key] && perIndustry[key].length) return new Set(perIndustry[key]);
-    if (perType[type] && perType[type].length) return new Set(perType[type]);
-    if (perAny[type] && perAny[type].length) return new Set(perAny[type]);
-    return new Set(['sectionBg']);
-  };
+  for (const industry of LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER) {
+    Object.assign(allMap, industryMap[industry]);
+  }
+  const resolve = (type, industry) => new Set(getFieldsForSection(type, industry));
 
   // The renderer's component pick for (industry, type): specific ?? shared ?? all.
   const renderComponent = (type, industry) => {
-    const specific = industryMap[industry] || industryMap.tradesman || {};
+    const normalized = SECTION_INDUSTRY_ALIASES[industry?.trim().toLowerCase()] || industry?.trim().toLowerCase();
+    const specific = industryMap[normalized] || industryMap.tradesman || {};
     return specific[type] || sharedMap[type] || allMap[type] || null;
   };
 
   const violations = [];
-  const industries = [...new Set([...Object.keys(industryMap), 'handwerk', 'realstate'])];
+  const industries = [...new Set([...Object.keys(industryMap), ...Object.keys(SECTION_INDUSTRY_ALIASES), 'realstate', '', ' HOTEL '])];
   const allTypes = new Set([...Object.keys(allMap), ...Object.keys(sharedMap)]);
 
   for (const industry of industries) {

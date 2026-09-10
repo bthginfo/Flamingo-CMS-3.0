@@ -1,3 +1,4 @@
+import { getFieldsForSection } from './section-color-resolver';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
@@ -82,4 +83,19 @@ test('addon sections are locked consistently in specific and borrowed catalogs',
   assert.notEqual(withShop.find(section => section.type === 'shopCart')?.locked, true);
   const withoutBooking = getSectionTypesForIndustry('hotel', { hasBooking: false });
   assert.equal(withoutBooking.find(section => section.type === 'bookingWidget')?.locked, true);
+});
+
+
+test('CMS color contracts match the exact rendered definition for every industry and type', () => {
+  for (const industry of [...INDUSTRIES, 'handwerk', 'eishockey', 'shop', '', ' HOTEL ']) {
+    for (const type of Object.keys(getIndustryTemplates(industry))) {
+      const rendered = resolveSectionDefinition({ type, industry });
+      assert.ok(rendered);
+      assert.deepEqual(
+        getFieldsForSection(type, industry),
+        getFieldsForSection(type, industry, rendered.key),
+        `Color mapping drift: ${industry}:${type} -> ${rendered.key}`,
+      );
+    }
+  }
 });

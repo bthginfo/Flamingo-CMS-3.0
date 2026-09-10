@@ -20,34 +20,36 @@
 //     soon as the override is set on the section.
 export function scanSectionTokens(root: Element): Set<string> {
   const found = new Set<string>();
-  const clone = root.cloneNode(true) as HTMLElement;
-  clone.querySelectorAll('style').forEach((s) => s.remove());
-  const html = clone.outerHTML;
-  const re = /var\(\s*(--token-[\w-]+)\s*(?:,[^)]*)?\)/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) !== null) found.add(m[1]);
+  // Read only rendering attributes: text content and injected styles are not
+  // evidence of a consumed role. Avoid cloning the whole subtree on every edit.
+  const re = /var\(\s*(--token-[\w-]+)/g;
+  for (const element of [root, ...Array.from(root.querySelectorAll('[class], [style]'))]) {
+    if (element.tagName.toLowerCase() === 'style') continue;
+    const attributes = `${element.getAttribute('class') || ''} ${element.getAttribute('style') || ''}`;
+    for (const match of attributes.matchAll(re)) found.add(match[1]);
+  }
 
   for (const t of ['--token-section-bg', '--token-heading', '--token-body', '--token-muted']) {
     found.add(t);
   }
-  if (clone.querySelector('[data-card], [data-edit-collection]')) {
+  if (root.querySelector('[data-card], [data-edit-collection]')) {
     found.add('--token-card-heading');
     found.add('--token-card-body');
     found.add('--token-card-muted');
   }
-  if (clone.querySelector('.section-badge')) {
+  if (root.querySelector('.section-badge')) {
     found.add('--token-badge-bg');
     found.add('--token-badge-text');
     // globals.css paints every badge role from the canonical token family.
     found.add('--token-badge-border');
   }
-  if (clone.querySelector('a[class*="bg-"], button[class*="bg-"]')) {
+  if (root.querySelector('a[class*="bg-"], button[class*="bg-"]')) {
     found.add('--token-btn-bg');
     found.add('--token-btn-text');
   }
   // globals.css recolours hr/divide-*/border-b elements from
   // --style-divider-color (normalized from --token-divider) once set.
-  if (clone.querySelector('hr, [class*="divide-"], [class*="divider"], [class*="border-b"], [class*="border-t"]')) {
+  if (root.querySelector('hr, [class*="divide-"], [class*="divider"], [class*="border-b"], [class*="border-t"]')) {
     found.add('--token-divider');
   }
   return found;

@@ -32,7 +32,7 @@ Layer 2 — SECTION SLOTS (--token-*)
   Every distinct visual role in a section gets its own var.
   Defaults derive from Layer 1, but each is independent so overriding
   one cannot bleed into another.
-  ~27 canonical slots — see FIELD_DEFS in
+  canonical slots — see FIELD_DEFS in
   apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx.
 
 Layer 3 — PER-SECTION OVERRIDES (section.styleOverrides)
@@ -73,70 +73,60 @@ For every `(industry, sectionType)` pair registered in
 5. Sort and dedupe.
 
 Output: `apps/renderer/src/lib/section-color-contracts-generated.ts` —
-a checked-in file containing two maps:
+a checked-in file containing the generated maps:
 
 - `SECTION_COLOR_CONTRACTS_GENERATED` — per `(type, industry)` pair, keyed
   as `${type}${IndustryPascalCase}` (e.g. `heroSalon`, `proofWallHotel`).
-- `SECTION_COLOR_CONTRACTS_GENERIC` — per `type`, union across all
-  industries. Used as fallback when no industry-specific entry exists.
+- `SECTION_COLOR_CONTRACTS_GENERIC` — per `type`, for shared templates only.
+  Used when no exact industry definition exists.
+- `SECTION_COLOR_CONTRACTS_ANY` — legacy catalog discovery for the API's list
+  of available section types. The colour resolver does not use this union for
+  field selection.
 
-### 2. Editor reads only the generated file
+### 2. Editor uses the same definition registry as the renderer
 
-`section-color-resolver.ts > resolveColorContractForSection(type, industry)` does:
+`section-color-resolver.ts > resolveColorContractForSection(type, industry,
+definitionKey)` builds a lightweight registry from the generated contract data
+and follows the renderer's exact precedence:
 
 ```ts
-// 1. Exact industry template:        heroSalon
-const industrySpecific = SECTION_COLOR_CONTRACTS_GENERATED[`${type}${Industry}`];
-if (industrySpecific?.length) return { source: 'industry', fields: industrySpecific };
-// 2. Shared template:                hero (shared only)
-const generic = SECTION_COLOR_CONTRACTS_GENERIC[type];
-if (generic?.length) return { source: 'generic', fields: generic };
-// 3. Cross-industry borrow (UNION):  any industry that defines this type
-const any = SECTION_COLOR_CONTRACTS_ANY[type];
-if (any?.length) return { source: 'any', fields: any };
-// 4. Unknown type → background only
-return { source: 'none', fields: ['sectionBg'] };
+// 1. Stored definition key when it matches the requested type
+// 2. Exact industry template (including the renderer's aliases)
+// 3. Shared template
+// 4. One deterministic legacy cross-industry definition
+// 5. Unknown type → background only
 ```
 
-No hand-curated map, no heuristics, no per-industry escape hatches.
+The resolver returns the fields read by that one selected definition. It does
+not union every industry's fields for a borrowed type, so an editor cannot
+offer controls for roles that the rendered variant does not paint. Invalid or
+stale definition keys safely use the legacy path, and invalid schema versions
+are reported as incompatible by the shared registry.
 
-**Why stage 3 exists (the cross-industry UNION).** The renderer's
-`getIndustryTemplates(industry)` falls back to `ALL_TEMPLATES` when a section
-type is *borrowed* into an industry that doesn't define it (the editor catalog
-offers foreign sections under "Andere: …"). Before stage 3, those sections
-rendered a full template in the FE but the editor collapsed to a single
-"Hintergrund" picker — ~1300 (industry, type) pairs were affected. Stage 3
-mirrors that borrow: `SECTION_COLOR_CONTRACTS_ANY[type]` is the **union** of the
-fields every industry's variant reads, so the editor can never expose *fewer*
-controls than the FE paints. It is a deliberate superset; stage 3 of the
-runtime DOM-scan (below) trims it back down to what the rendered variant
-actually uses.
-
-**Industry aliases must match the renderer.** `INDUSTRY_CONTRACT_ALIASES`
-(`handwerk → tradesman`) exists only because the renderer serves the same
-template for that string. Never add an alias the renderer's
-`getIndustryTemplates` does not honor — it would point the editor at a
-different template than the one painted (the render-mirror guard fails if you
-do).
+`SECTION_INDUSTRY_ALIASES` and `LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER` live in
+`section-industry-config.ts`, which is shared by the resolver and the render
+mirror. Add an alias only when the renderer's template lookup supports it.
 
 ### 3. Runtime DOM-scan (trims the contract to reality — in BOTH editors)
 
-Both colour editors scan the rendered section's `outerHTML` for
-`var(--token-X)` substrings and split the contract fields into *active* (token
-present in the DOM, or already overridden by the user) and *inactive*. Inactive
-pickers are hidden behind an "Erweitert: N ungenutzte Slots anzeigen" toggle, so
-the user is never shown a no-op control.
+Both colour editors retain the statically supported editable field set from
+the selected contract. Their runtime DOM scan reads the rendered section's class
+and inline-style attributes for `var(--token-X)` substrings and annotates each
+field with whether that role is visible in the current preview; user
+overrides are annotated separately. Injected `<style>` elements and text
+content are ignored. Preview visibility is metadata for the editor, so an
+inactive role remains available for editing when it is rendered conditionally
+or becomes active after content changes.
 
 - **Live-preview overlay** (`live-preview/edit-overlays.tsx`) — `useUsedTokens`.
 - **Page-editor card** (`admin/pages/[id]/section-color-editor.tsx`) — scans the
   same `[data-section-id]` element through the preview iframe ref.
 
-When no preview iframe is reachable the scan returns nothing and **every**
+When no preview iframe is reachable the scan returns nothing and every
 contract field is shown (we never hide a control we cannot prove is unused).
-
-This handles two cases at once: the codegen over-including a slot the template
-only uses conditionally (`data.bordered === true`), and the stage-3 union
-above contributing slots a particular industry variant doesn't paint.
+The scan also accounts for renderer-forced roles such as heading/body/muted,
+card text, badges, buttons, and dividers. This handles conditionally rendered
+markup while retaining a useful fallback for legacy sections.
 
 ## CI guard — drift is forbidden
 
@@ -155,7 +145,7 @@ above contributing slots a particular industry variant doesn't paint.
    the output to the committed `section-color-contracts-generated.ts`.
    If they differ it exits 1 with a diff summary.
 
-4. **Role-coverage gate** (`scripts/audit-color-role-coverage.cjs --strict`):
+3. **Role-coverage gate** (`scripts/audit-color-role-coverage.cjs --strict`):
    for each semantic role that has a dedicated slot (badge, eyebrow, price, …)
    it checks every section that RENDERS the role actually binds it to its own
    token — not to a borrowed one. This catches the subtle bug where a badge is
@@ -165,7 +155,7 @@ above contributing slots a particular industry variant doesn't paint.
    (text-only roles via `scripts/rebind-text-roles.cjs`, pill badges via the
    `.section-badge` class which the renderer wires to the badge slots).
 
-3. **Render-mirror gate** (`scripts/check-section-color-render-mirror.cjs`):
+4. **Render-mirror gate** (`scripts/check-section-color-render-mirror.cjs`):
    for every `(industry, type)` the renderer can paint, re-derives the
    actually-rendered component (`specific ?? shared ?? all`, mirroring
    `getIndustryTemplates`) and asserts the contract resolver exposes **at
@@ -174,8 +164,8 @@ above contributing slots a particular industry variant doesn't paint.
    FE. It also catches industry-alias drift and templates that read tokens
    through an import the codegen doesn't follow.
 
-`pnpm check:section-colors` runs gates 2 + 3 (gate 1 via
-`audit-token-vocabulary`). Wired into `.github/workflows/ci.yml` before any app
+`pnpm check:section-colors` runs the contract, render-mirror, role-coverage,
+and token-crosstalk gates. Wired into `.github/workflows/ci.yml` before any app
 build runs.
 
 Locally before pushing:
@@ -237,8 +227,10 @@ Common mappings:
 | `apps/renderer/src/lib/section-color-contracts-generated.ts`                  | AUTO-GENERATED contracts (do not edit)     |
 | `apps/renderer/src/app/live-preview/edit-overlays.tsx`                        | Live overlay + runtime DOM-scan filter     |
 | `apps/renderer/src/templates/index.ts`                                        | sectionType → component registry           |
-| `apps/renderer/src/lib/section-color-resolver.ts`                             | 4-stage resolver (industry → generic → any → none) |
-| `scripts/generate-section-color-contracts.cjs`                                | Codegen (emits GENERATED + GENERIC + ANY)  |
+| `apps/renderer/src/lib/section-text-color-selectors.ts`                       | Section-local legacy text cascade and semantic role defaults |
+| `apps/renderer/src/lib/section-color-resolver.ts`                             | Definition registry resolver (exact → shared → deterministic legacy borrow) |
+| `apps/renderer/src/lib/section-industry-config.ts`                            | Shared industry aliases and legacy fallback order |
+| `scripts/generate-section-color-contracts.cjs`                                | Codegen (emits GENERATED + GENERIC + catalog ANY) |
 | `scripts/check-section-color-contracts.cjs`                                   | CI drift guard                             |
 | `scripts/check-section-color-render-mirror.cjs`                               | CI render-mirror guard (resolver ⊇ renderer) |
 | `scripts/audit-template-colors.cjs`                                           | Reports hardcoded colours per template     |

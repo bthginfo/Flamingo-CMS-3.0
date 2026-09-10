@@ -273,33 +273,8 @@ const CameraExplodeScrollSection = dynamic(() => import('./advanced/camera-explo
  * Alias industries such as `bar` resolve to a canonical owner and stay out of
  * this order so adding a preset cannot change cross-industry legacy rendering.
  */
-export const LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER = [
-  'tradesman',
-  'restaurant',
-  'hotel',
-  'tourism',
-  'salon',
-  'medical',
-  'wedding',
-  'consulting',
-  'photography',
-  'realestate',
-  'cafe',
-  'tattoo',
-  'ecommerce',
-  'retail',
-  'florist',
-  'fitness',
-  'location',
-  'verein',
-] as const;
-
-export const SECTION_INDUSTRY_ALIASES: Readonly<Record<string, string>> = Object.freeze({
-  handwerk: 'tradesman',
-  shop: 'ecommerce',
-  bar: 'restaurant',
-  eishockey: 'verein',
-});
+import { LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER, SECTION_INDUSTRY_ALIASES } from '../lib/section-industry-config';
+export { LEGACY_SECTION_FALLBACK_INDUSTRY_ORDER, SECTION_INDUSTRY_ALIASES } from '../lib/section-industry-config';
 
 export const TRADESMAN_TEMPLATES: Record<string, TemplateComponent> = {
   hero: HeroSection,

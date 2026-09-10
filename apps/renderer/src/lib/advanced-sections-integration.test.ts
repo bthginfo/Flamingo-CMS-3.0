@@ -137,14 +137,6 @@ test('advanced scroll stories keep reduced-motion SSR markup hydration-stable', 
   }
 });
 
-test('dark color contexts outrank generic card text rules', () => {
-  const source = readFileSync(new URL('../components/section-renderer.tsx', import.meta.url), 'utf8');
-  assert.match(
-    source,
-    /\[data-color-context="dark"\] :is\(h1,h2,h3,h4,h5,h6\):not\(\[class\*="text-white"\]\):not\(\[class\*="text-black"\]\)/,
-  );
-});
-
 test('wave two media overlays use semantic on-dark roles and robust scrims', () => {
   for (const file of ['day-to-night.tsx', 'editorial-card-morph.tsx']) {
     const source = readFileSync(new URL(`../templates/advanced/${file}`, import.meta.url), 'utf8');

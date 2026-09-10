@@ -1,3 +1,4 @@
+import { buildSectionTextColorCss } from '../lib/section-text-color-selectors';
 import React from 'react';
 import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
 import { resolveSectionDefinition } from '@/templates';
@@ -552,9 +553,15 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const mutedColorVar = hasMediaOverlay
     ? (own('--token-muted', '--token-on-dark-muted') ?? 'rgba(255,255,255,0.72)')
     : 'var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, var(--style-text-secondary, inherit))))';
-  // Cards keep the full chain even on media sections: they sit on an opaque
-  // --token-card-bg, so the page-level text defaults are the right backdrop-
-  // matched colours for them.
+  const subheadingColorVar = hasMediaOverlay
+    // Keep media subheadings independent from the body slot. If a template
+    // does not bind a dedicated subheading override, use the readable media
+    // default; a body picker must not silently recolour section-subline text.
+    ? (own('--token-subheading') ?? 'rgba(255,255,255,0.86)')
+    : 'var(--token-subheading, var(--token-body, var(--token-on-dark-body, var(--style-body-color, var(--style-text-secondary, inherit)))))';
+  const eyebrowColorVar = own('--token-eyebrow') ?? 'var(--token-eyebrow)';
+  // Cards keep their own text slots even on media sections, so card content
+  // stays matched to the card surface rather than the media backdrop.
   const cardHeadingColorVar = `var(--token-card-heading, var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, ${hasMediaOverlay ? '#ffffff' : 'inherit'}))))`;
   const cardBodyColorVar = `var(--token-card-body, var(--token-body, var(--token-on-dark-body, var(--style-body-color, ${hasMediaOverlay ? 'rgba(255,255,255,0.86)' : 'inherit'}))))`;
   const cardMutedColorVar = `var(--token-card-muted, var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, ${hasMediaOverlay ? 'rgba(255,255,255,0.72)' : 'inherit'}))))`;
@@ -586,6 +593,15 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const sectionStyle = hasMediaOverlay
     ? ({
         ...(baseSectionStyle || {}),
+        // Canonical text classes (for example text-[color:var(--token-heading)])
+        // must resolve to the media-safe defaults inside this section. Without
+        // these local bindings they inherit the page's dark ink and become
+        // unreadable over a photo. Explicit on-dark/custom role bindings stay
+        // available to the selector guard and continue to win.
+        '--token-heading': headingColorVar,
+        '--token-subheading': subheadingColorVar,
+        '--token-body': bodyColorVar,
+        '--token-muted': mutedColorVar,
         // Media overlays need their own secondary action contract. Inheriting a
         // light page's pale secondary button can make the CTA disappear over a
         // photograph even when the hero copy itself was correctly inverted.
@@ -650,20 +666,9 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   // fresh sections — which hid the heading/body/muted controls exactly when
   // the user needed them to set a first colour.
   const escapedSectionId = escapeCssAttr(section.id);
-  const sectionColorCss = `
-[data-section-id="${escapedSectionId}"][data-style] { --_card-h:${cardHeadingColorVar}; --_card-b:${cardBodyColorVar}; --_card-m:${cardMutedColorVar}; --_on-dark-h:${darkContextHeadingVar}; --_on-dark-b:${darkContextBodyVar}; --_on-dark-m:${darkContextMutedVar}; }
-[data-section-id="${escapedSectionId}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
-[data-section-id="${escapedSectionId}"][data-style] :is(p,li):not(.section-badge):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
-[data-section-id="${escapedSectionId}"][data-style] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${mutedColorVar} !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-card] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardHeadingColorVar} !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-card] :is(p,li):not(.section-badge):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardBodyColorVar} !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-card] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardMutedColorVar} !important; }
-[data-section-id="${escapedSectionId}"][data-style] .section-badge { color: ${badgeTextVar} !important; background-color: ${badgeBgVar} !important; border-color: ${badgeBorderVar} !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"],[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] [data-card] { --token-heading:var(--_on-dark-h); --token-on-dark-heading:var(--_on-dark-h); --token-body:var(--_on-dark-b); --token-on-dark-body:var(--_on-dark-b); --token-muted:var(--_on-dark-m); --token-on-dark-muted:var(--_on-dark-m); }
-[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: var(--_on-dark-h) !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(p,li):not(.section-badge):not([class*="text-white"]):not([class*="text-black"]) { color: var(--_on-dark-b) !important; }
-[data-section-id="${escapedSectionId}"][data-style] [data-color-context="dark"] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: var(--_on-dark-m) !important; }
-`;
+  const sectionColorCss = buildSectionTextColorCss(escapedSectionId, {
+    headingColorVar, bodyColorVar, mutedColorVar, subheadingColorVar, eyebrowColorVar, cardHeadingColorVar, cardBodyColorVar, cardMutedColorVar, badgeBgVar, badgeTextVar, badgeBorderVar, darkContextHeadingVar, darkContextBodyVar, darkContextMutedVar,
+  });
   const sectionOverlayCss = buildImageOverlayCss(section);
   const sectionOverrideCss = escapeStyleElementText(
     `${sectionColorCss}${sectionOverlayCss ? `\n${sectionOverlayCss}` : ''}`.trim(),

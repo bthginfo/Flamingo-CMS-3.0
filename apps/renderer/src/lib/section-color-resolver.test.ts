@@ -62,3 +62,16 @@ test('returned fields are unique and stable across calls', () => {
   assert.deepEqual(a, b);
   assert.equal(new Set(a).size, a.length, 'no duplicate fields');
 });
+
+
+test('unknown and omitted industries use the same tradesman default as rendering', () => {
+  for (const industry of [undefined, '', 'unknown-industry', 'realstate']) {
+    assert.deepEqual(getFieldsForSection('hero', industry), getFieldsForSection('hero', 'tradesman'));
+  }
+});
+
+test('unsupported definition versions and owner aliases fall back like the renderer', () => {
+  for (const key of ['hero.hotel.v2', 'hero.handwerk.v1']) {
+    assert.deepEqual(getFieldsForSection('hero', 'salon', key), getFieldsForSection('hero', 'salon'));
+  }
+});

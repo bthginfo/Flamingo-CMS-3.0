@@ -39,6 +39,11 @@ jobs:
       # (npm run sync:section-surface).
       - run: pnpm check:section-surface
 
+      # The section colour cascade is verified against compiled Tailwind
+      # arbitrary-value selectors in a real Chromium engine.
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright test tests/section-color-mapping.spec.ts --project=desktop
+
       # Unit tests (node:test via tsx — runs on the CI Node version, no build).
       - run: pnpm test
 
