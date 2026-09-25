@@ -100,6 +100,37 @@ export async function fetchUserMedia(accessToken: string, limit = 25): Promise<I
   });
   const res = await fetch(`${IG_GRAPH}/me/media?${params.toString()}`);
   if (!res.ok) throw new Error(`Media fetch failed: ${res.status} ${await res.text()}`);
-  const json = await res.json() as { data: IgMedia[] };
-  return json.data || [];
+  return parseUserMediaResponse(await res.json());
+}
+
+export function parseUserMediaResponse(payload: unknown): IgMedia[] {
+  if (!payload || typeof payload !== 'object' || !Array.isArray((payload as { data?: unknown }).data)) {
+    throw new Error('Instagram media response is invalid: expected a data array');
+  }
+  const seenIds = new Set<string>();
+  return (payload as { data: unknown[] }).data.map((value, index) => {
+    if (!value || typeof value !== 'object') throw new Error(`Instagram media response is invalid at item ${index + 1}`);
+    const item = value as Record<string, unknown>;
+    if (typeof item.id !== 'string' || !item.id || item.id.length > 64) throw new Error(`Instagram media response has an invalid ID at item ${index + 1}`);
+    if (seenIds.has(item.id)) throw new Error(`Instagram media response contains duplicate ID ${item.id}`);
+    seenIds.add(item.id);
+    if (!['IMAGE', 'VIDEO', 'CAROUSEL_ALBUM'].includes(String(item.media_type))) throw new Error(`Instagram media response has an invalid media type at item ${index + 1}`);
+    if (typeof item.media_url !== 'string' || !item.media_url || typeof item.permalink !== 'string' || !item.permalink) {
+      throw new Error(`Instagram media response is missing a media URL or permalink at item ${index + 1}`);
+    }
+    if (typeof item.timestamp !== 'string' || !Number.isFinite(new Date(item.timestamp).getTime())) {
+      throw new Error(`Instagram media response has an invalid timestamp at item ${index + 1}`);
+    }
+    if (item.caption !== undefined && item.caption !== null && typeof item.caption !== 'string') throw new Error(`Instagram media response has an invalid caption at item ${index + 1}`);
+    if (item.thumbnail_url !== undefined && item.thumbnail_url !== null && typeof item.thumbnail_url !== 'string') throw new Error(`Instagram media response has an invalid thumbnail URL at item ${index + 1}`);
+    return {
+      id: item.id,
+      media_type: item.media_type as IgMedia['media_type'],
+      media_url: item.media_url,
+      ...(item.thumbnail_url == null ? {} : { thumbnail_url: item.thumbnail_url as string }),
+      permalink: item.permalink,
+      ...(item.caption == null ? {} : { caption: item.caption as string }),
+      timestamp: item.timestamp,
+    };
+  });
 }

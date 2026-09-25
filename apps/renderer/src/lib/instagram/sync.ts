@@ -1,8 +1,9 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { instagramConnections, instagramPosts } from '@flamingo/db';
 import { getDb } from '@/lib/db';
 import { decryptToken, encryptToken } from './cipher';
 import { fetchUserMedia, refreshLongToken, type IgMedia } from './graph';
+import { diffInstagramPosts } from './sync-diff';
 
 /**
  * Pull latest media for a connection, upsert into instagram_posts, drop
@@ -59,24 +60,39 @@ export async function syncConnection(connectionId: string): Promise<{ ok: true; 
     return { ok: false, error: msg };
   }
 
-  // Replace all posts for this connection (simpler than diffing — IDs are stable
-  // but ordering changes and Meta may delete posts upstream).
-  await db.delete(instagramPosts).where(eq(instagramPosts.connectionId, conn.id));
-  if (media.length > 0) {
+  const existingPosts = await db.select({
+    igMediaId: instagramPosts.igMediaId,
+    mediaType: instagramPosts.mediaType,
+    mediaUrl: instagramPosts.mediaUrl,
+    thumbnailUrl: instagramPosts.thumbnailUrl,
+    permalink: instagramPosts.permalink,
+    caption: instagramPosts.caption,
+    timestamp: instagramPosts.timestamp,
+    position: instagramPosts.position,
+  }).from(instagramPosts).where(eq(instagramPosts.connectionId, conn.id));
+  const { upserts, removedMediaIds } = diffInstagramPosts(existingPosts, media);
+
+  if (upserts.length > 0) {
     await db.insert(instagramPosts).values(
-      media.map((m, idx) => ({
-        connectionId: conn.id,
-        tenantId: conn.tenantId,
-        igMediaId: m.id,
-        mediaType: m.media_type,
-        mediaUrl: m.media_url,
-        thumbnailUrl: m.thumbnail_url ?? null,
-        permalink: m.permalink,
-        caption: m.caption ?? null,
-        timestamp: new Date(m.timestamp),
-        position: idx,
-      })),
-    );
+      upserts.map(post => ({ connectionId: conn.id, tenantId: conn.tenantId, ...post })),
+    ).onConflictDoUpdate({
+      target: [instagramPosts.connectionId, instagramPosts.igMediaId],
+      set: {
+        mediaType: sql`excluded.media_type`,
+        mediaUrl: sql`excluded.media_url`,
+        thumbnailUrl: sql`excluded.thumbnail_url`,
+        permalink: sql`excluded.permalink`,
+        caption: sql`excluded.caption`,
+        timestamp: sql`excluded.timestamp`,
+        position: sql`excluded.position`,
+      },
+    });
+  }
+  if (removedMediaIds.length > 0) {
+    await db.delete(instagramPosts).where(and(
+      eq(instagramPosts.connectionId, conn.id),
+      inArray(instagramPosts.igMediaId, removedMediaIds),
+    ));
   }
 
   await db
