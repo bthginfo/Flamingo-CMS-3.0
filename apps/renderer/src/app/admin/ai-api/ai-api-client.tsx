@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { createApiToken, revokeApiToken } from './actions';
 import { toast } from 'sonner';
 import { Key, Trash2, Copy, CheckCircle, Bot, ExternalLink } from 'lucide-react';
+import { buildAiStarterPrompt } from '@/lib/ai-starter-prompt';
 
 type Token = {
   id: string;
@@ -58,6 +59,7 @@ export function AiApiClient({ existingToken, apiBase }: { existingToken: Token |
   };
 
   const instructionsUrl = `${apiBase}/instructions`;
+  const starterPrompt = buildAiStarterPrompt(instructionsUrl);
 
   return (
     <div className="space-y-8">
@@ -156,8 +158,7 @@ export function AiApiClient({ existingToken, apiBase }: { existingToken: Token |
           <h3 className="font-semibold text-sm text-zinc-700">Hilfs-Prompt für die KI</h3>
           <button
             onClick={() => {
-              const prompt = `Ich möchte, dass du meine Website mit Inhalten befüllst.\n\n1. Rufe zuerst GET ${instructionsUrl} auf (Header: Authorization: Bearer [DEIN_API_KEY]).\n   Du bekommst alle verfügbaren Section-Typen, Datenstrukturen und Endpoints zurück.\n\n2. Erstelle folgende Seiten und befülle sie mit passenden Inhalten:\n   - Startseite mit: [Z.B. HERO-BANNER, LEISTUNGSÜBERSICHT, ÜBER UNS, KUNDENBEWERTUNGEN, FAQ, KONTAKT]\n   - Unterseiten für: [Z.B. LEISTUNG A, LEISTUNG B, LEISTUNG C]\n   - [WEITERE SEITEN, Z.B. ÜBER UNS, TEAM, GALERIE, BLOG]\n   - Impressum & Datenschutz (als Platzhalter anlegen)\n\n3. Befülle außerdem:\n   - Marke & Farben: [Z.B. PRIMÄRFARBE #1A2B3C, SEKUNDÄRFARBE #4D5E6F]\n   - Navigation mit Links zu allen erstellten Seiten\n   - Footer mit Spalten und Links\n   - Kontaktdaten und Öffnungszeiten\n   - SEO-Titel und -Beschreibung für jede Seite\n   - Kontaktformular-Felder\n\n4. Wenn alles fertig ist, rufe den Publish-Endpoint auf.\n\n---\nMeine Unternehmensdaten:\n- Firmenname: [DEIN FIRMENNAME]\n- Branche: [DEINE BRANCHE, Z.B. MALERBETRIEB, FRISEURSALON, RESTAURANT]\n- Leistungen/Angebote: [LEISTUNG 1, LEISTUNG 2, LEISTUNG 3, ...]\n- Adresse: [STRASSE HAUSNR, PLZ ORT]\n- Telefon: [TELEFONNUMMER]\n- E-Mail: [E-MAIL-ADRESSE]\n- Öffnungszeiten: [Z.B. MO-FR 8-17 UHR, SA 9-13 UHR]\n- Was uns besonders macht: [ALLEINSTELLUNGSMERKMALE, ERFAHRUNG, ZERTIFIKATE ETC.]\n\nOptionale Zusatzinfos (je mehr, desto besser):\n- Link zur bisherigen Website: [URL FALLS VORHANDEN]\n- Texte/Beschreibungen die übernommen werden sollen: [TEXT EINFÜGEN]\n- Tonalität: [Z.B. PROFESSIONELL, LOCKER, FREUNDLICH, PREMIUM]\n- Zielgruppe: [Z.B. PRIVATKUNDEN, GESCHÄFTSKUNDEN, FAMILIEN]\n- Referenzen/Bewertungen: [KUNDENZITATE ODER LINKS]`;
-              navigator.clipboard.writeText(prompt);
+              navigator.clipboard.writeText(starterPrompt);
               setCopiedPrompt(true);
               setTimeout(() => setCopiedPrompt(false), 2000);
               toast.success('Prompt kopiert!');
@@ -175,44 +176,7 @@ export function AiApiClient({ existingToken, apiBase }: { existingToken: Token |
           Du kannst z.B. Links zu deiner bisherigen Website, Texte aus Flyern, Kundenbewertungen oder eine Beschreibung deiner Wunsch-Tonalität mitgeben.
         </p>
         <div className="bg-zinc-50 rounded-lg p-4 border text-sm text-zinc-700 whitespace-pre-wrap break-words leading-relaxed font-mono overflow-x-auto max-w-full">
-{`Ich möchte, dass du meine Website mit Inhalten befüllst.
-
-1. Rufe zuerst GET ${instructionsUrl} auf (Header: Authorization: Bearer [DEIN_API_KEY]).
-   Du bekommst alle verfügbaren Section-Typen, Datenstrukturen und Endpoints zurück.
-
-2. Erstelle folgende Seiten und befülle sie mit passenden Inhalten:
-   - Startseite mit: [Z.B. HERO-BANNER, LEISTUNGSÜBERSICHT, ÜBER UNS, KUNDENBEWERTUNGEN, FAQ, KONTAKT]
-   - Unterseiten für: [Z.B. LEISTUNG A, LEISTUNG B, LEISTUNG C]
-   - [WEITERE SEITEN, Z.B. ÜBER UNS, TEAM, GALERIE, BLOG]
-   - Impressum & Datenschutz (als Platzhalter anlegen)
-
-3. Befülle außerdem:
-   - Marke & Farben: [Z.B. PRIMÄRFARBE #1A2B3C, SEKUNDÄRFARBE #4D5E6F]
-   - Navigation mit Links zu allen erstellten Seiten
-   - Footer mit Spalten und Links
-   - Kontaktdaten und Öffnungszeiten
-   - SEO-Titel und -Beschreibung für jede Seite
-   - Kontaktformular-Felder
-
-4. Wenn alles fertig ist, rufe den Publish-Endpoint auf.
-
----
-Meine Unternehmensdaten:
-- Firmenname: [DEIN FIRMENNAME]
-- Branche: [DEINE BRANCHE, Z.B. MALERBETRIEB, FRISEURSALON, RESTAURANT]
-- Leistungen/Angebote: [LEISTUNG 1, LEISTUNG 2, LEISTUNG 3, ...]
-- Adresse: [STRASSE HAUSNR, PLZ ORT]
-- Telefon: [TELEFONNUMMER]
-- E-Mail: [E-MAIL-ADRESSE]
-- Öffnungszeiten: [Z.B. MO-FR 8-17 UHR, SA 9-13 UHR]
-- Was uns besonders macht: [ALLEINSTELLUNGSMERKMALE, ERFAHRUNG, ZERTIFIKATE ETC.]
-
-Optionale Zusatzinfos (je mehr, desto besser):
-- Link zur bisherigen Website: [URL FALLS VORHANDEN]
-- Texte/Beschreibungen die übernommen werden sollen: [TEXT EINFÜGEN]
-- Tonalität: [Z.B. PROFESSIONELL, LOCKER, FREUNDLICH, PREMIUM]
-- Zielgruppe: [Z.B. PRIVATKUNDEN, GESCHÄFTSKUNDEN, FAMILIEN]
-- Referenzen/Bewertungen: [KUNDENZITATE ODER LINKS]`}
+{starterPrompt}
         </div>
       </div>
     </div>

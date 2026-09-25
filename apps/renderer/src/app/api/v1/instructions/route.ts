@@ -13,7 +13,7 @@ import {
   SECTION_COLOR_CONTRACTS_ANY,
 } from '@/lib/section-color-contracts-generated';
 import { getCatalogSectionSchemas } from '@/lib/section-data-schemas';
-import { buildAiAgentContract, buildAiAgentPrompt } from '@/lib/ai-agent-guidance';
+import { buildAiAgentContract, buildAiAgentPrompt, filterSectionTypesToCatalog } from '@/lib/ai-agent-guidance';
 import { profilePassesExistingValidation, readPersistedBusinessProfile } from '@/lib/business-profile';
 
 export async function GET(req: NextRequest) {
@@ -76,7 +76,11 @@ export async function GET(req: NextRequest) {
     sectionDataSchemas,
     styleSystem: getStyleSystemInstructions(),
     sectionStyleContracts: getSectionStyleContracts(allowedSectionTypes, auth.tenant.industry),
-    aiContentPlaybook: getAiContentPlaybook(auth.tenant.industry, { hasShop, hasBooking }),
+    aiContentPlaybook: getAiContentPlaybook(
+      auth.tenant.industry,
+      { hasShop, hasBooking },
+      new Set(allowedSectionTypes.map(section => section.type).filter((type): type is string => Boolean(type))),
+    ),
     approvedSiteProfile,
     agentContract: buildAiAgentContract({
       tenantName: auth.tenant.name,
@@ -150,10 +154,14 @@ export async function GET(req: NextRequest) {
       'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
       'Only use section types listed in availableSectionTypes.',
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
-      'Section colors are NOT normal data fields. Put per-section colors into section.styleOverrides using exact field names or CSS variables from sectionStyleContracts[type].colorFields.',
+      'Renderer color slots are NOT normal data fields. For EVERY section, set fitting local colors in section.styleOverrides; global design colors are defaults and are not a substitute for section-level choices.',
       'sectionStyleContracts is COMPLETE: it also contains entries with source="borrowed" for section types that are valid in stored content but not offered in this industry\'s picker. When updating such a section, use exactly its listed colorFields.',
-      'For every section with an image, dark background or overlay, explicitly set contrasting text/button colors in styleOverrides. Do not rely on global theme colors when contrast is uncertain.',
-      'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --token-btn-bg with a readable --token-btn-text. WCAG AA requires a contrast ratio of 4.5:1 for body text and 3:1 for large text.',
+      'Before composing styleOverrides, inspect sectionStyleContracts[section.type].colorFields for that exact section. Use only its listed field or cssVar keys; do not copy keys from another section or from the global token catalog.',
+      'For every section, explicitly choose its supported background and visible heading/body/muted text colors. Where supported and visible, also choose card background and text, primary/secondary button background and text, badge background and text, and image overlay colors. Pair every changed background with its own readable foreground. WCAG AA is 4.5:1 for body text and 3:1 for large text.',
+      'Choose sections and pages for the tenant industry, page purpose, visitor task, enabled addons and supplied assets. Every section must serve a distinct job; do not pad pages or use unrelated types just to meet a section count.',
+      'Use Premium/Advanced sections only when their real asset requirements and interaction fit the page. If the owner has not supplied a required image, video or other asset, choose a suitable section that does not depend on it; never invent asset URLs.',
+      'If a visible color role is not listed in that section’s colorFields, never invent an override key: keep the global fallback for that role or choose a different section when custom treatment is needed.',
+      'Renderer color slots belong in styleOverrides. A separate color such as overlayColor, bgColor or textColor may go in data only when that exact property is listed in sectionDataSchemas[section.type].',
       'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
@@ -539,29 +547,25 @@ Workflow: 1) POST /collections → { key, label }  2) POST /collections/:key/ite
 
 function getStyleSystemInstructions() {
   return {
-    whereToPutSectionColors: 'Set per-section colors on the section object as styleOverrides, not inside section.data.',
+    whereToPutSectionColors: 'Set renderer color slots in section.styleOverrides. Add a local styleOverrides object to EVERY section so its colors are chosen for that section rather than inherited only from global design. Use data only for color properties explicitly listed by sectionDataSchemas[type].',
     sectionObjectShape: {
       type: 'sectionType',
       data: '{ content fields from sectionDataSchemas }',
-      styleOverrides: {
-        '--token-section-bg': '#ffffff',
-        '--token-heading': '#111111',
-        '--token-body': '#3f3f46',
-        '--token-btn-bg': '#111111',
-        '--token-btn-text': '#ffffff',
-      },
     },
     globalVsSection: [
-      'Use /api/v1/content/brand and /api/v1/content/design for global brand defaults.',
-      'Use section.styleOverrides only when a specific section needs its own background, text, card, badge, button or overlay colors.',
-      'Do not place color keys like headingColor, btnBg or cardBg inside data unless that exact field is listed in sectionDataSchemas. Renderer colors are controlled by CSS variables in styleOverrides.',
+      'Use /api/v1/content/brand and /api/v1/content/design to establish a coherent global brand palette and fallback defaults.',
+      'For EVERY section, read sectionStyleContracts[section.type].colorFields and set that section’s fitting background and visible text colors in section.styleOverrides. Global defaults do not replace this explicit section-level decision.',
+      'When the contract lists and the section renders cards, buttons, badges, form controls or an image overlay, choose those colors locally too and pair every surface color with its corresponding text color.',
+      'The exact allowed keys for a section are only its own colorFields[].field or colorFields[].cssVar. Use values that are valid CSS colors or documented safe size values; never send a label, description, semantic alias or key copied from another section.',
+      'If a role is not listed in that section’s colorFields, never invent an override key: keep the global fallback for that role or choose a different section when custom treatment is needed.',
+      'Renderer color slots belong in styleOverrides. A separate color such as overlayColor, bgColor or textColor may go in data only when that exact property is listed in sectionDataSchemas[section.type].',
     ],
     contrastRules: [
-      'Every background/text pair must be readable: section/card/image backgrounds must contrast with heading, body and muted text.',
-      'Every primary CTA must define both --token-btn-bg and --token-btn-text when overriding one of them.',
-      'Image sections should use a dark overlay with light text OR a light overlay with dark text. Do not use dark text on dark images.',
-      'Badge colors must pair --token-badge-bg with --token-badge-text.',
-      'If a section has cards on a dark section background, set --token-card-bg and text colors independently so card content remains readable.',
+      'Keep every visible foreground/background pair at WCAG AA: 4.5:1 for body text and 3:1 for large text.',
+      'If a button, badge, card or input background is set locally, explicitly set a readable matching foreground when that foreground field is supported.',
+      'For image sections, use an overlay only if the section supports one; select light or dark foreground colors to match the actual overlay and image treatment.',
+      'For cards on a dark section, choose a separate card background and card text colors when those fields are available.',
+      'GET /api/v1/content/validate reports advisory findings. Review and repair useful contrast issues; it does not block publish.',
     ],
     canonicalSlots: [
       '--token-section-bg', '--token-section-bg-alt', '--token-card-bg', '--token-card-border',
@@ -572,6 +576,7 @@ function getStyleSystemInstructions() {
       '--token-btn-bg', '--token-btn-text', '--token-divider',
       '--token-image-overlay', '--token-card-radius', '--token-button-radius',
     ],
+    canonicalSlotsNote: 'This is the global style-token catalog, not a per-section allowlist. For each section, only that type’s sectionStyleContracts[type].colorFields entries are valid.',
     commonCssVariables: Object.fromEntries(
       PUBLIC_COLOR_FIELD_KEYS.map((slot) => {
         const def = FIELD_DEFS[slot];
@@ -586,7 +591,7 @@ function getStyleSystemInstructions() {
   };
 }
 
-function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasBooking: boolean }) {
+function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasBooking: boolean }, availableSectionTypes: ReadonlySet<string>) {
   const industryHints: Record<string, {
     tone: string;
     preferredCollectionKeys: string[];
@@ -657,10 +662,10 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
   };
 
   return {
-    goal: 'Build a full premium demo website that feels custom-made for this exact tenant and industry. Use the API only; do not invent fields or section types.',
+    goal: 'Build a complete, credible website tailored to this tenant, its industry, actual audience and supplied assets. Use the API only; do not invent fields, facts, assets or section types.',
     workflow: [
       '1. Read tenant, existingPages, hasShopAddon, hasBookingAddon, availableSectionTypes, sectionDataSchemas, sectionStyleContracts.',
-      '2. Design a tenant identity before writing content: company name, city/region, story, tone, brand palette, image world.',
+      '2. Establish the voice and visual direction from verified tenant facts and supplied assets. Put missing details in facts.unknowns; do not invent a story, palette rationale or image assets.',
       '3. Create global brand/contact/design/style/navigation/footer/SEO first.',
       '4. Create collections before pages when pages link to collection items. Every public collection POST creates or repairs its reachable overview page; supply overviewPage for a tailored 4–6 section composition.',
       '5. Create pages with complete sections and real content.',
@@ -675,24 +680,29 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
     },
     minimumContentStandard: {
       homePage: {
-        minSections: 12,
-        requiredMix: ['hero', 'socialProofBar', 'storytelling/textImage or branch equivalent', 'branch-specific offer/overview section', 'featureShowcase', 'processSteps', 'bentoGrid', 'statsCounter', 'timeline', 'testimonials/proof', 'faq', 'ctaBand'],
+        minSections: 1,
+        sectionCountRule: 'Usually 5–8 distinct sections; stop when the page is complete and never pad to reach a count.',
+        requiredMix: ['clear opening and next step', 'the business’s main offer', 'verified proof or helpful process information', 'answers to real visitor questions when useful'],
       },
       overviewPages: {
-        minSections: 6,
-        requiredMix: ['hero/collectionHero', 'branch-specific overview', 'premium section', 'collectionList or cards', 'faq/testimonials', 'ctaBand'],
+        minSections: 1,
+        sectionCountRule: 'Usually 3–5 sections when each has a distinct job; fewer are fine when the collection is small.',
+        requiredMix: ['clear introduction', 'the actual collection items or offer', 'a relevant next action'],
       },
       aboutPage: {
-        minSections: 6,
-        requiredMix: ['hero/collectionHero', 'textImage/story', 'team or values', 'timeline', 'stats/proof', 'ctaBand'],
+        minSections: 1,
+        sectionCountRule: 'Use only enough sections to explain verified story, people or values and the next action.',
+        requiredMix: ['verified company story or working approach', 'real people or proof when supplied', 'a relevant next action'],
       },
       contactPage: {
-        minSections: 4,
-        requiredMix: ['hero/collectionHero', 'contact or branch contact', 'map/places/additionalLocations', 'visitorInfo/openingHours/faq', 'ctaBand optional'],
+        minSections: 1,
+        sectionCountRule: 'Use the contact path and only the practical supporting information the business can verify.',
+        requiredMix: ['working contact path', 'verified practical information such as location or hours when available'],
       },
       collectionItems: {
-        minSections: 4,
-        requiredMix: ['collectionHero with bgImage/backgroundImage', 'textImage or detail section', 'benefits/process/info section', 'faq or proof', 'ctaBand'],
+        minSections: 1,
+        sectionCountRule: 'Use a detail, benefit/process and next step only when the item has enough verified content; do not pad.',
+        requiredMix: ['what this item is', 'its verified details or benefits', 'a relevant next action'],
       },
       arrays: {
         cardArraysMinItems: 4,
@@ -715,22 +725,19 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
       'Use real German copy with umlauts and no mojibake.',
       'Write from the business perspective, not as a neutral directory.',
       'Avoid generic phrases such as "maßgeschneiderte Lösungen", "Ihre Zufriedenheit ist unser Ziel" unless backed by concrete content.',
-      'Every image field must be filled with a contextually fitting image URL or uploaded media URL.',
+      'Use only an existing or owner-supplied image/video URL. If a section needs an unavailable asset, choose a fitting section without that requirement; never fabricate a URL.',
       'Every image should have meaningful alt text when the schema exposes an alt field.',
       'No placeholder labels like "Mehr erfahren" repeated everywhere; CTAs should be specific to the action.',
-      'Use branch-specific sections before generic shared sections when available.',
+      'Prefer available industry-specific sections when their purpose and content fit. Otherwise choose a suitable shared section from availableSectionTypes.',
     ],
-    // The single biggest quality gap of AI-built sites is mechanical repetition:
-    // every page opens with the same hero and closes with the same CTA band.
-    // /validate now emits "variety.*" warnings when this happens — treat them as
-    // must-fix. Build variety in from the start with these rules.
+    // Encourage useful variety while keeping page purpose and catalog support primary.
     varietyRules: [
-      'Rotate the OPENING section type across pages. No hero/opener type should cover more than ~half of the content pages. Cycle through the hero variants available for this industry (e.g. editorialHero, cinematicHero, collectionHero, glowHero, hero).',
-      'Rotate the CLOSING section type. Do not end every page with the same ctaBand — alternate ctaBand, immersiveCtaBanner, faq, contact, ctaSplit.',
+      'Vary page openers when a different opener better serves the page; choose only from availableSectionTypes and never use variety as a reason to choose an unrelated section.',
+      'Vary page endings when the page purpose calls for it. Choose only a relevant available section; a different type is not required for its own sake.',
       'Never reuse a headline verbatim across sections. Each headline is unique and specific.',
       'CTA labels are action-specific and rarely repeated (max ~4 uses of any single label site-wide).',
       'Vary the middle of each page too: the sequence of section types should differ noticeably page to page, not a fixed template stamped N times.',
-      'Give each page its own hero image; do not reuse one image as the hero of every page.',
+      'When multiple supplied images are available, choose imagery that fits each page; do not reuse the same image everywhere without a reason.',
     ],
     seoRules: [
       'Set per-page SEO via PUT /api/v1/content/seo/:pageId with { metaTitle, metaDescription }.',
@@ -740,13 +747,12 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
       'Every metaDescription is unique and reflects that page; include the city/region for local SEO where relevant.',
     ],
     colorRules: [
-      'Global design colors should establish readable defaults for all light sections: sectionBg, cardBg, heading, body, muted, btnBg, btnText, badgeBg, badgeText.',
-      'For every image hero or dark/overlay section, set overlayColor/overlayOpacity and section.styleOverrides for --token-heading, --token-body and --token-muted. Do not send onDark* fields; internal dark aliases are written automatically.',
-      'If overriding --token-btn-bg, always set --token-btn-text in the same styleOverrides.',
-      'If overriding --token-badge-bg, always set --token-badge-text.',
-      'If cards sit on a dark section, set --token-card-bg, --token-card-border and readable text tokens. Do NOT use rgba(255,255,255,0.05-0.2) with white heading/body tokens; use a solid dark card bg (for example #0A2A33) with white text, or a solid light card bg with dark text.',
-      'Do not use white text on pale backgrounds or dark text on dark imagery. Validate contrast before publishing.',
-      'Use sectionStyleContracts[type].colorSlots to know which visual parts a section supports.',
+      'Global design colors establish the brand palette and fallback defaults. Also choose local section.styleOverrides for EVERY section so its background and visible text fit that section.',
+      'For each section use only sectionStyleContracts[section.type].colorFields[].field or .cssVar. Set the background and every visible text role the contract supports; for visible cards, buttons, badges, inputs and overlays, set each supported surface and its matching text color.',
+      'Use styleOverrides for renderer color slots. A separate color field may go in data only when sectionDataSchemas[section.type] lists it. Never copy styleOverride keys from another section; a key is valid only when that exact section type lists it in colorFields.',
+      'If a visible role is not listed in that section’s colorFields, do not invent a key: keep the global fallback for that role or select a section when custom treatment is required.',
+      'Use WCAG AA contrast (4.5:1 body, 3:1 large text). Pair a light surface with dark text or a dark surface with light text. Only set image-overlay values exposed by the section contract/schema.',
+      'GET /api/v1/content/validate is advisory. Review and repair useful colorIssues, but do not treat warnings or readyToPublish as a publish gate.',
     ],
     addons: {
       shop: addons.hasShop
@@ -756,7 +762,10 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
         ? 'Booking addon is active. Use bookingSlotPicker for time-slot bookings, bookingDateRange for multi-day stays/rooms/locations, availabilityCalendar for availability overview, and resourceBookingShowcase for resources.'
         : 'Booking addon is not active. Do not use premium booking sections; simple contact/reservation sections are still allowed when listed in availableSectionTypes.',
     },
-    industry: industryHints[industry] || fallback,
+    industry: {
+      ...(industryHints[industry] || fallback),
+      preferredSections: filterSectionTypesToCatalog((industryHints[industry] || fallback).preferredSections, availableSectionTypes),
+    },
     finalValidation: [
       'Optional GET /api/v1/content/validate findings have been reviewed where useful.',
       'Every main route returns 200.',

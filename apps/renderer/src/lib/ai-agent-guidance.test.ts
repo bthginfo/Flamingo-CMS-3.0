@@ -1,6 +1,8 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildAiAgentContract, buildAiAgentPrompt } from './ai-agent-guidance';
+import { buildAiAgentContract, buildAiAgentPrompt, filterSectionTypesToCatalog } from './ai-agent-guidance';
+import { FIELD_DEFS } from './section-color-fields';
+import { getFieldsForSection } from './section-color-resolver';
 import type { SiteProfile } from './content-quality';
 
 describe('AI agent guidance', () => {
@@ -22,9 +24,11 @@ describe('AI agent guidance', () => {
 
   it('emits an ordered, idempotent workflow', () => {
     assert.deepEqual(contract.stateMachine.map(step => step.state), [
-      'DISCOVER', 'FOUNDATION', 'CONTENT', 'VERIFY', 'PUBLISH',
+      'DISCOVER', 'PROFILE', 'PLAN', 'FOUNDATION', 'CONTENT', 'VERIFY', 'PUBLISH',
     ]);
     assert.deepEqual(contract.agentRunbook.writeOrder.slice(0, 3), ['profile-preflight', 'plan-preflight', 'brand']);
+    assert.match(contract.stateMachine[1].action, /If approvedSiteProfile is present.*skip this preflight/);
+    assert.match(contract.stateMachine[2].action, /Always plan.*mode="plan"/);
     assert.equal(contract.requestRules.pageEnvelope.upsert, true);
     assert.equal(contract.requestBodies.page.body.upsert, true);
     assert.equal(contract.currentState.bookingEnabled, true);
@@ -38,6 +42,19 @@ describe('AI agent guidance', () => {
     assert.equal(contract.schemaCoverage, 5);
   });
 
+  it('attaches the exact local color keys to each recommended section plan', () => {
+    for (const page of contract.recommendedPages) {
+      for (const section of page.sections) {
+        assert.deepEqual(
+          section.availableStyleOverrideKeys,
+          getFieldsForSection(section.type, 'tradesman').map(field => FIELD_DEFS[field].cssVar),
+        );
+        assert.match(section.styleOverrideRule, /actual section\.styleOverrides object/);
+        assert.equal('_instruction' in section, false);
+      }
+    }
+  });
+
   it('keeps the short prompt focused on deterministic contracts', () => {
     const prompt = buildAiAgentPrompt('Beispiel GmbH', 'tradesman');
     assert.match(prompt, /agentContract\.agentRunbook\.writeOrder/);
@@ -45,7 +62,11 @@ describe('AI agent guidance', () => {
     assert.match(prompt, /agentContract\.stateMachine/);
     assert.match(prompt, /POST \/api\/v1\/content\/validate/);
     assert.match(prompt, /upsert=true/);
-    assert.match(prompt, /publish does not require readyToPublish=true/);
+    assert.match(prompt, /does not gate publishing/);
+    assert.match(prompt, /approvedSiteProfile.*skip profile preflight when it is present/);
+    assert.match(prompt, /always POST the complete profile and page plan with mode="plan"/);
+    assert.match(prompt, /sectionStyleContracts\[type\]\.colorFields/);
+    assert.match(prompt, /never rely only on global colors/i);
   });
 
   it('gives weak models a profile, plan and targeted repair contract', () => {
@@ -61,6 +82,25 @@ describe('AI agent guidance', () => {
     assert.deepEqual(contract.agentRunbook.commonFieldAliasesHandledByApi.manualCards, ['cards', 'items', 'services']);
     assert.ok(contract.missionBrief.copyRules.some(rule => /stage directions/i.test(rule)));
     assert.ok(contract.missionBrief.compositionRules.some(rule => /Premium\/Advanced/.test(rule)));
+  });
+
+  it('sets explicit per-section color choices and keeps validation advisory', () => {
+    const colors = contract.missionBrief.colorRules.join(' ');
+    assert.match(colors, /EVERY section/);
+    assert.match(colors, /sectionStyleContracts\[section\.type\]\.colorFields/);
+    assert.match(colors, /card, button, badge, input and overlay/);
+    assert.match(colors, /do not invent a key/);
+    assert.match(colors, /advisory/);
+    assert.doesNotMatch(colors, /color warnings are blockers/);
+    assert.match(contract.requestRules.colors, /per-section styleOverrides object for every section/);
+    assert.match(contract.weakModelWorkflow.pagePlanContract.rules.join(' '), /do not assume global colors alone/i);
+  });
+
+  it('filters static section suggestions through the tenant catalog', () => {
+    assert.deepEqual(filterSectionTypesToCatalog(
+      ['hero', 'roomGrid', 'galleryGrid'],
+      new Set(['hero', 'galleryGrid']),
+    ), ['hero', 'galleryGrid']);
   });
 
   it('exposes curated experience families with only available section recommendations', () => {

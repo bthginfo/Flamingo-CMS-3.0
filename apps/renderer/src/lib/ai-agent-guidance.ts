@@ -2,6 +2,8 @@ import { CONTENT_FIELD_BUDGETS, CONTENT_GOOD_BAD_EXAMPLES, type SiteProfile } fr
 import { profilePassesExistingValidation } from './business-profile';
 import { getSitePagePolicy } from './site-page-policy';
 import { SECTION_PREVIEW_DATA } from './section-preview-data';
+import { FIELD_DEFS } from './section-color-fields';
+import { getFieldsForSection } from './section-color-resolver';
 
 type SectionCatalogEntry = { type?: string; id?: string; label?: string };
 type ExistingPage = { id: string; slug: string; title: string };
@@ -32,6 +34,10 @@ const ADVANCED_SECTION_TYPES = [
   'aiWorkflowReel',
   'cameraExplodeScroll',
 ] as const;
+
+export function filterSectionTypesToCatalog(sectionTypes: string[], availableTypes: ReadonlySet<string>): string[] {
+  return sectionTypes.filter(type => availableTypes.has(type));
+}
 
 const SECTION_EXAMPLES: Record<string, Record<string, unknown>> = {
   hero: {
@@ -261,7 +267,7 @@ const AGENT_REQUEST_BODIES = {
       sections: [{
         type: '<availableSectionTypes only>',
         data: '<exact sectionDataSchemas[type] shape>',
-        styleOverrides: '<optional exact sectionStyleContracts[type].colorFields keys>',
+        styleOverrides: '<required object: choose values for this section using exact sectionStyleContracts[type].colorFields keys>',
       }],
     },
   },
@@ -344,10 +350,17 @@ export function buildAiAgentContract(input: {
     slug,
     title,
     write: { method: 'POST', path: '/api/v1/content/pages', upsert: true },
-    sections: candidates.filter(type => allowed.has(type)).map(type => ({
-      type,
-      data: SECTION_EXAMPLES[type] || { _instruction: `Fill only fields documented in sectionDataSchemas.${type}` },
-    })),
+    sections: candidates.filter(type => allowed.has(type)).map(type => {
+      const colorFields = getFieldsForSection(type, input.industry);
+      return {
+        type,
+        ...(SECTION_EXAMPLES[type]
+          ? { data: SECTION_EXAMPLES[type] }
+          : { dataSchema: `sectionDataSchemas.${type}` }),
+        availableStyleOverrideKeys: colorFields.map(field => FIELD_DEFS[field].cssVar),
+        styleOverrideRule: 'Choose fitting local colors for the visible roles in this section. Put values in the actual section.styleOverrides object; this guidance field is not part of the API request.',
+      };
+    }),
   });
   const industryHero = `hero${input.industry.charAt(0).toUpperCase()}${input.industry.slice(1)}`;
   const hero = allowed.has('hero') ? 'hero' : industryHero;
@@ -399,16 +412,19 @@ export function buildAiAgentContract(input: {
       goal: 'Generate a premium, non-generic website that feels tailored to this tenant, its assets and its audience.',
       copyRules: AI_COPY_RULES,
       compositionRules: [
-        'Pick one experienceFamily before planning pages and follow its homepageFormula.',
-        'If Premium/Advanced sections are available and real media/assets exist, the homepage must use at least one fitting Premium/Advanced section.',
+        'Pick the closest experienceFamily before planning; adapt its formula to the actual business, page purpose, available section catalog and supplied assets.',
+        'Choose each section because it serves a distinct audience need or page task. Use Premium/Advanced sections only when their interaction and required assets genuinely fit; never force one to meet a quota.',
         'Do not reuse the default hero → uspStrip → servicesGrid → processSteps → testimonials → faq → ctaBand sequence.',
         'No two non-legal pages may share the exact same section sequence.',
-        'Use fewer, stronger sections on subpages; do not repeat homepage content with different headlines.',
+        'Use about 5–8 homepage sections only when every one has a distinct job; stop earlier rather than pad. Subpages usually need 2–5 sections. Tailor public collection overviews to 4–6 sections only when that content warrants them.',
+        'Use only section types in availableSectionTypes. Prefer types whose purpose, industry and required assets match the page; filter every recommendation through the tenant catalog and addon state.',
       ],
       colorRules: [
-        'Manual color overrides are allowed, but every text/background pair must pass WCAG AA.',
-        'When setting a local section/card/button/badge background, also set readable foreground tokens unless the inherited tokens are already readable.',
-        'Use /validate before publish; color warnings are blockers.',
+        'For EVERY section, inspect sectionStyleContracts[section.type].colorFields and set section.styleOverrides on that section with deliberate, section-fitting values for its supported background and visible text colors. Do not rely on global design colors alone.',
+        'Set every visible color role listed for this section, including card, button, badge, input and overlay pairs where supported. If a needed role is absent, do not invent a key: keep the global fallback for that role, or choose another section when it needs a custom color treatment.',
+        'Use only the exact field or cssVar entries listed in that section type’s colorFields. Field labels and descriptions explain their purpose; they are not color values.',
+        'Choose foreground and background pairs that meet WCAG AA (4.5:1 body text, 3:1 large text). Pair button and badge backgrounds with their own text colors. Use image overlays only when the section schema/rendering supports them, and match the text to the overlay.',
+        'GET /api/v1/content/validate is advisory. Review and repair useful contrast findings, but publishing does not require readyToPublish=true.',
       ],
     },
     experienceFamilies: Object.fromEntries(
@@ -425,7 +441,9 @@ export function buildAiAgentContract(input: {
     requestBodies: AGENT_REQUEST_BODIES,
     stateMachine: [
       { state: 'DISCOVER', action: 'Read this response completely. Reuse existing page IDs/slugs. Never guess section fields.' },
-      { state: 'FOUNDATION', action: 'Write brand, contact, design, navigation, footer, opening hours and global SEO.' },
+      { state: 'PROFILE', action: 'If approvedSiteProfile is present, reuse it verbatim and skip this preflight. Otherwise build siteProfile only from verified facts, preserve facts.unknowns, then POST /api/v1/content/validate with mode="profile". Continue only when valid=true.' },
+      { state: 'PLAN', action: 'Always plan sitemap, page purposes, sections, per-section color overrides and routes without writes; POST /api/v1/content/validate with mode="plan". Continue only when valid=true.' },
+      { state: 'FOUNDATION', action: 'After PROFILE and PLAN pass, write brand, contact, global design defaults, navigation, footer, opening hours and global SEO.' },
       { state: 'CONTENT', action: 'POST every page with upsert=true. This operation is safe to repeat after corrections.' },
       { state: 'VERIFY', action: 'Optionally call GET /api/v1/content/validate and repair useful findings. This report is advisory.' },
       { state: 'PUBLISH', action: 'POST /api/v1/content/publish. Publishing does not require a readiness result.' },
@@ -433,9 +451,9 @@ export function buildAiAgentContract(input: {
     requestRules: {
       authorization: 'Authorization: Bearer <PAT>',
       contentType: 'application/json; charset=utf-8',
-      pageEnvelope: { slug: 'lowercase slug without leading slash', title: 'page title', upsert: true, sections: [{ type: 'from availableSectionTypes', definitionKey: 'omit to let the server derive it, or copy availableSectionTypes[type].definitionKey exactly', schemaVersion: 'omit to derive, or copy availableSectionTypes[type].schemaVersion exactly', data: {}, styleOverrides: {} }] },
+      pageEnvelope: { slug: 'lowercase slug without leading slash', title: 'page title', upsert: true, sections: [{ type: 'from availableSectionTypes', definitionKey: 'omit to let the server derive it, or copy availableSectionTypes[type].definitionKey exactly', schemaVersion: 'omit to derive, or copy availableSectionTypes[type].schemaVersion exactly', data: {}, styleOverrides: '<required object: exact supported keys and suitable values for this section>' }] },
       safeDefaults: { visible: true, container: 'default', spacingTop: 'm', spacingBottom: 'm' },
-      colors: 'Prefer global design tokens. Use only sectionStyleContracts[type].colorFields for local overrides.',
+      colors: 'Set a per-section styleOverrides object for every section. Select exact keys from sectionStyleContracts[type].colorFields[].field or .cssVar and choose values for that section’s actual background and foreground roles; set card/button/badge/overlay pairs when supported and visible. Global design colors provide defaults but never replace this per-section color decision.',
     },
     recovery: {
       '400': 'Do not retry unchanged. Correct the named field using code/error/hint.',
@@ -455,8 +473,8 @@ export function buildAiAgentContract(input: {
       'Every image is relevant and has meaningful alt text.',
       'Use at least three substantive array items unless reality provides fewer.',
       'Avoid duplicated paragraphs and repeated headlines across sections.',
-      'Homepage must include at least one Premium/Advanced section when available assets make it feasible.',
-      'Do not publish while validation reports any error or color warning.',
+      'Choose Premium/Advanced sections only when their purpose and available real assets fit; do not add them just to reach a count.',
+      'Review and repair meaningful validation and contrast findings when possible; GET validation is advisory and does not gate publishing.',
     ],
     sitemapPolicy,
     weakModelWorkflow: {
@@ -547,13 +565,15 @@ export function buildAiAgentContract(input: {
           purpose: 'audience need + page job + desired next action',
           primaryAction: 'one conversion action',
           seo: { metaTitle: '20-70 chars; brand omitted if template adds it', metaDescription: '70-170 chars; unique' },
-          sections: [{ type: 'availableSectionTypes only', definitionKey: 'omit or copy the exact availableSectionTypes entry', schemaVersion: 'omit or copy the exact availableSectionTypes entry', purpose: 'one job', data: 'exact sectionDataSchemas[type] shape', styleOverrides: 'optional exact sectionStyleContracts[type] keys' }],
+          sections: [{ type: 'availableSectionTypes only', definitionKey: 'omit or copy the exact availableSectionTypes entry', schemaVersion: 'omit or copy the exact availableSectionTypes entry', purpose: 'one job', data: 'exact sectionDataSchemas[type] shape', styleOverrides: 'required object with fitting values for exact sectionStyleContracts[type].colorFields keys' }],
         },
         rules: [
           'Select one experienceFamily and state it in the plan before page sections.',
-          'Use 7-10 sections on a homepage only when every section has a distinct job; use fewer on subpages.',
-          'When Premium/Advanced sections are available and usable assets exist, the homepage must include at least one fitting Premium/Advanced section.',
+          'Usually use 5-8 homepage sections only when every section has a distinct job; use fewer when the content is complete. Subpages usually need 2-5 sections. Never add sections merely to reach a count.',
+          'Select Premium/Advanced sections only when their purpose and required real assets fit this business and page; simpler available sections are the correct choice otherwise.',
           'Do not use the generic homepage sequence hero, uspStrip, servicesGrid, processSteps, testimonials, faq, ctaBand.',
+          'Choose sections by the page purpose and audience task. Prefer relevant industry-specific section types in availableSectionTypes, then suitable shared types. Exclude unavailable types, disabled-addon types, unrelated patterns and sections requiring assets the owner did not provide.',
+          'For every planned section, choose all supported visible background and text roles in section.styleOverrides using exact entries from sectionStyleContracts[type].colorFields; add card, button, badge, input or overlay pairs when that section supports them. If a role is absent, never invent its key; use the global fallback for that role or choose another section if it needs a custom color. Do not assume global colors alone will fit every section.',
           'No page may share the exact same opener-middle-closer sequence with another page.',
           'Every CTA resolves to a planned page, collection item, anchor, phone, email or verified external URL.',
           'For every public collection, plan a tailored 4-6 section overviewPage. The collection POST auto-creates /<collectionKey> as a safety net, but generic fallback composition is not the quality target.',
@@ -573,7 +593,7 @@ export function buildAiAgentContract(input: {
     },
     advancedExperienceGuide: {
       available: ADVANCED_SECTION_TYPES.filter(type => allowed.has(type)),
-      selectionRule: 'Use Advanced sections deliberately, not rarely. Homepage: use one fitting Advanced/Premium experience when the tenant has real assets or a visual/storytelling need. Subpages: use Advanced only when it adds clarity. A standard section is the fallback only when required assets are missing.',
+      selectionRule: 'Choose an Advanced section only when its purpose fits the page and the owner supplied the required real assets. Do not force one to meet a quota; a simpler available section is correct whenever it communicates better or the needed assets are missing.',
       assetRules: {
         dualWave: '6–12 concise titled entries; one list powers both waves. Prefer at least 4 relevant images.',
         cinematicChapters: '3–6 coherent chapters with one strong landscape image each and short copy.',
@@ -606,5 +626,5 @@ export function buildAiAgentContract(input: {
 }
 
 export function buildAiAgentPrompt(tenantName: string, industry: string): string {
-  return `Create a complete premium ${industry} website for ${tenantName}. Follow agentContract.stateMachine, agentContract.agentRunbook.writeOrder, agentContract.requestBodies and agentContract.missionBrief exactly. Choose one agentContract.experienceFamilies entry before planning. Write final public German copy from the business perspective (ich/wir), never stage directions or section/media notes. Plan distinct pages with at least one fitting Premium/Advanced homepage section when available, then preflight via POST /api/v1/content/validate before writing. Treat sectionDataSchemas and sectionStyleContracts as authoritative. Use page upsert=true. Keep manual color overrides valid and repair named issue locations when possible. GET /api/v1/content/validate is advisory; publish does not require readyToPublish=true.`;
+  return `Create a tailored ${industry} website for ${tenantName}. Read the full GET /api/v1/instructions response and follow agentContract.sitemapPolicy, agentContract.stateMachine, agentContract.agentRunbook.writeOrder and agentContract.requestBodies. Choose pages and sections for this business, page purpose, available assets and enabled addons; use only availableSectionTypes and exact sectionDataSchemas[type] fields. Before any content writes, reuse approvedSiteProfile and skip profile preflight when it is present; otherwise POST /api/v1/content/validate with mode="profile" and continue only when valid=true. Then always POST the complete profile and page plan with mode="plan" and continue only when valid=true. For EVERY section, set section.styleOverrides from that type’s exact sectionStyleContracts[type].colorFields: choose a fitting background and every supported visible text color, plus card/button/badge/overlay pairs where supported. If a needed role is absent, do not invent a key; use its global fallback or select another section when custom treatment is required. Never rely only on global colors or invent override keys. Keep public German copy factual and business-facing; do not invent facts, reviews, people, prices or image assets, and do not write stage directions. Use upsert=true, repair named issues, then publish. GET /api/v1/content/validate is advisory and does not gate publishing.`;
 }
