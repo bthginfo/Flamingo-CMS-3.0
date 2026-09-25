@@ -574,9 +574,11 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const badgeBorderVar = hasMediaOverlay
     ? (own('--token-badge-border') ?? 'rgba(255,255,255,0.28)')
     : 'var(--token-badge-border)';
-  const darkContextHeadingVar = own('--token-on-dark-heading', '--token-heading') ?? '#ffffff';
-  const darkContextBodyVar = own('--token-on-dark-body', '--token-body') ?? 'rgba(255,255,255,0.86)';
-  const darkContextMutedVar = own('--token-on-dark-muted', '--token-muted') ?? 'rgba(255,255,255,0.72)';
+  // Inner photo cards use inverse text independently from the section heading.
+  // A light section can have dark headings while its images still need white type.
+  const darkContextHeadingVar = own('--token-on-dark-heading') ?? '#ffffff';
+  const darkContextBodyVar = own('--token-on-dark-body') ?? 'rgba(255,255,255,0.86)';
+  const darkContextMutedVar = own('--token-on-dark-muted') ?? 'rgba(255,255,255,0.72)';
 
   // Per-section color overrides (from CMS) applied as inline CSS vars.
   const baseSectionStyle = withBookingStyleAliases(

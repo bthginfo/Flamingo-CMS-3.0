@@ -62,6 +62,50 @@ function validInput(): ContentQualityInput {
 }
 
 describe('content quality validator', () => {
+  it('does not treat CSS color tokens as alt text copy', () => {
+    const input = validInput();
+    input.pages[0].sections[0].styleOverrides = { '--token-section-bg-alt': '#fff' };
+    const result = validateContentQuality(input);
+    assert.ok(!result.issues.some(entry => entry.location.includes('styleOverrides')));
+  });
+
+  it('rejects the same substantive paragraph under different card titles', () => {
+    const input = validInput();
+    input.allowedSectionTypes?.push('serviceDetail');
+    input.pages[0].sections.push({
+      type: 'serviceDetail',
+      data: {
+        headline: 'Konzept, Gestaltung und Umsetzung',
+        items: [
+          { title: 'Strategie', text: 'Wir analysieren Anforderungen, Zielgruppen und Prozesse und entwickeln daraus einen konkreten Fahrplan für das Projekt.' },
+          { title: 'Design', text: 'Wir analysieren Anforderungen, Zielgruppen und Prozesse und entwickeln daraus einen konkreten Fahrplan für das Projekt.' },
+          { title: 'Umsetzung', text: 'Wir setzen Gestaltung und Inhalte für die gewählten Kanäle um.' },
+        ],
+      },
+    });
+    const result = validateContentQuality(input);
+    assert.equal(result.valid, false);
+    assert.ok(result.issues.some(entry => entry.code === 'copy.duplicate_card_description' && entry.location.endsWith('items[1].text')));
+  });
+
+  it('requires a visible poster for video reels in a new plan', () => {
+    const input = validInput();
+    input.allowedSectionTypes?.push('verticalReelShowcase');
+    input.pages[0].sections.push({
+      type: 'verticalReelShowcase',
+      data: {
+        headline: 'Einblicke in die Arbeit',
+        reels: [
+          { title: 'Projektfilm', videoSrc: 'https://example.test/film.mp4' },
+          { title: 'Projektmotiv', poster: 'https://example.test/motiv.webp' },
+        ],
+      },
+    });
+    const result = validateContentQuality(input);
+    assert.equal(result.valid, false);
+    assert.ok(result.issues.some(entry => entry.code === 'media.poster_missing' && entry.location.endsWith('reels[0].poster')));
+  });
+
   it('supports a profile-only gate before page planning', () => {
     const result = validateContentQuality({
       mode: 'profile',

@@ -177,7 +177,7 @@ function ReelFrame({ reel, index, featured = false, aspectRatio }: { reel: Reel;
             type="button"
             onClick={startPlayback}
             aria-label={`${reel.title || `Reel ${index + 1}`} vollständig abspielen`}
-            className="absolute left-1/2 top-[42%] z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-[var(--token-card-border)] bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow-[0_20px_55px_rgba(0,0,0,.45)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--token-accent)] md:h-[4.5rem] md:w-[4.5rem]"
+            className="absolute left-1/2 top-[32%] z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-[var(--token-card-border)] bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow-[0_20px_55px_rgba(0,0,0,.45)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--token-accent)] md:h-[4.5rem] md:w-[4.5rem]"
           >
             <Play className="ml-1 fill-current" size={25} aria-hidden="true" />
           </button>
@@ -224,9 +224,9 @@ export function VerticalReelShowcaseSection({ data }: Props) {
           subline={subline}
           aside={<AdvancedLink cta={data.cta as AdvancedCta} className="mt-6" />}
         />
-        <div className="mt-12 grid items-start gap-5 lg:grid-cols-[minmax(17rem,.62fr)_minmax(0,1.38fr)] lg:gap-8">
+        <div className={`mt-12 grid items-start gap-5 lg:gap-8 ${reels.length === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-[minmax(17rem,.62fr)_minmax(0,1.38fr)]'}`}>
           <ReelFrame reel={featured} index={0} featured aspectRatio={aspectRatio} />
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className={`grid gap-5 ${reels.length === 2 ? 'sm:grid-cols-1' : 'sm:grid-cols-2'}`}>
             {rest.map((reel, index) => <ReelFrame key={`${reel.title || reel.videoSrc}-${index}`} reel={reel} index={index + 1} aspectRatio={aspectRatio} />)}
           </div>
         </div>

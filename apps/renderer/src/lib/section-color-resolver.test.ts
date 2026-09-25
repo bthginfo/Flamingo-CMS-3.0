@@ -1,6 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { getFieldsForSection, resolveColorContractForSection } from './section-color-resolver';
+import { getCssVarsForColorField } from './section-color-fields';
+
+test('section text controls do not recolor inverse text on image cards', () => {
+  assert.ok(!getCssVarsForColorField('headingColor').includes('--token-on-dark-heading'));
+  assert.ok(!getCssVarsForColorField('bodyColor').includes('--token-on-dark-body'));
+  assert.ok(!getCssVarsForColorField('mutedColor').includes('--token-on-dark-muted'));
+});
 
 // The resolver decides which colour fields the CMS editor exposes and which
 // --token-* the API accepts per (sectionType, industry). The exact field lists

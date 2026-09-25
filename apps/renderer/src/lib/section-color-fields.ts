@@ -94,6 +94,9 @@ const INTERNAL_COLOR_FIELD_ALIASES: Partial<Record<ColorFieldKey, ColorFieldKey>
   onDarkMuted: 'mutedColor',
 };
 
+// Section text and text over media are separate surfaces. Full-bleed media
+// sections mirror their own text overrides inside SectionRenderer; writing the
+// inverse slots here would also recolor captions on inner image cards.
 const FIELD_WRITE_ALIASES: Partial<Record<ColorFieldKey, string[]>> = {
   sectionBg: ['--style-section-bg'],
   sectionBgAlt: ['--style-section-bg-alt'],
@@ -101,17 +104,14 @@ const FIELD_WRITE_ALIASES: Partial<Record<ColorFieldKey, string[]>> = {
   headingColor: [
     '--style-heading-color',
     '--style-text-primary',
-    '--token-on-dark-heading',
   ],
   subheadingColor: ['--style-subheading-color'],
   bodyColor: [
     '--style-body-color',
     '--style-text-secondary',
-    '--token-on-dark-body',
   ],
   mutedColor: [
     '--style-text-muted',
-    '--token-on-dark-muted',
   ],
   iconColor: ['--style-icon-color'],
   accentColor: ['--style-accent-color', '--style-accent'],

@@ -82,6 +82,14 @@ test('design auto-fix derives readable foregrounds without replacing explicit ch
   assert.ok(!applied.includes('headingColor=#ffffff'));
 });
 
+test('light design auto-fix keeps inverse media text independent', () => {
+  const { design } = autoFixDesignReadable({ sectionBg: '#f8f7f3' });
+  assert.ok((contrastRatio(String(design.headingColor), '#f8f7f3') ?? 0) >= 4.5);
+  assert.equal(design.onDarkHeading, undefined);
+  assert.equal(design.onDarkBody, undefined);
+  assert.equal(design.onDarkMuted, undefined);
+});
+
 test('section contrast validation checks inherited design tokens when overrides are absent', () => {
   const issues = validateSectionStyleOverrides(0, 'hero', {}, {
     sectionBg: '#f8fafc',

@@ -646,6 +646,9 @@ function validateCopyAndBudgets(input: ContentQualityInput, issues: ContentQuali
   for (const [rootPath, rootValue] of roots) {
     walk(rootValue, rootPath, ({ path, key, value }) => {
       if (typeof value !== 'string') return;
+      // Color tokens are values, not public copy; "-alt" in a CSS variable
+      // must not trigger the alt-text length budget.
+      if (path.includes('.styleOverrides.')) return;
       const clean = plain(value);
       if (!clean) return;
 
@@ -784,6 +787,64 @@ function validateArraysAndImages(input: ContentQualityInput, issues: ContentQual
       repair: repair('replace', 'Keep the strongest use and replace the other occurrences with tenant-specific images.', 'No non-brand image is reused more than twice site-wide.'),
     }));
   }
+}
+
+function validateCardCopyUniqueness(input: ContentQualityInput, issues: ContentQualityIssue[]): void {
+  walk({ pages: input.pages, collections: input.collections }, '', ({ path, value }) => {
+    if (!isObjectRecord(value) || typeof value.type !== 'string' || !isObjectRecord(value.data)) return;
+    const data = value.data;
+    const variants = data._localized
+      ? Object.entries(data).filter(([locale, variant]) => /^[a-z]{2}(?:-[A-Z]{2})?$/.test(locale) && isObjectRecord(variant))
+      : [['', data]];
+    for (const [locale, variant] of variants) {
+      if (!isObjectRecord(variant)) continue;
+      if (value.type === 'verticalReelShowcase' && Array.isArray(variant.reels)) {
+        variant.reels.forEach((reel, index) => {
+          if (!isObjectRecord(reel) || !text(reel.videoSrc) || text(reel.poster)) return;
+          issues.push(issue({
+            code: 'media.poster_missing',
+            severity: contentSeverity(input),
+            location: `${path}.data${locale ? `.${locale}` : ''}.reels[${index}].poster`,
+            message: 'A video reel has no poster, so its first frame may appear blank.',
+            repair: repair(
+              'add',
+              'Provide a representative still from this reel or another verified image from the same project.',
+              'Every reel with videoSrc has a relevant, reachable poster image.',
+            ),
+          }));
+        });
+      }
+      for (const arrayKey of ['items', 'cards', 'steps', 'reels']) {
+        const entries = variant[arrayKey];
+        if (!Array.isArray(entries) || entries.length < 2) continue;
+        const seen = new Map<string, number>();
+        entries.forEach((entry, index) => {
+          if (!isObjectRecord(entry)) return;
+          const copyKey = text(entry.text) ? 'text' : 'description';
+          const copy = text(entry[copyKey]);
+          const normalized = normalize(plain(copy));
+          if (normalized.length < 45) return;
+          const first = seen.get(normalized);
+          if (first === undefined) {
+            seen.set(normalized, index);
+            return;
+          }
+          const base = `${path}.data${locale ? `.${locale}` : ''}.${arrayKey}`;
+          issues.push(issue({
+            code: 'copy.duplicate_card_description',
+            severity: contentSeverity(input),
+            location: `${base}[${index}].${copyKey}`,
+            message: `Card ${index + 1} repeats the description from card ${first + 1}.`,
+            repair: repair(
+              'replace',
+              'Describe this card’s own contribution, deliverable or outcome using verified details.',
+              'Each card has a distinct substantive description that matches its title.',
+            ),
+          }));
+        });
+      }
+    }
+  });
 }
 
 function validateLinks(input: ContentQualityInput, issues: ContentQualityIssue[]): void {
@@ -981,6 +1042,7 @@ export function validateContentQuality(input: ContentQualityInput): ContentQuali
     validatePlanStructure(normalizedInput, issues);
     validatePlanComposition(normalizedInput, issues);
     validateCopyAndBudgets(normalizedInput, issues);
+    validateCardCopyUniqueness(normalizedInput, issues);
     validateArraysAndImages(normalizedInput, issues);
     validateLinks(normalizedInput, issues);
     validateSeo(normalizedInput, issues);

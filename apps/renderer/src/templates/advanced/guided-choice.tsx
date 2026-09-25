@@ -90,10 +90,10 @@ export function GuidedChoiceSection({ data }: Props) {
             <motion.div className="h-full bg-[var(--token-accent)]" animate={{ width: `${result ? 100 : progress}%` }} />
           </div>
           <div className="grid min-h-[34rem] lg:grid-cols-[.38fr_.62fr]">
-            <aside className="border-b border-[var(--token-card-border)] bg-[var(--token-section-bg-alt)] p-6 lg:border-b-0 lg:border-r lg:p-9">
+            <aside className="border-b border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 lg:border-b-0 lg:border-r lg:p-9">
               <p className="text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{result ? 'Ihre Empfehlung' : `Frage ${history.length + 1}`}</p>
-              <p className="mt-5 text-5xl font-black tracking-[-.06em] text-[color:var(--token-heading)]">{result ? '✓' : String(history.length + 1).padStart(2, '0')}</p>
-              <p className="mt-5 max-w-xs text-sm leading-6 text-[color:var(--token-muted)]">Antworten Sie intuitiv. Ihre Auswahl wird nur für diese Empfehlung verwendet.</p>
+              <p className="mt-5 text-5xl font-black tracking-[-.06em] text-[color:var(--token-card-heading)]">{result ? '✓' : String(history.length + 1).padStart(2, '0')}</p>
+              <p className="mt-5 max-w-xs text-sm leading-6 text-[color:var(--token-card-body)]">Antworten Sie intuitiv. Ihre Auswahl wird nur für diese Empfehlung verwendet.</p>
               <div className="mt-8 flex gap-2">
                 <button type="button" onClick={back} disabled={!history.length && !result} className="inline-flex min-h-10 items-center gap-2 rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-3 text-xs font-bold text-[color:var(--token-card-heading,var(--token-heading))] disabled:opacity-35">
                   <ArrowLeft size={14} /> Zurück
@@ -122,9 +122,9 @@ export function GuidedChoiceSection({ data }: Props) {
                     {question?.description && <p className="mt-3 max-w-2xl text-base leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="description">{plain(question.description)}</p>}
                     <div className="mt-8 grid gap-3 sm:grid-cols-2" role="group" aria-label={question?.label}>
                       {question?.answers?.map((answer, index) => (
-                        <button key={answer.id || index} type="button" onClick={() => choose(answer)} className="group min-h-24 border-l-2 border-[var(--token-divider)] bg-[var(--token-section-bg)] p-5 text-left transition hover:border-[var(--token-accent)] hover:bg-[var(--token-section-bg-alt)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)]" data-edit-collection="answers" data-edit-index={index}>
-                          <span className="text-base font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{answer.label}</span>
-                          {answer.description && <span className="mt-1 block text-sm leading-5 text-[color:var(--token-card-muted,var(--token-muted))]" data-edit-path="description">{plain(answer.description)}</span>}
+                        <button key={answer.id || index} type="button" onClick={() => choose(answer)} className="group min-h-24 border-l-2 border-[var(--token-divider)] bg-[var(--token-btn-bg)] p-5 text-left transition hover:border-[var(--token-accent)] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)]" data-edit-collection="answers" data-edit-index={index}>
+                          <span className="text-base font-black text-[color:var(--token-btn-text)]" data-edit-path="label">{answer.label}</span>
+                          {answer.description && <span className="mt-1 block text-sm leading-5 text-[color:var(--token-btn-text)]" data-edit-path="description">{plain(answer.description)}</span>}
                         </button>
                       ))}
                     </div>

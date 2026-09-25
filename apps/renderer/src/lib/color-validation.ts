@@ -456,9 +456,8 @@ export function autoFixDesignReadable(design: Record<string, unknown>): {
       out.mutedColor = muted;
       applied.push(`mutedColor=${muted}`);
     }
-    if (!out.onDarkHeading) out.onDarkHeading = pickDesignValue(out, ['headingColor', 'heading', 'textPrimary']);
-    if (!out.onDarkBody) out.onDarkBody = pickDesignValue(out, ['bodyColor', 'body', 'textSecondary']);
-    if (!out.onDarkMuted) out.onDarkMuted = pickDesignValue(out, ['mutedColor', 'muted', 'textMuted']);
+    // Image-overlay text is an inverse role. A light section's dark foreground
+    // must not be copied into it; brand-colors provides safe light defaults.
   }
   if (cardBg) {
     const cardHeading = readableTextColorForBackground(cardBg, { canvas: sectionBg || '#ffffff', large: true, role: 'heading' });

@@ -123,14 +123,15 @@ describe('AI agent guidance', () => {
     const advanced = buildAiAgentContract({
       tenantName: 'Studio Beispiel',
       industry: 'tradesman',
-      allowedSections: [{ type: 'hero' }, { type: 'xrayReveal' }, { type: 'infiniteCanvas' }],
+      allowedSections: [{ type: 'hero' }, { type: 'xrayReveal' }, { type: 'infiniteCanvas' }, { type: 'verticalReelShowcase' }],
       existingPages: [],
-      sectionSchemas: { hero: {}, xrayReveal: {}, infiniteCanvas: {} },
+      sectionSchemas: { hero: {}, xrayReveal: {}, infiniteCanvas: {}, verticalReelShowcase: {} },
       hasShop: false,
       hasBooking: false,
     });
-    assert.deepEqual(advanced.advancedExperienceGuide.available, ['xrayReveal', 'infiniteCanvas']);
+    assert.deepEqual(advanced.advancedExperienceGuide.available, ['xrayReveal', 'infiniteCanvas', 'verticalReelShowcase']);
     assert.match(advanced.advancedExperienceGuide.assetRules.xrayReveal, /identical pixel dimensions/);
+    assert.match(advanced.advancedExperienceGuide.assetRules.verticalReelShowcase, /representative poster/);
     assert.equal((advanced.advancedExperienceGuide.examples.infiniteCanvas as { items: unknown[] }).items.length, 10);
     assert.equal(advanced.advancedExperienceGuide.examples.sceneLab, undefined);
   });

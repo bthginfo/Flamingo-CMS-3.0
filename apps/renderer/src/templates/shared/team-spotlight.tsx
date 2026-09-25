@@ -48,9 +48,9 @@ export function TeamSpotlightSection({ data }: Props) {
               <div className="absolute inset-0 flex items-center justify-center bg-[var(--token-badge-bg)] text-6xl font-black text-[color:var(--token-badge-text)]">{m.name.charAt(0)}</div>
             )}
             {/* Gradient scrim keeps the name readable on any photo */}
-            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[linear-gradient(to_top,var(--token-image-overlay),transparent)]" />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[linear-gradient(to_top,rgba(0,0,0,.45),transparent_80%),linear-gradient(to_top,var(--token-image-overlay),transparent)]" />
 
-            <div className="absolute inset-x-0 bottom-0 p-5">
+            <div data-color-context="dark" className="absolute inset-x-0 bottom-0 p-5">
               <h3 className="text-lg font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{m.name}</h3>
               {m.role && <p className="text-sm text-[color:var(--token-on-dark-muted)]" data-edit-path="role">{m.role}</p>}
 
