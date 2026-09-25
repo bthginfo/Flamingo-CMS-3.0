@@ -93,9 +93,9 @@ test('billing finalization is immutable, numbered atomically and delivered with 
   assert.match(actions, /WITH locked_document AS MATERIALIZED/);
   assert.match(actions, /settings\.sequence_period IS NULL AND \$\{type\} = 'invoice' THEN settings\.next_invoice_number/);
   assert.match(actions, /const finalizedStatus = type === 'quote' \? 'issued' : 'finalized'/);
-  assert.match(actions, /status: finalizedStatus/);
+  assert.match(actions, /status = \$\{finalizedStatus\}/);
   assert.match(actions, /storeBillingArtifact\(\{ tenantId, documentId, documentNumber, kind: 'pdf'/);
-  assert.match(actions, /pdfBase64: pdfBlobUrl \? null : Buffer\.from\(pdf\)\.toString\('base64'\)/);
+  assert.match(actions, /pdf_base64 = \$\{pdfBase64\}/);
   assert.match(actions, /readBillingPdfArtifact\(\{ blobUrl: document\.pdfBlobUrl, base64: document\.pdfBase64 \}\)/);
   assert.match(artifacts, /isTrustedBlobUrl/);
   assert.match(artifacts, /\.public\.blob\.vercel-storage\.com/);

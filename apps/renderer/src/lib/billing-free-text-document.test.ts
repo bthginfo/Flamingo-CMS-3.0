@@ -62,15 +62,22 @@ test('a long free-text document automatically spans multiple PDF pages', async (
   const parsed = await PDFDocument.load(result.bytes);
   assert.ok(parsed.getPageCount() >= 2);
   assert.equal(result.pageCount, parsed.getPageCount());
-  assert.equal(result.pageCount, layoutFreeTextDocument(content).pages.length);
+  const header = layoutFreeTextHeader(
+    { displayName: 'Muster GmbH', street: 'Hauptstra\u00dfe 1', postalCode: '10115', city: 'Berlin', countryCode: 'DE' },
+    'Paginationstest',
+    'Langes Schreiben',
+  );
+  assert.equal(result.pageCount, layoutFreeTextDocument(content, { firstPageStartY: header.contentStartY }).pages.length);
 });
 
 test('shared layout plan matches PDF pages for a long 30pt unbroken paragraph', async () => {
   const content = { type: 'doc' as const, content: [{ type: 'paragraph' as const, content: [{ type: 'text' as const, text: 'W'.repeat(10_001), marks: [{ type: 'fontSize' as const, attrs: { size: 30 } }] }] }] };
-  const layout = layoutFreeTextDocument(content);
+  const recipient = { displayName: 'Muster GmbH', street: 'Hauptstra\u00dfe 1', addressLine2: 'Geb\u00e4ude B', postalCode: '10115', city: 'Berlin', countryCode: 'DE' as const };
+  const header = layoutFreeTextHeader(recipient, 'Langer Betreff', 'Breitentest');
+  const layout = layoutFreeTextDocument(content, { firstPageStartY: header.contentStartY });
   const result = await renderFreeTextDocumentPdf({
     title: 'Breitentest', subject: 'Langer Betreff', issueDate: new Date('2026-08-05T12:00:00Z'), content,
-    recipient: { displayName: 'Muster GmbH', street: 'Hauptstra\u00dfe 1', addressLine2: 'Geb\u00e4ude B', postalCode: '10115', city: 'Berlin', countryCode: 'DE' },
+    recipient,
     seller: { companyName: 'Flamingo GmbH', street: 'Testweg 2', postalCode: '85049', city: 'Ingolstadt', countryCode: 'DE', email: 'hallo@example.de', smallBusiness: false },
   });
   assert.equal(result.pageCount, layout.pages.length);

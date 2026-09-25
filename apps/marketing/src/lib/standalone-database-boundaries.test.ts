@@ -5,7 +5,7 @@ import { buildAtomicTenantPurgeSql } from './tenant-data-migration';
 import { createTenantOperationFingerprint } from './tenant-operation';
 
 function source(path: string) {
-  return readFileSync(new URL(path, import.meta.url), 'utf8');
+  return readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
 test('operation fingerprints are deterministic across object key order', () => {

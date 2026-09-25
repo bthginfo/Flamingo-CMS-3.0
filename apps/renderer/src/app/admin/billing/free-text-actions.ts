@@ -1,7 +1,7 @@
 'use server';
 
 import { randomUUID } from 'node:crypto';
-import { and, desc, eq, inArray, isNull, lte, ne } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, lte } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -105,6 +105,11 @@ export async function saveFreeTextDocumentAction(input: unknown) {
   try {
     const value = draftSchema.parse(input);
     const db = getDb();
+    const [existing] = await db.select({ status: billingFreeTextDocuments.status, pdfBlobUrl: billingFreeTextDocuments.pdfBlobUrl })
+      .from(billingFreeTextDocuments).where(and(eq(billingFreeTextDocuments.id, value.id), eq(billingFreeTextDocuments.tenantId, tenantId))).limit(1);
+    if (!existing) throw new Error('Schreiben nicht gefunden.');
+    if (existing.status === 'finalized') throw new Error('Festgeschriebene Schreiben sind unver\u00e4nderlich und k\u00f6nnen nicht bearbeitet werden.');
+    if (existing.status === 'finalizing') throw new Error('Die PDF-Datei wird gerade erzeugt. Bitte warten Sie kurz.');
     let previewRecipient: FreeTextRecipient;
     if (value.recipientMode === 'customer') {
       const [customer] = await db.select().from(customers).where(and(eq(customers.id, value.customerId!), eq(customers.tenantId, tenantId), isNull(customers.archivedAt))).limit(1);
@@ -112,10 +117,6 @@ export async function saveFreeTextDocumentAction(input: unknown) {
       previewRecipient = freeTextRecipientFromCustomer(customer);
     } else previewRecipient = freeTextRecipientSchema.parse(value.recipient);
     if (!layoutFreeTextHeader(previewRecipient, value.subject, value.title).fits) throw new Error('Empf\u00e4nger oder Betreff sind zu lang f\u00fcr den Briefkopf. Bitte k\u00fcrzen Sie die Angaben.');
-    const [existing] = await db.select({ status: billingFreeTextDocuments.status, pdfBlobUrl: billingFreeTextDocuments.pdfBlobUrl })
-      .from(billingFreeTextDocuments).where(and(eq(billingFreeTextDocuments.id, value.id), eq(billingFreeTextDocuments.tenantId, tenantId))).limit(1);
-    if (!existing) throw new Error('Schreiben nicht gefunden.');
-    if (existing.status === 'finalizing') throw new Error('Die PDF-Datei wird gerade erzeugt. Bitte warten Sie kurz.');
     const [saved] = await db.update(billingFreeTextDocuments).set({
       customerId: value.recipientMode === 'customer' ? value.customerId : null,
       recipientMode: value.recipientMode, recipientDraft: value.recipientMode === 'custom' ? value.recipient : null,
@@ -123,8 +124,15 @@ export async function saveFreeTextDocumentAction(input: unknown) {
       status: 'draft', finalizationToken: null, sellerSnapshot: null, recipientSnapshot: null,
       pdfBase64: null, pdfBlobUrl: null, pdfSha256: null, documentSha256: null, pageCount: null, finalizedAt: null,
       updatedAt: new Date(),
-    }).where(and(eq(billingFreeTextDocuments.id, value.id), eq(billingFreeTextDocuments.tenantId, tenantId), ne(billingFreeTextDocuments.status, 'finalizing'))).returning({ id: billingFreeTextDocuments.id });
-    if (!saved) throw new Error('Das Schreiben konnte nicht gespeichert werden.');
+    }).where(and(eq(billingFreeTextDocuments.id, value.id), eq(billingFreeTextDocuments.tenantId, tenantId), eq(billingFreeTextDocuments.status, 'draft'))).returning({ id: billingFreeTextDocuments.id });
+    if (!saved) {
+      const [current] = await db.select({ status: billingFreeTextDocuments.status }).from(billingFreeTextDocuments)
+        .where(and(eq(billingFreeTextDocuments.id, value.id), eq(billingFreeTextDocuments.tenantId, tenantId))).limit(1);
+      if (current?.status === 'finalized') throw new Error('Festgeschriebene Schreiben sind unver\u00e4nderlich und k\u00f6nnen nicht bearbeitet werden.');
+      if (current?.status === 'finalizing') throw new Error('Die PDF-Datei wird gerade erzeugt. Bitte warten Sie kurz.');
+      if (!current) throw new Error('Schreiben nicht gefunden.');
+      throw new Error('Das Schreiben konnte nicht gespeichert werden.');
+    }
     if (existing.pdfBlobUrl) await deleteBillingArtifact(existing.pdfBlobUrl);
     revalidatePath('/admin/billing');
     return { success: true as const };
@@ -154,7 +162,7 @@ export async function finalizeFreeTextDocumentAction(input: unknown) {
       issueDate: value.issueDate, content: value.content, status: 'finalizing', finalizationToken: claimToken, updatedAt: new Date(),
     } as const;
     const claimDraft = () => db.update(billingFreeTextDocuments).set({ ...claimValues, updatedAt: new Date() })
-      .where(and(eq(billingFreeTextDocuments.id, value.id), eq(billingFreeTextDocuments.tenantId, tenantId), inArray(billingFreeTextDocuments.status, ['draft', 'finalized']))).returning({ id: billingFreeTextDocuments.id });
+      .where(and(eq(billingFreeTextDocuments.id, value.id), eq(billingFreeTextDocuments.tenantId, tenantId), eq(billingFreeTextDocuments.status, 'draft'))).returning({ id: billingFreeTextDocuments.id });
     let [claim] = await claimDraft();
     if (!claim) {
       const [current] = await db.select({ status: billingFreeTextDocuments.status, pageCount: billingFreeTextDocuments.pageCount, updatedAt: billingFreeTextDocuments.updatedAt, finalizationToken: billingFreeTextDocuments.finalizationToken })
@@ -216,10 +224,24 @@ export async function finalizeFreeTextDocumentAction(input: unknown) {
 export async function deleteFreeTextDocumentAction(id: string) {
   const tenantId = await requireFreeTextTenant(true);
   try {
-    const [deleted] = await getDb().delete(billingFreeTextDocuments)
-      .where(and(eq(billingFreeTextDocuments.id, z.string().uuid().parse(id)), eq(billingFreeTextDocuments.tenantId, tenantId), ne(billingFreeTextDocuments.status, 'finalizing')))
+    const db = getDb();
+    const documentId = z.string().uuid().parse(id);
+    const [existing] = await db.select({ status: billingFreeTextDocuments.status }).from(billingFreeTextDocuments)
+      .where(and(eq(billingFreeTextDocuments.id, documentId), eq(billingFreeTextDocuments.tenantId, tenantId))).limit(1);
+    if (!existing) throw new Error('Schreiben nicht gefunden.');
+    if (existing.status === 'finalized') throw new Error('Festgeschriebene Schreiben sind unver\u00e4nderlich und k\u00f6nnen nicht gel\u00f6scht werden.');
+    if (existing.status === 'finalizing') throw new Error('Die PDF-Datei wird gerade erzeugt. Bitte warten Sie kurz.');
+    const [deleted] = await db.delete(billingFreeTextDocuments)
+      .where(and(eq(billingFreeTextDocuments.id, documentId), eq(billingFreeTextDocuments.tenantId, tenantId), eq(billingFreeTextDocuments.status, 'draft')))
       .returning({ pdfBlobUrl: billingFreeTextDocuments.pdfBlobUrl });
-    if (!deleted) throw new Error('Das Schreiben wird gerade verarbeitet oder wurde bereits gel\u00f6scht.');
+    if (!deleted) {
+      const [current] = await db.select({ status: billingFreeTextDocuments.status }).from(billingFreeTextDocuments)
+        .where(and(eq(billingFreeTextDocuments.id, documentId), eq(billingFreeTextDocuments.tenantId, tenantId))).limit(1);
+      if (current?.status === 'finalized') throw new Error('Festgeschriebene Schreiben sind unver\u00e4nderlich und k\u00f6nnen nicht gel\u00f6scht werden.');
+      if (current?.status === 'finalizing') throw new Error('Die PDF-Datei wird gerade erzeugt. Bitte warten Sie kurz.');
+      if (!current) throw new Error('Schreiben nicht gefunden.');
+      throw new Error('Das Schreiben konnte nicht gel\u00f6scht werden.');
+    }
     if (deleted.pdfBlobUrl) await deleteBillingArtifact(deleted.pdfBlobUrl);
     revalidatePath('/admin/billing');
     return { success: true as const };
