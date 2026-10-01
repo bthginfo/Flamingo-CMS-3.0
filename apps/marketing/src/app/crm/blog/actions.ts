@@ -3,6 +3,7 @@
 import { getDb } from '@/lib/db';
 import {
   BLOG_SCHEMA_MISSING_MESSAGE,
+  PUBLIC_BLOG_CACHE_TAG,
   excerptFrom,
   isMissingBlogSchemaError,
   normalizeSlug,
@@ -13,7 +14,7 @@ import {
 } from '@/lib/blog';
 import { crmBlogPosts } from '@flamingo/db';
 import { desc, eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { requireCrmAdmin } from '@/lib/session';
 
@@ -29,6 +30,7 @@ function handleBlogSchemaError(error: unknown): never {
 }
 
 function revalidateBlog(slug?: string) {
+  revalidateTag(PUBLIC_BLOG_CACHE_TAG);
   revalidatePath('/crm/blog');
   revalidatePath('/blog');
   revalidatePath('/');

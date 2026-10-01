@@ -2,6 +2,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { timingSafeEqual } from 'crypto';
 import { verifyFwRevalidationOidcToken } from '@/lib/github-actions-oidc';
+import { invalidateBillingWork, invalidateInstagramWork } from '@/lib/scheduled-db-work';
 
 function safeCompare(a: string, b: string): boolean {
   if (!a || !b) return false;
@@ -20,6 +21,10 @@ export async function POST(request: NextRequest) {
   if (!authorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  revalidateTag('public-tenant-routing');
+  invalidateBillingWork();
+  invalidateInstagramWork();
 
   // Optional ?tenant=<id> for surgical revalidation. Without it, we nuke
   // the whole tree (kept for back-compat with the old publish helper).

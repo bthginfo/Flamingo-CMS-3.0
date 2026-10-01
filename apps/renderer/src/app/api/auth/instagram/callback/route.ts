@@ -10,6 +10,7 @@ import {
   fetchUserProfile,
 } from '@/lib/instagram/graph';
 import { syncConnection } from '@/lib/instagram/sync';
+import { invalidateInstagramWork } from '@/lib/scheduled-db-work';
 
 export const dynamic = 'force-dynamic';
 
@@ -96,6 +97,7 @@ export async function GET(req: NextRequest) {
       connectionId = inserted.id;
     }
 
+    invalidateInstagramWork();
     // Run an initial sync immediately so the user sees real posts as soon as
     // they land back in the editor. Errors are recorded on the connection row.
     const syncResult = await syncConnection(connectionId).catch(() => null);

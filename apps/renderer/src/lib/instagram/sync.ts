@@ -4,6 +4,7 @@ import { getDb } from '@/lib/db';
 import { decryptToken, encryptToken } from './cipher';
 import { fetchUserMedia, refreshLongToken, type IgMedia } from './graph';
 import { diffInstagramPosts } from './sync-diff';
+import { getInstagramConnectionIds, invalidateInstagramWork } from '../scheduled-db-work';
 
 /**
  * Pull latest media for a connection, upsert into instagram_posts, drop
@@ -115,8 +116,7 @@ export async function syncTenant(tenantId: string) {
 }
 
 export async function syncAll() {
-  const db = getDb();
-  const all = await db.select({ id: instagramConnections.id }).from(instagramConnections);
+  const all = await getInstagramConnectionIds();
   const results = await Promise.allSettled(all.map(c => syncConnection(c.id)));
   return {
     total: all.length,
@@ -128,11 +128,13 @@ export async function syncAll() {
 export async function disconnectTenant(tenantId: string) {
   const db = getDb();
   await db.delete(instagramConnections).where(eq(instagramConnections.tenantId, tenantId));
+  invalidateInstagramWork();
 }
 
 export async function deleteByIgUserId(igUserId: string) {
   const db = getDb();
   await db.delete(instagramConnections).where(eq(instagramConnections.igUserId, igUserId));
+  invalidateInstagramWork();
 }
 
 export { and, eq };

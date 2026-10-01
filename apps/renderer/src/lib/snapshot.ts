@@ -3,6 +3,7 @@ import { tenants, tenantDomains, pages, pageSections, collections, collectionIte
 import { eq, and, asc, desc, inArray, notInArray, or } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 import { resolveActiveFixedTenantId } from './active-tenant';
 
 const lastKnownSnapshots = new Map<string, Snapshot>();
@@ -60,7 +61,7 @@ export type Snapshot = {
 };
 
 /** Resolve tenant from hostname, or from the first path segment for shared lead/demo URLs. */
-export async function resolveTenant(candidateSlug?: string): Promise<string | null> {
+export const resolveTenant = cache(async (candidateSlug?: string): Promise<string | null> => {
   // Standalone mode: fixed tenant via env var (dedicated Vercel project)
   const fixedTenantId = process.env.FIXED_TENANT_ID;
   if (fixedTenantId) {
@@ -73,45 +74,48 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
   }
 
   try {
-    const db = getDb();
     const headersList = await headers();
     const host = headersList.get('host') ?? 'localhost';
     const isLocalHost = host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]');
 
-    // Try domain lookup
-    const [domain] = await db
-      .select({ tenantId: tenantDomains.tenantId })
-      .from(tenantDomains)
-      .innerJoin(tenants, eq(tenants.id, tenantDomains.tenantId))
-      .where(and(eq(tenantDomains.domain, host), eq(tenants.status, 'active')))
-      .limit(1);
-    if (domain) return domain.tenantId;
+    return await unstable_cache(async () => {
+      const db = getDb();
+      // Try domain lookup
+      const [domain] = await db
+        .select({ tenantId: tenantDomains.tenantId })
+        .from(tenantDomains)
+        .innerJoin(tenants, eq(tenants.id, tenantDomains.tenantId))
+        .where(and(eq(tenantDomains.domain, host), eq(tenants.status, 'active')))
+        .limit(1);
+      if (domain) return domain.tenantId;
 
-    if (candidateSlug) {
-      const [tenantBySlug] = await db.select({ id: tenants.id }).from(tenants).where(
-        isLocalHost
-          ? and(eq(tenants.slug, candidateSlug), eq(tenants.status, 'active'))
-          : and(
-              eq(tenants.slug, candidateSlug),
-              eq(tenants.status, 'active'),
-              inArray(tenants.deploymentMode, ['shared', 'lead_shared']),
-              or(eq(tenants.isDemo, true), eq(tenants.isLead, true)),
-            ),
-      ).limit(1);
-      if (tenantBySlug) return tenantBySlug.id;
+      if (candidateSlug) {
+        const [tenantBySlug] = await db.select({ id: tenants.id }).from(tenants).where(
+          isLocalHost
+            ? and(eq(tenants.slug, candidateSlug), eq(tenants.status, 'active'))
+            : and(
+                eq(tenants.slug, candidateSlug),
+                eq(tenants.status, 'active'),
+                inArray(tenants.deploymentMode, ['shared', 'lead_shared']),
+                or(eq(tenants.isDemo, true), eq(tenants.isLead, true)),
+              ),
+        ).limit(1);
+        if (tenantBySlug) return tenantBySlug.id;
+        if (!isLocalHost) return null;
+      }
+
       if (!isLocalHost) return null;
-    }
 
-    if (!isLocalHost) return null;
-
-    // Fallback: first active tenant (local dev mode only)
-    const [tenant] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.status, 'active')).limit(1);
-    return tenant?.id ?? null;
+      // Fallback: first active tenant (local dev mode only)
+      const [tenant] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.status, 'active')).limit(1);
+      return tenant?.id ?? null;
+    }, ['public-tenant-route-v1', host, candidateSlug || ''],
+    { revalidate: 60, tags: ['public-tenant-routing'] })();
   } catch (err) {
     console.error('[resolveTenant] DB error:', err);
     return null;
   }
-}
+});
 
 /**
  * Public-facing snapshot read.
@@ -247,7 +251,7 @@ export async function isDemoTenant(tenantId: string): Promise<boolean> {
 }
 
 /** Resolve a demo tenant without collapsing a DB failure into "not found". */
-export async function resolveDemoTenantResult(
+async function readDemoTenantResult(
   industry: string,
   urlKey?: string,
 ): Promise<DemoTenantResolution> {
@@ -298,6 +302,27 @@ export async function resolveDemoTenantResult(
   }
 }
 
+async function cachedDemoResolution(read: () => Promise<DemoTenantResolution>, key: string[]): Promise<DemoTenantResolution> {
+  try {
+    return await unstable_cache(async () => {
+      const result = await read();
+      if (result.status === 'error') throw result;
+      return result;
+    }, key, { revalidate: 60, tags: ['public-tenant-routing'] })();
+  } catch (error) {
+    if (error && typeof error === 'object' && 'status' in error && error.status === 'error') {
+      return error as Extract<DemoTenantResolution, { status: 'error' }>;
+    }
+    return { status: 'error', stage: 'slug', error };
+  }
+}
+
+export const resolveDemoTenantResult = cache((industry: string, urlKey?: string): Promise<DemoTenantResolution> =>
+  cachedDemoResolution(() => readDemoTenantResult(industry, urlKey), ['demo-tenant-v1', industry, urlKey || '']));
+
+export const resolveDemoTenantBySlugResult = cache((slug: string): Promise<DemoTenantResolution> =>
+  cachedDemoResolution(() => readDemoTenantBySlugResult(slug), ['demo-tenant-slug-v1', slug]));
+
 /** Resolve demo tenant by industry (isDemo=true). Excludes special slug-mapped tenants. */
 export async function resolveDemoTenant(industry: string, urlKey?: string): Promise<string | null> {
   const result = await resolveDemoTenantResult(industry, urlKey);
@@ -308,7 +333,7 @@ export async function resolveDemoTenant(industry: string, urlKey?: string): Prom
   return result.status === 'found' ? result.tenantId : null;
 }
 
-export async function resolveDemoTenantBySlugResult(slug: string): Promise<DemoTenantResolution> {
+async function readDemoTenantBySlugResult(slug: string): Promise<DemoTenantResolution> {
   try {
     const db = getDb();
     const [tenant] = await db

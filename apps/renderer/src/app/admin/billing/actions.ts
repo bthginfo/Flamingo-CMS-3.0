@@ -23,6 +23,8 @@ import {
   tenants,
 } from '@flamingo/db';
 import { getDb } from '@/lib/db';
+import { getNextBillingRunAt, invalidateBillingWork } from '@/lib/scheduled-db-work';
+import { shouldRunScheduledWork } from '@/lib/scheduled-work-policy';
 import { getSession, getWritableSession } from '@/lib/session';
 import { createHardenedRendererSmtpTransport, getEffectiveSmtp, isValidSmtpAddress } from '@/lib/smtp';
 import {
@@ -1640,10 +1642,12 @@ export async function saveBillingRecurringScheduleAction(input: unknown) {
         .where(and(eq(billingRecurringSchedules.id, value.id), eq(billingRecurringSchedules.tenantId, tenantId)))
         .returning({ id: billingRecurringSchedules.id });
       if (!saved) return { success: false as const, error: 'Serienvorlage nicht gefunden.' };
+      invalidateBillingWork();
       revalidatePath('/admin/billing');
       return { success: true as const, id: saved.id };
     }
     const [saved] = await db.insert(billingRecurringSchedules).values({ tenantId, ...update }).returning({ id: billingRecurringSchedules.id });
+    invalidateBillingWork();
     revalidatePath('/admin/billing');
     return { success: true as const, id: saved.id };
   } catch (error) {
@@ -1660,6 +1664,7 @@ export async function setBillingRecurringScheduleStatusAction(id: string, status
       .where(and(eq(billingRecurringSchedules.id, z.string().uuid().parse(id)), eq(billingRecurringSchedules.tenantId, tenantId)))
       .returning({ id: billingRecurringSchedules.id });
     if (!updated) return { success: false as const, error: 'Serienvorlage nicht gefunden.' };
+    invalidateBillingWork();
     revalidatePath('/admin/billing');
     return { success: true as const };
   } catch (error) {
@@ -1711,6 +1716,7 @@ async function runBillingRecurringScheduleForTenant(tenantId: string, id: string
       db.update(billingRecurringRuns).set({ status: 'completed', documentId: created.id, completedAt: new Date() }).where(eq(billingRecurringRuns.id, claim.id)),
       db.update(billingRecurringSchedules).set({ status: completed ? 'completed' : schedule.status, lastRunAt: scheduledFor, nextRunAt, updatedAt: new Date() }).where(and(eq(billingRecurringSchedules.id, scheduleId), eq(billingRecurringSchedules.tenantId, tenantId))),
     ]);
+    invalidateBillingWork();
     revalidatePath('/admin/billing');
     return { success: true as const, documentId: created.id, nextRunAt, completed };
   } catch (error) {
@@ -1732,9 +1738,14 @@ export async function runBillingRecurringScheduleAction(id: string, scheduledFor
 export async function runDueBillingRecurringSchedules(authorization: string | null, now = new Date(), limit = 50) {
   const secret = process.env.CRON_SECRET;
   if (!secret || authorization !== `Bearer ${secret}`) throw new Error('Unauthorized');
+  const nextRunAt = await getNextBillingRunAt();
+  if (!shouldRunScheduledWork(nextRunAt, now)) {
+    return { processed: 0, succeeded: 0, failed: 0, results: [] };
+  }
   const due = await getDb().select({ id: billingRecurringSchedules.id, tenantId: billingRecurringSchedules.tenantId, nextRunAt: billingRecurringSchedules.nextRunAt })
     .from(billingRecurringSchedules)
-    .where(and(eq(billingRecurringSchedules.status, 'active'), lte(billingRecurringSchedules.nextRunAt, now)))
+    .where(and(eq(billingRecurringSchedules.status, 'active'), lte(billingRecurringSchedules.nextRunAt, now),
+      process.env.FIXED_TENANT_ID ? eq(billingRecurringSchedules.tenantId, process.env.FIXED_TENANT_ID.trim()) : undefined))
     .orderBy(asc(billingRecurringSchedules.nextRunAt))
     .limit(Math.min(200, Math.max(1, limit)));
   const results: Array<{ id: string; ok: boolean; alreadyGenerated?: boolean; error?: string }> = [];
@@ -1746,6 +1757,7 @@ export async function runDueBillingRecurringSchedules(authorization: string | nu
       results.push({ id: schedule.id, ok: false, error: error instanceof Error ? error.name : 'generation_error' });
     }
   }
+  invalidateBillingWork();
   return { processed: results.length, succeeded: results.filter(result => result.ok).length, failed: results.filter(result => !result.ok).length, results };
 }
 

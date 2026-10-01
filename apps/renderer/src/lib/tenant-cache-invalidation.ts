@@ -7,5 +7,6 @@ import { revalidatePath, revalidateTag } from 'next/cache';
  */
 export function revalidateTenantPublicData(tenantId: string) {
   revalidateTag(`tenant-${tenantId}`);
+  revalidateTag('public-tenant-routing');
   revalidatePath('/', 'layout');
 }
