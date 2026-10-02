@@ -1,3 +1,5 @@
+import { handleApiError } from '@/lib/api-utils';
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
@@ -45,7 +47,7 @@ export async function POST(req: NextRequest) {
     const auth = await validatePat(req.headers.get('authorization'));
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const body = await req.json();
+    const body = await readApiJsonObject(req);
     const { key, label, schema: colSchema, settings, overviewPage } = body;
     if (!key || !label) return NextResponse.json({ error: 'key and label required' }, { status: 400 });
 
@@ -207,8 +209,6 @@ export async function POST(req: NextRequest) {
       overviewPage: overview,
     }, { status: existing ? 200 : 201 });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('POST /collections error:', message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return handleApiError(req, err);
   }
 }

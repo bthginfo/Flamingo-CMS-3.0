@@ -1,6 +1,8 @@
 ﻿'use client';
 
-import { useInView, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { useInView, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { Aperture, ArrowUpRight, Box, Cuboid, Eye, Layers3, ScanLine, View } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
@@ -486,8 +488,8 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
   return (
     <div ref={wrapRef} className="relative h-full min-h-[22rem] w-full sm:min-h-[30rem] md:min-h-[34rem]">
       <canvas ref={canvasRef} className="h-full w-full" aria-label="3D Exploded View einer Kamera" />
-      {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D Kamera lädt</div>}
-      {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-on-dark-muted)]">3D nicht verfügbar</div>}
+      {status === 'loading' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-card-muted)]">3D Kamera lädt</div>}
+      {status === 'fallback' && <div className="absolute inset-0 grid place-items-center text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-card-muted)]">3D nicht verfügbar</div>}
     </div>
   );
 }
@@ -495,15 +497,15 @@ function CameraThreeScene({ parts, modelUrl, progress }: { parts: CameraPart[]; 
 function PartCopy({ part, index, compact = false }: { part: CameraPart; index: number; compact?: boolean }) {
   const Icon = PART_ICONS[index % PART_ICONS.length];
   return (
-    <article className={`rounded-[var(--token-card-radius)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] ${compact ? 'p-4' : 'p-5'} text-[color:var(--token-on-dark-body)] shadow-[0_18px_54px_rgba(0,0,0,.22)] backdrop-blur-xl`} data-card data-color-context="dark" data-edit-collection="parts" data-edit-index={index}>
+    <article className={`rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] ${compact ? 'p-4' : 'p-5'} text-[color:var(--token-card-body)] shadow-[0_18px_54px_var(--token-shadow)]`} data-card data-edit-collection="parts" data-edit-index={index}>
       <div className="flex items-start gap-4">
-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_24%,transparent)] bg-[color:color-mix(in_srgb,var(--token-accent)_18%,white_10%)] text-[color:var(--token-on-dark-heading)] shadow-[inset_0_1px_0_rgba(255,255,255,.14),0_14px_32px_rgba(0,0,0,.22)]">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-[var(--token-badge-border)] bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)]">
           <Icon size={19} strokeWidth={2.25} />
         </div>
         <div>
           <p className="text-[10px] font-black uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{String(index + 1).padStart(2, '0')}</p>
-          <h3 className="mt-1 text-base font-black text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{part.label}</h3>
-          {part.text && <p className="mt-1.5 text-xs leading-5 text-[color:var(--token-on-dark-body)]" data-edit-path="text">{plain(part.text)}</p>}
+          <h3 className="mt-1 text-base font-black text-[color:var(--token-card-heading)]" data-edit-path="label">{part.label}</h3>
+          {part.text && <p className="mt-1.5 text-xs leading-5 text-[color:var(--token-card-body)]" data-edit-path="text">{plain(part.text)}</p>}
         </div>
       </div>
     </article>
@@ -556,7 +558,7 @@ function MobileCameraExperience({ data, parts, brandImage, modelUrl, cta, reduce
   const progress = useTransform(scrollYProgress, [0, 1], [0.08, 0.96]);
   const badge = cleanCameraBadge(data.badge);
   return (
-    <section ref={mobileRef} className="bg-[var(--token-section-bg)] [--_quote-role:var(--token-quote)] px-5 py-16 md:hidden">
+    <section ref={mobileRef} className="advanced-static-fallback bg-[var(--token-section-bg)] [--_quote-role:var(--token-quote)] px-5 py-16 md:hidden">
       <AdvancedIntro badge={badge} headline={String(data.headline || '')} subline={String(data.subline || '')} compact />
       <div className="mt-10 overflow-hidden rounded-[calc(var(--token-card-radius)*1.25)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[radial-gradient(circle_at_48%_35%,rgba(255,255,255,.13),transparent_42%),radial-gradient(circle_at_88%_16%,color-mix(in_srgb,var(--token-accent)_28%,transparent),transparent_34%),var(--token-card-bg)] p-2 shadow-[0_28px_90px_rgba(0,0,0,.32)]">
         <div className="relative h-[24rem] w-full sm:h-[30rem]">
@@ -566,7 +568,7 @@ function MobileCameraExperience({ data, parts, brandImage, modelUrl, cta, reduce
           ) : shouldLoadScene ? (
             <CameraThreeScene parts={parts} modelUrl={modelUrl} progress={progress} />
           ) : (
-            <div className="grid h-full place-items-center text-xs font-black uppercase tracking-[.22em] text-[color:var(--token-on-dark-muted)]">3D wird geladen</div>
+            <div className="grid h-full place-items-center text-xs font-black uppercase tracking-[.22em] text-[color:var(--token-card-muted)]">3D wird geladen</div>
           )}
         </div>
       </div>
@@ -578,7 +580,7 @@ function MobileCameraExperience({ data, parts, brandImage, modelUrl, cta, reduce
 
 export function CameraExplodeScrollSection({ data }: Props) {
   const ref = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const shouldLoadScene = useInView(ref, { once: true, margin: '900px 0px 900px 0px' });
   const rawParts = normalizedParts(data.parts);
   const displayData = shouldUseSchuktuewCameraCopy(data, rawParts) ? { ...data, ...SCHUKTUEW_CAMERA_COPY } : data;
@@ -595,9 +597,9 @@ export function CameraExplodeScrollSection({ data }: Props) {
   return (
     <>
       <MobileCameraExperience data={displayData} parts={parts} brandImage={brandImage} modelUrl={modelUrl} cta={cta} reduceMotion={reduceMotion} />
-      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] [--_quote-role:var(--token-quote)] text-[color:var(--token-on-dark-body)] md:block" style={{ height: `${reduceMotion ? 120 : Math.max(220, parts.length * 42)}vh` }}>
+      <section ref={ref} className="advanced-motion-experience relative hidden bg-[var(--token-section-bg)] [--_quote-role:var(--token-quote)] text-[color:var(--token-body)] md:block" style={{ height: `${reduceMotion ? 120 : Math.max(220, parts.length * 42)}vh` }}>
         <div className="sticky top-0 grid h-[100svh] overflow-hidden px-8 py-8 lg:grid-cols-[minmax(25rem,.7fr)_minmax(34rem,1.3fr)] lg:gap-10 lg:px-14">
-          <div className="relative z-20 flex min-w-0 flex-col py-6" data-color-context="dark">
+          <div className="relative z-20 flex min-w-0 flex-col py-6">
             <CameraStickyIntro data={displayData} />
             <div className="mt-10 grid gap-3 pb-6 xl:grid-cols-2">{parts.slice(0, 6).map((part, index) => <PartCopy key={`${part.label}-${index}`} part={part} index={index} compact />)}</div>
           </div>
@@ -614,11 +616,11 @@ export function CameraExplodeScrollSection({ data }: Props) {
                 <CameraThreeScene parts={parts} modelUrl={modelUrl} progress={progress} />
               </div>
             ) : (
-              <div className="relative grid h-[min(78vh,48rem)] w-full max-w-5xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),var(--token-card-bg)] p-8 text-xs font-black uppercase tracking-[.22em] text-[color:var(--token-on-dark-muted)]">
+              <div className="relative grid h-[min(78vh,48rem)] w-full max-w-5xl place-items-center rounded-[calc(var(--token-card-radius)*1.5)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.12),transparent_45%),var(--token-card-bg)] p-8 text-xs font-black uppercase tracking-[.22em] text-[color:var(--token-card-muted)]">
                 3D wird geladen
               </div>
             )}
-            <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_35%,transparent)] px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-[color:var(--token-on-dark-muted)] backdrop-blur">
+            <div className="pointer-events-none absolute bottom-8 left-8 z-20 rounded-full border border-[var(--token-badge-border)] bg-[var(--token-badge-bg)] px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-[color:var(--token-badge-text)]">
               {modelUrl ? '3D Kamera' : 'Kamera-System'}
             </div>
             {ctaHref && ctaLabel && <a href={ctaHref} className="absolute bottom-8 right-8 z-30 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-black text-[color:var(--token-btn-text)] shadow-2xl transition hover:-translate-y-0.5" data-edit-link="cta"><span data-edit-path="cta.label">{ctaLabel}</span><ArrowUpRight size={16} /></a>}

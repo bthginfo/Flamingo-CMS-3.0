@@ -1,20 +1,24 @@
+import { pageMetadataUpdates } from '@/lib/api-page-input';
+import type { BatchItem } from 'drizzle-orm/batch';
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
-import { eq, and, inArray } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import crypto from 'crypto';
 import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverridesForSection, autoFixStyleOverridesForSectionReadability } from '@/lib/api-utils';
 import { resolveSectionWriteIdentities } from '@/lib/section-write-identity';
 
 export const POST = withApiHandler(async (req, auth) => {
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   const { slug, sections } = body;
   const title = typeof body.title === 'string' ? body.title.trim() : '';
   if (!title) return NextResponse.json({ success: false, code: 'TITLE_REQUIRED', error: 'title is required and must be a non-empty string' }, { status: 400 });
 
   const db = getDb();
-  const normalizedSlug = slug ? normalizeSlug(slug) : normalizeSlug(title);
-  if (!normalizedSlug) return NextResponse.json({ success: false, code: 'SLUG_INVALID', error: 'slug must contain at least one URL-safe character' }, { status: 400 });
+  const metadata = pageMetadataUpdates({ ...body, slug: slug ?? title.toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '') });
+  const normalizedSlug = metadata.slug as string;
+  if (!normalizedSlug && slug == null) return NextResponse.json({ success: false, code: 'SLUG_INVALID', error: 'Provide an explicit slug when title has no URL-safe characters.' }, { status: 400 });
   const hasSections = Object.prototype.hasOwnProperty.call(body, 'sections');
   if (hasSections) {
     const sectionErr = validateSections(sections, auth.tenant.industry, {
@@ -45,7 +49,7 @@ export const POST = withApiHandler(async (req, auth) => {
   // A duplicate slug otherwise surfaces as an opaque 500 from the unique index.
   // Return a clear 409 so an AI agent knows to update the existing page (PUT
   // /pages/:id) or choose a different slug instead of blindly retrying.
-  const [clash] = await db.select({ id: pages.id }).from(pages)
+  const [clash] = await db.select({ id: pages.id, type: pages.type }).from(pages)
     .where(and(eq(pages.tenantId, auth.tenantId), eq(pages.slug, normalizedSlug))).limit(1);
   if (clash && body.upsert !== true) {
     return NextResponse.json({
@@ -55,6 +59,10 @@ export const POST = withApiHandler(async (req, auth) => {
       existingPageId: clash.id,
       hint: 'Resend the same POST request with upsert: true to replace this page idempotently.',
     }, { status: 409 });
+  }
+  if (clash && hasSections) {
+    const [locked] = await db.select({ id: pageSections.id }).from(pageSections).where(and(eq(pageSections.pageId, clash.id), eq(pageSections.tenantId, auth.tenantId), eq(pageSections.locked, true))).limit(1);
+    if (locked) return NextResponse.json({ code: 'LOCKED_SECTIONS_PROTECTED', error: 'Use PATCH to edit system sections without replacing them.' }, { status: 409 });
   }
 
   const pageId = clash?.id || crypto.randomUUID();
@@ -98,57 +106,16 @@ export const POST = withApiHandler(async (req, auth) => {
     });
   }
 
+  const writes: [BatchItem<'pg'>, ...BatchItem<'pg'>[]] = clash
+    ? [db.execute(sql`SELECT id FROM pages WHERE id = ${pageId} AND tenant_id = ${auth.tenantId} FOR UPDATE`)]
+    : [db.insert(pages).values({ id: pageId, tenantId: auth.tenantId, slug: normalizedSlug, title, status: 'published', ...(body.visible !== undefined ? { visible: body.visible } : {}) })];
   if (clash) {
-    const previousSections = hasSections
-      ? await db.select({ id: pageSections.id }).from(pageSections)
-        .where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, auth.tenantId)))
-      : [];
-    const previousIds = previousSections.map(section => section.id);
-
-    if (sectionValues.length > 0) await db.insert(pageSections).values(sectionValues as never);
-    try {
-      await db.update(pages).set({ title, slug: normalizedSlug }).where(and(
-        eq(pages.id, pageId),
-        eq(pages.tenantId, auth.tenantId),
-      ));
-      if (previousIds.length > 0) {
-        await db.delete(pageSections).where(and(
-          eq(pageSections.tenantId, auth.tenantId),
-          inArray(pageSections.id, previousIds),
-        ));
-      }
-    } catch (error) {
-      const newIds = sectionValues.map(section => section.id as string);
-      if (newIds.length > 0) {
-        await db.delete(pageSections).where(and(
-          eq(pageSections.tenantId, auth.tenantId),
-          inArray(pageSections.id, newIds),
-        )).catch(() => {});
-      }
-      throw error;
-    }
-
-    return NextResponse.json({ success: true, operation: 'updated', id: pageId, slug: normalizedSlug });
+    writes.push(db.update(pages).set({ ...metadata, title, slug: normalizedSlug }).where(and(eq(pages.id, pageId), eq(pages.tenantId, auth.tenantId))));
+    if (hasSections) writes.push(db.delete(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, auth.tenantId))));
   }
-
-  await db.insert(pages).values({
-    id: pageId,
-    tenantId: auth.tenantId,
-    slug: normalizedSlug,
-    title,
-    status: 'published',
-  });
-
-  if (sectionValues.length > 0) {
-    try {
-      await db.insert(pageSections).values(sectionValues as never);
-    } catch (e) {
-      // No transactions: clean up the page row we just inserted so the caller
-      // can retry without colliding on the unique slug.
-      await db.delete(pages).where(eq(pages.id, pageId)).catch(() => {});
-      throw e;
-    }
-  }
+  if (sectionValues.length > 0) writes.push(db.insert(pageSections).values(sectionValues as never));
+  await db.batch(writes);
+  if (clash) return NextResponse.json({ success: true, operation: 'updated', id: pageId, slug: normalizedSlug });
 
   return NextResponse.json({ success: true, operation: 'created', id: pageId, slug: normalizedSlug }, { status: 201 });
 });

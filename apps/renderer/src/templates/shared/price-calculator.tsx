@@ -99,6 +99,8 @@ export function PriceCalculatorSection({ data }: Props) {
                   {type === 'toggle' && (
                     <button
                       role="switch"
+                      type="button"
+                      aria-label={plain(opt.label)}
                       aria-checked={!!toggles[i]}
                       onClick={() => setToggles((s) => ({ ...s, [i]: !s[i] }))}
                       className={`relative h-7 w-12 shrink-0 rounded-full transition-colors duration-300 ${toggles[i] ? 'bg-[var(--token-btn-bg)]' : 'bg-[var(--token-card-border)]'}`}
@@ -119,13 +121,15 @@ export function PriceCalculatorSection({ data }: Props) {
                     {opt.choices!.map((choice, ci) => (
                       <button
                         key={`${choice.label}-${ci}`}
+                        type="button"
+                        aria-pressed={(selects[i] ?? 0) === ci}
                         onClick={() => setSelects((s) => ({ ...s, [i]: ci }))}
                         className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${(selects[i] ?? 0) === ci
                           ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] shadow'
                           : 'border border-[var(--token-card-border)] text-[color:var(--token-muted)] hover:text-[color:var(--token-heading)]'}`}
                       >
                         {choice.label}
-                        {(choice.price ?? 0) !== 0 && <span className="ml-1.5 opacity-75">{(choice.price ?? 0) > 0 ? '+' : ''}{fmt(choice.price ?? 0, currency)}</span>}
+                        {(choice.price ?? 0) !== 0 && <span className="ml-1.5">{(choice.price ?? 0) > 0 ? '+' : ''}{fmt(choice.price ?? 0, currency)}</span>}
                       </button>
                     ))}
                   </div>

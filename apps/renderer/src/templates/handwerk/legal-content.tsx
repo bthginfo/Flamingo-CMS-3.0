@@ -2,14 +2,14 @@
 
 import { sanitizeHtml } from '@/lib/sanitize-html';
 
-type ContentBlock = { headline?: string; title?: string; text?: string };
+type ContentBlock = { headline?: string; title?: string; heading?: string; text?: string; content?: string };
 type Props = { data: Record<string, unknown> };
 
 export function LegalContentSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   // `content` = single-HTML-string form (older data); `blocks` = structured form.
   const content = (data.content as string) || '';
-  const blocks = ((data.blocks as ContentBlock[]) || []).map((b) => b && ({ ...b, headline: b.headline ?? b.title }));
+  const blocks = ((data.blocks as ContentBlock[]) || []).filter(Boolean).map(b => ({ ...b, headline: b.headline ?? b.title ?? b.heading, text: b.text ?? b.content }));
 
   return (
     <section className="py-16">

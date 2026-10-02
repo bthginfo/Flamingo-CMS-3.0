@@ -9,6 +9,15 @@ test('section text controls do not recolor inverse text on image cards', () => {
   assert.ok(!getCssVarsForColorField('mutedColor').includes('--token-on-dark-muted'));
 });
 
+test('mixed sections expose independent media colors through the CMS and API contract', () => {
+  const fields = getFieldsForSection('beforeAfter', 'tradesman');
+  assert.ok(fields.includes('headingColor'));
+  assert.ok(fields.includes('onDarkHeading'));
+  assert.deepEqual(getCssVarsForColorField('onDarkHeading'), ['--token-on-dark-heading']);
+  assert.deepEqual(getCssVarsForColorField('onDarkBody'), ['--token-on-dark-body']);
+  assert.deepEqual(getCssVarsForColorField('onDarkMuted'), ['--token-on-dark-muted']);
+});
+
 // The resolver decides which colour fields the CMS editor exposes and which
 // --token-* the API accepts per (sectionType, industry). The exact field lists
 // are codegen output (they change), so these assert the invariants instead.

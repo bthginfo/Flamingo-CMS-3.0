@@ -98,13 +98,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "text": ""
   },
   "legalContent": {
-    "content": ""
-  },
-  "videoEmbed": {
-    "badge": "",
-    "headline": "",
-    "text": "",
-    "videoUrl": ""
+    "blocks": []
   },
   "freeText": {
     "headline": "",
@@ -545,11 +539,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "media": "",
     "reversed": false
   },
-  "logoMarquee": {
-    "headline": "",
-    "items": [],
-    "subline": ""
-  },
   "collectionList": {
     "itemsPerPage": [],
     "pageSize": "",
@@ -563,6 +552,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "sortBy": ""
   },
   "instagramFeed": {
+    "_isSectionPreview": "",
     "sourceTenantSlug": ""
   },
   "beforeAfterSlider": {
@@ -625,6 +615,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   "offerMatcher": {
     "badgeText": ""
   },
+  "mobileActionDock": {
+    "_isSectionPreview": ""
+  },
   "jobListings": {
     "badgeText": "",
     "emptyText": ""
@@ -664,8 +657,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   },
   "textBlock": {
     "content": "",
-    "headline": "",
-    "html": "",
-    "text": ""
+    "html": ""
   }
 };

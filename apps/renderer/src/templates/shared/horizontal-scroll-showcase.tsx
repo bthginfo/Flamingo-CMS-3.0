@@ -63,9 +63,9 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
       <div className="sticky top-0 overflow-hidden" style={{ height: sectionHeight }}>
         {/* Header */}
         {(headline || subline) && (
-          <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10 max-w-md">
-            {headline && <h2 className="text-2xl md:text-3xl font-bold" data-edit-path="headline">{headline}</h2>}
-            {subline && <p className="mt-1 text-sm opacity-70" data-edit-path="subline">{plain(subline)}</p>}
+          <div data-color-context="dark" className="absolute top-6 left-6 md:top-10 md:left-10 z-10 max-w-md">
+            {headline && <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-1 text-sm text-[color:var(--token-on-dark-body)]" data-edit-path="subline">{plain(subline)}</p>}
           </div>
         )}
 
@@ -75,18 +75,18 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
             <div key={i} className="relative flex-shrink-0 h-full" style={{ width: `${100 / panels.length}%` }} data-edit-collection="panels" data-edit-index={i}>
               <img data-edit-image="image" src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
-              <div className="relative z-10 flex flex-col justify-end h-full p-8 md:p-14 max-w-lg">
+              <div data-color-context="dark" className="relative z-10 flex flex-col justify-end h-full p-8 md:p-14 max-w-lg">
                 <motion.h3
-                  className="text-2xl md:text-4xl font-bold"
+                  className="text-2xl md:text-4xl font-bold text-[color:var(--token-on-dark-heading)]"
                   initial={{ opacity: 0, y: 30 }}
-                  animate={i === activeIndex ? { opacity: 1, y: 0 } : { opacity: 0.5, y: 10 }}
+                  animate={{ opacity: 1, y: i === activeIndex ? 0 : 10 }}
                   transition={{ duration: 0.4 }} data-edit-path="title"
                 >
                   {panel.title}
                 </motion.h3>
-                {panel.text && <p className="mt-3 opacity-80 leading-relaxed" data-edit-path="text">{plain(panel.text)}</p>}
+                {panel.text && <p className="mt-3 text-[color:var(--token-on-dark-body)] leading-relaxed" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
-                  <a href={panel.ctaHref} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold opacity-90 hover:opacity-100 transition-opacity">
+                  <a href={panel.ctaHref} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] hover:underline">
                     <span data-edit-path="ctaLabel">{panel.ctaLabel}</span> <span>-&gt;</span>
                   </a>
                 )}
@@ -126,8 +126,8 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
     <section className="py-16" style={{ backgroundColor: bgColor, color: textColor }}>
       {(headline || subline) && (
         <div className="px-5 mb-6">
-          {headline && <h2 className="text-2xl font-bold" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="mt-1 text-sm opacity-70" data-edit-path="subline">{plain(subline)}</p>}
+          {headline && <h2 className="text-2xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-1 text-sm text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -137,11 +137,11 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
             <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
               <img data-edit-image="image" src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
-              <div className="relative z-10 flex flex-col justify-end h-full p-6">
-                <h3 className="text-xl font-bold" data-edit-path="title">{panel.title}</h3>
-                {panel.text && <p className="mt-2 text-sm opacity-80" data-edit-path="text">{plain(panel.text)}</p>}
+              <div data-color-context="dark" className="relative z-10 flex flex-col justify-end h-full p-6">
+                <h3 className="text-xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{panel.title}</h3>
+                {panel.text && <p className="mt-2 text-sm text-[color:var(--token-on-dark-body)]" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
-                  <a href={panel.ctaHref} className="mt-3 text-sm font-semibold opacity-90"><span data-edit-path="ctaLabel">{panel.ctaLabel}</span> -&gt;</a>
+                  <a href={panel.ctaHref} className="mt-3 text-sm font-semibold text-[color:var(--token-on-dark-heading)] hover:underline"><span data-edit-path="ctaLabel">{panel.ctaLabel}</span> -&gt;</a>
                 )}
               </div>
             </div>

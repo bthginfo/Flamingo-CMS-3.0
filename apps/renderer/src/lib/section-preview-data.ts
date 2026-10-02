@@ -3,6 +3,7 @@
  * Used by the section-preview route to render isolated section previews.
  */
 import { DEFAULT_ANAMNESIS_CUSTOM_FORM } from './custom-form-defaults';
+import { INDUSTRY_HERO_EXAMPLES } from './section-industry-hero-examples';
 const SCENE_LAYER_WARM = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23b76d38" fill-opacity=".22"/%3E%3C/svg%3E';
 const SCENE_LAYER_LIGHT = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23f6efe4" fill-opacity=".32"/%3E%3C/svg%3E';
 const SCENE_LAYER_BLACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%2313171d" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%2313171d" stop-opacity=".28"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%2313171d" stroke-width="8" stroke-opacity=".18"/%3E%3C/svg%3E';
@@ -10,6 +11,7 @@ const SCENE_LAYER_BRASS = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/20
 
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   customForm: DEFAULT_ANAMNESIS_CUSTOM_FORM,
+  textBlock: { headline: 'Von der ersten Idee zum klaren Projekt.', text: '<p>Wir beginnen mit dem, was bereits vorhanden ist: Ziele, Materialien und die Fragen, die eine Entscheidung noch offenhalten.</p><h3>Ein gemeinsamer Arbeitsstand</h3><p>Im nächsten Schritt halten wir Umfang, Zuständigkeiten und Freigaben fest. So werden Entwürfe vergleichbar und die Umsetzung bleibt nachvollziehbar.</p>' },
   verticalReelShowcase: {
     badge: 'Reel Portfolio',
     headline: 'Kurze Filme, die sofort Haltung zeigen.',
@@ -971,18 +973,23 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   logoMarquee: {
-    logos: [
-      { name: 'Partner 1', image: 'https://via.placeholder.com/120x40?text=Partner+1' },
-      { name: 'Partner 2', image: 'https://via.placeholder.com/120x40?text=Partner+2' },
-      { name: 'Partner 3', image: 'https://via.placeholder.com/120x40?text=Partner+3' },
+    headline: 'Gemeinsam Projekte umsetzen',
+    subline: 'Fiktive Partnernamen zur Vorschau des Layouts.',
+    items: [
+      { name: 'ATELIER NORD' },
+      { name: 'WERKSTATT 12' },
+      { name: 'STUDIO FELD' },
+      { name: 'FORM & RAUM' },
     ],
   },
   richText: {
     content: '<h2>Beispiel-Überschrift</h2><p>Dies ist ein Beispieltext. Er zeigt wie formatierter Inhalt dargestellt wird.</p><ul><li>Punkt eins</li><li>Punkt zwei</li><li>Punkt drei</li></ul>',
   },
   videoEmbed: {
-    url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    title: 'Beispiel-Video',
+    videoUrl: 'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
+    headline: 'Ein Blick hinter die Produktion.',
+    badge: 'Film',
+    text: '<p>Das Beispiel zeigt einen eingebetteten Kurzfilm. Besucher entscheiden selbst, ob sie den externen Videoplayer laden möchten.</p>',
   },
   servicePackages: {
     headline: 'Unsere Pakete',
@@ -995,16 +1002,16 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   newsPreview: {
     headline: 'Aktuelles',
     items: [
-      { title: 'Neuer Service verfügbar', excerpt: 'Ab sofort bieten wir auch...', date: '2026-05-15', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80', href: '#' },
-      { title: 'Auszeichnung erhalten', excerpt: 'Wir freuen uns über...', date: '2026-04-20', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80', href: '#' },
+      { title: 'Vom Entwurf zur Umsetzung', slug: 'vom-entwurf-zur-umsetzung', excerpt: 'Ein Blick auf die Entscheidungen, Materialien und Arbeitsschritte unseres jüngsten Projekts.', date: '2026-05-15', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80', href: '#' },
+      { title: 'Ein Tag im Team', slug: 'ein-tag-im-team', excerpt: 'Wie aus unterschiedlichen Perspektiven ein gemeinsamer Arbeitsstand entsteht.', date: '2026-04-20', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80', href: '#' },
     ],
   },
   newsGrid: {
     headline: 'Aktuelle Beiträge',
     items: [
-      { title: 'Neuer Service verfügbar', excerpt: 'Ab sofort bieten wir auch...', date: '2026-05-15', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80', href: '#' },
-      { title: 'Auszeichnung erhalten', excerpt: 'Wir freuen uns über...', date: '2026-04-20', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80', href: '#' },
-      { title: 'Teamzuwachs', excerpt: 'Unser Team wächst weiter...', date: '2026-03-10', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&q=80', href: '#' },
+      { title: 'Vom Entwurf zur Umsetzung', slug: 'vom-entwurf-zur-umsetzung', excerpt: 'Ein Blick auf die Entscheidungen, Materialien und Arbeitsschritte unseres jüngsten Projekts.', date: '2026-05-15', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80', href: '#' },
+      { title: 'Ein Tag im Team', slug: 'ein-tag-im-team', excerpt: 'Wie aus unterschiedlichen Perspektiven ein gemeinsamer Arbeitsstand entsteht.', date: '2026-04-20', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80', href: '#' },
+      { title: 'Material bewusst auswählen', slug: 'material-bewusst-auswaehlen', excerpt: 'Drei Fragen zu Qualität, Pflege und Einsatz, die wir vor jeder Materialentscheidung besprechen.', date: '2026-03-10', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&q=80', href: '#' },
     ],
   },
   noticeBanner: {
@@ -1076,11 +1083,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     content: '<h2>Freitext-Abschnitt</h2><p>Hier können Sie beliebigen formatierten Text eingeben.</p>',
   },
   legalContent: {
-    headline: 'Impressum',
-    blocks: [
-      { heading: 'Angaben gemäß § 5 TMG', content: 'Musterfirma GmbH\nMusterstraße 1\n12345 Berlin' },
-      { heading: 'Kontakt', content: 'Telefon: +49 123 456 7890\nE-Mail: info@beispiel.de' },
-    ],
+    headline: 'Rechtliche Informationen',
+    content: '<h2>Beispielinhalt für die Layout-Vorschau</h2><p>Hier stehen die rechtlichen Angaben Ihres Unternehmens. Ergänzen Sie die Angaben passend zu Ihrem Standort und Angebot.</p><h3>Kontakt</h3><p>Unternehmensname, ladungsfähige Anschrift und Kontaktmöglichkeiten.</p>',
   },
   bentoGrid: {
     headline: 'Alles, was Vertrauen schneller macht.',
@@ -1215,8 +1219,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   },
   foodMenu: {
     headline: 'Speisekarte',
-    categories: [
-      { name: 'Frühstück', items: [{ name: 'Granola Bowl', price: '8,90 €', description: 'Mit frischem Obst und Joghurt' }, { name: 'Avocado Toast', price: '9,50 €', description: 'Auf Sauerteigbrot' }] },
+    items: [
+      { name: 'Granola Bowl', price: '8,90 €', description: 'Knuspriges Granola, Naturjoghurt und frisches Obst der Saison.', image: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=800&q=80' },
+      { name: 'Avocado auf Sauerteig', price: '9,50 €', description: 'Frisch geröstetes Brot mit Avocado, Zitrone und Kräutern.', image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&q=80' },
     ],
     subline: "",
   },
@@ -1460,23 +1465,29 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
 
   // === TOURISM ===
   destinationHighlights: {
+    subline: 'Natur, Kultur und kleine Entdeckungen für Ihren nächsten Ausflug.',
     items: [
-      { title: 'Schloss Neuschwanstein', description: 'Das Märchenschloss König Ludwigs II.', image: 'https://images.unsplash.com/photo-1534313314376-a72289b6181e?w=600&q=80', category: 'Kultur' },
-      { title: 'Partnachklamm', description: 'Spektakuläre Schlucht bei Garmisch.', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80', category: 'Natur' },
+      { title: 'Schloss Neuschwanstein', text: 'Kulturgeschichte und weite Ausblicke verbinden sich zu einem besonderen Tagesausflug. Planen Sie Zeit für den Weg zum Schloss und einen Spaziergang durch die Umgebung ein.', image: 'https://images.unsplash.com/photo-1534313314376-a72289b6181e?w=600&q=80', category: 'Kultur' },
+      { title: 'Partnachklamm', text: 'Felswände, Wasser und schmale Stege machen die Schlucht zu einem eindrucksvollen Naturerlebnis. Festes Schuhwerk und eine wetterfeste Jacke gehören ins Gepäck.', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80', category: 'Natur' },
+      { title: 'Zeit am See', text: 'Ein ruhiger Uferweg, ein Platz für die Picknickdecke und der Blick auf die Berge: So lässt sich ein aktiver Urlaubstag entspannt ausklingen.', image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600&q=80', category: 'Auszeit' },
     ],
     ctaPrimary: { label: '', href: '' },
   },
   experienceGrid: {
+    subline: 'Wählen Sie eine Tour, die zu Ihrer Zeit, Kondition und Reisegruppe passt.',
     items: [
-      { title: 'Bergwandern', description: 'Über 200 km markierte Wege.', duration: '2–6h', level: 'Mittel', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&q=80' },
-      { title: 'Radtouren', description: 'E-Bike-Verleih vor Ort.', duration: '3–5h', level: 'Leicht', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80' },
+      { title: 'Bergwandern', text: 'Von der gemütlichen Talrunde bis zur aussichtsreichen Höhenwanderung: Entdecken Sie markierte Wege und planen Sie unterwegs Zeit für eine Hütteneinkehr ein.', durationLabel: '2–6 Stunden', difficultyLabel: 'Mittlere Kondition', audienceLabel: 'Aktive Entdecker', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80' },
+      { title: 'Radtouren', text: 'Erkunden Sie die Region auf zwei Rädern. Leichte Strecken entlang des Wassers eignen sich für einen entspannten Einstieg; längere Runden lassen sich mit einem E-Bike-Verleih verbinden.', durationLabel: '3–5 Stunden', difficultyLabel: 'Leicht', audienceLabel: 'Paare & Familien', image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=600&q=80' },
     ],
     ctaPrimary: { label: '', href: '' },
   },
   seasonTeaser: {
+    subline: 'Jede Jahreszeit eröffnet andere Möglichkeiten. Finden Sie Ihren persönlichen Reisezeitraum.',
     seasons: [
-      { title: 'Sommer', description: 'Wandern, Baden, Radfahren', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80', months: 'Jun–Sep' },
-      { title: 'Winter', description: 'Skifahren, Langlauf, Wellness', image: 'https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?w=600&q=80', months: 'Dez–Mär' },
+      { title: 'Frühling', text: 'Die Natur wird wieder grün. Genießen Sie erste Wanderungen im Tal, Ausflüge und ruhige Tage vor der Hauptsaison.', image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600&q=80', periodLabel: 'März–Mai' },
+      { title: 'Sommer', text: 'Lange Tage für Bergtouren, Radrunden und eine Abkühlung am See. Starten Sie früh und lassen Sie den Abend draußen ausklingen.', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80', periodLabel: 'Juni–August' },
+      { title: 'Herbst', text: 'Klare Luft und wechselnde Farben begleiten Ihre Auszeit. Verbinden Sie aussichtsreiche Spaziergänge mit regionaler Küche.', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80', periodLabel: 'September–November' },
+      { title: 'Winter', text: 'Skifahren, Langlauf oder ein Spaziergang durch die Winterlandschaft: Nach einem Tag im Freien ist Zeit für Wärme und Entspannung.', image: 'https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?w=600&q=80', periodLabel: 'Dezember–Februar' },
     ],
   },
   eventsCalendar: {
@@ -1552,8 +1563,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Unsere Leistungen',
     badgeText: 'Services',
     categories: [
-      { name: 'Haare', items: [{ name: 'Waschen & Schneiden', price: 'ab 45 €', duration: '45 Min.' }, { name: 'Färben', price: 'ab 65 €', duration: '90 Min.' }] },
-      { name: 'Nägel', items: [{ name: 'Maniküre', price: '35 €', duration: '30 Min.' }] },
+      { title: 'Schnitt & Styling', text: 'Wir beraten zu Form, Pflege und einem Look, der im Alltag funktioniert.', services: ['Waschen & Schneiden – ab 45 €', 'Farbe mit Beratung – ab 65 €'], image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&q=80' },
+      { title: 'Hände & Pflege', text: 'Gepflegte Nägel mit passender Form und einem sauberen Finish.', services: ['Maniküre – 35 €', 'Pflege und Lack nach Absprache'], image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80' },
     ],
     subline: "",
     ctaPrimary: { label: '', href: '' },
@@ -1581,8 +1592,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Pakete & Specials',
     badgeText: 'Specials',
     packages: [
-      { name: 'Braut-Paket', price: '189 €', features: ['Probetermin', 'Styling am Tag', 'Make-up'] },
-      { name: 'Wellness-Paket', price: '99 €', features: ['Kopfmassage', 'Pflege', 'Styling'] },
+      { title: 'Styling für deinen Hochzeitstag', text: 'Wir stimmen Look, Ablauf und Haltbarkeit bei einem Probetermin gemeinsam ab.', priceLabel: 'ab 189 €', includes: ['Probetermin mit Beratung', 'Styling am Hochzeitstag', 'Abgestimmtes Make-up'] },
+      { title: 'Zeit für Haar und Kopfhaut', text: 'Eine Auszeit mit abgestimmter Pflege und einem Styling, das du auch zu Hause tragen kannst.', priceLabel: 'ab 99 €', includes: ['Kopfhautberatung und Massage', 'Pflege passend zum Haartyp', 'Waschen und Styling'] },
     ],
     subline: "",
     ctaPrimary: { label: '', href: '' },
@@ -2483,3 +2494,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
 };
+
+/** Use the same industry example in the catalogue and when adding a CMS section. */
+export function getSectionPreviewData(type: string, industry?: string): Record<string, unknown> {
+  const aliases: Record<string, string> = { handwerk: 'tradesman', tourismus: 'tourism', shop: 'ecommerce', bar: 'restaurant' };
+  const key = aliases[industry || ''] || industry || 'tradesman';
+  return { ...(SECTION_PREVIEW_DATA[type] || {}), ...(type === 'hero' ? INDUSTRY_HERO_EXAMPLES[key] || {} : {}) };
+}

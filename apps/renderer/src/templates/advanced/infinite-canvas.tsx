@@ -1,6 +1,8 @@
 ﻿'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { motion } from 'framer-motion';
 import { ArrowUpRight, Maximize2, Minus, Move, Plus, RotateCcw, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent, type WheelEvent } from 'react';
 import { createPortal } from 'react-dom';
@@ -125,7 +127,7 @@ export function InfiniteCanvasSection({ data }: Props) {
               </motion.figure>
             );
           })}
-          <span className="absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_35%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_70%,transparent)] px-4 py-2 text-xs font-bold text-[color:var(--token-on-dark-heading)] backdrop-blur"><Move size={14} /> Öffnen, ziehen und entdecken</span>
+          <span className="absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_35%,transparent)] bg-[var(--token-btn-bg)] px-4 py-2 text-xs font-bold text-[color:var(--token-btn-text)] backdrop-blur"><Move size={14} /> Öffnen, ziehen und entdecken</span>
         </button>
       </div>
       {mounted && open && createPortal(<CanvasExplorer items={explorerItems} totalItems={items.length} headline={headline} theme={canvasTheme} onClose={() => setOpen(false)} />, document.body)}
@@ -134,7 +136,7 @@ export function InfiniteCanvasSection({ data }: Props) {
 }
 
 function CanvasExplorer({ items, totalItems, headline, theme, onClose }: { items: CanvasItem[]; totalItems: number; headline: string; theme: CanvasTheme; onClose: () => void }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(0.68);
   const [isDragging, setIsDragging] = useState(false);

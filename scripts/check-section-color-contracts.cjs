@@ -93,17 +93,16 @@ if (!fs.existsSync(GENERATOR)) {
 
 const before = fs.readFileSync(GENERATED, 'utf8');
 
-const INTERNAL_PUBLIC_FIELD_RE = /['"]onDark(?:Heading|Body|Muted)['"]/;
-function assertNoInternalPublicFields(source, label) {
-  if (!INTERNAL_PUBLIC_FIELD_RE.test(source)) return;
-  console.error('');
-  console.error('INTERNAL FIELD LEAK DETECTED in ' + label + '.');
-  console.error('Generated public section color contracts must not expose onDark* aliases.');
-  console.error('Use headingColor/bodyColor/mutedColor as public fields; onDark* is internal compatibility only.');
-  process.exit(1);
+// Media foregrounds are public, independent roles. Collapsing them into normal
+// section text silently loses one of the two colors during save/publish.
+require('tsx/cjs');
+const { canonicalColorField } = require('../apps/renderer/src/lib/section-color-fields.ts');
+for (const field of ['onDarkHeading', 'onDarkBody', 'onDarkMuted']) {
+  if (canonicalColorField(field) !== field) {
+    console.error('Media text must retain its independent color role: ' + field);
+    process.exit(1);
+  }
 }
-
-assertNoInternalPublicFields(before, path.relative(ROOT, GENERATED));
 
 // Run the generator, capture the new output, then restore the file so the
 // check is non-destructive.
@@ -115,7 +114,6 @@ try {
   process.exit(1);
 }
 const after = fs.readFileSync(GENERATED, 'utf8');
-assertNoInternalPublicFields(after, 'fresh generator output');
 
 // Git may check this tracked generated file out with CRLF on Windows while the
 // generator intentionally emits LF. Line endings do not change a TypeScript

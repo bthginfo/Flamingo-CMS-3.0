@@ -56,30 +56,32 @@ test('documented size values survive the strict grammar while declaration inject
   }, 'florist'), null);
 });
 
-test('known legacy aliases remain renderable but are rewritten to canonical tokens', () => {
+test('legacy surface aliases normalize while media text retains its independent role', () => {
   assert.deepEqual(normalizeStyleOverridesForSection('hero', {
     '--style-section-bg': '#101820',
     '--token-on-dark-heading': '#ffffff',
     onDarkBody: 'rgba(255, 255, 255, 0.85)',
   }, 'hotel'), {
     '--token-section-bg': '#101820',
-    '--token-heading': '#ffffff',
-    '--token-body': 'rgba(255, 255, 255, 0.85)',
+    '--token-on-dark-heading': '#ffffff',
+    '--token-on-dark-body': 'rgba(255, 255, 255, 0.85)',
   });
 });
 
-test('canonical public color values win over internal aliases independent of JSON order', () => {
+test('normal and media headings both survive normalization independent of JSON order', () => {
   assert.deepEqual(normalizeStyleOverrides({
     '--token-heading': '#102030',
     '--token-on-dark-heading': '#ffffff',
   }), {
     '--token-heading': '#102030',
+    '--token-on-dark-heading': '#ffffff',
   });
   assert.deepEqual(normalizeStyleOverrides({
     '--token-on-dark-heading': '#ffffff',
     '--token-heading': '#102030',
   }), {
     '--token-heading': '#102030',
+    '--token-on-dark-heading': '#ffffff',
   });
 });
 

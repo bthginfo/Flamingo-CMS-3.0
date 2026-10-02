@@ -1,3 +1,4 @@
+import { handleApiError } from '@/lib/api-utils';
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
@@ -43,8 +44,6 @@ export async function POST(req: NextRequest) {
       pagesRevalidated: allPages.length,
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('POST /publish error:', message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return handleApiError(req, err);
   }
 }

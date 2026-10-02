@@ -60,7 +60,7 @@ const FIELD_FANOUT: Partial<Record<ColorFieldKey, string[]>> = {
   mutedColor:   ['--token-on-dark-muted'],
 };
 // Fields that are now redundant because they are auto-written via FIELD_FANOUT.
-const HIDDEN_FIELDS = new Set<ColorFieldKey>(['onDarkHeading', 'onDarkBody', 'onDarkMuted']);
+const HIDDEN_FIELDS = new Set<ColorFieldKey>();
 
 export function EditOverlays({
   enabled,

@@ -225,12 +225,13 @@ export function getBrandCssVars(
   const headingSource = configured(brand.headingColor) ?? fallback('--token-heading', '--style-text-primary');
   const bodySource = configured(brand.bodyTextColor) ?? fallback('--token-body', '--style-text-secondary');
   const mutedSource = configured(brand.mutedTextColor) ?? fallback('--token-muted', '--style-text-muted', '--style-text-secondary');
-  const headingValue = resolveAccessibleText(paintedSectionBg, headingSource, '#111827', '#ffffff');
-  const bodyValue = resolveAccessibleText(paintedSectionBg, bodySource, '#374151', '#f3f4f6');
-  const mutedValue = resolveAccessibleText(paintedSectionBg, mutedSource, '#4b5563', '#d1d5db');
+  const textSurfaces = [paintedSectionBg, paintedSectionBgAlt];
+  const headingValue = resolveAccessibleRoleForeground(textSurfaces, resolveAccessibleText(paintedSectionBg, headingSource, '#111827', '#ffffff'));
+  const bodyValue = resolveAccessibleRoleForeground(textSurfaces, resolveAccessibleText(paintedSectionBg, bodySource, '#374151', '#f3f4f6'), 5);
+  const mutedValue = resolveAccessibleRoleForeground(textSurfaces, resolveAccessibleText(paintedSectionBg, mutedSource, '#4b5563', '#d1d5db'), 5);
   const cardHeadingValue = resolveAccessibleText(paintedCardBg, headingSource, '#111827', '#ffffff');
-  const cardBodyValue = resolveAccessibleText(paintedCardBg, bodySource, '#374151', '#f3f4f6');
-  const cardMutedValue = resolveAccessibleText(paintedCardBg, mutedSource, '#4b5563', '#d1d5db');
+  const cardBodyValue = resolveAccessibleRoleForeground([paintedCardBg], resolveAccessibleText(paintedCardBg, bodySource, '#374151', '#f3f4f6'), 5);
+  const cardMutedValue = resolveAccessibleRoleForeground([paintedCardBg], resolveAccessibleText(paintedCardBg, mutedSource, '#4b5563', '#d1d5db'), 5);
   const badgeBg = configured(brand.badgeBg) ?? fallback('--token-badge-bg', '--style-badge-bg') ?? `${normalizedPrimary}12`;
   const paintedBadgeBg = normalizeHexColor(badgeBg, paintedSectionBg) ?? paintedSectionBg;
   const badgeText = resolveAccessibleText(paintedBadgeBg, configured(brand.badgeText) ?? fallback('--token-badge-text', '--style-badge-text') ?? normalizedPrimary, '#111827', '#ffffff', 5);
@@ -269,8 +270,8 @@ export function getBrandCssVars(
   vars['--token-card-muted']    = cardMutedValue;
   // Inverse contrast tokens for content on dark backgrounds.
   vars['--token-on-dark-heading']= '#ffffff';
-  vars['--token-on-dark-body']   = 'rgba(255,255,255,0.82)';
-  vars['--token-on-dark-muted']  = 'rgba(255,255,255,0.62)';
+  vars['--token-on-dark-body']   = '#ffffff';
+  vars['--token-on-dark-muted']  = '#ffffff';
   // Accent family.
   vars['--token-accent']        = accent;
   vars['--token-eyebrow']       = readableAccent;
@@ -290,10 +291,8 @@ export function getBrandCssVars(
   // Each is a VALUE (not a var() reference to another slot), so a slot can NEVER
   // be steered by editing a different field. Templates read these via a plain
   // `var(--token-<role>)` with no borrowed fallback (see gate: check:section-color-crosstalk).
-  // NOTE: theme-aware text slots (heading/body/muted, card-heading/body/muted,
-  // on-dark-*) are intentionally NOT defaulted here — their light/dark value is
-  // resolved per section by section-renderer.tsx, so adding a flat default would
-  // break dark sections.
+  // Theme-aware text and card slots are resolved above against their surfaces.
+  // SectionRenderer can replace these values with explicit section-level roles.
   const HEADING_VALUE = headingValue;
   const BODY_VALUE = bodyValue;
   const MUTED_VALUE = mutedValue;

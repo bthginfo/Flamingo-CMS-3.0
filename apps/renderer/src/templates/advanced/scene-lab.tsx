@@ -1,6 +1,8 @@
 ﻿'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Check, Layers3 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { plain } from '@/lib/strip-html';
@@ -23,7 +25,7 @@ export function SceneLabSection({ data }: Props) {
     ? (data.groups as Group[]).filter((group) => group?.label && Array.isArray(group.choices) && group.choices.length)
     : [];
   const cta = (data.cta as { label?: string; href?: string }) || {};
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const defaults = (data.defaultSelections as Record<string, string>) || {};
   const [activeGroup, setActiveGroup] = useState(0);
   const [selections, setSelections] = useState<Record<string, number>>(() => Object.fromEntries(groups.map((group, index) => {

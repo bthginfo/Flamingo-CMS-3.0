@@ -85,7 +85,7 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
       {/* Content */}
       <div className="pb-2">
         <div className="flex items-baseline gap-3 mb-1">
-          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: accentColor }}>
+          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--token-eyebrow)' }}>
             Schritt {number}/{String(total).padStart(2, '0')}
           </span>
         {step.timeLabel && <span className="text-xs text-[var(--token-muted,#a1a1aa)]">{step.timeLabel}</span>}

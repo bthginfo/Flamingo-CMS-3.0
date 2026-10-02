@@ -1,24 +1,24 @@
+import { withApiHandlerParams } from '@/lib/api-utils';
+import { validateProductInput } from '@/lib/shop-api-input';
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
-import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { products, tenantAddons } from '@flamingo/db';
+import { products, productCategories } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 
-async function checkShop(tenantId: string) {
-  const db = getDb();
-  const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
-    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')));
-  return addon?.active === true;
-}
+export const PUT = withApiHandlerParams(async (req, auth, params) => {
+  if (!auth.addons.includes('shop')) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (!(await checkShop(auth.tenantId))) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
-
-  const { id } = await params;
-  const body = await req.json();
+  const { id } = params;
+  const body = await readApiJsonObject(req);
+  validateProductInput(body);
   const db = getDb();
+
+  if (body.categoryId) {
+    const [category] = await db.select({ id: productCategories.id }).from(productCategories)
+      .where(and(eq(productCategories.id, body.categoryId), eq(productCategories.tenantId, auth.tenantId))).limit(1);
+    if (!category) return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+  }
 
   const updateData: Record<string, unknown> = {};
   if (body.title !== undefined) updateData.title = body.title;
@@ -40,15 +40,14 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ product: updated });
-}
+});
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (!(await checkShop(auth.tenantId))) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
+export const DELETE = withApiHandlerParams(async (req, auth, params) => {
+  if (!auth.addons.includes('shop')) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
 
-  const { id } = await params;
+  const { id } = params;
   const db = getDb();
-  await db.delete(products).where(and(eq(products.id, id), eq(products.tenantId, auth.tenantId)));
+  const [deleted] = await db.delete(products).where(and(eq(products.id, id), eq(products.tenantId, auth.tenantId))).returning({ id: products.id });
+  if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ ok: true });
-}
+});

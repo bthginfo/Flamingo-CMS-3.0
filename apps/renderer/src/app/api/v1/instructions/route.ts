@@ -102,11 +102,11 @@ export async function GET(req: NextRequest) {
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logoUrl, faviconUrl, etc.)' },
       contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address, whatsapp, whatsappEnabled, whatsappColor)' },
-      navigation: { method: 'PUT', path: '/api/v1/content/navigation', description: 'Set nav items + CTA' },
+      navigation: { method: 'PUT', path: '/api/v1/content/navigation', description: 'Set nav items and/or CTA. Omitted fields and existing translations are preserved. locale must be configured and i18n enabled.' },
       footer: { method: 'PUT', path: '/api/v1/content/footer', description: 'Set footer columns + legal links + CTA' },
       createPage: { method: 'POST', path: '/api/v1/content/pages', description: 'Create or idempotently update a page. Send upsert: true so retries and corrections update an existing slug instead of returning 409.' },
-      updatePage: { method: 'PUT', path: '/api/v1/content/pages/:id', description: 'Update a page (title, sections)' },
-      deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a page' },
+      updatePage: { method: 'PUT', path: '/api/v1/content/pages/:id', description: 'Update a page atomically (title, sections). Replacing sections on pages containing locked system sections returns 409; edit their data with PATCH instead. System page slugs are protected.' },
+      deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a free page. System pages return 409.' },
       seoGlobal: { method: 'PUT', path: '/api/v1/content/seo', description: 'Set global SEO defaults (titleTemplate, defaultDescription, canonicalBase, locale)' },
       seoPage: { method: 'PUT', path: '/api/v1/content/seo/:pageId', description: 'Set page-level SEO (metaTitle, metaDescription, ogImage, canonical, noindex)' },
       design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set GLOBAL design defaults. These cascade to every section. For PER-SECTION color tuning use section.styleOverrides with the exact fields from sectionStyleContracts[type].colorFields.' },
@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
       patchCollectionItem: { method: 'PATCH', path: '/api/v1/content/collections/:key/items/:id', description: 'Partially update a collection item (merges data fields instead of replacing)' },
       getCollectionItem: { method: 'GET', path: '/api/v1/content/collections/:key/items/:id', description: 'Get a single collection item with all data' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
-      patchPage: { method: 'PATCH', path: '/api/v1/content/pages/:id', description: 'Partially update a page. Send patchSections: [{id, data: {partial fields}}] to merge section data without full replace.' },
+      patchPage: { method: 'PATCH', path: '/api/v1/content/pages/:id', description: 'Partially update a page atomically. Send patchSections: [{id, data: {partial fields}}] to merge section data. styleOverrides: null resets all local overrides; a null color value resets that field to inherited. Locked section identity cannot change.' },
       publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content immediately. Quality or contrast findings never block this endpoint.' },
       validate: { method: 'GET', path: '/api/v1/content/validate', description: 'Optional quality audit. Returns { readyToPublish, summary, contentIssues, colorIssues } as advisory information only.' },
       validatePlan: { method: 'POST', path: '/api/v1/content/validate', description: 'Preflight a siteProfile + page plan before any write. Returns stable issue codes, exact locations and deterministic repair instructions.' },
@@ -151,6 +151,7 @@ export async function GET(req: NextRequest) {
       } : {}),
     },
     restrictions: [
+      'JSON write requests require Content-Type: application/json, a JSON object body and at most 2 MiB of UTF-8 bytes. Malformed JSON returns 400, oversized bodies 413 and unsupported media types 415. Split large updates into smaller requests.',
       'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
       'Only use section types listed in availableSectionTypes.',
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
@@ -279,7 +280,9 @@ B) WENN sectionBg DUNKEL ist (Helligkeit < 50%, also rel. Luminanz < 0.5):
    - heading / --token-heading: "#ffffff"  (oder ähnlich hell)
    - body / --token-body:       "rgba(255,255,255,0.85)"
    - muted / --token-muted:     "rgba(255,255,255,0.6)"
-   Die internen Dark-Aliases werden automatisch daraus abgeleitet. Sende KEINE onDark*-Felder.
+   Text auf inneren Bildkarten ist eine eigene Fläche: nutze dort onDarkHeading,
+   onDarkBody und onDarkMuted bzw. --token-on-dark-* aus dem Section-Vertrag.
+   Diese Farben ändern NICHT die normale Section-Headline oder den Fließtext.
 
    Beispiel (Dark CTA-Band):
    {
@@ -318,10 +321,10 @@ G) SICHERER WORKFLOW:
    3) Behebe sinnvolle colorIssues, ohne den Publish davon abhängig zu machen.
    4) Der Server lehnt ungültige styleOverrides (#xyz, "primary", "blue", unbekannte Keys) mit 400 und konkretem Pfad ab — korrigiere die Werte statt sie erneut zu senden.
 
-H) AUTO-FIX: Wenn du PUT /content/design oder section.styleOverrides mit heading/body/muted sendest,
-   schreibt der Server die internen Dark-Aliases automatisch mit. Das verhindert doppelte CMS-Felder
-   und hält alte Templates kompatibel. Nutze trotzdem GET /api/v1/content/validate, um Kontrastprobleme
-   vor dem Publish zu finden.
+H) AUTO-FIX: Fehlende Vordergrundfarben können bei eigener Hintergrundfarbe automatisch
+   ergänzt werden. Explizit gewählte Farben bleiben erhalten. Text auf Bildern verwendet
+   unabhängige onDarkHeading/onDarkBody/onDarkMuted-Felder aus dem jeweiligen Vertrag.
+   Prüfe normale Flächen, Karten und Bildtexte jeweils separat vor dem Publish.
 
 ═══════════════════════════════════════════
 i18n — MEHRSPRACHIGKEIT:
@@ -408,7 +411,7 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
       * dividerColor
       * eyebrow, statValue, quote, ratingStar, check  (granulare Slot-Farben)
     - Diese Werte gelten als Defaults für ALLE Sections. Für einzelne Sections kannst du sie überschreiben (siehe 12.).
-    - Wichtig: Achte auf WCAG-Kontrast. Bei dunkler sectionBg unbedingt heading/body/muted hell setzen; interne Dark-Aliases werden automatisch daraus geschrieben.
+    - Wichtig: Achte auf WCAG-Kontrast. Bei dunkler sectionBg unbedingt heading/body/muted hell setzen. Bildtext-Farben sind unabhängig und werden nicht aus diesen Farben überschrieben.
 
 12. PER-SECTION FARB-OVERRIDES — section.styleOverrides:
     - Jede Section kann individuelle CSS-Variablen überschreiben — nutze styleOverrides als zusätzliches Property auf einer section.
@@ -431,7 +434,7 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
           "--token-btn-text": "#0f4c4c"
         }
       }
-    - Nutze styleOverrides SPARSAM und gezielt: typische Einsatzgebiete sind dunkle Hero-Sections, kontrastreiche CTA-Bänder, oder einzelne Karten mit Sonderfarben. Lass sonst die globalen Werte aus DESIGN gewinnen — das hält die Site konsistent.
+    - Wähle für JEDE Section passende lokale Hintergrund- und sichtbare Textfarben aus ihrem Vertrag. Stimmen weitere Slots mit dem globalen Design überein, können diese weiter erben.
     - Setze styleOverrides NUR für Slots die du wirklich ändern willst. Nicht-gesetzte Slots erben automatisch über die Fallback-Kette --token-* → --style-* → --brand-*.
 
 ═══════════════════════════════════════════

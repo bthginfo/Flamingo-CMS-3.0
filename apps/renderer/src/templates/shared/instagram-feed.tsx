@@ -22,6 +22,13 @@ const COLUMN_CLASSES: Record<number, string> = {
   6: 'grid-cols-3 md:grid-cols-6',
 };
 
+// Isolated CMS previews do not need an Instagram connection or a database read.
+const PREVIEW_POSTS: IgPost[] = [
+  { id: 'preview-work', mediaType: 'IMAGE', mediaUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80', thumbnailUrl: null, permalink: 'https://www.instagram.com/', caption: 'Beispiel: Einblicke in unseren Arbeitsalltag.', timestamp: '' },
+  { id: 'preview-team', mediaType: 'IMAGE', mediaUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80', thumbnailUrl: null, permalink: 'https://www.instagram.com/', caption: 'Beispiel: Gemeinsam Ideen entwickeln.', timestamp: '' },
+  { id: 'preview-project', mediaType: 'IMAGE', mediaUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=80', thumbnailUrl: null, permalink: 'https://www.instagram.com/', caption: 'Beispiel: Ein neues Projekt entsteht.', timestamp: '' },
+];
+
 function previewImage(p: IgPost): string {
   if (p.mediaType === 'VIDEO') return p.thumbnailUrl || p.mediaUrl;
   return p.mediaUrl;
@@ -42,23 +49,30 @@ export function InstagramFeedSection({ data }: Props) {
   const showCaptions = data.showCaptions !== false;
   const showProfileLink = data.showProfileLink !== false;
   const ctaLabel = (data.ctaLabel as string) || 'Auf Instagram folgen';
+  const isSectionPreview = data._isSectionPreview === true;
+  const sourceSlug = (data.sourceTenantSlug as string | undefined)?.trim();
 
   // IMPORTANT: SSR + first client render MUST be identical (skeleton state).
   // Anything dynamic (real posts, fetched username, hide-when-not-connected)
   // only happens AFTER mount to avoid React hydration error #418.
   const [mounted, setMounted] = useState(false);
-  const [posts, setPosts] = useState<IgPost[]>([]);
+  const [posts, setPosts] = useState<IgPost[]>(isSectionPreview ? PREVIEW_POSTS : []);
   const [username, setUsername] = useState<string>('');
   const [connected, setConnected] = useState<boolean | null>(null);
 
   // In live-preview (admin) the global tenantId is injected. We use that as a
   // signal to ALWAYS render the section UI (including text fields) so editors
   // can author headlines/badges/CTAs even before Instagram is connected.
-  const isPreview = typeof window !== 'undefined'
-    && Boolean((window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__);
+  const isPreview = isSectionPreview || (mounted && typeof window !== 'undefined'
+    && Boolean((window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__));
 
   useEffect(() => {
     setMounted(true);
+    if (isSectionPreview) {
+      setPosts(PREVIEW_POSTS);
+      setConnected(true);
+      return;
+    }
     let cancelled = false;
     // Build the feed URL with the right tenant signal:
     //   - Live preview (admin) injects window.__FLAMINGO_TENANT_ID__ so we can
@@ -79,7 +93,6 @@ export function InstagramFeedSection({ data }: Props) {
     }
     // Optional per-section override: borrow another demo tenant's feed.
     // The API enforces isDemo=true on the override slug.
-    const sourceSlug = (data.sourceTenantSlug as string | undefined)?.trim();
     if (sourceSlug) qs += `&fromSlug=${encodeURIComponent(sourceSlug)}`;
     fetch(`/api/instagram/feed?${qs}`)
       .then(r => r.json())
@@ -91,7 +104,7 @@ export function InstagramFeedSection({ data }: Props) {
       })
       .catch(() => { if (!cancelled) setConnected(false); });
     return () => { cancelled = true; };
-  }, [maxPosts]);
+  }, [maxPosts, sourceSlug, isSectionPreview]);
 
   // After mount + fetch: if no account is connected (or no posts at all),
   // render nothing on the live site so there's no broken UI.

@@ -19,7 +19,7 @@ export function AtmosphereGallerySection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28 bg-[var(--token-section-bg,theme(colors.stone.900))]">
       <div className="max-w-7xl mx-auto px-6">
         {headline && (
-          <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[var(--token-on-dark-heading,white)] text-center mb-12" data-edit-path="headline">
+          <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading)] text-center mb-12" data-edit-path="headline">
             {headline}
           </motion.h2>
         )}

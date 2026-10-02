@@ -48,7 +48,9 @@ function gatherSource(filePath, depth = 0, seen = new Set()) {
       ? resolveImport('./' + spec.slice(2), SRC_DIR)
       : resolveImport(spec, path.dirname(filePath));
     if (!resolved) continue;
-    if (!resolved.startsWith(TEMPLATES_DIR) && !resolved.startsWith(COMPONENTS_DIR)) continue;
+    // Data adapters in lib can consume collection aliases before a template
+    // renders them (timeline entries/items/steps). Follow these reads too.
+    if (!resolved.startsWith(SRC_DIR)) continue;
     out += '\n' + gatherSource(resolved, depth + 1, seen);
   }
   return out;

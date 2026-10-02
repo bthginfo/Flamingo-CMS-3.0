@@ -1,20 +1,13 @@
+import { withApiHandler } from '@/lib/api-utils';
+import { readApiJsonObject } from '@/lib/api-request-body';
+import { validateShopSettingsInput } from '@/lib/shop-api-input';
 import { NextRequest, NextResponse } from 'next/server';
-import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { shopSettings, tenantAddons } from '@flamingo/db';
+import { shopSettings } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 
-async function checkShop(tenantId: string) {
-  const db = getDb();
-  const [addon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
-    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')));
-  return addon?.active === true;
-}
-
-export async function GET(req: NextRequest) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (!(await checkShop(auth.tenantId))) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
+export const GET = withApiHandler(async (req, auth) => {
+  if (!auth.addons.includes('shop')) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
 
   const db = getDb();
   const [settings] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, auth.tenantId)).limit(1);
@@ -23,14 +16,13 @@ export async function GET(req: NextRequest) {
   // Don't expose secrets via API
   const { stripeSecretKey, stripeWebhookSecret, paypalSecret, sumupApiKey, ...safe } = settings;
   return NextResponse.json({ settings: safe });
-}
+});
 
-export async function PUT(req: NextRequest) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  if (!(await checkShop(auth.tenantId))) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
+export const PUT = withApiHandler(async (req, auth) => {
+  if (!auth.addons.includes('shop')) return NextResponse.json({ error: 'Shop addon not active' }, { status: 403 });
 
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
+  validateShopSettingsInput(body);
   const db = getDb();
 
   const updateData: Record<string, unknown> = {};
@@ -54,4 +46,4 @@ export async function PUT(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true });
-}
+});

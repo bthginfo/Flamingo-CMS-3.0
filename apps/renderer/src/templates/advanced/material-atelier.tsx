@@ -1,6 +1,8 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Check, ChevronRight } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
@@ -33,7 +35,7 @@ export function MaterialAtelierSection({ data }: Props) {
       .slice(0, 8)
     : [];
   const [active, setActive] = useState(0);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const titleId = useId();
   const quiet = data.preset === 'quiet';
 

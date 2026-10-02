@@ -174,10 +174,9 @@ function normalizeStyleOverridesInternal(
       continue;
     }
 
-    // Canonical public inputs always win over legacy/internal aliases,
-    // regardless of JSON property order. Otherwise an old
-    // --token-on-dark-heading value could silently replace the editor's
-    // --token-heading value during normalization.
+    // Canonical field/CSS variable inputs win over legacy aliases regardless
+    // of JSON property order. Normal text and image foregrounds are separate
+    // roles and never overwrite each other.
     const canonicalCssVar = FIELD_DEFS[field].cssVar;
     const priority = key === field || key === canonicalCssVar ? 2 : 1;
     if ((inputPriority[field] ?? 0) <= priority) {
@@ -279,7 +278,8 @@ export function validateStyleOverridesForApi(
   industry?: string,
   definitionKey?: string | null,
 ): string | null {
-  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
+  if (styleOverrides === undefined || styleOverrides === null) return null;
+  if (typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return `${location} must be an object or null to reset all overrides`;
   const { issues } = sectionType
     ? normalizeStyleOverridesForSectionWithIssues(sectionType, styleOverrides, industry, location, definitionKey)
     : normalizeStyleOverridesWithIssues(styleOverrides, location);

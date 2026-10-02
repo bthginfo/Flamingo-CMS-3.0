@@ -25,7 +25,7 @@
   --token-heading: #0f172a;
   --token-subheading: #1e293b;
   --token-body: #475569;
-  --token-muted: #64748b;
+  --token-muted: #5d6b80;
   --token-label: #334155;
   --token-link: #b91c1c;
   --token-link-hover: #991b1b;
@@ -35,8 +35,8 @@
   --token-heading-tracking: -0.02em;
   /* Inverted (on-dark) typography */
   --token-on-dark-heading: #ffffff;
-  --token-on-dark-body: rgba(255, 255, 255, 0.78);
-  --token-on-dark-muted: rgba(255, 255, 255, 0.56);
+  --token-on-dark-body: #ffffff;
+  --token-on-dark-muted: #ffffff;
   /* Surfaces / structure */
   --token-page-bg: #ffffff;
   --token-section-bg: #ffffff;
@@ -45,7 +45,7 @@
   --token-card-border: rgba(15, 23, 42, 0.08);
   --token-card-heading: #0f172a;
   --token-card-body: #475569;
-  --token-card-muted: #64748b;
+  --token-card-muted: #5d6b80;
   --token-card-icon: #dc2626;
   --token-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   --token-divider: rgba(15, 23, 42, 0.12);
@@ -291,13 +291,14 @@ html {
      turned every card into a solid brand-coloured block with unreadable text
      (the florist "burgundy cards" bug). A real button never contains an
      image or a heading. */
-  [data-style][style*="--token-btn-bg"] a[class*="bg-"]:not(:has(img, picture, h1, h2, h3, h4, [data-card])),
-  [data-style][style*="--token-btn-bg"] button[class*="bg-"]:not(:has(img, picture, h1, h2, h3, h4, [data-card])) {
+  [data-style][style*="--token-btn-bg"] a[class*="bg-"]:not([data-card], [data-card-scope], [class*="--token-"], [class*="--style-"]):not(:has(img, picture, h1, h2, h3, h4, [data-card])),
+  [data-style][style*="--token-btn-bg"] button[class*="bg-"]:not([data-card], [data-card-scope], [class*="--token-"], [class*="--style-"]):not(:has(img, picture, h1, h2, h3, h4, [data-card])) {
     background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-primary))) !important;
     color: var(--token-btn-text, var(--brand-btn-text, white)) !important;
   }
 
-  /* Fallback: CTA / accent button color overrides — use brand primary (legacy Tailwind classes) */
+  /* Canonical token utilities above retain their own foreground/background
+     pair. These fallbacks apply only to legacy Tailwind colour classes. */
   [data-style] a[class*="bg-amber-"],
   [data-style] button[class*="bg-amber-"],
   [data-style] a[class*="bg-red-6"],
@@ -1342,7 +1343,7 @@ html {
 }
 
 [data-section-id][data-style] :where(input, textarea)::placeholder {
-  color: color-mix(in srgb, var(--token-label) 72%, transparent);
+  color: var(--token-input-text);
   opacity: 1;
 }
 

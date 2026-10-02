@@ -30,7 +30,7 @@ export function HeaderBannerSection({ data }: Props) {
           </span>
         ))}
       </div>
-      <button onClick={() => setDismissed(true)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100">
+      <button type="button" aria-label="Hinweis schließen" onClick={() => setDismissed(true)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100">
         <X size={14} />
       </button>
     </div>

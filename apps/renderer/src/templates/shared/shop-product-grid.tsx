@@ -100,16 +100,17 @@ export function ShopProductGridSection({ data }: Props) {
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--token-card-body,var(--token-body))]" />
             <input
               type="text"
+              aria-label="Produkte suchen"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Produkt suchen…"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--token-card-border)] focus:bg-[var(--token-card-bg)] transition"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[color:var(--token-input-border)] bg-[var(--token-input-bg)] text-[color:var(--token-input-text)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--token-card-border)] transition"
             />
           </div>
         )}
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={14} className="text-[color:var(--token-card-body,var(--token-body))]" />
-          <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="text-sm border border-[color:var(--token-card-border)] rounded-lg px-3 py-2.5 bg-[var(--token-section-bg-alt)]">
+          <select aria-label="Produkte sortieren" value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="text-sm border border-[color:var(--token-card-border)] rounded-lg px-3 py-2.5 bg-[var(--token-section-bg-alt)]">
             <option value="default">Standard</option>
             <option value="price-asc">Preis aufsteigend</option>
             <option value="price-desc">Preis absteigend</option>
@@ -127,6 +128,7 @@ export function ShopProductGridSection({ data }: Props) {
             type="range"
             min={priceRange[0]} max={priceRange[1]} step={100}
             value={priceFilter[0]}
+            aria-label="Mindestpreis"
             onChange={e => setPriceFilter([Math.min(Number(e.target.value), priceFilter[1]), priceFilter[1]])}
             className="w-24 sm:w-32 accent-[var(--token-icon)]"
           />
@@ -135,6 +137,7 @@ export function ShopProductGridSection({ data }: Props) {
             type="range"
             min={priceRange[0]} max={priceRange[1]} step={100}
             value={priceFilter[1]}
+            aria-label="Höchstpreis"
             onChange={e => setPriceFilter([priceFilter[0], Math.max(Number(e.target.value), priceFilter[0])])}
             className="w-24 sm:w-32 accent-[var(--token-icon)]"
           />
@@ -148,11 +151,11 @@ export function ShopProductGridSection({ data }: Props) {
       {/* Category filter */}
       {showCategories && categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
-          <button onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${!activeCategory ? 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-[var(--token-section-bg-alt,theme(colors.zinc.200))]'}`}>
+          <button type="button" aria-pressed={!activeCategory} onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${!activeCategory ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:brightness-95'}`}>
             Alle
           </button>
           {categories.map(c => (
-            <button key={c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-[var(--token-section-bg-alt,theme(colors.zinc.200))]'}`} data-edit-path="name">
+            <button key={c.slug} type="button" aria-pressed={activeCategory === c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:brightness-95'}`} data-edit-path="name">
               {c.name}
             </button>
           ))}
@@ -181,10 +184,10 @@ export function ShopProductGridSection({ data }: Props) {
                     </div>
                   )}
                   {product.stock === 0 && (
-                    <div className="absolute top-3 left-3 bg-[var(--token-danger-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
+                    <div className="absolute top-3 left-3 bg-[var(--token-danger-bg)] text-[color:var(--token-danger)] text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
                   )}
                   {product.comparePriceCents && (
-                    <div className="absolute top-3 right-3 bg-[color:var(--token-success-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>
+                    <div className="absolute top-3 right-3 bg-[color:var(--token-success-bg)] text-[color:var(--token-success)] text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>
                   )}
                 </div>
                 <div className="p-5">

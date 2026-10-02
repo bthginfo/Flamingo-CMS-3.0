@@ -1,6 +1,8 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { AnimatePresence, motion } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 import { useState, type CSSProperties } from 'react';
 import { plain } from '@/lib/strip-html';
@@ -17,7 +19,7 @@ function safeTint(value?: string) {
 export function DayToNightSection({ data }: Props) {
   const scenes = Array.isArray(data.scenes) ? (data.scenes as Scene[]).filter((scene) => scene?.title) : [];
   const [active, setActive] = useState(0);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   if (scenes.length < 2) return null;
 
   const scene = scenes[active] || scenes[0];
@@ -74,7 +76,7 @@ export function DayToNightSection({ data }: Props) {
             </div>
             <div className="mt-5 grid gap-2" role="group" aria-label="Tageszeit auswählen" style={{ gridTemplateColumns: `repeat(${scenes.length},minmax(0,1fr))` }}>
               {scenes.map((item, index) => (
-                <button key={`${item.time}-${index}`} type="button" onClick={() => setActive(index)} className={`min-h-14 border-t-2 px-1 pt-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${index === active ? 'border-[var(--token-accent)]' : 'border-[var(--token-divider)] opacity-60 hover:opacity-100'}`} aria-label={`${item.time || ''} · ${item.label || item.title || `Szene ${index + 1}`}`} aria-pressed={index === active} aria-current={index === active ? 'true' : undefined} data-edit-collection="scenes" data-edit-index={index}>
+                <button key={`${item.time}-${index}`} type="button" onClick={() => setActive(index)} className={`min-h-14 border-t-2 px-1 pt-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--token-accent)] ${index === active ? 'border-[var(--token-accent)]' : 'border-[var(--token-divider)]'}`} aria-label={`${item.time || ''} · ${item.label || item.title || `Szene ${index + 1}`}`} aria-pressed={index === active} aria-current={index === active ? 'true' : undefined} data-edit-collection="scenes" data-edit-index={index}>
                   <span className="block text-xs font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="time">{item.time}</span>
                   <span className="mt-1 hidden text-[11px] text-[color:var(--token-card-muted,var(--token-muted))] sm:block" data-edit-path="label">{item.label}</span>
                 </button>

@@ -1,16 +1,24 @@
+import { validateCollectionItemInput } from '@/lib/api-collection-input';
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { collectionItems } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { collections, collectionItems } from '@flamingo/db';
+import { eq, and, sql } from 'drizzle-orm';
 import { normalizeSectionData, normalizeStyleOverridesForSection, validateSections, withApiHandlerParams } from '@/lib/api-utils';
 import { resolveSectionWriteIdentities } from '@/lib/section-write-identity';
 import crypto from 'crypto';
 
+// Both route identifiers participate in every read and mutation.
+function itemScope(tenantId: string, key: string, id: string) {
+  return and(eq(collectionItems.id, id), eq(collectionItems.tenantId, tenantId),
+    sql`EXISTS (SELECT 1 FROM ${collections} WHERE ${collections.id} = ${collectionItems.collectionId} AND ${collections.tenantId} = ${tenantId} AND ${collections.key} = ${key})`);
+}
+
 export const GET = withApiHandlerParams(async (_req, auth, params) => {
-  const { id } = params;
+  const { id, key } = params;
   const db = getDb();
   const [item] = await db.select().from(collectionItems)
-    .where(and(eq(collectionItems.id, id), eq(collectionItems.tenantId, auth.tenantId)));
+    .where(itemScope(auth.tenantId, key, id));
   if (!item) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
   return NextResponse.json({
     id: item.id,
@@ -25,8 +33,9 @@ export const GET = withApiHandlerParams(async (_req, auth, params) => {
 });
 
 export const PUT = withApiHandlerParams(async (req, auth, params) => {
-  const { id } = params;
-  const body = await req.json();
+  const { id, key } = params;
+  const body = await readApiJsonObject(req);
+  validateCollectionItemInput(body);
   const db = getDb();
 
   // Ensure all sections have IDs for DnD support
@@ -61,19 +70,21 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
   if (body.published != null) updates.published = body.published;
   if (body.priority != null) updates.priority = body.priority;
 
-  await db.update(collectionItems).set(updates)
-    .where(and(eq(collectionItems.id, id), eq(collectionItems.tenantId, auth.tenantId)));
+  const [updated] = await db.update(collectionItems).set(updates)
+    .where(itemScope(auth.tenantId, key, id)).returning({ id: collectionItems.id });
+  if (!updated) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
 
   return NextResponse.json({ ok: true });
 });
 
 export const PATCH = withApiHandlerParams(async (req, auth, params) => {
-  const { id } = params;
-  const body = await req.json();
+  const { id, key } = params;
+  const body = await readApiJsonObject(req);
+  validateCollectionItemInput(body);
   const db = getDb();
 
   const [existing] = await db.select().from(collectionItems)
-    .where(and(eq(collectionItems.id, id), eq(collectionItems.tenantId, auth.tenantId)));
+    .where(itemScope(auth.tenantId, key, id));
   if (!existing) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
 
   const updates: Record<string, unknown> = { updatedAt: new Date() };
@@ -110,15 +121,17 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
     updates.data = mergedData;
   }
 
-  await db.update(collectionItems).set(updates)
-    .where(and(eq(collectionItems.id, id), eq(collectionItems.tenantId, auth.tenantId)));
+  const [updated] = await db.update(collectionItems).set(updates)
+    .where(itemScope(auth.tenantId, key, id)).returning({ id: collectionItems.id });
+  if (!updated) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
 
   return NextResponse.json({ ok: true });
 });
 
 export const DELETE = withApiHandlerParams(async (_req, auth, params) => {
-  const { id } = params;
+  const { id, key } = params;
   const db = getDb();
-  await db.delete(collectionItems).where(and(eq(collectionItems.id, id), eq(collectionItems.tenantId, auth.tenantId)));
+  const [deleted] = await db.delete(collectionItems).where(itemScope(auth.tenantId, key, id)).returning({ id: collectionItems.id });
+  if (!deleted) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
   return NextResponse.json({ ok: true });
 });

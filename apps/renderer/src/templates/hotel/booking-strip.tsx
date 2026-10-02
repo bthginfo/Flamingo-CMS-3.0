@@ -32,7 +32,7 @@ type Props = {
 function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta, bookingNote, trustItems }: Props) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-6 shadow-lg text-center">
-      {badgeText && <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span></p>}
+      {badgeText && <p className="section-badge w-fit inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span></p>}
       <h2 className="mt-3 text-2xl font-[700] text-[color:var(--token-heading)] sm:text-3xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mx-auto mt-2 max-w-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {trustItems.length > 0 && (

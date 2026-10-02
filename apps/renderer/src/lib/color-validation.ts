@@ -366,9 +366,9 @@ export function validateSectionStyleOverrides(
   // Contrast: heading/body over section/card bg
   const sectionBg = pickInheritedValue(overrides, ['--token-section-bg', '--style-section-bg'], inheritedTokens, ['sectionBg', 'pageBg']);
   const cardBg    = pickInheritedValue(overrides, ['--token-card-bg', '--style-card-bg'], inheritedTokens, ['cardBg', 'sectionBg']);
-  const heading   = pickInheritedValue(overrides, ['--token-heading', '--style-heading-color'], inheritedTokens, ['headingColor', 'heading', 'textPrimary', 'onDarkHeading']);
-  const body      = pickInheritedValue(overrides, ['--token-body', '--style-body-color'], inheritedTokens, ['bodyColor', 'body', 'bodyTextColor', 'textSecondary', 'onDarkBody']);
-  const muted     = pickInheritedValue(overrides, ['--token-muted', '--style-text-muted'], inheritedTokens, ['mutedColor', 'muted', 'mutedTextColor', 'textMuted', 'onDarkMuted']);
+  const heading   = pickInheritedValue(overrides, ['--token-heading', '--style-heading-color'], inheritedTokens, ['headingColor', 'heading', 'textPrimary']);
+  const body      = pickInheritedValue(overrides, ['--token-body', '--style-body-color'], inheritedTokens, ['bodyColor', 'body', 'bodyTextColor', 'textSecondary']);
+  const muted     = pickInheritedValue(overrides, ['--token-muted', '--style-text-muted'], inheritedTokens, ['mutedColor', 'muted', 'mutedTextColor', 'textMuted']);
   const cardHeading = pickInheritedValue(overrides, ['--token-card-heading'], inheritedTokens, ['cardHeadingColor']) || heading;
   const cardBody = pickInheritedValue(overrides, ['--token-card-body'], inheritedTokens, ['cardBodyColor']) || body;
   const cardMuted = pickInheritedValue(overrides, ['--token-card-muted'], inheritedTokens, ['cardMutedColor']) || muted;

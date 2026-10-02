@@ -9,10 +9,13 @@ import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { BOOKING_SECTION_TYPES } from '@/lib/booking-core';
-import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
+import { getSectionPreviewData } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
-import { normalizeStyleOverridesForSection } from '@/lib/section-style-overrides';
+import { normalizeStyleOverridesForSection, validateStyleOverridesForApi } from '@/lib/section-style-overrides';
 import { resolveSectionWriteIdentity } from '@/lib/section-write-identity';
+import type { BatchItem } from 'drizzle-orm/batch';
+import { pageMetadataUpdates } from '@/lib/api-page-input';
+import { pickSectionMetadata } from '@/lib/section-metadata-input';
 
 async function requireSession() {
   const session = await getSession();
@@ -120,11 +123,16 @@ export async function createPageAction(formData: FormData) {
   redirect(`/admin/pages/${page.id}`);
 }
 
-export async function deletePageAction(pageId: string) {
+export async function deletePageAction(pageId: string, allowSystemPage = false) {
   const session = await requireWriteSession();
   const db = getDb();
-  await db.delete(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
+  const [deleted] = await db.delete(pages).where(and(
+    eq(pages.id, pageId), eq(pages.tenantId, session.tenantId),
+    allowSystemPage === true ? undefined : not(eq(pages.type, 'system')),
+  )).returning({ id: pages.id });
+  if (!deleted) return { error: 'Seite nicht gefunden oder Systemseite ohne Bestätigung.' };
   revalidatePath('/admin/pages');
+  return { success: true };
 }
 
 export async function duplicatePageAction(pageId: string) {
@@ -168,26 +176,26 @@ export async function duplicatePageAction(pageId: string) {
   if (invalidIdentity && !invalidIdentity.ok) return { error: invalidIdentity.error };
 
   const slug = uniqueSlug(`${sourcePage.slug || sourcePage.title}-kopie`, new Set(existingPages.map((page) => page.slug)));
-  const [copy] = await db
+  const copyId = randomUUID();
+  const writes: [BatchItem<'pg'>, ...BatchItem<'pg'>[]] = [db
     .insert(pages)
     .values({
-      id: randomUUID(),
+      id: copyId,
       tenantId: session.tenantId,
       title: `${sourcePage.title} Kopie`,
       slug,
-      type: sourcePage.type,
+      type: 'free',
       status: 'draft',
       visible: false,
       sortOrder: (lastPage[0]?.sortOrder ?? sourcePage.sortOrder ?? 0) + 1,
-    })
-    .returning({ id: pages.id });
+    })];
 
   if (sourceSections.length > 0) {
-    await db.insert(pageSections).values(
+    writes.push(db.insert(pageSections).values(
       sourceSections.map((section, index) => ({
         id: randomUUID(),
         tenantId: session.tenantId,
-        pageId: copy.id,
+        pageId: copyId,
         type: section.type,
         definitionKey: sourceIdentities[index].ok ? sourceIdentities[index].identity.definitionKey : null,
         schemaVersion: sourceIdentities[index].ok ? sourceIdentities[index].identity.schemaVersion : null,
@@ -203,19 +211,29 @@ export async function duplicatePageAction(pageId: string) {
         data: cloneJson(section.data),
         sortOrder: section.sortOrder,
       }))
-    );
+    ));
   }
+  await db.batch(writes);
 
   revalidatePath('/admin/pages');
-  return { success: true, id: copy.id };
+  return { success: true, id: copyId };
 }
 
 export async function updatePageAction(pageId: string, data: { title?: string; slug?: string; visible?: boolean; status?: 'draft' | 'published' | 'archived' }) {
   const session = await requireWriteSession();
   const db = getDb();
-  await db.update(pages).set({ ...data, updatedAt: new Date() }).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
+  const [page] = await db.select({ type: pages.type, slug: pages.slug }).from(pages)
+    .where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId))).limit(1);
+  if (!page) return { error: 'Seite nicht gefunden.' };
+  let metadata;
+  try { metadata = pageMetadataUpdates(data); }
+  catch { return { error: 'Bitte prüfe Seitentitel, URL und Sichtbarkeit.' }; }
+  if (page.type === 'system' && metadata.slug !== undefined && metadata.slug !== page.slug) return { error: 'Die URL einer Systemseite kann nicht geändert werden.' };
+  if (data.status !== undefined && !['draft', 'published', 'archived'].includes(data.status)) return { error: 'Ungültiger Seitenstatus.' };
+  await db.update(pages).set({ ...metadata, ...(data.status !== undefined ? { status: data.status } : {}), updatedAt: new Date() }).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
   revalidatePath('/admin/pages');
   revalidatePath(`/admin/pages/${pageId}`);
+  return { success: true };
 }
 
 export async function getPageWithSectionsAction(pageId: string) {
@@ -284,7 +302,7 @@ export async function addSectionAction(pageId: string, type: string) {
   // wins when both are present so the user sees richer demo content.
   const seedData: Record<string, unknown> = {
     ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}),
-    ...(SECTION_PREVIEW_DATA[type] || {}),
+    ...getSectionPreviewData(type, tenant.industry),
   };
   const [section] = await db.insert(pageSections).values({
     tenantId: session.tenantId,
@@ -422,6 +440,9 @@ export async function updateSectionTypeAndDataAction(sectionId: string, pageId: 
 
 export async function updateSectionMetaAction(sectionId: string, meta: { type?: string; definitionKey?: string | null; schemaVersion?: number | null; visible?: boolean; titleInternal?: string | null; variant?: string | null; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string | null; styleOverrides?: Record<string, unknown> | null }, pageId?: string) {
   const session = await requireWriteSession();
+  let normalizedMeta;
+  try { normalizedMeta = pickSectionMetadata(meta); }
+  catch { return { error: 'Ungültige Section-Metadaten' }; }
   const db = getDb();
   const sectionScope = pageId
     ? and(eq(pageSections.id, sectionId), eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))
@@ -429,6 +450,7 @@ export async function updateSectionMetaAction(sectionId: string, meta: { type?: 
   const [existing] = await db
     .select({
       type: pageSections.type,
+      locked: pageSections.locked,
       definitionKey: pageSections.definitionKey,
       schemaVersion: pageSections.schemaVersion,
       styleOverrides: pageSections.styleOverrides,
@@ -442,7 +464,16 @@ export async function updateSectionMetaAction(sectionId: string, meta: { type?: 
     return { error: 'Section nicht gefunden oder keine Berechtigung' };
   }
 
-  const normalizedMeta = { ...meta };
+  // Type changes must use the action that validates data, locked sections and
+  // paid entitlements together. A metadata-only request cannot bypass it.
+  if (meta.type !== undefined && meta.type !== existing.type) {
+    return { error: 'Section-Typ bitte über den validierten Section-Wechsel ändern' };
+  }
+  if (existing.locked && ((meta.definitionKey !== undefined && meta.definitionKey !== existing.definitionKey)
+    || (meta.schemaVersion !== undefined && meta.schemaVersion !== existing.schemaVersion))) {
+    return { error: 'Die Definition einer gesperrten System-Section kann nicht geändert werden' };
+  }
+
   const identity = resolveSectionWriteIdentity({
     type: meta.type || existing.type,
     industry: existing.industry,
@@ -458,6 +489,10 @@ export async function updateSectionMetaAction(sectionId: string, meta: { type?: 
         : existing.schemaVersion,
   });
   if (!identity.ok) return { error: identity.error };
+  if (meta.styleOverrides !== undefined) {
+    const styleError = validateStyleOverridesForApi(meta.styleOverrides, 'styleOverrides', existing.type, existing.industry, identity.identity.definitionKey);
+    if (styleError) return { error: styleError };
+  }
   normalizedMeta.definitionKey = identity.identity.definitionKey;
   normalizedMeta.schemaVersion = identity.identity.schemaVersion;
   if (meta.styleOverrides !== undefined || meta.type) {
@@ -504,6 +539,12 @@ export async function reorderSectionsAction(pageId: string, sectionIds: string[]
   );
   const updated = await db.execute(sql`
     WITH requested(id, sort_order) AS (VALUES ${requestedRows}),
+    owned AS MATERIALIZED (
+      SELECT section.id FROM page_sections AS section
+      JOIN requested ON requested.id = section.id
+      WHERE section.page_id = ${pageId}::uuid
+        AND section.tenant_id = ${session.tenantId}::uuid
+    ),
     updated AS (
       UPDATE page_sections AS section
       SET sort_order = requested.sort_order,
@@ -512,6 +553,7 @@ export async function reorderSectionsAction(pageId: string, sectionIds: string[]
       WHERE section.id = requested.id
         AND section.page_id = ${pageId}::uuid
         AND section.tenant_id = ${session.tenantId}::uuid
+        AND (SELECT COUNT(*) FROM owned) = ${sectionIds.length}
       RETURNING section.id
     )
     SELECT id FROM updated

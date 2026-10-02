@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { footer } from '@flamingo/db';
@@ -5,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 
 export const PUT = withApiHandler(async (req, auth) => {
-  const { columns, legalLinks, cta, locale } = await req.json();
+  const { columns, legalLinks, cta, locale } = await readApiJsonObject(req);
   const db = getDb();
 
   // Validate columns have items

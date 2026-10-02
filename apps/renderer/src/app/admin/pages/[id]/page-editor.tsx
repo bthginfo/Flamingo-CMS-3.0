@@ -308,7 +308,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     try {
       await flushColorSaves();
       // Save page title/slug/visible
-      await updatePageAction(page.id, { title: page.title, slug: page.slug, visible: page.visible });
+      const pageResult = await updatePageAction(page.id, { title: page.title, slug: page.slug, visible: page.visible });
+      if (pageResult.error) { toast.error(pageResult.error); return false; }
       const currentSections = sectionsRef.current;
       const typeChanges = new Set(pendingTypeChanges.current);
       const entries = new Map(pendingChanges.current);

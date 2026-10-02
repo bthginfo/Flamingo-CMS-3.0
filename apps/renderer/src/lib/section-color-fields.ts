@@ -89,9 +89,8 @@ export const FIELD_RENDER_ORDER: ColorFieldKey[] = [
 ];
 
 const INTERNAL_COLOR_FIELD_ALIASES: Partial<Record<ColorFieldKey, ColorFieldKey>> = {
-  onDarkHeading: 'headingColor',
-  onDarkBody: 'bodyColor',
-  onDarkMuted: 'mutedColor',
+  // Text over media has its own surface. Never collapse these roles into the
+  // normal section text: a white image caption and a dark heading must coexist.
 };
 
 // Section text and text over media are separate surfaces. Full-bleed media
@@ -166,9 +165,9 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   quoteMark:        { cssVar: '--token-quote',            label: 'Anführungszeichen',      description: 'Anführungszeichen-Glyph in Testimonial-Karten', group: 'special' },
   ratingStar:       { cssVar: '--token-rating-star',      label: 'Rating-Sterne',          description: 'Sterne in Reviews / Bewertungen', group: 'special' },
   check:            { cssVar: '--token-check',            label: 'Checkmarks',             description: 'Häkchen in Feature-/Vergleichs-Listen', group: 'special' },
-  onDarkHeading:    { cssVar: '--token-on-dark-heading',  label: 'Interner Headline-Alias',  description: 'Interner Legacy-Alias. Öffentlich über Headline-Farbe gesteuert.', group: 'advanced' },
-  onDarkBody:       { cssVar: '--token-on-dark-body',     label: 'Interner Fließtext-Alias', description: 'Interner Legacy-Alias. Öffentlich über Fließtext-Farbe gesteuert.', group: 'advanced' },
-  onDarkMuted:      { cssVar: '--token-on-dark-muted',    label: 'Interner Dezenttext-Alias', description: 'Interner Legacy-Alias. Öffentlich über Dezenter Text gesteuert.', group: 'advanced' },
+  onDarkHeading:    { cssVar: '--token-on-dark-heading',  label: 'Headline auf Bildern', description: 'Überschriften auf Bildern und dunklen Bild-Overlays; unabhängig von der Section-Headline.', group: 'special' },
+  onDarkBody:       { cssVar: '--token-on-dark-body',     label: 'Fließtext auf Bildern', description: 'Text auf Bildern und dunklen Bild-Overlays; unabhängig vom normalen Fließtext.', group: 'special' },
+  onDarkMuted:      { cssVar: '--token-on-dark-muted',    label: 'Dezenter Text auf Bildern', description: 'Bildunterschriften und ergänzende Texte auf dunklen Bild-Overlays.', group: 'special' },
   imageOverlay:     { cssVar: '--token-image-overlay',    label: 'Bild-Overlay',           description: 'Abdunklung / Farbfläche über Hintergrund-Bildern', group: 'special' },
   btnBg:            { cssVar: '--token-btn-bg',           label: 'Primär-Button Hintergrund', description: 'Hintergrund der wichtigsten Handlungsaufforderung', group: 'core' },
   btnText:          { cssVar: '--token-btn-text',         label: 'Primär-Button Text & Icons', description: 'Text- und Iconfarbe der wichtigsten Handlungsaufforderung', group: 'core' },

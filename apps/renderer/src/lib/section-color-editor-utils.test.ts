@@ -175,3 +175,13 @@ test('evaluateContrastPairs returns only resolvable pairs with an AA verdict', (
   assert.equal(results.find((result) => result.id === 'body-section')?.passesAA, false);
   assert.equal(results.find((result) => result.id === 'button')?.passesAA, true);
 });
+
+test('contrast evaluation covers inputs, secondary actions and error/success states', () => {
+  const colors = { sectionBg: '#ffffff', inputBg: '#ffffff', inputText: '#dddddd', labelColor: '#dddddd', btnSecondaryBg: '#111111', btnSecondaryText: '#ffffff', dangerBg: '#ffffff', dangerColor: '#eeeeee', successBg: '#ffffff', successColor: '#166534' };
+  const results = evaluateContrastPairs(new Set(Object.keys(colors) as ColorFieldKey[]), field => colors[field as keyof typeof colors]);
+  assert.equal(results.find(pair => pair.id === 'input')?.passesAA, false);
+  assert.equal(results.find(pair => pair.id === 'label')?.passesAA, false);
+  assert.equal(results.find(pair => pair.id === 'danger')?.passesAA, false);
+  assert.equal(results.find(pair => pair.id === 'success')?.passesAA, true);
+  assert.equal(results.find(pair => pair.id === 'secondary-button')?.passesAA, true);
+});

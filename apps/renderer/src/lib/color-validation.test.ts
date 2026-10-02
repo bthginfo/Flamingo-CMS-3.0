@@ -100,3 +100,10 @@ test('section contrast validation checks inherited design tokens when overrides 
   assert.ok(locations.includes('sections[0].heading on .sectionBg'));
   assert.ok(locations.includes('sections[0].body on .sectionBg'));
 });
+
+test('independent image foregrounds are never treated as the normal section text', () => {
+  const issues = validateSectionStyleOverrides(0, 'beforeAfter', { '--token-section-bg': '#ffffff' }, {
+    onDarkHeading: '#ffffff', onDarkBody: '#ffffff', onDarkMuted: '#ffffff',
+  });
+  assert.equal(issues.length, 0);
+});

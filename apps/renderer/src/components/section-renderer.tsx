@@ -355,10 +355,9 @@ function normalizeSectionStyle(style?: React.CSSProperties): React.CSSProperties
 }
 
 /**
- * Media sections expose only the canonical heading/body/muted controls in the
- * CMS. Mirror section-local overrides to the inverse implementation aliases so
- * older templates that still read --token-on-dark-* render the same value.
- * Global page text is intentionally never mirrored here.
+ * Whole-media sections retain their legacy normal-text overrides when no
+ * independent image foreground is set. Explicit on-dark choices always win;
+ * global page text is never mirrored into the media surface.
  */
 function withMediaTextAliases(style?: React.CSSProperties): React.CSSProperties | undefined {
   if (!style) return style;
@@ -521,11 +520,9 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   ]);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
-  // UNIFIED colour resolution — no dark/light decision. Each text role resolves
-  // to whatever the section actually set for it: the plain slot first, then its
-  // on-dark alias (so it doesn't matter which the data used), then the global
-  // style default. There is no "this section is dark" branch — you pick the
-  // section background AND the text colour, and the renderer paints exactly that.
+  // Normal text and media text are independent roles. Whole-media sections
+  // prefer their explicit inverse role, then an explicit normal role for
+  // compatibility. Nested image overlays use only their inverse role.
   //
   // MEDIA sections (photo/overlay behind the text) are the one exception to the
   // var() chain: the page-level defaults define --token-heading etc. on the page
@@ -545,13 +542,13 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     return null;
   };
   const headingColorVar = hasMediaOverlay
-    ? (own('--token-heading', '--token-on-dark-heading') ?? '#ffffff')
+    ? (own('--token-on-dark-heading', '--token-heading') ?? '#ffffff')
     : 'var(--token-heading, var(--token-on-dark-heading, var(--style-heading-color, var(--style-text-primary, inherit))))';
   const bodyColorVar = hasMediaOverlay
-    ? (own('--token-body', '--token-on-dark-body') ?? 'rgba(255,255,255,0.86)')
+    ? (own('--token-on-dark-body', '--token-body') ?? '#ffffff')
     : 'var(--token-body, var(--token-on-dark-body, var(--style-body-color, var(--style-text-secondary, inherit))))';
   const mutedColorVar = hasMediaOverlay
-    ? (own('--token-muted', '--token-on-dark-muted') ?? 'rgba(255,255,255,0.72)')
+    ? (own('--token-on-dark-muted', '--token-muted') ?? '#ffffff')
     : 'var(--token-muted, var(--token-on-dark-muted, var(--style-text-muted, var(--style-text-secondary, inherit))))';
   const subheadingColorVar = hasMediaOverlay
     // Keep media subheadings independent from the body slot. If a template
@@ -577,8 +574,8 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   // Inner photo cards use inverse text independently from the section heading.
   // A light section can have dark headings while its images still need white type.
   const darkContextHeadingVar = own('--token-on-dark-heading') ?? '#ffffff';
-  const darkContextBodyVar = own('--token-on-dark-body') ?? 'rgba(255,255,255,0.86)';
-  const darkContextMutedVar = own('--token-on-dark-muted') ?? 'rgba(255,255,255,0.72)';
+  const darkContextBodyVar = own('--token-on-dark-body') ?? '#ffffff';
+  const darkContextMutedVar = own('--token-on-dark-muted') ?? '#ffffff';
 
   // Per-section color overrides (from CMS) applied as inline CSS vars.
   const baseSectionStyle = withBookingStyleAliases(

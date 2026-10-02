@@ -11,6 +11,18 @@ test('hex contrast uses the WCAG luminance formula', () => {
   assert.equal(getHexContrastRatio('not-a-color', '#fff'), null);
 });
 
+test('body and muted defaults are readable on both normal section surfaces', () => {
+  const vars = getBrandCssVars({}, {
+    '--style-section-bg': '#f6f7f3', '--style-section-bg-alt': '#e9f0df',
+    '--style-text-secondary': '#667765', '--style-text-muted': '#667765',
+  });
+  for (const role of ['--token-body', '--token-muted']) {
+    for (const background of ['--token-section-bg', '--token-section-bg-alt']) {
+      assert.ok((getHexContrastRatio(vars[role], vars[background]) ?? 0) >= 5, `${role} on ${background}`);
+    }
+  }
+});
+
 test('accessible explicit footer colors are preserved and normalized', () => {
   assert.equal(resolveAccessibleFooterForeground('#111827', '#F9FAFB'), '#f9fafb');
 });

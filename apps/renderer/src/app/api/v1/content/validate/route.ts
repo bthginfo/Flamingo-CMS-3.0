@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import {
@@ -512,7 +513,7 @@ export async function GET(req: NextRequest) {
  * the response is a repair queue, not a transport failure to retry unchanged.
  */
 export const POST = withApiHandler(async (req, auth) => {
-  const rawBody = await req.json();
+  const rawBody = await readApiJsonObject(req);
   if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
     return NextResponse.json({
       success: false,

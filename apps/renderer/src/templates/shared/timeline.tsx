@@ -53,7 +53,7 @@ export function TimelineSection({ data }: Props) {
                 </div>
 
                 <article className={`col-start-2 row-start-1 min-w-0 border-t border-[var(--token-divider)] pt-3 ${isLeft ? 'md:col-start-1 md:text-right' : 'md:col-start-3 md:text-left'}`}>
-                  {entry.year && <time className="text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--token-accent)]" data-edit-path="year">{entry.year}</time>}
+                  {entry.year && <time className="text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--token-eyebrow)]" data-edit-path="year">{entry.year}</time>}
                   {entry.title && <h3 className="mt-1 break-words text-lg font-semibold leading-snug text-[color:var(--token-card-heading,var(--token-heading))] [overflow-wrap:anywhere]" data-edit-path="title">{entry.title}</h3>}
                   {entry.text && <p className={`mt-1.5 text-sm leading-6 text-[color:var(--token-card-body,var(--token-body))] ${isLeft ? 'md:ml-auto' : ''} max-w-[38rem]`} data-edit-path="text">{plain(entry.text)}</p>}
                 </article>

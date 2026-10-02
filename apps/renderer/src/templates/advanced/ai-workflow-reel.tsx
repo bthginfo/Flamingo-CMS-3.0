@@ -118,7 +118,7 @@ export function AiWorkflowReelSection({ data }: Props) {
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(120deg,color-mix(in_srgb,var(--token-card-bg)_94%,black)_0%,var(--token-section-bg)_58%,color-mix(in_srgb,var(--token-accent)_18%,var(--token-section-bg))_100%)]" />
       <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[minmax(0,.95fr)_minmax(0,1.05fr)] lg:gap-16">
         <WorkflowVideo data={data} />
-        <div data-color-context="dark">
+        <div>
           <AdvancedIntro
             compact
             badge={String(data.badge || '')}
@@ -127,15 +127,15 @@ export function AiWorkflowReelSection({ data }: Props) {
           />
           <div className="mt-8 space-y-3">
             {steps.map((step, index) => (
-              <article key={`${step.title}-${index}`} className="group grid gap-4 rounded-[var(--token-card-radius)] border border-[color:color-mix(in_srgb,var(--token-card-border)_18%,transparent)] bg-[color:color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] p-4 backdrop-blur transition hover:bg-[color:color-mix(in_srgb,var(--token-btn-bg)_10%,var(--token-card-bg))] sm:grid-cols-[4rem_1fr]" data-card data-edit-collection="steps" data-edit-index={index}>
-                <div className="grid h-14 w-14 place-items-center rounded-2xl border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-accent)_24%,white_8%)] text-[color:var(--token-on-dark-heading)] shadow-[inset_0_1px_0_rgba(255,255,255,.12),0_18px_40px_rgba(0,0,0,.22)]">
+              <article key={`${step.title}-${index}`} className="group grid gap-4 rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-4 sm:grid-cols-[4rem_1fr]" data-card data-edit-collection="steps" data-edit-index={index}>
+                <div className="grid h-14 w-14 place-items-center rounded-2xl border border-[var(--token-badge-border)] bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)] shadow-[0_18px_40px_var(--token-shadow)]">
                   {index === 0 ? <Bot size={24} strokeWidth={2.2} /> : index === steps.length - 1 ? <CheckCircle2 className="text-[color:var(--token-check)]" size={24} strokeWidth={2.2} /> : <GitBranch size={24} strokeWidth={2.2} />}
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{step.kicker || `Phase ${String(index + 1).padStart(2, '0')}`}</p>
-                  {step.title && <h3 className="mt-1 text-xl font-black tracking-[-.025em] text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{step.title}</h3>}
-                  {step.text && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-body)]" data-edit-path="text">{plain(step.text)}</p>}
-                  {step.proof && <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] px-3 py-1 text-[11px] font-bold text-[color:var(--token-on-dark-muted)]" data-edit-path="proof"><Sparkles size={13} />{step.proof}</p>}
+                  {step.title && <h3 className="mt-1 text-xl font-black tracking-[-.025em] text-[color:var(--token-card-heading)]" data-edit-path="title">{step.title}</h3>}
+                  {step.text && <p className="mt-2 text-sm leading-6 text-[color:var(--token-card-body)]" data-edit-path="text">{plain(step.text)}</p>}
+                  {step.proof && <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-3 py-1 text-[11px] font-bold text-[color:var(--token-card-muted)]" data-edit-path="proof"><Sparkles size={13} />{step.proof}</p>}
                 </div>
               </article>
             ))}

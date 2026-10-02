@@ -244,6 +244,12 @@ function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   if (!fs.existsSync(filePath)) return new Set();
   const src = fs.readFileSync(filePath, 'utf8');
   const vars = new Set();
+  // The renderer paints these contexts from its own CSS, even when a template
+  // has no literal var(--token-on-dark-*) reference. Its controls must survive
+  // CMS/API normalization just like directly consumed template colors.
+  if (/data-color-context\s*=\s*["']dark["']/.test(src)) {
+    for (const role of ['heading', 'body', 'muted']) vars.add(`--token-on-dark-${role}`);
+  }
   let m;
   const re = new RegExp(TOKEN_REF_RE.source, 'gi');
   while ((m = re.exec(src)) !== null) vars.add(m[1]);

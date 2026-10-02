@@ -6,6 +6,9 @@ import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types
 import { validateStyleOverridesForApi } from '@/lib/section-style-overrides';
 import { validateAdvancedSectionData } from '@/lib/advanced-section-validation';
 import { isContentUrlField, safeContentUrl } from '@/lib/safe-content-url';
+import { ApiRequestBodyError } from './api-request-body';
+import { apiErrorLogMetadata, databaseErrorCode } from './api-error-policy';
+export { readApiJsonObject } from './api-request-body';
 
 export {
   normalizeStyleOverrides,
@@ -30,10 +33,13 @@ function jsonResponse(data: unknown, init?: { status?: number }): NextResponse {
   });
 }
 
-function handleError(req: NextRequest, err: unknown) {
+export function handleApiError(req: NextRequest, err: unknown) {
+  if (err instanceof ApiRequestBodyError) {
+    return jsonResponse({ success: false, code: err.code, error: err.message, retryable: false }, { status: err.status });
+  }
   const message = err instanceof Error ? err.message : String(err);
   const requestId = globalThis.crypto.randomUUID();
-  console.error(`[API Error] ${requestId} ${req.method} ${req.nextUrl.pathname}:`, message);
+  console.error(`[API Error] ${requestId} ${req.method} ${req.nextUrl.pathname}:`, apiErrorLogMetadata(err));
   if (message.includes('Unexpected token') || message.includes('JSON')) {
     return jsonResponse({
       success: false,
@@ -44,7 +50,7 @@ function handleError(req: NextRequest, err: unknown) {
       requestId,
     }, { status: 400 });
   }
-  if (message.includes('unique') || message.includes('duplicate')) {
+  if (databaseErrorCode(err) === '23505' || message.includes('unique') || message.includes('duplicate')) {
     return jsonResponse({
       success: false,
       code: 'DUPLICATE_ENTRY',
@@ -82,7 +88,7 @@ export function withApiHandler(
       }, { status: 401 });
       return await handler(req, auth);
     } catch (err: unknown) {
-      return handleError(req, err);
+      return handleApiError(req, err);
     }
   };
 }
@@ -106,7 +112,7 @@ export function withApiHandlerParams<T extends Record<string, string>>(
       const resolvedParams = await context.params;
       return await handler(req, auth, resolvedParams);
     } catch (err: unknown) {
-      return handleError(req, err);
+      return handleApiError(req, err);
     }
   };
 }
@@ -176,7 +182,8 @@ export function validateSections(
     }
     if (
       s.styleOverrides !== undefined
-      && (typeof s.styleOverrides !== 'object' || s.styleOverrides === null || Array.isArray(s.styleOverrides))
+      && s.styleOverrides !== null
+      && (typeof s.styleOverrides !== 'object' || Array.isArray(s.styleOverrides))
     ) {
       return `sections[${i}].styleOverrides must be an object`;
     }

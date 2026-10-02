@@ -38,7 +38,7 @@ function StoryClassic(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-          {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{p.badgeText}</span></p>}
+          {p.badgeText && <p className="section-badge w-fit flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]"><Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{p.badgeText}</span></p>}
           <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 text-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: p.subline }} />}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}

@@ -14,12 +14,12 @@ export function FlashDayBannerSection({ data }: Props) {
   const bgColor = (data.bgColor as string) || '#dc2626';
 
   return (
-    <section className="py-12 px-6" style={{ backgroundColor: bgColor }}>
+    <section data-color-context="dark" className="py-12 px-6" style={{ backgroundColor: bgColor }}>
       <div className="max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
-          {date && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-sm font-mono uppercase tracking-widest mb-2" data-edit-path="date">{date}</p>}
+          {date && <p className="text-[color:var(--token-on-dark-body)] text-sm font-mono uppercase tracking-widest mb-2" data-edit-path="date">{date}</p>}
           <h2 className="text-3xl sm:text-5xl font-black text-[color:var(--token-on-dark-heading)] uppercase" data-edit-path="headline">{headline}</h2>
-          {description && <p className="mt-3 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] max-w-xl mx-auto" data-edit-path="description">{plain(description)}</p>}
+          {description && <p className="mt-3 text-[color:var(--token-on-dark-body)] max-w-xl mx-auto" data-edit-path="description">{plain(description)}</p>}
           <a href={ctaHref} className="inline-flex items-center justify-center mt-6 px-8 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider text-sm hover:brightness-110 transition-colors" data-edit-path="ctaLabel">
             {ctaLabel}
           </a>

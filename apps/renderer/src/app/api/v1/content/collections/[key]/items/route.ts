@@ -1,3 +1,6 @@
+import { validateCollectionItemInput, collectionItemSlug } from '@/lib/api-collection-input';
+import { handleApiError } from '@/lib/api-utils';
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
@@ -18,10 +21,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
     const [collection] = await db.select().from(collections).where(and(eq(collections.tenantId, auth.tenantId), eq(collections.key, key)));
     if (!collection) return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
 
-    const { title, slug, data, published, priority } = await req.json();
+    const body = await readApiJsonObject(req);
+    validateCollectionItemInput(body, true);
+    const { title, slug, data, published, priority } = body;
     if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
 
-    const itemSlug = slug || title.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/(^-|-$)/g, '');
+    const itemSlug = collectionItemSlug(title, slug);
     const id = crypto.randomUUID();
 
     // Ensure all sections have IDs for DnD support
@@ -65,14 +70,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
 
     return NextResponse.json({ id, slug: itemSlug }, { status: 201 });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('POST /collections/:key/items error:', {
-      message,
-      name: err instanceof Error ? err.name : undefined,
-    });
-    if (message.includes('unique') || message.includes('duplicate')) {
-      return NextResponse.json({ error: 'Item with this slug already exists' }, { status: 409 });
-    }
-    return NextResponse.json({ error: message }, { status: 500 });
+    return handleApiError(req, err);
   }
 }

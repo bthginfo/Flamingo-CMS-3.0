@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { tenants } from '@flamingo/db';
@@ -7,7 +8,7 @@ import { withApiHandler } from '@/lib/api-utils';
 const VALID_STYLES = ['classic'];
 
 export const PUT = withApiHandler(async (req, auth) => {
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   const style = 'classic';
 
   if (body.style && !VALID_STYLES.includes(body.style)) {

@@ -37,7 +37,7 @@ export function LogoMarqueeSection({ data }: Props) {
         <div className="flex overflow-hidden">
           <div className="flex items-center gap-12 animate-scroll-x" style={{ animationDuration: '35s' }}>
             {doubled.map((item, i) => (
-              <div key={i} className="flex-shrink-0 flex items-center justify-center h-12 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0" data-edit-collection="doubled" data-edit-index={i}>
+              <div key={i} aria-hidden={i >= items.length || undefined} className={`flex-shrink-0 flex items-center justify-center h-12 ${item.image ? 'opacity-60' : 'opacity-100'} hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0`} data-edit-collection="items" data-edit-index={i % items.length}>
                 {item.image ? (
                   <ResilientImage data-edit-image="image" src={item.image} alt={item.name} className="h-8 md:h-10 w-auto object-contain" />
                 ) : (

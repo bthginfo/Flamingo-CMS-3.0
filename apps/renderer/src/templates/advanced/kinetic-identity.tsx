@@ -1,6 +1,8 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { plain } from '@/lib/strip-html';
 import { AdvancedIntro, AdvancedLink, EmptyVisual, type AdvancedCta } from './advanced-shared';
@@ -9,13 +11,13 @@ type Statement = { prefix?: string; highlight?: string; suffix?: string; text?: 
 type Props = { data: Record<string, unknown> };
 
 function StatementLine({ item, compact = false }: { item: Statement; index: number; compact?: boolean }) {
-  return <h3 className={`hyphens-auto [overflow-wrap:anywhere] font-black text-[color:var(--token-heading)] ${compact ? 'text-[clamp(2rem,4vw,4.6rem)] leading-[.92] tracking-[-.055em]' : 'text-[clamp(2.25rem,6vw,6.8rem)] leading-[.88] tracking-[-.065em]'}`}><span data-edit-path="prefix">{item.prefix}</span>{' '}<span className="text-[color:var(--token-accent)]" data-edit-path="highlight">{item.highlight}</span>{' '}<span data-edit-path="suffix">{item.suffix}</span></h3>;
+  return <h3 className={`hyphens-auto [overflow-wrap:anywhere] font-black text-[color:var(--token-heading)] ${compact ? 'text-[clamp(2rem,4vw,4.6rem)] leading-[.92] tracking-[-.055em]' : 'text-[clamp(2.25rem,6vw,6.8rem)] leading-[.88] tracking-[-.065em]'}`}><span data-edit-path="prefix">{item.prefix}</span>{' '}<span className="text-[color:var(--token-eyebrow)]" data-edit-path="highlight">{item.highlight}</span>{' '}<span data-edit-path="suffix">{item.suffix}</span></h3>;
 }
 
 export function KineticIdentitySection({ data }: Props) {
   const items = Array.isArray(data.statements) ? (data.statements as Statement[]).filter((item) => item && (item.prefix || item.highlight || item.suffix)) : [];
   const sectionRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const [active, setActive] = useState(0);
   const centeredHoldVh = 56;
   const scrollHeightVh = Math.max(155, items.length * 38) + centeredHoldVh;

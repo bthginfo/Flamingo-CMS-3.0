@@ -62,7 +62,25 @@ export function BeforeAfterSection({ data }: Props) {
         </div>
 
         {/* Slider handle */}
-        <div className="absolute top-0 bottom-0" style={{ left: `${sliderPos}%` }}>
+        <div
+          role="slider"
+          tabIndex={0}
+          aria-label={`${labelBefore} / ${labelAfter}`}
+          aria-valuemin={5}
+          aria-valuemax={95}
+          aria-valuenow={sliderPos}
+          aria-valuetext={`${Math.round(sliderPos)}% ${labelBefore}`}
+          className="absolute top-0 bottom-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--token-icon)]"
+          style={{ left: `${sliderPos}%` }}
+          onKeyDown={(event) => {
+            const next = event.key === 'Home' ? 5 : event.key === 'End' ? 95
+              : ['ArrowLeft', 'ArrowDown'].includes(event.key) ? sliderPos - 5
+              : ['ArrowRight', 'ArrowUp'].includes(event.key) ? sliderPos + 5 : null;
+            if (next === null) return;
+            event.preventDefault();
+            setSliderPos(Math.max(5, Math.min(95, next)));
+          }}
+        >
           <div className="absolute inset-y-0 -translate-x-1/2 w-1 bg-[var(--token-card-bg)] shadow-lg" />
           <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--token-card-bg)] shadow-xl flex items-center justify-center border-2 border-[var(--token-icon)]">
             <svg width="16" height="16" viewBox="0 0 16 16" className="text-[color:var(--token-icon)]">
@@ -72,8 +90,8 @@ export function BeforeAfterSection({ data }: Props) {
         </div>
 
         {/* Labels */}
-        <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)] text-[color:var(--token-on-dark-heading)] rounded-full">{labelBefore}</span>
-        <span className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)] text-[color:var(--token-on-dark-heading)] rounded-full">{labelAfter}</span>
+        <span data-color-context="dark" className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold bg-[var(--token-image-overlay)] text-[color:var(--token-on-dark-heading)] rounded-full">{labelBefore}</span>
+        <span data-color-context="dark" className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold bg-[var(--token-image-overlay)] text-[color:var(--token-on-dark-heading)] rounded-full">{labelAfter}</span>
       </motion.div>
     </div>
   );

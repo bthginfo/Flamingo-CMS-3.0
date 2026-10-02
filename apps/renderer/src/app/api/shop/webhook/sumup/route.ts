@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
     const checkoutRes = await fetch(`https://api.sumup.com/v0.1/checkouts/${order.paymentId}`, {
       headers: { 'Authorization': `Bearer ${settings.sumupApiKey}` },
     });
+    if (!checkoutRes.ok) throw new Error(`SumUp verification failed (${checkoutRes.status})`);
     const checkout = await checkoutRes.json();
 
     const amountCents = Math.round(Number(checkout.amount) * 100);
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest) {
       totalCents: order.totalCents,
       paymentMethod: 'SumUp',
       shippingAddress: order.shippingAddress as any,
-    });
+    }).catch(error => console.error('[SumUp] Confirmation email failed after payment:', error));
   } catch (e) {
     console.error('[SumUp] Verification error:', e);
     return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.nextUrl.origin));

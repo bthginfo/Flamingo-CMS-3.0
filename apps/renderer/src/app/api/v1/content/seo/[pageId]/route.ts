@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seoPage } from '@flamingo/db';
@@ -10,7 +11,7 @@ const LIMITS: Record<string, number> = { metaTitle: 70, metaDescription: 170, ca
 
 export const PUT = withApiHandlerParams(async (req, auth, params) => {
   const { pageId } = params;
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   for (const [field, max] of Object.entries(LIMITS)) {
     const value = body[field];
     if (typeof value === 'string' && value.length > max) {

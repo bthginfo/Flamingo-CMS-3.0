@@ -1,7 +1,10 @@
+import { pageMetadataUpdates, mergeSectionStylePatch, validateSectionPatchKeys } from '@/lib/api-page-input';
+import type { BatchItem } from 'drizzle-orm/batch';
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
-import { eq, and, asc, inArray } from 'drizzle-orm';
+import { eq, and, asc, inArray, sql } from 'drizzle-orm';
 import crypto from 'crypto';
 import { withApiHandlerParams, normalizeSlug, validateSections, validateSectionIdentity, normalizeSectionData, normalizeStyleOverridesForSection, autoFixStyleOverridesForSectionReadability, validateStyleOverridesForApi } from '@/lib/api-utils';
 import { resolveSectionWriteIdentities, resolveSectionWriteIdentity } from '@/lib/section-write-identity';
@@ -18,51 +21,43 @@ export const GET = withApiHandlerParams(async (_req, auth, params) => {
     title: page.title,
     status: page.status,
     visible: page.visible,
-    sections: sections.map(s => ({ id: s.id, type: s.type, definitionKey: s.definitionKey, schemaVersion: s.schemaVersion, data: s.data, variant: s.variant, visible: s.visible, sortOrder: s.sortOrder, styleOverrides: s.styleOverrides })),
+    sections: sections.map(s => ({ id: s.id, type: s.type, definitionKey: s.definitionKey, schemaVersion: s.schemaVersion, data: s.data, variant: s.variant, visible: s.visible, sortOrder: s.sortOrder, container: s.container, spacingTop: s.spacingTop, spacingBottom: s.spacingBottom, anchorId: s.anchorId, locked: s.locked, titleInternal: s.titleInternal, styleOverrides: s.styleOverrides })),
   });
 });
 
 export const PUT = withApiHandlerParams(async (req, auth, params) => {
   const { id } = params;
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   const db = getDb();
 
-  const [existingPage] = await db.select({ id: pages.id }).from(pages)
+  const [existingPage] = await db.select({ id: pages.id, type: pages.type, slug: pages.slug }).from(pages)
     .where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)))
     .limit(1);
   if (!existingPage) return NextResponse.json({ error: 'Page not found' }, { status: 404 });
 
-  const updates: Record<string, unknown> = {};
-  if (body.title) updates.title = body.title;
-  if (body.slug != null) updates.slug = normalizeSlug(body.slug);
-
-  if (Object.keys(updates).length > 0) {
-    await db.update(pages).set(updates).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
+  // Preflight the whole request before any metadata or section mutation.
+  const updates = pageMetadataUpdates(body);
+  if (existingPage.type === 'system' && updates.slug !== undefined && updates.slug !== existingPage.slug) {
+    return NextResponse.json({ code: 'SYSTEM_PAGE_PROTECTED', error: 'System page routes cannot be changed.' }, { status: 409 });
   }
-
-  if (Array.isArray(body.sections)) {
+  const writes: [BatchItem<'pg'>, ...BatchItem<'pg'>[]] = [
+    db.execute(sql`SELECT id FROM pages WHERE id = ${id} AND tenant_id = ${auth.tenantId} FOR UPDATE`),
+  ];
+  if (body.sections !== undefined) {
+    const [locked] = await db.select({ id: pageSections.id }).from(pageSections).where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId), eq(pageSections.locked, true))).limit(1);
+    if (locked) return NextResponse.json({ code: 'LOCKED_SECTIONS_PROTECTED', error: 'This page contains system sections. Use PATCH patchSections to edit their content without replacing them.' }, { status: 409 });
     const sectionErr = validateSections(body.sections, auth.tenant.industry, {
       hasShop: auth.addons.includes('shop'),
       hasBooking: auth.addons.includes('booking'),
     });
-    if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
+    if (sectionErr) return NextResponse.json({ success: false, code: 'INVALID_SECTIONS', error: sectionErr }, { status: 400 });
     const identityResolution = resolveSectionWriteIdentities(body.sections, auth.tenant.industry);
-    if (!identityResolution.ok) {
-      return NextResponse.json({
-        success: false,
-        code: 'INVALID_SECTION_IDENTITY',
-        error: identityResolution.error,
-        hint: 'Omit definitionKey/schemaVersion to let the server derive them, or copy exact values from GET /api/v1/instructions.',
-      }, { status: 400 });
-    }
+    if (!identityResolution.ok) return NextResponse.json({ success: false, code: 'INVALID_SECTION_IDENTITY', error: identityResolution.error }, { status: 400 });
 
-    const oldSections = await db.select({ id: pageSections.id }).from(pageSections)
-      .where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId)));
-    const newSectionIds: string[] = [];
+    writes.push(db.delete(pageSections).where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId))));
     if (body.sections.length > 0) {
       const replacements = body.sections.map((s: any, i: number) => {
         const sectionId = crypto.randomUUID();
-        newSectionIds.push(sectionId);
         const normalizedStyleOverrides = normalizeStyleOverridesForSection(
           s.type,
           s.styleOverrides,
@@ -93,22 +88,13 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
           sortOrder: i,
         };
       });
-      // Insert the complete replacement set first. A validation/DB failure now
-      // leaves the previous page intact instead of deleting all its sections.
-      await db.insert(pageSections).values(replacements);
-    }
-
-    if (oldSections.length > 0) {
-      try {
-        await db.delete(pageSections).where(inArray(pageSections.id, oldSections.map(section => section.id)));
-      } catch (error) {
-        if (newSectionIds.length > 0) {
-          await db.delete(pageSections).where(inArray(pageSections.id, newSectionIds)).catch(() => {});
-        }
-        throw error;
-      }
+      writes.push(db.insert(pageSections).values(replacements));
     }
   }
+  if (Object.keys(updates).length > 0) writes.push(db.update(pages).set(updates).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId))));
+  // Neon HTTP batches are one transaction. A failed insert/update restores the
+  // previous sections and metadata, and the page lock serializes replacements.
+  await db.batch(writes);
 
   return NextResponse.json({ success: true });
 });
@@ -117,7 +103,7 @@ const PATCH_ALLOWED_KEYS = new Set(['title', 'slug', 'visible', 'patchSections']
 
 export const PATCH = withApiHandlerParams(async (req, auth, params) => {
   const { id } = params;
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   // Reject unknown keys instead of silently ignoring them — callers sending
   // e.g. `sections` (the PUT shape) would otherwise get a 200 no-op.
   const unknownKeys = Object.keys(body).filter((key) => !PATCH_ALLOWED_KEYS.has(key));
@@ -134,24 +120,9 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
   // Validate the complete patch before the first write. The HTTP Neon driver
   // has no interactive transaction, so preflight prevents identity/style
   // errors from leaving a partially updated page behind.
-  const updates: Record<string, unknown> = {};
-  if (body.title !== undefined) {
-    if (typeof body.title !== 'string' || !body.title.trim()) {
-      return NextResponse.json({ success: false, code: 'TITLE_INVALID', error: 'title must be a non-empty string' }, { status: 400 });
-    }
-    updates.title = body.title.trim();
-  }
-  if (body.slug !== undefined) {
-    if (typeof body.slug !== 'string' || !normalizeSlug(body.slug)) {
-      return NextResponse.json({ success: false, code: 'SLUG_INVALID', error: 'slug must contain at least one URL-safe character' }, { status: 400 });
-    }
-    updates.slug = normalizeSlug(body.slug);
-  }
-  if (body.visible !== undefined) {
-    if (typeof body.visible !== 'boolean') {
-      return NextResponse.json({ success: false, code: 'VISIBLE_INVALID', error: 'visible must be a boolean' }, { status: 400 });
-    }
-    updates.visible = body.visible;
+  const updates = pageMetadataUpdates(body);
+  if (page.type === 'system' && updates.slug !== undefined && updates.slug !== page.slug) {
+    return NextResponse.json({ code: 'SYSTEM_PAGE_PROTECTED', error: 'System page routes cannot be changed.' }, { status: 409 });
   }
 
   if (body.patchSections !== undefined && !Array.isArray(body.patchSections)) {
@@ -165,6 +136,7 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
     if (!patch || typeof patch !== 'object' || typeof patch.id !== 'string' || !patch.id) {
       return NextResponse.json({ success: false, code: 'PATCH_SECTION_ID_REQUIRED', error: `patchSections[${index}].id is required` }, { status: 400 });
     }
+    validateSectionPatchKeys(patch, index);
     patchIds.push(patch.id);
   }
   if (new Set(patchIds).size !== patchIds.length) {
@@ -194,6 +166,10 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
       const patch = patches[index];
       const patchId = patch.id as string;
       const existing = existingById.get(patchId)!;
+      if (existing.locked && ((patch.definitionKey !== undefined && patch.definitionKey !== existing.definitionKey)
+        || (patch.schemaVersion !== undefined && patch.schemaVersion !== existing.schemaVersion))) {
+        return NextResponse.json({ code: 'LOCKED_SECTION_PROTECTED', error: 'System section identities cannot be changed.' }, { status: 409 });
+      }
       const identityErr = validateSectionIdentity({
         type: existing.type,
         definitionKey: patch.definitionKey,
@@ -232,16 +208,15 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
           ...(existing.data as Record<string, unknown>),
           ...(patch.data as Record<string, unknown>),
         });
+        const dataError = validateSections([{ type: existing.type, definitionKey: identityResolution.identity.definitionKey, data: sectionUpdates.data }], auth.tenant.industry, { hasShop: auth.addons.includes('shop'), hasBooking: auth.addons.includes('booking') });
+        if (dataError) return NextResponse.json({ code: 'SECTION_DATA_INVALID', error: dataError }, { status: 400 });
       }
       if (patch.visible !== undefined) sectionUpdates.visible = patch.visible;
       if (patch.variant !== undefined) sectionUpdates.variant = patch.variant;
       sectionUpdates.definitionKey = identityResolution.identity.definitionKey;
       sectionUpdates.schemaVersion = identityResolution.identity.schemaVersion;
       if (patch.styleOverrides !== undefined) {
-        const normalizedStyleOverrides = normalizeStyleOverridesForSection(existing.type, {
-          ...((existing.styleOverrides as Record<string, string> | null) || {}),
-          ...(patch.styleOverrides || {}),
-        }, auth.tenant.industry, identityResolution.identity.definitionKey);
+        const normalizedStyleOverrides = normalizeStyleOverridesForSection(existing.type, mergeSectionStylePatch(existing.styleOverrides as Record<string, unknown> | null, patch.styleOverrides), auth.tenant.industry, identityResolution.identity.definitionKey);
         sectionUpdates.styleOverrides = autoFixStyleOverridesForSectionReadability(
           existing.type,
           normalizedStyleOverrides,
@@ -259,16 +234,16 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
     return NextResponse.json({ success: false, code: 'PATCH_NO_CHANGES', error: 'PATCH contains no changes' }, { status: 400 });
   }
 
-  if (Object.keys(updates).length > 0) {
-    await db.update(pages).set(updates).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
-  }
+  const writes: [BatchItem<'pg'>, ...BatchItem<'pg'>[]] = [
+    db.execute(sql`SELECT id FROM pages WHERE id = ${id} AND tenant_id = ${auth.tenantId} FOR UPDATE`),
+  ];
+  if (Object.keys(updates).length > 0) writes.push(db.update(pages).set(updates).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId))));
   for (const prepared of preparedSectionUpdates) {
-    await db.update(pageSections).set(prepared.values).where(and(
-      eq(pageSections.id, prepared.id),
-      eq(pageSections.pageId, id),
-      eq(pageSections.tenantId, auth.tenantId),
-    ));
+    writes.push(db.update(pageSections).set(prepared.values).where(and(
+      eq(pageSections.id, prepared.id), eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId),
+    )));
   }
+  await db.batch(writes);
 
   return NextResponse.json({ success: true, updatedSections: preparedSectionUpdates.length });
 });
@@ -276,6 +251,9 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
 export const DELETE = withApiHandlerParams(async (_req, auth, params) => {
   const { id } = params;
   const db = getDb();
+  const [page] = await db.select({ type: pages.type }).from(pages).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId))).limit(1);
+  if (!page) return NextResponse.json({ error: 'Page not found' }, { status: 404 });
+  if (page.type === 'system') return NextResponse.json({ code: 'SYSTEM_PAGE_PROTECTED', error: 'System pages cannot be deleted through the content API.' }, { status: 409 });
   await db.delete(pages).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
   return NextResponse.json({ success: true });
 });

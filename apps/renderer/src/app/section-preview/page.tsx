@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import { getIndustryTemplates } from '@/templates';
-import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
+import { getSectionPreviewData } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 import { getStyleCssVars } from '@/lib/styles';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import { SectionRenderer } from '@/components/section-renderer';
 import { DEFAULT_CONTACT_FORM_FIELDS } from '@/lib/contact-form';
 import {
@@ -78,11 +79,11 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
   const data = {
     ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}),
     ...(SECTION_EDITOR_FIELD_DEFAULTS[previewType] || {}),
-    ...(SECTION_PREVIEW_DATA[type] || {}),
-    ...(SECTION_PREVIEW_DATA[previewType] || {}),
+    ...getSectionPreviewData(type, industry),
     _isSectionPreview: true,
   };
   const styleCssVars = getStyleCssVars(industry, style);
+  const previewCssVars = { ...styleCssVars, ...getBrandCssVars({}, styleCssVars) };
   const previewSection = {
     id: `preview-${type}`,
     type,
@@ -99,7 +100,7 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
   };
 
   return (
-    <div data-style={style} className="min-h-screen bg-[var(--token-page-bg)]" style={styleCssVars as React.CSSProperties}>
+    <div data-style={style} className="min-h-screen bg-[var(--token-page-bg)]" style={previewCssVars as React.CSSProperties}>
       <main>
         {type === 'uspStrip' && <div className="h-24" />}
         <SectionRenderer section={previewSection} styleVariant={style} industry={industry} globalFormFields={DEFAULT_CONTACT_FORM_FIELDS} />

@@ -1,6 +1,8 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Check, RotateCcw } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { getDeterministicWeightedResultId } from '@/lib/offer-matcher';
@@ -21,7 +23,7 @@ export function GuidedChoiceSection({ data }: Props) {
   const [questionId, setQuestionId] = useState(questions[0]?.id || '');
   const [history, setHistory] = useState<Array<{ questionId: string; answer: Answer }>>([]);
   const [resultId, setResultId] = useState('');
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const question = questions.find((item) => item.id === questionId) || questions[0];
   const result = results.find((item) => item.id === resultId);
   const currentIndex = Math.max(0, questions.findIndex((item) => item.id === question?.id));

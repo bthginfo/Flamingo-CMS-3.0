@@ -104,7 +104,7 @@ export function ShopProductDetailSection({ data }: Props) {
               </>
             )}
             {discount > 0 && (
-              <span className="absolute top-4 left-4 bg-[color:var(--token-danger-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
+              <span className="absolute top-4 left-4 bg-[color:var(--token-danger-bg)] text-[color:var(--token-danger)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
             )}
           </div>
           {/* Thumbnails */}
@@ -171,7 +171,7 @@ export function ShopProductDetailSection({ data }: Props) {
                     <button
                       key={val}
                       onClick={() => setSelectedVariant(matchVariant?.id || null)}
-                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${isSelected ? 'border-[color:var(--token-card-border)] bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`}
+                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${isSelected ? 'border-[color:var(--token-card-border)] bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)]' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`}
                     >
                       {val}
                     </button>

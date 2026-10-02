@@ -1,6 +1,8 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { useRef } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
@@ -33,7 +35,7 @@ function buildRailPath(count: number, preset: string) {
 export function SignaturePathSection({ data }: Props) {
   const items = Array.isArray(data.items) ? (data.items as PathItem[]).filter((item) => item?.title && item?.text).slice(0, 4) : [];
   const ref = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const preset = String(data.pathPreset || 'flow');
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start .82', 'end .3'] });
   const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);

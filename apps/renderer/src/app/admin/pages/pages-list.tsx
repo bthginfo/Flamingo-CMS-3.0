@@ -79,7 +79,7 @@ const SHOP_SLUGS = new Set(['shop', 'warenkorb', 'checkout', 'bestellung-abgesch
 
 export function PagesList({ pages, deleteAction, duplicateAction, hasShop, shopPages, addShopPageAction }: {
   pages: Page[];
-  deleteAction: (id: string) => Promise<void>;
+  deleteAction: (id: string, allowSystemPage?: boolean) => Promise<{ success?: boolean; error?: string }>;
   duplicateAction?: (id: string) => Promise<{ success?: boolean; id?: string; error?: string }>;
   hasShop?: boolean;
   shopPages?: ShopPageInfo[];
@@ -166,11 +166,11 @@ export function PagesList({ pages, deleteAction, duplicateAction, hasShop, shopP
                   type="button"
                   disabled={pending}
                   onClick={() => {
-                    if (SHOP_SLUGS.has(page.slug)) {
+                    if (page.type === 'system' || SHOP_SLUGS.has(page.slug)) {
                       setShopDeleteTarget(page);
                     } else {
                       if (confirm(`Seite "${page.title}" wirklich löschen?`)) {
-                        startTransition(() => deleteAction(page.id));
+                        startTransition(async () => { const result = await deleteAction(page.id); if (result.error) toast.error(result.error); });
                       }
                     }
                   }}
@@ -188,7 +188,7 @@ export function PagesList({ pages, deleteAction, duplicateAction, hasShop, shopP
           page={shopDeleteTarget}
           onCancel={() => setShopDeleteTarget(null)}
           onConfirm={() => {
-            startTransition(() => deleteAction(shopDeleteTarget.id));
+            startTransition(async () => { const result = await deleteAction(shopDeleteTarget.id, true); if (result.error) toast.error(result.error); });
             setShopDeleteTarget(null);
           }}
         />

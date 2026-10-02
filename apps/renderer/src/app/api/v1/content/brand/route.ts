@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { globalSettings } from '@flamingo/db';
@@ -6,7 +7,7 @@ import { withApiHandler } from '@/lib/api-utils';
 import { validateBrandPayload, type ColorIssue } from '@/lib/color-validation';
 
 export const PUT = withApiHandler(async (req, auth) => {
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   const db = getDb();
 
   // ── Input validation: reject malformed colors hard, surface contrast

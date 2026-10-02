@@ -67,12 +67,13 @@ function DockSurface({ compactLabel, actions, mobile = false }: { compactLabel: 
 
 export function MobileActionDockSection({ data }: Props) {
   const config = normalizeMobileActionDockData(data);
-  const [mobileVisible, setMobileVisible] = useState(!config.revealAfterScroll);
+  const isSectionPreview = data._isSectionPreview === true;
+  const [mobileVisible, setMobileVisible] = useState(isSectionPreview || !config.revealAfterScroll);
   const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
     const updateVisibility = () => {
-      setMobileVisible(!config.revealAfterScroll || window.scrollY >= config.revealAfterPx);
+      setMobileVisible(isSectionPreview || !config.revealAfterScroll || window.scrollY >= config.revealAfterPx);
       setBlocked(
         shouldHideActionDockForPath(window.location.pathname, config.hideOnPaths)
         || hasVisibleBlockingSurface(),
@@ -86,7 +87,7 @@ export function MobileActionDockSection({ data }: Props) {
       window.removeEventListener('scroll', updateVisibility);
       observer.disconnect();
     };
-  }, [config.hideOnPaths.join('|'), config.revealAfterPx, config.revealAfterScroll]);
+  }, [config.hideOnPaths.join('|'), config.revealAfterPx, config.revealAfterScroll, isSectionPreview]);
 
   if (config.actions.length === 0) return null;
 

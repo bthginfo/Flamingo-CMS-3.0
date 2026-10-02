@@ -1,6 +1,8 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
@@ -14,7 +16,7 @@ type Props = { data: Record<string, unknown> };
 export function EditorialCardMorphSection({ data }: Props) {
   const items = Array.isArray(data.items) ? (data.items as Item[]).filter((item) => item?.title).slice(0, 8) : [];
   const [active, setActive] = useState<number | null>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const detailId = useId();
   const titleId = `${detailId}-title`;
   const selected = active === null ? null : items[active];

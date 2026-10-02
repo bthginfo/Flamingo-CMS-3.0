@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { globalSettings } from '@flamingo/db';
@@ -12,7 +13,7 @@ export const GET = withApiHandler(async (_req, auth) => {
 });
 
 export const PUT = withApiHandler(async (req, auth) => {
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   const db = getDb();
 
   const fields = Array.isArray(body) ? body : body?.fields;

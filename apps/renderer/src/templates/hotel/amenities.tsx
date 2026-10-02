@@ -34,7 +34,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && (
-          <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]">
+          <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="section-badge w-fit flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]">
             <Star size={12} className="text-[color:var(--token-rating-star)]" /><span data-edit-path="badgeText">{badgeText}</span>
           </motion.p>
         )}

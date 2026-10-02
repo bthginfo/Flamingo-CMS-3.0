@@ -175,7 +175,7 @@ test('material atelier keeps an accessible ledger and a no-hidden-content mobile
   assert.match(source, /onFocus=\{\(\) => setActive\(index\)\}/);
   assert.match(source, /snap-mandatory/);
   assert.match(source, /focus-visible:outline/);
-  assert.match(source, /useReducedMotion/);
+  assert.match(source, /useHydrationSafeReducedMotion/);
   assert.match(source, /safeContentUrl\(item\?\.image/);
   assert.match(source, /aria-label="Merkmale"/, 'mobile and tablet cards must expose item metadata as a semantic list');
   assert.match(source, /item\.meta\.slice\(0, 5\)/, 'responsive metadata must stay deliberately compact');

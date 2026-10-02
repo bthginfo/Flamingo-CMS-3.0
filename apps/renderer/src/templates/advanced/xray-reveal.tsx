@@ -1,6 +1,8 @@
 ﻿'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
+
+import { motion } from 'framer-motion';
 import { ScanSearch } from 'lucide-react';
 import { useMemo, useState, type CSSProperties, type PointerEvent } from 'react';
 import { plain } from '@/lib/strip-html';
@@ -22,7 +24,7 @@ export function XrayRevealSection({ data }: Props) {
   const caption = plain((data.caption as string) || '');
   const revealStyle = (data.revealStyle as string) || 'lens';
   const aspectRatio = (data.aspectRatio as string) || '16/9';
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydrationSafeReducedMotion();
   const [position, setPosition] = useState({ x: 52, y: 48 });
   const [slider, setSlider] = useState(50);
   const [engaged, setEngaged] = useState(false);

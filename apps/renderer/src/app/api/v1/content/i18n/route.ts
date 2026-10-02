@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, tenants, collections, collectionItems } from '@flamingo/db';
@@ -120,7 +121,7 @@ export const PATCH = withApiHandler(async () => {
  * For collection items: localizes title, excerpt, and individual sections within item.data.
  */
 export const PUT = withApiHandler(async (req, auth) => {
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   const { sections, items } = body;
 
   if ((!Array.isArray(sections) || sections.length === 0) && (!Array.isArray(items) || items.length === 0)) {

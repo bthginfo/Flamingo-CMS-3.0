@@ -1,3 +1,4 @@
+import { readApiJsonObject } from '@/lib/api-request-body';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { globalSettings } from '@flamingo/db';
@@ -5,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 
 export const PUT = withApiHandler(async (req, auth) => {
-  const body = await req.json();
+  const body = await readApiJsonObject(req);
   const db = getDb();
 
   const [existing] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, auth.tenantId));

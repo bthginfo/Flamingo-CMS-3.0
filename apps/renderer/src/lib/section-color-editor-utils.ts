@@ -100,6 +100,9 @@ export const EDITOR_FIELD_GROUPS: Readonly<Record<EditorFieldGroupKey, readonly 
     'linkColor',
   ],
   surfaces: [
+    'onDarkHeading',
+    'onDarkBody',
+    'onDarkMuted',
     'sectionBgAlt',
     'cardBg',
     'cardHeadingColor',
@@ -458,6 +461,11 @@ export const CONTRAST_PAIRS: ContrastPairDefinition[] = [
   { id: 'button', label: 'Button-Text auf Button', foreground: 'btnText', background: 'btnBg', canvas: 'sectionBg' },
   { id: 'badge', label: 'Badge-Text auf Badge', foreground: 'badgeText', background: 'badgeBg', canvas: 'sectionBg' },
   { id: 'card-badge', label: 'Karten-Badge-Text auf Badge', foreground: 'cardBadgeText', background: 'cardBadgeBg', canvas: 'cardBg' },
+  { id: 'secondary-button', label: 'Sekundärer Button-Text auf Button', foreground: 'btnSecondaryText', background: 'btnSecondaryBg', canvas: 'sectionBg' },
+  { id: 'input', label: 'Eingabetext auf Eingabefeld', foreground: 'inputText', background: 'inputBg', canvas: 'sectionBg' },
+  { id: 'label', label: 'Feldbeschriftung auf Sektionsfläche', foreground: 'labelColor', background: 'sectionBg' },
+  { id: 'success', label: 'Erfolgsmeldung', foreground: 'successColor', background: 'successBg', canvas: 'sectionBg' },
+  { id: 'danger', label: 'Fehlermeldung', foreground: 'dangerColor', background: 'dangerBg', canvas: 'sectionBg' },
 ];
 
 export interface ContrastResult extends ContrastPairDefinition {
