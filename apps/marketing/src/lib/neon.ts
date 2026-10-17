@@ -164,15 +164,9 @@ function databaseNameFromConnectionUri(databaseUrl: string) {
   }
 }
 
-function roleNameFromConnectionUri(databaseUrl: string) {
-  try {
-    const username = new URL(databaseUrl).username;
-    return username ? decodeURIComponent(username) : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
+// Resolve maintenance credentials independently of the supplied runtime role.
+// Registry repair migrates the schema with the returned direct URI, while it
+// retains the caller's restricted runtime URI for the deployed application.
 export async function findNeonTenantProjectByConnectionUri(databaseUrl: string): Promise<NeonTenantProject | null> {
   const endpointId = endpointIdFromConnectionUri(databaseUrl);
   if (!endpointId.startsWith('ep-')) return null;
@@ -189,7 +183,6 @@ export async function findNeonTenantProjectByConnectionUri(databaseUrl: string):
     return resolveNeonTenantProject(project.id!, {
       region: project.region_id || null,
       databaseName: databaseNameFromConnectionUri(databaseUrl),
-      roleName: roleNameFromConnectionUri(databaseUrl),
     });
   }
 
