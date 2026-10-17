@@ -1,12 +1,70 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { buildAtomicTenantPurgeSql } from './tenant-data-migration';
+import { PgDialect } from 'drizzle-orm/pg-core';
+import type { Database } from '@flamingo/db';
+import { buildAtomicTenantPurgeSql, copyTenantData } from './tenant-data-migration';
 import { createTenantOperationFingerprint } from './tenant-operation';
 
 function source(path: string) {
   return readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
+
+test('tenant copies preserve PostgreSQL microseconds, exact numerics and history records', async () => {
+  const tenantId = '6f1c4984-1ae6-4b93-a590-d61416e09fa2';
+  const dialect = new PgDialect();
+  const exactRecord = '{"created_at":"2026-06-09T14:28:48.757697+00:00","amount":9007199254740993.123456789,"nested":{"quoted":"O\'Brien"}}';
+  const sourceQueries: Array<{ sql: string; params: unknown[] }> = [];
+  const inserts: Array<{ sql: string; params: unknown[] }> = [];
+  const restoredStatuses: string[] = [];
+  const sourceDb = {
+    async execute(statement: Parameters<PgDialect['sqlToQuery']>[0]) {
+      const query = dialect.sqlToQuery(statement);
+      sourceQueries.push(query);
+      if (/FROM tenants AS row_data/.test(query.sql)) return { rows: [{ data: '{"id":"tenant"}' }] };
+      if (/FROM "pages" AS row_data/.test(query.sql)) return { rows: Array.from({ length: 201 }, () => ({ data: exactRecord })) };
+      if (/FROM "billing_documents" AS row_data/.test(query.sql)) {
+        assert.match(query.sql, /jsonb_build_object\('status', 'draft'\)/);
+        return { rows: [{ data: exactRecord, id: 'document', status: 'partially_paid' }] };
+      }
+      if (/FROM order_status_history AS history_row/.test(query.sql)) return { rows: [{ data: exactRecord }] };
+      return { rows: [] };
+    },
+  } as unknown as Database;
+  const targetDb = {
+    async execute(statement: Parameters<PgDialect['sqlToQuery']>[0]) {
+      inserts.push(dialect.sqlToQuery(statement));
+      return { rows: [] };
+    },
+    update() {
+      return { set(values: { status: string }) {
+        restoredStatuses.push(values.status);
+        return { async where() {} };
+      } };
+    },
+  } as unknown as Database;
+
+  const result = await copyTenantData(sourceDb, targetDb, tenantId);
+  const pageInserts = inserts.filter(query => /INSERT INTO "pages"/.test(query.sql));
+  assert.deepEqual(pageInserts.map(query => query.params[0]), [
+    `[${Array(100).fill(exactRecord).join(',')}]`,
+    `[${Array(100).fill(exactRecord).join(',')}]`,
+    `[${exactRecord}]`,
+  ]);
+  assert.equal(inserts.find(query => /INSERT INTO "order_status_history"/.test(query.sql))?.params[0], `[${exactRecord}]`);
+  assert.ok(sourceQueries.every(query => query.params.includes(tenantId)), 'every read must remain scoped to the requested tenant');
+  assert.deepEqual(restoredStatuses, ['partially_paid']);
+  assert.equal(result.totalRows, 204);
+});
+
+test('tenant copies reject invalid identity and missing sources before writing', async () => {
+  let writes = 0;
+  const targetDb = { async execute() { writes += 1; } } as unknown as Database;
+  const sourceDb = { async execute() { return { rows: [] }; } } as unknown as Database;
+  await assert.rejects(copyTenantData(sourceDb, targetDb, 'invalid'), /Tenant-ID/);
+  await assert.rejects(copyTenantData(sourceDb, targetDb, '6f1c4984-1ae6-4b93-a590-d61416e09fa2'), /Quell-Tenant/);
+  assert.equal(writes, 0);
+});
 
 test('operation fingerprints are deterministic across object key order', () => {
   assert.equal(
@@ -140,7 +198,7 @@ test('shared-to-standalone cutover quiesces writes, verifies twice and retains t
   assert.match(actions, /\['shared', 'lead_shared'\]\.includes\(tenant\.deploymentMode\)/);
   assert.doesNotMatch(migration, /source\.transaction\(async transaction/);
   assert.match(migration, /DO \$flamingo_tenant_purge\$/);
-  assert.match(migration, /name === 'billing_documents'[\s\S]*status: 'draft'/, 'immutable billing documents must be staged before their items are copied');
+  assert.match(migration, /name === 'billing_documents'[\s\S]*jsonb_build_object\('status', 'draft'\)/, 'immutable billing documents must be staged before their items are copied');
   assert.match(migration, /set_config\('flamingo\.tenant_maintenance_tenant',[\s\S]*true\)/, 'purge must use the transaction-local tenant maintenance capability');
   assert.match(migration, /order_status_history/, 'order status history must be copied and verified');
   assert.match(migration, /'custom_form_deliveries'/, 'the custom form delivery ledger must be copied and verified');

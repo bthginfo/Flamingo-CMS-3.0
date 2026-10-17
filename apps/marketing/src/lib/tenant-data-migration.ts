@@ -178,9 +178,19 @@ const TENANT_TABLES = [
   ['instagram_posts', instagramPosts],
 ] as const;
 
-async function insertChunks(target: Database, table: unknown, rows: unknown[]) {
+type PostgresRecord = { data: string; id?: string; status?: string };
+
+async function insertChunks(target: Database, tableName: string, rows: PostgresRecord[]) {
   for (let index = 0; index < rows.length; index += 100) {
-    await (target as any).insert(table).values(rows.slice(index, index + 100));
+    // Keep PostgreSQL's JSON as text throughout the transfer. Decoding rows
+    // through the ORM truncates timestamp microseconds to JS milliseconds;
+    // JSON.parse would also round large numeric values. PostgreSQL restores
+    // its own wire values, including bytea and nested JSON, without either loss.
+    const records = `[${rows.slice(index, index + 100).map(row => row.data).join(',')}]`;
+    await target.execute(sql`
+      INSERT INTO ${sql.identifier(tableName)}
+      SELECT * FROM jsonb_populate_recordset(NULL::${sql.identifier(tableName)}, ${records}::jsonb)
+    `);
   }
 }
 
@@ -189,28 +199,42 @@ async function insertChunks(target: Database, table: unknown, rows: unknown[]) {
  * Flamingo's own CRM tables deliberately remain in the central control plane.
  */
 export async function copyTenantData(source: Database, target: Database, tenantId: string): Promise<CopyResult> {
-  const [tenant] = await source.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  assertTenantUuid(tenantId);
+  const tenantRows = await source.execute(sql`
+    SELECT (to_jsonb(row_data) || jsonb_build_object(
+      'deployment_mode', 'standalone', 'is_lead', false,
+      'status', 'provisioning', 'vercel_project_id', NULL
+    ))::text AS data
+    FROM tenants AS row_data WHERE id = ${tenantId}::uuid LIMIT 1
+  `);
+  const [tenant] = tenantRows.rows as PostgresRecord[];
   if (!tenant) throw new Error('Der Quell-Tenant wurde nicht gefunden.');
-  await target.insert(tenants).values({ ...tenant, deploymentMode: 'standalone', isLead: false, status: 'provisioning', vercelProjectId: null });
+  await insertChunks(target, 'tenants', [tenant]);
 
   const result: CopyResult = { tables: { tenants: 1 }, totalRows: 1 };
   const finalizedBillingStatuses = new Map<string, string[]>();
-  for (const [name, table] of TENANT_TABLES) {
-    const rows = await (source.select() as any).from(table).where(eq((table as any).tenantId, tenantId));
+  for (const [name] of TENANT_TABLES) {
+    const record = name === 'billing_documents'
+      ? sql`to_jsonb(row_data) || jsonb_build_object('status', 'draft')`
+      : sql`to_jsonb(row_data)`;
+    const originalStatus = name === 'billing_documents' ? sql`, row_data.id, row_data.status` : sql``;
+    const selected = await source.execute(sql`
+      SELECT (${record})::text AS data ${originalStatus}
+      FROM ${sql.identifier(name)} AS row_data WHERE tenant_id = ${tenantId}::uuid
+    `);
+    const rows = selected.rows as PostgresRecord[];
     if (name === 'billing_documents') {
       // The target already has immutability triggers. Insert archived documents
       // temporarily as drafts so their line items can be restored, then restore
       // the original status after every dependent row has been copied.
-      for (const row of rows as Array<{ id: string; status: string }>) {
-        if (row.status === 'draft') continue;
+      for (const row of rows) {
+        if (!row.id || !row.status || row.status === 'draft') continue;
         const ids = finalizedBillingStatuses.get(row.status) || [];
         ids.push(row.id);
         finalizedBillingStatuses.set(row.status, ids);
       }
-      if (rows.length) await insertChunks(target, table, rows.map((row: { status: string }) => ({ ...row, status: 'draft' })));
-    } else if (rows.length) {
-      await insertChunks(target, table, rows);
     }
+    if (rows.length) await insertChunks(target, name, rows);
     result.tables[name] = rows.length;
     result.totalRows += rows.length;
   }
@@ -225,13 +249,14 @@ export async function copyTenantData(source: Database, target: Database, tenantI
     }
   }
 
-  const sourceOrders = await source.select({ id: orders.id }).from(orders).where(eq(orders.tenantId, tenantId));
-  const orderIds = sourceOrders.map(order => order.id);
-  let historyRows: Array<typeof orderStatusHistory.$inferSelect> = [];
-  for (let index = 0; index < orderIds.length; index += 500) {
-    historyRows = historyRows.concat(await source.select().from(orderStatusHistory).where(inArray(orderStatusHistory.orderId, orderIds.slice(index, index + 500))));
-  }
-  if (historyRows.length) await insertChunks(target, orderStatusHistory, historyRows);
+  const selectedHistory = await source.execute(sql`
+    SELECT to_jsonb(history_row)::text AS data
+    FROM order_status_history AS history_row
+    INNER JOIN orders AS tenant_order ON tenant_order.id = history_row.order_id
+    WHERE tenant_order.tenant_id = ${tenantId}::uuid
+  `);
+  const historyRows = selectedHistory.rows as PostgresRecord[];
+  if (historyRows.length) await insertChunks(target, 'order_status_history', historyRows);
   result.tables.order_status_history = historyRows.length;
   result.totalRows += historyRows.length;
   return result;
