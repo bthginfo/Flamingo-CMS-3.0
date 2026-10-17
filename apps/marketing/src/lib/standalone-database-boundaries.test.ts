@@ -5,10 +5,29 @@ import { PgDialect } from 'drizzle-orm/pg-core';
 import type { Database } from '@flamingo/db';
 import { buildAtomicTenantPurgeSql, copyTenantData } from './tenant-data-migration';
 import { createTenantOperationFingerprint } from './tenant-operation';
+import { createHash } from 'node:crypto';
+import { getMigrationSource } from '../../../../packages/db/src/migration-source';
 
 function source(path: string) {
   return readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
+
+test('migration identity survives a Windows to Linux move without replaying data migrations', () => {
+  const lf = '-- historic data repair\nUPDATE published_snapshots SET version = 1;\n';
+  const crlf = lf.replace(/\n/g, '\r\n');
+  const legacyWindowsHash = createHash('sha256').update(crlf).digest('hex');
+  const applied = new Set([legacyWindowsHash]);
+  const linux = getMigrationSource(lf, applied);
+  const windows = getMigrationSource(crlf, applied);
+  assert.equal(linux.hash, windows.hash);
+  assert.equal(linux.sqlText, lf);
+  assert.equal(windows.sqlText, lf);
+  assert.equal(linux.alreadyApplied, true);
+  assert.equal(windows.alreadyApplied, true);
+  assert.ok(linux.hashes.includes(legacyWindowsHash));
+  assert.equal(getMigrationSource(lf.replace('version = 1', 'version = 2'), applied).alreadyApplied, false);
+  assert.equal(getMigrationSource(lf, new Set([linux.hash])).alreadyApplied, true);
+});
 
 test('tenant copies preserve PostgreSQL microseconds, exact numerics and history records', async () => {
   const tenantId = '6f1c4984-1ae6-4b93-a590-d61416e09fa2';

@@ -1,9 +1,10 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import * as schema from './schema';
+import { getMigrationSource } from './migration-source';
 
 export function createDb(databaseUrl: string) {
   const sql = neon(databaseUrl, { fetchOptions: { cache: 'no-store' } });
@@ -217,7 +218,7 @@ async function executeLockedTransaction(sql: NeonSql, queries: MigrationQuery[])
   ], { isolationLevel: 'Serializable' });
 }
 
-function migrationGuardedStatement(statement: string, hash: string, index: number) {
+function migrationGuardedStatement(statement: string, hash: string, index: number, hashes: readonly string[] = [hash]) {
   const normalized = makeMigrationStatementIdempotent(statement).trim();
   const suffix = `${hash.slice(0, 12)}_${index}`;
   const guardTag = `$flamingo_guard_${suffix}$`;
@@ -225,21 +226,25 @@ function migrationGuardedStatement(statement: string, hash: string, index: numbe
   while (normalized.includes(statementTag)) statementTag = `${statementTag.slice(0, -1)}_x$`;
   return `DO ${guardTag}
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM drizzle.__drizzle_migrations WHERE hash = ${quoteLiteral(hash)}) THEN
+  IF NOT EXISTS (SELECT 1 FROM drizzle.__drizzle_migrations WHERE hash IN (${hashes.map(quoteLiteral).join(', ')})) THEN
     EXECUTE ${statementTag}${normalized}${statementTag};
   END IF;
 END
 ${guardTag};`;
 }
 
-function migrationTransactionQueries(hash: string, createdAt: number, sqlText: string) {
+function migrationJournalQuery(hash: string, createdAt: number): MigrationQuery {
+  return {
+    text: 'INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ($1, $2) ON CONFLICT (hash) DO NOTHING',
+    params: [hash, createdAt],
+  };
+}
+
+function migrationTransactionQueries(hash: string, createdAt: number, sqlText: string, hashes: readonly string[] = [hash]) {
   const statements = splitSqlStatements(sqlText);
   return [
-    ...statements.map((statement, index) => ({ text: migrationGuardedStatement(statement, hash, index) })),
-    {
-      text: 'INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ($1, $2) ON CONFLICT (hash) DO NOTHING',
-      params: [hash, createdAt],
-    },
+    ...statements.map((statement, index) => ({ text: migrationGuardedStatement(statement, hash, index, hashes) })),
+    migrationJournalQuery(hash, createdAt),
   ] satisfies MigrationQuery[];
 }
 
@@ -356,20 +361,16 @@ export async function migrateDatabase(databaseUrl: string, migrationsFolder?: st
     const baselineIndex = entries.findIndex(entry => entry.tag === baselineMeta.lastJournalTag);
     if (baselineIndex < 0) throw new Error('Flamingo database baseline metadata does not match the migration journal.');
     const baselineEntries = entries.slice(0, baselineIndex + 1).map(entry => {
-      const sqlText = readFileSync(path.join(folder, `${entry.tag}.sql`), 'utf8');
-      return { ...entry, hash: createHash('sha256').update(sqlText).digest('hex') };
+      return { ...entry, ...getMigrationSource(readFileSync(path.join(folder, `${entry.tag}.sql`), 'utf8')) };
     });
     const baselineGuardHash = baselineEntries.at(-1)?.hash;
     if (!baselineGuardHash) throw new Error('Flamingo database baseline metadata is empty.');
-    const baselineSql = readFileSync(baselinePath, 'utf8');
+    const baselineSql = getMigrationSource(readFileSync(baselinePath, 'utf8')).sqlText;
     const baselineQueries: MigrationQuery[] = [
       ...splitSqlStatements(baselineSql).map((statement, index) => ({
-        text: migrationGuardedStatement(statement, baselineGuardHash, index),
+        text: migrationGuardedStatement(statement, baselineGuardHash, index, baselineEntries.at(-1)?.hashes),
       })),
-      ...baselineEntries.map(entry => ({
-        text: 'INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES ($1, $2) ON CONFLICT (hash) DO NOTHING',
-        params: [entry.hash, entry.when],
-      })),
+      ...baselineEntries.map(entry => migrationJournalQuery(entry.hash, entry.when)),
     ];
     await executeLockedTransaction(sql, baselineQueries);
   }
@@ -378,13 +379,15 @@ export async function migrateDatabase(databaseUrl: string, migrationsFolder?: st
   const applied = new Set(appliedRows.map(row => row.hash));
   for (const entry of entries) {
     const migrationPath = path.join(folder, `${entry.tag}.sql`);
-    const sqlText = readFileSync(migrationPath, 'utf8');
-    const hash = createHash('sha256').update(sqlText).digest('hex');
+    const migration = getMigrationSource(readFileSync(migrationPath, 'utf8'), applied);
+    const { hash, sqlText, hashes } = migration;
     if (applied.has(hash)) continue;
     // The advisory lock, guarded statements and journal insert live in the
     // same transaction. Concurrent provisioners therefore cannot execute a
     // migration twice, and a failed migration can never be journaled as done.
-    await executeLockedTransaction(sql, migrationTransactionQueries(hash, entry.when, sqlText));
+    await executeLockedTransaction(sql, migration.alreadyApplied
+      ? [migrationJournalQuery(hash, entry.when)]
+      : migrationTransactionQueries(hash, entry.when, sqlText, hashes));
     applied.add(hash);
   }
 
