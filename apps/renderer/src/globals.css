@@ -8,7 +8,8 @@
 
 /* The top-bar spacer already reserves its measured height. Only a leading
    content hero reserves the remaining fixed navigation, when it is present. */
-[data-site-header] ~ main > [data-section-type="editorialHero"]:first-child {
+[data-site-header] ~ main > [data-section-type="editorialHero"]:first-child,
+[data-site-header] ~ main > [data-collection-content-hero] > [data-section-type="editorialHero"]:first-of-type {
   --opening-header-clearance: var(--site-nav-height, 72px);
 }
 

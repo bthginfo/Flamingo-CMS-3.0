@@ -40,7 +40,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
     const otherSections = visibleSections.filter(s => s.type !== 'collectionHero');
 
     return (
-      <div className="relative">
+      <div className="relative" data-collection-content-hero={heroSections.length === 0 && otherSections[0]?.type === 'editorialHero' ? '' : undefined}>
         {/* Hero sections with overlapping back button */}
         <div className="relative">
           {heroSections.map((section) => (
@@ -56,7 +56,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         </div>
         <Link
           href={`${backHrefPrefix}/${collection.key}`}
-          className="fixed left-4 z-40 inline-flex items-center gap-2 rounded-full bg-[var(--token-card-bg,#fff)] px-4 py-3 text-sm font-semibold text-[color:var(--token-card-heading,var(--token-heading,#111827))] shadow-xl ring-1 ring-[color:var(--token-card-border,rgba(0,0,0,0.08))] backdrop-blur transition-colors hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text,#fff)] md:hidden"
+          className="fixed left-4 z-40 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,#fff)] px-4 py-3 text-sm font-semibold text-[color:var(--token-btn-text,#111827)] shadow-xl ring-1 ring-[color:var(--token-btn-secondary-border,rgba(0,0,0,0.08))] backdrop-blur transition-colors hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text,#fff)] md:hidden"
           style={{ bottom: 'calc(env(safe-area-inset-bottom) + 1rem)' }}
         >
           <ArrowLeft size={15} />
