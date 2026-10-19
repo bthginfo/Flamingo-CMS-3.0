@@ -59,7 +59,7 @@ import { generateCollectionItemMetadata, renderCollectionItemPage } from '@/app/
 import { serializeJsonForHtml } from '@/lib/safe-json';
 import { composeSeoTitle } from '@/lib/seo-title';
 import { getTenantFontAssets, getTenantFontCssVars } from '@/lib/tenant-theme';
-import { isValidColorString } from '@/lib/color-validation';
+import { getBrandForegroundOverrides } from '@/lib/brand-foreground-overrides';
 import { escapeStyleElementText } from '@/lib/section-style-overrides';
 
 // Known locale codes for i18n routing (first slug segment)
@@ -456,26 +456,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   const shopEnabled = shopActive;
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
-  // Build dynamic style overrides that need !important to beat Tailwind utilities
-  const importantOverrides: string[] = [];
-  const safeBrandColor = (value: unknown) => typeof value === 'string' && isValidColorString(value) ? value.trim() : null;
-  const headingColor = safeBrandColor(brand.headingColor);
-  const bodyTextColor = safeBrandColor(brand.bodyTextColor);
-  const mutedTextColor = safeBrandColor(brand.mutedTextColor);
-  const linkColor = safeBrandColor(brand.linkColor);
-  if (headingColor) importantOverrides.push(`[data-style] main h1, [data-style] main h2, [data-style] main h3, [data-style] main h4, [data-style] main h5, [data-style] main h6 { color: ${headingColor} !important; }`);
-  if (bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li { color: ${bodyTextColor} !important; }`);
-  if (mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${mutedTextColor} !important; }`);
-  if (linkColor) importantOverrides.push(`[data-style] main a:not([data-edit-link]):not(.cms-button):not([class*="cms-button"]):not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${linkColor} !important; }`);
-  importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-on-dark-heading, #fff) !important; }`);
-  importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(p,li,.cms-section-subtitle) { color: var(--token-on-dark-body, rgba(255,255,255,.78)) !important; }`);
-  importantOverrides.push(`[data-style] main [data-color-context="dark"] :where(.section-badge,.eyebrow) { color: var(--token-eyebrow, var(--token-on-dark-muted, rgba(255,255,255,.62))) !important; }`);
-  importantOverrides.push(`[data-style] main [data-card] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-card-heading, var(--token-heading)) !important; }`);
-  importantOverrides.push(`[data-style] main [data-card] :where(p,li,.cms-section-copy,.cms-section-subtitle) { color: var(--token-card-body, var(--token-body)) !important; }`);
-  importantOverrides.push(`[data-style] main [data-card] :where(.section-badge,.eyebrow) { color: var(--token-eyebrow, var(--token-card-muted, var(--token-muted))) !important; }`);
-  importantOverrides.push(`[data-style] main [data-color-context="light"] :where(h1,h2,h3,h4,h5,h6,.cms-section-title) { color: var(--token-card-heading, #0f172a) !important; }`);
-  importantOverrides.push(`[data-style] main [data-color-context="light"] :where(p,li,.cms-section-copy,.cms-section-subtitle) { color: var(--token-card-body, #475569) !important; }`);
-  importantOverrides.push(`[data-style] main [data-color-context="light"] :where(.section-badge,.eyebrow) { color: var(--token-card-muted, #64748b) !important; }`);
+  const importantOverrides = getBrandForegroundOverrides(brand);
 
   return (
     <div data-style={tenantStyle.activeStyle} className="overflow-x-clip" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>

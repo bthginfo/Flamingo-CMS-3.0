@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { plain } from '@/lib/strip-html';
 import { AdvancedIntro, AdvancedLink, EmptyVisual, type AdvancedCta } from './advanced-shared';
 
-type Statement = { prefix?: string; highlight?: string; suffix?: string; text?: string; image?: string };
+type Statement = { id?: string; prefix?: string; highlight?: string; suffix?: string; text?: string; image?: string };
 type Props = { data: Record<string, unknown> };
 
 function StatementLine({ item, compact = false }: { item: Statement; index: number; compact?: boolean }) {
@@ -15,6 +15,32 @@ function StatementLine({ item, compact = false }: { item: Statement; index: numb
 }
 
 export function KineticIdentitySection({ data }: Props) {
+  if (data.preset === 'editorial') return <KineticEditorial data={data} />;
+  return <KineticStage data={data} />;
+}
+
+function EditorialStatement({ item, index, sourceIndex }: { item: Statement; index: number; sourceIndex: number }) {
+  const ref = useRef<HTMLElement>(null);
+  const reduceMotion = useHydrationSafeReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], ['-3%', '3%']);
+  const beat = index % 3;
+  return <article ref={ref} className="grid items-center gap-6 border-t border-[var(--token-divider)] py-8 lg:grid-cols-12 lg:gap-12 lg:py-12" data-edit-collection="statements" data-edit-index={sourceIndex}>
+    <div className={`min-w-0 ${beat === 0 ? 'lg:col-span-5' : beat === 1 ? 'lg:col-span-6 lg:col-start-7 lg:row-start-1' : 'lg:col-span-7'}`}>
+      <h3 className={`font-display font-semibold leading-[1.02] tracking-[-0.035em] text-[color:var(--token-heading)] [text-wrap:balance] ${beat === 0 ? 'text-[clamp(2.8rem,5.2vw,5rem)]' : beat === 1 ? 'max-w-[16ch] text-[clamp(2.3rem,3.8vw,3.6rem)]' : 'text-[clamp(2.6rem,4.8vw,4.6rem)]'}`}><span data-edit-path="prefix">{item.prefix}</span>{' '}<span className="text-[color:var(--token-icon)]" data-edit-path="highlight">{item.highlight}</span>{' '}<span data-edit-path="suffix">{item.suffix}</span></h3>
+      {item.text && <p className="mt-5 max-w-[45ch] text-base leading-8 text-[color:var(--token-body)]" data-edit-path="text">{plain(item.text)}</p>}
+    </div>
+    {item.image && <figure className={`m-0 overflow-hidden ${beat === 0 ? 'aspect-[16/10] lg:col-span-7' : beat === 1 ? 'aspect-[16/9] lg:col-span-5 lg:col-start-1 lg:row-start-1' : 'aspect-[16/9] lg:col-span-4 lg:col-start-9 lg:aspect-square'}`}><motion.img src={item.image} alt="" loading="lazy" data-edit-image="image" className="h-full w-full object-cover" style={reduceMotion ? undefined : { y, scale: 1.08 }} /></figure>}
+  </article>;
+}
+
+function KineticEditorial({ data }: Props) {
+  const items = (Array.isArray(data.statements) ? data.statements as Statement[] : []).map((item, sourceIndex) => ({ ...item, sourceIndex })).filter(item => item.prefix || item.highlight || item.suffix);
+  if (!items.length) return null;
+  return <section className="bg-[var(--token-section-bg)] px-6 py-8 md:px-10 md:py-12 lg:px-14" data-kinetic-preset="editorial"><div className="mx-auto max-w-[1440px]"><AdvancedIntro headline={String(data.headline || '')} subline={String(data.subline || '')} /><div className="mt-8 lg:mt-10">{items.map((item, index) => <EditorialStatement key={item.id || item.sourceIndex} item={item} index={index} sourceIndex={item.sourceIndex} />)}</div><AdvancedLink cta={data.cta as AdvancedCta} className="mt-3" /></div></section>;
+}
+
+function KineticStage({ data }: Props) {
   const items = Array.isArray(data.statements) ? (data.statements as Statement[]).filter((item) => item && (item.prefix || item.highlight || item.suffix)) : [];
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useHydrationSafeReducedMotion();

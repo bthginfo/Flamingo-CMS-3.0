@@ -120,7 +120,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "bgImage": "",
     "imageSrc": "",
     "imageUrl": "",
-    "layout": "",
     "media": ""
   },
   "collectionHero": {
@@ -144,6 +143,8 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "bgImage": "",
     "image": "",
     "imageAlt": "",
+    "imageFit": "",
+    "imagePosition": "",
     "imageSrc": "",
     "imageUrl": "",
     "items": [],
@@ -199,9 +200,6 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   },
   "shopCategoryOverview": {
     "tenantId": ""
-  },
-  "categoryMosaic": {
-    "layout": ""
   },
   "floristHero": {
     "bgImage": "",
@@ -295,6 +293,8 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "badge": "",
     "badgeText": "",
     "bgImage": "",
+    "imageFit": "",
+    "imagePosition": "",
     "imageSrc": "",
     "imageUrl": "",
     "items": [],
@@ -430,14 +430,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   },
   "editorialHero": {
     "badgeText": "",
-    "compact": false,
     "hideImageOnMobile": "",
     "image": "",
-    "imageAlt": "",
-    "imageFit": "",
     "imagePosition": "",
-    "imagePrimaryPosition": "",
-    "layout": "",
     "mobileImageMode": "",
     "subline": "",
     "variant": ""

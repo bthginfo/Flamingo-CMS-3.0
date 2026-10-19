@@ -169,17 +169,19 @@ test('wave two responsive and selection semantics cannot drift', () => {
   assert.doesNotMatch(kinetic, /initial=\{reduceMotion \? false : \{ opacity: 0/, 'server-rendered kinetic content must fail open as visible');
 });
 
-test('material atelier keeps an accessible ledger and a no-hidden-content mobile sequence', () => {
+test('material atelier keeps an accessible normal-flow material selector', () => {
   const source = readFileSync(new URL('../templates/advanced/material-atelier.tsx', import.meta.url), 'utf8');
   assert.match(source, /aria-pressed=/);
   assert.match(source, /onFocus=\{\(\) => setActive\(index\)\}/);
-  assert.match(source, /snap-mandatory/);
+  assert.match(source, /aria-controls=/);
+  assert.doesNotMatch(source, /sticky|snap-mandatory|lg:hidden/, 'material choices must remain in normal document flow on touch screens');
   assert.match(source, /focus-visible:outline/);
   assert.match(source, /useHydrationSafeReducedMotion/);
   assert.match(source, /safeContentUrl\(item\?\.image/);
   assert.match(source, /aria-label="Merkmale"/, 'mobile and tablet cards must expose item metadata as a semantic list');
-  assert.match(source, /item\.meta\.slice\(0, 5\)/, 'responsive metadata must stay deliberately compact');
-  assert.match(source, /--token-card-muted/, 'responsive metadata must use semantic color tokens');
+  assert.match(source, /\.slice\(0,\s*5\)/, 'item metadata must stay deliberately compact');
+  assert.match(source, /--token-muted/, 'metadata must use its own section text role');
+  assert.match(source, /data-edit-path="ctaLabel"/, 'the material detail link must have an editable label');
   assert.match(source, /visibleText\(item\?\.text\)/, 'raw CSS values must not leak into visible atelier copy');
   assert.match(source, /ResilientImage/, 'atelier media must fail into an intentional visual state');
 });
@@ -188,4 +190,32 @@ test('primary cms buttons keep the explicit button foreground token', () => {
   const css = readFileSync(new URL('../globals.css', import.meta.url), 'utf8');
   assert.match(css, /:is\(a, button\)\.cms-button\.cms-button--primary\s*\{[\s\S]*?background-color:\s*var\(--token-btn-bg\)\s*!important;[\s\S]*?color:\s*var\(--token-btn-text\)\s*!important;/);
   assert.match(css, /\.cms-button\.cms-button--primary\s*>\s*\*\s*\{[\s\S]*?color:\s*inherit\s*!important;/);
+});
+
+
+test('progressive variants expose their documented CMS selection contracts', () => {
+  const contracts = new Map(getAllSectionContracts().map(contract => [contract.type, contract]));
+  for (const industry of ['tradesman', 'retail', 'photography']) {
+    const schemas = getSectionSchemas(industry) as Record<string, { fields: Record<string, unknown> }>;
+    for (const [type, key, options] of [
+      ['editorialHero', 'layout', ['studio', 'memorial']],
+      ['categoryMosaic', 'layout', ['spread']],
+      ['kineticIdentity', 'preset', ['editorial']],
+      ['materialAtelier', 'preset', ['quiet', 'editorial']],
+      ['textImage', 'layout', ['image-left', 'image-right']],
+      ['textImage', 'imageFit', ['cover', 'contain']],
+    ] as const) {
+      const field = contracts.get(type)?.fields.find(entry => entry.key === key);
+      assert.equal(field?.type, 'select', type + '.' + key);
+      for (const option of options) {
+        assert.ok(field?.options?.includes(option), type + '.' + key + ': ' + option);
+        assert.ok(String(schemas[type]?.fields[key]).includes(option), industry + ': ' + type + '.' + key);
+      }
+    }
+    for (const field of ['imageAlt', 'imagePosition', 'ctaLabel']) assert.ok(String(schemas.materialAtelier.fields.items).includes(field));
+    assert.equal(contracts.get('textImage')?.fields.find(field => field.key === 'imagePosition')?.type, 'text');
+    assert.ok(schemas.textImage.fields.imagePosition);
+    assert.ok(schemas.cinematicChapters.fields.skipLabel);
+    assert.ok(contracts.get('cinematicChapters')?.fields.some(field => field.key === 'skipLabel'));
+  }
 });

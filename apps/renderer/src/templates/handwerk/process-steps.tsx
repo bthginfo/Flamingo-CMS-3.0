@@ -16,7 +16,7 @@ export function ProcessStepsSection({ data, styleVariant }: Props) {
   if (data.layout === 'simple') return <div>
     {headline && <h2 className="section-headline mx-0 max-w-3xl text-left" data-edit-path="headline">{headline}</h2>}
     {subline && <p className="mt-4 max-w-2xl leading-7 text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
-    <ol className="mt-9 grid gap-8 md:grid-cols-3">
+    <ol className={`mt-9 grid gap-8 ${steps.length === 4 ? 'md:grid-cols-2 xl:grid-cols-4' : 'md:grid-cols-3'}`}>
       {steps.map((step, i) => <li key={i} className="border-t border-[var(--token-divider)] pt-6" data-edit-collection="steps" data-edit-index={i}>
         <span className="text-sm font-semibold tabular-nums text-[color:var(--token-muted)]" aria-hidden="true">{i + 1}.</span>
         <h3 className="font-display mt-4 text-2xl font-semibold leading-tight text-[color:var(--token-heading)]" data-edit-path="title">{step.title}</h3>

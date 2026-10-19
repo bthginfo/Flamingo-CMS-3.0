@@ -24,7 +24,8 @@ export function TextImageSection({ data, variant }: Props) {
   const text = (data.text as string) || '';
   const image = pickString(data.image, data.imageUrl, data.imageSrc, data.backgroundImage, data.bgImage, data.media);
   const imageAlt = (data.imageAlt as string) || headline;
-  const layout = (data.layout as string) || 'image-right';
+  const layout = (data.layout as string) || (data.imagePosition === 'left' ? 'image-left' : 'image-right');
+  const imagePosition = typeof data.imagePosition === 'string' && (data.layout || !['left', 'right'].includes(data.imagePosition)) ? data.imagePosition : 'center';
   const items = (data.items as Array<{ icon?: string; title: string; text: string }>) || [];
   const primaryCta = (data.primaryCta as ButtonValue) || {};
   const secondaryCta = (data.secondaryCta as ButtonValue) || {};
@@ -32,11 +33,11 @@ export function TextImageSection({ data, variant }: Props) {
   const imageLeft = layout === 'image-left';
 
   return (
-    <section className="py-20 px-6 bg-[var(--token-section-bg)] overflow-hidden">
+    <section className="py-7 px-6 bg-[var(--token-section-bg)] overflow-hidden md:py-12">
       <div className={`max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center ${imageLeft ? '' : 'md:[&>*:first-child]:order-2'}`}>
         {image && (
-          <motion.div initial={reduceMotion ? false : { opacity: 0, x: imageLeft ? -30 : 30 }} animate={reduceMotion ? { opacity: 1, x: 0 } : undefined} whileInView={{ opacity: 1, x: 0 }} transition={reduceMotion ? { duration: 0 } : undefined} viewport={{ once: true }} className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
-            <Image data-edit-image="image" src={image} alt={imageAlt} fill className="object-cover" />
+          <motion.div initial={false} whileInView={{ opacity: 1, x: 0 }} transition={reduceMotion ? { duration: 0 } : undefined} viewport={{ once: true }} className="relative aspect-[4/3] overflow-hidden bg-[var(--token-section-bg-alt)]" style={{ borderRadius: 'var(--token-card-radius)' }}>
+            <Image data-edit-image="image" src={image} alt={imageAlt} fill className={data.imageFit === 'contain' ? 'object-contain p-3' : 'object-cover'} style={{ objectPosition: imagePosition }} sizes="(min-width: 768px) 50vw, 100vw" />
           </motion.div>
         )}
         <div className={!image ? 'md:col-span-2 max-w-3xl mx-auto' : ''}>
@@ -44,13 +45,12 @@ export function TextImageSection({ data, variant }: Props) {
           {headline && <h2 className="section-headline mx-0 text-left" data-edit-path="headline">{headline}</h2>}
           {text && <div className="text-[color:var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
-            <ul className="mt-6 space-y-3">
+            <ul className="mt-6 divide-y divide-[var(--token-divider)] border-y border-[var(--token-divider)]">
               {items.map((item, i) => (
-                <li key={i} className="flex items-start gap-3" data-edit-collection="items" data-edit-index={i}>
-                  <span className="w-2 h-2 mt-2 rounded-full bg-[var(--token-icon)] shrink-0" />
+                <li key={i} className="py-4" data-edit-collection="items" data-edit-index={i}>
                   <div>
-                    <span className="font-medium text-[color:var(--token-body)]" data-edit-path="title">{item.title}</span>
-                    {item.text && <span className="text-[color:var(--token-body)]"> - <span data-edit-path="text">{plain(item.text)}</span></span>}
+                    <h3 className="font-display text-xl font-medium text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
+                    {item.text && <p className="mt-2 leading-7 text-[color:var(--token-body)]" data-edit-path="text">{plain(item.text)}</p>}
                   </div>
                 </li>
               ))}

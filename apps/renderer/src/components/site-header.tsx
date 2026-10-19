@@ -269,6 +269,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
 
       {/* Main nav */}
       <motion.header
+        data-site-header
         animate={{ y: hidden ? -100 : 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="fixed left-0 right-0 z-50 transition-all duration-500"
@@ -282,7 +283,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         )}
         style={(scrolled || (!isHeroDark)) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
         >
-          <div className="mx-auto flex h-[72px] max-w-[1480px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex h-[var(--site-nav-height,72px)] max-w-[1480px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex min-w-0 shrink-0 items-center gap-2 font-display text-xl font-bold tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                 brand.navLogoColor ? (

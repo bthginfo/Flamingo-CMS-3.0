@@ -2,6 +2,7 @@ import { WordReveal } from '@/components/ui/fx';
 import type { CSSProperties } from 'react';
 import { ActionGroup, ActionLink, MediaFrame, PremiumSectionHeader } from './section-primitives';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { StudioHero } from './studio-hero';
 
 type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -46,6 +47,8 @@ export function EditorialHeroSection({ data }: Props) {
     color: 'var(--token-card-body, #475569)',
   } as CSSProperties;
   if (!headline) return null;
+
+  if (layout === 'studio' || layout === 'memorial') return <StudioHero data={data} memorial={layout === 'memorial'} />;
 
   // A solid reading surface keeps architectural and memorial photography
   // intact, including inscriptions. These layouts deliberately omit effects

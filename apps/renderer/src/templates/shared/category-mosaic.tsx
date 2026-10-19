@@ -12,6 +12,10 @@ type Category = {
   title: string;
   href?: string;
   size?: 'large' | 'small';
+  imageAlt?: string;
+  imagePosition?: string;
+  imageFit?: 'cover' | 'contain';
+  description?: string;
 };
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
@@ -22,6 +26,16 @@ export function CategoryMosaicSection({ data }: Props) {
   const items = (data.items as Category[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-50px' });
+
+  if (data.layout === 'spread') return <div>
+    <PremiumSectionHeader headline={headline} subline={subline} richSubline={false} />
+    <div className="mt-10 grid gap-x-8 gap-y-12 md:grid-cols-12 lg:gap-x-14 lg:gap-y-20">
+      {items.map((item, index) => <a key={item.href || index} href={item.href || '#'} className={`group block min-w-0 outline-offset-8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--token-icon)] ${index % 3 === 0 ? 'md:col-span-8' : index % 3 === 1 ? 'md:col-span-4 md:mt-24' : 'md:col-span-8 md:col-start-4'}`} data-edit-collection="items" data-edit-index={index} data-edit-link="href">
+        {item.image && <div className={`overflow-hidden bg-[var(--token-section-bg-alt)] ${index % 3 === 1 ? 'aspect-[4/5]' : 'aspect-[16/11]'}`}><ResilientImage src={item.image} alt={item.imageAlt || item.title} loading="lazy" data-edit-image="image" className={`h-full w-full transition-transform duration-700 ${item.imageFit === 'contain' ? 'object-contain p-3' : 'object-cover motion-safe:group-hover:scale-[1.035]'}`} style={{ objectPosition: item.imagePosition || 'center' }} /></div>}
+        <div className="mt-4 flex items-start justify-between gap-5 border-b border-[var(--token-divider)] pb-5"><div><h3 className="font-display text-3xl font-medium leading-tight text-[color:var(--token-heading)] md:text-4xl" data-edit-path="title">{item.title}</h3>{item.description && <p className="mt-3 max-w-[48ch] text-base leading-7 text-[color:var(--token-body)]" data-edit-path="description">{item.description}</p>}</div><ArrowUpRight size={28} aria-hidden="true" className="mt-1 shrink-0 text-[color:var(--token-icon)] transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></div>
+      </a>)}
+    </div>
+  </div>;
 
   if (data.layout === 'editorial') return <div>
     <PremiumSectionHeader headline={headline} subline={subline} richSubline={false} />

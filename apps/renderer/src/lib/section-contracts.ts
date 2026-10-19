@@ -346,14 +346,18 @@ export function getAllSectionContracts(): SectionContract[] {
 /** Keep new reading-first variants discoverable to CMS and API consumers. */
 function sectionLayoutField(type: string, key: string): Partial<SectionFieldContract> {
   const layouts: Record<string, string[]> = {
-    editorialHero: ['', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
+    editorialHero: ['', 'studio', 'memorial', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
     servicesGrid: ['classic', 'index'], processSteps: ['classic', 'simple'],
-    ctaBand: ['classic', 'plain'], categoryMosaic: ['mosaic', 'editorial'],
+    ctaBand: ['classic', 'plain'], categoryMosaic: ['mosaic', 'editorial', 'spread'],
+    textImage: ['image-left', 'image-right'],
   };
   if (key === 'layout' && layouts[type]) return { type: 'select', options: layouts[type] };
+  if (key === 'preset' && type === 'kineticIdentity') return { type: 'select', options: ['editorial', 'architectural', 'expressive'] };
+  if (key === 'preset' && type === 'materialAtelier') return { type: 'select', options: ['architectural', 'quiet', 'editorial'] };
   if (type === 'richText' && key === 'titleAs') return { type: 'select', options: ['h1', 'h2'] };
   if (type === 'editorialHero' && key === 'compact') return { type: 'boolean' };
-  if (type === 'editorialHero' && ['imageAlt', 'imagePosition', 'imagePrimaryPosition'].includes(key)) return { type: 'text', supportsFocalPoint: false };
+  if (['editorialHero', 'textImage'].includes(type) && key === 'imageFit') return { type: 'select', options: ['cover', 'contain'] };
+  if (['editorialHero', 'textImage'].includes(type) && ['imageAlt', 'imagePosition', 'imagePrimaryPosition'].includes(key)) return { type: 'text', supportsFocalPoint: false };
   return {};
 }
 

@@ -678,6 +678,10 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     'data-section-type': section.type,
     'data-section-family': sectionFamily,
     'data-section-state': 'ready',
+    // Configured spacing belongs to this wrapper; full-bleed components own
+    // their own padding. Missing metadata retains the global theme fallback.
+    'data-section-spacing-top': isFullBleed ? 'component' : Object.prototype.hasOwnProperty.call(SPACING_TOP, section.spacingTop) ? 'authored' : undefined,
+    'data-section-spacing-bottom': isFullBleed ? 'component' : Object.prototype.hasOwnProperty.call(SPACING_BOTTOM, section.spacingBottom) ? 'authored' : undefined,
   } as const;
 
   if (isFullBleed) {

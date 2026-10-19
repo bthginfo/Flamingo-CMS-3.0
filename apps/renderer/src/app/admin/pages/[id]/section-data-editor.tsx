@@ -531,7 +531,9 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       const fieldName = String(path[path.length - 1] || '');
       const multiline = value.length > 80 || /content|description|text|subline|bio|answer|excerpt|intro/i.test(fieldName);
       const enumOptions = type === 'editorialHero' && fieldName === 'layout'
-        ? [['', 'Editorial mit Bildrahmen'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
+        ? [['', 'Editorial mit Bildrahmen'], ['studio', 'Studio – typografische Bühne'], ['memorial', 'Bildgeführt – ruhige Komposition'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
+        : type === 'editorialHero' && fieldName === 'imageFit'
+        ? [['cover', 'Fläche füllen'], ['contain', 'Vollständig zeigen']]
         : type === 'mobileActionDock' && fieldName === 'kind'
         ? [
             ['call', 'Anrufen'],
@@ -1870,7 +1872,9 @@ function TextImageEditor({ data, onChange }: EditorProps) {
     text: (data.text as string) || '',
     image: (data.image as string) || '',
     imageAlt: (data.imageAlt as string) || '',
-    imagePosition: (data.imagePosition as string) || (data.layout as string) || 'right',
+    layout: (data.layout as string) || (data.imagePosition === 'left' ? 'image-left' : 'image-right'),
+    imagePosition: (data.imagePosition as string) && (data.layout || !['left', 'right'].includes(data.imagePosition as string)) ? String(data.imagePosition) : 'center',
+    imageFit: String(data.imageFit || 'cover'),
     primaryCta: (data.primaryCta as { label: string; href: string; icon?: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string; icon?: string }) || { label: '', href: '' },
   });
@@ -1886,7 +1890,9 @@ function TextImageEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('text')} value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline />
       <ImageUploadField label={fieldLabel('image')} value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <Field label="Bild Alt-Text" value={d.imageAlt} onChange={(v) => setD({ ...d, imageAlt: v })} />
-      <SelectField label="Bild-Position" value={d.imagePosition} options={['left', 'right']} onChange={(v) => setD({ ...d, imagePosition: v })} />
+      <SelectField label="Bildseite" value={d.layout} options={['image-left', 'image-right']} onChange={(v) => setD({ ...d, layout: v })} />
+      <SelectField label="Bild einpassen" value={d.imageFit} options={['cover', 'contain']} onChange={(v) => setD({ ...d, imageFit: v })} />
+      <Field label="Bildausschnitt (CSS-Position)" value={d.imagePosition} onChange={(v) => setD({ ...d, imagePosition: v })} />
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Auflistung (optional)</p>
         {items.map((item, i) => (
@@ -2904,7 +2910,7 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
   const [layout, setLayout] = useState((data.layout as string) || 'mosaic');
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
-  const [items, setItems] = useState<{ image: string; title: string; href: string; size: string }[]>(
+  const [items, setItems] = useState<{ image: string; imageAlt?: string; imagePosition?: string; imageFit?: string; description?: string; title: string; href: string; size: string }[]>(
     (data.items as any[]) || []
   );
   useReport({ headline, subline, items, layout }, onChange);
@@ -2913,7 +2919,7 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <SelectField label="Darstellung" value={layout} options={['mosaic', 'editorial']} onChange={setLayout} />
+      <SelectField label="Darstellung" value={layout} options={['mosaic', 'editorial', 'spread']} onChange={setLayout} />
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <p className="text-xs text-zinc-500">Tipp: Die ersten 2 Einträge mit Größe "Groß" erscheinen als große Kacheln.</p>
@@ -2921,6 +2927,10 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs" aria-label="Eintrag entfernen" title="Entfernen">×</button>
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
+          <Field label="Bildbeschreibung" value={item.imageAlt || ''} onChange={(v) => update(i, 'imageAlt', v)} />
+          <Field label="Bildausschnitt (CSS object-position)" value={item.imagePosition || 'center'} onChange={(v) => update(i, 'imagePosition', v)} />
+          <SelectField label="Bildanpassung" value={item.imageFit || 'cover'} options={['cover', 'contain']} onChange={(v) => update(i, 'imageFit', v)} />
+          <Field label="Beschreibung" value={item.description || ''} onChange={(v) => update(i, 'description', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/kategorie" />

@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ResilientNextImage as Image } from '@/components/ui/resilient-image';
 import { DynamicIcon } from '@/components/ui/icon-map';
-import { CheckCircle } from 'lucide-react';
+import { ArrowUpRight, CheckCircle } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
@@ -61,7 +61,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[color:var(--token-icon)] font-medium hover:gap-3 transition-all">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={16} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span><ArrowUpRight aria-hidden="true" size={16} />
                 </a>
               )}
             </div>

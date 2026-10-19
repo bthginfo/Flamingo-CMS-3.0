@@ -9,7 +9,7 @@ export function RichTextSection({ data }: Props) {
   const Title = data.titleAs === 'h2' || data.headingLevel === 'h2' ? 'h2' : 'h1';
 
   return (
-    <section className="py-20">
+    <section className="py-7 md:py-12">
       <div className="max-w-3xl mx-auto px-6">
         {headline && <Title className="font-display text-3xl md:text-4xl font-semibold mb-7 text-[color:var(--token-heading)] [text-wrap:balance]" data-edit-path="headline">{headline}</Title>}
         <div

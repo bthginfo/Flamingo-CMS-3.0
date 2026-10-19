@@ -65,6 +65,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   cinematicChapters: {
+    skipLabel: 'Bildgeschichte überspringen',
     badge: 'Unsere Geschichte',
     headline: 'Aus einer Idee wird ein Ort mit eigener Energie.',
     intro: 'Vier Kapitel, ein roter Faden und genug Raum für starke Bilder.',
@@ -184,10 +185,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     subline: 'Wählen Sie eine Position. Bild, Herkunft und Charakter wechseln gemeinsam – präzise statt verspielt.',
     preset: 'architectural',
     items: [
-      { id: 'travertin', kicker: 'Naturstein · 01', title: 'Travertin Romano', text: 'Warm, lebendig und mit einer Oberfläche, die Licht weich aufnimmt.', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=88', href: '#travertin', meta: ['Innenraum', 'Matt', 'Naturstein'] },
-      { id: 'marmor', kicker: 'Naturstein · 02', title: 'Marmor Arabescato', text: 'Ausdrucksstarke Zeichnung für präzise gesetzte Solitäre und Flächen.', image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1600&q=88', href: '#marmor', meta: ['Bad', 'Poliert', 'Unikat'] },
-      { id: 'basalt', kicker: 'Naturstein · 03', title: 'Basaltina', text: 'Ruhige Tiefe, feine Struktur und eine fast monolithische Präsenz.', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=88', href: '#basalt', meta: ['Treppe', 'Gebürstet', 'Robust'] },
-      { id: 'quarzit', kicker: 'Naturstein · 04', title: 'Quarzit Verde', text: 'Ein markanter Akzent für Räume, die Material selbst sprechen lassen.', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=88', href: '#quarzit', meta: ['Statement', 'Langlebig', 'Individuell'] },
+      { id: 'travertin', kicker: 'Naturstein · 01', title: 'Travertin Romano', text: 'Warm, lebendig und mit einer Oberfläche, die Licht weich aufnimmt.', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=88', imageAlt: '', imagePosition: 'center', ctaLabel: 'Beispiele ansehen', href: '#travertin', meta: ['Innenraum', 'Matt', 'Naturstein'] },
+      { id: 'marmor', kicker: 'Naturstein · 02', title: 'Marmor Arabescato', text: 'Ausdrucksstarke Zeichnung für präzise gesetzte Solitäre und Flächen.', image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1600&q=88', imageAlt: '', imagePosition: 'center', ctaLabel: 'Beispiele ansehen', href: '#marmor', meta: ['Bad', 'Poliert', 'Unikat'] },
+      { id: 'basalt', kicker: 'Naturstein · 03', title: 'Basaltina', text: 'Ruhige Tiefe, feine Struktur und eine fast monolithische Präsenz.', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=88', imageAlt: '', imagePosition: 'center', ctaLabel: 'Beispiele ansehen', href: '#basalt', meta: ['Treppe', 'Gebürstet', 'Robust'] },
+      { id: 'quarzit', kicker: 'Naturstein · 04', title: 'Quarzit Verde', text: 'Ein markanter Akzent für Räume, die Material selbst sprechen lassen.', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=88', imageAlt: '', imagePosition: 'center', ctaLabel: 'Beispiele ansehen', href: '#quarzit', meta: ['Statement', 'Langlebig', 'Individuell'] },
     ],
     cta: { label: 'Materialberatung anfragen', href: '#kontakt' },
   },
@@ -922,6 +923,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   textImage: {
+    layout: 'image-right',
+    imageFit: 'cover',
+    imagePosition: 'center',
     headline: 'Über uns',
     text: '<p>Seit über 10 Jahren stehen wir für Qualität und Zuverlässigkeit. Unser erfahrenes Team arbeitet mit modernsten Methoden und legt größten Wert auf Kundenzufriedenheit.</p><p>Wir freuen uns, Sie kennenzulernen!</p>',
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
@@ -2014,6 +2018,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   categoryMosaic: {
+    layout: 'spread',
     headline: 'Unsere Welten',
     subline: 'Finden Sie Ihren Stil.',
     items: [
@@ -2416,6 +2421,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   editorialHero: {
+    layout: 'studio', compact: false, imageAlt: '', imagePrimaryPosition: 'center', imageFit: 'cover',
     eyebrow: 'Willkommen',
     headline: 'Ruhe, die man schon auf der Startseite spürt.',
     text: '<p>Ein heller, editorialer Einstieg für Marken, die nicht laut sein müssen: große Typografie, weiche Formen und Fotos mit Charakter.</p>',

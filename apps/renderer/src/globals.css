@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --site-nav-height: 72px;
+}
+
+/* The top-bar spacer already reserves its measured height. Only a leading
+   content hero reserves the remaining fixed navigation, when it is present. */
+[data-site-header] ~ main > [data-section-type="editorialHero"]:first-child {
+  --opening-header-clearance: var(--site-nav-height, 72px);
+}
+
+@keyframes studio-type-in {
+  from { transform: translateY(18px); letter-spacing: -0.025em; }
+  to { transform: translateY(0); letter-spacing: -0.04em; }
+}
+@keyframes studio-image-in {
+  from { transform: translateY(28px) scale(1.015); }
+  to { transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .studio-stage-title { animation: studio-type-in 950ms cubic-bezier(.16,1,.3,1) both; }
+  .studio-stage-image { animation: studio-image-in 1100ms cubic-bezier(.16,1,.3,1) both; }
+}
+
 /* Advanced scroll stories keep identical SSR/client markup. Reduced-motion
    users see the already-rendered static fallback without hydration swaps. */
 @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
@@ -656,9 +679,12 @@ html {
 [data-style] .shadow-lg { box-shadow: var(--style-card-shadow, 0 10px 15px rgba(0,0,0,0.1)); }
 [data-style] .shadow-xl { box-shadow: var(--style-card-shadow, 0 20px 25px rgba(0,0,0,0.1)); }
 
-/* Section spacing */
-[data-style] section {
+/* Theme fallback for unconfigured outer sections. Renderer metadata and
+   template padding own configured wrappers and their nested sections. */
+[data-style] section:not([data-section-spacing-top]):not([data-section-id] section) {
   padding-top: var(--style-section-spacing, 5rem);
+}
+[data-style] section:not([data-section-spacing-bottom]):not([data-section-id] section) {
   padding-bottom: var(--style-section-spacing, 5rem);
 }
 
@@ -1146,6 +1172,7 @@ html {
 
   .cms-accordion--minimal .cms-accordion-trigger {
     padding-inline: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .cms-accordion-chevron {
@@ -1189,7 +1216,7 @@ html {
 
   .cms-accordion--minimal .cms-accordion-answer {
     padding-right: 0;
-    padding-left: 3.05rem;
+    padding-left: 0;
   }
 
   @media (max-width: 639px) {
@@ -1214,7 +1241,7 @@ html {
     }
 
     .cms-accordion--minimal .cms-accordion-answer {
-      padding-left: 2.4rem;
+      padding-left: 0;
     }
   }
 
