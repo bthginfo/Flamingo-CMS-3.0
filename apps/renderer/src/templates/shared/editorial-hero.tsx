@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { ActionGroup, ActionLink, MediaFrame, PremiumSectionHeader } from './section-primitives';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { StudioHero } from './studio-hero';
+import { CorrespondenceHero } from './correspondence-hero';
 
 type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -49,6 +50,7 @@ export function EditorialHeroSection({ data }: Props) {
   if (!headline) return null;
 
   if (layout === 'studio' || layout === 'memorial') return <StudioHero data={data} memorial={layout === 'memorial'} />;
+  if (layout === 'correspondence') return <CorrespondenceHero data={data} />;
 
   // A solid reading surface keeps architectural and memorial photography
   // intact, including inscriptions. These layouts deliberately omit effects

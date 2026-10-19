@@ -429,6 +429,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "venue": ""
   },
   "editorialHero": {
+    "contactRows": [{ "label": "", "value": "", "href": "" }],
+    "linksLabel": "",
+    "links": [{ "label": "", "href": "" }],
     "badgeText": "",
     "hideImageOnMobile": "",
     "image": "",
@@ -651,6 +654,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "openLabel": ""
   },
   "teamSpotlight": {
+    "layout": "",
     "badgeText": ""
   },
   "faqContactSplit": {

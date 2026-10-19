@@ -5,6 +5,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import * as schema from './schema';
 import { getMigrationSource } from './migration-source';
+import { assertRestrictedRuntimeRole } from './runtime-role-policy';
 
 export function createDb(databaseUrl: string) {
   const sql = neon(databaseUrl, { fetchOptions: { cache: 'no-store' } });
@@ -264,10 +265,17 @@ function validateJournalEntries(entries: Array<{ tag: string; when: number }>, f
 
 export async function grantRuntimeDatabasePrivileges(ownerDatabaseUrl: string, roleName: string) {
   assertSafeIdentifier(roleName, 'Runtime-Rolle');
+  if (!new RegExp(`^${RUNTIME_DATABASE_ROLE_PREFIX}_[a-f0-9]{8,16}$`).test(roleName)) {
+    throw new Error('Runtime-Berechtigungen dürfen nur einer dedizierten Flamingo-App-Rolle zugewiesen werden.');
+  }
   const sql = neon(ownerDatabaseUrl, { fetchOptions: { cache: 'no-store' } });
   const databaseResult = await sql.query('SELECT current_database() AS database_name', []) as Array<{ database_name: string }>;
   const databaseName = databaseResult[0]?.database_name;
   if (!databaseName || !/^[a-zA-Z0-9_-]+$/.test(databaseName)) throw new Error('Der Datenbankname ist für die Runtime-Rolle ungültig.');
+  const roles = await sql.query(`SELECT rolsuper, rolcreatedb, rolcreaterole, rolreplication, rolbypassrls,
+    EXISTS(SELECT 1 FROM pg_auth_members WHERE member=pg_roles.oid) AS has_memberships
+    FROM pg_roles WHERE rolname=$1`, [roleName]) as Array<Record<string, boolean>>;
+  assertRestrictedRuntimeRole(roles);
   const role = quoteIdentifier(roleName);
   await executeSqlScript(sql, `
     GRANT CONNECT ON DATABASE ${quoteIdentifier(databaseName)} TO ${role};
@@ -286,18 +294,12 @@ export async function grantRuntimeDatabasePrivileges(ownerDatabaseUrl: string, r
  */
 export async function createRuntimeDatabaseRole(ownerDatabaseUrl: string) {
   const password = randomBytes(32).toString('hex');
-  const roleName = `${RUNTIME_DATABASE_ROLE_PREFIX}_${randomBytes(4).toString('hex')}`;
+  const roleName = `${RUNTIME_DATABASE_ROLE_PREFIX}_${randomBytes(8).toString('hex')}`;
   const sql = neon(ownerDatabaseUrl, { fetchOptions: { cache: 'no-store' } });
-  await sql.query(`
-    DO $role$
-    BEGIN
-      IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = ${quoteLiteral(roleName)}) THEN
-        CREATE ROLE ${quoteIdentifier(roleName)} LOGIN;
-      END IF;
-    END
-    $role$;
-  `, []);
-  await sql.query(`ALTER ROLE ${quoteIdentifier(roleName)} WITH LOGIN PASSWORD ${quoteLiteral(password)} NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION`, []);
+  // SQL-created roles have no inherited neon_superuser membership. Neon API
+  // roles always inherit administrator permissions and cannot be demoted.
+  // A collision fails safely instead of rotating another existing password.
+  await sql.query(`CREATE ROLE ${quoteIdentifier(roleName)} WITH LOGIN PASSWORD ${quoteLiteral(password)} NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS`, []);
   await grantRuntimeDatabasePrivileges(ownerDatabaseUrl, roleName);
 
   const runtimeUrl = new URL(ownerDatabaseUrl);

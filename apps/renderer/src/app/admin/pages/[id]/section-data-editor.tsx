@@ -531,7 +531,9 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       const fieldName = String(path[path.length - 1] || '');
       const multiline = value.length > 80 || /content|description|text|subline|bio|answer|excerpt|intro/i.test(fieldName);
       const enumOptions = type === 'editorialHero' && fieldName === 'layout'
-        ? [['', 'Editorial mit Bildrahmen'], ['studio', 'Studio – typografische Bühne'], ['memorial', 'Bildgeführt – ruhige Komposition'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
+        ? [['', 'Editorial mit Bildrahmen'], ['studio', 'Studio – typografische Bühne'], ['memorial', 'Bildgeführt – ruhige Komposition'], ['correspondence', 'Korrespondenz – offene Typografie und Kontaktspalte'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
+        : type === 'teamSpotlight' && fieldName === 'layout'
+        ? [['', 'Bildkarten'], ['directory', 'Verzeichnis – Bilder und sichtbare Profile']]
         : type === 'editorialHero' && fieldName === 'imageFit'
         ? [['cover', 'Fläche füllen'], ['contain', 'Vollständig zeigen']]
         : type === 'mobileActionDock' && fieldName === 'kind'

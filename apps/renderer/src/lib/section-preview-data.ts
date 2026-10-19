@@ -2382,11 +2382,12 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     phone: '+49 89 1234567',
   },
   teamSpotlight: {
+    layout: '',
     badge: 'Team',
     headline: 'Die Menschen hinter der Arbeit.',
     subline: 'Beim Überfahren der Karten zeigen sich Zitat, Schwerpunkte und Kontaktwege.',
     members: [
-      { name: 'Sarah Winkler', role: 'Gründerin & Strategie', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=82', quote: 'Gute Arbeit erkennt man daran, dass sie leise überzeugt.', focus: ['Strategie', 'Beratung'], linkedin: 'https://linkedin.com' },
+      { name: 'Sarah Winkler', role: 'Gründerin & Strategie', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=82', imageAlt: 'Porträt von Sarah Winkler', imagePosition: 'center 25%', href: '/team/sarah-winkler', quote: 'Gute Arbeit erkennt man daran, dass sie leise überzeugt.', focus: ['Strategie', 'Beratung'], linkedin: 'https://linkedin.com' },
       { name: 'Jonas Berger', role: 'Kreation', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=82', quote: 'Design ist entschieden, nicht dekoriert.', focus: ['Design', 'Marke'], instagram: 'https://instagram.com' },
       { name: 'Mia Kraus', role: 'Projektleitung', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=82', quote: 'Termine hält man, indem man ehrlich plant.', focus: ['Projekte', 'Kundenkontakt'], email: 'mia@example.com' },
     ],
@@ -2422,6 +2423,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   },
   editorialHero: {
     layout: 'studio', compact: false, imageAlt: '', imagePrimaryPosition: 'center', imageFit: 'cover',
+    contactRows: [], linksLabel: 'Weiterführende Seiten', links: [],
     eyebrow: 'Willkommen',
     headline: 'Ruhe, die man schon auf der Startseite spürt.',
     text: '<p>Ein heller, editorialer Einstieg für Marken, die nicht laut sein müssen: große Typografie, weiche Formen und Fotos mit Charakter.</p>',

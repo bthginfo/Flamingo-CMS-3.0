@@ -1,0 +1,469 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-19T19:15:59.447Z",
+  "title": "Design System: Hagn & Partner",
+  "extensions": {
+    "colorMeta": {
+      "ink-navy": {
+        "role": "primary",
+        "displayName": "Ink Navy",
+        "tonalRamp": [
+          "oklch(15% 0.0529 225.25)",
+          "oklch(26.43% 0.0529 225.25)",
+          "oklch(37.86% 0.0529 225.25)",
+          "oklch(49.29% 0.0529 225.25)",
+          "oklch(60.71% 0.0529 225.25)",
+          "oklch(72.14% 0.0529 225.25)",
+          "oklch(83.57% 0.0529 225.25)",
+          "oklch(95% 0.0529 225.25)"
+        ]
+      },
+      "link-teal": {
+        "role": "primary",
+        "displayName": "Link Teal",
+        "tonalRamp": [
+          "oklch(15% 0.0670 209.27)",
+          "oklch(26.43% 0.0670 209.27)",
+          "oklch(37.86% 0.0670 209.27)",
+          "oklch(49.29% 0.0670 209.27)",
+          "oklch(60.71% 0.0670 209.27)",
+          "oklch(72.14% 0.0670 209.27)",
+          "oklch(83.57% 0.0670 209.27)",
+          "oklch(95% 0.0670 209.27)"
+        ]
+      },
+      "paper-ivory": {
+        "role": "neutral",
+        "displayName": "Paper Ivory",
+        "tonalRamp": [
+          "oklch(15% 0.0070 88.64)",
+          "oklch(26.43% 0.0070 88.64)",
+          "oklch(37.86% 0.0070 88.64)",
+          "oklch(49.29% 0.0070 88.64)",
+          "oklch(60.71% 0.0070 88.64)",
+          "oklch(72.14% 0.0070 88.64)",
+          "oklch(83.57% 0.0070 88.64)",
+          "oklch(95% 0.0070 88.64)"
+        ]
+      },
+      "paper-alternate": {
+        "role": "neutral",
+        "displayName": "Paper Alternate",
+        "tonalRamp": [
+          "oklch(15% 0.0094 99.99)",
+          "oklch(26.43% 0.0094 99.99)",
+          "oklch(37.86% 0.0094 99.99)",
+          "oklch(49.29% 0.0094 99.99)",
+          "oklch(60.71% 0.0094 99.99)",
+          "oklch(72.14% 0.0094 99.99)",
+          "oklch(83.57% 0.0094 99.99)",
+          "oklch(95% 0.0094 99.99)"
+        ]
+      },
+      "surface-white": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "tonalRamp": [
+          "oklch(15% 0.0000 0.00)",
+          "oklch(26.43% 0.0000 0.00)",
+          "oklch(37.86% 0.0000 0.00)",
+          "oklch(49.29% 0.0000 0.00)",
+          "oklch(60.71% 0.0000 0.00)",
+          "oklch(72.14% 0.0000 0.00)",
+          "oklch(83.57% 0.0000 0.00)",
+          "oklch(95% 0.0000 0.00)"
+        ]
+      },
+      "body-slate": {
+        "role": "neutral",
+        "displayName": "Body Slate",
+        "tonalRamp": [
+          "oklch(15% 0.0260 219.22)",
+          "oklch(26.43% 0.0260 219.22)",
+          "oklch(37.86% 0.0260 219.22)",
+          "oklch(49.29% 0.0260 219.22)",
+          "oklch(60.71% 0.0260 219.22)",
+          "oklch(72.14% 0.0260 219.22)",
+          "oklch(83.57% 0.0260 219.22)",
+          "oklch(95% 0.0260 219.22)"
+        ]
+      },
+      "muted-slate": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "tonalRamp": [
+          "oklch(15% 0.0225 226.11)",
+          "oklch(26.43% 0.0225 226.11)",
+          "oklch(37.86% 0.0225 226.11)",
+          "oklch(49.29% 0.0225 226.11)",
+          "oklch(60.71% 0.0225 226.11)",
+          "oklch(72.14% 0.0225 226.11)",
+          "oklch(83.57% 0.0225 226.11)",
+          "oklch(95% 0.0225 226.11)"
+        ]
+      },
+      "divider-grey": {
+        "role": "neutral",
+        "displayName": "Divider Grey",
+        "tonalRamp": [
+          "oklch(15% 0.0122 190.38)",
+          "oklch(26.43% 0.0122 190.38)",
+          "oklch(37.86% 0.0122 190.38)",
+          "oklch(49.29% 0.0122 190.38)",
+          "oklch(60.71% 0.0122 190.38)",
+          "oklch(72.14% 0.0122 190.38)",
+          "oklch(83.57% 0.0122 190.38)",
+          "oklch(95% 0.0122 190.38)"
+        ]
+      },
+      "outline-grey": {
+        "role": "neutral",
+        "displayName": "Outline Grey",
+        "tonalRamp": [
+          "oklch(15% 0.0255 213.73)",
+          "oklch(26.43% 0.0255 213.73)",
+          "oklch(37.86% 0.0255 213.73)",
+          "oklch(49.29% 0.0255 213.73)",
+          "oklch(60.71% 0.0255 213.73)",
+          "oklch(72.14% 0.0255 213.73)",
+          "oklch(83.57% 0.0255 213.73)",
+          "oklch(95% 0.0255 213.73)"
+        ]
+      },
+      "input-grey": {
+        "role": "neutral",
+        "displayName": "Input Grey",
+        "tonalRamp": [
+          "oklch(15% 0.0236 211.08)",
+          "oklch(26.43% 0.0236 211.08)",
+          "oklch(37.86% 0.0236 211.08)",
+          "oklch(49.29% 0.0236 211.08)",
+          "oklch(60.71% 0.0236 211.08)",
+          "oklch(72.14% 0.0236 211.08)",
+          "oklch(83.57% 0.0236 211.08)",
+          "oklch(95% 0.0236 211.08)"
+        ]
+      },
+      "ink-alternate": {
+        "role": "secondary",
+        "displayName": "Ink Alternate",
+        "tonalRamp": [
+          "oklch(15% 0.0558 220.78)",
+          "oklch(26.43% 0.0558 220.78)",
+          "oklch(37.86% 0.0558 220.78)",
+          "oklch(49.29% 0.0558 220.78)",
+          "oklch(60.71% 0.0558 220.78)",
+          "oklch(72.14% 0.0558 220.78)",
+          "oklch(83.57% 0.0558 220.78)",
+          "oklch(95% 0.0558 220.78)"
+        ]
+      },
+      "ink-surface": {
+        "role": "secondary",
+        "displayName": "Ink Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0580 217.52)",
+          "oklch(26.43% 0.0580 217.52)",
+          "oklch(37.86% 0.0580 217.52)",
+          "oklch(49.29% 0.0580 217.52)",
+          "oklch(60.71% 0.0580 217.52)",
+          "oklch(72.14% 0.0580 217.52)",
+          "oklch(83.57% 0.0580 217.52)",
+          "oklch(95% 0.0580 217.52)"
+        ]
+      },
+      "on-ink-body": {
+        "role": "neutral",
+        "displayName": "On Ink Body",
+        "tonalRamp": [
+          "oklch(15% 0.0090 179.59)",
+          "oklch(26.43% 0.0090 179.59)",
+          "oklch(37.86% 0.0090 179.59)",
+          "oklch(49.29% 0.0090 179.59)",
+          "oklch(60.71% 0.0090 179.59)",
+          "oklch(72.14% 0.0090 179.59)",
+          "oklch(83.57% 0.0090 179.59)",
+          "oklch(95% 0.0090 179.59)"
+        ]
+      },
+      "on-ink-muted": {
+        "role": "neutral",
+        "displayName": "On Ink Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0196 188.75)",
+          "oklch(26.43% 0.0196 188.75)",
+          "oklch(37.86% 0.0196 188.75)",
+          "oklch(49.29% 0.0196 188.75)",
+          "oklch(60.71% 0.0196 188.75)",
+          "oklch(72.14% 0.0196 188.75)",
+          "oklch(83.57% 0.0196 188.75)",
+          "oklch(95% 0.0196 188.75)"
+        ]
+      },
+      "on-ink-accent": {
+        "role": "secondary",
+        "displayName": "On Ink Accent",
+        "tonalRamp": [
+          "oklch(15% 0.0321 151.12)",
+          "oklch(26.43% 0.0321 151.12)",
+          "oklch(37.86% 0.0321 151.12)",
+          "oklch(49.29% 0.0321 151.12)",
+          "oklch(60.71% 0.0321 151.12)",
+          "oklch(72.14% 0.0321 151.12)",
+          "oklch(83.57% 0.0321 151.12)",
+          "oklch(95% 0.0321 151.12)"
+        ]
+      },
+      "on-ink-divider": {
+        "role": "neutral",
+        "displayName": "On Ink Divider",
+        "tonalRamp": [
+          "oklch(15% 0.0382 217.57)",
+          "oklch(26.43% 0.0382 217.57)",
+          "oklch(37.86% 0.0382 217.57)",
+          "oklch(49.29% 0.0382 217.57)",
+          "oklch(60.71% 0.0382 217.57)",
+          "oklch(72.14% 0.0382 217.57)",
+          "oklch(83.57% 0.0382 217.57)",
+          "oklch(95% 0.0382 217.57)"
+        ]
+      },
+      "on-ink-outline": {
+        "role": "neutral",
+        "displayName": "On Ink Outline",
+        "tonalRamp": [
+          "oklch(15% 0.0271 205.76)",
+          "oklch(26.43% 0.0271 205.76)",
+          "oklch(37.86% 0.0271 205.76)",
+          "oklch(49.29% 0.0271 205.76)",
+          "oklch(60.71% 0.0271 205.76)",
+          "oklch(72.14% 0.0271 205.76)",
+          "oklch(83.57% 0.0271 205.76)",
+          "oklch(95% 0.0271 205.76)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "display",
+        "purpose": "Großer Haupttitel der Korrespondenz-Eröffnung."
+      },
+      "display-compact": {
+        "displayName": "display-compact",
+        "purpose": "Kompakter Haupttitel der Unterseiten."
+      },
+      "headline": {
+        "displayName": "headline",
+        "purpose": "Titel im Personenverzeichnis."
+      },
+      "section-title": {
+        "displayName": "section-title",
+        "purpose": "Gemeinsam verwendete Abschnittstitel."
+      },
+      "practice-title": {
+        "displayName": "practice-title",
+        "purpose": "Titel der offenen Rechtsgebietszeilen."
+      },
+      "person-name": {
+        "displayName": "person-name",
+        "purpose": "Sichtbarer Name unter einem Originalporträt."
+      },
+      "body": {
+        "displayName": "body",
+        "purpose": "Lesetext und Verzeichnisbeschreibungen."
+      },
+      "body-intro": {
+        "displayName": "body-intro",
+        "purpose": "Einleitungen der gemeinsamen Abschnittsüberschriften."
+      },
+      "label": {
+        "displayName": "label",
+        "purpose": "Sichtbare Formularlabels."
+      },
+      "control": {
+        "displayName": "control",
+        "purpose": "Beschriftungen gemeinsamer Aktionen."
+      },
+      "input": {
+        "displayName": "input",
+        "purpose": "Text in Kontaktfeldern."
+      },
+      "navigation": {
+        "displayName": "navigation",
+        "purpose": "Kurze Desktop-Navigationslinks; ab 2xl 13px."
+      }
+    },
+    "shadows": [
+      {
+        "name": "action-rest",
+        "value": "0 8px 24px var(--token-shadow)",
+        "purpose": "Gemeinsame primäre Aktion; aktueller Markenschatten rgba(15,23,42,0.08)."
+      },
+      {
+        "name": "action-hover",
+        "value": "0 14px 32px var(--token-shadow)",
+        "purpose": "Gemeinsame Aktion bei Hover mit feinem Zeiger."
+      },
+      {
+        "name": "card-inherited",
+        "value": "0 4px 16px rgba(15,23,42,0.06)",
+        "purpose": "Geerbter Consulting-Classic-Wert, soweit die Section keinen eigenen Schatten setzt."
+      },
+      {
+        "name": "contact-surfaces",
+        "value": "none",
+        "purpose": "Ausschließlich /kontakt: --token-card-shadow gilt gemeinsam für vier weiße, fein gerahmte Infopaneele und das Formular."
+      }
+    ],
+    "motion": [
+      {
+        "name": "action-transition",
+        "value": "transform 220ms ease, box-shadow 220ms ease, filter 220ms ease",
+        "purpose": "Kleine Zustandsänderungen der gemeinsamen Buttons; aktiver Zustand setzt den Hub zurück."
+      },
+      {
+        "name": "correspondence-arrow",
+        "value": "transform 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Geringe Pfeilverschiebung im Linkregister; Inhalte bleiben statisch vorhanden."
+      },
+      {
+        "name": "reduced-motion-duration",
+        "value": "0.01ms",
+        "purpose": "Globaler Reduced-Motion-Block kürzt Übergänge und Animationen; Scrollen wird unmittelbar."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "2xl",
+        "value": "1536px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Die gemeinsame Terminaktion auf heller Fläche; Farben bleiben an die CMS-Buttonrollen gebunden.",
+      "html": "<a class=\"ds-button-primary\" href=\"/kontakt\"><span>Termin vereinbaren</span><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></a>",
+      "css": ".ds-button-primary{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);display:inline-flex;min-height:3rem;align-items:center;justify-content:center;gap:.6rem;border:1px solid transparent;border-radius:var(--token-button-radius,.125rem);padding:.7rem 1.2rem;font-size:.9375rem;font-weight:650;line-height:1.25;text-decoration:none;background:var(--token-btn-bg,#103B4A);color:var(--token-btn-text,#FFFFFF);box-shadow:0 8px 24px var(--token-shadow,rgba(15,23,42,.08));transition:transform 220ms ease,box-shadow 220ms ease,filter 220ms ease}.ds-button-primary svg{color:inherit;transition:transform 220ms ease}.ds-button-primary:focus-visible{outline:2px solid var(--token-accent,#195D67);outline-offset:2px;border-radius:4px}.ds-button-primary:active{transform:translateY(0)}@media(hover:hover) and (pointer:fine){.ds-button-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px var(--token-shadow,rgba(15,23,42,.08));filter:brightness(1.035)}.ds-button-primary:hover svg{transform:translateX(3px)}}@media(max-width:639px){.ds-button-primary{width:100%}}@media(prefers-reduced-motion:reduce){.ds-button-primary,.ds-button-primary svg{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Secondary telephone action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Gerahmter Telefonzugang im Einstieg, ohne zusätzliche Bildmetapher.",
+      "html": "<a class=\"ds-button-secondary\" href=\"tel:+49841935570\">0841 93557-0</a>",
+      "css": ".ds-button-secondary{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);display:inline-flex;min-height:3rem;align-items:center;justify-content:center;gap:.6rem;border:1px solid var(--token-btn-secondary-border,#6E8388);border-radius:var(--token-button-radius,.125rem);padding:.7rem 1.2rem;font-size:.9375rem;font-weight:650;line-height:1.25;text-decoration:none;background:var(--token-btn-secondary-bg,transparent);color:var(--token-btn-secondary-text,#103B4A);box-shadow:none;transition:transform 220ms ease,box-shadow 220ms ease,filter 220ms ease}.ds-button-secondary svg{color:inherit;transition:transform 220ms ease}.ds-button-secondary:focus-visible{outline:2px solid var(--token-accent,#195D67);outline-offset:2px;border-radius:4px}.ds-button-secondary:active{transform:translateY(0)}@media(hover:hover) and (pointer:fine){.ds-button-secondary:hover{transform:translateY(-2px);box-shadow:0 14px 32px var(--token-shadow,rgba(15,23,42,.08));filter:brightness(1.035)}.ds-button-secondary:hover svg{transform:translateX(3px)}}@media(max-width:639px){.ds-button-secondary{width:100%}}@media(prefers-reduced-motion:reduce){.ds-button-secondary,.ds-button-secondary svg{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Labelled contact input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Sichtbares Feldlabel, weißer Hintergrund, eigener Feldrahmen und Tastaturfokus.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-contact-email\">E-Mail-Adresse <span aria-hidden=\"true\">*</span></label><input class=\"ds-field-input\" id=\"ds-contact-email\" name=\"email\" type=\"email\" autocomplete=\"email\" placeholder=\"name@beispiel.de\" required></div>",
+      "css": ".ds-field{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);display:grid;gap:.45rem}.ds-field-label{color:var(--token-label,#33464C);font-size:.875rem;font-weight:650;line-height:1.4}.ds-field-label span{color:var(--token-danger,#b91c1c)}.ds-field-input{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);min-height:3rem;max-width:100%;border-radius:.75rem;border:1px solid var(--token-input-border,#7E9296);background:var(--token-input-bg,#FFFFFF);color:var(--token-input-text,#33464C);padding:.75rem 1rem;font-size:15px;line-height:1.5;transition:border-color 200ms,box-shadow 200ms,background-color 200ms}.ds-field-input::placeholder{color:var(--token-muted,#53636A)}.ds-field-input:focus-visible{outline:2px solid var(--token-accent,#195D67);outline-offset:2px;border-radius:4px}@media(prefers-reduced-motion:reduce){.ds-field-input{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Desktop navigation links",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Die kurzen CMS-Navigationsbezeichnungen auf hellem Papier; das Produkt ergänzt Logo, Terminaktion und mobilen Menüdialog.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Hauptnavigation\"><a href=\"/rechtsgebiete-anwalt-ingolstadt\">Rechtsgebiete</a><a href=\"/anwaelte-ingolstadt\">Anwälte</a><a href=\"/anwaltskanzlei-ingolstadt\">Kanzlei</a><a href=\"/service-anwaelte-ingolstadt\">Service</a></nav>",
+      "css": ".ds-nav{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:1rem;min-height:72px;padding:0 1.5rem;background:#FAF8F3}.ds-nav a{color:var(--nav-link-color,#103B4A);font-size:12px;font-weight:600;letter-spacing:.025em;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:color 300ms}.ds-nav a:hover{color:var(--nav-link-hover,#195D67)}.ds-nav a:focus-visible{outline:2px solid var(--token-accent,#195D67);outline-offset:2px;border-radius:4px}@media(min-width:1536px){.ds-nav{gap:1.5rem}.ds-nav a{font-size:13px}}@media(prefers-reduced-motion:reduce){.ds-nav a{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Kontakt information panel",
+      "kind": "card",
+      "refersTo": "contact-panel",
+      "description": "Eines von vier Kontaktpaneelen. Der lokale Sectionwert none gilt gleichermaßen für diese Paneele und das Formular; Weiß und 1px-Rahmen bleiben erhalten.",
+      "html": "<div class=\"ds-contact-scope\"><article class=\"ds-contact-panel\"><span class=\"ds-contact-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.126.96.36 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.34 1.85.574 2.81.7A2 2 0 0 1 22 16.92z\"/></svg></span><div class=\"ds-contact-copy\"><div class=\"ds-contact-label\">Telefon</div><a class=\"ds-contact-value\" href=\"tel:+49841935570\">+49 841 93557-0</a></div></article></div>",
+      "css": ".ds-contact-scope{--token-card-shadow:none;--token-card-bg:#FFFFFF;--token-card-border:#BBC6C5}.ds-contact-panel{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);display:flex;align-items:center;gap:1rem;padding:1.25rem;border:1px solid var(--token-card-border);border-radius:var(--token-card-radius,.125rem);background:var(--token-card-bg);box-shadow:var(--token-card-shadow);transition:border-color 280ms ease,box-shadow 280ms ease,transform 280ms ease}.ds-contact-icon{display:flex;flex-shrink:0;align-items:center;justify-content:center;width:3rem;height:3rem;border-radius:.75rem;background:color-mix(in srgb,var(--token-icon,#195D67) 12%,transparent);color:var(--token-icon,#195D67);transition:transform 150ms cubic-bezier(.4,0,.2,1)}.ds-contact-panel:hover .ds-contact-icon{transform:scale(1.1)}.ds-contact-copy{min-width:0;flex:1}.ds-contact-label{color:var(--token-muted,#53636A);font-size:.75rem;font-weight:500;line-height:1rem;text-transform:uppercase;letter-spacing:.05em}.ds-contact-value{display:block;padding:.25rem 0;color:var(--token-heading,#103B4A);font-size:1rem;font-weight:600;line-height:1.5;overflow-wrap:break-word;text-decoration:none;text-underline-offset:4px}.ds-contact-value:hover{text-decoration:underline}.ds-contact-value:focus-visible{outline:2px solid var(--token-icon,#195D67);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-contact-panel,.ds-contact-icon{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Open practice row",
+      "kind": "custom",
+      "refersTo": "practice-row",
+      "description": "Der verlinkte Titel einer offenen Rechtsgebietszeile; konkrete Leistungsbeschreibungen stehen im Produkt darunter.",
+      "html": "<article class=\"ds-practice\"><h3 class=\"ds-practice-title\"><a class=\"ds-practice-link\" href=\"/verkehrsrecht-rechtsanwalt-ingolstadt\"><span>Verkehrsrecht</span><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></a></h3></article>",
+      "css": ".ds-practice{border-top:1px solid var(--token-divider,#BBC6C5);padding:1.75rem 0}.ds-practice-title{font-family:var(--style-heading-font,\"Cormorant Garamond\",var(--font-outfit),system-ui,sans-serif);margin:0;color:var(--token-heading,#103B4A);font-size:1.5rem;font-weight:600;line-height:1.25;letter-spacing:-.02em}.ds-practice-link{display:flex;align-items:flex-start;justify-content:space-between;gap:1.25rem;padding:.25rem 0;color:inherit;text-decoration:none;text-underline-offset:4px}.ds-practice-link svg{flex-shrink:0;margin-top:.25rem;color:var(--token-icon,#195D67);transition:transform 150ms cubic-bezier(.4,0,.2,1)}.ds-practice-link:hover{text-decoration:underline}.ds-practice-link:hover svg{transform:translate(2px,-2px)}.ds-practice-link:focus-visible{outline:2px solid var(--token-icon,#195D67);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-practice-link svg{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Visible profile reading surface",
+      "kind": "custom",
+      "refersTo": "person-name",
+      "description": "Name, Qualifikation und Schwerpunkt bleiben unter dem tatsächlichen Porträt auf einer soliden Lesefläche lesbar.",
+      "html": "<article class=\"ds-person\"><h3 class=\"ds-person-name\"><a href=\"/veronika-hagn-anwalt-ingolstadt\">Veronika Hagn</a></h3><p class=\"ds-person-role\">Rechtsanwältin · Fachanwältin für Verkehrsrecht und Strafrecht</p><p class=\"ds-person-focus\">Verkehrsrecht · Strafrecht · Allgemeines Zivilrecht</p></article>",
+      "css": ".ds-person{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);border-bottom:1px solid var(--token-divider,#BBC6C5);padding-bottom:1.5rem;color:var(--token-body,#33464C)}.ds-person-name{font-family:var(--style-heading-font,\"Cormorant Garamond\",var(--font-outfit),system-ui,sans-serif);margin:0;color:var(--token-heading,#103B4A);font-size:1.7rem;font-weight:500;line-height:1.25;letter-spacing:-.02em}.ds-person-name a{color:inherit;text-decoration:none;text-underline-offset:4px}.ds-person-name a:hover{text-decoration:underline}.ds-person-name a:focus-visible{outline:2px solid var(--token-icon,#195D67);outline-offset:4px}.ds-person-role{margin:.5rem 0 0;font-size:.875rem;line-height:1.5rem;color:var(--token-body,#33464C)}.ds-person-focus{margin:.75rem 0 0;font-size:.875rem;line-height:1.5rem;color:var(--token-muted,#53636A)}"
+    },
+    {
+      "name": "Classic footer silhouette",
+      "kind": "custom",
+      "refersTo": "footer",
+      "description": "Die große obere Rundung gehört zum tiefblauen Footer; sie wird nicht als allgemeiner Kartenradius übernommen.",
+      "html": "<footer class=\"ds-footer\"><div class=\"ds-footer-inner\"><h3 class=\"ds-footer-title\">Kontakt</h3><a href=\"tel:+49841935570\">+49 841 93557-0</a><a href=\"mailto:info@hagn-partner.de\">info@hagn-partner.de</a><span>Bergbräustr. 7, 85049 Ingolstadt</span></div></footer>",
+      "css": ".ds-footer{font-family:var(--custom-body-font,\"Manrope\",var(--font-inter),system-ui,sans-serif);overflow:hidden;border-radius:2rem 2rem 0 0;background:var(--brand-footer,#103B4A);color:var(--brand-footer-text,#E1E9E7)}.ds-footer-inner{display:flex;flex-direction:column;align-items:flex-start;gap:.625rem;max-width:80rem;margin:auto;padding:5rem 1.5rem 2.5rem;font-size:.875rem;line-height:1.5}.ds-footer-title{font-family:var(--style-heading-font,\"Cormorant Garamond\",var(--font-outfit),system-ui,sans-serif);margin:0 0 1.25rem;color:var(--brand-footer-text,#E1E9E7);font-size:.875rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}.ds-footer a{color:var(--brand-footer-link,#FAF8F3);text-decoration:none;transition:color 200ms}.ds-footer a:hover{text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.25em}.ds-footer a:focus-visible{outline:2px solid var(--token-accent,#195D67);outline-offset:2px;}@media(min-width:768px){.ds-footer{border-radius:3rem 3rem 0 0}}@media(prefers-reduced-motion:reduce){.ds-footer a{transition-duration:.01ms}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Zeitgemäße Kanzleikorrespondenz",
+    "overview": "Warmes Papier, tiefe blaue Tinte und präzise Leselinien übersetzen die institutionelle Korrespondenz der Kanzlei in ein zeitgemäßes Websystem. Cormorant Garamond gibt Titeln Ruhe und Gewicht; Manrope führt durch Texte, Kontaktdaten und Bedienung. Offene Verzeichnisse lassen konkrete Rechtsgebiete und benannte Ansprechpartner im Vordergrund stehen.\n\nAuthentische Porträts, Besprechungsräume und Arbeitsdetails tragen die menschliche Seite der Kanzlei. Namen, Qualifikationen und Schwerpunkte stehen auf einer eigenen Lesefläche unter den Bildern. Die helle Navigation wahrt die Lesbarkeit des originalen Logos; helle Schlussabschnitte gehen in den tiefblauen, oben gerundeten Footer über.\n\nDiese Aufzeichnung gilt ausschließlich für Hagn & Partner. Sie führt den bestehenden Gestaltungsvertrag mit der fertigen, codebasierten Umsetzung zusammen: Richtung „institutionelle Korrespondenz“, Kandidat 6, Konzept b56e9e6b. Eine freigegebene Bildkomposition ist keine Grundlage dieses Systems; maßgeblich sind die tatsächlich verwendeten CMS-Werte und Komponenten.",
+    "keyCharacteristics": [
+      "Offene, durch feine Linien gegliederte Verzeichnisse.",
+      "Serifentitel mit gut lesbarem Sans-Serif-Text.",
+      "Originalfotografie und sichtbare Qualifikationen.",
+      "Echte Telefon- und Adressmarge im Einstieg.",
+      "Eigenständige Farbrollen pro CMS-Section."
+    ],
+    "rules": [
+      {
+        "name": "The Leseflächen Rule",
+        "body": "Namen, Qualifikationen und Schwerpunkte bleiben auf einer soliden, kontrastreichen Lesefläche sichtbar. Ein Bild oder Hover ist keine Voraussetzung, um diese Angaben zu lesen.",
+        "section": "typography"
+      },
+      {
+        "name": "The Kontextfarben Rule",
+        "body": "Helle und tintenfarbene Sections verwenden jeweils ihre zusammengehörigen Hintergrund-, Text-, Linien- und Buttonrollen. Karten und Eingaben behalten ihre eigenen Vordergrundrollen.",
+        "section": "colors"
+      },
+      {
+        "name": "The Kontakt nur mit Rahmen Rule",
+        "body": "Nur die Kontakt-Section auf /kontakt setzt --token-card-shadow auf none. Alle vier Infopaneele und das Formular konsumieren diesen Sectionwert; ihre weißen Flächen und 1px-Rahmen bleiben bestehen. Daraus entsteht kein globales Schattenverbot.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do die institutionelle Korrespondenz durch offene Leselinien, eindeutige Verweise und echte Kontaktdaten fortführen.",
+      "Do Cormorant Garamond für Titel und Manrope für Text und Bedienung über die CMS-Markenfelder verwenden.",
+      "Do Namen, belegte Qualifikationen und Schwerpunkte ohne Hover lesbar halten.",
+      "Do Rechtsgebiete im Verzeichnis unmittelbar mit ihrer konkreten Leistung beschreiben.",
+      "Do Kontaktflächen über den lokalen Karten-Schatten steuern und ihre weißen Flächen sowie feinen Rahmen erhalten.",
+      "Do Originalfotos, Bildpositionen, Alttexte und Verweise über die vorhandenen CMS-Felder pflegen.",
+      "Do den hellen Abschluss vor dem tiefblauen, oben gerundeten Footer erhalten."
+    ],
+    "donts": [
+      "Don't Namen oder Biografien über Fotos setzen oder Qualifikationen erst bei Hover offenlegen.",
+      "Don't die offenen Rechtsgebiets- und Personenverzeichnisse durch austauschbare Symbolkarten ersetzen.",
+      "Don't synthetische Personen oder fremde Räume als tatsächliche Kanzlei aufzeigen.",
+      "Don't dekorative Pillen, erfundene Werbekicker oder juristische Embleme als neue Hagn-Bausteine hinzufügen.",
+      "Don't die lokale Kontaktregel auf alle Sections oder andere Websites übertragen.",
+      "Don't CMS-Inhalte, Farbrollen oder Kontaktdaten durch Hagn-spezifische JSX-Konstanten ersetzen."
+    ]
+  }
+}

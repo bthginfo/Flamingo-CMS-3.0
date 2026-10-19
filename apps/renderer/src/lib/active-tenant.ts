@@ -3,8 +3,7 @@ import { eq, and } from 'drizzle-orm';
 import { unstable_cache } from 'next/cache';
 
 import { getDb } from './db';
-
-const ACTIVE_TENANT_REVALIDATE_SECONDS = 60;
+import { standalonePublicStatusTtl } from './standalone-public-cache-policy';
 
 /**
  * Standalone deployments still mirror their tenant control row locally.
@@ -14,6 +13,7 @@ const ACTIVE_TENANT_REVALIDATE_SECONDS = 60;
 export async function resolveActiveFixedTenantId(): Promise<string | null> {
   const fixedTenantId = process.env.FIXED_TENANT_ID?.trim();
   if (!fixedTenantId) return null;
+  const revalidate = standalonePublicStatusTtl(process.env.STANDALONE_PUBLIC_STATUS_CACHE_SECONDS);
 
   const readActiveTenant = unstable_cache(
     async () => {
@@ -24,8 +24,8 @@ export async function resolveActiveFixedTenantId(): Promise<string | null> {
         .limit(1);
       return tenant?.id ?? null;
     },
-    ['active-fixed-tenant', fixedTenantId],
-    { revalidate: ACTIVE_TENANT_REVALIDATE_SECONDS, tags: [`tenant-${fixedTenantId}`] },
+    ['active-fixed-tenant', fixedTenantId, String(revalidate)],
+    { revalidate, tags: [`tenant-${fixedTenantId}`] },
   );
 
   return readActiveTenant();

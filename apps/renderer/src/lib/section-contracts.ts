@@ -346,7 +346,8 @@ export function getAllSectionContracts(): SectionContract[] {
 /** Keep new reading-first variants discoverable to CMS and API consumers. */
 function sectionLayoutField(type: string, key: string): Partial<SectionFieldContract> {
   const layouts: Record<string, string[]> = {
-    editorialHero: ['', 'studio', 'memorial', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
+    editorialHero: ['', 'studio', 'memorial', 'correspondence', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
+    teamSpotlight: ['', 'directory'],
     servicesGrid: ['classic', 'index'], processSteps: ['classic', 'simple'],
     ctaBand: ['classic', 'plain'], categoryMosaic: ['mosaic', 'editorial', 'spread'],
     textImage: ['image-left', 'image-right'],

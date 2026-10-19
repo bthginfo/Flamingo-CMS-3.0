@@ -33,6 +33,7 @@ export function ContactSection({ data }: Props) {
               as="article"
               key={i}
               className="group flex items-center gap-4 p-5"
+              style={{ boxShadow: 'var(--token-card-shadow)' }}
              data-edit-collection="infoCards" data-edit-index={i}>
               <div className={cn('w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] transition-transform group-hover:scale-110')}>
                 <DynamicIcon editPath="icon" name={card.icon} size={20} />
@@ -52,7 +53,7 @@ export function ContactSection({ data }: Props) {
               fields={formFields}
               submitLabel={submitLabel}
               privacyHref={(data.privacyHref as string) || undefined}
-              className="cms-card space-y-5 p-6 sm:p-8 lg:p-10"
+              className="cms-card space-y-5 p-6 [box-shadow:var(--token-card-shadow)] sm:p-8 lg:p-10"
             />
           </div>
         )}

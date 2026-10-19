@@ -498,6 +498,7 @@ const LOCAL_BUSINESS_TYPES = new Set([
   'HealthAndBeautyBusiness',
   'HomeAndConstructionBusiness',
   'ProfessionalService',
+  'LegalService',
   'Florist',
   'EventVenue',
   'SportsActivityLocation',

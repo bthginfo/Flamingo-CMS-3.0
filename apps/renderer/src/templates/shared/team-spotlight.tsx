@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Instagram, Linkedin, Mail } from 'lucide-react';
+import { ArrowUpRight, Instagram, Linkedin, Mail } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
+import { safeContentUrl } from '@/lib/safe-content-url';
 
 type Member = {
   name: string;
@@ -13,6 +14,9 @@ type Member = {
   instagram?: string;
   linkedin?: string;
   email?: string;
+  href?: string;
+  imageAlt?: string;
+  imagePosition?: string;
 };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -22,6 +26,31 @@ export function TeamSpotlightSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const members = (data.members as Member[]) || [];
   if (!members.length) return null;
+
+  // The directory keeps qualifications visible on a solid reading surface.
+  // It uses ordinary links and no hover-only biography or animation prerequisite.
+  if (data.layout === 'directory') {
+    return <div>
+      <header className="mb-9 grid gap-4 border-t border-[var(--token-divider)] pt-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,.7fr)] lg:gap-16">
+        {headline && <h2 className="font-display max-w-[21ch] text-[clamp(2.3rem,4.1vw,3.8rem)] font-medium leading-[1.08] tracking-[-.025em] text-[color:var(--token-heading)] [text-wrap:balance]" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="max-w-[55ch] self-end text-base leading-7 text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
+      </header>
+      <div className={`grid gap-x-7 gap-y-10 ${members.length === 1 ? '' : members.length === 2 ? 'sm:grid-cols-2' : members.length > 4 ? 'sm:grid-cols-2 xl:grid-cols-4' : 'sm:grid-cols-2 lg:grid-cols-3'}`}>
+        {members.map((member, index) => {
+          const href = safeContentUrl(member.href || '');
+          return <article key={`${member.name}-${index}`} data-edit-collection="members" data-edit-index={index} className={`border-b border-[var(--token-divider)] pb-6 ${members.length === 1 ? 'grid items-center gap-x-12 md:grid-cols-[minmax(220px,.55fr)_minmax(0,1fr)]' : ''}`}>
+            {member.image && <figure className={`m-0 mb-5 aspect-[5/4] overflow-hidden bg-[var(--token-section-bg-alt)] ${members.length === 1 ? 'md:mb-0' : ''}`}><img data-edit-image="image" src={member.image} alt={member.imageAlt || member.name} loading="lazy" className="h-full w-full object-cover" style={{ objectPosition: member.imagePosition || 'center 25%' }} /></figure>}
+            <div>
+            <h3 className="font-display text-[1.7rem] font-medium leading-tight text-[color:var(--token-heading)]">{href ? <a href={href} className="group flex items-start justify-between gap-3 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--token-icon)]" data-edit-link="href"><span data-edit-path="name">{member.name}</span><ArrowUpRight aria-hidden="true" size={18} className="mt-1.5 shrink-0 text-[color:var(--token-icon)]" /></a> : <span data-edit-path="name">{member.name}</span>}</h3>
+            {member.role && <p className="mt-2 text-sm leading-6 text-[color:var(--token-body)]" data-edit-path="role">{member.role}</p>}
+            {!!member.focus?.length && <p className="mt-3 text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="focus">{member.focus.join(' · ')}</p>}
+            {member.quote && <p className="mt-5 max-w-[55ch] text-base leading-7 text-[color:var(--token-body)]" data-edit-path="quote">{plain(member.quote)}</p>}
+            </div>
+          </article>;
+        })}
+      </div>
+    </div>;
+  }
 
   return (
     <div>

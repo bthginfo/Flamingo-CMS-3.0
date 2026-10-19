@@ -204,6 +204,7 @@ export function SeoForm() {
               <option value="HealthAndBeautyBusiness">HealthAndBeautyBusiness</option>
               <option value="HomeAndConstructionBusiness">HomeAndConstructionBusiness</option>
               <option value="ProfessionalService">ProfessionalService</option>
+              <option value="LegalService">LegalService – Rechtsanwaltskanzlei</option>
               <option value="Florist">Florist</option>
               <option value="EventVenue">EventVenue</option>
               <option value="SportsActivityLocation">SportsActivityLocation</option>

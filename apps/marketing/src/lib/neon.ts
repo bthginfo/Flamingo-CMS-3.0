@@ -1,5 +1,4 @@
-import { grantRuntimeDatabasePrivileges } from '@flamingo/db';
-import { randomBytes } from 'node:crypto';
+import { createRuntimeDatabaseRole } from '@flamingo/db';
 
 const NEON_API = 'https://console.neon.tech/api/v2';
 
@@ -194,34 +193,15 @@ export async function getNeonTenantProjectById(projectId: string, preferred?: { 
 }
 
 export async function createNeonRuntimeDatabaseRole(project: Pick<NeonTenantProject, 'projectId' | 'branchId' | 'databaseName' | 'directConnectionUri'>) {
-  const roleName = `flamingo_app_${randomBytes(4).toString('hex')}`;
-  const created = await neonFetch<{ role?: { name?: string }; operations?: NeonOperation[] }>(
-    `/projects/${encodeURIComponent(project.projectId)}/branches/${encodeURIComponent(project.branchId)}/roles`,
-    {
-      method: 'POST',
-      body: JSON.stringify({ role: { name: roleName } }),
-    },
-  );
-  await waitForOperations(project.projectId, created.operations);
-  const effectiveRole = created.role?.name || roleName;
-  const passwordResponse = await neonFetch<{ password?: string; role?: { password?: string } }>(
-    `/projects/${encodeURIComponent(project.projectId)}/branches/${encodeURIComponent(project.branchId)}/roles/${encodeURIComponent(effectiveRole)}/reveal_password`,
-  );
-  const password = passwordResponse.password || passwordResponse.role?.password;
-
-  await grantRuntimeDatabasePrivileges(project.directConnectionUri, effectiveRole);
-
-  let runtimeConnectionUri = await connectionUri(project.projectId, project.databaseName, effectiveRole, true, project.branchId);
-  if (password) {
-    const url = new URL(runtimeConnectionUri);
-    if (!url.password) {
-      url.username = effectiveRole;
-      url.password = password;
-      runtimeConnectionUri = url.toString();
-    }
+  const owner = new URL(project.directConnectionUri);
+  if (!owner.hostname.endsWith('.neon.tech') || !owner.hostname.startsWith('ep-')) {
+    throw new Error('Eine gültige direkte Neon-Owner-Verbindung fehlt.');
   }
-  if (!runtimeConnectionUri.startsWith('postgres')) throw new Error('Neon hat keine gültige Runtime-Datenbankverbindung zurückgegeben.');
-  return { roleName: effectiveRole, connectionUri: runtimeConnectionUri };
+  const runtime = await createRuntimeDatabaseRole(project.directConnectionUri);
+  const pooled = new URL(runtime.connectionUri);
+  const [endpoint, ...domain] = pooled.hostname.split('.');
+  pooled.hostname = `${endpoint.replace(/-pooler$/, '')}-pooler.${domain.join('.')}`;
+  return { roleName: runtime.roleName, connectionUri: pooled.toString() };
 }
 
 export async function createNeonTenantProject(slug: string): Promise<NeonTenantProject> {
