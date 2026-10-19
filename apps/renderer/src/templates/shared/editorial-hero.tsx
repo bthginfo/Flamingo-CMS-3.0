@@ -1,6 +1,7 @@
 import { WordReveal } from '@/components/ui/fx';
 import type { CSSProperties } from 'react';
 import { ActionGroup, ActionLink, MediaFrame, PremiumSectionHeader } from './section-primitives';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -45,6 +46,35 @@ export function EditorialHeroSection({ data }: Props) {
     color: 'var(--token-card-body, #475569)',
   } as CSSProperties;
   if (!headline) return null;
+
+  // A solid reading surface keeps architectural and memorial photography
+  // intact, including inscriptions. These layouts deliberately omit effects
+  // and decorative overlapping frames; they also work as text-only openers.
+  if (layout === 'architectural' || layout === 'quiet') {
+    const quiet = layout === 'quiet';
+    const compact = data.compact === true;
+    return (
+      <div className="overflow-hidden bg-[var(--token-section-bg)]">
+        <div className={`mx-auto grid max-w-[1440px] ${imagePrimary ? 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]' : ''}`}>
+          <div className={`flex flex-col justify-center px-6 sm:px-10 lg:px-14 xl:px-20 ${compact ? 'py-12 md:py-16' : 'py-14 md:py-20 lg:py-24'}`}>
+            <h1
+              className={`font-display max-w-[15ch] text-[color:var(--token-heading)] [text-wrap:balance] ${quiet ? 'text-[clamp(2.65rem,4.6vw,4.8rem)] font-medium leading-[1.06] tracking-[-0.025em]' : 'text-[clamp(2.6rem,4.5vw,4.6rem)] font-semibold leading-[1.08] tracking-[-0.035em]'}`}
+              data-edit-path="headline"
+            >{headline}</h1>
+            {text && <div className="rt-content mt-6 max-w-[49ch] text-base leading-[1.8] text-[color:var(--token-body)] sm:text-lg" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }} />}
+            {(primaryCta.label || secondaryCta.label) && <ActionGroup className="mt-8 gap-3">
+              <ActionLink action={primaryCta} editKey="primaryCta" />
+              <ActionLink action={secondaryCta} editKey="secondaryCta" tone="secondary" showArrow={false} />
+            </ActionGroup>}
+            {hint && <p className="mt-7 max-w-[48ch] border-t border-[var(--token-divider)] pt-5 text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="hint">{hint}</p>}
+          </div>
+          {imagePrimary && <figure className={`relative m-0 ${compact ? 'min-h-[280px] lg:min-h-[430px]' : quiet ? 'min-h-[380px] lg:min-h-[600px]' : 'min-h-[330px] lg:min-h-[620px]'} ${hideImageOnMobile ? 'hidden md:block' : ''}`}>
+            <img data-edit-image="imagePrimary" src={imagePrimary} alt={(data.imageAlt as string) || ''} loading="eager" fetchPriority="high" className={`absolute inset-0 h-full w-full ${imageFit === 'contain' ? 'object-contain' : 'object-cover'}`} style={{ objectPosition: (data.imagePrimaryPosition as string) || (data.imagePosition as string) || 'center' }} />
+          </figure>}
+        </div>
+      </div>
+    );
+  }
 
   if (isFullBleedImage && imagePrimary) {
     return (

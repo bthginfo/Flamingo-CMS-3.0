@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useConsent, type OptionalConsentCategory } from '@/lib/consent';
 import { cn } from '@/lib/utils';
+import { privacyHrefForPath } from '@/lib/privacy-link';
 
 type Props = {
   children: ReactNode;
@@ -12,13 +13,6 @@ type Props = {
   provider?: string;
   className?: string;
 };
-
-function privacyHref(pathname: string | null) {
-  const demo = pathname?.match(/^(\/demo\/[^/]+)/)?.[1];
-  if (demo) return `${demo}/datenschutz`;
-  const locale = pathname?.match(/^\/(de|en|es)(?:\/|$)/)?.[1];
-  return locale ? `/${locale}/datenschutz` : '/datenschutz';
-}
 
 export function ConsentGate({
   children,
@@ -67,7 +61,7 @@ export function ConsentGate({
             Inhalt laden
           </button>
           <a
-            href={privacyHref(pathname)}
+            href={privacyHrefForPath(pathname)}
             className="min-h-11 content-center px-2 text-sm font-semibold text-[color:var(--token-heading)] underline decoration-[var(--token-divider)] underline-offset-4"
           >
             Datenschutz

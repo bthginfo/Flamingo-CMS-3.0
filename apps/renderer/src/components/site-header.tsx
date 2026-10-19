@@ -14,6 +14,7 @@ import { getNavScriptProvider } from '@/lib/embed-providers';
 import type { NavItem, NavCta, BrandData, ContactData, TopBarConfig } from '@/lib/tenant-data';
 import { prefixInternalHref } from '@/lib/link-prefix';
 import { useModalFocusTrap } from '@/hooks/use-modal-focus-trap';
+import { resolveNavigationHoverColor } from '@/lib/navigation-colors';
 
 function NavCtaButton({ cta, scrolled, isHeroDark, linkPrefix, className }: { cta: NavCta; scrolled: boolean; isHeroDark: boolean; linkPrefix: string; className?: string }) {
   const scriptProvider = cta.scriptProvider ? getNavScriptProvider(cta.scriptProvider) : null;
@@ -162,7 +163,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const topBarOffset = topBarEnabled ? topBarHeight : 0;
   const topBarHidden = scrolled || mobileOpen;
   const navLinkColorDesktop = brand.navLinkColor || ((scrolled || (!isHeroDark)) ? '#4b5563' : '#ffffff');
-  const navLinkHoverColor = brand.linkHoverColor || brand.accentColor || 'var(--brand-accent)';
+  const configuredNavHoverColor = brand.linkHoverColor || brand.accentColor;
   const activeNavBg = brand.navBgColor || 'rgba(255,255,255,0.8)';
   const navSurfaceIsDark = !scrolled && darkBg ? true : ((scrolled || (!isHeroDark)) ? isDarkColor(activeNavBg) : isHeroDark);
   const mobileToggleColor = navSurfaceIsDark ? '#ffffff' : '#111827';
@@ -170,6 +171,17 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const mobileNavBg = (brand.navBgColor || '').trim() || '#ffffff';
   const mobileNavIsDark = isDarkColor(mobileNavBg);
   const navLinkColorMobile = brand.navLinkColor || (mobileNavIsDark ? '#ffffff' : '#1f2937');
+  const navLinkHoverColorDesktop = resolveNavigationHoverColor({
+    background: scrolled || !isHeroDark ? activeNavBg : '#111827',
+    hover: configuredNavHoverColor,
+    foreground: navLinkColorDesktop,
+    canvas: navSurfaceIsDark ? '#111827' : '#ffffff',
+  });
+  const navLinkHoverColorMobile = resolveNavigationHoverColor({
+    background: mobileNavBg,
+    hover: configuredNavHoverColor,
+    foreground: navLinkColorMobile,
+  });
   const mobileMutedColor = mobileNavIsDark ? 'rgba(255,255,255,0.72)' : '#6b7280';
   const mobileBorderColor = mobileNavIsDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.08)';
   const mobileHoverBg = mobileNavIsDark ? 'rgba(255,255,255,0.08)' : 'rgba(17,24,39,0.06)';
@@ -312,11 +324,11 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   key={i}
                   href={prefixInternalHref(item.href, linkPrefix) as string}
                   className={cn(
-                    'whitespace-nowrap font-semibold tracking-wide uppercase transition-colors duration-300 hover:text-[var(--nav-link-hover)]',
+                    'whitespace-nowrap font-semibold tracking-wide uppercase transition-colors duration-300 text-[color:var(--nav-link-color)] hover:text-[color:var(--nav-link-hover)]',
                     denseDesktopNav ? 'text-[11px]' : 'text-[12px] 2xl:text-[13px]',
                     (!scrolled && isHeroDark && !brand.navLinkColor) ? 'drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]' : '',
                   )}
-                  style={{ color: navLinkColorDesktop, ['--nav-link-hover' as string]: navLinkHoverColor }}
+                  style={{ ['--nav-link-color' as string]: navLinkColorDesktop, ['--nav-link-hover' as string]: navLinkHoverColorDesktop }}
                 >
                   {item.label}
                 </Link>
@@ -392,8 +404,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     <Link
                       href={prefixInternalHref(item.href, linkPrefix) as string}
                       onClick={() => setMobileOpen(false)}
-                      className="block text-2xl font-semibold py-3 hover:text-[var(--nav-link-hover)] transition-colors"
-                      style={{ color: navLinkColorMobile, ['--nav-link-hover' as string]: navLinkHoverColor }}
+                      className="block text-2xl font-semibold py-3 text-[color:var(--nav-link-color)] hover:text-[color:var(--nav-link-hover)] transition-colors"
+                      style={{ ['--nav-link-color' as string]: navLinkColorMobile, ['--nav-link-hover' as string]: navLinkHoverColorMobile }}
                     >
                       {item.label}
                     </Link>

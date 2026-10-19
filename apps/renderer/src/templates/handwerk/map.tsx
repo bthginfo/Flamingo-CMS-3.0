@@ -4,12 +4,14 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ConsentGate } from '@/components/consent-gate';
 import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
 const HEIGHT: Record<string, string> = { s: 'h-64', m: 'h-[400px]', l: 'h-[500px]' };
 
 export function MapSection({ data }: Props) {
+  const reduceMotion = useHydrationSafeReducedMotion();
   const headline = (data.headline as string) || '';
   const embedUrl = safeMapEmbedUrl(data.embedUrl || data.mapEmbedUrl);
   const address = (data.address as string) || '';
@@ -20,9 +22,9 @@ export function MapSection({ data }: Props) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+      animate={inView || reduceMotion ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: reduceMotion ? 0 : 0.6 }}
     >
       {headline && <h2 className="section-headline mb-4 text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
       {address && (

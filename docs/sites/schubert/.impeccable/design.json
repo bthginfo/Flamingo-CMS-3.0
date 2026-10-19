@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-19T10:38:40.252Z",
+  "title": "Design System: Schubert tenant websites",
+  "extensions": {
+    "colorMeta": {
+      "brass": {
+        "role": "primary",
+        "displayName": "Brass",
+        "canonical": "#78613C",
+        "tonalRamp": [
+          "oklch(15.00% 0.0606 78.63)",
+          "oklch(26.43% 0.0606 78.63)",
+          "oklch(37.86% 0.0606 78.63)",
+          "oklch(49.29% 0.0606 78.63)",
+          "oklch(60.71% 0.0606 78.63)",
+          "oklch(72.14% 0.0606 78.63)",
+          "oklch(83.57% 0.0606 78.63)",
+          "oklch(95.00% 0.0606 78.63)"
+        ]
+      },
+      "brass-link": {
+        "role": "primary",
+        "displayName": "Brass Link",
+        "canonical": "#6A532E",
+        "tonalRamp": [
+          "oklch(15.00% 0.0612 78.18)",
+          "oklch(26.43% 0.0612 78.18)",
+          "oklch(37.86% 0.0612 78.18)",
+          "oklch(49.29% 0.0612 78.18)",
+          "oklch(60.71% 0.0612 78.18)",
+          "oklch(72.14% 0.0612 78.18)",
+          "oklch(83.57% 0.0612 78.18)",
+          "oklch(95.00% 0.0612 78.18)"
+        ]
+      },
+      "stone": {
+        "role": "neutral",
+        "displayName": "Stone",
+        "canonical": "#F7F4EF",
+        "tonalRamp": [
+          "oklch(15.00% 0.0074 80.72)",
+          "oklch(26.43% 0.0074 80.72)",
+          "oklch(37.86% 0.0074 80.72)",
+          "oklch(49.29% 0.0074 80.72)",
+          "oklch(60.71% 0.0074 80.72)",
+          "oklch(72.14% 0.0074 80.72)",
+          "oklch(83.57% 0.0074 80.72)",
+          "oklch(95.00% 0.0074 80.72)"
+        ]
+      },
+      "stone-alternate": {
+        "role": "neutral",
+        "displayName": "Stone Alternate",
+        "canonical": "#EDE8DF",
+        "tonalRamp": [
+          "oklch(15.00% 0.0132 82.40)",
+          "oklch(26.43% 0.0132 82.40)",
+          "oklch(37.86% 0.0132 82.40)",
+          "oklch(49.29% 0.0132 82.40)",
+          "oklch(60.71% 0.0132 82.40)",
+          "oklch(72.14% 0.0132 82.40)",
+          "oklch(83.57% 0.0132 82.40)",
+          "oklch(95.00% 0.0132 82.40)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "charcoal": {
+        "role": "neutral",
+        "displayName": "Charcoal",
+        "canonical": "#151A17",
+        "tonalRamp": [
+          "oklch(15.00% 0.0096 159.15)",
+          "oklch(26.43% 0.0096 159.15)",
+          "oklch(37.86% 0.0096 159.15)",
+          "oklch(49.29% 0.0096 159.15)",
+          "oklch(60.71% 0.0096 159.15)",
+          "oklch(72.14% 0.0096 159.15)",
+          "oklch(83.57% 0.0096 159.15)",
+          "oklch(95.00% 0.0096 159.15)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#222622",
+        "tonalRamp": [
+          "oklch(15.00% 0.0093 145.30)",
+          "oklch(26.43% 0.0093 145.30)",
+          "oklch(37.86% 0.0093 145.30)",
+          "oklch(49.29% 0.0093 145.30)",
+          "oklch(60.71% 0.0093 145.30)",
+          "oklch(72.14% 0.0093 145.30)",
+          "oklch(83.57% 0.0093 145.30)",
+          "oklch(95.00% 0.0093 145.30)"
+        ]
+      },
+      "body-ink": {
+        "role": "neutral",
+        "displayName": "Body Ink",
+        "canonical": "#454740",
+        "tonalRamp": [
+          "oklch(15.00% 0.0118 119.92)",
+          "oklch(26.43% 0.0118 119.92)",
+          "oklch(37.86% 0.0118 119.92)",
+          "oklch(49.29% 0.0118 119.92)",
+          "oklch(60.71% 0.0118 119.92)",
+          "oklch(72.14% 0.0118 119.92)",
+          "oklch(83.57% 0.0118 119.92)",
+          "oklch(95.00% 0.0118 119.92)"
+        ]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#62635B",
+        "tonalRamp": [
+          "oklch(15.00% 0.0125 112.63)",
+          "oklch(26.43% 0.0125 112.63)",
+          "oklch(37.86% 0.0125 112.63)",
+          "oklch(49.29% 0.0125 112.63)",
+          "oklch(60.71% 0.0125 112.63)",
+          "oklch(72.14% 0.0125 112.63)",
+          "oklch(83.57% 0.0125 112.63)",
+          "oklch(95.00% 0.0125 112.63)"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Divider",
+        "canonical": "#D6D1C7",
+        "tonalRamp": [
+          "oklch(15.00% 0.0147 84.59)",
+          "oklch(26.43% 0.0147 84.59)",
+          "oklch(37.86% 0.0147 84.59)",
+          "oklch(49.29% 0.0147 84.59)",
+          "oklch(60.71% 0.0147 84.59)",
+          "oklch(72.14% 0.0147 84.59)",
+          "oklch(83.57% 0.0147 84.59)",
+          "oklch(95.00% 0.0147 84.59)"
+        ]
+      },
+      "control-border": {
+        "role": "neutral",
+        "displayName": "Control Border",
+        "canonical": "#9C9C92",
+        "tonalRamp": [
+          "oklch(15.00% 0.0143 106.77)",
+          "oklch(26.43% 0.0143 106.77)",
+          "oklch(37.86% 0.0143 106.77)",
+          "oklch(49.29% 0.0143 106.77)",
+          "oklch(60.71% 0.0143 106.77)",
+          "oklch(72.14% 0.0143 106.77)",
+          "oklch(83.57% 0.0143 106.77)",
+          "oklch(95.00% 0.0143 106.77)"
+        ]
+      },
+      "footer-copy": {
+        "role": "neutral",
+        "displayName": "Footer Copy",
+        "canonical": "#DEDCD4",
+        "tonalRamp": [
+          "oklch(15.00% 0.0110 95.18)",
+          "oklch(26.43% 0.0110 95.18)",
+          "oklch(37.86% 0.0110 95.18)",
+          "oklch(49.29% 0.0110 95.18)",
+          "oklch(60.71% 0.0110 95.18)",
+          "oklch(72.14% 0.0110 95.18)",
+          "oklch(83.57% 0.0110 95.18)",
+          "oklch(95.00% 0.0110 95.18)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "design-display": {
+        "displayName": "Architectural display",
+        "purpose": "Schubert Design editorial hero headlines."
+      },
+      "memorial-display": {
+        "displayName": "Quiet memorial display",
+        "purpose": "Schubert Grabdenkmale editorial hero headlines."
+      },
+      "headline": {
+        "displayName": "Section headline",
+        "purpose": "H2 section openings with balanced wrapping."
+      },
+      "design-body": {
+        "displayName": "Design reading copy",
+        "purpose": "Manrope body copy for Schubert Design."
+      },
+      "memorial-body": {
+        "displayName": "Memorial reading copy",
+        "purpose": "Inter body copy for Schubert Grabdenkmale."
+      },
+      "label": {
+        "displayName": "Field label",
+        "purpose": "Explicit form labels above each control."
+      }
+    },
+    "shadows": [
+      {
+        "name": "button-rest",
+        "value": "0 8px 24px rgba(25,30,25,0.10)",
+        "purpose": "Small ambient lift beneath the primary action."
+      },
+      {
+        "name": "button-hover",
+        "value": "0 14px 32px rgba(25,30,25,0.10)",
+        "purpose": "Fine-pointer hover state of shared button primitives."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-state",
+        "value": "220ms ease",
+        "purpose": "Button transform, shadow and brightness changes."
+      },
+      {
+        "name": "field-state",
+        "value": "180ms ease",
+        "purpose": "Shared input border, background and focus shadow changes."
+      },
+      {
+        "name": "button-hover-offset",
+        "value": "translateY(-2px)",
+        "purpose": "Fine-pointer button feedback; suppressed by reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary consultation action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Dark action with an independent white foreground.",
+      "html": "<a class=\"ds-button ds-primary\" href=\"#contact\">Beratung anfragen<svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></a>",
+      "css": ".ds-button{display:inline-flex;min-height:3rem;align-items:center;justify-content:center;gap:.6rem;border:1px solid transparent;border-radius:var(--token-button-radius,.25rem);padding:.7rem 1.2rem;font:650 .9375rem/1.25 var(--custom-body-font,Manrope,sans-serif);text-decoration:none;transition:transform 220ms ease,box-shadow 220ms ease,filter 220ms ease}.ds-button:focus-visible{outline:2px solid var(--token-accent,#78613C);outline-offset:2px}@media(hover:hover) and (pointer:fine){.ds-button:hover{transform:translateY(-2px);box-shadow:0 14px 32px var(--token-shadow,rgba(25,30,25,.10));filter:brightness(1.035)}}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}.ds-button:hover{transform:none}}.ds-primary{background:var(--token-btn-bg,#222622);color:var(--token-btn-text,#fff);box-shadow:0 8px 24px var(--token-shadow,rgba(25,30,25,.10))}.ds-primary>*{color:inherit}"
+    },
+    {
+      "name": "Secondary exploration action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Transparent, bounded action for examples and supporting routes.",
+      "html": "<a class=\"ds-button ds-secondary\" href=\"#examples\">Beispiele ansehen</a>",
+      "css": ".ds-button{display:inline-flex;min-height:3rem;align-items:center;justify-content:center;gap:.6rem;border:1px solid transparent;border-radius:var(--token-button-radius,.25rem);padding:.7rem 1.2rem;font:650 .9375rem/1.25 var(--custom-body-font,Manrope,sans-serif);text-decoration:none;transition:transform 220ms ease,box-shadow 220ms ease,filter 220ms ease}.ds-button:focus-visible{outline:2px solid var(--token-accent,#78613C);outline-offset:2px}@media(hover:hover) and (pointer:fine){.ds-button:hover{transform:translateY(-2px);box-shadow:0 14px 32px var(--token-shadow,rgba(25,30,25,.10));filter:brightness(1.035)}}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}.ds-button:hover{transform:none}}.ds-secondary{border-color:var(--token-btn-secondary-border,#9C9C92);background:var(--token-btn-secondary-bg,transparent);color:var(--token-btn-secondary-text,#222622);box-shadow:none}"
+    },
+    {
+      "name": "Contact field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Explicit label, white surface and separate value, placeholder and border roles.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-label\" for=\"ds-email\">E-Mail <span aria-hidden=\"true\">*</span></label><input class=\"ds-input\" id=\"ds-email\" name=\"email\" type=\"email\" autocomplete=\"email\" required placeholder=\"E-Mail\"></div>",
+      "css": ".ds-field{display:grid;gap:.45rem;font-family:var(--custom-body-font,Manrope,sans-serif)}.ds-label{color:var(--token-label,#454740);font-size:.875rem;font-weight:650;line-height:1.4}.ds-input{min-height:3rem;border:1px solid var(--token-input-border,#9C9C92);border-radius:.75rem;background:var(--token-input-bg,#fff);color:var(--token-input-text,#222622);padding:.75rem 1rem;font:400 15px/1.5 var(--custom-body-font,Manrope,sans-serif);transition:border-color 180ms ease,box-shadow 180ms ease,background-color 180ms ease}.ds-input::placeholder{color:var(--token-input-text,#222622);opacity:1}.ds-input:focus{border-color:var(--token-accent,#78613C);box-shadow:0 0 0 3px color-mix(in srgb,var(--token-accent,#78613C) 16%,transparent);outline:none}.ds-input:disabled{cursor:not-allowed}"
+    },
+    {
+      "name": "Contact information surface",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Quiet contact surface with a useful email link.",
+      "html": "<article class=\"ds-card\"><p class=\"ds-card-label\">E-Mail</p><a class=\"ds-card-value\" href=\"mailto:schubert@schubertdesign.de\">schubert@schubertdesign.de</a></article>",
+      "css": ".ds-card{padding:1.25rem;border:1px solid var(--token-card-border,#D6D1C7);border-radius:var(--token-card-radius,.25rem);background:var(--token-card-bg,#fff);font-family:var(--custom-body-font,Manrope,sans-serif)}.ds-card-label{margin:0 0 .25rem;color:var(--token-card-muted,#62635B);font-size:.75rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase}.ds-card-value{display:block;padding:.25rem 0;color:var(--token-card-heading,#222622);font-size:1rem;font-weight:600;overflow-wrap:anywhere;text-decoration:none;text-underline-offset:4px}.ds-card-value:hover{text-decoration:underline}.ds-card-value:focus-visible{outline:2px solid var(--token-accent,#78613C);outline-offset:4px}"
+    },
+    {
+      "name": "Site navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Charcoal identity strip and useful routes; responsive menu behavior stays in the shared renderer.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Beispielnavigation\"><a class=\"ds-brand\" href=\"#home\">Schubert Design</a><div class=\"ds-nav-links\"><a href=\"#services\">Leistungen</a><a href=\"#work\">Projekte</a><a href=\"#showroom\">Showroom</a></div></nav>",
+      "css": ".ds-nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.5rem;background:#151A17;color:#F7F4EF;padding:1.5rem;font-family:var(--custom-body-font,Manrope,sans-serif)}.ds-brand{font-family:var(--style-heading-font,'Space Grotesk',sans-serif);font-size:1.25rem;font-weight:700}.ds-nav-links{display:flex;flex-wrap:wrap;gap:1.5rem;font-size:.875rem;font-weight:600;letter-spacing:.025em;text-transform:uppercase}.ds-nav a{color:inherit;text-decoration:none;transition:color 300ms}.ds-nav a:hover{text-decoration:underline;text-underline-offset:4px}.ds-nav a:focus-visible{outline:2px solid #F7F4EF;outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Stone, clearly presented",
+    "overview": "The two Schubert websites share a material identity: warm stone surfaces, dark ink, restrained brass and genuine work photography. Text occupies solid surfaces, so rooms, craftsmanship and memorial inscriptions can be seen without competing with copy.\n\nSchubert Design uses architectural sans-serif typography; Schubert Grabdenkmale uses a softer serif display face with a neutral body face. Both use clear section boundaries, useful information and measured space. These rules apply only to the two Schubert tenants.",
+    "keyCharacteristics": [
+      "Light reading surfaces with dark, independent text roles.",
+      "Genuine work photography with deliberate framing.",
+      "Distinct display typography for the two visitor contexts.",
+      "Quiet controls and a practical, restrained footer."
+    ],
+    "rules": [
+      {
+        "name": "The Surface Pair Rule",
+        "body": "Bind each surface to its own heading, body, muted, input and icon roles. A page palette change must not leave an old per-section foreground behind.",
+        "section": "colors"
+      },
+      {
+        "name": "The Photograph Rule",
+        "body": "Photograph overlays use independent inverse roles. Do not derive photo text from the dark ink used on the surrounding light page.",
+        "section": "colors"
+      },
+      {
+        "name": "The Outline Rule",
+        "body": "Use one H1 for the page purpose, H2 for sections and H3 for entries. Rich text beneath a hero must not introduce another H1.",
+        "section": "typography"
+      },
+      {
+        "name": "The Material Rule",
+        "body": "Let genuine stone and room photography carry visual interest. The Schubert hero variants do not add glow, decorative glass or blurred orbs.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve the independent section, card, image and form color roles.",
+      "Do use the configured tenant heading family throughout display text.",
+      "Do keep real work imagery matched to the page topic and use respectful memorial framing.",
+      "Do check the complete page outline, mobile navigation, controls and contact path."
+    ],
+    "donts": [
+      "Don't introduce glow heroes on either Schubert website.",
+      "Don't use brass as a substitute for readable body copy on light surfaces.",
+      "Don't repeat the same generic contact invitation in a page section and a large footer box.",
+      "Don't invent testimonials, projects, staff, prices or statistics to fill a layout."
+    ]
+  }
+}

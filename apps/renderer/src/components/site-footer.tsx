@@ -6,6 +6,7 @@ import type { FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tena
 import { prefixInternalHref } from '@/lib/link-prefix';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { normalizeFooterVariant } from '@/lib/footer-variants';
+import { CookieSettingsButton } from '@/components/cookie-settings-button';
 
 const SOCIAL_ICONS: Record<string, ElementType> = {
   instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube, google: Globe, tiktok: Music,
@@ -84,6 +85,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
               </Link>
             )}
             <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+              <CookieSettingsButton />
               {compactLinks.slice(0, 10).map((item, index) => (
                 <Link key={`${item.href}-${index}`} href={prefixInternalHref(item.href || '/', linkPrefix) as string}>{item.text}</Link>
               ))}
@@ -276,6 +278,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
             © {new Date().getFullYear()} {brand.companyName}. Alle Rechte vorbehalten.
           </span>
           <div className="flex items-center gap-6 flex-wrap justify-center">
+            <CookieSettingsButton />
             {footer.legalLinks.map((link, i) => (
               <Link key={i} href={prefixInternalHref(link.href, linkPrefix) as string} className="text-xs hover:underline transition-colors duration-200">
                 {legalLinkLabel(link.label, link.href)}

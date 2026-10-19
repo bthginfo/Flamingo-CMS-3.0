@@ -5,6 +5,7 @@ import { ResilientNextImage as Image } from '@/components/ui/resilient-image';
 import Link from 'next/link';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 
 type ButtonValue = { label?: string; href?: string; icon?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -17,6 +18,7 @@ function pickString(...values: unknown[]): string {
 }
 
 export function TextImageSection({ data, variant }: Props) {
+  const reduceMotion = useHydrationSafeReducedMotion();
   const badge = (data.badge as string) || (data.badgeText as string) || '';
   const headline = (data.headline as string) || '';
   const text = (data.text as string) || '';
@@ -33,7 +35,7 @@ export function TextImageSection({ data, variant }: Props) {
     <section className="py-20 px-6 bg-[var(--token-section-bg)] overflow-hidden">
       <div className={`max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center ${imageLeft ? '' : 'md:[&>*:first-child]:order-2'}`}>
         {image && (
-          <motion.div initial={{ opacity: 0, x: imageLeft ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
+          <motion.div initial={reduceMotion ? false : { opacity: 0, x: imageLeft ? -30 : 30 }} animate={reduceMotion ? { opacity: 1, x: 0 } : undefined} whileInView={{ opacity: 1, x: 0 }} transition={reduceMotion ? { duration: 0 } : undefined} viewport={{ once: true }} className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
             <Image data-edit-image="image" src={image} alt={imageAlt} fill className="object-cover" />
           </motion.div>
         )}

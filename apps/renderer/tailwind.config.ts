@@ -16,7 +16,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-outfit)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        display: ['var(--style-heading-font, var(--font-outfit))', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         style: 'var(--style-radius-md, 1rem)',

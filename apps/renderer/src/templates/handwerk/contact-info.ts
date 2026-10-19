@@ -2,7 +2,18 @@ export type ContactInfoCard = {
   icon: string;
   label: string;
   value: string;
+  href?: string;
 };
+
+export function contactInfoHref(card: ContactInfoCard): string | undefined {
+  if (card.href && /^(tel:|mailto:|https:\/\/)/i.test(card.href)) return card.href;
+  if (/mail/i.test(card.icon) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(card.value)) return `mailto:${card.value}`;
+  if (/phone|telefon/i.test(`${card.icon} ${card.label}`)) {
+    const number = card.value.replace(/\(0\)/g, '').replace(/[^+\d]/g, '');
+    if (number) return `tel:${number}`;
+  }
+  return undefined;
+}
 
 function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
@@ -25,6 +36,7 @@ export function resolveContactInfoCards(data: Record<string, unknown>): ContactI
             icon: text(card.icon) || 'info',
             label: text(card.label),
             value,
+            ...(text(card.href) ? { href: text(card.href) } : {}),
           };
         })
         .filter((item): item is ContactInfoCard => item !== null)

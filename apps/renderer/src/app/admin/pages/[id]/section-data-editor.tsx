@@ -530,7 +530,9 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     if (typeof value === 'string') {
       const fieldName = String(path[path.length - 1] || '');
       const multiline = value.length > 80 || /content|description|text|subline|bio|answer|excerpt|intro/i.test(fieldName);
-      const enumOptions = type === 'mobileActionDock' && fieldName === 'kind'
+      const enumOptions = type === 'editorialHero' && fieldName === 'layout'
+        ? [['', 'Editorial mit Bildrahmen'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
+        : type === 'mobileActionDock' && fieldName === 'kind'
         ? [
             ['call', 'Anrufen'],
             ['route', 'Route'],
@@ -555,6 +557,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if (/color|colour|farbe|overlay/i.test(fieldName)) {
         return <ColorField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} allowEmpty />;
       }
+      if (/imageAlt$/i.test(fieldName)) return <Field key={renderKey} label="Alternativtext des Bildes" value={value} onChange={(next) => updateAtPath(path, next)} />;
       if (/image|background|photo|avatar|poster|logo/i.test(fieldName)) {
         const positionPath = imagePositionPath(path);
         const positionValue = valueAtPath(positionPath);
@@ -878,6 +881,7 @@ function FaqEditor({ data, onChange }: EditorProps) {
 // ─── CTA Band Editor ────────────────────────────────────────────
 function CtaBandEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
+    layout: (data.layout as string) || 'classic',
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
@@ -887,6 +891,7 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
+      <SelectField label="Darstellung" value={d.layout} options={['classic', 'plain']} onChange={(layout) => setD({ ...d, layout })} />
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
       <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
@@ -1239,6 +1244,7 @@ function UspStripEditor({ data, onChange }: EditorProps) {
 
 // ─── Services Grid Editor ────────────────────────────────────────
 function ServicesGridEditor({ data, onChange }: EditorProps) {
+  const [layout, setLayout] = useState((data.layout as string) || 'classic');
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
@@ -1255,7 +1261,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
       href: (c.href as string) || '',
     }))
   );
-  useReport({ headline, subline, badgeText, ctaLabel, ctaHref, manualCards: cards }, onChange);
+  useReport({ headline, subline, badgeText, ctaLabel, ctaHref, manualCards: cards, layout }, onChange);
 
   function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', imagePosition: 'center', mediaType: 'icon', href: '' }]); }
   function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
@@ -1263,6 +1269,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
+      <SelectField label="Darstellung" value={layout} options={['classic', 'index']} onChange={setLayout} />
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
@@ -1292,12 +1299,13 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
 
 // ─── Process Steps Editor ────────────────────────────────────────
 function ProcessStepsEditor({ data, onChange }: EditorProps) {
+  const [layout, setLayout] = useState((data.layout as string) || 'classic');
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
   const [steps, setSteps] = useState<{ title: string; text: string; icon: string }[]>(
     (data.steps as { title: string; text: string; icon: string }[]) || []
   );
-  useReport({ headline, badgeText, steps }, onChange);
+  useReport({ headline, badgeText, steps, layout }, onChange);
 
   function addStep() { setSteps([...steps, { title: '', text: '', icon: '' }]); }
   function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
@@ -1305,6 +1313,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
+      <SelectField label="Darstellung" value={layout} options={['classic', 'simple']} onChange={setLayout} />
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       {steps.map((step, i) => (
@@ -1572,12 +1581,14 @@ function TeamEditor({ data, onChange }: EditorProps) {
 
 // ─── Rich Text Editor ────────────────────────────────────────────
 function RichTextEditor({ data, onChange }: EditorProps) {
+  const [titleAs, setTitleAs] = useState((data.titleAs as string) || (data.headingLevel as string) || 'h1');
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [content, setContent] = useState((data.content as string) || '');
-  useReport({ headline, content }, onChange);
+  useReport({ headline, content, titleAs }, onChange);
 
   return (
     <div className="space-y-3">
+      <SelectField label="Überschriftenebene" value={titleAs} options={['h1', 'h2']} onChange={setTitleAs} />
       <Field label="Headline (optional)" value={headline} onChange={setHeadline} />
       <RichTextEditorField label={fieldLabel('content')} value={content} onChange={setContent} />
     </div>
@@ -2890,17 +2901,19 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
 }
 
 function CategoryMosaicEditor({ data, onChange }: EditorProps) {
+  const [layout, setLayout] = useState((data.layout as string) || 'mosaic');
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [items, setItems] = useState<{ image: string; title: string; href: string; size: string }[]>(
     (data.items as any[]) || []
   );
-  useReport({ headline, subline, items }, onChange);
+  useReport({ headline, subline, items, layout }, onChange);
   function addItem() { setItems([...items, { image: '', title: '', href: '', size: 'small' }]); }
   function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
+      <SelectField label="Darstellung" value={layout} options={['mosaic', 'editorial']} onChange={setLayout} />
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <p className="text-xs text-zinc-500">Tipp: Die ersten 2 Einträge mit Größe "Groß" erscheinen als große Kacheln.</p>

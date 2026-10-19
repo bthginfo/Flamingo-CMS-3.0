@@ -6,6 +6,8 @@ import { ResilientNextImage as Image } from '@/components/ui/resilient-image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { CheckCircle } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
+import { sanitizeHtml } from '@/lib/sanitize-html';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 type ServiceItem = { title: string; text: string; image?: string; icon?: string; mediaType?: 'icon' | 'image'; features?: string[]; ctaLabel?: string; ctaHref?: string };
@@ -23,19 +25,20 @@ type SProps = { headline: string; subline: string; badgeText: string; items: Ser
 
 /* ─── CLASSIC: Alternating image/text rows, rounded images, feature checkmarks ─── */
 function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
+  const reduceMotion = useHydrationSafeReducedMotion();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
+      <motion.div initial={reduceMotion ? false : { opacity: 0, y: 30 }} animate={inView || reduceMotion ? { opacity: 1, y: 0 } : {}} transition={{ duration: reduceMotion ? 0 : 0.6 }} className="text-center mb-12 md:mb-20">
         {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="space-y-24">
         {items.map((item, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.15 }}
+          <motion.div key={i} initial={reduceMotion ? false : { opacity: 0, y: 40 }} animate={inView || reduceMotion ? { opacity: 1, y: 0 } : {}} transition={{ duration: reduceMotion ? 0 : 0.6, delay: reduceMotion ? 0 : i * 0.15 }}
             className={`flex flex-col ${i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-10 md:gap-12 lg:gap-16 items-center`} data-edit-collection="items" data-edit-index={i}>
             <div className="w-full lg:w-1/2">
               {item.mediaType === 'image' && item.image ? (
@@ -50,7 +53,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
             </div>
             <div className="w-full lg:w-1/2">
               <h3 className="font-display font-bold text-2xl lg:text-3xl mb-4 text-[color:var(--token-body)]" data-edit-path="title">{item.title}</h3>
-              <p className="text-[color:var(--token-body)] leading-relaxed mb-6 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
+              <div className="text-[color:var(--token-body)] leading-relaxed mb-6 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.text) }} />
               {item.features && item.features.length > 0 && (
                 <ul className="space-y-2 mb-6">
                   {item.features.map((f, fi) => <li key={fi} className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]" data-edit-collection="features" data-edit-index={fi}><CheckCircle size={16} className="text-[color:var(--token-check)] shrink-0" />{f}</li>)}

@@ -14,7 +14,7 @@ export function LegalContentSection({ data }: Props) {
   return (
     <section className="py-16">
       <div className="max-w-3xl mx-auto px-6">
-        {headline && <h1 className="font-display text-3xl md:text-4xl font-bold mb-12 text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h1>}
+        {headline && <h1 className="font-display text-[clamp(1.25rem,6vw,2.25rem)] md:text-4xl font-bold mb-12 text-[color:var(--token-heading)] [text-wrap:balance]" data-edit-path="headline">{headline}</h1>}
         {content && (
           <div
             className="prose prose-slate max-w-none prose-headings:font-display prose-a:text-[color:var(--token-icon)] prose-a:no-underline hover:prose-a:underline rt-content mb-10"

@@ -15,10 +15,12 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "videoUrl": ""
   },
   "servicesGrid": {
-    "badgeText": ""
+    "badgeText": "",
+    "layout": ""
   },
   "processSteps": {
     "badgeText": "",
+    "layout": "",
     "subline": ""
   },
   "faq": {
@@ -31,13 +33,15 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "ctaSecondary": {
       "label": "",
       "href": ""
-    }
+    },
+    "layout": ""
   },
   "contact": {
     "badgeText": "",
     "formFields": [],
     "introText": "",
     "mapEmbedUrl": "",
+    "privacyHref": "",
     "showMap": false
   },
   "map": {
@@ -93,17 +97,21 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "subline": ""
   },
   "richText": {
+    "headingLevel": "",
     "headline": "",
     "html": "",
-    "text": ""
+    "text": "",
+    "titleAs": ""
   },
   "legalContent": {
     "blocks": []
   },
   "freeText": {
+    "headingLevel": "",
     "headline": "",
     "html": "",
-    "text": ""
+    "text": "",
+    "titleAs": ""
   },
   "textImage": {
     "backgroundImage": "",
@@ -192,10 +200,16 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   "shopCategoryOverview": {
     "tenantId": ""
   },
+  "categoryMosaic": {
+    "layout": ""
+  },
   "floristHero": {
     "bgImage": "",
     "bgPosition": "",
     "imagePosition": ""
+  },
+  "occasionMosaic": {
+    "layout": ""
   },
   "weddingFloristry": {
     "overlayOpacity": 0
@@ -212,6 +226,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "ctaHref": "",
     "ctaIcon": "",
     "ctaLabel": "",
+    "layout": "",
     "services": []
   },
   "courseSchedule": {
@@ -255,6 +270,9 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "trustItems": [],
     "trustStripColor": "",
     "videoUrl": ""
+  },
+  "eventTypes": {
+    "layout": ""
   },
   "availabilityCta": {
     "imagePosition": "",
@@ -412,9 +430,13 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   },
   "editorialHero": {
     "badgeText": "",
+    "compact": false,
     "hideImageOnMobile": "",
     "image": "",
+    "imageAlt": "",
     "imageFit": "",
+    "imagePosition": "",
+    "imagePrimaryPosition": "",
     "layout": "",
     "mobileImageMode": "",
     "subline": "",
@@ -651,12 +673,15 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "headline": "",
     "introText": "",
     "mapEmbedUrl": "",
+    "privacyHref": "",
     "showMap": false,
     "subline": "",
     "submitLabel": ""
   },
   "textBlock": {
     "content": "",
-    "html": ""
+    "headingLevel": "",
+    "html": "",
+    "titleAs": ""
   }
 };

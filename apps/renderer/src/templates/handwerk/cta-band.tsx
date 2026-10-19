@@ -5,6 +5,7 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
+import { ActionGroup, ActionLink } from '@/templates/shared/section-primitives';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -14,6 +15,13 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const badgeText = (data.badgeText as string) || '';
   const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
   const ctaSecondary = data.ctaSecondary as { label: string; href: string; icon?: string } | undefined;
+  if (data.layout === 'plain') return <div className="grid items-center gap-8 border-t border-[var(--token-divider)] py-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
+    <div>
+      {headline && <h2 className="font-display max-w-[24ch] text-3xl font-semibold leading-tight text-[color:var(--token-heading)] md:text-4xl [text-wrap:balance]" data-edit-path="headline">{headline}</h2>}
+      {subline && <p className="mt-4 max-w-[65ch] text-base leading-7 text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
+    </div>
+    <ActionGroup><ActionLink action={cta || {}} editKey="ctaPrimary" /><ActionLink action={ctaSecondary || {}} editKey="ctaSecondary" tone="secondary" showArrow={false} /></ActionGroup>
+  </div>;
   // Colors come from styleOverrides (CSS vars: --style-section-bg, --style-heading-color, --style-accent-color)
   const colors = {
     bgColor: undefined as string | undefined,

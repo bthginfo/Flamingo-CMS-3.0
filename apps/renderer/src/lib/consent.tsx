@@ -80,6 +80,9 @@ type ConsentContextValue = {
   ready: boolean;
   needsDecision: boolean;
   consent: StoredConsent;
+  settingsOpen: boolean;
+  openSettings: () => void;
+  closeSettings: () => void;
   acceptAll: () => void;
   rejectAll: () => void;
   setConsent: (selection: ConsentSelection) => void;
@@ -91,6 +94,9 @@ const FALLBACK_CONTEXT: ConsentContextValue = {
   ready: false,
   needsDecision: false,
   consent: undecidedConsent(),
+  settingsOpen: false,
+  openSettings: () => {},
+  closeSettings: () => {},
   acceptAll: () => {},
   rejectAll: () => {},
   setConsent: () => {},
@@ -103,6 +109,9 @@ const ConsentContext = createContext<ConsentContextValue | null>(null);
 export function ConsentProvider({ children }: { children: ReactNode }) {
   const [consent, setConsentState] = useState<StoredConsent>(undecidedConsent);
   const [ready, setReady] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const openSettings = useCallback(() => setSettingsOpen(true), []);
+  const closeSettings = useCallback(() => setSettingsOpen(false), []);
 
   const persist = useCallback((next: StoredConsent) => {
     try {
@@ -136,6 +145,7 @@ export function ConsentProvider({ children }: { children: ReactNode }) {
     setConsentState(next);
     setReady(true);
     persist(next);
+    setSettingsOpen(false);
   }, [persist]);
 
   const acceptAll = useCallback(() => {
@@ -174,12 +184,15 @@ export function ConsentProvider({ children }: { children: ReactNode }) {
     ready,
     needsDecision: ready && consent.ts === 0,
     consent,
+    settingsOpen,
+    openSettings,
+    closeSettings,
     acceptAll,
     rejectAll,
     setConsent: commit,
     allowCategory,
     revoke,
-  }), [acceptAll, allowCategory, commit, consent, ready, rejectAll, revoke]);
+  }), [acceptAll, allowCategory, closeSettings, commit, consent, openSettings, ready, rejectAll, revoke, settingsOpen]);
 
   return <ConsentContext.Provider value={value}>{children}</ConsentContext.Provider>;
 }

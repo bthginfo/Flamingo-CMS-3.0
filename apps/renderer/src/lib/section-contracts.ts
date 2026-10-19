@@ -330,6 +330,7 @@ export function getAllSectionContracts(): SectionContract[] {
         label: labelFromKey(key),
         type: inferFieldType(key, defaultData[key] ?? previewData[key] ?? schemaFields[key]),
         supportsFocalPoint: key.toLowerCase().includes('image') || key.toLowerCase().includes('logo'),
+        ...sectionLayoutField(type, key),
       })),
       colorFields,
       colorSlots: colorFields,
@@ -340,6 +341,20 @@ export function getAllSectionContracts(): SectionContract[] {
   });
 
   return derived.sort((a, b) => a.category.localeCompare(b.category) || a.label.localeCompare(b.label, 'de'));
+}
+
+/** Keep new reading-first variants discoverable to CMS and API consumers. */
+function sectionLayoutField(type: string, key: string): Partial<SectionFieldContract> {
+  const layouts: Record<string, string[]> = {
+    editorialHero: ['', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
+    servicesGrid: ['classic', 'index'], processSteps: ['classic', 'simple'],
+    ctaBand: ['classic', 'plain'], categoryMosaic: ['mosaic', 'editorial'],
+  };
+  if (key === 'layout' && layouts[type]) return { type: 'select', options: layouts[type] };
+  if (type === 'richText' && key === 'titleAs') return { type: 'select', options: ['h1', 'h2'] };
+  if (type === 'editorialHero' && key === 'compact') return { type: 'boolean' };
+  if (type === 'editorialHero' && ['imageAlt', 'imagePosition', 'imagePrimaryPosition'].includes(key)) return { type: 'text', supportsFocalPoint: false };
+  return {};
 }
 
 function getSchemaFieldsByType() {

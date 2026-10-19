@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 
 type RowLink = { label?: string; href?: string };
 type Row = {
@@ -21,6 +22,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
  * the section-level `startRight`).
  */
 export function ZigzagShowcaseSection({ data }: Props) {
+  const reduceMotion = useHydrationSafeReducedMotion();
   const rows = (data.rows as Row[]) || [];
   const startRight = data.startRight === true;
   if (!rows.length) return null;
@@ -32,10 +34,11 @@ export function ZigzagShowcaseSection({ data }: Props) {
         return (
           <div key={`${row.headline}-${i}`} className={`grid items-center gap-10 lg:grid-cols-2 lg:gap-16`} data-edit-collection="rows" data-edit-index={i}>
             <motion.div
-              initial={{ opacity: 0, x: imageRight ? -24 : 24 }}
+              initial={reduceMotion ? false : { opacity: 0, x: imageRight ? -24 : 24 }}
+              animate={reduceMotion ? { opacity: 1, x: 0 } : undefined}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.55 }}
+              transition={{ duration: reduceMotion ? 0 : 0.55 }}
               className={imageRight ? 'lg:order-1' : 'lg:order-2'}
             >
               {row.eyebrow && <p className="text-xs font-bold uppercase tracking-[0.2em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{row.eyebrow}</p>}
@@ -54,10 +57,11 @@ export function ZigzagShowcaseSection({ data }: Props) {
             </motion.div>
             {row.image && (
               <motion.div
-                initial={{ opacity: 0, y: 24 }}
+                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+                animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.55, delay: 0.1 }}
+                transition={{ duration: reduceMotion ? 0 : 0.55, delay: reduceMotion ? 0 : 0.1 }}
                 className={`relative ${imageRight ? 'lg:order-2' : 'lg:order-1'}`}
               >
                 <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-xl">

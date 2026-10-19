@@ -4,6 +4,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle, Info, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FormField } from '@/templates/shared/section-primitives';
+import { usePathname } from 'next/navigation';
+import { privacyHrefForPath } from '@/lib/privacy-link';
 import {
   DEFAULT_CONTACT_FORM_FIELDS,
   normalizeContactFormFields,
@@ -29,6 +31,7 @@ type Props = {
   className?: string;
   inputClassName?: string;
   leadContext?: LeadContext | null;
+  privacyHref?: string;
 };
 
 export function DynamicContactForm({
@@ -37,7 +40,9 @@ export function DynamicContactForm({
   className,
   inputClassName,
   leadContext: directLeadContext,
+  privacyHref,
 }: Props) {
+  const pathname = usePathname();
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
   const [storedLeadContext, setStoredLeadContext] = useState<LeadContext | null>(null);
@@ -148,6 +153,7 @@ export function DynamicContactForm({
             </div>
           )}
           {renderFields(formFields, baseInput, formId)}
+          <p className="max-w-[65ch] text-sm leading-6 text-[color:var(--token-muted)]">Wir verwenden Ihre Angaben zur Bearbeitung Ihrer Anfrage. Informationen zur Verarbeitung finden Sie in unserer <a href={privacyHref || privacyHrefForPath(pathname)} className="font-medium text-[color:var(--token-link)] underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">Datenschutzerklärung</a>.</p>
           <button type="submit" disabled={status === 'loading'} className="cms-button cms-button--primary w-full sm:w-auto">
             <Send aria-hidden="true" size={16} />
             <span>{status === 'loading' ? 'Wird gesendet…' : submitLabel}</span>

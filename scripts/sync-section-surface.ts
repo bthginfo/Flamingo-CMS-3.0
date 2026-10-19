@@ -150,7 +150,7 @@ function defaultForField(field: string): unknown {
   if (/opacity|count|limit|delay|height|width|intensity|duration|rating|price|number/i.test(field)) return 0;
   if (/headline|subline|title|label|text|href|image|icon|badge|eyebrow|slug|url|mode|align|overlay/i.test(field)) return '';
   if (/items|cards|blocks|steps|facts|values|stats|services|features|links|images|logos|rows|members|projects|packages|entries|slides|panels|highlights|trustItems|formFields|categories/i.test(field)) return [];
-  if (/show|enabled|disabled|reversed|highlighted|expandFirst|valid|success|error/i.test(field)) return false;
+  if (/show|enabled|disabled|reversed|highlighted|expandFirst|valid|success|error|^compact$/i.test(field)) return false;
   return '';
 }
 

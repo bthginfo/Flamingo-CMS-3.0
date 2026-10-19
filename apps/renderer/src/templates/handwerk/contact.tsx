@@ -6,7 +6,7 @@ import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-cont
 import { ConsentGate } from '@/components/consent-gate';
 import { CardSurface, PremiumSectionHeader } from '@/templates/shared/section-primitives';
 import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
-import { resolveContactInfoCards } from './contact-info';
+import { contactInfoHref, resolveContactInfoCards } from './contact-info';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -39,7 +39,7 @@ export function ContactSection({ data }: Props) {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-xs text-[color:var(--token-muted)] uppercase tracking-wider font-medium" data-edit-path="label">{card.label}</div>
-                <div className="text-sm font-semibold text-[color:var(--token-heading)] break-words" data-edit-path="value">{card.value}</div>
+                {contactInfoHref(card) ? <a href={contactInfoHref(card)} className="block py-1 text-base font-semibold text-[color:var(--token-heading)] break-words underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--token-icon)]" data-edit-path="value">{card.value}</a> : <div className="text-base font-semibold leading-7 text-[color:var(--token-heading)] break-words" data-edit-path="value">{card.value}</div>}
               </div>
             </CardSurface>
           ))}
@@ -51,6 +51,7 @@ export function ContactSection({ data }: Props) {
             <DynamicContactForm
               fields={formFields}
               submitLabel={submitLabel}
+              privacyHref={(data.privacyHref as string) || undefined}
               className="cms-card space-y-5 p-6 sm:p-8 lg:p-10"
             />
           </div>
