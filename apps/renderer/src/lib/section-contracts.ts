@@ -90,6 +90,10 @@ export const PILOT_SECTION_CONTRACTS: SectionContract[] = [
       { key: 'headline', label: 'Headline', type: 'text', required: true },
       { key: 'subline', label: 'Subline', type: 'richText' },
       { key: 'image', label: 'Bild', type: 'image', supportsFocalPoint: true },
+      { key: 'imageAlt', label: 'Alternativtext', type: 'text' },
+      { key: 'imagePosition', label: 'Bildausschnitt', type: 'text' },
+      { key: 'imageEffect', label: 'Bild-Effekt', type: 'select', options: ['none', 'parallax', 'kenBurns'] },
+      { key: 'imageEffectIntensity', label: 'Effekt-St?rke', type: 'select', options: ['subtle', 'medium', 'strong'] },
       { key: 'primaryCta', label: 'Primärer Button', type: 'cta' },
       { key: 'secondaryCta', label: 'Sekundärer Button', type: 'cta' },
       { key: 'facts', label: 'Fakten', type: 'list', itemFields: [{ key: 'value', label: 'Wert', type: 'text' }, { key: 'label', label: 'Label', type: 'text' }] },
@@ -346,7 +350,7 @@ export function getAllSectionContracts(): SectionContract[] {
 /** Keep new reading-first variants discoverable to CMS and API consumers. */
 function sectionLayoutField(type: string, key: string): Partial<SectionFieldContract> {
   const layouts: Record<string, string[]> = {
-    editorialHero: ['', 'studio', 'memorial', 'correspondence', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
+    editorialHero: ['', 'edition', 'portrait', 'journal', 'studio', 'memorial', 'correspondence', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
     teamSpotlight: ['', 'directory'],
     servicesGrid: ['classic', 'index'], processSteps: ['classic', 'simple'],
     ctaBand: ['classic', 'plain'], categoryMosaic: ['mosaic', 'editorial', 'spread'],
@@ -355,10 +359,11 @@ function sectionLayoutField(type: string, key: string): Partial<SectionFieldCont
   if (key === 'layout' && layouts[type]) return { type: 'select', options: layouts[type] };
   if (key === 'preset' && type === 'kineticIdentity') return { type: 'select', options: ['editorial', 'architectural', 'expressive'] };
   if (key === 'preset' && type === 'materialAtelier') return { type: 'select', options: ['architectural', 'quiet', 'editorial'] };
-  if (type === 'richText' && key === 'titleAs') return { type: 'select', options: ['h1', 'h2'] };
+  if (['richText', 'teamSpotlight'].includes(type) && key === 'titleAs') return { type: 'select', options: ['h1', 'h2'] };
+  if (['showKickers', 'showNumbers'].includes(key)) return { type: 'boolean' };
   if (type === 'editorialHero' && key === 'compact') return { type: 'boolean' };
   if (['editorialHero', 'textImage'].includes(type) && key === 'imageFit') return { type: 'select', options: ['cover', 'contain'] };
-  if (['editorialHero', 'textImage'].includes(type) && ['imageAlt', 'imagePosition', 'imagePrimaryPosition'].includes(key)) return { type: 'text', supportsFocalPoint: false };
+  if (['editorialHero', 'textImage', 'signatureGrid', 'ctaSplit', 'cinematicHero'].includes(type) && ['imageAlt', 'imagePosition', 'imagePrimaryPosition'].includes(key)) return { type: 'text', supportsFocalPoint: false };
   return {};
 }
 

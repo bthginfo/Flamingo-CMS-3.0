@@ -7,7 +7,7 @@ import { plain } from '@/lib/strip-html';
 import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
 import { focusAfterCinematicStory } from '@/lib/cinematic-navigation';
 
-type Chapter = { kicker?: string; title: string; text?: string; image?: string; ctaLabel?: string; ctaHref?: string };
+type Chapter = { kicker?: string; title: string; text?: string; image?: string; imageAlt?: string; imagePosition?: string; ctaLabel?: string; ctaHref?: string };
 type IndexedChapter = Chapter & { sourceIndex: number };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -16,7 +16,7 @@ function ChapterCards({ chapters }: { chapters: IndexedChapter[] }) {
     <div className="space-y-5">
       {chapters.map((chapter, index) => (
         <article key={chapter.sourceIndex} className="overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)]" data-card data-edit-collection="chapters" data-edit-index={chapter.sourceIndex}>
-          {chapter.image && <img src={chapter.image} alt="" className="aspect-[4/3] w-full object-cover" loading="lazy" data-edit-image="image" />}
+          {chapter.image && <img src={chapter.image} alt={chapter.imageAlt || ''} className="aspect-[4/3] w-full object-cover" style={{ objectPosition: chapter.imagePosition || 'center' }} loading="lazy" data-edit-image="image" />}
           <div className="p-6">
             {chapter.kicker && <p className="text-xs font-bold text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{chapter.kicker}</p>}
             <h3 className="mt-2 text-2xl font-black text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{chapter.title}</h3>
@@ -81,7 +81,7 @@ export function CinematicChaptersSection({ data }: Props) {
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <AnimatePresence mode="sync" initial={false}>
             <motion.div key={active.sourceIndex} initial={reduceMotion ? false : transitionInitial} animate={{ opacity: 1, y: 0, scale: 1 }} exit={reduceMotion ? undefined : transitionExit} transition={{ duration: reduceMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }} className="absolute inset-0" data-edit-collection="chapters" data-edit-index={active.sourceIndex}>
-              {active.image ? <img src={active.image} alt="" className="h-full w-full object-cover" loading={activeIndex === 0 ? 'eager' : 'lazy'} data-edit-image="image" /> : <div className="h-full bg-[radial-gradient(circle_at_70%_25%,var(--token-accent),transparent_34%),linear-gradient(135deg,var(--token-section-bg-alt),var(--token-section-bg)_70%)]" />}
+              {active.image ? <img src={active.image} alt={active.imageAlt || ''} className="h-full w-full object-cover" style={{ objectPosition: active.imagePosition || 'center' }} loading={activeIndex === 0 ? 'eager' : 'lazy'} data-edit-image="image" /> : <div className="h-full bg-[radial-gradient(circle_at_70%_25%,var(--token-accent),transparent_34%),linear-gradient(135deg,var(--token-section-bg-alt),var(--token-section-bg)_70%)]" />}
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.9)_0%,rgba(0,0,0,.58)_45%,rgba(0,0,0,.18)_100%)]" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25" />
             </motion.div>

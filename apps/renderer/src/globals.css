@@ -1176,6 +1176,10 @@ html {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .cms-accordion--unnumbered .cms-accordion-trigger {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
   .cms-accordion-chevron {
     display: inline-grid;
     width: 2rem;

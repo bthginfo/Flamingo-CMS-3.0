@@ -8,7 +8,7 @@ type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function FaqContactSplitSection({ data }: Props) {
-  const badge = (data.badge as string) || (data.badgeText as string) || 'FAQ';
+  const badge = typeof data.badge === 'string' ? data.badge : (data.badgeText as string) || 'FAQ';
   const headline = (data.headline as string) || 'Häufige Fragen';
   const subline = (data.subline as string) || '';
   const items = (data.items as FaqItem[]) || [];
@@ -31,7 +31,7 @@ export function FaqContactSplitSection({ data }: Props) {
       />
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22.5rem] lg:items-start">
-        <FaqAccordion items={items} variant="cards" />
+        <FaqAccordion items={items} variant="cards" showNumbers={data.showNumbers !== false} />
 
         <CardSurface as="aside" className="p-6 lg:sticky lg:top-28 sm:p-7">
           <h3 className="text-xl font-bold text-[color:var(--token-card-heading)]" data-edit-path="contactTitle">{contactTitle}</h3>

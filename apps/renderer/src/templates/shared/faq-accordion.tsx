@@ -15,17 +15,19 @@ export function FaqAccordion({
   items,
   defaultOpenFirst = false,
   variant = 'cards',
+  showNumbers = true,
   className,
 }: {
   items: FaqAccordionItem[];
   defaultOpenFirst?: boolean;
   variant?: 'cards' | 'divided' | 'minimal';
+  showNumbers?: boolean;
   className?: string;
 }) {
   if (!items.length) return null;
 
   return (
-    <div className={cn('cms-accordion', `cms-accordion--${variant}`, className)}>
+    <div className={cn('cms-accordion', `cms-accordion--${variant}`, !showNumbers && 'cms-accordion--unnumbered', className)}>
       {items.map((item, index) => (
         <details
           key={`${item.question || 'faq'}-${index}`}
@@ -35,7 +37,7 @@ export function FaqAccordion({
           data-edit-index={index}
         >
           <summary className="cms-accordion-trigger">
-            {variant !== 'minimal' && <span aria-hidden="true" className="cms-accordion-index">{String(index + 1).padStart(2, '0')}</span>}
+            {showNumbers && variant !== 'minimal' && <span aria-hidden="true" className="cms-accordion-index">{String(index + 1).padStart(2, '0')}</span>}
             <span className="cms-accordion-question" data-edit-path="question">{item.question || ''}</span>
             <ChevronDown aria-hidden="true" className="cms-accordion-chevron" size={19} />
           </summary>

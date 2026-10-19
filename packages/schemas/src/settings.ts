@@ -9,6 +9,7 @@ export const brandSchema = z.object({
   primaryColor: z.string().optional(),
   accentColor: z.string().optional(),
   themePresetId: z.string().optional(),
+  navMode: z.enum(['auto', 'solid']).optional(),
 });
 
 export const contactInfoSchema = z.object({

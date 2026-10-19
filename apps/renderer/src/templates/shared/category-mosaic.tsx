@@ -41,7 +41,7 @@ export function CategoryMosaicSection({ data }: Props) {
     <PremiumSectionHeader headline={headline} subline={subline} richSubline={false} />
     <div className="grid gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item, index) => <a key={item.href || index} href={item.href || '#'} className="group block outline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--token-icon)]" data-edit-collection="items" data-edit-index={index}>
-        {item.image && <div className="aspect-[4/3] overflow-hidden rounded-[var(--token-card-radius)]"><ResilientImage data-edit-image="image" src={item.image} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]" /></div>}
+        {item.image && <div className="aspect-[4/3] overflow-hidden rounded-[var(--token-card-radius)]"><ResilientImage data-edit-image="image" src={item.image} alt={item.imageAlt || item.title} style={{ objectPosition: item.imagePosition || 'center' }} className="h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]" /></div>}
         <h3 className="font-display mt-4 flex items-center justify-between gap-4 border-b border-[var(--token-divider)] pb-4 text-2xl font-semibold text-[color:var(--token-heading)]"><span data-edit-path="title">{item.title}</span><ArrowUpRight aria-hidden="true" size={22} className="shrink-0 text-[color:var(--token-icon)]" /></h3>
       </a>)}
     </div>

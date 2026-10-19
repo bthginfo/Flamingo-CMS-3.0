@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
  * if the background is dark or light, using canvas pixel analysis.
  * Returns true if the background behind the header is dark.
  */
-export function useHeaderContrast(initialDark: boolean): boolean {
+export function useHeaderContrast(initialDark: boolean, enabled = true): boolean {
   const [isDark, setIsDark] = useState(initialDark);
 
   const sampleImage = useCallback((img: HTMLImageElement) => {
@@ -83,6 +83,7 @@ export function useHeaderContrast(initialDark: boolean): boolean {
   }, [sampleImage]);
 
   useEffect(() => {
+    if (!enabled) return;
     // Small delay to ensure DOM is rendered
     const timer = setTimeout(analyze, 100);
 
@@ -97,7 +98,7 @@ export function useHeaderContrast(initialDark: boolean): boolean {
     observer.observe(firstSection, { childList: true, subtree: false, attributes: true, attributeFilter: ['class', 'style'] });
 
     return () => { clearTimeout(timer); observer.disconnect(); };
-  }, [analyze]);
+  }, [analyze, enabled]);
 
   return isDark;
 }

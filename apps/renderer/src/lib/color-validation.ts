@@ -195,6 +195,9 @@ const BRAND_COLOR_FIELDS = [
 
 export function validateBrandPayload(brand: Record<string, unknown>): ColorIssue[] {
   const issues: ColorIssue[] = [];
+  if (brand.navMode !== undefined && brand.navMode !== 'auto' && brand.navMode !== 'solid') {
+    issues.push({ severity: 'error', code: 'invalid_nav_mode', location: 'brand.navMode', message: 'Navigation mode must be auto or solid.', hint: 'Use auto for image-aware navigation or solid for the configured navigation surface.' });
+  }
   for (const f of BRAND_COLOR_FIELDS) {
     const v = brand[f];
     if (v !== undefined && v !== null && v !== '') {

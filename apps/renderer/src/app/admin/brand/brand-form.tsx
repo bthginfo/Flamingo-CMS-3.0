@@ -60,6 +60,7 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
     footerTextColor: initial.footerTextColor || '',
     navLinkColor: initial.navLinkColor || '',
     navBgColor: initial.navBgColor || '',
+    navMode: initial.navMode || 'auto',
     navBrandColor: initial.navBrandColor || '',
     navLogoColor: initial.navLogoColor || '',
     headingColor: initial.headingColor || '',
@@ -294,6 +295,14 @@ export function BrandForm({ initial, industry, activeStyle }: { initial: BrandDa
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Navigation & Header</h2>
         <p className="text-sm text-zinc-500">Farben für die Hauptnavigation und den Info-Balken am oberen Seitenrand.</p>
+        <label className="block">
+          <span className="admin-label">Navigationsfläche</span>
+          <select className="admin-input mt-1.5" value={form.navMode} onChange={event => setForm(current => ({ ...current, navMode: event.target.value as 'auto' | 'solid' }))}>
+            <option value="auto">Automatisch passend zum Einstieg</option>
+            <option value="solid">Feste Fläche in der Navigationsfarbe</option>
+          </select>
+          <span className="mt-1.5 block text-xs text-zinc-500">Eine feste Fläche erhält die gewählten Logo- und Linkfarben auch über Fotografien.</span>
+        </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <label className="admin-label">Navigations-Links</label>

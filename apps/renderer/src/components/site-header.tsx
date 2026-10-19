@@ -123,8 +123,10 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const mobileMenuTriggerRef = useRef<HTMLButtonElement>(null);
   const { scrollY } = useScroll();
   const pathname = usePathname();
-  const measuredHeroDark = useHeaderContrast(darkBg);
-  const isHeroDark = forceDarkNav ? true : measuredHeroDark;
+  const solidNavigation = brand.navMode === 'solid';
+  const measuredHeroDark = useHeaderContrast(darkBg, !solidNavigation);
+  const isHeroDark = solidNavigation ? isDarkColor(brand.navBgColor || '#ffffff') : forceDarkNav ? true : measuredHeroDark;
+  const navShowsSurface = solidNavigation || scrolled || !isHeroDark;
 
   useModalFocusTrap({
     active: mobileOpen,
@@ -165,14 +167,14 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const navLinkColorDesktop = brand.navLinkColor || ((scrolled || (!isHeroDark)) ? '#4b5563' : '#ffffff');
   const configuredNavHoverColor = brand.linkHoverColor || brand.accentColor;
   const activeNavBg = brand.navBgColor || 'rgba(255,255,255,0.8)';
-  const navSurfaceIsDark = !scrolled && darkBg ? true : ((scrolled || (!isHeroDark)) ? isDarkColor(activeNavBg) : isHeroDark);
+  const navSurfaceIsDark = solidNavigation ? isDarkColor(activeNavBg) : !scrolled && darkBg ? true : ((scrolled || (!isHeroDark)) ? isDarkColor(activeNavBg) : isHeroDark);
   const mobileToggleColor = navSurfaceIsDark ? '#ffffff' : '#111827';
   const mobileToggleHoverBg = navSurfaceIsDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.08)';
   const mobileNavBg = (brand.navBgColor || '').trim() || '#ffffff';
   const mobileNavIsDark = isDarkColor(mobileNavBg);
   const navLinkColorMobile = brand.navLinkColor || (mobileNavIsDark ? '#ffffff' : '#1f2937');
   const navLinkHoverColorDesktop = resolveNavigationHoverColor({
-    background: scrolled || !isHeroDark ? activeNavBg : '#111827',
+    background: navShowsSurface ? activeNavBg : '#111827',
     hover: configuredNavHoverColor,
     foreground: navLinkColorDesktop,
     canvas: navSurfaceIsDark ? '#111827' : '#ffffff',
@@ -182,7 +184,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
     hover: configuredNavHoverColor,
     foreground: navLinkColorMobile,
   });
-  const mobileMutedColor = mobileNavIsDark ? 'rgba(255,255,255,0.72)' : '#6b7280';
+  const mobileMutedColor = navLinkColorMobile;
   const mobileBorderColor = mobileNavIsDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.08)';
   const mobileHoverBg = mobileNavIsDark ? 'rgba(255,255,255,0.08)' : 'rgba(17,24,39,0.06)';
   const mobileBrandColor = brand.navBrandColor || (mobileNavIsDark ? navLinkColorMobile : brand.primaryColor);
@@ -279,18 +281,18 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
           'transition-all duration-500',
           scrolled
             ? 'backdrop-blur-2xl shadow-lg border-b border-gray-100/50'
-            : isHeroDark ? 'bg-gradient-to-b from-black/70 via-black/30 to-transparent' : 'backdrop-blur-sm shadow-sm',
+            : solidNavigation ? 'shadow-sm' : isHeroDark ? 'bg-gradient-to-b from-black/70 via-black/30 to-transparent' : 'backdrop-blur-sm shadow-sm',
         )}
-        style={(scrolled || (!isHeroDark)) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
+        style={navShowsSurface ? { backgroundColor: brand.navBgColor || (solidNavigation ? '#ffffff' : 'rgba(255,255,255,0.8)') } : undefined}
         >
           <div className="mx-auto flex h-[var(--site-nav-height,72px)] max-w-[1480px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-            <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex min-w-0 shrink-0 items-center gap-2 font-display text-xl font-bold tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
+            <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex min-w-0 shrink-0 items-center gap-2 font-display text-xl font-bold tracking-tight transition-colors duration-300" style={{ color: navShowsSurface ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                 brand.navLogoColor ? (
                   <span
                     className="inline-block h-9 w-[118px] lg:w-[132px] 2xl:w-[140px]"
                     style={{
-                      backgroundColor: (scrolled || (!isHeroDark)) ? brand.navLogoColor : 'white',
+                      backgroundColor: navShowsSurface ? brand.navLogoColor : 'white',
                       WebkitMaskImage: `url(${brand.logoUrl})`,
                       WebkitMaskSize: 'contain',
                       WebkitMaskRepeat: 'no-repeat',
@@ -335,7 +337,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 </Link>
               ))}
               <div className="shrink-0">
-                <NavCtaButton cta={ctaData} scrolled={scrolled} isHeroDark={isHeroDark} linkPrefix={linkPrefix} />
+                <NavCtaButton cta={ctaData} scrolled={scrolled || solidNavigation} isHeroDark={isHeroDark} linkPrefix={linkPrefix} />
               </div>
               {i18n && i18n.locales.length > 1 && (
                 <LanguageSwitcher locales={i18n.locales} currentLocale={i18n.currentLocale} defaultLocale={i18n.defaultLocale} style={(i18n.style as 'dropdown' | 'inline') || 'dropdown'} />

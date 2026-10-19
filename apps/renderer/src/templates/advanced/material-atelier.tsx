@@ -6,7 +6,7 @@ import { useEffect, useId, useState } from 'react';
 import { safeContentUrl } from '@/lib/safe-content-url';
 import { visibleText } from '@/lib/visible-content';
 import { useHydrationSafeReducedMotion } from '@/lib/use-hydration-safe-reduced-motion';
-import { ResilientImage } from '@/components/ui/resilient-image';
+import { ResilientNextImage } from '@/components/ui/resilient-image';
 import { AdvancedIntro, AdvancedLink, type AdvancedCta } from './advanced-shared';
 
 type AtelierItem = { id?: string; title?: string; kicker?: string; text?: string; image?: string; imageAlt?: string; imagePosition?: string; href?: string; ctaLabel?: string; meta?: string[] };
@@ -40,7 +40,7 @@ export function MaterialAtelierSection({ data }: Props) {
         </div>
         <div id={id} aria-live="polite" className={`min-w-0 ${editorial ? 'lg:col-start-2 lg:row-start-1' : 'lg:col-start-1 lg:row-start-1'}`}>
           <AnimatePresence mode="wait" initial={false}><motion.figure key={selected.id || selected.sourceIndex} initial={reduceMotion ? false : { opacity: .75, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: .75 }} transition={{ duration: reduceMotion ? 0 : quiet ? .2 : .35 }} className="m-0" data-edit-collection="items" data-edit-index={selected.sourceIndex}>
-            <div className={`overflow-hidden bg-[var(--token-section-bg-alt)] ${quiet ? 'aspect-[4/3] p-4' : editorial ? 'aspect-[5/4] lg:aspect-[4/5]' : 'aspect-[4/3]'}`}><ResilientImage src={selected.image} alt={selected.imageAlt || selected.title} loading="lazy" className={`h-full w-full ${quiet ? 'object-contain' : 'object-cover'}`} style={{ objectPosition: selected.imagePosition || 'center' }} data-edit-image="image" /></div>
+            <div className={`relative overflow-hidden bg-[var(--token-section-bg-alt)] ${quiet ? 'aspect-[4/3]' : editorial ? 'aspect-[5/4] lg:aspect-[4/5]' : 'aspect-[4/3]'}`}><ResilientNextImage src={selected.image} alt={selected.imageAlt || selected.title} fill sizes="(min-width: 1024px) 60vw, 100vw" className={quiet ? 'object-contain p-4' : 'object-cover'} style={{ objectPosition: selected.imagePosition || 'center' }} data-edit-image="image" /></div>
             <figcaption className="mt-4 border-b border-[var(--token-divider)] pb-4 text-sm text-[color:var(--token-muted)]">{selected.kicker && <><span className="text-[color:var(--token-eyebrow)]" data-edit-path="kicker">{selected.kicker}</span>{' · '}</>}<span data-edit-path="title">{selected.title}</span></figcaption>
           </motion.figure></AnimatePresence>
         </div>

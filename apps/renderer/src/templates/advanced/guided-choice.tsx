@@ -20,6 +20,7 @@ export function GuidedChoiceSection({ data }: Props) {
   const questions = Array.isArray(data.questions) ? (data.questions as Question[]).filter((item) => item?.id && item?.label) : [];
   const results = Array.isArray(data.results) ? (data.results as Result[]).filter((item) => item?.id && item?.title) : [];
   const mode = data.mode === 'branch' ? 'branch' : 'score';
+  const showKickers = data.showKickers !== false;
   const [questionId, setQuestionId] = useState(questions[0]?.id || '');
   const [history, setHistory] = useState<Array<{ questionId: string; answer: Answer }>>([]);
   const [resultId, setResultId] = useState('');
@@ -91,12 +92,12 @@ export function GuidedChoiceSection({ data }: Props) {
           <div className="h-1.5 bg-[var(--token-section-bg-alt)]">
             <motion.div className="h-full bg-[var(--token-accent)]" animate={{ width: `${result ? 100 : progress}%` }} />
           </div>
-          <div className="grid min-h-[34rem] lg:grid-cols-[.38fr_.62fr]">
-            <aside className="border-b border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 lg:border-b-0 lg:border-r lg:p-9">
-              <p className="text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{result ? 'Ihre Empfehlung' : `Frage ${history.length + 1}`}</p>
-              <p className="mt-5 text-5xl font-black tracking-[-.06em] text-[color:var(--token-card-heading)]">{result ? '✓' : String(history.length + 1).padStart(2, '0')}</p>
-              <p className="mt-5 max-w-xs text-sm leading-6 text-[color:var(--token-card-body)]">Antworten Sie intuitiv. Ihre Auswahl wird nur für diese Empfehlung verwendet.</p>
-              <div className="mt-8 flex gap-2">
+          <div className={showKickers ? 'grid min-h-[34rem] lg:grid-cols-[.38fr_.62fr]' : 'flex flex-col-reverse'}>
+            <aside className={showKickers ? 'border-b border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 lg:border-b-0 lg:border-r lg:p-9' : 'border-t border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-5 md:px-9 lg:px-12'}>
+              {showKickers && <><p className="text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">{result ? 'Ihre Empfehlung' : `Frage ${history.length + 1}`}</p>
+              <p className="mt-5 text-5xl font-black tracking-[-.04em] text-[color:var(--token-card-heading)]">{result ? <Check size={36} aria-hidden="true" /> : String(history.length + 1).padStart(2, '0')}</p>
+              <p className="mt-5 max-w-xs text-sm leading-6 text-[color:var(--token-card-body)]">Antworten Sie intuitiv. Ihre Auswahl wird nur für diese Empfehlung verwendet.</p></>}
+              <div className={`flex flex-wrap gap-2 ${showKickers ? 'mt-8' : ''}`}>
                 <button type="button" onClick={back} disabled={!history.length && !result} className="inline-flex min-h-10 items-center gap-2 rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-3 text-xs font-bold text-[color:var(--token-card-heading,var(--token-heading))] disabled:opacity-35">
                   <ArrowLeft size={14} /> Zurück
                 </button>
@@ -117,10 +118,10 @@ export function GuidedChoiceSection({ data }: Props) {
                     data-edit-collection="questions"
                     data-edit-index={currentIndex}
                   >
-                    <p className="text-xs font-bold uppercase tracking-[.18em] text-[color:var(--token-card-muted,var(--token-muted))]">
+                    {showKickers && <p className="text-xs font-bold uppercase tracking-[.18em] text-[color:var(--token-card-muted,var(--token-muted))]">
                       {mode === 'score' ? `${currentIndex + 1} von ${questions.length}` : 'Passender nächster Schritt'}
-                    </p>
-                    <h3 className="mt-4 max-w-3xl text-3xl font-black leading-tight tracking-[-.04em] text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="label">{question?.label}</h3>
+                    </p>}
+                    <h3 className={`${showKickers ? 'mt-4' : ''} max-w-3xl text-3xl font-black leading-tight tracking-[-.04em] text-[color:var(--token-card-heading,var(--token-heading))]`} data-edit-path="label">{question?.label}</h3>
                     {question?.description && <p className="mt-3 max-w-2xl text-base leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="description">{plain(question.description)}</p>}
                     <div className="mt-8 grid gap-3 sm:grid-cols-2" role="group" aria-label={question?.label}>
                       {question?.answers?.map((answer, index) => (
@@ -136,16 +137,16 @@ export function GuidedChoiceSection({ data }: Props) {
                     key={result.id}
                     initial={reduceMotion ? false : { opacity: 0, scale: .97, filter: 'blur(8px)' }}
                     animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                    className="grid gap-7 md:grid-cols-[.72fr_1fr]"
+                    className={`grid gap-7 ${result.image || showKickers ? 'md:grid-cols-[.72fr_1fr]' : ''}`}
                     data-edit-collection="results"
                     data-edit-index={resultIndex}
                   >
-                    <div className="aspect-[4/5] overflow-hidden rounded-[var(--token-card-radius)] bg-[var(--token-section-bg-alt)]">
+                    {(result.image || showKickers) && <div className="aspect-[4/5] overflow-hidden rounded-[var(--token-card-radius)] bg-[var(--token-section-bg-alt)]">
                       {result.image ? <img src={result.image} alt="" loading="lazy" className="h-full w-full object-cover" data-edit-image="image" /> : <EmptyVisual label="Empfehlung" />}
-                    </div>
+                    </div>}
                     <div className="self-center">
-                      <p className="text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">Beste Übereinstimmung</p>
-                      <h3 className="mt-4 text-4xl font-black leading-[.98] tracking-[-.05em] text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{result.title}</h3>
+                      {showKickers && <p className="text-xs font-bold uppercase tracking-[.2em] text-[color:var(--token-eyebrow)]">Beste Übereinstimmung</p>}
+                      <h3 className={`${showKickers ? 'mt-4' : ''} text-4xl font-black leading-[.98] tracking-[-.04em] text-[color:var(--token-card-heading,var(--token-heading))]`} data-edit-path="title">{result.title}</h3>
                       {result.text && <p className="mt-4 text-base leading-7 text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="text">{plain(result.text)}</p>}
                       {Array.isArray(result.features) && (
                         <ul className="mt-5 space-y-2">

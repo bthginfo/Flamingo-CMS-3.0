@@ -1,8 +1,10 @@
 /** Import the existing firm's own public media. Never generates or substitutes people. */
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import { stockMedia } from './stock-media.mjs';
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const publicRoot = resolve(repository, 'apps/renderer/public/hagn-partner');
@@ -38,6 +40,23 @@ export async function importAssets() {
     const logo = local === 'logo.png';
     manifest.push({ path: `/hagn-partner/${local}`, sourceUrl, width, height, alt, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), mimeType: document ? 'application/pdf' : local.endsWith('.png') ? 'image/png' : 'image/jpeg', generated: false, creator: null, credit: document ? 'Original client document from the existing website; individual author not established.' : logo ? 'Original client logo from the existing website; designer not established.' : 'The source website credits Stefan Bösl Fotografie, Ingolstadt for firm photography and portraits; attribution is source-wide, not independently established per image.', license: 'Existing client website media; reuse authorized by the user, no new license asserted.' });
   }
+  for (const item of stockMedia) {
+    const path = resolve(publicRoot, item.path);
+    await mkdir(dirname(path), { recursive: true });
+    let bytes;
+    try { bytes = await readFile(path); } catch {
+      const response = await fetch(item.downloadUrl);
+      if (!response.ok) throw new Error(`Context media unavailable: ${response.status} ${item.sourceUrl}`);
+      const candidates = await readdir(resolve(repository, 'node_modules/.pnpm'));
+      const dependency = candidates.find(name => name.startsWith('sharp@'));
+      if (!dependency) throw new Error('Install the workspace image optimizer before importing context media.');
+      const require = createRequire(import.meta.url);
+      const sharp = require(resolve(repository, 'node_modules/.pnpm', dependency, 'node_modules/sharp'));
+      bytes = await sharp(Buffer.from(await response.arrayBuffer())).rotate().resize({ width: 1800, height: 1800, fit: 'inside', withoutEnlargement: true }).webp({ quality: 86, effort: 5 }).toBuffer();
+      await writeFile(path, bytes);
+    }
+    manifest.push({ ...item, path: `/hagn-partner/${item.path}`, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') });
+  }
   await mkdir(resolve(repository, 'docs/sites/hagn-partner'), { recursive: true });
   await writeFile(resolve(repository, 'docs/sites/hagn-partner/MEDIA-PROVENANCE.json'), `${JSON.stringify({ source: 'https://www.hagn-partner.de/', retrievedOn: '2026-10-19', assets: manifest }, null, 2)}\n`);
   return manifest;
@@ -45,5 +64,5 @@ export async function importAssets() {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const manifest = await importAssets();
-  console.log(`Imported ${manifest.length} original client assets; no database access.`);
+  console.log(`Imported ${sourceMedia.length} original client assets and ${stockMedia.length} visually checked context photographs; no database access.`);
 }

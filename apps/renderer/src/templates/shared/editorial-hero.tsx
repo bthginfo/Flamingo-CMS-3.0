@@ -4,6 +4,7 @@ import { ActionGroup, ActionLink, MediaFrame, PremiumSectionHeader } from './sec
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { StudioHero } from './studio-hero';
 import { CorrespondenceHero } from './correspondence-hero';
+import { EditionHero } from './edition-hero';
 
 type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -49,6 +50,8 @@ export function EditorialHeroSection({ data }: Props) {
   } as CSSProperties;
   if (!headline) return null;
 
+  if (['edition', 'portrait', 'journal'].includes(layout)) return <EditionHero data={data} />;
+
   if (layout === 'studio' || layout === 'memorial') return <StudioHero data={data} memorial={layout === 'memorial'} />;
   if (layout === 'correspondence') return <CorrespondenceHero data={data} />;
 
@@ -59,7 +62,7 @@ export function EditorialHeroSection({ data }: Props) {
     const quiet = layout === 'quiet';
     const compact = data.compact === true;
     return (
-      <div className="overflow-hidden bg-[var(--token-section-bg)]">
+      <div className="overflow-hidden bg-[var(--token-section-bg)] pt-[var(--opening-header-clearance,0px)]">
         <div className={`mx-auto grid max-w-[1440px] ${imagePrimary ? 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]' : ''}`}>
           <div className={`flex flex-col justify-center px-6 sm:px-10 lg:px-14 xl:px-20 ${compact ? 'py-12 md:py-16' : 'py-14 md:py-20 lg:py-24'}`}>
             <h1

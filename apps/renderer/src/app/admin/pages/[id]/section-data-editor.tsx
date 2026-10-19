@@ -531,7 +531,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       const fieldName = String(path[path.length - 1] || '');
       const multiline = value.length > 80 || /content|description|text|subline|bio|answer|excerpt|intro/i.test(fieldName);
       const enumOptions = type === 'editorialHero' && fieldName === 'layout'
-        ? [['', 'Editorial mit Bildrahmen'], ['studio', 'Studio – typografische Bühne'], ['memorial', 'Bildgeführt – ruhige Komposition'], ['correspondence', 'Korrespondenz – offene Typografie und Kontaktspalte'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
+        ? [['', 'Editorial mit Bildrahmen'], ['edition', 'Edition – Fototitelseite'], ['portrait', 'Porträt – Person im Einstieg'], ['journal', 'Journal – Titel und Bildstrecke'], ['studio', 'Studio – typografische Bühne'], ['memorial', 'Bildgeführt – ruhige Komposition'], ['correspondence', 'Korrespondenz – offene Typografie und Kontaktspalte'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
         : type === 'teamSpotlight' && fieldName === 'layout'
         ? [['', 'Bildkarten'], ['directory', 'Verzeichnis – Bilder und sichtbare Profile']]
         : type === 'editorialHero' && fieldName === 'imageFit'
@@ -3269,6 +3269,8 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     image: (data.image as string) || '',
+    imageAlt: (data.imageAlt as string) || '',
+    imagePosition: (data.imagePosition as string) || 'center',
     videoUrl: (data.videoUrl as string) || '',
     overlay: (data.overlay as string) || 'rgba(0,0,0,0.52)',
     align: (data.align as string) || 'left',
@@ -3289,7 +3291,8 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
       <Field label="Eyebrow / Badge" value={d.eyebrow} onChange={(v) => setD({ ...d, eyebrow: v })} />
       <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
-      <ImageUploadField label="Hero-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <ImageUploadField label="Hero-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} position={d.imagePosition} onPositionChange={(imagePosition) => setD({ ...d, imagePosition })} />
+      <Field label="Alternativtext" value={d.imageAlt} onChange={(imageAlt) => setD({ ...d, imageAlt })} />
       <Field label="Video-URL optional" value={d.videoUrl} onChange={(v) => setD({ ...d, videoUrl: v })} placeholder="https://..." />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <ColorField label={fieldLabel('overlay')} value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
@@ -3363,19 +3366,20 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
 }
 
 function ScrollStoryEditor({ data, onChange }: EditorProps) {
+  const [showKickers, setShowKickers] = useState(data.showKickers !== false);
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
-  const [steps, setSteps] = useState<{ kicker: string; title: string; text: string; image: string }[]>(
-    ((data.steps as any[]) || []).map((step) => ({ kicker: step.kicker || '', title: step.title || '', text: step.text || '', image: step.image || '' }))
+  const [steps, setSteps] = useState<{ kicker: string; title: string; text: string; image: string; imageAlt: string; imagePosition: string }[]>(
+    ((data.steps as any[]) || []).map((step) => ({ kicker: step.kicker || '', title: step.title || '', text: step.text || '', image: step.image || '', imageAlt: step.imageAlt || '', imagePosition: step.imagePosition || 'center' }))
   );
-  useReport({ headline, subline, steps }, onChange);
-  function addStep() { setSteps([...steps, { kicker: '', title: '', text: '', image: '' }]); }
+  useReport({ headline, subline, showKickers, steps }, onChange);
+  function addStep() { setSteps([...steps, { kicker: '', title: '', text: '', image: '', imageAlt: '', imagePosition: 'center' }]); }
   function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
   function updateStep(i: number, field: string, value: string) {
     setSteps(steps.map((step, idx) => idx === i ? { ...step, [field]: value } : step));
   }
   return (
-    <div className="space-y-4">
+    <div className="space-y-4"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={showKickers} onChange={event => setShowKickers(event.target.checked)} />Dachzeilen der Schritte anzeigen</label>
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {steps.map((step, i) => (
@@ -3384,7 +3388,7 @@ function ScrollStoryEditor({ data, onChange }: EditorProps) {
           <Field label={fieldLabel('kicker')} value={step.kicker} onChange={(v) => updateStep(i, 'kicker', v)} placeholder="01 / Analyse / Woche 1" />
           <Field label={fieldLabel('title')} value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
           <Field label={fieldLabel('text')} value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
-          <ImageUploadField label={fieldLabel('image')} value={step.image} onChange={(v) => updateStep(i, 'image', v)} />
+          <ImageUploadField label={fieldLabel('image')} value={step.image} onChange={(v) => updateStep(i, 'image', v)} position={step.imagePosition} onPositionChange={(v) => updateStep(i, 'imagePosition', v)} /><Field label="Alternativtext" value={step.imageAlt} onChange={(v) => updateStep(i, 'imageAlt', v)} />
         </div>
       ))}
       <button type="button" onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Story-Schritt hinzufügen</button>
@@ -3609,6 +3613,8 @@ function SignatureGridEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     image: (data.image as string) || '',
+    imageAlt: String(data.imageAlt || ''),
+    imagePosition: String(data.imagePosition || 'center'),
     traits: ((data.traits as any[]) || []).map(item => ({ title: item.title || '', text: item.text || '', icon: item.icon || '' })),
     stats: ((data.stats as any[]) || []).map(item => ({ value: item.value || '', label: item.label || '' })),
   });
@@ -3618,7 +3624,7 @@ function SignatureGridEditor({ data, onChange }: EditorProps) {
       <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
       <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
-      <ImageUploadField label="Signatur-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <ImageUploadField label="Signatur-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} position={d.imagePosition} onPositionChange={(imagePosition) => setD({ ...d, imagePosition })} /><Field label="Alternativtext" value={d.imageAlt} onChange={(imageAlt) => setD({ ...d, imageAlt })} />
       <TraitList items={d.traits} onChange={(items) => setD({ ...d, traits: items })} />
       <SimplePairs title="Stats" items={d.stats} onAdd={() => setD({ ...d, stats: [...d.stats, { value: '', label: '' }] })} onRemove={(i) => setD({ ...d, stats: d.stats.filter((_, idx) => idx !== i) })} onChange={(i, next) => setD({ ...d, stats: d.stats.map((item, idx) => idx === i ? next : item) })} firstLabel="Wert" secondLabel="Label" />
     </div>

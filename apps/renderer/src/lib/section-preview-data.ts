@@ -121,9 +121,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ], cta: { label: 'Haltung entdecken', href: '#details' },
   },
   signaturePath: {
+    showKickers: true,
     badge: 'Unser Weg', headline: 'Eine Linie verbindet Idee und Wirkung.', subline: 'Jede Station macht sichtbar, wie aus einem ersten Impuls ein belastbares Ergebnis wird.', pathPreset: 'craft',
     items: [
-      { id: 'dialog', title: 'Dialog', text: 'Wir beginnen mit den Fragen, die wirklich zählen.' },
+      { id: 'dialog', title: 'Dialog', text: 'Wir beginnen mit den Fragen, die wirklich zählen.', href: '#kontakt', ctaLabel: 'Dialog beginnen' },
       { id: 'fokus', title: 'Fokus', text: 'Ziele, Rahmen und Prioritäten werden konkret.' },
       { id: 'entwurf', title: 'Entwurf', text: 'Die Idee bekommt eine klare Form.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=900&q=84' },
       { id: 'handwerk', title: 'Handwerk', text: 'Präzision verbindet alle Übergänge.' },
@@ -139,6 +140,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ], cta: { label: 'Details besprechen', href: '#kontakt' },
   },
   guidedChoice: {
+    showKickers: true,
     badge: 'Schnell zum passenden Angebot', headline: 'Was passt wirklich zu Ihrem Vorhaben?', subline: 'Drei kurze Antworten reichen für eine erste, nachvollziehbare Empfehlung.', mode: 'score', restartLabel: 'Neu starten',
     questions: [
       { id: 'ziel', label: 'Was ist Ihnen am wichtigsten?', answers: [{ id: 'komfort', label: 'Mehr Komfort', scores: [{ resultId: 'premium', points: 3 }, { resultId: 'smart', points: 1 }] }, { id: 'effizienz', label: 'Mehr Effizienz', scores: [{ resultId: 'smart', points: 3 }] }, { id: 'design', label: 'Starkes Design', scores: [{ resultId: 'premium', points: 2 }, { resultId: 'design', points: 3 }] }] },
@@ -676,6 +678,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   cinematicHero: {
+    imageAlt: 'Lichtdurchfluteter B?roraum', imagePosition: 'center',
     eyebrow: 'Premium Launch',
     headline: 'Der erste Eindruck fühlt sich nach Marktführer an.',
     subline: 'Eine große, filmische Bühne für Angebote, die sofort Vertrauen aufbauen müssen: starke Bilder, klare Nutzenversprechen, schnelle Handlung.',
@@ -701,6 +704,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   scrollStory: {
+    showKickers: true,
     headline: 'Vom ersten Gespräch bis zum sichtbaren Ergebnis.',
     subline: 'Eine scrollbare Projektstory für Beratung, Planung, Umsetzung und messbaren Erfolg.',
     steps: [
@@ -2382,6 +2386,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     phone: '+49 89 1234567',
   },
   teamSpotlight: {
+    titleAs: 'h2',
     layout: '',
     badge: 'Team',
     headline: 'Die Menschen hinter der Arbeit.',
@@ -2393,6 +2398,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   faqContactSplit: {
+    showNumbers: true,
     badge: 'FAQ',
     headline: 'Häufige Fragen — und ein direkter Draht.',
     subline: 'Das Akkordeon beantwortet die Standardfragen, die Kontaktkarte fängt alles andere auf.',

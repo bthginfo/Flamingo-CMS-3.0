@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
 import { ActionGroup, ActionLink, CardSurface, MediaFrame, PremiumSectionHeader } from './section-primitives';
+import { ResilientNextImage } from '@/components/ui/resilient-image';
 
 type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -48,7 +49,7 @@ export function CtaSplitSection({ data }: Props) {
         </div>
         {image && (
           <MediaFrame className="min-h-[19rem] [direction:ltr] lg:min-h-[30rem]">
-            <img data-edit-image="image" src={image} alt={headline} className="absolute inset-0 h-full w-full object-cover" />
+            <ResilientNextImage data-edit-image="image" src={image} alt={String(data.imageAlt || headline)} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" style={{ objectPosition: String(data.imagePosition || 'center') }} />
           </MediaFrame>
         )}
       </div>

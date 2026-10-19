@@ -3,11 +3,11 @@
 import { WordReveal } from '@/components/ui/fx';
 
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 import { plain } from '@/lib/strip-html';
-import { ResilientImage } from '@/components/ui/resilient-image';
+import { ResilientNextImage } from '@/components/ui/resilient-image';
 
 type Cta = { label?: string; href?: string };
 type Fact = { value: string; label: string };
@@ -45,6 +45,7 @@ export function CinematicHeroSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const image = (data.image as string) || (data.bgImage as string) || (data.backgroundImage as string) || '';
+  const imagePosition = String(data.imagePosition || data.bgPosition || 'center');
   const videoUrl = (data.videoUrl as string) || '';
   const primaryCta = (data.primaryCta as Cta) || {};
   const secondaryCta = (data.secondaryCta as Cta) || {};
@@ -70,9 +71,9 @@ export function CinematicHeroSection({ data }: Props) {
   const mediaContent = (
     <>
       {videoUrl ? (
-        <video ref={videoRef} src={videoUrl} poster={image} autoPlay={false} muted loop playsInline className="h-[110%] w-full object-cover" />
+        <video ref={videoRef} src={videoUrl} poster={image} autoPlay={false} muted loop playsInline className="h-[110%] w-full object-cover" style={{ objectPosition: imagePosition }} />
       ) : image ? (
-        <ResilientImage data-edit-image="image" src={image} alt="" className="h-[110%] w-full object-cover" />
+        <ResilientNextImage data-edit-image="image" src={image} alt={String(data.imageAlt || '')} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: imagePosition }} />
       ) : (
         <div className="h-full w-full bg-[var(--token-section-bg)]" />
       )}
@@ -93,14 +94,14 @@ export function CinematicHeroSection({ data }: Props) {
         </motion.div>
       )}
 
-      <motion.div style={reduceMotion ? undefined : { y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center px-5 pb-14 pt-28 sm:px-6 md:pb-16 md:pt-32 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
+      <motion.div style={reduceMotion || requestedImageEffect === 'none' ? undefined : { y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center px-5 pb-14 pt-28 sm:px-6 md:pb-16 md:pt-32 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
         {eyebrow && <div className="section-badge mb-5 backdrop-blur" data-color-role="badge" data-edit-path="eyebrow">{eyebrow}</div>}
         {headline && <h1 className="max-w-5xl break-words text-[clamp(2.75rem,11vw,5rem)] font-black leading-[0.96] tracking-[-0.035em] [overflow-wrap:anywhere] md:text-7xl lg:text-8xl" style={{ color: heroText }} data-edit-path="headline"><WordReveal text={headline} /></h1>}
         {subline && <p className={`mt-6 max-w-2xl text-base leading-8 md:text-xl ${align === 'center' ? 'mx-auto' : ''}`} style={{ color: heroBody }} data-edit-path="subline">{plain(subline)}</p>}
 
         <div className="mt-9 flex w-full flex-wrap items-center gap-3 sm:w-auto">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-6 py-3 text-center text-sm font-bold text-[color:var(--token-btn-text)] shadow-xl transition hover:brightness-110 sm:w-auto"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--token-button-radius)] border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-6 py-3 text-center text-sm font-bold text-[color:var(--token-btn-secondary-text)] shadow-sm backdrop-blur transition hover:brightness-110 sm:w-auto"><Play size={15} /><span data-edit-path="label">{secondaryCta.label}</span></a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[var(--token-button-radius)] border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-6 py-3 text-center text-sm font-bold text-[color:var(--token-btn-secondary-text)] shadow-sm transition hover:brightness-110 sm:w-auto"><span data-edit-path="label">{secondaryCta.label}</span><ArrowRight size={15} aria-hidden="true" /></a>}
         </div>
 
         {factItems.length > 0 && (
