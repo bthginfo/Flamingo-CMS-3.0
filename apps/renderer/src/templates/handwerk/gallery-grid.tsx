@@ -14,6 +14,9 @@ const inverseCardForegroundTokens = {
   '--token-card-muted': 'var(--token-on-dark-muted)',
 } as CSSProperties;
 
+// A card token in className triggers the renderer's legacy rounded-card rule.
+const inverseControlBorder = { borderColor: 'var(--token-card-border)' } as CSSProperties;
+
 export function GalleryGridSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
@@ -59,12 +62,12 @@ export function GalleryGridSection({ data }: Props) {
     </div>
     <dialog data-color-context="dark" style={inverseCardForegroundTokens} ref={dialogRef} aria-label="Bildansicht" onClose={() => setLightbox(null)} onKeyDown={onKeyDown} onClick={event => { if (event.target === event.currentTarget) close(); }} className="fixed inset-0 m-auto h-full max-h-none w-full max-w-none bg-black/95 p-5 text-[color:var(--token-on-dark-heading)] backdrop:bg-black/70">
       {active && <div className="mx-auto flex h-full max-w-6xl flex-col items-center justify-center">
-        <button type="button" onClick={close} aria-label="Bildansicht schließen" autoFocus className="absolute right-4 top-4 grid h-12 w-12 place-items-center rounded-full bg-black/60 text-[color:var(--token-on-dark-heading)] outline-offset-4 hover:bg-white/20 focus-visible:outline focus-visible:outline-2"><X size={24} /></button>
+        <button type="button" onClick={close} aria-label="Bildansicht schließen" autoFocus className="absolute right-4 top-4 grid h-12 w-12 place-items-center rounded-full bg-black/60 text-[color:var(--token-on-dark-heading)] outline-offset-4 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:!outline-[color:var(--token-on-dark-heading)]"><X size={24} /></button>
         <img src={active.src} alt={active.alt || ''} className="max-h-[77vh] max-w-full object-contain" />
         <div className="mt-5 flex max-w-full items-center justify-center gap-6">
-          {images.length > 1 && <button type="button" aria-label="Vorheriges Bild" onClick={() => navigate(-1)} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[var(--token-card-border)] bg-black/60 text-[color:var(--token-on-dark-heading)] hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"><ChevronLeft size={24} /></button>}
+          {images.length > 1 && <button type="button" aria-label="Vorheriges Bild" style={inverseControlBorder} onClick={() => navigate(-1)} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border bg-black/60 text-[color:var(--token-on-dark-heading)] hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:!outline-[color:var(--token-on-dark-heading)]"><ChevronLeft size={24} /></button>}
           <div className="text-center text-sm leading-6 text-[color:var(--token-on-dark-body)]">{active.caption && <p className="text-[color:var(--token-on-dark-body)]">{active.caption}</p>}<p className="tabular-nums text-[color:var(--token-on-dark-muted)]">{(lightbox || 0) + 1} / {images.length}</p></div>
-          {images.length > 1 && <button type="button" aria-label="Nächstes Bild" onClick={() => navigate(1)} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[var(--token-card-border)] bg-black/60 text-[color:var(--token-on-dark-heading)] hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"><ChevronRight size={24} /></button>}
+          {images.length > 1 && <button type="button" aria-label="Nächstes Bild" style={inverseControlBorder} onClick={() => navigate(1)} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border bg-black/60 text-[color:var(--token-on-dark-heading)] hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:!outline-[color:var(--token-on-dark-heading)]"><ChevronRight size={24} /></button>}
         </div>
       </div>}
     </dialog>
