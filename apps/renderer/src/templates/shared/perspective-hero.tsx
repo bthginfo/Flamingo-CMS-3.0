@@ -1,7 +1,6 @@
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import type { CSSProperties } from 'react';
-import { ResilientNextImage } from '@/components/ui/resilient-image';
-import { action, copy, imageUrl, stringRows } from './perspective-utils';
+import { action, copy, imageUrl, perspectiveLinkProps, stringRows } from './perspective-utils';
+import { PerspectiveImage } from './perspective-image';
+import { PerspectiveActionIcon } from './perspective-action-icons';
 
 type Props = { data: Record<string, unknown> };
 
@@ -20,8 +19,8 @@ export function PerspectiveHeroSection({ data }: Props) {
   if (!headline && !text && !image) return null;
 
   const actions = (primary.label && primary.href) || (secondary.label && secondary.href) ? <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3 md:mt-9">
-    {primary.label && primary.href && <a href={primary.href} data-edit-link="primaryCta" className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-[var(--token-button-radius,8px)] bg-[var(--token-btn-bg)] px-6 py-3.5 text-base font-semibold text-[color:var(--token-btn-text)] transition-[filter,transform] duration-200 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current active:translate-y-px"><span data-edit-path="label">{primary.label}</span><ArrowRight aria-hidden="true" size={18} className="transition-transform motion-safe:group-hover:translate-x-1" /></a>}
-    {secondary.label && secondary.href && <a href={secondary.href} data-edit-link="secondaryCta" className="group inline-flex min-h-12 items-center gap-2 rounded-[var(--token-button-radius,8px)] border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-5 py-3 text-base font-semibold text-[color:var(--token-btn-secondary-text)] underline-offset-4 transition-[filter] hover:brightness-110 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"><span data-edit-path="label">{secondary.label}</span><ArrowUpRight aria-hidden="true" size={18} /></a>}
+    {primary.label && primary.href && <a href={primary.href} {...perspectiveLinkProps(primary.href)} data-edit-link="primaryCta" className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-[var(--token-button-radius,8px)] bg-[var(--token-btn-bg)] px-6 py-3.5 text-base font-semibold text-[color:var(--token-btn-text)] transition-[filter,transform] duration-200 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current active:translate-y-px"><PerspectiveActionIcon cta={primary} side="prefix" /><span data-edit-path="label">{primary.label}</span><PerspectiveActionIcon cta={primary} side="suffix" defaultIcon="ArrowRight" className="transition-transform motion-safe:group-hover:translate-x-1" /></a>}
+    {secondary.label && secondary.href && <a href={secondary.href} {...perspectiveLinkProps(secondary.href)} data-edit-link="secondaryCta" className="group inline-flex min-h-12 items-center gap-2 rounded-[var(--token-button-radius,8px)] border border-[var(--token-btn-secondary-border)] bg-[var(--token-btn-secondary-bg)] px-5 py-3 text-base font-semibold text-[color:var(--token-btn-secondary-text)] underline-offset-4 transition-[filter] hover:brightness-110 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"><PerspectiveActionIcon cta={secondary} side="prefix" /><span data-edit-path="label">{secondary.label}</span><PerspectiveActionIcon cta={secondary} side="suffix" /></a>}
   </div> : null;
   const facts = meta.length ? <ul className={`mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm leading-6 ${dark ? 'text-[color:var(--token-on-dark-muted)]' : 'text-[color:var(--token-muted)]'}`}>{meta.map(({ value, sourceIndex }) => <li key={sourceIndex} data-edit-path={`meta.${sourceIndex}`}>{value}</li>)}</ul> : null;
   const title = <>
@@ -30,7 +29,7 @@ export function PerspectiveHeroSection({ data }: Props) {
     {text && <p data-edit-path="text" className={`mt-6 max-w-[49ch] whitespace-pre-line text-[1.075rem] leading-[1.7] md:mt-8 md:text-[1.18rem] ${dark ? 'text-[color:var(--token-on-dark-body)]' : 'text-[color:var(--token-body)]'}`}>{text}</p>}
     {actions}
   </>;
-  const photo = (classes: string, sizes: string, contain = false) => image ? <figure className={`${classes.includes('absolute') ? '' : 'relative'} m-0 overflow-hidden bg-[var(--token-section-bg-alt)] ${classes}`}><ResilientNextImage src={image} alt={copy(data.imageAlt)} fill priority sizes={sizes} className={contain ? 'object-contain' : 'object-cover'} style={{ objectPosition: copy(data.imagePosition) || 'center', '--perspective-mobile-focal': copy(data.imageMobilePosition) || copy(data.imagePosition) || 'center' } as CSSProperties} data-edit-image="image" /></figure> : null;
+  const photo = (classes: string, sizes: string) => image ? <figure className={`${classes.includes('absolute') ? '' : 'relative'} m-0 overflow-hidden bg-[var(--token-section-bg-alt)] ${classes}`}><PerspectiveImage src={image} alt={copy(data.imageAlt)} priority sizes={sizes} position={copy(data.imagePosition)} mobilePosition={copy(data.imageMobilePosition)} motion={copy(data.motion)} imageEffect={copy(data.imageEffect)} hoverEffect={copy(data.hoverEffect)} /></figure> : null;
   const imageCaption = caption ? <p data-edit-path="caption" className="mx-auto mt-3 w-full max-w-[1512px] px-6 text-xs leading-5 text-[color:var(--token-muted)] sm:px-10 lg:px-16">{caption}</p> : null;
 
   if (layout === 'panorama') return <div className="bg-[var(--token-section-bg)] pt-[var(--opening-header-clearance,0px)]" data-perspective-layout={layout}>
@@ -50,7 +49,7 @@ export function PerspectiveHeroSection({ data }: Props) {
   if (layout === 'portrait') return <div className="bg-[var(--token-section-bg)] pt-[var(--opening-header-clearance,0px)]" data-perspective-layout={layout}>
     <div className="mx-auto grid max-w-[1512px] items-center gap-8 px-6 pb-14 pt-12 sm:px-10 lg:grid-cols-[1.08fr_1fr] lg:gap-20 lg:px-16 lg:pb-20 lg:pt-16">
       <div className="order-2 py-4 lg:order-1">{title}{facts}{caption && <p data-edit-path="caption" className="mt-7 max-w-[50ch] text-sm leading-6 text-[color:var(--token-muted)]">{caption}</p>}</div>
-      {photo('order-1 aspect-[6/5] w-full rounded-[14px] lg:order-2 lg:aspect-[4/5] lg:max-h-[700px]', '(min-width:1024px) 46vw, 100vw')}
+      {photo('order-1 aspect-[13/12] w-full max-w-[430px] justify-self-center rounded-[14px] lg:order-2 lg:justify-self-end', '(min-width:768px) 430px, calc(100vw - 48px)')}
     </div>
   </div>;
 

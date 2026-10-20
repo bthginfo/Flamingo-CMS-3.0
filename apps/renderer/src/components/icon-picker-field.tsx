@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback, useId } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 import * as icons from 'lucide-react';
 import { resolveIcon, canonicalIconName } from './ui/icon-map';
+import { useModalFocusTrap } from '@/hooks/use-modal-focus-trap';
 
 // Build the icon list from lucide exports. Do not require function exports
 // because newer bundling can represent component exports differently.
@@ -27,16 +29,15 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
   const [search, setSearch] = useState('');
   const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const openerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const fieldId = useId();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (open && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
-  }, [open]);
+  useModalFocusTrap({ active: open && mounted, containerRef: dialogRef, initialFocusRef: inputRef, onEscape: () => setOpen(false) });
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -44,16 +45,6 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
-  }, [open]);
-
-  // Close on Escape
-  useEffect(() => {
-    if (!open) return;
-    function handler(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
-    }
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
   }, [open]);
 
   const filtered = useMemo(() => {
@@ -75,57 +66,51 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
 
   return (
     <div className="text-sm">
-      <span className="text-gray-600 text-xs block mb-1">{label}</span>
+      <span id={`${fieldId}-label`} className="text-gray-600 text-xs block mb-1">{label}</span>
+      <div className="flex items-stretch gap-1.5">
       <button
+        ref={openerRef}
         type="button"
         onClick={() => setOpen(true)}
-        className="admin-input w-full flex items-center gap-2 text-left"
+        aria-label={`${label}: Symbol auswählen`}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls={open ? `${fieldId}-dialog` : undefined}
+        className="admin-input min-h-11 min-w-0 flex-1 flex items-center gap-2 text-left"
       >
         {value ? (
           <>
             {renderIcon(value, 16)}
             <span className="text-xs truncate flex-1">{value}</span>
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={(e) => { e.stopPropagation(); onChange(''); }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onChange('');
-                }
-              }}
-              className="text-gray-400 hover:text-red-500"
-              aria-label="Icon entfernen"
-            >
-              <X size={12} />
-            </span>
           </>
         ) : (
-          <span className="text-xs text-gray-400">Icon auswählen...</span>
+          <span className="text-xs text-gray-600">Symbol auswählen…</span>
         )}
       </button>
+      <button type="button" aria-label={`${label}: Symbol entfernen`} disabled={!value} onClick={() => { onChange(''); openerRef.current?.focus(); }} className="flex min-h-11 min-w-11 items-center justify-center rounded border border-gray-200 text-gray-600 hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-30"><X size={16} aria-hidden="true" /></button>
+      </div>
 
-      {open && mounted && (
+      {open && mounted && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
           {/* Modal */}
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div ref={dialogRef} id={`${fieldId}-dialog`} role="dialog" aria-modal="true" aria-labelledby={`${fieldId}-title`} tabIndex={-1} className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <h3 id={`${fieldId}-title`} className="sr-only">{label}: Symbol auswählen</h3>
             {/* Header */}
             <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
               <Search size={18} className="text-gray-400 shrink-0" />
               <input
                 ref={inputRef}
+                aria-label="Icons suchen"
                 className="flex-1 text-sm outline-none placeholder:text-gray-400"
                 placeholder="Icon suchen..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <button type="button" onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
-                <X size={18} />
+              <button type="button" aria-label="Symbolauswahl schließen" onClick={() => setOpen(false)} className="flex min-h-11 min-w-11 items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition">
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
 
@@ -140,6 +125,8 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
                       key={name}
                       type="button"
                       title={name}
+                      aria-label={name}
+                      aria-pressed={canonicalValue === name}
                       onClick={() => handleSelect(name)}
                       className={`flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all hover:bg-blue-50 hover:scale-105 ${canonicalValue === name ? 'bg-blue-100 ring-2 ring-blue-400 scale-105' : ''}`}
                     >
@@ -161,7 +148,7 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
               )}
             </div>
           </div>
-        </div>
+        </div>, document.body
       )}
     </div>
   );

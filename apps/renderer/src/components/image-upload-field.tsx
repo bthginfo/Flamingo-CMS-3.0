@@ -349,7 +349,7 @@ export function ImageUploadField({
           {onPositionChange && <span className="absolute bottom-2 left-2 rounded-md bg-zinc-950/70 px-2 py-1 text-[10px] font-medium text-white">Fokuspunkt im Bild wählen</span>}
         </div>
       )}
-      <p className="mt-1.5 text-[11px] leading-4 text-zinc-400">{getImageQualityHint(value, Boolean(onPositionChange))}</p>
+      <p className="mt-1.5 text-[11px] leading-4 text-zinc-600">{getImageQualityHint(value, Boolean(onPositionChange))}</p>
 
       <details className="mt-2 text-xs text-zinc-500">
           <summary className="inline-flex cursor-pointer items-center gap-1 rounded py-1 font-medium hover:text-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">

@@ -46,6 +46,36 @@ typography:
     fontWeight: 600
     lineHeight: 1.015
     letterSpacing: "-0.04em"
+  reel-opening:
+    fontFamily: "Manrope, var(--font-outfit), system-ui, sans-serif"
+    fontSize: "clamp(3.05rem, 7vw, 7rem)"
+    fontWeight: 600
+    lineHeight: 1.025
+    letterSpacing: "-0.04em"
+  reel-chapter:
+    fontFamily: "Manrope, var(--font-outfit), system-ui, sans-serif"
+    fontSize: "clamp(1.8rem, 3.3vw, 3.5rem)"
+    fontWeight: 600
+    lineHeight: 1.09
+    letterSpacing: "-0.03em"
+  atlas:
+    fontFamily: "Manrope, var(--font-outfit), system-ui, sans-serif"
+    fontSize: "clamp(2.6rem, 7.5vw, 7rem)"
+    fontWeight: 600
+    lineHeight: 1.035
+    letterSpacing: "-0.04em"
+  atlas-item:
+    fontFamily: "Manrope, var(--font-outfit), system-ui, sans-serif"
+    fontSize: "clamp(1.65rem, 2.9vw, 3rem)"
+    fontWeight: 600
+    lineHeight: 1.13
+    letterSpacing: "-0.025em"
+  spread-headline:
+    fontFamily: "Manrope, var(--font-outfit), system-ui, sans-serif"
+    fontSize: "clamp(2.35rem, 4.5vw, 5.3rem)"
+    fontWeight: 600
+    lineHeight: 1.06
+    letterSpacing: "-0.035em"
   headline:
     fontFamily: "Manrope, var(--font-outfit), system-ui, sans-serif"
     fontSize: "clamp(2.7rem, 5.6vw, 6.2rem)"
@@ -156,10 +186,15 @@ components:
     textColor: "{colors.ink-navy}"
     typography: "{typography.navigation}"
     height: "72px"
-  topic-row:
-    textColor: "{colors.ink-navy}"
-    typography: "{typography.topic}"
-    padding: "1.5rem 0"
+  reel-control:
+    backgroundColor: "{colors.surface-white}"
+    textColor: "{colors.link-blue}"
+    width: "48px"
+    height: "48px"
+  atlas-frame:
+    backgroundColor: "{colors.surface-cool}"
+    textColor: "{colors.on-photo-body}"
+    typography: "{typography.atlas-item}"
   portrait-name:
     textColor: "{colors.ink-navy}"
   footer:
@@ -173,175 +208,183 @@ components:
 
 **Creative North Star: "Perspektive"**
 
-Perspektive verbindet eine fotografische Bühne mit großer, klarer Manrope-Typografie und offenen fachlichen Leseflächen. Die bestätigte Apple-Referenz zeigt sich in der Größe der Bilder, der reduzierten Hierarchie und dem Wechsel zwischen weitläufigen Kapiteln und konzentrierter Information. Weiß, kühles Hellgrau und dunkle Marinetöne tragen die Kanzleiidentität.
+Perspektive verbindet große fotografische Flächen mit klarer Manrope-Typografie und offenen fachlichen Lesestrecken. Die bestätigte Apple-informierte Richtung zeigt sich in Bildmaßstab, reduzierter Hierarchie und dem Wechsel zwischen weitläufigen Bildkapiteln und konzentrierter Information. Weiß, kühles Hellgrau, dunkle Marinetöne und blaue Verweise tragen die bestehende Kanzleiidentität.
 
-Originalporträts und Kanzleiaufnahmen verankern die Darstellung in der tatsächlichen Kanzlei. Ergänzende Symbolfotografie gibt den Rechtsgebieten einen situativen Kontext und bleibt als Symbolbild kenntlich. Die Bildkomposition, die Länge der Lesestrecke und die Informationsform folgen dem jeweiligen Inhalt.
+Originalporträts und Kanzleiaufnahmen verankern die Darstellung in der tatsächlichen Kanzlei. Ergänzende Symbolfotografie gibt Situationen einen Kontext; Herkunft und Credits bleiben in Medienmetadaten, Sidecars und den vorhandenen rechtlichen Bildnachweisen. Bildproportionen, Textdichte und Informationsform folgen dem Inhalt. Die native Fotostrecke und der verlinkte Bildatlas ergänzen die vorhandenen Portrait-, Lese- und Serviceformen.
 
 **Key Characteristics:**
 
-- Große Fotografien und deutliche Titel prägen die Eröffnungen.
+- Große Fotografien, bewusste Asymmetrie und unterschiedliche Bildproportionen prägen die Komposition.
 - Manrope verbindet Titel, Lesetext und Bedienung.
-- Offene Themenzeilen, Porträts und Dokumentlisten gliedern den Inhalt.
+- Native Bildkapitel, offene Fachtexte, Porträts und zweckgebundene Dokumentlisten gliedern den Inhalt.
 - Eigene Vordergrundrollen sichern helle, dunkle und fotografische Kontexte.
+- Bewegung bleibt optional; Inhalt und native Ziele sind beim ersten Rendern vorhanden.
 - Ein dunkelblauer, oben gerundeter Footer schließt die Seiten ab.
 
-Geltung: Hagn & Partner, Quellenstand 20.10.2026. Grundlage sind der eingefrorene Export in tmp/hagn-perspective-2026-10-20/hagn-content.json, der aktuelle Builder und die verwendeten Rendererkomponenten. Der Export enthält 24 native Routen, 82 bearbeitbare Sections, neun verwendete Sectiontypen, 24 SEO-Zeilen und 39 Medien. Diese Dokumentation beschreibt die Quelle; Browserbestätigung, CMS-Liveprüfung und Veröffentlichung besitzen separate Belege. Produktfakten stehen in [PRODUCT.md](PRODUCT.md), die Pflegeverträge in [README.md](README.md).
+Geltung: Hagn & Partner, Quellenstand 20.10.2026. Grundlage sind die aktuellen Renderer und der eingefrorene Export `tmp/hagn-showcase-2026-10-20/hagn-content.json`: 24 Routen, 80 bearbeitbare Sections, zwölf verwendete Sectiontypen, 24 SEO-Zeilen und 39 Medien. SHA-256: `704c79cf5253416a7694afedb0c8240df3226815aac6242f83f0b1ffecec2681`. Der historische Seed `3cb1de89` gehört zur früheren Weltwahl; für diese codebasierte Kompositionsiteration wurden weder eine neue Katalogkarte noch ein neuer Seed oder Bild-Comp ausgewählt. Der zuvor synchronisierte [Oberflächenvertrag](.impeccable/surfaces/readme-md.md) hält die aktuelle Ausprägung fest. Produktfakten stehen in [PRODUCT.md](PRODUCT.md), Pflege und Releasebelege in [README.md](README.md).
 
 ## Colors
 
-Die Palette verwendet Weiß und kühle Grautöne als große Flächen, tiefe Marinetöne für Text und dunkle Kapitel und ein kontrolliertes Blau für Links. Die Frontmatter besitzt die normativen Werte; synthetische OKLCH-Streifen im Sidecar dienen ausschließlich der Farbvorschau.
+Weiß und kühle Grautöne bilden die großen Flächen, tiefe Marinetöne tragen Text und dunkle Kapitel, Blau kennzeichnet Verweise. Die Frontmatter besitzt die normativen Werte; synthetische OKLCH-Streifen im Sidecar dienen ausschließlich der Farbvorschau.
 
 ### Primary
 
-- **Ink Navy** (ink-navy): Titel, Haupttextakzente, primäre Aktionen, dunkle Sections und Footer.
-- **Link Blue / Link Blue Hover** (link-blue, link-blue-hover): Verweise und Funktionssymbole auf hellen Flächen.
+- **Ink Navy:** Titel, Haupttextakzente, primäre Aktionen, dunkle Sections und Footer.
+- **Link Blue / Link Blue Hover:** Verweise und Funktionssymbole auf hellen Flächen.
 
 ### Secondary
 
-- **Ink Alternate** (ink-alternate): Bildplatzhalter und ergänzende Flächen in dunklen Sections.
-- **On Ink Link** (on-ink-link): Links und Funktionsakzente auf dunklem Grund; Hover führt zu Weiß.
+- **Ink Alternate:** Bildplatzhalter und ergänzende Flächen in dunklen Sections.
+- **On Ink Link:** Links auf dunklem Grund; Hover führt zu Weiß.
 
 ### Neutral
 
-- **Surface White / Cool / Cool Deep**: Seitenfläche, ruhige Kapitelwechsel und Bildplatzhalter.
-- **Body Slate / Muted Slate**: Lesetexte sowie sekundäre Angaben auf hellen Flächen.
-- **Divider Grey / Outline Grey**: feine Inhaltslinien, sekundäre Aktionsrahmen und Feldgrenzen.
-- **On Ink Body / Muted / Divider / Outline**: zusammengehörige Text-, Nebenangaben-, Linien- und Rahmenrollen auf dunklen Flächen.
-- **On Photo Body / Muted**: Text und Bildnachweise auf den dunklen fotografischen Bühnen. Titel verwenden Surface White.
-- **Photo Scrim**: die dunkle Ausgangsfarbe der mehrteiligen fotografischen Überlagerung. Sie erzeugt eine stabile Textzone und lässt das Motiv erkennbar.
+- **Surface White / Cool / Cool Deep:** Seitenfläche, Kapitelwechsel und Bildplatzhalter.
+- **Body Slate / Muted Slate:** Lesetexte und sekundäre Angaben auf hellen Flächen.
+- **Divider Grey / Outline Grey:** feine Inhaltslinien, Aktionsrahmen und Feldgrenzen.
+- **On Ink Body / Muted / Divider / Outline:** Text-, Linien- und Rahmenrollen auf dunklen Flächen.
+- **On Photo Body / Muted:** Text und optionale Bildnachweise auf dunklen Bildflächen; Fototitel verwenden Surface White.
+- **Photo Scrim:** dunkle Ausgangsfarbe für die lesbare Textzone auf Fotografien.
 
-**The Kontextfarben Rule.** Helle Flächen, dunkle Flächen und Fototext verwenden jeweils ihre eigenen Vordergrundrollen. Bildüberlagerungen sind Lesbarkeitshilfen; Verläufe dienen hier keiner dekorativen Schriftfüllung.
+**The Kontextfarben Rule.** Helle Flächen, dunkle Flächen und Fototext verwenden jeweils ihre eigenen Vordergrundrollen. Eine Änderung der normalen Sectionüberschrift verändert weder Fototitel noch benachbarte Sections.
 
-Der Builder übernimmt pro Section ausschließlich die registrierten Farbrollen. Vorhandene Badge- und Kartenreserven im Markenobjekt begründen keine zusätzlichen Hagn-Komponenten.
+Fototext in Reel und Atlas besitzt einen lokalen `data-color-context="dark"`. Titel und Fotoaktionen lesen `--token-on-dark-heading`, Lesetext liest `--token-on-dark-body`; die normalen Textflächen behalten `--token-heading`, `--token-body`, `--token-link` und `--token-link-hover`. Die passenden CMS-Rollen heißen `onDarkHeading`, `onDarkBody` und `imageOverlay`. Die normale Überschriftenfarbe darf nicht zur Fotovordergrundfarbe umgedeutet werden.
+
+**The Lesbare Bildzone Rule.** Reel und Atlas legen die Abdunklung über die vollständige tatsächliche Textfläche. `--token-image-overlay` bestimmt die Farbe; die Deckkraft bleibt bis (3rem) vor der oberen Kante mindestens (88%), anschließend läuft sie transparent aus. Eine längere Beschreibung erweitert diese Zone mit dem Text.
+
+Panorama und die registrierte immersive-Variante behalten ihre eigenen mehrteiligen Bildüberlagerungen. Der Builder übernimmt ausschließlich registrierte Farbrollen; textbasierte Briefings, Themen- und Ressourcenlisten erhalten keinen funktionslosen Bild-Overlay-Regler. Reserven im Markenobjekt begründen keine zusätzlichen Hagn-Komponenten.
 
 ## Typography
 
-**Display Font:** Manrope über brand.headingFont.
-**Body Font:** Manrope über brand.bodyFont.
+**Display Font:** Manrope über `brand.headingFont`.
+**Body Font:** Manrope über `brand.bodyFont`.
 
-**Character:** Eine gemeinsame, kräftige Groteskschrift hält große Titel und sachliche Inhalte zusammen. Die Quelle fordert in den neuen Titeln überwiegend Gewicht (600); die Schriftfamilie wird über den bestehenden Website-Schriftproxy bereitgestellt. Die Frontmatter erfasst die tatsächlich gesetzten CSS-Werte, ohne eine verfügbare Schnittdatei oder einen gemessenen Browserwert zu behaupten.
+**Character:** Eine gemeinsame kräftige Groteskschrift verbindet große Titel und sachliche Inhalte. Die Frontmatter beschreibt gesetzte CSS-Werte; sie behauptet keine zusätzliche Schriftdatei. Titel verwenden überwiegend Gewicht (600).
 
 ### Hierarchy
 
-- **Display:** Panorama-H1 mit maximal (18ch). Die fließende Größe reicht bei einer Basis von (16px) von (51,2px) bis (132px).
-- **Statement / Portrait / Compact:** unterschiedliche H1-Größen und Lesebreiten aus der Frontmatter. Statement endet bei (17ch), Portrait bei (13ch), Compact bei (21ch). Journal verwendet (3,3rem–8,25rem), (7,7vw), Zeilenhöhe (1,015) und maximal (19ch).
-- **Headline:** die dokumentierte Foto-Kapitelüberschrift; benachbarte Komponenten verwenden eigene, eng verwandte Größen. Topic Explorer nutzt (2,8rem–6,2rem) bei (5,9vw), Editorial Briefing (2,7rem–6rem) bei (5,5vw), Dossier (2,5rem–4,8rem) bei (4,4vw), Resource List (2,5rem–5,25rem) bei (4,6vw).
-- **Topic / Title:** große Themenzeilen und fachliche Zwischenüberschriften. Sie bleiben auf offenen Flächen sichtbar.
-- **Body:** Editorial-Briefing-Text mit maximal (67ch). Andere Lesetexte liegen überwiegend bei (1,075rem–1,13rem), Zeilenhöhe (1,75–1,85) und (48–67ch).
-- **Lead:** Panorama-Einleitung ab md; mobil (1,075rem) bei gleicher Zeilenhöhe. Journal-Einleitungen verwenden (1,15rem), ab md (1,25rem), Zeilenhöhe (1,75).
-- **Label / Control / Input / Navigation:** funktionale Beschriftungen. Die Desktopnavigation ist versal und wächst ab 2xl auf (13px); der Inhalt verwendet normal gesetzte Titel. Bildnachweise sind kleiner (0,75rem / 1,25rem).
+- **Reel Opening:** kurzer Seitentitel mit maximal (15ch). Die Frontmatter führt Größe, Zeilenhöhe und Laufweite. Showcase verwendet (2,6rem–6rem) bei (5,7vw), Zeilenhöhe (1,06).
+- **Reel Chapter:** Bildkapiteltitel mit maximal (20ch); Beschreibungen folgen mit (1rem), ab md (1,075rem), Zeilenhöhe (1,7).
+- **Atlas / Atlas Item:** eigene Auftakt- und Bildtitelrollen. Der Auftakt endet bei (16ch), Bildtitel bei (20ch). Unter (640px) erhalten Bildtitel (1,6rem–2,2rem) bei (6,8vw).
+- **Display / Statement / Portrait / Compact:** die bestehenden Hero-H1-Rollen. Panorama endet bei (18ch), Statement bei (17ch), Portrait bei (13ch), Compact bei (21ch). Journal nutzt (3,3rem–8,25rem), (7,7vw), Zeilenhöhe (1,015), maximal (19ch).
+- **Headline / Spread Headline:** Foto-Kapitelüberschriften; Spread besitzt die kleinere eigene Rolle aus der Frontmatter.
+- **Topic / Title:** vorhandene fachliche Zwischenüberschriften. Topic bleibt eine unterstützte Bibliotheksrolle, im aktuellen Hagn-Export ist kein `topicExplorer` verwendet.
+- **Body / Lead:** fachliche Texte liegen überwiegend bei (1,075rem–1,13rem), Zeilenhöhe (1,75–1,85), mit Lesebreiten bis (67ch). Editorial Briefing verwendet den Body-Wert der Frontmatter.
+- **Label / Control / Input / Navigation:** funktionale Beschriftungen. Die Desktopnavigation ist versal und wächst ab 2xl auf (13px); Bildnachweise verwenden (0,75rem / 1,25rem).
 
-**The Lesbare Worte Rule.** Die neuen Kompositionen setzen normale Wortumbrüche und manuelle Silbentrennung. Deutsche Namen und Komposita erhalten ihre Zeilen durch redaktionellen Umbruch, Breite und Schriftgröße; beliebiges Auftrennen im Wort ist kein Gestaltungsmittel.
+**The Lesbare Worte Rule.** Titel behalten normale Wortumbrüche. Reel, Atlas und Spread erlauben sprachabhängige automatische Silbentrennung; die vorhandenen Hero- und Leserollen verwenden manuelle Silbentrennung. Feature-Fotoüberschriften erhalten bis (360px) zusätzlich `min-inline-size: 0`, `max-inline-size: 100%`, `font-size: clamp(2.15rem,11.5vw,2.35rem)` und automatische deutsche Silbentrennung. Bei (320px) ergibt das (36,8px); größere Ansichten behalten die normale Kapitelgröße. Redaktioneller Umbruch, Breite und Schriftgröße sichern lange deutsche Wörter auch bei (320px); beliebiges Auftrennen im Wort ist kein Gestaltungsmittel.
 
 ## Layout
 
-Die neuen vollflächigen Sections verwenden einen gemeinsamen Innenraum bis (1512px). Seine seitlichen Abstände wachsen von (24px) über (40px) ab sm auf (64px) ab lg. Reguläre fotografische und redaktionelle Kapitel setzen vertikal (64px), ab md (96px). Kompakte Listen und einzelne Ansprechpartner verwenden kürzere, komponenteneigene Abstände. Fehlt eine Kapitelüberschrift, reduzieren Topic Explorer, Briefing und Resource List ihren oberen Abstand auf (20px), ab md (32px); sie führen dann den vorherigen Auftakt fort.
-
-Die Sectionverträge der fünf neuen Typen verwenden fullBleed. Der Builder setzt deren äußere CMS-Abstände sowie die von contact und teamSpotlight auf none, weil die Komponenten ihren Innenraum selbst führen. Die Rechtsseiten bleiben im normalen Leseraster mit eigenem oberen CMS-Abstand.
+Der gemeinsame Innenraum endet bei (1512px). Seitliche Abstände wachsen von (24px) über (40px) ab sm auf (64px) ab lg. Reguläre Bild- und Lesekapitel setzen vertikal (64px), ab md (96px). Die fotografischen Komponenten führen ihre Abstände selbst; die jeweiligen äußeren CMS-Abstände stehen im Export auf `none`. Die Rechtsseiten behalten ihr Leseraster und eigenen oberen Abstand.
 
 ### Eröffnungen
 
-- **Panorama:** vollbreite fotografische Bühne, Text unten links. Mindesthöhe mobil (680px), ab md min(780px, 100svh − 72px). Der obere Textabstand beträgt mobil (96px), ab md (80px); die Unterkante erhält (48–64px). Das Foto wird priorisiert geladen. Die Panorama-Bildauslieferung verwendet sizes = "(max-width: 767px) 1210px, 100vw". Bei einer mobilen Bühne von (390 × 680px) zeichnet ein bildfüllendes 16:9-Motiv eine ungefähr (1209px) breite Bildebene; der Größenhinweis berücksichtigt diese Ebene bei der Auswahl der Bilddatei. Er ändert weder die sichtbare Layoutbreite noch den Fokalpunkt und ist eine Rendererregel, kein zusätzliches CMS-Feld.
-- **Statement:** weiße Titelfläche über einer anschließenden Panoramaaufnahme. Ab lg trennt ein (1,55:1)-Raster Titel und Einleitung. Die Fotohöhe wächst von (310px) über (430px) auf (470px).
-- **Portrait:** Bild zuerst auf Mobilgeräten, ab lg Text links und Originalporträt rechts im Verhältnis (1,08:1). Bildformat mobil (6:5), ab lg (4:5), maximale Höhe (700px).
-- **Journal:** breiter Titel über einer asymmetrischen Foto-/Textkomposition. Ab lg liegt das Verhältnis bei (1,12:0,88), das Bild wechselt von (6:5) auf (7:5).
-- **Compact:** kurzer typografischer Auftakt; ein optionales Bild hätte eine Höhe von (260px), ab md (360px). Die Hagn-Utility-Seiten verwenden diese Variante ohne Pflichtfoto.
-- **Contact Sheet, Editorial Contact und Legal Content:** eigenständige Personen-, Kontakt- und Leseauftakte ergänzen die fünf Hero-Varianten. Im Export ergeben sich acht Eröffnungsformen.
+- **Reel Opening:** Titel und Einleitung teilen ab lg ein Verhältnis von (1,6:1). Darunter folgen native Bildkapitel mit einer Mindesthöhe von (480px), ab md (550px), ab lg (580px). Die nächste Bildfläche bleibt bei mehreren Einträgen erkennbar.
+- **Atlas:** eigener Titel und ab lg ein asymmetrischer Bildverbund. Seine Flächen führen unmittelbar zu den jeweiligen Rechtsgebieten.
+- **Panorama:** vollbreite Fotografie mit Text unten links, mindestens (680px), ab md `min(780px, calc(100svh - 72px))`. Die Bildauswahl nutzt `sizes="(max-width: 767px) 1210px, 100vw"`, um die breite Bildebene eines bildfüllenden 16:9-Motivs zu versorgen.
+- **Statement:** weiße Titelfläche im Verhältnis (1,55:1), darunter eine Aufnahme mit (310px), ab sm (430px), ab lg (470px) Höhe.
+- **Portrait:** Bild zuerst auf Mobilgeräten, ab lg Text links und Originalporträt rechts. Das Bildformat ist (13:12), die Bildbreite höchstens (430px); der Größenhinweis liefert ab (768px) (430px). Diese Begrenzung erhält die verwendbare Porträtauflösung.
+- **Journal:** Titel über asymmetrischer Bild-/Textfolge im Verhältnis (1,12:0,88); Bildformat (6:5), ab lg (7:5).
+- **Compact:** kurzer typografischer Einstieg; ein optionales Bild verwendet (260px), ab md (360px) Höhe.
+- **Contact Sheet, Editorial Contact und Legal Content:** eigenständige Personen-, Kontakt- und Leseauftakte. Zusammen mit Reel und Atlas ergeben sich zehn Eröffnungsfamilien im Export.
 
-Der feste Header reserviert am ersten passenden Auftakt seine gemessene Höhe über --opening-header-clearance und --site-nav-height; der Ausgangswert beträgt (72px). Es gibt keinen zusätzlichen Headerabstand für jede folgende Section.
+Der feste Header reserviert ausschließlich am führenden passenden Auftakt seine gemessene Höhe über `--opening-header-clearance` und `--site-nav-height`; der Ausgangswert beträgt (72px).
 
-### Kapitel und Raster
+### Bildraster und Lesestrecken
 
-Photo Chapter feature verteilt ab lg das Bild auf acht und den Text auf vier von zwölf Spalten. Diptych paart zwei Fotos im Verhältnis (1,18:0,82); das zweite Bild beginnt versetzt (64px), ab md (96px). Die registrierte immersive-Variante besitzt eine dunkle Bühne bis (1800px) Breite und mindestens (660px), ab md (740px) Höhe; sie ist im eingefrorenen Hagn-Export unbenutzt.
+Die Reel-Spur scrollt innerhalb ihrer eigenen Fläche. Ein Kapitel belegt mobil `calc(100vw - 4rem)`, ab sm (84vw), ab lg `min(82vw, 1248px)`. Ein einzelner Eintrag füllt die Spur. Seitenabstand und Scroll-Padding stimmen überein; ab lg zentrieren sie sich auf die breite Inhaltsfläche.
 
-Der Themenindex verwendet großzügige native Disclosure-Zeilen. Editorial Briefing bietet offene Spalten, eine nummerierte Phasenfolge und ein Dossier mit Seitenkolumne. Resource List ordnet ab lg Gruppenüberschrift und Ressourcen im Verhältnis (0,6:1,6). Kontaktformular und Kontaktangaben teilen ab lg die Fläche im Verhältnis (0,85:1,15); mobil stehen Telefon und E-Mail vor dem Formular.
+Der Atlas verwendet ab lg zwölf Spalten: wiederkehrend (7/5), (5/7) und ein um zwei Spalten eingerücktes Bild über acht Spalten. Mindesthöhen variieren zwischen (440px) und (580px). Ab sm entsteht ein zweispaltiger Rhythmus mit breiten Zwischenbildern. Unter (640px) folgen breite und wechselweise um (24px) eingerückte Einzelbilder mit verschiedenen Höhen; der letzte Eintrag schließt vollbreit. Eigene Regeln für einen, zwei und sechs Einträge sowie für letzte ungerade Einträge verhindern Lücken. Eine leere Liste lässt Titel, Einleitung und optionale Folgeaktion nutzbar.
 
-Das Personenverzeichnis zeigt umfangreiche Gruppen ab md in zwei großen Spalten. Bei einer ungeraden Anzahl erhält die letzte Person eine breite Bild-/Textzeile. Eine Vorschau mit drei Personen verwendet ab md drei Spalten; ein einzelner fachlicher Ansprechpartner erhält ein kompaktes eigenes Raster bis (1224px). Die Originalporträts behalten ihren individuellen Ausschnitt; der Hagn-Datenstand verwendet überwiegend center 25%.
+Photo Chapter `spread` verteilt Titel und Text links sowie ein großes Hauptbild rechts; das zweite Bild sitzt ab lg versetzt über der Folgefläche. Der Zwischenrahmen verwendet die jeweilige Sectionfarbe, mobil (10px), ab md (16px). Feature nutzt ein (8/4)-Spaltenraster; Diptych paart Fotos im Verhältnis (1,18:0,82). Die unterstützte immersive-Variante bleibt im Hagn-Export unbenutzt.
 
-Die implementierten Tailwind-Breakpoints sind sm (640px), md (768px), lg (1024px), xl (1280px), 2xl (1536px). Die normale Desktopnavigation erscheint ab xl. Nur die gemeinsamen CMS-Buttons füllen unter (640px) die verfügbare Breite; die neuen Heroaktionen bleiben umbrechende Inlineaktionen. Der Panoramaauftakt besitzt mit imageMobilePosition einen eigenen mobilen Fokalpunkt unter (768px).
+Offene Rich-Text-Lesestrecken tragen die fachliche Tiefe. Briefing und Resource List bleiben für echte Überblicks- und Dokumentaufgaben verfügbar. Die fünf Kernrechtsgebiete besitzen unterschiedliche Sectionfolgen. Home-Reel und Rechtsgebietsatlas sind eigenständige Oberflächenkompositionen; ihre genaue Folge ist im Oberflächenvertrag festgehalten.
+
+Das Personenverzeichnis zeigt große Gruppen ab md in zwei Spalten, eine ungerade letzte Person als breite Zeile. Kurze Vorschauen verwenden drei Spalten, einzelne Ansprechpartner ein kompaktes Raster. Qualifikationen und Kontaktdaten bleiben sichtbar. Die implementierten Breakpoints sind sm (640px), md (768px), lg (1024px), xl (1280px) und 2xl (1536px). Die normale Desktopnavigation erscheint ab xl.
 
 ## Elevation & Depth
 
-Große Fotografien, wechselnde helle und dunkle Flächen sowie feine Linien schaffen die wesentliche Tiefe. Die neuen Heroaktionen, Themenzeilen, Personenkompositionen und Ressourcenlisten setzen keine Karten-Schatten. Die gemeinsam verwendete Formularaktion und der feste Header besitzen weiterhin ihre eigene Schattenbehandlung.
+Fotografien, überlagerte Bildränder, wechselnde Flächen und feine Linien schaffen Tiefe. Reel, Atlas, neue Bildkompositionen, Personen und Ressourcenlisten benötigen keine schwebenden Karten. Die vorhandene Formularaktion und der feste Header behalten ihre eigene Schattenbehandlung.
 
 ### Shadow Vocabulary
 
-- **Gemeinsame CMS-Aktion:** 0 8px 24px var(--token-shadow), bei Hover mit feinem Zeiger 0 14px 32px var(--token-shadow).
-- **Formularfeld:** inset 0 1px 0 color-mix(in srgb, var(--token-card-bg) 75%, transparent).
-- **Formularfokus:** 0 0 0 3px color-mix(in srgb, var(--token-accent) 16%, transparent).
-
-Der Brand-/Consulting-Fallback für Schatten bleibt eine geteilte Rendererregel. Die neuen Hagn-Komponenten begründen keinen neuen globalen Schattenwert. Der Sidecar führt die Quell-Snippets und Bewegungswerte als Erweiterungen.
+- **Gemeinsame CMS-Aktion:** `0 8px 24px var(--token-shadow)`, bei Hover mit feinem Zeiger `0 14px 32px var(--token-shadow)`.
+- **Formularfeld:** `inset 0 1px 0 color-mix(in srgb, var(--token-card-bg) 75%, transparent)`.
+- **Formularfokus:** `0 0 0 3px color-mix(in srgb, var(--token-accent) 16%, transparent)`.
 
 **The Offene Flächen Rule.** Themen, Personen und Dokumente erhalten ihren Zusammenhang durch Abstand, Typografie und feine Linien. Eine neue Inhaltsgruppe erfordert keine zusätzliche schwebende Karte.
 
 ## Shapes
 
-Foto-Kapitel und große Hero-Porträts verwenden den Medienradius photo; Personen- und Themenbilder den etwas kleineren portrait-grid-Radius. Panorama- und Statement-Bilder bleiben vollflächig rechteckig. Die Inhaltsaktionen folgen button, die Kontaktfelder field. Der größere inherited-card-Radius bleibt Teil vorhandener gemeinsamer Formzustände.
+Reel und Atlas verwenden rechteckige fotografische Flächen. Spread erzeugt seine Überschneidung durch Bildproportion und farbgleichen Zwischenrahmen. Bestehende Feature-, Diptych-, Journal- und Hero-Porträts verwenden den Medienradius `photo`; Personenbilder den kleineren `portrait-grid`. Inhaltsaktionen folgen `button`, Kontaktfelder `field`.
 
-Der Header besitzt eine pillenförmige Kontaktaktion. Der Footer verwendet seine eigene obere Rundung, footer-mobile und ab md footer-desktop. Diese funktionalen Sonderformen geben Inhaltsflächen keine pauschale Rundung vor. Inhaltslinien sind fein (1px).
+Die Headerkontaktaktion bleibt pillenförmig. Der Footer besitzt seine eigene obere Rundung, `footer-mobile` und ab md `footer-desktop`. Diese Sonderformen geben Inhaltsflächen keine pauschale Rundung vor. Inhaltslinien sind fein (1px).
 
 ## Components
 
 ### Buttons
 
-Primäre Heroaktionen sind gefüllte Textaktionen mit einer Mindesthöhe von (3rem). Auf heller Fläche stehen Ink Navy und Weiß zusammen, auf dem Panorama Weiß und Ink Navy. Sekundäre Aktionen verwenden eine transparente Fläche und eine eigene Rahmenrolle. Hover erhöht die Helligkeit; aktiv verschiebt sich die primäre Aktion um (1px). Die Übergänge dauern (200ms). Ein sichtbarer Fokus nutzt eine Outline von (2px) mit Abstand (4px).
+Primäre Heroaktionen haben mindestens (48px) Höhe, (200ms)-Übergänge und einen sichtbaren Fokus mit (2px) Outline und (4px) Abstand. Helle und dunkle Kontexte besitzen eigene Aktionsfarben. Sekundäre Aktionen verwenden ihre getrennten Hintergrund-, Text- und Rahmenrollen. Die gemeinsame Formularaktion behält mindestens (48px) Höhe und ihre vorhandene Schattenbehandlung.
 
-Perspective Link zeigt eine fachlich beschriftete Textaktion mit eingebettetem SVG-Pfeil, Mindesthöhe (44px), Farbwechsel und Unterstreichung bei Hover. Die kleine Pfeilbewegung ist an motion-safe gebunden. Die Formularaktion nutzt weiterhin den gemeinsamen CMS-Button mit (0,9375rem), Gewicht (650), Mindesthöhe (48px), eigenem Schatten und (220ms)-Übergängen.
+Perspective Link ist eine beschriftete native Textaktion mit mindestens (44px) Höhe, Unterstreichung bei Hover und optionalen SVG-Symbolen vor und nach dem Text. `iconPrefix` und `iconSuffix` werden tatsächlich gerendert; ein fehlender Suffix verwendet den kompatiblen Standardpfeil, ein explizit leerer Suffix entfernt ihn. Lokale Pfade, Pfadanker, PDF-Dateien, `tel:` und `mailto:` bleiben native Ziele. Externe HTTPS-Ziele öffnen mit `noopener noreferrer` separat.
 
 ### Cards / Containers
 
-Die aktuellen Hauptmuster sind offene Bild-, Text- und Listenflächen. Die neun im Export verwendeten Sectiontypen sind perspectiveHero, photoChapter, topicExplorer, editorialBriefing, resourceList, teamSpotlight, contact, timeline und legalContent. Andere registrierte Bibliotheksvarianten bleiben für bestehende Daten verfügbar und gehören dadurch nicht automatisch zu dieser Hagn-Gestaltung.
+Die zwölf im Export verwendeten Typen sind `editorialReel`, `imageAtlas`, `perspectiveHero`, `photoChapter`, `richText`, `editorialBriefing`, `resourceList`, `teamSpotlight`, `ctaBand`, `contact`, `timeline` und `legalContent`. Andere Bibliotheksvarianten bleiben unterstützt, ohne eine neue Standardkomposition für Hagn zu bilden.
 
 ### Inputs / Fields
 
-Editorial Contact nutzt das bestehende DynamicContactForm. Die hellen Felder haben eine Mindesthöhe von (48px), den Feldradius aus der Frontmatter und sichtbare Labels. Name und E-Mail stehen ab sm nebeneinander. Telefon bleibt optional; Name, E-Mail und Anliegen sind Pflichtfelder. Das Nachrichtenfeld startet mit fünf Zeilen und lässt sich vertikal vergrößern. Fokus verwendet den blauen Feldrahmen und den bestehenden Halo; deaktivierte Bedienelemente zeigen den vorhandenen gesperrten Zustand. Status- und Fehlerfarben stammen aus den vorhandenen semantischen Rendererrollen.
+Editorial Contact verwendet das bestehende DynamicContactForm mit sichtbaren Labels, mindestens (48px) hohen Feldern und dem Feldradius der Frontmatter. Name, E-Mail und Anliegen sind Pflichtfelder, Telefon optional. Das Nachrichtenfeld startet mit fünf Zeilen und ist vertikal vergrößerbar. Fokus nutzt den blauen Feldrahmen und den vorhandenen Halo. Status und Fehler behalten die semantischen Rendererrollen.
 
 ### Navigation
 
-brand.navMode ist solid: ein fester weißer Header mit Original-Kanzleilogo und dunklen Links. Der Innenraum reicht bis (1480px), die nominelle Höhe beträgt (72px). Desktoplinks heißen Rechtsgebiete, Anwälte, Kanzlei und Service; die eigene Kontaktaktion führt zu Kontakt & Termin. Die obere Leiste ist im gelieferten Datenstand deaktiviert.
+`brand.navMode = solid`: weißer fester Header, Original-Kanzleilogo, dunkle Links und eine Kontaktaktion. Innenraum bis (1480px), nominelle Höhe (72px). Die obere Leiste ist deaktiviert. Mobil öffnet der beschriftete Schalter den vorhandenen Dialog mit Fokusfalle, Escape, Schließen und Fokuswiederherstellung.
 
-Mobil öffnet ein beschrifteter Schalter den bestehenden Menüdialog. Fokusfalle, Escape, Schließen-Aktion und Fokuswiederherstellung gehören zum vorhandenen Verhalten. Farben werden im Marken-CMS gepflegt und stammen auch vor dunkler Fotografie aus dem gewählten soliden Navigationsmodus.
+### Fotografische Erzählung und Atlas
 
-### Fotografische Kapitel
+`editorialReel` bietet `opening` und `showcase`, `titleAs = h1/h2`, Überschrift, Einleitung, Bildkapitel und optionale Folgeaktion. Die native Scroll-Snap-Spur unterstützt Touch, sichtbare (48px)-Vor-/Zurück-Schalter und bei fokussierter Spur Pfeiltasten sowie Home/End. Randpositionen deaktivieren den passenden Schalter; die aktive Kapitelbezeichnung wird höflich angekündigt. Kein automatisches Weiterblättern. Inhalte und Verweise sind bereits serverseitig vorhanden.
 
-perspectiveHero besitzt die fünf oben beschriebenen Kompositionen. headline ist Klartext mit optionalen Zeilenumbrüchen und besitzt H1. image, imageAlt, imagePosition und imageMobilePosition steuern Motiv und Ausschnitt; caption und die beiden Aktionen sind unabhängige Felder. Leere Dachzeilen und Metadaten bleiben im Hagn-Export leer.
+`imageAtlas` bietet dieselben Bildkapitelfelder, einen eigenen Titel und eine optionale Folgeaktion. Ein Eintrag mit Ziel ist ein vollständiger nativer Anker; die sichtbare Linkzeile darin ist ein Span. Es gibt keine verschachtelten Links. Ohne Ziel bleibt der Eintrag ein Artikel. Die Headline-Ebene steuert die folgende Bildtitelebene.
 
-photoChapter besitzt feature, diptych und die derzeit unbenutzte immersive-Variante. Das Rich-Text-Feld wird vor Ausgabe bereinigt. Primär- und Zweitbild haben eigene Alttexte und Fokalpunkte. Die Überschrift besitzt H2.
+`perspectiveHero` behält fünf Layouts; `photoChapter` bietet `feature`, `diptych`, `spread` und `immersive`. Photo Chapter bereinigt Rich Text vor der Ausgabe. Haupt- und Zweitbild besitzen eigene Alttexte sowie Desktop- und Mobilfokalpunkte. Fototext ist unabhängig von normalem Text editierbar.
 
-### Themen, Fachtexte und Dokumente
+### Bewegung und Bildbearbeitung
 
-topicExplorer verwendet native details/summary mit einer gemeinsamen Namensgruppe; das erste sichtbare Thema ist standardmäßig offen. Alle Titel und Zusammenfassungen bleiben sichtbar, der Inhalt ist bereits serverseitig im Dokument enthalten. Ein offenes Thema zeigt Foto, fachlichen Text, Fragen, Ansprechpartnerangaben und Link. Die Zeile ist mindestens (112px), ab md (132px) hoch. Das Öffnen erfordert keine Animation oder clientseitig nachgeladene Inhalte.
+**The Native zuerst Rule.** Native Ziele und wesentlicher Inhalt bleiben ohne JavaScript und ohne Bewegung zugänglich. Bewegung ergänzt das Foto; sie steuert weder die Lesbarkeit noch den Zugriff auf Kapitel.
 
-editorialBriefing verwendet columns, sequence oder dossier. groups enthalten Überschrift, bereinigten Rich Text und optionale Punkte; stages enthalten Klartextphasen. Fehlt eine äußere Überschrift, werden die Gruppenüberschriften H2, sonst H3. Ein Hinweis und eine konkrete Folgeaktion schließen den Abschnitt optional ab.
+Die Bewegungswahl lautet `none`, `subtle` oder `expressive`. Reel, Hero und Photo Chapter unterstützen `imageEffect = none/parallax/kenBurns`; Atlas hat keinen Regler für eine unimplementierte Bildfahrt. `hoverEffect = none/zoom/lift` wirkt nur bei feinem Zeiger und erlaubter Bewegung. `none` schaltet Bildfahrt, optionale Bildhoverbewegung und sanftes programmatisches Blättern aus.
 
-resourceList gruppiert reale Dokumente und Verweise. Gruppen-IDs dürfen native Sprungziele bilden. Jede Ressource besitzt Titel, Zweck, Link, Format und Aktionsbeschriftung. PDF wählt das Downloadsymbol; der Formatwert begründet keine erfundene Dateigröße. Fehlt ein Gruppentitel, beansprucht die Liste die gesamte Inhaltsbreite. Die neun Kanzlei-PDFs stehen in einer zusammenhängenden Serviceliste.
+Bildhover nutzt (550ms) mit `cubic-bezier(.16,1,.3,1)`, Atlasbewegung (450ms). Zoom beträgt (1,035), bei `expressive` (1,065); Lift versetzt um (−5px). Die optionale leichte Bildfahrt verwendet den vorhandenen ImageEffectWrapper. Bei `prefers-reduced-motion` entfallen Parallaxe, Bildskalierung, Hovertransforms und sanftes Scrollen; der globale CSS-Schutz bleibt zusätzlich aktiv.
 
-### Personen und Kontakt
+Der eigene CMS-Editor zeigt wiederholbare Einträge als einklappbare Titel-/Thumbnailzeilen mit stabilen eindeutigen IDs. Hinzufügen, Mehrfachauswahl aus der Mediathek, Duplizieren, Entfernen und Verschieben nach oben/unten sind direkte Aktionen. Jeder Eintrag besitzt Titel, Beschreibung, Medienauswahl/Upload/direkte URL, Alttext, getrennte Desktop-/Mobilfokalpunkte und vollständige Link-/Symbolfelder. Bewegungsdetails erscheinen abhängig von der gewählten Bewegung. Die Symbolauswahl ist ein beschrifteter Dialog mit Fokusfalle, Escape und Fokuswiederherstellung; Symbole lassen sich ausdrücklich entfernen.
 
-teamSpotlight.layout = contactSheet zeigt Originalporträts mit Namen, belegter Rolle und sichtbaren Schwerpunkten. Kontaktperson, Telefon und E-Mail sind eigene optionale Felder. titleAs legt den Verzeichniskopf als H1 oder H2 fest; Namen folgen eine Ebene darunter. Einzelne fachliche Ansprechpartner und kurze Vorschauen verwenden ihre jeweils implementierte Komposition.
+### Fachtexte, Personen und Kontakt
 
-contact.layout = editorial ist ausdrücklich wählbar und verändert bestehende Standardlayouts anderer Websites nicht. Die Kontaktseite besitzt einen eigenen H1, direkte Telefon-/E-Mail-Links, Bürozeiten und Adresse, das geteilte Formular und den Originalraum als folgendes Fotokapitel. showMap ist im Hagn-Stand false; ein Kartenlink öffnet erst nach Auswahl den externen Anbieter.
+Rich Text trägt die zusammenhängenden Lesestrecken. Briefing behält `columns`, `sequence` und `dossier`; Resource List gruppiert reale Dateien und native Sprungziele. `topicExplorer` bleibt als native Disclosure-Komponente kompatibel, kommt im aktuellen Export jedoch nicht vor. Sein früherer Platz im Home- und Verzeichnisaufbau ist keine geltende Vorgabe.
 
-Der Footer classic enthält die Kanzlei-, Fachgebiets-, Kontakt- und Rechtslinks. Seine zusätzliche CTA ist leer. Die jeweiligen Seiten führen über ihre tatsächliche letzte Inhaltssection in den Footer; eine fotografische Schlusskarte ist keine allgemeine Pflicht.
+`teamSpotlight.layout = contactSheet` zeigt Originalporträts, Namen, belegte Rolle und Schwerpunkte offen. Kontaktperson, Telefon und E-Mail bleiben eigene Felder. `ctaBand.layout = plain` verwendet eine feine obere Linie, eine kurze Überschrift, Text und bis zu zwei native Aktionen. Der eigene Bandeditor erhält beide Ziele und Symbole auch beim Bearbeiten der Überschrift; individuelle Sekretariatskontakte dürfen nicht durch allgemeine Kanzleidaten ersetzt werden.
+
+`contact.layout = editorial` führt Telefon, E-Mail, Bürozeiten und Adresse vor dem Formular. `showMap` ist false; der Kartenanbieter öffnet erst durch einen gewählten Link. Footer `classic` besitzt keine zusätzliche Footer-CTA.
 
 ## Do's and Don'ts
 
 ### Do:
 
 - Do die Perspektive mit großen Fotografien, Manrope und offenen fachlichen Leseflächen fortführen.
-- Do Eröffnung, Textdichte und Informationsform aus dem jeweiligen Seiteninhalt bestimmen.
+- Do Eröffnung, Textdichte, Bildproportion und Informationsform aus dem jeweiligen Seiteninhalt bestimmen.
 - Do Originalporträts, Namen, belegte Qualifikationen und Schwerpunkte ohne Hover lesbar halten.
 - Do helle, dunkle und fotografische Flächen mit ihren eigenen Vordergrundrollen paaren.
-- Do Alttexte, passende Bildausschnitte, Links und unabhängige Farben über registrierte CMS-Felder pflegen.
-- Do native Themenzeilen, sichtbaren Tastaturfokus und die vorhandene reduzierte Bewegung erhalten.
+- Do Alttexte, getrennte Bildausschnitte, native Ziele, optionale Symbole und Farben über die registrierten CMS-Felder pflegen.
+- Do native Reelbedienung, ganze Atlasanker, sichtbaren Tastaturfokus und reduzierte Bewegung erhalten.
 
 ### Don't:
 
 - Don't die verworfene beige Serifengestaltung als Hagn-Standard wieder einführen.
 - Don't alle Seiten auf dieselbe Bildfolge, Kartenfolge oder Kontaktbelehrung reduzieren.
 - Don't Symbolfotografie als Kanzleiraum, Kanzleipersonal, Mandantenaufnahme oder Ingolstädter Standort ausgeben.
-- Don't dekorative Werbekicker, erfundene Vertrauenssiegel oder juristische Erfolgsgarantien ergänzen.
+- Don't öffentliche Produktionsregie, dekorative Werbekicker, erfundene Vertrauenssiegel oder juristische Erfolgsgarantien ergänzen.
 - Don't Wörter willkürlich teilen, Qualifikationen hinter Hover verstecken oder wichtige Inhalte von Animation abhängig machen.
-- Don't CMS-Inhalte und Farbrollen durch Hagn-spezifische Renderer-Konstanten ersetzen.
+- Don't CMS-Inhalte, Symbolentscheidungen und Farbrollen durch Hagn-spezifische Renderer-Konstanten ersetzen.
 
-Nicht kanonisiert oder repariert: Der vorhandene Detektorbericht nennt drei unveränderte Regeln in globals.css außerhalb der geänderten Zeilen: die Gradient-Text-Utility (580), den alten Gray-on-Red-Match (663) und den Accordion-Seitenstreifen (1092). Sie werden nicht zu Hagn-Gestaltungsregeln. Unbenutzte Bibliotheksvarianten und optionale Dachzeilen sind ebenfalls keine Vorgabe. Diese Quellendokumentation enthält keine Behauptung einer abgeschlossenen Browser-, Veröffentlichungs- oder Rechtsfreigabe.
+Nicht kanonisiert oder repariert: Der vorhandene Detektorbericht führt die ältere Gradient-Text-Utility, den Gray-on-Red-Match und den Accordion-Seitenstreifen in globals.css auf. Diese Bibliothekswarnungen werden nicht zu Hagn-Gestaltungsregeln. Optionale Dachzeilen und unbenutzte Bibliotheksvarianten bilden ebenfalls keine Vorgabe. Authentifizierte Produktionsspeicherung, API-Rücklesen, exaktes Wiederherstellen und Veröffentlichung sind bei dieser Dokumentationsaktualisierung noch nicht belegt.

@@ -109,7 +109,7 @@ const CONTAINER: Record<string, string> = {
 const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 const CONTACT_FORM_SECTION_TYPES = new Set(['contact', 'contactForm', 'locationContact', 'tourismContact', 'smartInquiry']);
 const SKIP_REVEAL_SECTION_TYPES = new Set([
-  'perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList',
+  'perspectiveHero', 'photoChapter', 'editorialReel', 'imageAtlas', 'topicExplorer', 'editorialBriefing', 'resourceList',
   'hero',
   'collectionHero',
   'cinematicHero',
@@ -513,7 +513,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     'servicePackages',
     // Premium shared
     'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero', 'editorialHero',
-    'perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList',
+    'perspectiveHero', 'photoChapter', 'editorialReel', 'imageAtlas', 'topicExplorer', 'editorialBriefing', 'resourceList',
     'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
     'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup', 'mobileActionDock',
     'dualWave', 'cinematicChapters', 'transformationSequence', 'xrayReveal', 'sceneLab', 'infiniteCanvas',

@@ -351,6 +351,9 @@ export function getAllSectionContracts(): SectionContract[] {
 
 /** Keep new reading-first variants discoverable to CMS and API consumers. */
 function sectionLayoutField(type: string, key: string): Partial<SectionFieldContract> {
+  if (type === 'ctaBand' && ['ctaPrimary', 'ctaSecondary'].includes(key)) return { type: 'cta', itemFields: [
+    { key: 'label', label: 'Beschriftung', type: 'text' }, { key: 'href', label: 'Link-Ziel', type: 'text' }, { key: 'iconPrefix', label: 'Symbol vor dem Text', type: 'text' }, { key: 'iconSuffix', label: 'Symbol nach dem Text', type: 'text' },
+  ] };
   if (['contact', 'contactForm'].includes(type) && key === 'infoCards') return { type: 'list', itemFields: [
     { key: 'icon', label: 'Symbol (klassische Layouts)', type: 'text' }, { key: 'label', label: 'Bezeichnung', type: 'text' }, { key: 'value', label: 'Angabe', type: 'textarea' }, { key: 'href', label: 'Kontakt-Link', type: 'text' },
   ] };

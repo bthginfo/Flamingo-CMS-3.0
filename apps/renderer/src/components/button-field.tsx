@@ -7,7 +7,7 @@ import { getPagesAction } from '@/app/admin/pages/actions';
 import { getCollectionLinksAction } from '@/app/admin/collections/actions';
 import { getProductLinksAction } from '@/app/admin/shop/actions';
 
-type ButtonValue = { label: string; href: string; icon?: string };
+type ButtonValue = { label: string; href: string; icon?: string; iconPrefix?: string; iconSuffix?: string };
 type CollectionGroup = { key: string; label: string; items: { title: string; slug: string }[] };
 type ProductLink = { id: string; title: string; slug: string };
 type SectionAnchor = { id: string; type: string; anchorId: string | null };
@@ -86,7 +86,7 @@ function InternalSelect({ value, onChange, pages, cols, products }: { value: str
 /**
  * Combined button editor: label + internal/external link selection.
  */
-export function ButtonField({ label: fieldLabel, value, onChange }: { label: string; value: ButtonValue; onChange: (v: ButtonValue) => void }) {
+export function ButtonField({ label: fieldLabel, value, onChange, allowCustomHref = false, iconFields = 'legacy' }: { label: string; value: ButtonValue; onChange: (v: ButtonValue) => void; allowCustomHref?: boolean; iconFields?: 'legacy' | 'both' }) {
   const isInternal = value.href.startsWith('/') || value.href.startsWith('#') || value.href === '';
   const [mode, setMode] = useState<'external' | 'internal'>(value.href && !isInternal ? 'external' : 'internal');
   const { pages, cols, products } = useInternalLinks(mode);
@@ -99,14 +99,14 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
           <button
             type="button"
             onClick={() => { setMode('internal'); if (!value.href.startsWith('/') && !value.href.startsWith('#')) onChange({ ...value, href: '/' }); }}
-            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'internal' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'internal' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
           >
             <FileText size={10} className="inline mr-0.5" /> Intern
           </button>
           <button
             type="button"
             onClick={() => { setMode('external'); if (value.href.startsWith('/') || value.href.startsWith('#')) onChange({ ...value, href: '' }); }}
-            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'external' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'external' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
           >
             <ExternalLink size={10} className="inline mr-0.5" /> Extern
           </button>
@@ -136,7 +136,8 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
           )}
         </label>
       </div>
-      <IconPickerField label="Suffix-Icon (optional)" value={value.icon || ''} onChange={(v) => onChange({ ...value, icon: v })} />
+      {allowCustomHref && mode === 'internal' && <label className="block"><span className="text-xs text-gray-600">Link-Ziel frei eingeben</span><input className="admin-input mt-1 w-full" value={value.href} onChange={e => onChange({ ...value, href: e.target.value })} placeholder="/profil#kontakt oder /media/formular.pdf" /><span className="mt-1 block text-xs leading-5 text-gray-600">Seiten, Sprungmarken, PDF-Dateien, https://, tel: und mailto: werden unterstützt.</span></label>}
+      {iconFields === 'both' ? <div className="grid gap-3 sm:grid-cols-2"><IconPickerField label="Symbol vor dem Text" value={value.iconPrefix || ''} onChange={v => onChange({ ...value, iconPrefix: v })} /><IconPickerField label="Symbol nach dem Text" value={value.iconSuffix === undefined ? value.icon ?? 'ArrowUpRight' : value.iconSuffix} onChange={v => onChange({ ...value, iconSuffix: v })} /></div> : <IconPickerField label="Suffix-Icon (optional)" value={value.icon || ''} onChange={(v) => onChange({ ...value, icon: v })} />}
     </div>
   );
 }
@@ -145,7 +146,7 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
  * Simpler link-only version: internal/external + href, no label.
  * Use for "Detail-Link" fields on items.
  */
-export function DetailLinkField({ label: fieldLabel, value, onChange }: { label: string; value: string; onChange: (href: string) => void }) {
+export function DetailLinkField({ label: fieldLabel, value, onChange, allowCustomHref = false }: { label: string; value: string; onChange: (href: string) => void; allowCustomHref?: boolean }) {
   const isInternal = value.startsWith('/') || value.startsWith('#') || value === '';
   const [mode, setMode] = useState<'external' | 'internal'>(value && !isInternal ? 'external' : 'internal');
   const { pages, cols, products } = useInternalLinks(mode);
@@ -158,14 +159,14 @@ export function DetailLinkField({ label: fieldLabel, value, onChange }: { label:
           <button
             type="button"
             onClick={() => { setMode('internal'); if (!value.startsWith('/') && !value.startsWith('#')) onChange('/'); }}
-            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'internal' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'internal' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
           >
             <FileText size={10} className="inline mr-0.5" /> Intern
           </button>
           <button
             type="button"
             onClick={() => { setMode('external'); if (value.startsWith('/') || value.startsWith('#')) onChange(''); }}
-            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'external' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'external' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'}`}
           >
             <ExternalLink size={10} className="inline mr-0.5" /> Extern
           </button>
@@ -181,6 +182,7 @@ export function DetailLinkField({ label: fieldLabel, value, onChange }: { label:
       ) : (
         <InternalSelect value={value} onChange={onChange} pages={pages} cols={cols} products={products} />
       )}
+      {allowCustomHref && mode === 'internal' && <label className="mt-2 block"><span className="text-xs text-gray-600">Link-Ziel frei eingeben</span><input className="admin-input mt-1 w-full" value={value} onChange={event => onChange(event.target.value)} placeholder="/profil#kontakt oder /media/formular.pdf" /></label>}
     </div>
   );
 }

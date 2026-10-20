@@ -74,6 +74,8 @@ import { OpeningStatusSection } from './shared/opening-status';
 import { TeamSpotlightSection } from './shared/team-spotlight';
 import { PerspectiveHeroSection } from './shared/perspective-hero';
 import { PhotoChapterSection } from './shared/photo-chapter';
+import { EditorialReelSection } from './shared/editorial-reel';
+import { ImageAtlasSection } from './shared/image-atlas';
 import { TopicExplorerSection } from './shared/topic-explorer';
 import { EditorialBriefingSection } from './shared/editorial-briefing';
 import { ResourceListSection } from './shared/resource-list';
@@ -868,6 +870,8 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   teamSpotlight: TeamSpotlightSection,
   perspectiveHero: PerspectiveHeroSection,
   photoChapter: PhotoChapterSection,
+  editorialReel: EditorialReelSection,
+  imageAtlas: ImageAtlasSection,
   topicExplorer: TopicExplorerSection,
   editorialBriefing: EditorialBriefingSection,
   resourceList: ResourceListSection,

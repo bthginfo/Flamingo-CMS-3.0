@@ -11,6 +11,8 @@
 [data-site-header] ~ main > [data-section-type="editorialHero"]:first-child,
 [data-site-header] ~ main > [data-collection-content-hero] > [data-section-type="editorialHero"]:first-of-type,
 [data-site-header] ~ main > [data-section-type="perspectiveHero"]:first-child,
+[data-site-header] ~ main > [data-section-type="editorialReel"]:first-child,
+[data-site-header] ~ main > [data-section-type="imageAtlas"]:first-child,
 [data-site-header] ~ main > [data-section-type="teamSpotlight"]:first-child,
 [data-site-header] ~ main > [data-section-type="contact"]:first-child,
 [data-site-header] ~ main > [data-section-type="contactForm"]:first-child,
@@ -1524,4 +1526,76 @@ html {
 }
 .animate-fx-beam {
   animation: fx-beam 7s linear infinite;
+}
+
+/* Photographic editorial sections own their pacing and native browsing surfaces. */
+:is([data-editorial-reel], [data-image-atlas], .photo-spread) :is(h1, h2, h3) { overflow-wrap: normal; word-break: normal; hyphens: auto; }
+.photo-spread h2 { font-size: clamp(2.35rem,4.5vw,5.3rem); }
+:is([data-editorial-reel], [data-image-atlas], .photo-spread) ::selection { color: var(--token-section-bg); background: var(--token-heading); }
+.editorial-reel-track { scroll-snap-type: x mandatory; scroll-padding-inline: 1.5rem; overscroll-behavior-x: contain; scrollbar-color: var(--token-divider) transparent; scrollbar-width: thin; }
+.editorial-reel-track:focus-visible { outline-offset: -3px; }
+.editorial-reel-slide { flex-basis: calc(100vw - 4rem); scroll-snap-align: start; }
+.editorial-reel-track:has(> :only-child) .editorial-reel-slide { flex-basis: 100%; }
+.reel-control { display: inline-flex; min-width: 48px; min-height: 48px; align-items: center; justify-content: center; border: 1px solid var(--token-divider); color: var(--token-link); background: var(--token-section-bg); transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease; }
+.reel-control:hover:not(:disabled) { color: var(--token-link-hover); border-color: currentColor; }
+.reel-control:disabled { opacity: .3; cursor: not-allowed; }
+.perspective-image-media { transition: transform 550ms cubic-bezier(.16,1,.3,1); }
+.image-atlas-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+.image-atlas-tile { grid-column: span 2; min-height: 390px; transition: transform 450ms cubic-bezier(.16,1,.3,1); }
+.image-atlas-grid[data-atlas-count="1"] .image-atlas-tile { min-height: 470px; }
+@media (min-width: 640px) {
+  .editorial-reel-track { scroll-padding-inline: 2.5rem; }
+  .editorial-reel-slide { flex-basis: 84vw; }
+  .image-atlas-grid { gap: 1.5rem; }
+  .image-atlas-tile { grid-column: span 1; min-height: 380px; }
+  .image-atlas-tile:nth-child(3n + 1) { grid-column: span 2; min-height: 460px; }
+  .image-atlas-grid[data-atlas-count="2"] .image-atlas-tile { grid-column: span 1; min-height: 480px; }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .image-atlas-grid:not([data-atlas-count="2"]) .image-atlas-tile:last-child:nth-child(3n + 2) { grid-column: span 2; }
+}
+@media (min-width: 1024px) {
+  .editorial-reel-track { padding-inline: max(4rem,calc((100vw - 1384px) / 2)); scroll-padding-inline: max(4rem,calc((100vw - 1384px) / 2)); }
+  .editorial-reel-slide { flex-basis: min(82vw,1248px); }
+  .image-atlas-grid { grid-template-columns: repeat(12,minmax(0,1fr)); gap: 1.75rem; }
+  .image-atlas-tile { grid-column: span 5; min-height: 440px; }
+  .image-atlas-tile:nth-child(5n + 1) { grid-column: span 7; min-height: 580px; }
+  .image-atlas-tile:nth-child(5n + 2) { align-self: end; min-height: 440px; }
+  .image-atlas-tile:nth-child(5n + 3) { grid-column: span 5; min-height: 460px; }
+  .image-atlas-tile:nth-child(5n + 4) { grid-column: span 7; min-height: 540px; }
+  .image-atlas-tile:nth-child(5n + 5) { grid-column: 3 / span 8; min-height: 440px; }
+  .image-atlas-grid[data-atlas-count="1"] .image-atlas-tile { grid-column: span 12; min-height: 580px; }
+  .image-atlas-grid[data-atlas-count="2"] .image-atlas-tile { grid-column: span 6; min-height: 500px; }
+  .image-atlas-grid[data-atlas-count="6"] .image-atlas-tile:nth-child(5) { grid-column: span 5; }
+  .image-atlas-grid[data-atlas-count="6"] .image-atlas-tile:nth-child(6) { grid-column: span 7; min-height: 440px; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :is(article, figure, .image-atlas-tile):hover .perspective-image[data-hover-effect="zoom"] .perspective-image-media { transform: scale(1.035); }
+  :is(article, figure, .image-atlas-tile):hover .perspective-image[data-motion="expressive"][data-hover-effect="zoom"] .perspective-image-media { transform: scale(1.065); }
+  :is(article, figure):hover .perspective-image[data-hover-effect="lift"] .perspective-image-media { transform: scale(1.035) translateY(-5px); }
+  .image-atlas-tile:has(.perspective-image[data-hover-effect="lift"]):hover { transform: translateY(-5px); }
+}
+@media (max-width: 767px) { [data-perspective-image] .perspective-image-media { object-position: var(--perspective-mobile-focal,center) !important; } }
+@media (max-width: 639px) {
+  .image-atlas-grid { gap: 1.25rem; }
+  .image-atlas-tile:nth-child(n) { grid-column: span 2; min-height: 340px; }
+  .image-atlas-tile:nth-child(3n + 1) { min-height: 380px; }
+  .image-atlas-tile:nth-child(3n + 2) { width: calc(100% - 1.5rem); justify-self: end; min-height: 310px; }
+  .image-atlas-tile:nth-child(3n + 3) { width: calc(100% - 1.5rem); justify-self: start; }
+  .image-atlas-tile:last-child { width: 100%; min-height: 360px; }
+  .image-atlas-tile:nth-child(n) :is(h2,h3) { font-size: clamp(1.6rem,6.8vw,2.2rem); }
+  .image-atlas-grid[data-atlas-count="1"] .image-atlas-tile { min-height: 430px; }
+  .image-atlas-grid[data-atlas-count="2"] .image-atlas-tile { width: 100%; min-height: 350px; }
+}
+@media (max-width: 360px) {
+  [data-photo-layout="feature"] h2[data-edit-path="headline"] {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    font-size: clamp(2.15rem,11.5vw,2.35rem);
+    hyphens: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-perspective-image] *, .image-atlas-tile { transform: none !important; animation: none !important; transition: none !important; }
+  .editorial-reel-track { scroll-behavior: auto !important; }
 }

@@ -5,7 +5,8 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
-import { ActionGroup, ActionLink } from '@/templates/shared/section-primitives';
+import { PerspectiveLink } from '@/templates/shared/perspective-link';
+import { action } from '@/templates/shared/perspective-utils';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -20,7 +21,7 @@ export function CtaBandSection({ data, styleVariant }: Props) {
       {headline && <h2 className="font-display max-w-[24ch] text-3xl font-semibold leading-tight text-[color:var(--token-heading)] md:text-4xl [text-wrap:balance]" data-edit-path="headline">{headline}</h2>}
       {subline && <p className="mt-4 max-w-[65ch] text-base leading-7 text-[color:var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
     </div>
-    <ActionGroup><ActionLink action={cta || {}} editKey="ctaPrimary" /><ActionLink action={ctaSecondary || {}} editKey="ctaSecondary" tone="secondary" showArrow={false} /></ActionGroup>
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-1"><PerspectiveLink cta={action(data.ctaPrimary)} editKey="ctaPrimary" /><PerspectiveLink cta={action(data.ctaSecondary)} editKey="ctaSecondary" /></div>
   </div>;
   // Colors come from styleOverrides (CSS vars: --style-section-bg, --style-heading-color, --style-accent-color)
   const colors = {

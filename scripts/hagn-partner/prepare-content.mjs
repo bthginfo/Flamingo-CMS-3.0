@@ -26,7 +26,7 @@ const p = value => `<p>${value}</p>`;
 const a = (label, href) => ({ label, href });
 const tel = phone => `tel:${phone.replace(/[^+\d]/g, '')}`;
 const route = slug => slug ? `/${slug}` : '/';
-const SHARED = new Set(['perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList', 'contact', 'editorialHero', 'teamSpotlight', 'cinematicHero', 'categoryMosaic', 'materialAtelier', 'cinematicChapters', 'serviceTabs', 'signaturePath', 'signatureGrid', 'scrollStory', 'ctaSplit', 'faqContactSplit', 'guidedChoice', 'timeline']);
+const SHARED = new Set(['editorialReel', 'imageAtlas', 'perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList', 'contact', 'editorialHero', 'teamSpotlight', 'cinematicHero', 'categoryMosaic', 'materialAtelier', 'cinematicChapters', 'serviceTabs', 'signaturePath', 'signatureGrid', 'scrollStory', 'ctaSplit', 'faqContactSplit', 'guidedChoice', 'timeline']);
 const definition = type => `${type}.${SHARED.has(type) ? 'shared' : type === 'faq' ? 'consulting' : 'tradesman'}.v1`;
 
 export function hagnUuid(tenantId, key) {
@@ -54,7 +54,7 @@ const inkPalette = { ...lightPalette,
   '--token-card-heading': '#FFFFFF', '--token-card-body': '#DCE4EB', '--token-card-muted': '#B9C7D3',
   '--token-link': '#BBD4FF', '--token-link-hover': '#FFFFFF', '--token-label': '#DCE4EB', '--token-eyebrow': '#B9C7D3',
 };
-const ownSpacing = new Set(['perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList', 'teamSpotlight', 'contact', 'editorialHero', 'textImage', 'richText', 'legalContent']);
+const ownSpacing = new Set(['editorialReel', 'imageAtlas', 'perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList', 'teamSpotlight', 'contact', 'editorialHero', 'textImage', 'richText', 'legalContent']);
 
 export function buildHagnContent({ tenantId = HAGN_TENANT_ID, baseUrl = 'https://flamingo-hagn-partner.vercel.app', mediaBase = '/hagn-partner', mediaMap = {}, noindex = true } = {}) {
   if (!/^[0-9a-f-]{36}$/i.test(tenantId)) throw new Error('A valid isolated tenant UUID is required.');
@@ -164,7 +164,7 @@ export function validateHagnContent(doc) {
     if (ids.has(page.id) || paths.has(page.slug)) throw new Error(`Duplicate page: ${page.slug}`);
     ids.add(page.id); paths.add(page.slug);
     const sections = doc.sections.filter(section => section.page_id === page.id);
-    if (sections.filter(section => ['perspectiveHero', 'editorialHero', 'cinematicHero', 'legalContent'].includes(section.type) || ['richText', 'teamSpotlight', 'contact'].includes(section.type) && section.data.titleAs === 'h1').length !== 1) throw new Error(`One H1 required: ${page.slug}`);
+    if (sections.filter(section => ['perspectiveHero', 'editorialHero', 'cinematicHero', 'legalContent'].includes(section.type) || ['editorialReel', 'imageAtlas', 'richText', 'teamSpotlight', 'contact'].includes(section.type) && section.data.titleAs === 'h1').length !== 1) throw new Error(`One H1 required: ${page.slug}`);
     if (!doc.seoPages.find(seo => seo.page_id === page.id)) throw new Error(`SEO missing: ${page.slug}`);
   }
   const check = value => {

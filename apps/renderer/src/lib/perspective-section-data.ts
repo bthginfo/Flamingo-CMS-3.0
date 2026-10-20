@@ -1,5 +1,20 @@
 /** Complete sample shapes also seed optional nested controls in the CMS. */
 export const PERSPECTIVE_SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  editorialReel: {
+    titleAs: 'h1', layout: 'opening', headline: 'Eine Frage.\nNeue Perspektiven.', intro: 'Was Sie beschäftigt, verdient Raum. Entdecken Sie die Themen und finden Sie einen persönlichen nächsten Schritt.',
+    items: [
+      { id: 'perspektive', title: 'Den nächsten Schritt besprechen.', text: 'Ein persönliches Gespräch beginnt bei Ihrer konkreten Situation.', image: '/hagn-partner/kontext/architecture.webp', imageAlt: 'Licht an einer ruhigen architektonischen Fassade', imagePosition: 'center', imageMobilePosition: 'center', link: { label: 'Ein Gespräch vereinbaren', href: '/kontakt', iconPrefix: '', iconSuffix: 'ArrowUpRight' } },
+      { id: 'zusammenarbeit', title: 'Raum für Zusammenarbeit.', text: 'Offene Fragen gemeinsam einordnen und Möglichkeiten verstehen.', image: '/hagn-partner/kontext/hallway.webp', imageAlt: 'Heller Besprechungsraum', imagePosition: 'center', imageMobilePosition: 'center', link: { label: 'Mehr erfahren', href: '/ueber-uns', iconPrefix: '', iconSuffix: 'ArrowUpRight' } },
+    ], cta: { label: 'Kontakt aufnehmen', href: '/kontakt', iconPrefix: '', iconSuffix: 'ArrowUpRight' }, motion: 'subtle', imageEffect: 'none', hoverEffect: 'zoom',
+  },
+  imageAtlas: {
+    titleAs: 'h1', headline: 'Eine eigene\nPerspektive finden.', intro: 'Themen im Zusammenhang entdecken. Jedes Bild öffnet einen eigenen Weg.',
+    items: [
+      { id: 'orientierung', title: 'Orientierung', text: 'Die eigene Frage einordnen.', image: '/hagn-partner/kontext/architecture.webp', imageAlt: 'Architektonische Linien im Tageslicht', imagePosition: 'center', imageMobilePosition: 'center', link: { label: 'Thema entdecken', href: '/beratung', iconPrefix: '', iconSuffix: 'ArrowUpRight' } },
+      { id: 'zusammenarbeit', title: 'Zusammenarbeit', text: 'Den gemeinsamen Arbeitsstand klären.', image: '/hagn-partner/kontext/hallway.webp', imageAlt: 'Ein ruhiger heller Innenraum', imagePosition: 'center', imageMobilePosition: 'center', link: { label: 'Mehr erfahren', href: '/ueber-uns', iconPrefix: '', iconSuffix: 'ArrowUpRight' } },
+      { id: 'gespraech', title: 'Im Gespräch', text: 'Einen persönlichen Termin vereinbaren.', image: '/hagn-partner/kontext/light.webp', imageAlt: 'Licht und Schatten auf einer Wand', imagePosition: 'center', imageMobilePosition: 'center', link: { label: 'Kontakt', href: '/kontakt', iconPrefix: '', iconSuffix: 'ArrowUpRight' } },
+    ], cta: { label: '', href: '', iconPrefix: '', iconSuffix: 'ArrowUpRight' }, motion: 'subtle', hoverEffect: 'zoom',
+  },
   perspectiveHero: {
     layout: 'panorama', eyebrow: 'Perspektiven entdecken', headline: 'Raum für das,\nwas Sie bewegt.',
     text: 'Ein Einstieg mit einer klaren Aussage, einem großen Bild und einem konkreten nächsten Schritt.',
@@ -56,7 +71,7 @@ function mergeShape(data: Record<string, unknown>, defaults: Record<string, unkn
   for (const [key, sample] of Object.entries(defaults)) {
     const current = data[key];
     if (current === undefined) {
-      merged[key] = key === 'layout' || key === 'titleAs' ? sample : emptyValue(sample);
+      merged[key] = ['layout', 'titleAs', 'motion', 'imageEffect', 'hoverEffect'].includes(key) ? sample : emptyValue(sample);
     } else if (Array.isArray(current) && Array.isArray(sample)) {
       const itemShape = sample.find(item => item && typeof item === 'object' && !Array.isArray(item));
       if (itemShape) merged[key] = current.map(item => item && typeof item === 'object' && !Array.isArray(item) ? mergeShape(item, itemShape) : item);

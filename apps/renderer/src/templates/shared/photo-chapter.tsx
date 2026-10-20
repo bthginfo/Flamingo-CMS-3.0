@@ -1,12 +1,13 @@
-import { ResilientNextImage } from '@/components/ui/resilient-image';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { PerspectiveLink } from './perspective-link';
-import { action, copy, imageUrl } from './perspective-utils';
+import { PerspectiveImage } from './perspective-image';
+import { PerspectiveActionIcon } from './perspective-action-icons';
+import { action, copy, imageUrl, perspectiveLinkProps } from './perspective-utils';
 
 type Props = { data: Record<string, unknown> };
 
 export function PhotoChapterSection({ data }: Props) {
-  const layout = ['feature', 'immersive', 'diptych'].includes(copy(data.layout)) ? copy(data.layout) : 'feature';
+  const layout = ['feature', 'immersive', 'diptych', 'spread'].includes(copy(data.layout)) ? copy(data.layout) : 'feature';
   const headline = copy(data.headline);
   const text = copy(data.text);
   const caption = copy(data.caption);
@@ -17,7 +18,7 @@ export function PhotoChapterSection({ data }: Props) {
   const photo = (isSecondary: boolean, className: string, sizes: string) => {
     const src = isSecondary ? secondary : primary;
     if (!src) return null;
-    return <figure className={`relative m-0 overflow-hidden bg-[var(--token-section-bg-alt)] ${className}`}><ResilientNextImage src={src} alt={copy(isSecondary ? data.secondaryImageAlt : data.imageAlt)} fill sizes={sizes} className="object-cover" style={{ objectPosition: copy(isSecondary ? data.secondaryImagePosition : data.imagePosition) || 'center' }} data-edit-image={isSecondary ? 'secondaryImage' : 'image'} /></figure>;
+    return <figure className={`relative m-0 overflow-hidden bg-[var(--token-section-bg-alt)] ${className}`}><PerspectiveImage src={src} alt={copy(isSecondary ? data.secondaryImageAlt : data.imageAlt)} sizes={sizes} position={copy(isSecondary ? data.secondaryImagePosition : data.imagePosition)} mobilePosition={copy(isSecondary ? data.secondaryImageMobilePosition : data.imageMobilePosition)} editKey={isSecondary ? 'secondaryImage' : 'image'} motion={copy(data.motion)} imageEffect={copy(data.imageEffect)} hoverEffect={copy(data.hoverEffect)} /></figure>;
   };
   const copyBlock = <>
     {text && <div className="rt-content max-w-[59ch] text-[1.075rem] leading-[1.8] text-[color:var(--token-body)] [&_p+p]:mt-5 md:text-[1.13rem]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }} />}
@@ -28,14 +29,23 @@ export function PhotoChapterSection({ data }: Props) {
 
   if (layout === 'immersive') return <div className="bg-[var(--token-section-bg)] py-12 md:py-20" data-photo-layout={layout}>
     <div className="relative isolate mx-auto flex min-h-[660px] max-w-[1800px] items-end overflow-hidden md:min-h-[740px]" data-color-context="dark">
-      {primary && <figure className="absolute inset-0 m-0 bg-[var(--token-section-bg-alt)]"><ResilientNextImage src={primary} alt={copy(data.imageAlt)} fill sizes="100vw" className="object-cover" style={{ objectPosition: copy(data.imagePosition) || 'center' }} data-edit-image="image" /></figure>}
+      {primary && <figure className="absolute inset-0 m-0 bg-[var(--token-section-bg-alt)]"><PerspectiveImage src={primary} alt={copy(data.imageAlt)} sizes="(max-width:767px) 1200px, 100vw" position={copy(data.imagePosition)} mobilePosition={copy(data.imageMobilePosition)} motion={copy(data.motion)} imageEffect={copy(data.imageEffect)} hoverEffect={copy(data.hoverEffect)} /></figure>}
       <div aria-hidden="true" className="absolute inset-0" style={{ background: 'linear-gradient(90deg,var(--token-image-overlay),color-mix(in srgb,var(--token-image-overlay) 78%,transparent) 40%,transparent 100%),linear-gradient(0deg,var(--token-image-overlay),transparent)' }} />
       <div className="relative mx-auto w-full max-w-[1512px] px-6 py-12 sm:px-10 md:py-16 lg:px-16">
         {headline && <h2 data-edit-path="headline" className="font-display max-w-[16ch] whitespace-pre-line text-[clamp(2.8rem,6.2vw,6.6rem)] font-semibold leading-[1.04] tracking-[-.035em] text-[color:var(--token-on-dark-heading)] [text-wrap:balance]">{headline}</h2>}
         {text && <div data-edit-rich="text" className="rt-content mt-7 max-w-[48ch] text-[1.075rem] leading-[1.8] text-[color:var(--token-on-dark-body)] [&_p+p]:mt-5 md:text-lg" dangerouslySetInnerHTML={{ __html: sanitizeHtml(text) }} />}
-        {cta.label && cta.href && <a href={cta.href} data-edit-link="cta" className="mt-7 inline-flex min-h-12 items-center rounded-[var(--token-button-radius,8px)] bg-[var(--token-btn-bg)] px-6 py-3 text-base font-semibold text-[color:var(--token-btn-text)] transition-[filter] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"><span data-edit-path="label">{cta.label}</span></a>}
+        {cta.label && cta.href && <a href={cta.href} {...perspectiveLinkProps(cta.href)} data-edit-link="cta" className="mt-7 inline-flex min-h-12 items-center gap-3 rounded-[var(--token-button-radius,8px)] bg-[var(--token-btn-bg)] px-6 py-3 text-base font-semibold text-[color:var(--token-btn-text)] transition-[filter] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"><PerspectiveActionIcon cta={cta} side="prefix" /><span data-edit-path="label">{cta.label}</span><PerspectiveActionIcon cta={cta} side="suffix" /></a>}
         {caption && <p data-edit-path="caption" className="mt-10 max-w-[70ch] text-xs leading-5 text-[color:var(--token-on-dark-muted)]">{caption}</p>}
       </div>
+    </div>
+  </div>;
+
+  if (layout === 'spread') return <div className="photo-spread overflow-hidden bg-[var(--token-section-bg)] py-16 md:py-24" data-photo-layout={layout}>
+    <div className="mx-auto grid max-w-[1512px] items-start gap-x-14 gap-y-8 px-6 sm:px-10 md:gap-y-12 lg:grid-cols-12 lg:px-16">
+      <div className="min-w-0 lg:col-span-5 lg:pt-8">{title}</div>
+      {primary && <div className="lg:col-span-7 lg:col-start-6 lg:row-span-2">{photo(false, 'aspect-[6/5] md:aspect-[5/4] lg:aspect-[6/7]', '(min-width:1024px) 60vw, 100vw')}{credit}</div>}
+      <div className={`max-w-[60ch] ${primary ? 'lg:col-span-4 lg:col-start-1 lg:row-start-2 lg:pb-8' : 'lg:col-span-7'}`}>{copyBlock}{!primary && credit}</div>
+      {secondary && <div className="ml-auto w-[78%] md:w-[65%] lg:col-span-6 lg:col-start-2 lg:-mt-28 lg:ml-0 lg:w-full">{photo(true, 'aspect-[5/4] border-[10px] border-[var(--token-section-bg)] md:border-[16px]', '(min-width:1024px) 48vw, 78vw')}</div>}
     </div>
   </div>;
 

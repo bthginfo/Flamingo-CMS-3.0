@@ -15,6 +15,8 @@ export type SectionTypeDefinition = {
 const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'perspectiveHero', label: 'Perspektivischer Einstieg', description: 'Panorama, Statement, Porträt, Journal oder kompakter Seitentitel mit eigener Bildregie', category: 'Inhalt' },
   { type: 'photoChapter', label: 'Fotografisches Kapitel', description: 'Großes Bild, immersive Fotostrecke oder räumliches Bildpaar mit redaktionellem Text', category: 'Medien' },
+  { type: 'editorialReel', label: 'Fotografische Erzählung', description: 'Großzügiger Einstieg oder horizontal blätterbare Fotokapitel mit Text und eigenen Links', category: 'Medien' },
+  { type: 'imageAtlas', label: 'Fotografischer Themenatlas', description: 'Asymmetrisches Bildmosaik mit direkt verlinkten Themen und mobilen Bildausschnitten', category: 'Medien' },
   { type: 'topicExplorer', label: 'Themen entdecken', description: 'Offener Themenindex mit aufklappbaren Fotografien, konkreten Fragen und weiterführenden Links', category: 'Leistungen' },
   { type: 'editorialBriefing', label: 'Redaktioneller Überblick', description: 'Lesbare Spalten, chronologische Phasen oder Dossier mit Randnotizen', category: 'Inhalt' },
   { type: 'resourceList', label: 'Unterlagen und Links', description: 'Gruppierte Download- und Linkliste mit Verwendungszweck und Sprungmarken', category: 'Inhalt' },

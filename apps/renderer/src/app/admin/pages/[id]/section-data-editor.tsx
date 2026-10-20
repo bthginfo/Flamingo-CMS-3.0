@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import { Info } from 'lucide-react';
+import { ArrowDown, ArrowUp, Copy, Info } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { getProductLinksAction } from '@/app/admin/shop/actions';
@@ -27,6 +27,7 @@ import {
 } from '@/lib/editorial-field-metadata';
 import { AdvancedSectionEditor } from './advanced-section-editor';
 import { CustomFormEditor } from './custom-form-editor';
+import { PerspectiveContactBandEditor, PerspectiveSectionEditor } from './perspective-section-editor';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -389,6 +390,8 @@ function HelpHint({ fieldKey }: { fieldKey: string }) {
 
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange, sectionId }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string }) {
+  if (['editorialReel', 'imageAtlas', 'perspectiveHero', 'photoChapter'].includes(type)) return <PerspectiveSectionEditor type={type} data={data} onChange={onChange} sectionId={sectionId} />;
+  if (type === 'ctaBand' && data.layout === 'plain') return <PerspectiveContactBandEditor type={type} data={data} onChange={onChange} sectionId={sectionId} />;
   const Editor = ['contact', 'contactForm'].includes(type) && data.layout === 'editorial' ? SchemaSectionEditor : EDITORS[type] ?? SchemaSectionEditor;
   return <Editor type={type} data={data} onChange={onChange} sectionId={sectionId} />;
 }
@@ -593,7 +596,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
         );
       }
       if (/href|link|url/i.test(fieldName)) {
-        return <DetailLinkField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
+        return <DetailLinkField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} allowCustomHref={perspectiveEditor} />;
       }
       if (/icon/i.test(fieldName)) {
         return <IconPickerField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
@@ -635,7 +638,14 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
           <div className="space-y-3">
             {value.map((item, index) => (
               <div key={`${renderKey}.${index}`} className="relative rounded-xl border border-zinc-200 bg-white p-3 pt-8 shadow-sm">
-                <button type="button" className="absolute right-3 top-2 text-xs text-red-500 hover:text-red-600" onClick={() => updateAtPath(path, value.filter((_, itemIndex) => itemIndex !== index))}>Entfernen</button>
+                <div className="absolute right-3 top-1 flex items-center gap-2">
+                  {perspectiveEditor && <>
+                    <button type="button" aria-label={`${label} ${index + 1}: nach oben`} disabled={index === 0} className="flex min-h-7 min-w-7 items-center justify-center rounded text-zinc-600 hover:bg-zinc-100 disabled:opacity-30" onClick={() => { const next = [...value]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; updateAtPath(path, next); }}><ArrowUp size={14} aria-hidden="true" /></button>
+                    <button type="button" aria-label={`${label} ${index + 1}: nach unten`} disabled={index === value.length - 1} className="flex min-h-7 min-w-7 items-center justify-center rounded text-zinc-600 hover:bg-zinc-100 disabled:opacity-30" onClick={() => { const next = [...value]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; updateAtPath(path, next); }}><ArrowDown size={14} aria-hidden="true" /></button>
+                    <button type="button" aria-label={`${label} ${index + 1}: duplizieren`} className="flex min-h-7 min-w-7 items-center justify-center rounded text-zinc-600 hover:bg-zinc-100" onClick={() => { const duplicate = JSON.parse(JSON.stringify(item)); if (isRecord(duplicate) && typeof duplicate.id === 'string' && duplicate.id) duplicate.id = `${duplicate.id}-copy-${crypto.randomUUID().slice(0, 8)}`; updateAtPath(path, [...value.slice(0, index + 1), duplicate, ...value.slice(index + 1)]); }}><Copy size={14} aria-hidden="true" /></button>
+                  </>}
+                  <button type="button" className="min-h-7 text-xs text-red-600 hover:text-red-700" onClick={() => updateAtPath(path, value.filter((_, itemIndex) => itemIndex !== index))}>Entfernen</button>
+                </div>
                 {isRecord(item) && hasShape ? (
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     {Object.keys(itemShape).filter(childKey => !hiddenItemKeys.has(childKey)).map((childKey) => (
@@ -657,7 +667,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     if (isRecord(value)) {
       const entries = Object.entries(value);
       if ('label' in value && 'href' in value) {
-        return <ButtonField key={renderKey} label={label} value={{ label: String(value.label ?? ''), href: String(value.href ?? ''), icon: typeof value.icon === 'string' ? value.icon : undefined }} onChange={(v) => updateAtPath(path, v)} />;
+        return <ButtonField key={renderKey} label={label} value={{ ...value, label: String(value.label ?? ''), href: String(value.href ?? ''), icon: typeof value.icon === 'string' ? value.icon : undefined }} onChange={(v) => updateAtPath(path, v)} allowCustomHref={perspectiveEditor} iconFields={perspectiveEditor ? 'both' : 'legacy'} />;
       }
       const hiddenChildKeys = imagePositionCompanionKeys(value as Record<string, unknown>);
       return (

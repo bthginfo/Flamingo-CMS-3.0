@@ -12,8 +12,8 @@ import { validateAdvancedSectionData } from '../../apps/renderer/src/lib/advance
 import { contrastRatio } from '../../apps/renderer/src/lib/color-validation';
 
 type Row = Record<string, any>;
-const newTypes = ['perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList'];
-const publicationTypes = new Set([...newTypes, 'teamSpotlight', 'timeline', 'contact', 'legalContent']);
+const newTypes = ['editorialReel', 'imageAtlas', 'perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList'];
+const publicationTypes = new Set([...newTypes, 'richText', 'ctaBand', 'teamSpotlight', 'timeline', 'contact', 'legalContent']);
 const sourceLegalHashes = {
   impressum: 'ac6f041e596a8f5f0660a083822440ba8e2f96a8e0e4948bd9ee44bb2b460cb3',
   datenschutz: '64831de1251d179a92f6bea8d8ceefad1939db77a4885973c8a31fd05affd15a',
@@ -115,20 +115,22 @@ async function main() {
     anchors.set(page.slug, pageAnchors);
   }
   let internalLinkChecks = 0;
+  const checkHref = (href: string, currentSlug: string): void => {
+    assert.ok(/^(?:https?:\/\/|mailto:|tel:|\/|#)/.test(href), `Unsafe or unsupported href ${href}`);
+    if (href.startsWith('/hagn-partner/')) assert.ok(mediaUrls.has(href), `Unregistered document ${href}`);
+    else if (href.startsWith('#') || href.startsWith('/')) {
+      const [path, anchor] = href.split('#');
+      const slug = path ? path.slice(1) : currentSlug;
+      assert.ok(paths.has(slug), `Missing route ${href}`);
+      if (anchor) assert.ok(anchors.get(slug)?.has(anchor), `Missing anchor ${href} on ${currentSlug}`);
+      internalLinkChecks += 1;
+    }
+  };
   const checkLinks = (value: unknown, currentSlug: string): void => {
     if (Array.isArray(value)) value.forEach(child => checkLinks(child, currentSlug));
     else if (value && typeof value === 'object') for (const [key, child] of Object.entries(value)) {
-      if (['href', 'privacyHref'].includes(key) && typeof child === 'string' && child) {
-        assert.ok(/^(?:https?:\/\/|mailto:|tel:|\/|#)/.test(child), `Unsafe or unsupported href ${child}`);
-        if (child.startsWith('/hagn-partner/')) assert.ok(mediaUrls.has(child), `Unregistered document ${child}`);
-        else if (child.startsWith('#') || child.startsWith('/')) {
-          const [path, anchor] = child.split('#');
-          const slug = path ? path.slice(1) : currentSlug;
-          assert.ok(paths.has(slug), `Missing route ${child}`);
-          if (anchor) assert.ok(anchors.get(slug)?.has(anchor), `Missing anchor ${child} on ${currentSlug}`);
-          internalLinkChecks += 1;
-        }
-      }
+      if (['href', 'privacyHref'].includes(key) && typeof child === 'string' && child) checkHref(child, currentSlug);
+      if (typeof child === 'string' && child.includes('<a ')) for (const match of child.matchAll(/<a\s[^>]*href\s*=\s*(["'])(.*?)\1/gi)) checkHref(match[2], currentSlug);
       checkLinks(child, currentSlug);
     }
   };
@@ -140,12 +142,24 @@ async function main() {
   assert.ok(anchors.get('kontakt')?.has('anfahrt'));
 
   const home = sectionsFor('');
-  assert.ok(home.length >= 6 && home.length <= 7, 'Home requires an edited chapter structure');
-  assert.equal(home[0].data.layout, 'panorama');
-  assert.ok(home[0].data.image.endsWith('/kontext/courtyard.webp'), 'Home requires the approved courtyard photograph');
-  assert.equal(home[0].data.imageMobilePosition, '61% center');
-  assert.equal(home.filter(section => section.type === 'topicExplorer').length, 1);
+  assert.ok(home.length >= 5 && home.length <= 7, 'Home requires an edited photographic chapter structure');
+  assert.equal(home[0].type, 'editorialReel');
+  assert.equal(home[0].data.layout, 'opening');
+  assert.equal(home[0].data.titleAs, 'h1');
+  assert.equal(home[0].data.items.length, 3, 'Home requires three distinct visitor chapters');
+  assert.ok(home[0].data.items[0].image.endsWith('/kontext/courtyard.webp'), 'Home requires the approved courtyard photograph');
+  assert.equal(home[0].data.items[0].imageMobilePosition, '61% center');
+  assert.equal(new Set(home[0].data.items.map((item: Row) => item.image)).size, 3, 'Home photography must vary');
+  assert.ok(home[0].data.items.every((item: Row) => item.id && item.link?.label && item.link?.href));
+  assert.equal(home.filter(section => ['topicExplorer', 'imageAtlas', 'resourceList', 'editorialBriefing'].includes(section.type)).length, 0, 'Home must not repeat the full practice index or marketing lists');
   assert.equal(home.find(section => section.type === 'teamSpotlight')?.data.members.length, 3);
+  const practiceIndex = sectionsFor('rechtsgebiete-anwalt-ingolstadt');
+  assert.equal(practiceIndex[0].type, 'imageAtlas', 'The practice directory must have its own photographic mosaic opening');
+  assert.equal(practiceIndex[0].data.titleAs, 'h1');
+  assert.deepEqual(practiceIndex[0].data.items.map((item: Row) => [item.id, item.title, item.link.href]), practices.map(practice => [practice.key, practice.title, `/${practice.slug}`]));
+  assert.equal(new Set(practiceIndex[0].data.items.map((item: Row) => item.image)).size, 5);
+  assert.equal(practiceIndex.filter(section => ['imageAtlas', 'topicExplorer', 'resourceList'].includes(section.type)).length, 1, 'The directory must present the practice selection only once');
+  assert.notEqual(home.map(section => section.type).join('>'), practiceIndex.map(section => section.type).join('>'));
   const signatures = practices.map(practice => sectionsFor(practice.slug).map(section => `${section.type}:${section.data.layout || ''}`).join('>'));
   assert.equal(new Set(signatures).size, 5, 'Practice pages must have distinct compositions');
   const families = new Set(content.pages.map((page: Row) => { const first = sectionsFor(page.slug)[0]; return first.data.layout || first.type; }));
@@ -164,9 +178,17 @@ async function main() {
     assert.equal(portrait.headline, lawyer.name);
     assert.ok(portrait.image.endsWith(`/anwaelte/${lawyer.imageKey}.jpg`));
     const sourceContact = profile.find(section => section.anchor_id === 'kontakt')?.data;
-    assert.ok(sourceContact.intro.includes(lawyer.office));
+    assert.equal(profile.find(section => section.anchor_id === 'kontakt')?.type, 'ctaBand');
+    assert.equal(sourceContact.layout, 'plain');
+    assert.ok(sourceContact.subline.includes(lawyer.office));
     assert.ok(JSON.stringify(sourceContact).includes(lawyer.phone));
     assert.ok(JSON.stringify(sourceContact).includes(`mailto:${lawyer.email}`));
+    assert.equal(sourceContact.ctaPrimary.href, `tel:${lawyer.phone.replace(/[^+\d]/g, '')}`);
+    assert.equal(sourceContact.ctaPrimary.iconSuffix, 'Phone');
+    assert.equal(sourceContact.ctaSecondary.href, `mailto:${lawyer.email}`);
+    assert.equal(sourceContact.ctaSecondary.iconSuffix, 'Mail');
+    assert.ok(profile.some(section => section.type === 'richText' && section.data.content.includes('<h3>')), 'Personal biography requires readable substantive prose');
+    assert.ok(!profile.some(section => ['resourceList', 'editorialBriefing'].includes(section.type)), 'Profiles must not end in cloned marketing lists');
     assert.ok(JSON.stringify(portrait).includes(lawyer.licensed));
     assert.ok(portrait.meta.includes(lawyer.role), `Professional designation lost: ${lawyer.name}`);
     assert.ok(!JSON.stringify(profile).includes('/kontext/'), `Symbol photograph on personal profile ${lawyer.name}`);
@@ -179,14 +201,11 @@ async function main() {
   assert.equal(downloads.length, 9);
   assert.deepEqual([...downloads].sort(), [...originalDownloads].sort());
   assert.ok(!JSON.stringify(content.sections).includes('/kanzlei/telefon.jpg'), 'Repeated stock telephone sections must not return');
-  for (const slug of ['rechtsgebiete-anwalt-ingolstadt', 'service-anwaelte-ingolstadt']) {
-    const sections = sectionsFor(slug);
-    assert.equal(sections[0].data.layout, 'compact');
-    assert.equal(sections[1].data.headline, '', `Duplicate utility title ${slug}`);
-    assert.equal(sections[1].data.intro, '', `Duplicate utility introduction ${slug}`);
-  }
-  assert.ok(!sectionsFor('familienrecht-rechtsanwalt-ingolstadt').some(section => section.type === 'photoChapter'));
-  assert.ok(!sectionsFor('verkehrsrecht-rechtsanwalt-ingolstadt').some(section => section.type === 'photoChapter'));
+  assert.equal(service[0].data.layout, 'compact');
+  assert.equal(service[1].data.headline, '', 'The grouped PDF directory must not repeat the opening title');
+  assert.equal(service[1].data.intro, '', 'The grouped PDF directory must not repeat the opening introduction');
+  assert.ok(sectionsFor('familienrecht-rechtsanwalt-ingolstadt').some(section => section.type === 'photoChapter' && section.data.layout === 'spread'));
+  assert.ok(sectionsFor('verkehrsrecht-rechtsanwalt-ingolstadt').some(section => section.type === 'photoChapter' && section.data.layout === 'spread'));
   assert.ok(!sectionsFor('arbeitsrecht-rechtsanwalt-ingolstadt').some(section => section.data.layout === 'sequence'));
   const contactOpening = sectionsFor('kontakt')[0];
   assert.equal(contactOpening.type, 'contact');
@@ -202,6 +221,17 @@ async function main() {
   assert.ok(courtyardBytes.includes(Buffer.from('poEga0PVyPs')), 'Native WebP source URL missing');
   for (const [slug, expected] of Object.entries(sourceLegalHashes)) assert.equal(hash(sectionsFor(slug)[0].data), expected, `Legal source changed: ${slug}`);
 
+  // Captions and alternative text describe the subject; production provenance stays in media metadata and legal credits.
+  const publicStageDirections = /Originalaufnahme|Originalporträt|Originaldokument|Kanzleibestand|Bildbestand|Symbolbild|bisherigen (?:Kanzlei)?website|keine historischen Dokumente|aktuelle Aufnahmen zeigen|belegten Eckdaten|belegten Stationen/i;
+  for (const page of content.pages) {
+    if (['impressum', 'datenschutz'].includes(page.slug)) continue;
+    for (const section of sectionsFor(page.slug)) assert.ok(!publicStageDirections.test(JSON.stringify(section.data)), `Public stage direction on /${page.slug}: ${section.type}`);
+  }
+  const listTypes = new Set(['editorialBriefing', 'resourceList', 'topicExplorer']);
+  const listSections = content.sections.filter((section: Row) => listTypes.has(section.type));
+  assert.ok(listSections.length / content.sections.length < (45 / 82) / 2, 'Marketing list density must be less than half the previous 45/82 proportion');
+  assert.ok(listSections.every((section: Row) => section.type === 'resourceList' && section.page_id === content.pages.find((page: Row) => page.slug === 'service-anwaelte-ingolstadt').id || section.type === 'editorialBriefing' && section.anchor_id === 'vorbereitung'), 'Only functional preparation and document lists belong in this composition');
+
   // Narrative prose must be authored for its page. Short labels, identities and link facts may repeat.
   const paragraphs = new Map<string, Set<string>>();
   const inventory = [];
@@ -211,7 +241,7 @@ async function main() {
     const collect = (value: unknown): void => {
       if (Array.isArray(value)) value.forEach(collect);
       else if (value && typeof value === 'object') for (const [key, child] of Object.entries(value)) {
-        if (typeof child === 'string' && ['text', 'detail', 'intro', 'subline', 'description'].includes(key)) {
+        if (typeof child === 'string' && ['text', 'content', 'detail', 'intro', 'subline', 'description'].includes(key)) {
           narrative.push(child);
           const parts = child.includes('<p>') ? [...child.matchAll(/<p>([\s\S]*?)<\/p>/g)].map(match => match[1]) : [child];
           if (!['impressum', 'datenschutz'].includes(page.slug)) for (const part of parts) if (words(part).length >= 28) {
@@ -236,7 +266,7 @@ async function main() {
   assert.ok((contrastRatio(content.global.brand.navLinkColor, content.global.brand.navBgColor) || 0) >= 7);
   assert.equal(parseBusinessProfile(content.global.businessProfile).success, true, 'Business profile must open in its CMS editor');
 
-  const report = { offline: true, pages: content.pages.length, editorialPages: 22, registrySections: content.sections.length, openingFamilies: families.size, distinctPracticeCompositions: 5, colourChecks, internalLinkChecks, renderedSeoTitles: content.seoPages.length, internalMedia: content.media.length, provenanceRasterSidecars, originalLawyers: lawyers.length, originalStaff: staff.length, originalPdfs: downloads.length, unchangedLegalHashes: sourceLegalHashes, repeatedNarrativeParagraphs: duplicates.length, inventory, allPassed: true };
+  const report = { offline: true, pages: content.pages.length, editorialPages: 22, registrySections: content.sections.length, openingFamilies: families.size, distinctPracticeCompositions: 5, colourChecks, internalLinkChecks, renderedSeoTitles: content.seoPages.length, internalMedia: content.media.length, provenanceRasterSidecars, originalLawyers: lawyers.length, originalStaff: staff.length, originalPdfs: downloads.length, unchangedLegalHashes: sourceLegalHashes, repeatedNarrativeParagraphs: duplicates.length, listComposition: { before: { sections: 45, total: 82 }, after: { sections: listSections.length, total: content.sections.length }, ratio: listSections.length / content.sections.length }, inventory, allPassed: true };
   if (outputDirectory) await writeFile(resolve(outputDirectory, 'source-gate.json'), `${JSON.stringify(report, null, 2)}\n`);
   console.log(JSON.stringify({ ...report, inventory: undefined }));
 }
