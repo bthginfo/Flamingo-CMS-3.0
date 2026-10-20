@@ -60,7 +60,7 @@ export function hagnSnapshot(content: Content, generatedAt: string) {
 }
 
 async function main() {
-  const dir = resolve(process.env.HAGN_CONTENT_DIR || 'tmp/hagn-partner-2026-10-19');
+  const dir = resolve(process.env.HAGN_CONTENT_DIR || 'tmp/hagn-perspective-2026-10-20');
   const content = JSON.parse(await readFile(resolve(dir, 'hagn-content.json'), 'utf8')) as Content;
   const apply = process.argv.includes('--apply');
   validateHagnContent(content, apply ? process.env.DATABASE_URL : undefined);

@@ -8,6 +8,8 @@ import { stockMedia } from './stock-media.mjs';
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const publicRoot = resolve(repository, 'apps/renderer/public/hagn-partner');
+const xml = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+const sourceXmp = item => `<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:description><rdf:Alt><rdf:li xml:lang="x-default">${xml(item.origin)}</rdf:li></rdf:Alt></dc:description><dc:creator><rdf:Seq><rdf:li>${xml(item.creator)}</rdf:li></rdf:Seq></dc:creator><dc:source>${xml(item.sourceUrl)}</dc:source></rdf:Description></rdf:RDF></x:xmpmeta>`;
 export const sourceMedia = [
   ['logo.png', 'logo.png', 350, 100, 'Logo der Rechtsanwälte Hagn, Deckert, Stemmer & Partner'],
   ...['niels-deckert', 'markus-stemmer', 'gabriela-radlinger', 'veronika-hagn', 'maria-haneder', 'ulrike-wagner', 'eva-huxmann'].map((name, i) => [`anwaelte/${name}.jpg`, `anwalt-ingolstadt/${name}.jpg`, 650, [600, 540, 480, 490, 520, 600, 600][i], ['Dr. iur. Niels Deckert', 'Markus Stemmer', 'Gabriele Radlinger', 'Veronika Hagn', 'Maria Haneder', 'Ulrike Wagner', 'Eva Huxmann'][i]]),
@@ -52,7 +54,7 @@ export async function importAssets() {
       if (!dependency) throw new Error('Install the workspace image optimizer before importing context media.');
       const require = createRequire(import.meta.url);
       const sharp = require(resolve(repository, 'node_modules/.pnpm', dependency, 'node_modules/sharp'));
-      bytes = await sharp(Buffer.from(await response.arrayBuffer())).rotate().resize({ width: 1800, height: 1800, fit: 'inside', withoutEnlargement: true }).webp({ quality: 86, effort: 5 }).toBuffer();
+      bytes = await sharp(Buffer.from(await response.arrayBuffer())).rotate().resize({ width: item.width || 1800, height: item.height || 1800, fit: 'inside', withoutEnlargement: true }).withXmp(sourceXmp(item)).webp({ quality: 86, effort: 5 }).toBuffer();
       await writeFile(path, bytes);
     }
     manifest.push({ ...item, path: `/hagn-partner/${item.path}`, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') });

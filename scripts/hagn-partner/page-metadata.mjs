@@ -25,49 +25,49 @@ export const pageMetadata = [
     "slug": "niels-deckert-anwalt-ingolstadt",
     "title": "Dr. iur. Niels Deckert",
     "metaTitle": "Dr. iur. Niels Deckert | Rechtsanwalt Ingolstadt",
-    "description": "Rechtsberatung in Ingolstadt mit Dr. iur. Niels Deckert. Erfahren Sie mehr über Qualifikationen, Tätigkeitsschwerpunkte und den Kontakt zum Sekretariat.",
+    "description": "Dr. iur. Niels Deckert: Immobilienrecht, Handels- und Gesellschaftsrecht sowie Zivilrecht in Ingolstadt. Profil und direkter Kontakt zu Susanna Nagel.",
     "sourceSlug": "niels-deckert-anwalt-ingolstadt"
   },
   {
     "slug": "markus-stemmer-anwalt-ingolstadt",
     "title": "Markus Stemmer",
     "metaTitle": "Markus Stemmer | Rechtsanwalt Ingolstadt",
-    "description": "Rechtsberatung in Ingolstadt mit Markus Stemmer. Erfahren Sie mehr über Qualifikationen, Tätigkeitsschwerpunkte und den Kontakt zum Sekretariat.",
+    "description": "Markus Stemmer ist Fachanwalt für Miet- und Wohnungseigentumsrecht und IGZ-geprüfter Zwangsverwalter. Profil und Kontakt zu Aylin Durgut in Ingolstadt.",
     "sourceSlug": "markus-stemmer-anwalt-ingolstadt"
   },
   {
     "slug": "gabriele-radlinger-anwalt-ingolstadt",
     "title": "Gabriele Radlinger",
     "metaTitle": "Gabriele Radlinger | Rechtsanwältin Ingolstadt",
-    "description": "Rechtsberatung in Ingolstadt mit Gabriele Radlinger. Erfahren Sie mehr über Qualifikationen, Tätigkeitsschwerpunkte und den Kontakt zum Sekretariat.",
+    "description": "Gabriele Radlinger, Fachanwältin für Familienrecht in Ingolstadt: Trennung, Scheidung, Unterhalt und Vermögen. Profil und Kontakt zu Monika Kürzinger.",
     "sourceSlug": "gabriele-radlinger-anwalt-ingolstadt"
   },
   {
     "slug": "veronika-hagn-anwalt-ingolstadt",
     "title": "Veronika Hagn",
     "metaTitle": "Veronika Hagn | Rechtsanwältin Ingolstadt",
-    "description": "Rechtsberatung in Ingolstadt mit Veronika Hagn. Erfahren Sie mehr über Qualifikationen, Tätigkeitsschwerpunkte und den Kontakt zum Sekretariat.",
+    "description": "Veronika Hagn ist Fachanwältin für Verkehrsrecht und Strafrecht in Ingolstadt. Lernen Sie ihr Profil kennen und erreichen Sie das Sekretariat Ilona Epstein.",
     "sourceSlug": "veronika-hagn-anwalt-ingolstadt"
   },
   {
     "slug": "maria-haneder-anwalt-ingolstadt",
     "title": "Maria Haneder",
     "metaTitle": "Maria Haneder | Rechtsanwältin Ingolstadt",
-    "description": "Rechtsberatung in Ingolstadt mit Maria Haneder. Erfahren Sie mehr über Qualifikationen, Tätigkeitsschwerpunkte und den Kontakt zum Sekretariat.",
+    "description": "Maria Haneder ist Fachanwältin für Arbeitsrecht und Familienrecht in Ingolstadt. Tätigkeitsfelder, Qualifikation und direkter Kontakt zu Ilona Epstein.",
     "sourceSlug": "maria-haneder-anwalt-ingolstadt"
   },
   {
     "slug": "ulrike-wagner-anwalt-ingolstadt",
     "title": "Ulrike Wagner",
     "metaTitle": "Ulrike Wagner | Rechtsanwältin Ingolstadt",
-    "description": "Rechtsberatung in Ingolstadt mit Ulrike Wagner. Erfahren Sie mehr über Qualifikationen, Tätigkeitsschwerpunkte und den Kontakt zum Sekretariat.",
+    "description": "Ulrike Wagner berät im Familienrecht, Verkehrsrecht und allgemeinen Zivilrecht. Persönliches Profil, direkte E-Mail und Sekretariatskontakt in Ingolstadt.",
     "sourceSlug": "ulrike-wagner-anwalt-ingolstadt"
   },
   {
     "slug": "eva-huxmann-anwalt-ingolstadt",
     "title": "Eva Huxmann",
     "metaTitle": "Eva Huxmann | Rechtsanwältin Ingolstadt",
-    "description": "Rechtsberatung in Ingolstadt mit Eva Huxmann. Erfahren Sie mehr über Qualifikationen, Tätigkeitsschwerpunkte und den Kontakt zum Sekretariat.",
+    "description": "Eva Huxmann, Rechtsanwältin und Diplom-Verwaltungswirtin (FH): Familienrecht, Strafrecht und Verwaltungsrecht. Profil und Kontakt in Ingolstadt.",
     "sourceSlug": "eva-huxmann-anwalt-ingolstadt"
   },
   {
@@ -81,35 +81,35 @@ export const pageMetadata = [
     "slug": "verkehrsrecht-rechtsanwalt-ingolstadt",
     "title": "Verkehrsrecht",
     "metaTitle": "Verkehrsrecht Ingolstadt | Hagn & Partner",
-    "description": "Verkehrsrecht in Ingolstadt bei Hagn & Partner: typische Anliegen, Fachanwälte, hilfreiche Unterlagen und Kontakt für Ihr persönliches Beratungsgespräch.",
+    "description": "Unfall und Schadensregulierung, Fahrzeugkauf, Reparatur und verkehrsrechtliche Verfahren. Verkehrsrecht in Ingolstadt mit Fachanwältin Veronika Hagn.",
     "sourceSlug": "verkehrsrecht-rechtsanwalt-ingolstadt"
   },
   {
     "slug": "mietrecht-rechtsanwalt-ingolstadt",
     "title": "Miet- und WEG-Recht",
     "metaTitle": "Miet- und WEG-Recht Ingolstadt | Hagn & Partner",
-    "description": "Miet- und WEG-Recht in Ingolstadt bei Hagn & Partner: typische Anliegen, Fachanwälte, hilfreiche Unterlagen und Kontakt für Ihr persönliches Beratungsgespräch.",
+    "description": "Mietverhältnis, Eigentümergemeinschaft und Verwaltung: Miet- und Wohnungseigentumsrecht in Ingolstadt mit Fachanwalt Markus Stemmer. Themen und Kontakt.",
     "sourceSlug": "mietrecht-rechtsanwalt-ingolstadt"
   },
   {
     "slug": "arbeitsrecht-rechtsanwalt-ingolstadt",
     "title": "Arbeitsrecht",
     "metaTitle": "Arbeitsrecht Ingolstadt | Hagn & Partner",
-    "description": "Arbeitsrecht in Ingolstadt bei Hagn & Partner: typische Anliegen, Fachanwälte, hilfreiche Unterlagen und Kontakt für Ihr persönliches Beratungsgespräch.",
+    "description": "Arbeitsrecht für Arbeitnehmer, Arbeitgeber und betriebliche Vertretungen in Ingolstadt. Verträge und Beendigung mit Fachanwältin Maria Haneder einordnen.",
     "sourceSlug": "arbeitsrecht-rechtsanwalt-ingolstadt"
   },
   {
     "slug": "strafrecht-rechtsanwalt-ingolstadt",
     "title": "Strafrecht",
     "metaTitle": "Strafrecht Ingolstadt | Hagn & Partner",
-    "description": "Strafrecht in Ingolstadt bei Hagn & Partner: typische Anliegen, Fachanwälte, hilfreiche Unterlagen und Kontakt für Ihr persönliches Beratungsgespräch.",
+    "description": "Ermittlungsverfahren, Strafbefehl, Jugendstrafrecht sowie Opfer- und Zeugenvertretung: Strafrecht in Ingolstadt mit Fachanwältin Veronika Hagn.",
     "sourceSlug": "strafrecht-rechtsanwalt-ingolstadt"
   },
   {
     "slug": "familienrecht-rechtsanwalt-ingolstadt",
     "title": "Familienrecht",
     "metaTitle": "Familienrecht Ingolstadt | Hagn & Partner",
-    "description": "Familienrecht in Ingolstadt bei Hagn & Partner: typische Anliegen, Fachanwälte, hilfreiche Unterlagen und Kontakt für Ihr persönliches Beratungsgespräch.",
+    "description": "Kinder, Unterhalt, Vermögen, Trennung und Scheidung: Familienrecht in Ingolstadt mit den Fachanwältinnen Gabriele Radlinger und Maria Haneder.",
     "sourceSlug": "familienrecht-rechtsanwalt-ingolstadt"
   },
   {

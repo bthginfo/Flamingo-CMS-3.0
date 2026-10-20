@@ -4,12 +4,14 @@
  */
 import { DEFAULT_ANAMNESIS_CUSTOM_FORM } from './custom-form-defaults';
 import { INDUSTRY_HERO_EXAMPLES } from './section-industry-hero-examples';
+import { PERSPECTIVE_SECTION_PREVIEW_DATA } from './perspective-section-data';
 const SCENE_LAYER_WARM = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23b76d38" fill-opacity=".22"/%3E%3C/svg%3E';
 const SCENE_LAYER_LIGHT = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Crect width="1600" height="1200" fill="%23f6efe4" fill-opacity=".32"/%3E%3C/svg%3E';
 const SCENE_LAYER_BLACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%2313171d" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%2313171d" stop-opacity=".28"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%2313171d" stroke-width="8" stroke-opacity=".18"/%3E%3C/svg%3E';
 const SCENE_LAYER_BRASS = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0" x2="1"%3E%3Cstop offset="42%25" stop-color="%23b08d57" stop-opacity="0"/%3E%3Cstop offset="100%25" stop-color="%23b08d57" stop-opacity=".3"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="1600" height="1200" fill="url(%23g)"/%3E%3Cpath d="M1080 150v900M1360 150v900" stroke="%23b08d57" stroke-width="8" stroke-opacity=".24"/%3E%3C/svg%3E';
 
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  ...PERSPECTIVE_SECTION_PREVIEW_DATA,
   customForm: DEFAULT_ANAMNESIS_CUSTOM_FORM,
   textBlock: { headline: 'Von der ersten Idee zum klaren Projekt.', text: '<p>Wir beginnen mit dem, was bereits vorhanden ist: Ziele, Materialien und die Fragen, die eine Entscheidung noch offenhalten.</p><h3>Ein gemeinsamer Arbeitsstand</h3><p>Im nächsten Schritt halten wir Umfang, Zuständigkeiten und Freigaben fest. So werden Entwürfe vergleichbar und die Umsetzung bleibt nachvollziehbar.</p>' },
   verticalReelShowcase: {
@@ -907,6 +909,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   contact: {
+    layout: 'cards', titleAs: 'h2',
     headline: 'Kontakt aufnehmen',
     subline: 'Wir freuen uns auf Ihre Nachricht.',
     infoCards: [
@@ -2391,8 +2394,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     badge: 'Team',
     headline: 'Die Menschen hinter der Arbeit.',
     subline: 'Beim Überfahren der Karten zeigen sich Zitat, Schwerpunkte und Kontaktwege.',
+    cta: { label: '', href: '' },
     members: [
-      { name: 'Sarah Winkler', role: 'Gründerin & Strategie', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=82', imageAlt: 'Porträt von Sarah Winkler', imagePosition: 'center 25%', href: '/team/sarah-winkler', quote: 'Gute Arbeit erkennt man daran, dass sie leise überzeugt.', focus: ['Strategie', 'Beratung'], linkedin: 'https://linkedin.com' },
+      { name: 'Sarah Winkler', role: 'Gründerin & Strategie', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=82', imageAlt: 'Porträt von Sarah Winkler', imagePosition: 'center 25%', href: '/team/sarah-winkler', quote: 'Gute Arbeit erkennt man daran, dass sie leise überzeugt.', focus: ['Strategie', 'Beratung'], linkedin: 'https://linkedin.com', contactName: '', phone: '', email: '' },
       { name: 'Jonas Berger', role: 'Kreation', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=82', quote: 'Design ist entschieden, nicht dekoriert.', focus: ['Design', 'Marke'], instagram: 'https://instagram.com' },
       { name: 'Mia Kraus', role: 'Projektleitung', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=82', quote: 'Termine hält man, indem man ehrlich plant.', focus: ['Projekte', 'Kundenkontakt'], email: 'mia@example.com' },
     ],

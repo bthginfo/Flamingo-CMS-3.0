@@ -109,6 +109,7 @@ const CONTAINER: Record<string, string> = {
 const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 const CONTACT_FORM_SECTION_TYPES = new Set(['contact', 'contactForm', 'locationContact', 'tourismContact', 'smartInquiry']);
 const SKIP_REVEAL_SECTION_TYPES = new Set([
+  'perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList',
   'hero',
   'collectionHero',
   'cinematicHero',
@@ -512,6 +513,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     'servicePackages',
     // Premium shared
     'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero', 'editorialHero',
+    'perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList',
     'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
     'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup', 'mobileActionDock',
     'dualWave', 'cinematicChapters', 'transformationSequence', 'xrayReveal', 'sceneLab', 'infiniteCanvas',
@@ -519,7 +521,9 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     'verticalReelShowcase', 'aiWorkflowReel', 'cameraExplodeScroll',
   ]);
 
-  const isFullBleed = FULL_BLEED_TYPES.has(section.type);
+  const isFullBleed = FULL_BLEED_TYPES.has(section.type)
+    || (section.type === 'teamSpotlight' && section.data.layout === 'contactSheet')
+    || (['contact', 'contactForm'].includes(section.type) && section.data.layout === 'editorial');
   // Normal text and media text are independent roles. Whole-media sections
   // prefer their explicit inverse role, then an explicit normal role for
   // compatibility. Nested image overlays use only their inverse role.

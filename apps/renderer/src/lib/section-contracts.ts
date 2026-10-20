@@ -2,6 +2,7 @@ import { getSectionTypesForIndustry } from '../app/admin/pages/[id]/section-type
 import { SECTION_EDITOR_FIELD_DEFAULTS } from './section-editor-field-defaults';
 import { SECTION_PREVIEW_DATA } from './section-preview-data';
 import { getSectionSchemas } from './section-data-schemas';
+import { PERSPECTIVE_SECTION_CONTRACTS } from './perspective-section-contracts';
 import {
   FIELD_DEFS,
   PUBLIC_COLOR_FIELD_KEYS,
@@ -56,6 +57,7 @@ export type SectionContract = {
 };
 
 export const PILOT_SECTION_CONTRACTS: SectionContract[] = [
+  ...PERSPECTIVE_SECTION_CONTRACTS,
   {
     type: 'hero',
     label: 'Hero',
@@ -349,9 +351,35 @@ export function getAllSectionContracts(): SectionContract[] {
 
 /** Keep new reading-first variants discoverable to CMS and API consumers. */
 function sectionLayoutField(type: string, key: string): Partial<SectionFieldContract> {
+  if (['contact', 'contactForm'].includes(type) && key === 'infoCards') return { type: 'list', itemFields: [
+    { key: 'icon', label: 'Symbol (klassische Layouts)', type: 'text' }, { key: 'label', label: 'Bezeichnung', type: 'text' }, { key: 'value', label: 'Angabe', type: 'textarea' }, { key: 'href', label: 'Kontakt-Link', type: 'text' },
+  ] };
+  if (['contact', 'contactForm'].includes(type) && key === 'formFields') return { type: 'list', itemFields: [
+    { key: 'name', label: 'Technischer Feldname', type: 'text', required: true }, { key: 'label', label: 'Beschriftung', type: 'text', required: true }, { key: 'type', label: 'Feldtyp', type: 'select', options: ['text', 'email', 'tel', 'textarea', 'select'] }, { key: 'placeholder', label: 'Platzhalter', type: 'text' }, { key: 'required', label: 'Pflichtfeld', type: 'boolean' }, { key: 'halfWidth', label: 'Halbe Breite', type: 'boolean' }, { key: 'options', label: 'Auswahlmöglichkeiten', type: 'list' },
+  ] };
+  if (['contact', 'contactForm'].includes(type) && key === 'privacyHref') return { type: 'text', supportsFocalPoint: false };
+  if (type === 'teamSpotlight' && key === 'members') return {
+    type: 'list', supportsFocalPoint: false,
+    itemFields: [
+      { key: 'name', label: 'Name', type: 'text', required: true },
+      { key: 'role', label: 'Qualifikation und Rolle', type: 'textarea' },
+      { key: 'image', label: 'Porträt', type: 'image', supportsFocalPoint: true },
+      { key: 'imageAlt', label: 'Alternativtext', type: 'text' },
+      { key: 'imagePosition', label: 'Bildausschnitt', type: 'text' },
+      { key: 'href', label: 'Profil-Link', type: 'text' },
+      { key: 'focus', label: 'Schwerpunkte', type: 'list' },
+      { key: 'contactName', label: 'Kontaktperson', type: 'text' },
+      { key: 'phone', label: 'Telefon', type: 'text' },
+      { key: 'email', label: 'E-Mail', type: 'text' },
+      { key: 'quote', label: 'Zitat (klassische Layouts)', type: 'textarea' },
+      { key: 'instagram', label: 'Instagram', type: 'text' },
+      { key: 'linkedin', label: 'LinkedIn', type: 'text' },
+    ],
+  };
   const layouts: Record<string, string[]> = {
     editorialHero: ['', 'edition', 'portrait', 'journal', 'studio', 'memorial', 'correspondence', 'architectural', 'quiet', 'campaignBleed', 'fullBleedImage'],
-    teamSpotlight: ['', 'directory'],
+    teamSpotlight: ['', 'directory', 'contactSheet'],
+    contact: ['cards', 'editorial'], contactForm: ['cards', 'editorial'],
     servicesGrid: ['classic', 'index'], processSteps: ['classic', 'simple'],
     ctaBand: ['classic', 'plain'], categoryMosaic: ['mosaic', 'editorial', 'spread'],
     textImage: ['image-left', 'image-right'],
@@ -359,7 +387,7 @@ function sectionLayoutField(type: string, key: string): Partial<SectionFieldCont
   if (key === 'layout' && layouts[type]) return { type: 'select', options: layouts[type] };
   if (key === 'preset' && type === 'kineticIdentity') return { type: 'select', options: ['editorial', 'architectural', 'expressive'] };
   if (key === 'preset' && type === 'materialAtelier') return { type: 'select', options: ['architectural', 'quiet', 'editorial'] };
-  if (['richText', 'teamSpotlight'].includes(type) && key === 'titleAs') return { type: 'select', options: ['h1', 'h2'] };
+  if (['richText', 'teamSpotlight', 'contact', 'contactForm'].includes(type) && key === 'titleAs') return { type: 'select', options: ['h1', 'h2'] };
   if (['showKickers', 'showNumbers'].includes(key)) return { type: 'boolean' };
   if (type === 'editorialHero' && key === 'compact') return { type: 'boolean' };
   if (['editorialHero', 'textImage'].includes(type) && key === 'imageFit') return { type: 'select', options: ['cover', 'contain'] };

@@ -7,10 +7,12 @@ import { ConsentGate } from '@/components/consent-gate';
 import { CardSurface, PremiumSectionHeader } from '@/templates/shared/section-primitives';
 import { safeMapEmbedUrl } from '@/lib/safe-embed-url';
 import { contactInfoHref, resolveContactInfoCards } from './contact-info';
+import { EditorialContactSection } from '../shared/editorial-contact';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function ContactSection({ data }: Props) {
+  if (data.layout === 'editorial') return <EditorialContactSection data={data} />;
   const headline = (data.headline as string) || 'Kontakt';
   const introText = (data.introText as string) || (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';

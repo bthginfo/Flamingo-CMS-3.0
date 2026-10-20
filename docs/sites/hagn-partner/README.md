@@ -1,116 +1,138 @@
-# Hagn & Partner — eigenständige Kanzlei-Edition
+# Hagn & Partner — Perspektive
 
-## Inhalt und Betrieb
+## Inhalt und dokumentierter Stand
 
-Eigenständige Website für **Rechtsanwälte Hagn, Deckert, Stemmer & Partner PartG mbB**, Bergbräustr. 7, 85049 Ingolstadt. Tenant `a1853e0f-ff90-45ee-8fb2-8bada3812f67`, Slug `hagn-partner`, eigene isolierte Datenbank im Free-Plan. Die technische Templatefamilie `consulting` bezeichnet die Rendererfamilie.
+Website für **Rechtsanwälte Hagn, Deckert, Stemmer & Partner PartG mbB**, Bergbräustr. 7, 85049 Ingolstadt. Tenant a1853e0f-ff90-45ee-8fb2-8bada3812f67, Slug hagn-partner, technische Rendererfamilie consulting. Die bestehende Kanzleidomain [hagn-partner.de](https://www.hagn-partner.de/) bleibt erhalten; die Standalone-Adresse ist [flamingo-hagn-partner.vercel.app](https://flamingo-hagn-partner.vercel.app), im gelieferten Export mit noindex,nofollow.
 
-Standalone-Adresse: [flamingo-hagn-partner.vercel.app](https://flamingo-hagn-partner.vercel.app). Die bestehende Kanzleidomain wurde nicht umgestellt. Der Standalone-Host bleibt `noindex,nofollow`.
+Die Quelle vom **20.10.2026** enthält **24 native Routen, 82 bearbeitbare Sections, neun verwendete Sectiontypen, 24 explizite SEO-Zeilen und 39 Medien**. Sie umfasst sieben Anwaltsprofile, fünf ausführliche Kernrechtsgebiete, Kanzlei, Geschichte, Konzept, Ersttermin, fünf Mitarbeiterinnen, neun PDF-Formulare, Kontakt, Impressum und Datenschutz.
 
-Der fertig vorbereitete Stand vom 19.10.2026 enthält **24 native Seiten, 129 bearbeitbare Sections, 19 registrierte Sectiontypen und sechs fotografische beziehungsweise personengeführte Eröffnungsfamilien**. Edition, Portrait, Journal, Architectural, Cinematic und Directory geben den Hauptseiten unterschiedliche Kompositionen; Impressum und Datenschutz bleiben Leseseiten. Sieben Anwaltsprofile, fünf ausführliche Kernrechtsgebiete, Kanzleigeschichte, Ersttermin und Kosten, Sekretariat, neun PDF-Formulare und Kontakt sind enthalten. Die frühere Historien-Dublette sowie Konzept- und Sekretariatsrouten besitzen eigenständige Inhalte.
+Der eingefrorene Export liegt im ignorierten Arbeitsverzeichnis tmp/hagn-perspective-2026-10-20/hagn-content.json. Seine SHA-256 lautet:
 
-**Dokumentierter Freigabestand:** Diese Aufzeichnung beschreibt die eingefrorene Releasequelle, ihre Inhaltsdaten und die lokalen Prüfbelege. Produktionsbereitstellung und Livekontrolle werden separat in den Releasebelegen nachgewiesen. Die unten genannten Prüfungen belegen den lokalen Stand und die konkret nachgeprüften Korrekturen; sie bescheinigen keine neue Gesamtprüfung aller Appbereiche, Tabletansichten oder juristischen Inhalte.
+~~~text
+71dc61be094c52e8530651903854cb69c0cd8ce61c4ce98fdfba50002ce4bc5b
+~~~
+
+Diese Aufzeichnung beschreibt den Quellstand und die redaktionellen Verträge. Die abschließende Browserbestätigung, derselbe externe Evaluator, CMS-Livebelege, Produktionsbereitstellung und HTTP-Kontrollen werden separat im Releaseprozess geführt. Hier wird kein noch ausstehender Freigabeschritt als abgeschlossen dargestellt.
+
+## Gestaltung und Seitenkompositionen
+
+Die bestätigte Richtung ist Apple-informierte fotografische Produktdramaturgie: **Manrope für alle Schriftrollen, Weiß und kühles Hellgrau, dunkle Marinetöne und blaue Links**. Große Fotos, deutlich verschiedene Auftakte, offene Fachtexte und nützliche Listen bestimmen die Seiten.
+
+Fünf perspectiveHero-Kompositionen sind tatsächlich verwendet: panorama, statement, portrait, journal und compact. Das offene contactSheet, die redaktionelle Kontaktseite und die Rechtsleseseiten ergeben insgesamt acht Eröffnungsformen. Die fünf ausführlichen Rechtsgebiete haben verschiedene Sectionfolgen. Home kombiniert sieben Kapitel; die Anwaltsporträts folgen einer gemeinsamen, sachlich sinnvollen Profilstruktur.
+
+[DESIGN.md](DESIGN.md) dokumentiert die implementierten Tokens, Schriftgrößen, Maße und Regeln. [.impeccable/design.json](.impeccable/design.json) ergänzt Farbvorschauen, Zustände, Bewegung, Breakpoints und isoliert darstellbare Quellmuster. Die Farbstreifen sind synthetische Vorschauen und keine zusätzlichen CMS-Farbrollen. Der dokumentierte Stand ist aus dem Code abgeleitet; es liegt kein freigegebener Bild-Comp vor.
 
 ## Redaktion im CMS
 
-Alle 129 Sections sind native, registrierte Builder-Sections mit passendem `definitionKey` und `schemaVersion`. Texte, Medien, Listen, Aktionen und unterstützte Zustands-, Layout- und Farbwerte bleiben über CMS/API pflegbar.
+Alle 82 Sections sind native Builder-Sections mit definition_key und schema_version. Die fünf neuen Typen verwenden ihre jeweiligen .shared.v1-Definitionen und schema_version = 1. Die Gesamtquelle verwendet perspectiveHero (19), editorialBriefing (25), topicExplorer (2), teamSpotlight (8), photoChapter (6), resourceList (18), contact (1), timeline (1) und legalContent (2).
 
 | Bereich | Bearbeitungsweg / Datenfeld |
 |---|---|
-| Seiten, Reihenfolge und Sections | `/admin/pages`, jeweiliger Section-Builder |
-| Fotografiegeführte Titel | `editorialHero.layout = edition / portrait / journal / architectural`; `headline`, `text`, `imagePrimary`, `imageAlt`, `imagePrimaryPosition`, `imageFit`, `primaryCta`, `secondaryCta`, `hint`, `contactRows` |
-| Filmischer Auftakt | `cinematicHero`; `headline`, `subline`, `image`, `imageAlt`, `imagePosition`, `overlay`, `imageEffect`, `primaryCta`, `secondaryCta` |
-| Anwälte und Sekretariat | `teamSpotlight.layout = directory`; `titleAs`, `headline`, `subline`, `members[].name/role/image/imageAlt/imagePosition/focus/href` |
-| Große interaktive Themenbühne | `materialAtelier`; `preset`, `headline`, `subline`, `items[].title/text/image/imageAlt/imagePosition/meta/href/ctaLabel`, `cta` |
-| Thematische Tabs | `serviceTabs`; `tabs[].label/title/text/image/imageAlt/imagePosition/features/cta` |
-| Kapitel- und Bildstrecken | `cinematicChapters.chapters`, `scrollStory.steps`, `categoryMosaic.items`, `signatureGrid.image/traits/stats` |
-| Verbundene Schritte | `signaturePath`; `pathPreset`, `items[].title/text/image/href/ctaLabel`, `cta`; bis zu sieben Elemente |
-| Geführte Orientierung | `guidedChoice`; `questions`, `results`, `restartLabel`, `mode` |
-| Rechtsgebiets- und PDF-Index | `servicesGrid.layout = index`; `manualCards[].title/text/href` |
-| Lesetexte und Bild-/Text-Sections | `richText.content/titleAs`, `textImage.text/items/image/imageAlt/imagePosition/layout/primaryCta/secondaryCta` |
-| Geschichte | `timeline.entries` |
-| Fragen und Kontaktblock | `faqContactSplit.items[].question/answer`, `contactTitle`, `contactText`, `phone`, `email`, `cta` |
-| Helle Schlussaktionen mit Foto | `ctaSplit`; `headline`, `text`, `image`, `imageAlt`, `imagePosition`, `checklist`, `primaryCta`, `secondaryCta`, `note`, `reversed` |
-| Kontaktformular und Informationspaneele | `contact`; `headline`, `introText`, `infoCards`, `formFields`, `submitLabel`, `privacyHref`, `showMap` |
-| Rechtstexte | `legalContent.headline/blocks`; `/admin/legal` verweist auf diese bearbeitbaren Sections |
-| Farben je Section | Registrierte Rollen im Section-Farbeditor, einschließlich eigener Karten-, Foto-, Button-, Link-, Feld- und Zustandsrollen, soweit vom Sectiontyp unterstützt |
-| Marke, Schrift und Logo | `/admin/brand`; DM Serif Display und Manrope, originales Kanzleilogo |
-| Fester Header auf Papier | `/admin/brand` → Navigation & Header → Navigationsfläche → `solid`; `brand.navMode`, `navBgColor`, `navLinkColor`, `navBrandColor`. Der kompatible Modus `auto` bleibt unterstützt. |
-| Zentrale Kontaktdaten und Zeiten | `/admin/contact` |
-| Formularfelder und Antwortkonfiguration | `/admin/contact-form`, `/admin/mail`; Ziel `info@hagn-partner.de`, automatische Antwort im gelieferten Stand deaktiviert |
-| Navigation und Footer | `/admin/navigation` und Footer-Einstellungen; Footer `classic`, ohne zusätzliche generische Footer-CTA |
-| Suchmaschinen | `/admin/seo` und jeweilige Seiten-SEO; registriertes Schema `LegalService`, Canonicals, Titel, Beschreibung, OG-Bild und `noindex` |
-| Fotos und Formulare | `/admin/media`; lokale Dateien unter `apps/renderer/public/hagn-partner`, spätere Uploads über den konfigurierten Blob-Zugang |
+| Seiten, Reihenfolge, Sichtbarkeit und Sections | /admin/pages, jeweiliger Section-Builder |
+| Fotografischer Seitentitel | perspectiveHero: layout = panorama / statement / portrait / journal / compact; eyebrow, headline, text, image, imageAlt, imagePosition, imageMobilePosition, caption, primaryCta, secondaryCta, meta |
+| Foto-Kapitel | photoChapter: layout = feature / immersive / diptych; headline, text, image, imageAlt, imagePosition, secondaryImage, secondaryImageAlt, secondaryImagePosition, caption, cta |
+| Themenindex | topicExplorer: headline, intro, items[].id/title/summary/detail/image/imageAlt/imagePosition/bullets/meta/cta |
+| Fachlicher Überblick | editorialBriefing: layout = columns / sequence / dossier; headline, intro, groups[].title/text/items, stages[].title/text, note, cta |
+| Dokumente und Verweise | resourceList: headline, intro, groups[].id/title/items; je Ressource title, description, href, format, actionLabel; note |
+| Anwälte und Sekretariat | teamSpotlight.layout = contactSheet: titleAs, headline, subline, cta; members[].name/role/image/imageAlt/imagePosition/focus/href/contactName/phone/email |
+| Kontakt | contact.layout = editorial: titleAs, headline, introText, infoCards[].icon/label/value/href, formEnabled, formFields, submitLabel, privacyHref, showMap, mapEmbedUrl |
+| Geschichte | timeline.entries |
+| Rechtsseiten | legalContent.headline/blocks; /admin/legal führt zu den bearbeitbaren Sections |
+| Farben je Section | Ausschließlich registrierte Rollen im Farbeditor; helle, dunkle, fotografische, Aktions-, Link- und Feldrollen, soweit vom jeweiligen Typ unterstützt |
+| Marke, Schriften und Logo | /admin/brand; headingFont = Manrope, bodyFont = Manrope, originales Kanzleilogo |
+| Fester weißer Header | /admin/brand → Navigation & Header → Navigationsfläche = solid; brand.navMode, navBgColor, navLinkColor, navBrandColor |
+| Zentrale Kontaktangaben und Zeiten | /admin/contact |
+| Formular und Antwortkonfiguration | /admin/contact-form, /admin/mail; Ziel info@hagn-partner.de; automatische Antwort im Export deaktiviert |
+| Navigation und Footer | /admin/navigation und Footer-Einstellungen; Footer classic, zusätzliche Footer-CTA leer |
+| Suchmaschinen | /admin/seo und Seiten-SEO; LegalService, Canonicals, Titel, Beschreibung, OG-Bild und noindex |
+| Fotos und Dokumente | /admin/media; Ausgangsdateien unter apps/renderer/public/hagn-partner |
 
-Hagn setzt `showKickers = false` in Signature Path, Scroll Story und Guided Choice sowie `showNumbers = false` in FAQ Contact Split. Diese Optionen unterdrücken wiederholte dekorative Zeilen und FAQ-Ziffern. Fachliche Texte, eigentliche Pfadmarkierungen und Bedienelemente bleiben sichtbar. Die normalen sekundären Cinematic-Aktionen zeigen ihre redaktionelle Beschriftung.
+Aktionen besitzen label und href. Rich Text wird in photoChapter.text, topicExplorer.items[].detail und editorialBriefing.groups[].text bereinigt ausgegeben; die anderen beschriebenen Einleitungen und Phasen sind Klartext. Die vorhandene Kontakt-Einleitung unterstützt bereinigtes HTML. Originalindizes von Listen bleiben den CMS-Bearbeitungspfaden zugeordnet.
 
-Ein Originalporträt trägt technisch den Dateinamen `gabriela-radlinger.jpg`; die Person heißt korrekt **Gabriele Radlinger**. Durchwahlen sind überwiegend Sekretariatskontakte. Alttext, Fokalpunkt und Fit werden an den jeweils unterstützten Feldern gepflegt; ein allgemeines Medienfeld erzeugt keine nicht registrierte Sectionoption.
+Der Editor ergänzt fehlende optionale Felder aus vollständigen Formen als **leere Bedienelemente**; er fügt keine Demoabsätze oder Demolistenzeilen in vorhandene Daten ein. Layout und titleAs behalten ihren passenden Strukturstandard. Der Renderer verwendet bei ungültigem Layout panorama, feature beziehungsweise columns. Die kompatiblen älteren Team- und Kontaktlayouts bleiben registriert.
 
-## Medien und Designsystem
+imagePosition steuert den normalen Fokalpunkt; nur perspectiveHero besitzt zusätzlich imageMobilePosition unter 768px. photoChapter besitzt zwei voneinander unabhängige Motive mit eigenen Alttexten und Ausschnitten. Die registrierte immersive-Variante ist im eingefrorenen Export unbenutzt. Das aktuelle Home-Panorama nutzt für Desktop 58% center und für Mobilgeräte 61% center; dies sind Bildentscheidungen für dieses Motiv.
 
-38 lokale Assets: **30 Originalmedien und acht ergänzende, lokal optimierte Symbolbilder**. Originales Logo, sieben Anwaltsporträts und neun PDFs sind erhalten. Der Bestand benötigt keine Laufzeitverbindung zur alten Kanzleiwebsite oder Unsplash. Die Symbolbilder werden weder als Kanzleiräume noch als Mitarbeiter, Mandanten oder Ingolstädter Standort ausgegeben.
+Der [Panorama-Renderer](../../../apps/renderer/src/templates/shared/perspective-hero.tsx) meldet für die responsive Bildauswahl sizes = "(max-width: 767px) 1210px, 100vw". Der mobile Wert berücksichtigt die bei 680px Bühnenhöhe rund 1209px breite Bildebene eines 16:9-Motivs. Layout und CMS-Fokalpunkte bleiben davon unabhängig; die Dokumentation behauptet keine erneute visuelle Qualitätsprüfung.
 
-[MEDIA-PROVENANCE.json](MEDIA-PROVENANCE.json) dokumentiert Quelle, Download, Urheberangabe, Symbolstatus, Dateigröße und SHA-256. Die Quellwebsite nennt Stefan Bösl Fotografie, Ingolstadt, für Kanzleifotografie und Porträts; dies ist keine pauschale Urheberschaftsbehauptung zu Logo und PDFs. Die acht zusätzlichen Rasterquellen wurden bestätigt; der abschließende Nachweis meldet null fehlende Quellen.
+Originalporträts werden als tatsächliche Personenbilder behandelt. Das historische Asset gabriela-radlinger.jpg zeigt **Gabriele Radlinger**; die Bezeichnung in Inhalt und URL ist korrekt. Durchwahlen sind überwiegend zugeordnete Sekretariatskontakte und dürfen nicht als persönliche Anwaltsnummern umgedeutet werden.
 
-[DESIGN.md](DESIGN.md) enthält die tatsächlich verwendeten Farben, Typografie-, Abstands- und Komponentenwerte. [.impeccable/design.json](.impeccable/design.json) ergänzt Farbvorschauen, Schatten, Bewegung, Breakpoints und eigenständig darstellbare Komponenten. Die frühere Korrespondenzrichtung ist ersetzt. Die neue Kanzlei-Edition wurde aus dem Code entwickelt; es existiert kein freigegebener Comp, gegen den eine Bildtreue behauptet wird.
+## Interaktion und Kontakt
+
+Topic Explorer nutzt native details/summary: Das erste sichtbare Thema ist standardmäßig offen, Titel und Kurzbeschreibung bleiben im geschlossenen Zustand sichtbar. Die fachlichen Inhalte sind bereits serverseitig vorhanden. Der gemeinsame Name der Detailsgruppe erlaubt in unterstützenden Browsern jeweils ein offenes Thema; die native Einzelbedienung bleibt ohne diese Gruppierungsfunktion nutzbar.
+
+Das contactSheet zeigt auf der Anwaltsseite alle sieben Originalporträts. Große Gruppen verwenden ab 768px zwei Spalten mit einer breiten letzten Zeile bei ungerader Personenzahl; die Home-Vorschau zeigt drei Personen. Einzelne fachliche Ansprechpartner erhalten ein kompakteres Bild-/Textmuster. Qualifikation, Schwerpunkt und Kontaktangaben erfordern keinen Hover.
+
+Die Kontaktseite bietet Telefon und E-Mail vor dem Formular. Name, E-Mail und Anliegen sind Pflichtfelder, Telefon ist optional. Das bestehende DynamicContactForm und der geteilte Versandweg bleiben die Implementierung. showMap ist false; der externe Kartenanbieter wird erst über einen gewählten Link geöffnet. Eine Anfrage allein begründet kein Mandat.
+
+Neue Inhaltskomponenten zeigen wesentliche Informationen beim ersten Rendern. Pfeilbewegungen nutzen motion-safe; der gemeinsame prefers-reduced-motion-Block kürzt CSS-Animationen und Übergänge und deaktiviert weiches Scrollen. Keine Scrollstrecke erzwingt ein Abspielen der Inhalte. Die vorhandene Navigation besitzt einen beschrifteten Mobilmenüdialog mit Fokusverwaltung.
+
+## Medien und Herkunft
+
+**39 lokale Assets: 30 übernommene Originalmedien und neun ergänzende Symbolbilder.** Die Originalmedien umfassen 21 Rasterdateien und neun PDFs; mit den Symbolbildern sind insgesamt 30 Rasterdateien enthalten. Logo, sieben Anwaltsporträts, fünf Mitarbeiterinnen und die neun Kanzlei-PDFs sind erhalten.
+
+[MEDIA-PROVENANCE.json](MEDIA-PROVENANCE.json), [Originalmedien-Import](../../../scripts/hagn-partner/import-assets.mjs) und [Symbolbildinventar](../../../scripts/hagn-partner/stock-media.mjs) führen die Herkunft. Dateigröße, SHA-256 und vorhandene Credits werden in den Medienexport übernommen. Die laufzeitfähigen Motive und PDFs liegen lokal; die alten Website- und Unsplash-Adressen sind Herkunftsnachweise.
+
+Die bisherige Kanzleiwebsite nennt Stefan Bösl Fotografie, Ingolstadt, für Kanzleifotografie und Porträts. Diese Quellenangabe ist keine pauschale Urheberschaftsbehauptung zu Logo oder PDF-Dateien. Symbolbilder werden in Alttext oder Bildnachweis kenntlich gemacht und zeigen keine behaupteten Kanzleimitarbeiter, Mandanten oder Kanzleistandorte. Der an Root gemeldete vollständige Herkunftsscan zählt 30 Raster und null fehlende Quellen.
 
 ## Reproduzierbarer Builder
 
-`scripts/hagn-partner/prepare-content.mjs` exportiert die deterministische Funktion:
+[prepare-content.mjs](../../../scripts/hagn-partner/prepare-content.mjs) exportiert die deterministische Funktion:
 
-```js
+~~~js
 buildHagnContent({ tenantId, baseUrl, mediaBase, mediaMap, noindex: true })
-```
+~~~
 
-Sie erstellt die Inhaltsdaten ohne Datenbankzugriff. `edition-content.mjs` bestimmt die Seitenkompositionen, `edition-copy.mjs` die erweiterten Inhalte, `content.mjs` die belegten Kanzlei-, Profil- und Rechtsgebietsdaten, `page-metadata.mjs` die Seitenmetadaten und `stock-media.mjs` die ergänzenden Medien. `mediaMap` kann lokale Assetpfade auf später importierte CMS-URLs abbilden; Standard für `mediaBase` ist `/hagn-partner`.
+Sie baut die Daten ohne Datenbankzugriff. [perspective-content.mjs](../../../scripts/hagn-partner/perspective-content.mjs) bestimmt die aktuellen Seitenfolgen und redaktionellen Inhalte; [content.mjs](../../../scripts/hagn-partner/content.mjs) enthält die belegten Kanzlei-, Personen- und Rechtsgebietsdaten. [page-metadata.mjs](../../../scripts/hagn-partner/page-metadata.mjs) führt die SEO-Inhalte, stock-media.mjs die ergänzenden Fotos.
 
-Der CLI-Aufruf aus dem Repository erzeugt den vollständigen Export und das Routenmanifest im aktuellen Rework-Verzeichnis:
+Aus dem Repository:
 
-```powershell
+~~~powershell
 node scripts/hagn-partner/prepare-content.mjs
-```
+~~~
 
-Standardausgabe: `tmp/hagn-rework-2026-10-19/hagn-content.json` und `route-manifest.json`. `HAGN_CONTENT_DIR` ändert das Ausgabeziel, `HAGN_SITE_URL` die Basisadresse. Der CLI-Schritt ergänzt Dateigrößen und Hashmetadaten anhand des vorhandenen Herkunftsmanifests. Der eingefrorene Export enthält positive Größen und Prüfsummen für alle 38 Medien und ist die Veröffentlichungsgrundlage.
+Die Standardausgabe ist tmp/hagn-perspective-2026-10-20/hagn-content.json und route-manifest.json. HAGN_CONTENT_DIR ändert das Ziel, HAGN_SITE_URL die Basisadresse. mediaMap kann lokale Assetpfade auf importierte CMS-URLs abbilden; mediaBase ist standardmäßig /hagn-partner.
 
-```text
+~~~text
 tenant, global, navigation, footer, pages[], sections[],
 collections:[], items:[], seo, seoPages[], seoItems:[], media[],
 active:{snapshot}, routeManifest[], sourceManifest
-```
+~~~
 
-Seiten-, Section- und SEO-Zeilen verwenden Datenbankfeldnamen mit Unterstrichen. Snapshot-Sections verwenden die vorhandenen camelCase-Renderfelder. `import-assets.mjs` verwaltet die Originalmedien und verwendet vorhandene Dateien erneut. Der dokumentierte Builder erzeugt weder Tenantdaten anderer Kunden noch einen Datenbankimport.
+Datenbankzeilen nutzen Unterstrich-Feldnamen. Snapshot-Sections nutzen die vorhandenen camelCase-Renderfelder. Der Builder filtert Section-Farben gegen die wirklichen registrierten Verträge und verlangt einen H1-tragenden Auftakt je Route.
 
-Die Veröffentlichung verwendet `publish-content.ts` mit explizitem `HAGN_CONTENT_DIR` auf das aktuelle Rework-Verzeichnis: dessen historischer Standardpfad verweist noch auf das frühere Verzeichnis. Ohne `--apply` erzeugt es nur eine Zusammenfassung. Der schreibende Ablauf besitzt eine Isolationsprüfung, einen Vergleich des erwarteten aktiven Checksums und eine erneute Datenprüfung in der Transaktion; Root verwaltet Zugangsdaten und Veröffentlichung. `bootstrap.ts` dient der isolierten Erstbereitstellung und ist kein gewöhnlicher redaktioneller Aktualisierungsschritt.
+[publish-content.ts](../../../scripts/hagn-partner/publish-content.ts) ist der getrennte Veröffentlichungsweg. Der aktuelle Publisher verwendet wie der Builder standardmäßig tmp/hagn-perspective-2026-10-20. HAGN_CONTENT_DIR kann das gewünschte Exportverzeichnis ausdrücklich festlegen. Ohne --apply erstellt der Publisher eine Zusammenfassung. Isolationsprüfung, erwarteter aktiver Checksum und Transaktionsvalidierung gehören zu diesem bestehenden Ablauf. Zugangsdaten, DB-Mutation und Veröffentlichung liegen beim Releaseverantwortlichen. bootstrap.ts ist der isolierte Erstbereitstellungsweg.
 
-## Prüfungen und Belege
+## Quellprüfungen und Releasebelege
 
-Bereits abgeschlossene Source-Prüfungen sind in `tmp/hagn-rework-2026-10-19/implementation-source-gates.json` aufgezeichnet. Reproduzierbare Befehle, aus `apps/renderer`:
+Die aktuelle Inhaltsprüfung liegt lokal in tmp/hagn-perspective-2026-10-20/source-gate.json. Die an Root gemeldeten Source Gates zählen **24 Routen, 82 Sections, 1333 Farbrollenprüfungen, 119 interne Links, 24 SEO-Zeilen und neun PDFs**. content-change-summary.json ergänzt den Inhaltsvergleich. Der eingefrorene Datenhash steht oben.
 
-```powershell
-node --import tsx --test src/lib/edition-sections.test.ts src/lib/site-header-mobile-contact.test.ts src/lib/color-validation.test.ts
+Reproduzierbare reine Quellprüfungen aus apps/renderer:
+
+~~~powershell
+node --import tsx --test src/lib/perspective-sections.test.ts
 node --import tsx ../../scripts/hagn-partner/validate-content.ts
-```
+~~~
 
-Der erste Lauf bestand mit **22/22 Tests**. Die Offline-Validierung bestand für **129 registrierte Sections, 2097 erlaubte Farbrollen, 24 SEO-Zeilen, interne Routen und Anker sowie 38 Dateigrößen und SHA-256-Werte**. Sie prüft den wirklichen registrierten Datenvertrag, die Hagn-Navigationswahl, CTA-Beschriftungen und die ausgeblendeten dekorativen Elemente. Der Validator ergänzt Herkunftsdaten auch beim reinen Funktionsaufruf.
+Vertragsprüfungen aus dem Repository:
 
-Nach Änderungen an Farbverträgen werden aus dem Repository ausgeführt:
-
-```powershell
-node scripts/generate-section-color-contracts.cjs
+~~~powershell
 node scripts/check-section-color-contracts.cjs
-```
+node scripts/check-section-color-render-mirror.cjs
+node scripts/audit-color-role-coverage.cjs --strict
+node scripts/check-section-color-crosstalk.cjs
+~~~
 
-Der dokumentierte Vertragscheck bestand. `renderer-type-final.json` und `marketing-type-verified.json` melden jeweils Exitcode 0. `cms-new-fields-proof.json` belegt eine echte CMS-Änderung an Layout und Alttext, Speichern, API-Lesen und exakte Wiederherstellung; der veröffentlichte Snapshot blieb dabei unberührt.
+Der Komponenten-Handoff meldet Renderer- und Marketing-Typecheck, check:section-colors und 50 eindeutige fokussierte Testfälle als bestanden. Diese Aufzeichnung führt diese Läufe nicht erneut aus.
 
-Die abgeschlossene Chrome-Prüfung in `review-2` umfasst **48 tatsächliche Zustände auf 24 Routen** bei Desktop (1440 × 1000) und Mobil (390 × 844), jeweils Viewport- und Ganzseitenaufnahme (**96 Routenaufnahmen**), vier zusätzliche Atelier-Zustände und das geöffnete Mobilmenü. `audit.json` enthält `faults: []`. Nach einem lokalen Next-Dev-Speicherabbruch wurden 22 gültige Desktopzustände beibehalten und 26 fehlende Zustände mit unverändert eingefrorener Quelle ergänzt.
+Die Browserbestätigung schreibt getrennte lokale Belege nach review-confirmation/audit.json im selben ignorierten Arbeitsverzeichnis. Evaluatorurteil, CMS-Kontrollbelege, Deployment- und HTTP-Belege gehören zum abschließenden Release-Handoff. Sie werden durch die Quellprüfung oder dieses Dokument nicht ersetzt.
 
-Ein frischer externer Review und die anschließende begrenzte Bestätigung desselben Evaluators bewerteten die sieben materiellen Korrekturen als behoben: Headerabstand und Bildausschnitte, Fotoheader- und Mobilmenükontrast, deutsche Wortumbrüche, wiederholte Kicker und FAQ-Ziffern, editierbare CTA-Beschriftungen, H1/H2 im Personenverzeichnis und UTF-8-Labels. Das Ergebnis lautet **Frontend PASS / SHIP AFTER same-session verdict pass**. Diese Freigabe gilt für diese sieben nachgeprüften Punkte; die vollständige Routensichtung war der erste Reviewdurchgang. Sie ist keine neue Zertifizierung der gesamten App.
+Der vorhandene Detektorbericht detector.json führt drei alte Warnungen in globals.css außerhalb der geänderten Zeilen: Gradient-Text-Utility (580), Gray-on-Red-Match (663) und Accordion-Seitenstreifen (1092). Sie wurden weder repariert noch als Hagn-Designregeln übernommen. Für diese Dokumentationsaktualisierung fand kein neuer Detektorlauf und keine Browserbedienung statt.
 
-Der einmalige Detektorbericht enthält zwei alte, unveränderte Warnungen zu violetten CMS-Headerfarben. Sie wurden nicht als Hagn-Designtokens übernommen. Kein zweiter Detektorlauf wurde durchgeführt. In den Qualitätstests wurden keine echten Anfragen versendet.
+## Inhaltliche und rechtliche Grenze
 
-## Rechtliche und redaktionelle Grenze
+Die Faktenbasis bleibt die Kanzleiwebsite und das dokumentierte Quelleninventar. Vollständiger Kanzleiname, Originalidentität, sieben Anwälte, fünf Mitarbeiterinnen, Qualifikationen, Telefonzuordnungen, Formulare und vorhandene Rechtsdaten bleiben erhalten. Neue Aussagen über Auszeichnungen, erfolgreiche Fälle, Fristen, Gebühren oder zusätzliche Fähigkeiten sind nicht Teil dieses Rebuilds.
 
-Faktenbasis ist die bestehende Kanzleiwebsite, abgerufen am 19.10.2026, ergänzt um dokumentierte offizielle Quellen. Überholte TMG-/RStV- und Tracking-Vorlagentexte wurden nicht als aktuelle Betriebsbeschreibung übernommen. Betreiber-, Register- und Qualifikationsangaben wurden faktenbezogen übertragen; die technischen Datenschutzhinweise beschreiben die neue Bereitstellung.
+Impressum und Datenschutz stammen aus dem bestehenden Datenstand; der Perspektive-Builder verändert deren fachliche Inhalte nicht. Diese Dokumentation bestätigt keine neue anwaltliche oder vertragliche Prüfung. Produktverpflichtungen und Grenzen stehen in [PRODUCT.md](PRODUCT.md).
 
-Eine individuelle anwaltliche Freigabe, ein aktueller Versicherungsnachweis und eine vertragliche Datenschutzprüfung werden nicht behauptet. Vor einer späteren Umstellung der bestehenden öffentlichen Domain sind insbesondere Versicherungsgeltungsbereich, Auftragsverarbeitung, Aufbewahrung und die übernommenen PDF-Inhalte durch den Betreiber zu bestätigen.
-
-Die konfigurierte Bereitstellung verwendet Vercel-Serverfunktionen in Frankfurt, eine isolierte Neon-Datenbank in Frankfurt und IONOS SMTP. Es sind keine optionalen Tracker und keine automatisch geladenen Karten eingerichtet. Ein Kontaktformular allein begründet kein Mandat; hierfür ist die Annahme durch die Kanzlei erforderlich.
+Die Quellkonfiguration nennt Vercel-Serverfunktionen und eine isolierte Neon-Datenbank in Frankfurt sowie IONOS für E-Mail. Optionale Tracker sind nicht konfiguriert; Karten werden nicht automatisch geladen. Eine Livekontrolle dieser Betriebsangaben gehört zu den getrennten Releasebelegen. Es werden keine echten Anfragen für die Dokumentationsprüfung versendet.

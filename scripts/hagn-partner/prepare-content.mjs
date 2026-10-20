@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import { lawyers, practices, staff } from './content.mjs';
 import { sourceMedia } from './import-assets.mjs';
 import { stockMedia } from './stock-media.mjs';
-import { buildEditionSections } from './edition-content.mjs';
+import { buildPerspectiveSections } from './perspective-content.mjs';
 import { pageMetadata } from './page-metadata.mjs';
 
 const require = createRequire(import.meta.url);
@@ -16,7 +16,7 @@ const { getFieldsForSection } = require('../../apps/renderer/src/lib/section-col
 const { FIELD_DEFS } = require('../../apps/renderer/src/lib/section-color-fields.ts');
 
 export const HAGN_TENANT_ID = 'a1853e0f-ff90-45ee-8fb2-8bada3812f67';
-const STAMP = '2026-10-19T00:00:00.000Z';
+const STAMP = '2026-10-20T00:00:00.000Z';
 const NAME = 'Rechtsanwälte Hagn, Deckert, Stemmer & Partner PartG mbB';
 const PHONE = '+49 841 93557-0';
 const EMAIL = 'info@hagn-partner.de';
@@ -26,7 +26,7 @@ const p = value => `<p>${value}</p>`;
 const a = (label, href) => ({ label, href });
 const tel = phone => `tel:${phone.replace(/[^+\d]/g, '')}`;
 const route = slug => slug ? `/${slug}` : '/';
-const SHARED = new Set(['editorialHero', 'teamSpotlight', 'cinematicHero', 'categoryMosaic', 'materialAtelier', 'cinematicChapters', 'serviceTabs', 'signaturePath', 'signatureGrid', 'scrollStory', 'ctaSplit', 'faqContactSplit', 'guidedChoice', 'timeline']);
+const SHARED = new Set(['perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList', 'contact', 'editorialHero', 'teamSpotlight', 'cinematicHero', 'categoryMosaic', 'materialAtelier', 'cinematicChapters', 'serviceTabs', 'signaturePath', 'signatureGrid', 'scrollStory', 'ctaSplit', 'faqContactSplit', 'guidedChoice', 'timeline']);
 const definition = type => `${type}.${SHARED.has(type) ? 'shared' : type === 'faq' ? 'consulting' : 'tradesman'}.v1`;
 
 export function hagnUuid(tenantId, key) {
@@ -36,25 +36,25 @@ export function hagnUuid(tenantId, key) {
 }
 
 const lightPalette = {
-  '--token-section-bg': '#F5F3ED', '--token-section-bg-alt': '#EFEEE7', '--token-card-bg': '#FFFFFF',
-  '--token-heading': '#172E40', '--token-body': '#33464C', '--token-muted': '#53636A', '--token-icon': '#2D616A', '--token-accent': '#2D616A',
-  '--token-divider': '#BBC6C5', '--token-card-border': '#BBC6C5', '--token-btn-bg': '#172E40', '--token-btn-text': '#FFFFFF',
-  '--token-btn-secondary-bg': 'transparent', '--token-btn-secondary-text': '#172E40', '--token-btn-secondary-border': '#6E8388',
-  '--token-card-heading': '#172E40', '--token-card-body': '#33464C', '--token-card-muted': '#53636A',
-  '--token-badge-bg': '#E2EBE7', '--token-badge-text': '#164D55', '--token-badge-border': '#A3B8B4',
-  '--token-link': '#2D616A', '--token-link-hover': '#172E40', '--token-label': '#33464C', '--token-input-bg': '#FFFFFF', '--token-input-border': '#7E9296', '--token-input-text': '#33464C',
-  '--token-on-dark-heading': '#FFFFFF', '--token-on-dark-body': '#F5F3ED', '--token-on-dark-muted': '#E1E8E9', '--token-eyebrow': '#52616B', '--token-check': '#2D616A', '--token-shadow': 'rgba(15, 35, 49, .12)',
-  '--token-card-radius': '0.125rem', '--token-button-radius': '0.125rem', '--token-image-overlay': 'rgba(10, 25, 31, 0.72)',
+  '--token-section-bg': '#FFFFFF', '--token-section-bg-alt': '#F2F5F7', '--token-card-bg': '#FFFFFF',
+  '--token-heading': '#101820', '--token-body': '#364451', '--token-muted': '#596674', '--token-icon': '#0B55C4', '--token-accent': '#0B55C4',
+  '--token-divider': '#CED6DD', '--token-card-border': '#CED6DD', '--token-btn-bg': '#101820', '--token-btn-text': '#FFFFFF',
+  '--token-btn-secondary-bg': 'transparent', '--token-btn-secondary-text': '#101820', '--token-btn-secondary-border': '#8393A1',
+  '--token-card-heading': '#101820', '--token-card-body': '#364451', '--token-card-muted': '#596674',
+  '--token-badge-bg': '#EAF0FA', '--token-badge-text': '#174B91', '--token-badge-border': '#A9BEDB',
+  '--token-link': '#0B55C4', '--token-link-hover': '#103B79', '--token-label': '#364451', '--token-input-bg': '#FFFFFF', '--token-input-border': '#8393A1', '--token-input-text': '#364451',
+  '--token-on-dark-heading': '#FFFFFF', '--token-on-dark-body': '#EEF3F8', '--token-on-dark-muted': '#CBD5E1', '--token-eyebrow': '#596674', '--token-check': '#0B55C4', '--token-shadow': 'rgba(16, 24, 32, .12)',
+  '--token-card-radius': '1rem', '--token-button-radius': '0.5rem', '--token-image-overlay': '#09121B',
 };
 const inkPalette = { ...lightPalette,
-  '--token-section-bg': '#172E40', '--token-section-bg-alt': '#164654', '--token-card-bg': '#194D5A',
-  '--token-heading': '#F5F3ED', '--token-body': '#E1E9E7', '--token-muted': '#C0D2D0', '--token-icon': '#CADFCE', '--token-accent': '#CADFCE',
-  '--token-divider': '#587780', '--token-card-border': '#587780', '--token-btn-bg': '#F5F3ED', '--token-btn-text': '#172E40',
-  '--token-btn-secondary-text': '#F5F3ED', '--token-btn-secondary-border': '#90A8AB',
-  '--token-card-heading': '#F5F3ED', '--token-card-body': '#E1E9E7', '--token-card-muted': '#C0D2D0',
-  '--token-link': '#F5F3ED', '--token-link-hover': '#CADFCE', '--token-label': '#E1E9E7',
+  '--token-section-bg': '#101820', '--token-section-bg-alt': '#182634', '--token-card-bg': '#1C2E3E',
+  '--token-heading': '#FFFFFF', '--token-body': '#DCE4EB', '--token-muted': '#B9C7D3', '--token-icon': '#BBD4FF', '--token-accent': '#BBD4FF',
+  '--token-divider': '#526677', '--token-card-border': '#526677', '--token-btn-bg': '#FFFFFF', '--token-btn-text': '#101820',
+  '--token-btn-secondary-text': '#FFFFFF', '--token-btn-secondary-border': '#95A8BA',
+  '--token-card-heading': '#FFFFFF', '--token-card-body': '#DCE4EB', '--token-card-muted': '#B9C7D3',
+  '--token-link': '#BBD4FF', '--token-link-hover': '#FFFFFF', '--token-label': '#DCE4EB', '--token-eyebrow': '#B9C7D3',
 };
-const ownSpacing = new Set(['editorialHero', 'textImage', 'richText', 'legalContent']);
+const ownSpacing = new Set(['perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList', 'teamSpotlight', 'contact', 'editorialHero', 'textImage', 'richText', 'legalContent']);
 
 export function buildHagnContent({ tenantId = HAGN_TENANT_ID, baseUrl = 'https://flamingo-hagn-partner.vercel.app', mediaBase = '/hagn-partner', mediaMap = {}, noindex = true } = {}) {
   if (!/^[0-9a-f-]{36}$/i.test(tenantId)) throw new Error('A valid isolated tenant UUID is required.');
@@ -75,7 +75,7 @@ export function buildHagnContent({ tenantId = HAGN_TENANT_ID, baseUrl = 'https:/
     pages.push(page);
     for (const [[type, data, options], order] of specs.map((spec, order) => [spec, order])) {
       const allowed = new Set(getFieldsForSection(type, 'consulting', definition(type)).map(field => FIELD_DEFS[field].cssVar));
-      const styles = Object.fromEntries(Object.entries({ ...(options?.ink ? inkPalette : lightPalette), ...(options?.style || {}) }).filter(([key]) => allowed.has(key)));
+      const styles = Object.fromEntries(Object.entries({ ...(options?.ink ? inkPalette : lightPalette), ...(options?.soft ? { '--token-section-bg': '#F2F5F7', '--token-section-bg-alt': '#E8EDF2' } : {}), ...(options?.style || {}) }).filter(([key]) => allowed.has(key)));
       rows.push({ id: uid(`section/${slug || 'home'}/${order}/${type}`), tenant_id: tenantId, page_id: id, type, data, variant: null, visible: true, locked: false, sort_order: order, container: 'default', spacing_top: ownSpacing.has(type) ? 'none' : 'm', spacing_bottom: ownSpacing.has(type) ? 'none' : 's', definition_key: definition(type), schema_version: 1, anchor_id: options?.anchor || null, title_internal: data.headline || type, style_overrides: styles });
     }
     const path = route(slug);
@@ -84,10 +84,10 @@ export function buildHagnContent({ tenantId = HAGN_TENANT_ID, baseUrl = 'https:/
     routes.push({ path, pageId: id, title, metaTitle, description, sourceUrl: `${SITE_SOURCE}${route(sourceSlug)}`, canonical: `${base}${path}`, noindex });
   };
 
-  const editionSections = buildEditionSections({ media });
+  const editionSections = buildPerspectiveSections({ media });
   for (const meta of pageMetadata) {
     const specs = editionSections[meta.slug];
-    if (!specs) throw new Error(`Missing photographic edition page: ${meta.slug}`);
+    if (!specs) throw new Error(`Missing perspective publication page: ${meta.slug}`);
     const lawyer = lawyers.find(item => item.slug === meta.slug);
     addPage(meta.slug, meta.title, meta.metaTitle, meta.description, specs, meta.sourceSlug, lawyer ? media(`anwaelte/${lawyer.imageKey}.jpg`) : undefined);
   }
@@ -112,24 +112,24 @@ export function buildHagnContent({ tenantId = HAGN_TENANT_ID, baseUrl = 'https:/
     { headline: 'Externe Links und Formulare', text: p('Bei Links zu externen Angeboten gelten die Datenschutzinformationen des jeweiligen Anbieters. Die im Servicebereich übernommenen PDF-Formulare sind eigenständige Kanzleidokumente. Bitte stimmen Sie die Verwendung und die Übermittlung ausgefüllter Unterlagen mit uns ab.') },
   ];
   for (const [slug, title, blocks] of [['impressum', 'Impressum', legalBlocks], ['datenschutz', 'Datenschutz', privacyBlocks]]) {
-    addPage(slug, title, `${title} | Hagn & Partner Ingolstadt`, `${title} der Rechtsanwälte Hagn, Deckert, Stemmer & Partner PartG mbB in Ingolstadt. Kontakt und Informationen zum Betrieb dieser Website.`, [section('legalContent', { headline: title, blocks }, { style: { '--token-section-bg': '#F5F3ED' } })], slug);
+    addPage(slug, title, `${title} | Hagn & Partner Ingolstadt`, `${title} der Rechtsanwälte Hagn, Deckert, Stemmer & Partner PartG mbB in Ingolstadt. Kontakt und Informationen zum Betrieb dieser Website.`, [section('legalContent', { headline: title, blocks }, { style: { '--token-section-bg': '#FFFFFF' } })], slug);
     // LegalContent owns its H1 and requires the same physical fixed-header space.
     rows.find(item => item.page_id === uid(`page/${slug}`)).spacing_top = 'l';
   }
 
   const brand = {
     companyName: 'Hagn & Partner', tagline: 'Rechtsanwälte und Fachanwälte in Ingolstadt', logoDisplay: 'logo', logoUrl: media('logo.png'), faviconUrl: media('logo.png'),
-    headingFont: 'DM Serif Display', bodyFont: 'Manrope', customHeadingFontUrl: '', customHeadingFontName: '', customBodyFontUrl: '', customBodyFontName: '',
-    primaryColor: '#172E40', secondaryColor: '#2D616A', accentColor: '#2D616A', pageBg: '#F5F3ED', sectionBg: '#F5F3ED', sectionBgAlt: '#EFEEE7', cardBg: '#FFFFFF', headingColor: '#172E40', bodyTextColor: '#33464C', mutedTextColor: '#53636A', iconColor: '#2D616A', linkColor: '#2D616A', linkHoverColor: '#172E40',
-    btnPrimaryBg: '#172E40', btnPrimaryText: '#FFFFFF', btnSecondaryBg: 'transparent', btnSecondaryText: '#172E40', btnSecondaryBorder: '#6E8388', btnOutlineBg: 'transparent', btnOutlineText: '#172E40', btnOutlineBorder: '#6E8388',
-    badgeBg: '#E2EBE7', badgeText: '#164D55', badgeBorder: '#A3B8B4', cardBorder: '#BBC6C5', borderColor: '#BBC6C5', dividerColor: '#BBC6C5', cardRadius: '0.125rem', btnRadius: '0.125rem',
-    navMode: 'solid', navBgColor: '#F5F3ED', navLinkColor: '#172E40', navBrandColor: '#172E40', navLogoColor: '', topBarColor: '#172E40', footerColor: '#172E40', footerTextColor: '#E1E9E7', footerLinkColor: '#F5F3ED',
+    headingFont: 'Manrope', bodyFont: 'Manrope', customHeadingFontUrl: '', customHeadingFontName: '', customBodyFontUrl: '', customBodyFontName: '',
+    primaryColor: '#101820', secondaryColor: '#0B55C4', accentColor: '#0B55C4', pageBg: '#FFFFFF', sectionBg: '#FFFFFF', sectionBgAlt: '#F2F5F7', cardBg: '#FFFFFF', headingColor: '#101820', bodyTextColor: '#364451', mutedTextColor: '#596674', iconColor: '#0B55C4', linkColor: '#0B55C4', linkHoverColor: '#103B79',
+    btnPrimaryBg: '#101820', btnPrimaryText: '#FFFFFF', btnSecondaryBg: 'transparent', btnSecondaryText: '#101820', btnSecondaryBorder: '#8393A1', btnOutlineBg: 'transparent', btnOutlineText: '#101820', btnOutlineBorder: '#8393A1',
+    badgeBg: '#EAF0FA', badgeText: '#174B91', badgeBorder: '#A9BEDB', cardBorder: '#CED6DD', borderColor: '#CED6DD', dividerColor: '#CED6DD', cardRadius: '1rem', btnRadius: '0.5rem',
+    navMode: 'solid', navBgColor: '#FFFFFF', navLinkColor: '#101820', navBrandColor: '#101820', navLogoColor: '', topBarColor: '#101820', footerColor: '#101820', footerTextColor: '#DCE4EB', footerLinkColor: '#FFFFFF',
     localSeo: { businessType: 'LegalService', serviceArea: 'Ingolstadt und Umgebung', sameAs: [], services: practices.map(item => ({ name: item.title, description: item.intro, url: `${base}/${item.slug}` })) },
   };
   const formFields = [{ name: 'name', label: 'Ihr Name', type: 'text', placeholder: 'Vor- und Nachname', required: true, halfWidth: true }, { name: 'email', label: 'E-Mail-Adresse', type: 'email', placeholder: 'name@beispiel.de', required: true, halfWidth: true }, { name: 'phone', label: 'Telefon (optional)', type: 'tel', placeholder: 'Für die Terminabstimmung' }, { name: 'message', label: 'Ihr Anliegen', type: 'textarea', placeholder: 'Bitte beschreiben Sie kurz das Thema. Keine vertraulichen Falldokumente.', required: true }];
   const global = { id: uid('global'), tenant_id: tenantId, brand, contact: { phone: PHONE, email: EMAIL, address: ADDRESS }, openingHours: [
     { day: 'Montag', hours: '08:00–12:00 und 14:00–17:00' }, { day: 'Dienstag', hours: '08:00–12:00 und 14:00–17:00' }, { day: 'Mittwoch', hours: '08:00–12:00' }, { day: 'Donnerstag', hours: '08:00–12:00 und 14:00–17:00' }, { day: 'Freitag', hours: '08:00–12:00' }, { day: 'Samstag', closed: true }, { day: 'Sonntag', closed: true },
-  ], design: { sectionBg: '#F5F3ED', sectionBgAlt: '#EFEEE7', cardBg: '#FFFFFF', headingColor: '#172E40', bodyColor: '#33464C', mutedColor: '#53636A', textPrimary: '#172E40', textSecondary: '#33464C', accentColor: '#2D616A', borderColor: '#BBC6C5', dividerColor: '#BBC6C5', btnBg: '#172E40', btnText: '#FFFFFF', btnSecondaryBg: 'transparent', btnSecondaryText: '#172E40', btnSecondaryBorder: '#6E8388' }, socialLinks: {}, formFields, autoResponse: { enabled: false, subject: '', body: '', notificationEmail: EMAIL }, businessProfile: null };
+  ], design: { sectionBg: '#FFFFFF', sectionBgAlt: '#F2F5F7', cardBg: '#FFFFFF', headingColor: '#101820', bodyColor: '#364451', mutedColor: '#596674', textPrimary: '#101820', textSecondary: '#364451', accentColor: '#0B55C4', borderColor: '#CED6DD', dividerColor: '#CED6DD', btnBg: '#101820', btnText: '#FFFFFF', btnSecondaryBg: 'transparent', btnSecondaryText: '#101820', btnSecondaryBorder: '#8393A1' }, socialLinks: {}, formFields, autoResponse: { enabled: false, subject: '', body: '', notificationEmail: EMAIL }, businessProfile: null };
   // The business-profile editor and AI context share this strict versioned contract.
   global.businessProfile = {
     schemaVersion: '1.0',
@@ -142,7 +142,7 @@ export function buildHagnContent({ tenantId = HAGN_TENANT_ID, baseUrl = 'https:/
   };
   // Keep exactly the central form definition as the section definition too.
   rows.filter(row => row.type === 'contact').forEach(row => { row.data.formFields = structuredClone(formFields); });
-  const navigation = { id: uid('navigation'), tenant_id: tenantId, items: [a('Rechtsgebiete', '/rechtsgebiete-anwalt-ingolstadt'), a('Anwälte', '/anwaelte-ingolstadt'), a('Kanzlei', '/anwaltskanzlei-ingolstadt'), a('Service', '/service-anwaelte-ingolstadt')].map(item => ({ ...item, type: 'link' })), cta: { ...a('Kontakt & Termin', '/kontakt'), buttonColor: '#172E40', buttonTextColor: '#FFFFFF', topBar: { enabled: false, text: '', linkLabel: '', linkHref: '', bgColor: '#172E40', textColor: '#FFFFFF' } }, created_at: STAMP, updated_at: STAMP };
+  const navigation = { id: uid('navigation'), tenant_id: tenantId, items: [a('Rechtsgebiete', '/rechtsgebiete-anwalt-ingolstadt'), a('Anwälte', '/anwaelte-ingolstadt'), a('Kanzlei', '/anwaltskanzlei-ingolstadt'), a('Service', '/service-anwaelte-ingolstadt')].map(item => ({ ...item, type: 'link' })), cta: { ...a('Kontakt & Termin', '/kontakt'), buttonColor: '#101820', buttonTextColor: '#FFFFFF', topBar: { enabled: false, text: '', linkLabel: '', linkHref: '', bgColor: '#101820', textColor: '#FFFFFF' } }, created_at: STAMP, updated_at: STAMP };
   const footer = { id: uid('footer'), tenant_id: tenantId, cta: { label: '', href: '', variant: 'classic' }, columns: [
     { title: 'Rechtsgebiete', items: practices.map(item => ({ text: item.title, href: route(item.slug) })) },
     { title: 'Die Kanzlei', items: [{ text: 'Unsere Anwälte', href: '/anwaelte-ingolstadt' }, { text: 'Kanzlei & Geschichte', href: '/anwaltskanzlei-ingolstadt' }, { text: 'Ersttermin & Kosten', href: '/anwalt-ingolstadt' }, { text: 'Vollmachten & Formulare', href: '/service-anwaelte-ingolstadt' }, { text: 'Unser Sekretariat', href: '/ingolstadt-anwaltskanzlei' }] },
@@ -164,7 +164,7 @@ export function validateHagnContent(doc) {
     if (ids.has(page.id) || paths.has(page.slug)) throw new Error(`Duplicate page: ${page.slug}`);
     ids.add(page.id); paths.add(page.slug);
     const sections = doc.sections.filter(section => section.page_id === page.id);
-    if (sections.filter(section => ['editorialHero', 'cinematicHero', 'legalContent'].includes(section.type) || ['richText', 'teamSpotlight'].includes(section.type) && section.data.titleAs === 'h1').length !== 1) throw new Error(`One H1 required: ${page.slug}`);
+    if (sections.filter(section => ['perspectiveHero', 'editorialHero', 'cinematicHero', 'legalContent'].includes(section.type) || ['richText', 'teamSpotlight', 'contact'].includes(section.type) && section.data.titleAs === 'h1').length !== 1) throw new Error(`One H1 required: ${page.slug}`);
     if (!doc.seoPages.find(seo => seo.page_id === page.id)) throw new Error(`SEO missing: ${page.slug}`);
   }
   const check = value => {
@@ -183,7 +183,7 @@ export function validateHagnContent(doc) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const directory = resolve(process.env.HAGN_CONTENT_DIR || resolve(dirname(fileURLToPath(import.meta.url)), '../../tmp/hagn-rework-2026-10-19'));
+  const directory = resolve(process.env.HAGN_CONTENT_DIR || resolve(dirname(fileURLToPath(import.meta.url)), '../../tmp/hagn-perspective-2026-10-20'));
   const doc = buildHagnContent({ baseUrl: process.env.HAGN_SITE_URL || 'https://flamingo-hagn-partner.vercel.app' });
   try {
     const provenance = JSON.parse(await readFile(resolve(dirname(fileURLToPath(import.meta.url)), '../../docs/sites/hagn-partner/MEDIA-PROVENANCE.json'), 'utf8'));

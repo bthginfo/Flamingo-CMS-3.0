@@ -151,5 +151,25 @@ export const stockMedia = [
     "license": "Unsplash License; free download verified 19 October 2026; https://unsplash.com/license",
     "use": "Contextual symbolic photography; not Hagn staff, rooms, clients or Ingolstadt.",
     "origin": "Sourced photograph: https://unsplash.com/photos/staircase-with-dramatic-light-and-shadow-patterns-bUYdIgbyw7o. Photographer: set.sj. Download: https://images.unsplash.com/photo-1759329171501-b0e0c1b1589d?auto=format&fit=max&w=1800&q=86&fm=jpg. Unsplash License. Selected and visually checked 19 October 2026. Symbolic context only: not Hagn staff, rooms, clients or Ingolstadt. Local WebP delivery optimized without changing the scene."
+  },
+  {
+    "key": "courtyard",
+    "creator": "Miguel Picq",
+    "alt": "Begrünter Innenhof aus der Vogelperspektive mit hellem Steinboden und geometrischen Schatten",
+    "sourceUrl": "https://unsplash.com/photos/minimalist-concrete-courtyard-with-white-furniture-plants-and-geometric-shadows-poEga0PVyPs",
+    "downloadUrl": "https://images.unsplash.com/photo-1783315943625-6c00dc4b265b?auto=format&fit=max&w=2400&q=88&fm=jpg",
+    "bytes": 694028,
+    "path": "kontext/courtyard.webp",
+    "width": 2400,
+    "height": 1350,
+    "sha256": "a374adb15bb2802b218767a2342f1ac54a2ead316363ced8774bdbc46d0e6f9b",
+    "mimeType": "image/webp",
+    "generated": false,
+    "symbolic": true,
+    "credit": "Miguel Picq / Unsplash",
+    "license": "Unsplash License; free download verified live 20 October 2026; https://unsplash.com/license",
+    "use": "Contextual symbolic photography; not Hagn staff, rooms, clients or Ingolstadt.",
+    "selectedOn": "2026-10-20",
+    "origin": "Sourced photograph: https://unsplash.com/photos/minimalist-concrete-courtyard-with-white-furniture-plants-and-geometric-shadows-poEga0PVyPs. Photographer: Miguel Picq. Download: https://images.unsplash.com/photo-1783315943625-6c00dc4b265b?auto=format&fit=max&w=2400&q=88&fm=jpg. Unsplash License, free download verified live 20 October 2026. Selected and visually inspected by root and finish reviewer 20 October 2026. Symbolic context only: not Hagn staff, rooms, clients or Ingolstadt. Local 2400x1350 WebP optimization preserves the photographic scene; desktop/mobile crops are CSS object-position."
   }
 ];

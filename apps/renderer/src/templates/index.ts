@@ -72,6 +72,11 @@ import { JobListingsSection } from './shared/job-listings';
 import { CtaSplitSection } from './shared/cta-split';
 import { OpeningStatusSection } from './shared/opening-status';
 import { TeamSpotlightSection } from './shared/team-spotlight';
+import { PerspectiveHeroSection } from './shared/perspective-hero';
+import { PhotoChapterSection } from './shared/photo-chapter';
+import { TopicExplorerSection } from './shared/topic-explorer';
+import { EditorialBriefingSection } from './shared/editorial-briefing';
+import { ResourceListSection } from './shared/resource-list';
 import { FaqContactSplitSection } from './shared/faq-contact-split';
 import { GalleryProSection } from './shared/gallery-pro';
 import { ZigzagShowcaseSection } from './shared/zigzag-showcase';
@@ -861,6 +866,11 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   ctaSplit: CtaSplitSection,
   openingStatus: OpeningStatusSection,
   teamSpotlight: TeamSpotlightSection,
+  perspectiveHero: PerspectiveHeroSection,
+  photoChapter: PhotoChapterSection,
+  topicExplorer: TopicExplorerSection,
+  editorialBriefing: EditorialBriefingSection,
+  resourceList: ResourceListSection,
   faqContactSplit: FaqContactSplitSection,
   galleryPro: GalleryProSection,
   zigzagShowcase: ZigzagShowcaseSection,

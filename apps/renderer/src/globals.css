@@ -9,8 +9,32 @@
 /* The top-bar spacer already reserves its measured height. Only a leading
    content hero reserves the remaining fixed navigation, when it is present. */
 [data-site-header] ~ main > [data-section-type="editorialHero"]:first-child,
-[data-site-header] ~ main > [data-collection-content-hero] > [data-section-type="editorialHero"]:first-of-type {
+[data-site-header] ~ main > [data-collection-content-hero] > [data-section-type="editorialHero"]:first-of-type,
+[data-site-header] ~ main > [data-section-type="perspectiveHero"]:first-child,
+[data-site-header] ~ main > [data-section-type="teamSpotlight"]:first-child,
+[data-site-header] ~ main > [data-section-type="contact"]:first-child,
+[data-site-header] ~ main > [data-section-type="contactForm"]:first-child,
+[data-site-header] ~ main > [data-collection-content-hero] > [data-section-type="perspectiveHero"]:first-of-type {
   --opening-header-clearance: var(--site-nav-height, 72px);
+}
+
+/* These editorial compositions preserve German words and attached punctuation.
+   Their copy and column measures, rather than arbitrary word splitting, set lines. */
+:is([data-perspective-layout], [data-photo-layout], [data-topic-explorer], [data-briefing-layout], [data-resource-list], [data-team-layout="contactSheet"], [data-contact-layout="editorial"]) :is(h1, h2, h3) {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}
+
+/* Disclosure state is structural, so it survives reduced motion and utility resets. */
+[data-topic-explorer] details .topic-open-indicator { display: none; }
+[data-topic-explorer] details[open] > summary .topic-closed-indicator { display: none; }
+[data-topic-explorer] details[open] > summary .topic-open-indicator { display: block; }
+
+@media (max-width: 767px) {
+  [data-perspective-layout] img[data-edit-image="image"] {
+    object-position: var(--perspective-mobile-focal, center) !important;
+  }
 }
 
 @keyframes studio-type-in {

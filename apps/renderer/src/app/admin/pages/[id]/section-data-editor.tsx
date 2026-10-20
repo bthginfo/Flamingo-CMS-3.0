@@ -15,6 +15,7 @@ import { saveMediaRecord } from '@/app/admin/media-actions';
 import { EMBED_PROVIDERS, EMBED_CATEGORIES, getProvider } from '@/lib/embed-providers';
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
+import { EDITORIAL_CONTACT_EDITOR_DEFAULTS, withPerspectiveEditorDefaults } from '@/lib/perspective-section-data';
 import { compactStringList } from '@/lib/string-list';
 import { getCollectionKeysAction } from '@/app/admin/collections/actions';
 import { InstagramConnectPanel } from './instagram-connect-panel';
@@ -388,7 +389,7 @@ function HelpHint({ fieldKey }: { fieldKey: string }) {
 
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange, sectionId }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string }) {
-  const Editor = EDITORS[type] ?? SchemaSectionEditor;
+  const Editor = ['contact', 'contactForm'].includes(type) && data.layout === 'editorial' ? SchemaSectionEditor : EDITORS[type] ?? SchemaSectionEditor;
   return <Editor type={type} data={data} onChange={onChange} sectionId={sectionId} />;
 }
 
@@ -421,11 +422,13 @@ function imagePositionCompanionKeys(obj: Record<string, unknown>): Set<string> {
 
 // Generic structured editor for schema-shaped section data.
 function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
-  const defaults = type ? { ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}), ...(SECTION_PREVIEW_DATA[type] || {}) } : {};
-  const [source, setSource] = useState<Record<string, unknown>>(() => Object.keys(data).length > 0 ? data : defaults);
+  const editorialContact = ['contact', 'contactForm'].includes(type || '') && data.layout === 'editorial';
+  const defaults = type ? { ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}), ...(SECTION_PREVIEW_DATA[type] || {}), ...(editorialContact ? EDITORIAL_CONTACT_EDITOR_DEFAULTS : {}) } : {};
+  const perspectiveEditor = editorialContact || ['perspectiveHero', 'photoChapter', 'topicExplorer', 'editorialBriefing', 'resourceList'].includes(type || '') || (type === 'teamSpotlight' && data.layout === 'contactSheet');
+  const [source, setSource] = useState<Record<string, unknown>>(() => Object.keys(data).length > 0 ? withPerspectiveEditorDefaults(type, data, defaults) : defaults);
 
   useEffect(() => {
-    const next = Object.keys(data).length > 0 ? data : defaults;
+    const next = Object.keys(data).length > 0 ? withPerspectiveEditorDefaults(type, data, defaults) : defaults;
     setSource(next);
     if (Object.keys(data).length === 0 && Object.keys(defaults).length > 0) {
       onChange(defaults);
@@ -533,7 +536,19 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       const enumOptions = type === 'editorialHero' && fieldName === 'layout'
         ? [['', 'Editorial mit Bildrahmen'], ['edition', 'Edition – Fototitelseite'], ['portrait', 'Porträt – Person im Einstieg'], ['journal', 'Journal – Titel und Bildstrecke'], ['studio', 'Studio – typografische Bühne'], ['memorial', 'Bildgeführt – ruhige Komposition'], ['correspondence', 'Korrespondenz – offene Typografie und Kontaktspalte'], ['architectural', 'Architektur – Text neben Bild'], ['quiet', 'Ruhig – Text neben Bild'], ['campaignBleed', 'Kampagne'], ['fullBleedImage', 'Großes Bild mit Textkarte']]
         : type === 'teamSpotlight' && fieldName === 'layout'
-        ? [['', 'Bildkarten'], ['directory', 'Verzeichnis – Bilder und sichtbare Profile']]
+        ? [['', 'Bildkarten'], ['directory', 'Verzeichnis – Bilder und sichtbare Profile'], ['contactSheet', 'Kontaktbogen – große Porträts und Kontaktdaten']]
+        : type === 'perspectiveHero' && fieldName === 'layout'
+        ? [['panorama', 'Panorama – fotografische Bühne'], ['statement', 'Statement – großer Titel und Panorama'], ['portrait', 'Porträt – Person im Mittelpunkt'], ['journal', 'Journal – Titel und versetztes Bild'], ['compact', 'Kompakt – kurzer Seitentitel']]
+        : type === 'photoChapter' && fieldName === 'layout'
+        ? [['feature', 'Feature – großes Bild und versetzter Text'], ['immersive', 'Immersiv – Text im Fotomotiv'], ['diptych', 'Diptychon – räumliches Bildpaar']]
+        : type === 'editorialBriefing' && fieldName === 'layout'
+        ? [['columns', 'Spalten – redaktioneller Überblick'], ['sequence', 'Sequenz – chronologische Phasen'], ['dossier', 'Dossier – Lesespalte und Randnotizen']]
+        : ['teamSpotlight', 'contact', 'contactForm'].includes(type || '') && fieldName === 'titleAs'
+        ? [['h1', 'H1 – Seitentitel'], ['h2', 'H2 – Abschnittsüberschrift']]
+        : ['contact', 'contactForm'].includes(type || '') && fieldName === 'layout'
+        ? [['cards', 'Klassisch – Kontaktkarten und Formular'], ['editorial', 'Editorial – offener Kontakt und Formular']]
+        : editorialContact && path[0] === 'formFields' && fieldName === 'type'
+        ? [['text', 'Text'], ['email', 'E-Mail'], ['tel', 'Telefon'], ['textarea', 'Nachricht'], ['select', 'Auswahl']]
         : type === 'editorialHero' && fieldName === 'imageFit'
         ? [['cover', 'Fläche füllen'], ['contain', 'Vollständig zeigen']]
         : type === 'mobileActionDock' && fieldName === 'kind'
@@ -562,6 +577,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
         return <ColorField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} allowEmpty />;
       }
       if (/imageAlt$/i.test(fieldName)) return <Field key={renderKey} label="Alternativtext des Bildes" value={value} onChange={(next) => updateAtPath(path, next)} />;
+      if (type === 'perspectiveHero' && fieldName === 'imageMobilePosition') return <Field key={renderKey} label="Bildausschnitt auf Mobilgeräten (z. B. 61% center)" value={value} onChange={(next) => updateAtPath(path, next)} />;
       if (/image|background|photo|avatar|poster|logo/i.test(fieldName)) {
         const positionPath = imagePositionPath(path);
         const positionValue = valueAtPath(positionPath);
@@ -582,6 +598,11 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if (/icon/i.test(fieldName)) {
         return <IconPickerField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
       }
+      if (perspectiveEditor) {
+        const rich = (editorialContact && fieldName === 'introText') || (type === 'photoChapter' && fieldName === 'text') || (type === 'topicExplorer' && fieldName === 'detail') || (type === 'editorialBriefing' && path[0] === 'groups' && fieldName === 'text');
+        if (rich) return <RichTextEditorField key={renderKey} label={label} value={value} onChange={(next) => updateAtPath(path, next)} />;
+        if (multiline || ['headline', 'caption', 'note', 'summary'].includes(fieldName)) return <label key={renderKey} className="block"><span className="mb-1 block text-xs font-medium text-zinc-600">{label}</span><textarea rows={fieldName === 'headline' ? 3 : 4} className="admin-input w-full resize-y" value={value} onChange={(event) => updateAtPath(path, event.target.value)} /></label>;
+      }
       return (
         <div key={renderKey}>
           <Field label={label} value={value} onChange={(v) => updateAtPath(path, v)} multiline={multiline} />
@@ -600,6 +621,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if (isRecord(defaultSample)) for (const [k, v] of Object.entries(defaultSample)) itemShape[k] = v;
       for (const item of value) if (isRecord(item)) for (const [k, v] of Object.entries(item)) if (!(k in itemShape)) itemShape[k] = v;
       const hasShape = Object.keys(itemShape).length > 0;
+      const hiddenItemKeys = perspectiveEditor ? imagePositionCompanionKeys(itemShape) : new Set<string>();
       const sample = hasShape ? itemShape : (value[0] ?? defaultSample ?? '');
       const maxItems = type === 'mobileActionDock' && path[path.length - 1] === 'actions' ? 3 : null;
       const canAdd = maxItems == null || value.length < maxItems;
@@ -616,7 +638,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
                 <button type="button" className="absolute right-3 top-2 text-xs text-red-500 hover:text-red-600" onClick={() => updateAtPath(path, value.filter((_, itemIndex) => itemIndex !== index))}>Entfernen</button>
                 {isRecord(item) && hasShape ? (
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    {Object.keys(itemShape).map((childKey) => (
+                    {Object.keys(itemShape).filter(childKey => !hiddenItemKeys.has(childKey)).map((childKey) => (
                       <div key={childKey} className={/text|description|subline|content|bio|answer/i.test(childKey) ? 'md:col-span-2' : undefined}>
                         {renderValue([...path, index, childKey], fieldLabel(childKey), item[childKey] ?? createEmptyLike(itemShape[childKey]))}
                       </div>
@@ -1337,6 +1359,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
 
 // ─── Contact Editor ──────────────────────────────────────────────
 function ContactEditor({ data, onChange }: EditorProps) {
+  const [layout, setLayout] = useState((data.layout as string) || 'cards');
   const [headline, setHeadline] = useState((data.headline as string) || 'Kontakt');
   const [introText, setIntroText] = useState((data.introText as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
@@ -1345,7 +1368,7 @@ function ContactEditor({ data, onChange }: EditorProps) {
   const [infoCards, setInfoCards] = useState<{ icon: string; label: string; value: string }[]>(
     (data.infoCards as { icon: string; label: string; value: string }[]) || []
   );
-  useReport({ headline, introText, badgeText, submitLabel, formEnabled, infoCards }, onChange);
+  useReport({ ...data, layout, headline, introText, badgeText, submitLabel, formEnabled, infoCards }, onChange);
 
   function addCard() { setInfoCards([...infoCards, { icon: '', label: '', value: '' }]); }
   function removeCard(i: number) { setInfoCards(infoCards.filter((_, idx) => idx !== i)); }
@@ -1353,6 +1376,7 @@ function ContactEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
+      <SelectField label="Layout" value={layout} options={['cards', 'editorial']} onChange={setLayout} />
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label="Einleitungstext" value={introText} onChange={setIntroText} multiline />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
