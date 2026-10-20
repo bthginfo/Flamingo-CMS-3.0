@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-20T09:58:13Z",
+  "generatedAt": "2026-10-20T10:19:57Z",
   "title": "Design System: Hagn & Partner",
   "extensions": {
     "colorMeta": {
@@ -575,6 +575,11 @@
       {
         "name": "The Native zuerst Rule",
         "body": "Native Ziele und wesentlicher Inhalt bleiben ohne JavaScript und ohne Bewegung zugänglich. Bewegung ergänzt das Foto; sie steuert weder die Lesbarkeit noch den Zugriff auf Kapitel.",
+        "section": "components"
+      },
+      {
+        "name": "The Fortlaufende Bearbeitung Rule",
+        "body": "Jede aufeinanderfolgende Feld- oder Listenänderung aktualisiert sofort die kontrollierten Editorwerte und den ausstehenden Speicherstand. Bereits gesetzte Änderungsmarkierungen dürfen keine weitere Aktualisierung verhindern. Weitere Eingaben gehen vom zuletzt bearbeiteten Wert aus; Abschnittsidentität, Metadaten, andere Sprachstände und unberührte Inhalte bleiben erhalten.",
         "section": "components"
       }
     ],

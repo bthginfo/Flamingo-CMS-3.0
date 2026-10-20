@@ -359,6 +359,8 @@ Bildhover nutzt (550ms) mit `cubic-bezier(.16,1,.3,1)`, Atlasbewegung (450ms). Z
 
 Der eigene CMS-Editor zeigt wiederholbare Einträge als einklappbare Titel-/Thumbnailzeilen mit stabilen eindeutigen IDs. Hinzufügen, Mehrfachauswahl aus der Mediathek, Duplizieren, Entfernen und Verschieben nach oben/unten sind direkte Aktionen. Jeder Eintrag besitzt Titel, Beschreibung, Medienauswahl/Upload/direkte URL, Alttext, getrennte Desktop-/Mobilfokalpunkte und vollständige Link-/Symbolfelder. Bewegungsdetails erscheinen abhängig von der gewählten Bewegung. Die Symbolauswahl ist ein beschrifteter Dialog mit Fokusfalle, Escape und Fokuswiederherstellung; Symbole lassen sich ausdrücklich entfernen.
 
+**The Fortlaufende Bearbeitung Rule.** Jede aufeinanderfolgende Feld- oder Listenänderung aktualisiert sofort die kontrollierten Editorwerte und den ausstehenden Speicherstand. Bereits gesetzte Änderungsmarkierungen dürfen keine weitere Aktualisierung verhindern. Weitere Eingaben gehen vom zuletzt bearbeiteten Wert aus; Abschnittsidentität, Metadaten, andere Sprachstände und unberührte Inhalte bleiben erhalten.
+
 ### Fachtexte, Personen und Kontakt
 
 Rich Text trägt die zusammenhängenden Lesestrecken. Briefing behält `columns`, `sequence` und `dossier`; Resource List gruppiert reale Dateien und native Sprungziele. `topicExplorer` bleibt als native Disclosure-Komponente kompatibel, kommt im aktuellen Export jedoch nicht vor. Sein früherer Platz im Home- und Verzeichnisaufbau ist keine geltende Vorgabe.
@@ -387,4 +389,4 @@ Rich Text trägt die zusammenhängenden Lesestrecken. Briefing behält `columns`
 - Don't Wörter willkürlich teilen, Qualifikationen hinter Hover verstecken oder wichtige Inhalte von Animation abhängig machen.
 - Don't CMS-Inhalte, Symbolentscheidungen und Farbrollen durch Hagn-spezifische Renderer-Konstanten ersetzen.
 
-Nicht kanonisiert oder repariert: Der vorhandene Detektorbericht führt die ältere Gradient-Text-Utility, den Gray-on-Red-Match und den Accordion-Seitenstreifen in globals.css auf. Diese Bibliothekswarnungen werden nicht zu Hagn-Gestaltungsregeln. Optionale Dachzeilen und unbenutzte Bibliotheksvarianten bilden ebenfalls keine Vorgabe. Authentifizierte Produktionsspeicherung, API-Rücklesen, exaktes Wiederherstellen und Veröffentlichung sind bei dieser Dokumentationsaktualisierung noch nicht belegt.
+Nicht kanonisiert oder repariert: Der vorhandene Detektorbericht führt die ältere Gradient-Text-Utility, den Gray-on-Red-Match und den Accordion-Seitenstreifen in globals.css auf. Diese Bibliothekswarnungen werden nicht zu Hagn-Gestaltungsregeln. Optionale Dachzeilen und unbenutzte Bibliotheksvarianten bilden ebenfalls keine Vorgabe. Die erneute Bereitstellung der nachgeführten Editorkorrektur sowie authentifizierte Produktionsspeicherung, API-Rücklesen, Neuladen und exaktes Wiederherstellen bleiben separate Releasebelege. Die erste öffentliche Sichtkontrolle bestätigt diesen Speicherzyklus nicht.

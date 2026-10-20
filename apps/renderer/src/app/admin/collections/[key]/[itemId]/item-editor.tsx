@@ -164,6 +164,8 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   const handleSectionChange = useCallback((sectionId: string, data: Record<string, unknown>) => {
     const saveData = mergeLocalizedSectionData({ sectionId, data, sections: sectionsRef.current, pendingChanges: pendingChanges.current, i18n, activeLocale });
     pendingChanges.current.set(sectionId, saveData);
+    // Dirty flags can already be set; controlled editors still need fresh data props on every edit.
+    setSections(current => buildLiveSections(current, pendingChanges.current, { sectionId, data: saveData }));
     setHasDirty(true);
     setSaved(false);
     if (preview.isOpen) {
