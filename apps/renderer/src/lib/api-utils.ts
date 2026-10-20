@@ -6,6 +6,7 @@ import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types
 import { validateStyleOverridesForApi } from '@/lib/section-style-overrides';
 import { validateAdvancedSectionData } from '@/lib/advanced-section-validation';
 import { isContentUrlField, safeContentUrl } from '@/lib/safe-content-url';
+import { getAllSectionContracts } from '@/lib/section-contracts';
 import { ApiRequestBodyError } from './api-request-body';
 import { apiErrorLogMetadata, databaseErrorCode } from './api-error-policy';
 export { readApiJsonObject } from './api-request-body';
@@ -286,7 +287,7 @@ export function normalizeSectionData(
 ): Record<string, unknown> {
   const d = (options.sanitize === false ? { ...data } : sanitizeValue({ ...data })) as Record<string, unknown>;
   applyCommonCopyAliases(d);
-  applyCommonCtaAliases(d);
+  applyCommonCtaAliases(type, d);
 
   if (isHeroType(type)) {
     copyAlias(d, 'bgImage', ['backgroundImage', 'image', 'imageUrl']);
@@ -341,9 +342,19 @@ function applyCommonCopyAliases(data: Record<string, unknown>) {
   copyAlias(data, 'subline', ['subtitle', 'description']);
 }
 
-function applyCommonCtaAliases(data: Record<string, unknown>) {
+let ctaAliasFieldsByType: Map<string, Set<string>> | undefined;
+
+function applyCommonCtaAliases(type: string, data: Record<string, unknown>) {
+  // Contracts include schema fields and legacy editor defaults. Only synthesize
+  // targets the section supports; preserve every explicitly supplied input key.
+  ctaAliasFieldsByType ??= new Map(getAllSectionContracts().map(contract => [
+    contract.type,
+    new Set(contract.fields.map(field => field.key)),
+  ]));
+  const fields = ctaAliasFieldsByType.get(type);
+  if (fields?.has('secondaryCta')) copyAlias(data, 'secondaryCta', ['secondaryButton']);
+  if (!fields?.has('primaryCta')) return;
   copyAlias(data, 'primaryCta', ['cta', 'button', 'primaryButton']);
-  copyAlias(data, 'secondaryCta', ['secondaryButton']);
   if (data.primaryCta === undefined && (typeof data.ctaLabel === 'string' || typeof data.ctaHref === 'string')) {
     data.primaryCta = {
       label: typeof data.ctaLabel === 'string' ? data.ctaLabel : 'Kontakt aufnehmen',

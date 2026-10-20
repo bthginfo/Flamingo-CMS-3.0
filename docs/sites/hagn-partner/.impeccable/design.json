@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-20T10:19:57Z",
+  "generatedAt": "2026-10-20T10:41:58Z",
   "title": "Design System: Hagn & Partner",
   "extensions": {
     "colorMeta": {
@@ -579,7 +579,7 @@
       },
       {
         "name": "The Fortlaufende Bearbeitung Rule",
-        "body": "Jede aufeinanderfolgende Feld- oder Listenänderung aktualisiert sofort die kontrollierten Editorwerte und den ausstehenden Speicherstand. Bereits gesetzte Änderungsmarkierungen dürfen keine weitere Aktualisierung verhindern. Weitere Eingaben gehen vom zuletzt bearbeiteten Wert aus; Abschnittsidentität, Metadaten, andere Sprachstände und unberührte Inhalte bleiben erhalten.",
+        "body": "Jede aufeinanderfolgende Feld- oder Listenänderung aktualisiert sofort die kontrollierten Editorwerte und den ausstehenden Speicherstand. Bereits gesetzte Änderungsmarkierungen dürfen keine weitere Aktualisierung verhindern. Weitere Eingaben gehen vom zuletzt bearbeiteten Wert aus; Abschnittsidentität, Metadaten, andere Sprachstände und unberührte Inhalte bleiben erhalten. Beim Speichern bleibt die Aktionsform des jeweiligen Sectionvertrags maßgeblich: Ein kanonisches `cta` erzeugt kein ungenutztes `primaryCta`. Gültige bestehende Farbwerte mit Alpha-Kurzschreibweise wie `rgba(16, 24, 32, .12)` bleiben erhalten.",
         "section": "components"
       }
     ],

@@ -10,6 +10,7 @@ import {
   normalizeStyleOverrides,
   normalizeStyleOverridesForSection,
   normalizeStyleOverridesForSectionWithIssues,
+  validateStyleOverridesForApi,
 } from './section-style-overrides';
 
 const STYLE_BREAKOUT = '</style><script data-xss="stored">globalThis.__xss = true</script>';
@@ -54,6 +55,34 @@ test('documented size values survive the strict grammar while declaration inject
   assert.equal(normalizeStyleOverridesForSection('beforeAfter', {
     cardShadow: '0 4px #000; color:red',
   }, 'florist'), null);
+});
+
+test('section metadata accepts and preserves a seeded rgba shadow color with leading-dot alpha', () => {
+  const overrides = { '--token-shadow': 'rgba(16, 24, 32, .12)' };
+  assert.equal(validateStyleOverridesForApi(overrides, 'styleOverrides', 'ctaBand', 'consulting', 'ctaBand.tradesman.v1'), null);
+  const result = normalizeStyleOverridesForSectionWithIssues('ctaBand', overrides, 'consulting', 'styleOverrides', 'ctaBand.tradesman.v1');
+  assert.deepEqual(result, { styleOverrides: overrides, issues: [] });
+  assert.deepEqual(normalizeStyleOverrides({ shadowColor: 'rgba(16, 24, 32, .12)' }), overrides);
+});
+
+test('leading-dot rgba support still rejects malformed colors and CSS injection in metadata', () => {
+  for (const value of [
+    'rgba(16,24,32,.)',
+    'rgba(16,24,32,.12.3)',
+    'rgba(16,24,32,-.12)',
+    'rgba(16,24,32,1.12)',
+    'rgba(256,24,32,.12)',
+    'rgba(16,24,32,.12); color: red',
+    'rgba(16,24,32,.12)/* comment */',
+    'rgba(16,24,32,.12) url(https://example.com/pixel)',
+    'rgba(16,24,32,expression(alert(1)))',
+    `rgba(16,24,32,.12)${STYLE_BREAKOUT}`,
+  ]) {
+    const result = normalizeStyleOverridesForSectionWithIssues('ctaBand', { '--token-shadow': value }, 'consulting', 'styleOverrides', 'ctaBand.tradesman.v1');
+    assert.equal(result.styleOverrides, null, value);
+    assert.deepEqual(result.issues.map(issue => issue.reason), ['unsafe_value'], value);
+    assert.match(validateStyleOverridesForApi({ '--token-shadow': value }, 'styleOverrides', 'ctaBand', 'consulting', 'ctaBand.tradesman.v1') || '', /invalid or unsafe CSS value/, value);
+  }
 });
 
 test('legacy surface aliases normalize while media text retains its independent role', () => {

@@ -44,7 +44,7 @@ const HEX3 = /^#[0-9a-f]{3}$/i;
 const HEX6 = /^#[0-9a-f]{6}$/i;
 const HEX8 = /^#[0-9a-f]{8}$/i;
 const RGB  = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i;
-const RGBA = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*\)$/i;
+const RGBA = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(?:\.\d+)?|\.\d+|1(?:\.0+)?)\s*\)$/i;
 
 /** True if the string is a syntactically valid CSS color the API accepts. */
 export function isValidColorString(value: unknown): value is string {

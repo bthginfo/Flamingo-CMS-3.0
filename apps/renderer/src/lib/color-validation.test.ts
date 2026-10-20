@@ -48,6 +48,20 @@ test('isValidColorString guards types', () => {
   assert.equal(isValidColorString(null), false);
 });
 
+test('rgba accepts a leading-dot alpha with the same numeric and contrast behavior as a leading zero', () => {
+  for (const alpha of ['0', '12', '999']) {
+    const compact = `rgba(16, 24, 32, .${alpha})`;
+    const full = `rgba(16, 24, 32, 0.${alpha})`;
+    assert.equal(isValidColorString(compact), true);
+    assert.deepEqual(parseColor(compact), parseColor(full));
+    assert.equal(contrastRatio('#ffffff', compact), contrastRatio('#ffffff', full));
+  }
+  assert.deepEqual(parseColor('rgba(16, 24, 32, .12)'), { r: 16, g: 24, b: 32, a: 0.12 });
+  for (const value of ['rgba(16,24,32,.)', 'rgba(16,24,32,.12.3)', 'rgba(16,24,32,-.12)', 'rgba(16,24,32,1.12)', 'rgba(256,24,32,.12)']) {
+    assert.equal(isValidColorString(value), false, value);
+  }
+});
+
 test('brand validation covers every rendered color family', () => {
   const issues = validateBrandPayload({
     pageBg: '#gggggg',
